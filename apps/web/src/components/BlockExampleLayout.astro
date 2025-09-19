@@ -1,11 +1,11 @@
 ---
-import "@/styles/blocks.css";
+// import "@/styles/blocks.css";
+import "@bejamas/ui/styles/globals.css";
 ---
 
 <html class="bg-background">
   <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="/r/themes/current-theme.css" />
     <script is:inline>
       const storageKey = "starlight-theme";
       const parseTheme = (t) =>
@@ -42,6 +42,8 @@ import "@/styles/blocks.css";
     </script>
   </head>
   <body class="antialiased py-20 bg-background">
+    <link rel="stylesheet" href="/r/themes/current-theme.css" />
+
     <slot />
   </body>
 </html>

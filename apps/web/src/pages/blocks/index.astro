@@ -1,8 +1,9 @@
 ---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
 import { getCollection, getEntry, render } from "astro:content";
 import BlockPreview from "@/components/BlockPreview.astro";
 import BlocksNav from "@/components/BlocksNav.astro";
-import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
 const blocks = await getCollection("blocks");
 ---
@@ -44,6 +45,6 @@ const blocks = await getCollection("blocks");
   }
 
   .sl-container {
-    @apply max-w-[1500px];
+    @apply max-w-[1500px] mx-auto;
   }
 </style>
