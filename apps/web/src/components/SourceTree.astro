@@ -9,9 +9,9 @@ const { nodes } = Astro.props as { nodes: any[] };
     <li>
       <button
         type="button"
-        class="w-full text-left p-2 rounded-md text-xs font-mono flex items-center gap-2 hover:bg-muted"
+        class="w-full text-left px-2 py-1 rounded-md text-xs font-mono flex items-center gap-2"
         @click={`open['${node.path}']=!open['${node.path}']`}
-        // :class={`open['${node.path}'] ? '' : 'hover:bg-muted'`}
+        :class={`open['${node.path}'] ? 'bg-secondary/60' : 'hover:bg-muted'`}
       >
         <span x-show={`!open['${node.path}']`}><Folder class="size-4" /></span>
         <span x-show={`open['${node.path}']`}><FolderOpen class="size-4" /></span>
@@ -25,9 +25,9 @@ const { nodes } = Astro.props as { nodes: any[] };
     <li>
       <button
         type="button"
-        class="w-full text-left p-2 rounded-md text-xs font-mono flex items-center gap-2"
+        class="w-full text-left px-2 py-1 rounded-md text-xs font-mono flex items-center gap-2"
         @click={`active='${node.label}'`}
-        :class={`active === '${node.label}' ? 'bg-muted-foreground/10 text-foreground' : 'hover:bg-muted'`}
+        :class={`active === '${node.label}' ? 'bg-secondary text-secondary-foreground' : 'hover:bg-muted'`}
       >
         <FileIcon class="size-4" />
         {node.name}

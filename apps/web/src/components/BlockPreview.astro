@@ -1,78 +1,60 @@
 ---
 import Tabs from "@bejamas/ui/components/Tabs.astro";
 import Button from "@bejamas/ui/components/Button.astro";
-import { Laptop, Tablet, Smartphone, Terminal, Check } from "@lucide/astro";
+import { Laptop, Tablet, Smartphone } from "@lucide/astro";
 import Source from "@/components/Source.astro";
-import Separator from "@bejamas/ui/components/Separator.astro";
 
 const item = Astro.props.item;
 ---
 
-<div
-  x-data="{ size: 'desktop', copied: false, copy(cmd) { navigator.clipboard.writeText(cmd); this.copied = true; setTimeout(() => { this.copied = false }, 2000); } }"
->
+<div x-data="{ size: 'desktop' }">
   <Tabs>
     <div class="flex justify-between">
-      <div slot="tablist" class="space-x-1 mb-2 flex items-center">
+      <div slot="tablist" class="space-x-2 mb-4">
         <Button
           role="tab"
+          size="sm"
           aria-selected="true"
           variant="ghost"
-          class="aria-selected:bg-secondary aria-selected:text-secondary-foreground"
+          class="aria-selected:bg-primary aria-selected:text-primary-foreground"
           >Preview</Button
         >
         <Button
           role="tab"
+          size="sm"
           variant="ghost"
-          class="aria-selected:bg-secondary aria-selected:text-secondary-foreground"
+          class="aria-selected:bg-primary aria-selected:text-primary-foreground"
           >Source</Button
         >
-        <Separator orientation="vertical" class="h-6 ml-2" />
-        {item.description && <p class="text-sm ml-2">{item.description}</p>}
       </div>
-      <div class="flex items-center gap-1">
-        <div
-          class="flex space-x-2 items-center border p-0.5 rounded-xl border-border"
+      <div class="flex space-x-2">
+        <Button
+          size="sm"
+          size="icon"
+          variant="ghost"
+          title="Desktop"
+          @click="size = 'desktop'"
         >
-          <Button
-            size="sm"
-            size="icon"
-            variant="ghost"
-            title="Desktop"
-            @click="size = 'desktop'"
-            class="size-7.5"
-          >
-            <Laptop class="size-3.5" />
-          </Button>
-          <Button
-            size="sm"
-            size="icon"
-            variant="ghost"
-            title="Tablet"
-            class="size-7.5"
-            @click="size = 'tablet'"
-          >
-            <Tablet class="size-3.5" />
-          </Button>
-          <Button
-            size="sm"
-            size="icon"
-            class="size-7.5"
-            variant="ghost"
-            title="Smartphone"
-            @click="size = 'smartphone'"
-          >
-            <Smartphone class="size-3.5" />
-          </Button>
-        </div>
-        <code
-          class="text-sm font-mono text-xs px-3 h-9 py-1.5 rounded-lg border border-border flex items-center gap-2"
-          @click={`copy('npx bejamas add ${item.id}')`}
+          <Laptop class="size-4" />
+        </Button>
+        <Button
+          size="sm"
+          size="icon"
+          variant="ghost"
+          title="Tablet"
+          @click="size = 'tablet'"
         >
-          <Terminal class="size-4" x-show="!copied" />
-          <Check class="size-4" x-show="copied" />
-          npx bejamas add {item.id}</code
+          <Tablet class="size-4" />
+        </Button>
+        <Button
+          size="sm"
+          size="icon"
+          variant="ghost"
+          title="Smartphone"
+          @click="size = 'smartphone'"
         >
+          <Smartphone class="size-4" />
+        </Button>
       </div>
     </div>
     <div role="tabpanel">
