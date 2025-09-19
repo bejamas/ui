@@ -12,7 +12,6 @@ export default defineConfig({
   // output: 'server',
   integrations: [
     starlight({
-      // prerender: false,
       plugins: [
         starlightThemeBejamas({
           nav: [
@@ -50,7 +49,7 @@ export default defineConfig({
           autogenerate: { directory: "components" },
         },
       ],
-      customCss: ["./src/styles/global.css"],
+      customCss: ["./src/styles/global.css", "@bejamas/ui/styles/globals.css"],
       logo: {
         light: "./src/assets/logo.svg",
         dark: "./src/assets/logo-dark.svg",
@@ -61,7 +60,7 @@ export default defineConfig({
     mdx(),
   ],
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss({ applyBaseStyles: false })],
     ssr: {
       noExternal: ["zod"],
     },

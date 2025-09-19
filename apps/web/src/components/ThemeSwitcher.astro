@@ -5,7 +5,7 @@ import Select from "@bejamas/ui/components/Select.astro";
 import { Sun, Moon, Laptop } from "@lucide/astro";
 ---
 
-<div class="relative">
+<div class="relative text-sm">
   <div class="absolute z-10 left-3 top-2.75">
     <Sun class="size-4 dark:hidden" />
     <Moon class="size-4 hidden dark:block" />
@@ -62,6 +62,8 @@ import { Sun, Moon, Laptop } from "@lucide/astro";
   function applyTheme(theme) {
     const effective = theme === "auto" ? getPreferredColorScheme() : theme;
     document.documentElement.dataset.theme = effective;
+    document.documentElement.classList.remove("light", "dark");
+    document.documentElement.classList.add(effective);
     storeTheme(theme);
     const select = document.getElementById("theme-select");
     if (select instanceof HTMLSelectElement) select.value = theme;

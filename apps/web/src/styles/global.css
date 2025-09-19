@@ -4,8 +4,10 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 
-@import "@bejamas/ui/styles/globals.css";
-
 .site-title img {
   max-width: 20px;
+}
+
+.hero {
+  display: none;
 }
