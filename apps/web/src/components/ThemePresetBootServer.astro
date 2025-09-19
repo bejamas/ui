@@ -1,0 +1,21 @@
+---
+import { getEntry } from 'astro:content';
+import { applyThemeToCss } from '../utils/themes/apply-theme';
+
+const themeCookie = Astro.locals.theme;
+console.log('themeCookie', themeCookie?.value);
+
+let themeCss = '';
+if (themeCookie?.value) {
+  const theme = await getEntry('themes', themeCookie?.value);
+  themeCss = applyThemeToCss({ currentMode: theme.data.mode, styles: theme.data.styles });
+}
+
+console.log('themeCss', themeCss);
+---
+
+
+<Fragment slot="head">
+  <style is:inline set:html={themeCss}></style>
+
+</Fragment>

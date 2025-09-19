@@ -1,0 +1,60 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import Footer from "@bejamas/ui/components/Footer.astro";
+import FooterLinks from "@bejamas/ui/components/FooterLinks.astro";
+import Button from "@bejamas/ui/components/Button.astro";
+import Separator from "@bejamas/ui/components/Separator.astro";
+import CTA from "./components/cta.astro";
+---
+
+<BlockExampleLayout>
+  <Footer class="rounded-t-xl">
+    <CTA />
+    <div class="py-10 grid grid-cols-4 gap-4 mx-auto max-w-5xl">
+      <div>Acme, Inc. Logo</div>
+      <div class="space-y-6">
+        <FooterLinks
+          title="Resources"
+          items={[
+            { label: "Blog", href: "/blog" },
+            { label: "Documentation", href: "/docs" },
+            { label: "Pricing", href: "/pricing" },
+            { label: "Support", href: "/support" },
+          ]}
+        />
+        <FooterLinks
+          title="Resources"
+          items={[
+            { label: "Blog", href: "/blog" },
+            { label: "Documentation", href: "/docs" },
+            { label: "Pricing", href: "/pricing" },
+            { label: "Support", href: "/support" },
+          ]}
+        />
+      </div>
+
+      <FooterLinks
+        title="Company"
+        items={[
+          { label: "Home", href: "/" },
+          { label: "About", href: "/about" },
+          { label: "Contact", href: "/contact" },
+          { label: "Careers", href: "/careers" },
+          { label: "Press", href: "/press" },
+        ]}
+      />
+      <FooterLinks
+        title="Legal"
+        items={[
+          { label: "Privacy Policy", href: "/privacy-policy" },
+          { label: "Terms of Service", href: "/terms-of-service" },
+        ]}
+      />
+    </div>
+    <div class="border-t border-footer-border">
+      <div class="mx-auto max-w-5xl py-6">
+        <p>2025 Bejamas. All rights reserved.</p>
+      </div>
+    </div>
+  </Footer>
+</BlockExampleLayout>

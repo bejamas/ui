@@ -1,0 +1,57 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import BlockPreview from "@/components/BlockPreview.astro";
+import BlocksNav from "@/components/BlocksNav.astro";
+
+const block = await getEntry("blocks", Astro.params.slug);
+
+export async function getStaticPaths() {
+  const blocks = await getCollection("blocks");
+
+  return blocks.map((block) => ({
+    params: { slug: block.id },
+  }));
+}
+---
+
+<script src="//unpkg.com/alpinejs" defer></script>
+
+<StarlightPage
+  frontmatter={{
+    title: "Building blocks for content-driven sites.",
+    template: "splash",
+  }}
+>
+  <BlocksNav />
+
+  {
+    block.data.items.map((item) => (
+      <section class="text-left not-content space-y-20">
+        {block.data.items.map((item) => (
+          <BlockPreview item={item} />
+        ))}
+      </section>
+    ))
+  }
+</StarlightPage>
+
+<style is:global>
+  @reference "tailwindcss";
+
+  .content-panel {
+    @apply text-center border-0 pt-30 pb-0;
+  }
+
+  .content-panel + .content-panel {
+    @apply pt-10;
+  }
+
+  .content-panel h1 {
+    @apply text-5xl font-medium text-left max-w-2xl text-balance mx-0;
+  }
+
+  .sl-container {
+    @apply max-w-[1500px];
+  }
+</style>

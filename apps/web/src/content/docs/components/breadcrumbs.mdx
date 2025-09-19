@@ -1,0 +1,152 @@
+---
+title: Breadcrumbs
+description: A composable breadcrumbs navigation component for Astro, using slots for items.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import Breadcrumbs from '@bejamas/ui/components/Breadcrumbs.astro';
+import Button from '@bejamas/ui/components/Button.astro';
+import Dropdown from '@bejamas/ui/components/Dropdown.astro';
+import { ChevronRightIcon } from '@lucide/astro';
+
+A composable breadcrumbs navigation component for Astro, using slots for items.
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Breadcrumbs>
+  <li><Button href="/" as="a" variant="link">Home</Button></li>
+  <li><ChevronRightIcon /></li>
+  <li><Button href="/docs" as="a" variant="link">Docs</Button></li>
+  <li>
+    <Dropdown>
+      <span slot="trigger">Menu</span>
+      <ul slot="content">
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 1</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 2</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 3</Button></li>
+      </ul>
+    </Dropdown>
+  </li>
+  <li><Button as="span" variant="link">Current Page</Button></li>
+</Breadcrumbs>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Breadcrumbs>
+  <li><Button href="/" as="a" variant="link">Home</Button></li>
+  <li><ChevronRightIcon /></li>
+  <li><Button href="/docs" as="a" variant="link">Docs</Button></li>
+  <li>
+    <Dropdown>
+      <span slot="trigger">Menu</span>
+      <ul slot="content">
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 1</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 2</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 3</Button></li>
+      </ul>
+    </Dropdown>
+  </li>
+  <li><Button as="span" variant="link">Current Page</Button></li>
+</Breadcrumbs>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add breadcrumbs
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add breadcrumbs
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add breadcrumbs
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add breadcrumbs
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+/**
+ * @component Breadcrumbs
+ * @description A composable breadcrumbs navigation component for Astro, using slots for items.
+ * 
+ * @prop {string} [class] - Additional classes for the breadcrumbs container.
+ * 
+ * @example
+ * 
+ * <Breadcrumbs>
+ *   <li><Button href="/" as="a" variant="link">Home</Button></li>
+ *   <li><ChevronRightIcon /></li>
+ *   <li><Button href="/docs" as="a" variant="link">Docs</Button></li>
+ *   <li>
+ *     <Dropdown>
+ *       <span slot="trigger">Menu</span>
+ *       <ul slot="content">
+ *         <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 1</Button></li>
+ *         <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 2</Button></li>
+ *         <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 3</Button></li>
+ *       </ul>
+ *     </Dropdown>
+ *   </li>
+ *   <li><Button as="span" variant="link">Current Page</Button></li>
+ * </Breadcrumbs>
+ */
+
+import { cn } from "../lib/utils";
+
+const {
+  class: className = "",
+  ...props
+} = Astro.props;
+
+---
+
+<nav
+  aria-label="Breadcrumb"
+  class={cn("w-full flex items-center text-sm", className)}
+  {...props}
+>
+  <ol class="flex items-center">
+    <slot />
+  </ol>
+</nav>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+<Breadcrumbs />
+
+
+## Props
+
+- class (default: "")

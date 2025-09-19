@@ -1,0 +1,18 @@
+---
+---
+
+<Fragment slot="head">
+<script is:inline> 
+  (async () => {
+    // get theme from localStorage
+    const theme = localStorage.getItem('theme-preset');
+    console.log('theme', theme);
+    // inject css from /r/themes/[slug].css
+    const res = await fetch(`/r/themes/${theme}.css`);
+    const cssText = await res.text();
+    const style = document.createElement('style');
+    style.textContent = cssText;
+    document.head.appendChild(style);
+  })()
+</script>
+</Fragment>

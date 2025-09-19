@@ -1,0 +1,47 @@
+---
+import "@/styles/global.css";
+---
+
+<html class="bg-background">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/r/themes/current-theme.css" />
+    <script is:inline>
+      const storageKey = "starlight-theme";
+      const parseTheme = (t) =>
+        t === "auto" || t === "dark" || t === "light" ? t : "auto";
+      const getPreferredColorScheme = () =>
+        matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      const loadTheme = () => {
+        try {
+          return parseTheme(
+            typeof localStorage !== "undefined" &&
+              localStorage.getItem(storageKey),
+          );
+        } catch {
+          return "auto";
+        }
+      };
+      function applyTheme(theme) {
+        const effective = theme === "auto" ? getPreferredColorScheme() : theme;
+        document.documentElement.dataset.theme = effective;
+      }
+      // Initialize on load
+      applyTheme(loadTheme());
+      // Sync via storage events (parent <-> iframe)
+      window.addEventListener("storage", (event) => {
+        if (event.key === storageKey) applyTheme(loadTheme());
+      });
+      // React to system scheme while in 'auto'
+      matchMedia("(prefers-color-scheme: light)").addEventListener(
+        "change",
+        () => {
+          if (loadTheme() === "auto") applyTheme("auto");
+        },
+      );
+    </script>
+  </head>
+  <body class="antialiased py-20 bg-background">
+    <slot />
+  </body>
+</html>

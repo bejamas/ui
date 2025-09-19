@@ -1,0 +1,199 @@
+---
+title: Footer
+description: Footer component for the page.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import Footer from '@bejamas/ui/components/Footer.astro';
+import Button from '@bejamas/ui/components/Button.astro';
+import FooterLinks from '@bejamas/ui/components/FooterLinks.astro';
+
+Footer component for the page.
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Footer>
+  <div slot="cta">
+    <h2>Call to action</h2>
+    <Button>Call to action</Button>
+  </div>
+  <div class="grid grid-cols-4 gap-4">
+  <div>Acme, Inc. Logo</div>
+  <FooterLinks
+    title="Resources"
+    items={[
+      { label: "Blog", href: "/blog" },
+      { label: "Documentation", href: "/docs" }
+    ]}
+  />
+  <FooterLinks
+    title="Company"
+    items={[
+      { label: "Home", href: "/" },
+      { label: "About", href: "/about" }
+    ]}
+  />
+  </div>
+</Footer>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Footer>
+  <div slot="cta">
+    <h2>Call to action</h2>
+    <Button>Call to action</Button>
+  </div>
+  <div class="grid grid-cols-4 gap-4">
+  <div>Acme, Inc. Logo</div>
+  <FooterLinks
+    title="Resources"
+    items={[
+      { label: "Blog", href: "/blog" },
+      { label: "Documentation", href: "/docs" }
+    ]}
+  />
+  <FooterLinks
+    title="Company"
+    items={[
+      { label: "Home", href: "/" },
+      { label: "About", href: "/about" }
+    ]}
+  />
+  </div>
+</Footer>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add footer
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add footer
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add footer
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add footer
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+/**
+ * @component Footer
+ * @title Footer
+ * @description Footer component for the page.
+ * @status stable
+ * @since 0.1.0
+ * 
+ * @example
+ * 
+ * <Footer>
+ *   <div slot="cta">
+ *     <h2>Call to action</h2>
+ *     <Button>Call to action</Button>
+ *   </div>
+ *   <div class="grid grid-cols-4 gap-4">
+ *   <div>Acme, Inc. Logo</div>
+ *   <FooterLinks
+ *     title="Resources"
+ *     items={[
+ *       { label: "Blog", href: "/blog" },
+ *       { label: "Documentation", href: "/docs" }
+ *     ]}
+ *   />
+ *   <FooterLinks
+ *     title="Company"
+ *     items={[
+ *       { label: "Home", href: "/" },
+ *       { label: "About", href: "/about" }
+ *     ]}
+ *   />
+ *   </div>
+ * </Footer>
+ * 
+ * @usage
+ * 
+ * ## Structure
+ * 
+ * A Footer component is composed of the following parts:
+ *
+ * - `Footer.astro` - The footer container.
+ * - `FooterLinks.astro` - Links within the footer.
+ *
+ * ```astro
+ * ---
+ * import Footer from '@bejamas/ui/components/Footer.astro';
+ * ---
+ * 
+ * <Footer />
+ * 
+ * ```
+ * 
+ */
+
+import { cn } from "../lib/utils";
+
+const { class: className = "", ...props } = Astro.props;
+
+---
+
+<footer class={cn("bg-footer text-footer-foreground w-full", className)} {...props}>
+  {Astro.slots.cta && (
+    <div class="flex justify-center">
+      <slot name="cta" />
+    </div>
+  )}
+  <slot />
+</footer>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Structure
+
+A Footer component is composed of the following parts:
+
+- `Footer.astro` - The footer container.
+- `FooterLinks.astro` - Links within the footer.
+
+```astro
+---
+import Footer from '@bejamas/ui/components/Footer.astro';
+---
+
+<Footer />
+
+```
+
+## Props
+
+- class (default: "")

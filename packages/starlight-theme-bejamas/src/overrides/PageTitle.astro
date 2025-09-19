@@ -1,0 +1,71 @@
+---
+import Button from "virtual:starlight-theme-bejamas/components/Button.astro";
+import { Icon } from "@astrojs/starlight/components";
+import { ArrowLeft, ArrowRight } from "@lucide/astro";
+
+const { dir, pagination, template, entry } = Astro.locals.starlightRoute;
+const { prev, next } = pagination;
+const isRtl = dir === "rtl";
+---
+
+<div
+  class:list={[
+    "sl-bejamas-docs-title",
+    entry.data.template === "splash" && "mt-10",
+  ]}
+>
+  <h1 id="_top" class="test">{Astro.locals.starlightRoute.entry.data.title}</h1>
+
+  {
+    entry.data.template !== "splash" && (
+      <div class="sl-bejamas-docs-title-buttons">
+        <Button as="a" size="sm" href="#content" variant="secondary">
+          Copy Markdown
+        </Button>
+        {prev && (
+          <Button
+            as="a"
+            href={isRtl ? next.href : prev.href}
+            variant="secondary"
+            size="sm"
+          >
+            <ArrowLeft size="1.5rem" />
+          </Button>
+        )}
+        {next && (
+          <Button
+            as="a"
+            href={isRtl ? prev.href : next.href}
+            variant="secondary"
+            size="sm"
+          >
+            <ArrowRight size="1.5rem" />
+          </Button>
+        )}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  @layer bejamas {
+    .sl-bejamas-docs-title {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+    }
+    .sl-bejamas-docs-title-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+
+  @layer starlight.core {
+    h1 {
+      font-size: var(--sl-text-h1);
+      line-height: var(--sl-line-height-headings);
+      font-weight: 500;
+      color: var(--sl-color-white);
+    }
+  }
+</style>

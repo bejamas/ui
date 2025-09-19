@@ -1,0 +1,399 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { getCollection } from "astro:content";
+import cssSource from "@bejamas/ui/styles/globals.css?raw";
+import Select from "@bejamas/ui/components/Select.astro";
+import { defaultPresets } from "../utils/themes/presets";
+import Label from "@bejamas/ui/components/Label.astro";
+import Button from "@bejamas/ui/components/Button.astro";
+import { ArrowLeft, ArrowRight, CodeXml } from "@lucide/astro";
+
+const docs = await getCollection("docs");
+const components = docs.filter((doc) => doc.id.startsWith("components/"));
+
+const isTextToken = (token) =>
+  token === "foreground" || token.endsWith("-foreground");
+
+import "@/styles/global.css";
+
+// Load CSS variables from the UI package at build-time (via Vite raw import)
+
+function extractThemeBlock(css) {
+  const match = css.match(/@theme\s*\{([\s\S]*?)\}/);
+  return match ? match[1] : css;
+}
+
+function extractDarkBlock(css) {
+  const match = css.match(/\[data-theme="dark"\]\s*\{([\s\S]*?)\}/);
+  return match ? match[1] : "";
+}
+
+function parseTokenBlock(block) {
+  const tokens = {};
+  const re = /--color-([a-z0-9-]+)\s*:\s*([^;]+);/gi;
+  let m;
+  while ((m = re.exec(block))) {
+    tokens[m[1]] = m[2].trim();
+  }
+  return tokens;
+}
+
+const tokenValues = parseTokenBlock(extractThemeBlock(cssSource));
+const darkTokenValues = parseTokenBlock(extractDarkBlock(cssSource));
+
+// Lean presets payload for the client (label + styles only)
+const leanPresets = Object.fromEntries(
+  Object.entries(defaultPresets).map(([key, p]) => [
+    key,
+    {
+      label: p.label ?? key,
+      styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
+    },
+  ]),
+);
+
+const sections = [
+  {
+    title: "Primary Theme Colors",
+    items: [
+      { label: "Background", token: "background" },
+      { label: "Foreground", token: "foreground" },
+      { label: "Primary", token: "primary" },
+      { label: "Primary Foreground", token: "primary-foreground" },
+    ],
+  },
+  {
+    title: "Secondary & Accent Colors",
+    items: [
+      { label: "Secondary", token: "secondary" },
+      { label: "Secondary Foreground", token: "secondary-foreground" },
+      { label: "Accent", token: "accent" },
+      { label: "Accent Foreground", token: "accent-foreground" },
+    ],
+  },
+  {
+    title: "UI Component Colors",
+    items: [
+      { label: "Card", token: "card" },
+      { label: "Card Foreground", token: "card-foreground" },
+      { label: "Popover", token: "popover" },
+      { label: "Popover Foreground", token: "popover-foreground" },
+      { label: "Muted", token: "muted" },
+      { label: "Muted Foreground", token: "muted-foreground" },
+    ],
+  },
+  {
+    title: "Utility & Form Colors",
+    items: [
+      { label: "Border", token: "border" },
+      { label: "Input", token: "input" },
+      { label: "Ring", token: "ring" },
+    ],
+  },
+  {
+    title: "Status & Feedback Colors",
+    items: [
+      { label: "Destructive", token: "destructive" },
+      { label: "Destructive Foreground", token: "destructive-foreground" },
+    ],
+  },
+  {
+    title: "Chart & Visualization Colors",
+    items: [
+      { label: "Chart 1", token: "chart-1" },
+      { label: "Chart 2", token: "chart-2" },
+      { label: "Chart 3", token: "chart-3" },
+      { label: "Chart 4", token: "chart-4" },
+      { label: "Chart 5", token: "chart-5" },
+    ],
+  },
+  {
+    title: "Footer Colors",
+    items: [
+      { label: "Footer Background", token: "footer", source: "dark" },
+      {
+        label: "Footer Foreground",
+        token: "footer-foreground",
+        source: "dark",
+      },
+      { label: "Footer Primary", token: "footer-primary", source: "dark" },
+      {
+        label: "Footer Primary Foreground",
+        token: "footer-primary-foreground",
+        source: "dark",
+      },
+      { label: "Footer Accent", token: "footer-accent", source: "dark" },
+      {
+        label: "Footer Accent Foreground",
+        token: "footer-accent-foreground",
+        source: "dark",
+      },
+      { label: "Footer Border", token: "footer-border", source: "dark" },
+      { label: "Footer Ring", token: "footer-ring", source: "dark" },
+    ],
+  },
+];
+---
+
+<script hoist>
+  import "../utils/themes/apply-theme.ts";
+</script>
+
+<!-- Removed IndexedDB population; lean presets are used directly -->
+<StarlightPage
+  frontmatter={{ title: "Create a custom palette", template: "splash" }}
+>
+  <!-- {JSON.stringify(leanPresets)} -->
+  <div>
+    <div class="not-content">
+      <div class="flex items-end gap-2">
+        <div>
+          <Label for="theme-presets" class="mb-2 font-medium"
+            >Theme Presets</Label
+          >
+          <Select id="theme-presets" class="w-[180px]">
+            {
+              Object.entries(leanPresets).map(([key, preset]) => (
+                <option value={key}>
+                  <div class="flex gap-1 items-center">
+                    <div
+                      class="size-4 rounded-full"
+                      style={`background: ${preset.styles.light.background}`}
+                    />
+                    <div
+                      class="size-4 rounded-full"
+                      style={`background: ${preset.styles.light.primary}`}
+                    />
+                    <div
+                      class="size-4 rounded-full"
+                      style={`background: ${preset.styles.light.secondary}`}
+                    />
+                    <div
+                      class="size-4 rounded-full"
+                      style={`background: ${preset.styles.light.border}`}
+                    />
+                  </div>
+                  {preset.label}
+                </option>
+              ))
+            }
+          </Select>
+        </div>
+        <Button
+          variant="outline"
+          id="previous-preset"
+          size="icon"
+          aria-label="Previous preset"><ArrowLeft class="size-4" /></Button
+        >
+        <Button
+          variant="outline"
+          id="next-preset"
+          size="icon"
+          aria-label="Next preset"><ArrowRight class="size-4" /></Button
+        >
+        <Button variant="secondary">Copy Code <CodeXml class="size-4" /></Button
+        >
+      </div>
+    </div>
+    <div class="not-content mt-10">
+      <section class="space-y-10 text-left">
+        {
+          sections.map((section) => (
+            <div class="space-y-10 border-b pb-10 border-border">
+              <h2 class="text-base font-semibold">{section.title}</h2>
+              <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 border-bottom border-border">
+                {section.items.map((item) => {
+                  const source =
+                    item.source === "dark" ? darkTokenValues : tokenValues;
+                  const value = source[item.token] ?? "";
+                  return (
+                    <div class="flex items-center gap-5">
+                      <div
+                        class="size-15 rounded-md"
+                        data-swatch={item.token}
+                        data-source={item.source ?? "light"}
+                        style={`background: var(--color-${item.token}); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-foreground) 25%, transparent)`}
+                      />
+                      <div class="text-left">
+                        <div class="mb-1 text-sm font-medium">{item.label}</div>
+                        <div
+                          class="font-mono text-xs text-muted-foreground"
+                          data-token={item.token}
+                          data-source={item.source ?? "light"}
+                        >
+                          {value}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))
+        }
+      </section>
+    </div>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  @reference "tailwindcss";
+
+  .content-panel {
+    @apply text-center border-0 pt-14 pb-0;
+  }
+
+  .content-panel h1 {
+    @apply text-5xl font-medium tracking-tight max-w-2xl text-balance mx-auto;
+  }
+
+  .sl-container {
+    @apply max-w-7xl;
+  }
+</style>
+
+<script>
+  // Keep UI in sync with Starlight's theme toggle (and DOM state)
+  function getThemeFromDom() {
+    const apiTheme = window.astroThemeToggle?.getTheme?.();
+    if (apiTheme === "dark" || apiTheme === "light") return apiTheme;
+    const el = document.documentElement;
+    const attr = el.getAttribute("data-theme");
+    if (attr === "dark" || attr === "light") return attr;
+    return el.classList.contains("dark") ? "dark" : "light";
+  }
+
+  function updateDataSourceFromDom() {
+    const currentTheme = getThemeFromDom();
+    document.querySelectorAll("[data-source]").forEach((el) => {
+      el.setAttribute("data-source", currentTheme);
+    });
+  }
+
+  // Initial sync
+  updateDataSourceFromDom();
+
+  // Astro swaps can re-mount DOM; re-sync after swap
+  document.addEventListener("astro:after-swap", updateDataSourceFromDom);
+
+  // Patch Starlight API to emit our event too
+  if (window.astroThemeToggle?.setTheme) {
+    const originalSet = window.astroThemeToggle.setTheme;
+    window.astroThemeToggle.setTheme = (theme) => {
+      originalSet(theme);
+      window.dispatchEvent(
+        new CustomEvent("theme-toggle-changed", { detail: { theme } }),
+      );
+      updateDataSourceFromDom();
+    };
+  }
+
+  // Fallback: observe DOM mutations to theme markers
+  const observer = new MutationObserver(updateDataSourceFromDom);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme", "class"],
+  });
+</script>
+
+<script type="module" define:vars={{ leanPresets }}>
+  let PRESETS = leanPresets;
+  document.addEventListener("DOMContentLoaded", async () => {
+    const select = document.getElementById("theme-presets");
+
+    // If there is a saved preset key, use from lean presets
+    const savedKey = localStorage.getItem("theme-preset");
+    // Nothing to fetch; PRESETS already has everything we need
+    const updateUIForPreset = (key) => {
+      const preset = PRESETS[key];
+      if (!preset) return;
+      const light = (preset.styles && preset.styles.light) || {};
+      const dark = (preset.styles && preset.styles.dark) || {};
+      const mode = getCurrentMode();
+      // update displayed values
+      document.querySelectorAll("[data-token]").forEach((el) => {
+        const token = el.getAttribute("data-token");
+        const source = el.getAttribute("data-source") || "light";
+        const map = source === "dark" ? dark : light;
+        el.textContent = map[token] || "";
+      });
+      // update swatch backgrounds
+      document.querySelectorAll("[data-swatch]").forEach((el) => {
+        const token = el.getAttribute("data-swatch");
+        // For swatches, always reflect the current theme mode to avoid reversal
+        const map = mode === "dark" ? dark : light;
+        const v = map[token];
+        if (v) el.style.background = v;
+      });
+      // keep select UI in sync
+      if (select && select.value !== key) select.value = key;
+    };
+
+    const getCurrentMode = () => {
+      if (window.astroThemeToggle?.getTheme)
+        return window.astroThemeToggle.getTheme();
+      const el = document.documentElement;
+      const attr = el.getAttribute("data-theme");
+      if (attr === "dark" || attr === "light") return attr;
+      return el.classList.contains("dark") ? "dark" : "light";
+    };
+
+    const applyPreset = async (key) => {
+      let preset = PRESETS[key];
+      if (!preset) return;
+      // apply vars via external util using current theme
+      const mode = getCurrentMode();
+      window.bejamas &&
+        window.bejamas.applyThemeToElement(
+          { ...preset, currentMode: mode },
+          document.documentElement,
+        );
+      // update UI labels/swatches/select
+      updateUIForPreset(key);
+
+      // set selected preset in local storage
+      localStorage.setItem("theme-preset", key);
+
+      // set selected preset in cookies
+      document.cookie = `theme=${key}; path=/;`;
+    };
+    const saved = localStorage.getItem("theme-preset");
+    const initialFromSelect = (select && select.value) || "";
+    const initial = saved || initialFromSelect || Object.keys(PRESETS)[0] || "";
+    if (initial) applyPreset(initial);
+    if (select)
+      select.addEventListener("change", (e) => applyPreset(e.target.value));
+
+    const previousPreset = document.getElementById("previous-preset");
+    const nextPreset = document.getElementById("next-preset");
+    if (previousPreset)
+      previousPreset.addEventListener("click", () => {
+        const current = select.value;
+        const index = Object.keys(PRESETS).indexOf(current);
+        const previous = Object.keys(PRESETS)[index - 1];
+        if (previous) applyPreset(previous);
+      });
+    if (nextPreset)
+      nextPreset.addEventListener("click", () => {
+        const current = select.value;
+        const index = Object.keys(PRESETS).indexOf(current);
+        const next = Object.keys(PRESETS)[index + 1];
+        if (next) applyPreset(next);
+      });
+
+    // Re-apply currently selected preset when theme mode changes
+    const reapplyCurrentPreset = () => {
+      const current = (select && select.value) || Object.keys(PRESETS)[0] || "";
+      if (current) applyPreset(current);
+    };
+
+    window.addEventListener("theme-toggle-changed", reapplyCurrentPreset);
+    document.addEventListener("astro:after-swap", reapplyCurrentPreset);
+    window.addEventListener("storage", (event) => {
+      if (event.key === "theme-toggle") reapplyCurrentPreset();
+    });
+
+    // const mo = new MutationObserver(reapplyCurrentPreset);
+    // mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+  });
+</script>

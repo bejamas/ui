@@ -1,0 +1,40 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import BlocksNav from "@/components/BlocksNav.astro";
+
+// import "@/styles/global.css";
+import "@bejamas/ui/styles/globals.css";
+---
+
+<script src="//unpkg.com/alpinejs" defer></script>
+
+<StarlightPage
+  frontmatter={{
+    title: "Building blocks for content-driven sites.",
+    template: "splash",
+  }}
+>
+  <BlocksNav />
+
+  <slot />
+</StarlightPage>
+
+<style is:global>
+  @reference "tailwindcss";
+
+  .content-panel {
+    @apply text-center border-0 pt-30 pb-0;
+  }
+
+  .content-panel + .content-panel {
+    @apply pt-10;
+  }
+
+  .content-panel h1 {
+    @apply text-5xl font-medium text-left max-w-2xl text-balance mx-0;
+  }
+
+  .sl-container {
+    @apply max-w-[1500px];
+  }
+</style>

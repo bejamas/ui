@@ -1,0 +1,28 @@
+{
+  "name": "bejamas/ui",
+  "homepage": "https://ui.bejamas.com",
+  "items": [
+    {
+      "name": "Button",
+      "author": "Thom Krupa <thom@bejamas.com>",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/Button.astro",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "Dropdown",
+      "author": "Thom Krupa <thom@bejamas.com>",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/Dropdown.astro",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}

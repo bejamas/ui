@@ -1,0 +1,113 @@
+---
+title: FooterLinks
+description: Renders a group of footer links, optionally with a title.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import FooterLinks from '@bejamas/ui/components/FooterLinks.astro';
+
+Renders a group of footer links, optionally with a title.
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add footer-links
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add footer-links
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add footer-links
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add footer-links
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+/**
+ * @component FooterLinks
+ * @title FooterLinks
+ * @description Renders a group of footer links, optionally with a title.
+ * @status stable
+ * @since 0.1.0
+ * 
+ * @props
+ * - title?: string - Optional title for the link group.
+ * - items: Array<{ label: string, href: string }> - List of links to display.
+ * - class?: string - Additional classes for the container.
+ * 
+ * @usage
+ * 
+ * ```astro
+ * <FooterLinks
+ *   title="Company"
+ *   items={[
+ *     { label: "Home", href: "/" },
+ *     { label: "About", href: "/about" }
+ *   ]}
+ * />
+ * ```
+ */
+
+const { title, items = [], class: className = '', ...props } = Astro.props;
+---
+
+<div class={`flex flex-col gap-2 ${className}`.trim()} {...props}>
+  {title && (
+    <h4 class="text-lg mb-2 text-current">{title}</h4>
+  )}
+  <ul class="flex flex-col gap-1">
+    {items.map((item: { label: string, href: string }) => (
+      <li>
+        <a
+          href={item.href}
+          class="transition-colors underline-offset-4 hover:underline text-footer-primary/60"
+        >
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+```astro
+<FooterLinks
+  title="Company"
+  items={[
+    { label: "Home", href: "/" },
+    { label: "About", href: "/about" }
+  ]}
+/>
+```
+
+## Props
+
+- title
+- items (default: [])
+- class (default: '')

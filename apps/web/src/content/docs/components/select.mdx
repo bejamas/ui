@@ -1,0 +1,254 @@
+---
+title: Select
+description: Accessible select with custom styling and indicator.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import Select from '@bejamas/ui/components/Select.astro';
+import Label from '@bejamas/ui/components/Label.astro';
+
+Accessible select with custom styling and indicator.
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<div class="flex flex-col gap-2">
+  <Label for="fruits">Select a fruit</Label>
+  <Select id="fruits" class="w-[180px]">
+    <option value="apple">Apple</option>
+    <option value="banana">Banana</option>
+    <option value="cherry">Cherry</option>
+  </Select>
+</div>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<div class="flex flex-col gap-2">
+  <Label for="fruits">Select a fruit</Label>
+  <Select id="fruits" class="w-[180px]">
+    <option value="apple">Apple</option>
+    <option value="banana">Banana</option>
+    <option value="cherry">Cherry</option>
+  </Select>
+</div>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add select
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add select
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add select
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add select
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+/**
+ * @component Select
+ * @title Select
+ * @description Accessible select with custom styling and indicator.
+ * @status stable
+ * @since 0.1.0
+ * 
+ * @example
+ * 
+ * <div class="flex flex-col gap-2">
+ *   <Label for="fruits">Select a fruit</Label>
+ *   <Select id="fruits" class="w-[180px]">
+ *     <option value="apple">Apple</option>
+ *     <option value="banana">Banana</option>
+ *     <option value="cherry">Cherry</option>
+ *   </Select>
+ * </div>
+ */
+
+import { ChevronDown } from "@lucide/astro";
+import { cva } from "class-variance-authority";
+import { cn } from "../lib/utils";
+
+const {
+  label = "",
+  options = [],
+  value = "",
+  name = "",
+  id = "",
+  required = false,
+  disabled = false,
+  variant = "default",
+  optionClass = "",
+  class: className = "",
+  showCheckmark = true,
+  ...rest
+} = Astro.props;
+
+const baseClasses =
+  "block w-full select appearance-none relative shadow-xs rounded-lg bg-background ps-4 pe-10 py-2 text-sm text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring disabled:cursor-not-allowed disabled:opacity-50";
+
+const optionBaseClasses =
+  "px-3 py-1.5 text-foreground hover:bg-foreground/10 active:bg-neutral active:text-neutral-content disabled:text-foreground/40";
+
+const selectVariants = cva(baseClasses, {
+  variants: {
+    variant: {
+      default: "border border-border",
+      ghost: "border-0 bg-transparent shadow-none focus:bg-background",
+      neutral: "border border-neutral/50 focus:border-neutral focus:ring-neutral",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+const selectClasses = cn(selectVariants({ variant }), !showCheckmark && "hide-checkmark");
+const optionClasses = cn(optionBaseClasses, optionClass);
+const controlId = id || name || `select-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div class={cn("relative")}>
+    <select
+      id={controlId}
+      name={name}
+      value={value}
+      required={required}
+      disabled={disabled}
+      class={cn("select", selectClasses, className)}
+      {...rest}
+    >
+      {options.length
+        ? options.map((opt) => {
+            const isObject = typeof opt === "object";
+            const optionValue = isObject ? opt.value : opt;
+            const optionLabel = isObject ? opt.label ?? opt.value : opt;
+            const optionDisabled = isObject ? Boolean(opt.disabled) : false;
+            return (
+              <option
+                value={optionValue}
+                selected={value === optionValue}
+                disabled={optionDisabled}
+                class={optionClasses}
+              >
+                {optionLabel}
+              </option>
+            );
+          })
+        : <slot />
+      }
+    </select>
+    <ChevronDown slot="indicator" class="size-4 text-foreground/60 absolute right-3 top-1/2 -translate-y-1/2" />
+    <!-- <svg
+      aria-hidden="true"
+      class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+    </svg> -->
+</div>
+
+<style>
+  @reference "tailwindcss";
+  @reference "../styles/globals.css";
+
+  .hide-checkmark {
+    option::checkmark {
+      @apply hidden;
+    }
+  }
+    
+  :where(.select) {
+    &::picker(select) {
+      @supports (appearance: base-select) {
+        appearance: base-select;
+      }
+      max-height: 20dvh;
+      border-color: var(--color-border);
+      @apply rounded-lg my-2 p-1 shadow-sm bg-popover text-popover-foreground;
+    }
+    &::picker-icon {
+      @apply hidden;
+    }
+    :where(optgroup) :where(option) {
+      &:nth-child(1) {
+        @apply mt-[0.5em];
+      }
+    }
+   
+    :where(option) {
+    @apply transition-colors duration-200 ease-in-out;
+
+    &:not(:disabled) {
+      &:hover,
+      &:focus-visible {
+        @apply cursor-pointer outline-hidden;
+      }
+      &:active {
+        box-shadow: 0 2px calc(var(--depth) * 3px) -2px var(--color-foreground);
+      }
+    }
+  }
+  }
+
+
+
+  @supports (appearance: base-select) {
+    select {
+      appearance: base-select;
+    }
+  }
+</style>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+<Select />
+
+
+## Props
+
+- label (default: "")
+- options (default: [])
+- value (default: "")
+- name (default: "")
+- id (default: "")
+- required (default: false)
+- disabled (default: false)
+- variant (default: "default")
+- optionClass (default: "")
+- class (default: "")
+- showCheckmark (default: true)

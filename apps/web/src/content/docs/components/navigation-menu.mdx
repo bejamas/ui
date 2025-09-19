@@ -1,0 +1,262 @@
+---
+title: Navigation Menu
+description: Responsive navigation menu with support for slots and custom styling.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import NavigationMenu from '@bejamas/ui/components/NavigationMenu.astro';
+import Button from '@bejamas/ui/components/Button.astro';
+import Dropdown from '@bejamas/ui/components/Dropdown.astro';
+
+Responsive navigation menu with support for slots and custom styling.
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<NavigationMenu>
+  <div slot="logo">
+    <p>Acme, Inc.</p>
+  </div>
+  <ul slot="links" class="flex items-center space-x-2">
+    <li><Button as="a" href="/" variant="ghost">Home</Button></li>
+    <li>
+      <Dropdown>
+      <span slot="trigger">Company</span>
+      <ul slot="content">
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">About</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Team</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Blog</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Careers</Button></li>
+      </ul>
+    </Dropdown>
+  </li>
+    <li><Button as="a" href="/contact" variant="ghost">Contact</Button></li>
+  </ul>
+  <div slot="actions" class="flex items-center gap-2">
+    <Button>Sign in</Button>
+    <Button variant="outline">Contact sales</Button>
+  </div>
+</NavigationMenu>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<NavigationMenu>
+  <div slot="logo">
+    <p>Acme, Inc.</p>
+  </div>
+  <ul slot="links" class="flex items-center space-x-2">
+    <li><Button as="a" href="/" variant="ghost">Home</Button></li>
+    <li>
+      <Dropdown>
+      <span slot="trigger">Company</span>
+      <ul slot="content">
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">About</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Team</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Blog</Button></li>
+        <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Careers</Button></li>
+      </ul>
+    </Dropdown>
+  </li>
+    <li><Button as="a" href="/contact" variant="ghost">Contact</Button></li>
+  </ul>
+  <div slot="actions" class="flex items-center gap-2">
+    <Button>Sign in</Button>
+    <Button variant="outline">Contact sales</Button>
+  </div>
+</NavigationMenu>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add navigation-menu
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add navigation-menu
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add navigation-menu
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add navigation-menu
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+import { cn } from "../lib/utils";
+
+/**
+ * @component NavigationMenu
+ * @title Navigation Menu
+ * @description Responsive navigation menu with support for slots and custom styling.
+ * @status stable
+ * 
+ * @example
+ * <NavigationMenu>
+ *   <div slot="logo">
+ *     <p>Acme, Inc.</p>
+ *   </div>
+ *   <ul slot="links" class="flex items-center space-x-2">
+ *     <li><Button as="a" href="/" variant="ghost">Home</Button></li>
+ *     <li>
+ *       <Dropdown>
+ *       <span slot="trigger">Company</span>
+ *       <ul slot="content">
+ *         <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">About</Button></li>
+ *         <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Team</Button></li>
+ *         <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Blog</Button></li>
+ *         <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Careers</Button></li>
+ *       </ul>
+ *     </Dropdown>
+ *   </li>
+ *     <li><Button as="a" href="/contact" variant="ghost">Contact</Button></li>
+ *   </ul>
+ *   <div slot="actions" class="flex items-center gap-2">
+ *     <Button>Sign in</Button>
+ *     <Button variant="outline">Contact sales</Button>
+ *   </div>
+ * </NavigationMenu>
+ */
+
+import { cva } from "class-variance-authority";
+
+const {
+  class: className = "",
+  containerClass = "",
+  sticky = false,
+  variant = "default",
+  behavior = "static",
+  width = "default",
+  size = "default",
+  ...props
+} = Astro.props;
+
+// get all classes with prefix sticky:
+const userStickyClasses = Astro.props.class?.split(' ').filter((cls: string) => cls.startsWith('sticky:')).join(' ');
+
+// remove all classes with prefix sticky:
+const userClasses = Astro.props.class?.split(' ').filter((cls: string) => !cls.startsWith('sticky:')).join(' ');
+
+const stickyClasses = cn(`sticky top-0 z-50
+         after:content-[''] after:pointer-events-none
+         after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-black/15 after:opacity-0
+         supports-[animation-timeline:scroll()]:after:[animation:show-line_linear_both]
+         supports-[animation-timeline:scroll()]:after:[animation-timeline:scroll(root_block)]
+         supports-[animation-timeline:scroll()]:after:[animation-range:0_12px]`, userStickyClasses)
+
+const headerVariants = cva(
+	"w-full header",
+	{
+		variants: {
+			variant: {
+				default:
+					"bg-background",
+				transparent:
+					"bg-transparent",
+				glass:
+					"bg-white/60 backdrop-blur",
+			},
+      behavior: {
+        static: "relative",
+        sticky: stickyClasses,
+        fixed: "fixed top-0 z-50",
+      },
+      width: {
+        default: "w-full",
+        container: "container",
+        boxed: "max-w-screen-2xl mx-auto rounded-xl mt-4 top-4 border border-border after:hidden",
+      },
+			size: {
+				default: "h-20",
+				sm: "h-9 text-sm rounded-lg gap-1.5 px-3 has-[>svg]:px-2.5",
+				lg: "h-10 text-lg rounded-lg px-6 has-[>svg]:px-4",
+				icon: "size-9",
+			},
+		},
+		defaultVariants: {
+			variant: "default",
+			size: "default",
+      behavior: "static",
+		},
+	}
+)
+---
+
+<nav class={cn(headerVariants({
+  variant,
+  behavior,
+  width,
+  size,
+}), userClasses)} {...props}>
+    <div class:list={["grid grid-cols-12 py-4 px-6", containerClass]}>
+      <div class="col-span-2">
+        {Astro.slots.logo ? <slot name="logo" /> : null}
+      </div>
+      <div class="col-span-8 flex justify-center">
+        {Astro.slots.links ? <slot name="links" /> : null}
+      </div>
+      <div class="col-span-2 flex justify-end">
+        {Astro.slots.actions ? <slot name="actions" /> : null}
+      </div>
+    </div>
+</nav>
+
+<style>
+/* draw a line but keep it hidden initially */
+/* .site-header::after{
+  content:"";
+  position: absolute; inset-inline: 0; inset-block-end: 0;
+  height: 1px; background: rgba(0,0,0,.14);
+  opacity: 0; pointer-events: none;
+} */
+
+/* fade the line in after the first ~12px of page scroll */
+@supports (animation-timeline: scroll()){
+
+  @keyframes show-line { from { opacity: 0 } to { opacity: 1 } }
+}
+</style>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+<NavigationMenu />
+
+
+## Props
+
+- class (default: "")
+- containerClass (default: "")
+- sticky (default: false)
+- variant (default: "default")
+- behavior (default: "static")
+- width (default: "default")
+- size (default: "default")

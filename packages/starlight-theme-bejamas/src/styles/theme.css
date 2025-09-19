@@ -1,0 +1,240 @@
+@layer starlight, bejamas;
+
+@import "@fontsource-variable/inter/index.css";
+
+@layer bejamas {
+  :root {
+    --sl-font: "Inter Variable", sans-serif;
+    --sl-font-mono: "Geist Mono", monospace;
+
+    --radius: 0.5rem;
+
+    --sl-color-text-accent: var(--accent-foreground);
+
+    --sl-color-banner-text: var(--foreground);
+
+    --sl-color-bg-inline-code: var(--muted);
+
+    --sl-color-hairline-shade: var(--border);
+
+    --sl-color-bg-sidebar: var(--background);
+
+    --sl-color-gray-5: var(--input);
+    --sl-color-black: transparent;
+
+    --code-background: var(--muted);
+    --sl-color-text: var(--foreground);
+
+    --sl-text-h1: 2.25rem;
+    --sl-text-h2: var(--text-xl);
+
+    --sl-color-gray-2: var(--input);
+
+    --default-font-family: "Inter Variable", sans-serif;
+    --font-sans: "Inter Variable", sans-serif;
+
+    --sl-color-bg: var(--background);
+    --sl-color-fg: var(--foreground);
+    --sl-color-primary: var(--primary);
+    --sl-color-primary-fg: var(--primary-foreground);
+
+    --sl-color-hairline: var(--border);
+    --sl-color-bg-nav: var(--background);
+
+    --sl-color-text-accent: var(--primary);
+    --sl-color-accent: var(--primary);
+  }
+}
+
+@layer bejamas {
+  .sidebar-pane .sidebar-content,
+  .right-sidebar-panel {
+    --sl-sidebar-item-padding-inline: 1rem;
+    padding-top: 3rem;
+  }
+
+  .right-sidebar,
+  .sidebar .sidebar-pane {
+    border: 0;
+  }
+
+  .sidebar-content a {
+    background-color: var(--background);
+    padding: 0;
+  }
+
+  .group-label > span {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .group-label + svg {
+    color: var(--muted-foreground);
+    font-size: 1rem;
+  }
+
+  .sidebar-content a > span {
+    color: var(--foreground);
+    padding-inline: 0.5rem;
+    padding-block: 0.375rem;
+    border-radius: 0.5rem;
+    transition-property: color, background-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 0.15s;
+    display: inline-block;
+  }
+
+  .sidebar-content a[aria-current="page"] > span {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+    font-weight: 500;
+  }
+
+  .sidebar-content a:not([aria-current="page"]):hover > span {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .sidebar-content ul ul li {
+    margin-inline-start: 0;
+    border-inline-start: 0;
+    padding-inline-start: 0;
+    margin-bottom: 1px;
+  }
+
+  .right-sidebar-container {
+    max-width: 20rem;
+    margin-right: 0;
+    margin-left: auto;
+  }
+
+  .content-panel {
+    border-top: 0;
+  }
+
+  .content-panel:first-child {
+    padding-bottom: 0;
+    padding-top: 3rem;
+  }
+
+  .right-sidebar-panel h2 {
+    color: var(--color-muted-foreground);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding-inline: 0.5rem;
+  }
+
+  site-search button {
+    --tw-shadow: var(--shadow-sm);
+    box-shadow:
+      var(--tw-inset-shadow), var(--tw-inset-ring-shadow),
+      var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+
+  .expressive-code .frame {
+    box-shadow: none;
+  }
+
+  ul.top-level li details ul li:last-child {
+    margin-bottom: 1.25rem;
+  }
+
+  ul.top-level summary {
+    margin-bottom: 0.25rem;
+  }
+
+  starlight-tabs[data-sync-key="pkg"] .tablist-wrapper {
+    background-color: var(--code-background);
+    border-bottom: 1px solid var(--color-border);
+
+    padding-top: 0.5rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    font-family: var(--sl-font-mono);
+    font-size: 0.875rem;
+  }
+
+  starlight-tabs[data-sync-key="pkg"] .tablist-wrapper ul {
+    padding-bottom: 0.5rem;
+    padding-inline: 0.75rem;
+    border-bottom: 0;
+    gap: 0;
+  }
+
+  starlight-tabs[data-sync-key="pkg"] .tablist-wrapper a {
+    border-bottom: 0;
+    padding-block: 0.5rem;
+    padding-inline: 0.75rem;
+  }
+
+  starlight-tabs[data-sync-key="pkg"] .tablist-wrapper a[aria-selected="true"] {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    border-bottom: 0;
+    border-radius: 0.5rem;
+  }
+
+  starlight-tabs[data-sync-key="pkg"] .tablist-wrapper ~ div[role="tabpanel"] {
+    margin-top: 0;
+  }
+
+  starlight-tabs[data-sync-key="pkg"] figcaption.header {
+    display: none;
+  }
+
+  .tablist-wrapper > ul {
+    border: 0;
+    gap: 1.25rem;
+  }
+
+  .tablist-wrapper > ul a {
+    padding-inline: 0;
+  }
+
+  .sl-heading-wrapper.level-h2 {
+    margin-top: 5rem;
+  }
+
+  .sl-markdown-content a:not(:where(.not-content *)) {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  button[data-open-modal] {
+    border-color: var(--border);
+    color: var(--foreground);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .tablist-wrapper ~ [role="tabpanel"] {
+    margin-top: 0.5rem;
+  }
+
+  .expressive-code .title {
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+    border-color: var(--color-border);
+
+    font-family: var(--sl-font-mono);
+    width: 100%;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.875rem;
+    padding-block: 0.75rem;
+  }
+
+  .sl-markdown-content :is(h1, h2, h3, h4, h5, h6):not(:where(.not-content *)) {
+    font-weight: 500;
+  }
+
+  .sl-bejamas-component-preview {
+    min-height: 450px;
+    padding: 1rem;
+    border: 1px dashed var(--border);
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--background);
+  }
+}

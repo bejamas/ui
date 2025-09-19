@@ -1,0 +1,151 @@
+---
+/**
+ * @component Button
+ * @title Button
+ * @description Displays a button or a component that looks like a button.
+ * @status stable
+ * @since 0.1.0
+ *
+ * @example
+ *
+ * <Button>Click me</Button>
+ *
+ * @props
+ * - as?: "button" | "a" | "div" | "span" — Element to render. Default: "button"
+ * - className?: string — If set, adds a class to the component.
+ * - variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" — Sets style. Default: "default"
+ * - size?: "default" | "sm" | "lg" | "icon" — Sets size. Default: "default"
+ *
+ * @a11y
+ * - Uses focus-visible outline
+ * - Honors prefers-reduced-motion
+ *
+ *
+ * @usage
+ *
+ * ## Usage
+ *
+ * ```astro
+ * ---
+ * import Button from '@/ui/components/Button.astro';
+ * ---
+ * ```
+ * ```astro
+ * <Button>Click me</Button>
+ * ```
+ *
+ * ## Link
+ *
+ * You can use the `as` prop to render the component as an anchor.
+ *
+ * ```astro
+ * import Button from '@/ui/components/Button.astro';
+ *
+ * <Button as="a" href="https://bejamas.com">Click me</Button>
+ * ```
+ *
+ * @examples
+ *
+ * ### Sizes
+ *
+ * <div class="flex gap-2 items-center">
+ *   <Button variant="default" size="sm">Click me</Button>
+ *   <Button variant="default">Click me</Button>
+ *   <Button variant="default" size="lg">Click me</Button>
+ * </div>
+ * ### With badge
+ *
+ * <Button variant="default">
+ *   Click me
+ *   <Badge variant="secondary" shape="pill">Value</Badge>
+ * </Button>
+ *
+ * ### Destructive
+ *
+ * <Button variant="destructive">Click me</Button>
+ *
+ * ### Outline
+ *
+ * <Button variant="outline">Click me</Button>
+ *
+ * ### Secondary
+ *
+ * <Button variant="secondary">Click me</Button>
+ *
+ * ### Ghost
+ *
+ * <Button variant="ghost">Click me</Button>
+ *
+ * ### Link
+ *
+ * <Button variant="link">Click me</Button>
+ *
+ * ### Default
+ *
+ * <Button>Click me</Button>
+ *
+ */
+
+import type { HTMLTag, Polymorphic } from "astro/types";
+import { cva } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+
+type Props<Tag extends HTMLTag> = Polymorphic<{
+  as: Tag;
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
+  class?: string;
+  size?: "default" | "sm" | "lg" | "icon";
+}>;
+
+const {
+  as = "button",
+  variant = "default",
+  size = "default",
+  class: className = "",
+  ...props
+} = Astro.props as Props<typeof as>;
+
+const buttonVariants = cva(
+  "inline-flex ease-in-out border-border items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive active:scale-98",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "border shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary shadow-xs text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-accent-foreground underline-offset-4 hover:underline p-0",
+      },
+      size: {
+        default:
+          "h-9.5 px-3 py-2 has-[>svg]:px-3 text-sm has-[.badge:last-child]:pr-1.5 has-[.badge:first-child]:pl-1.5",
+        sm: "h-8.5 text-xs rounded-lg gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 text-sm rounded-lg px-4 has-[>svg]:px-4 has-[.badge:last-child]:pr-3 [&_.badge:last-child]:ml-1.5",
+        icon: "size-9.5",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+);
+
+const Tag = as;
+---
+
+<Tag class={cn(buttonVariants({ variant, size, className }))} {...props}>
+  <slot />
+</Tag>

@@ -1,0 +1,113 @@
+---
+title: Label
+description: Accessible and flexible label component with support for disabled states.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import Label from '@bejamas/ui/components/Label.astro';
+import Checkbox from '@bejamas/ui/components/Checkbox.astro';
+
+Accessible and flexible label component with support for disabled states.
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<div class="flex items-center space-x-2">
+  <Checkbox id="terms" />
+  <Label for="terms">Accept terms and conditions</Label>
+</div>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<div class="flex items-center space-x-2">
+  <Checkbox id="terms" />
+  <Label for="terms">Accept terms and conditions</Label>
+</div>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add label
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add label
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add label
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add label
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+/**
+ * @component Label
+ * @title Label
+ * @description Accessible and flexible label component with support for disabled states.
+ * @status stable
+ * @since 0.1.0
+ * 
+ * @example
+ * 
+ * <div class="flex items-center space-x-2">
+ *   <Checkbox id="terms" />
+ *   <Label for="terms">Accept terms and conditions</Label>
+ * </div>
+ * 
+ */
+
+ const { class: className = '', for: htmlFor, ...props } = Astro.props;
+
+const baseClass =
+  "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50";
+---
+
+<label
+  for={htmlFor}
+  data-slot="label"
+  class={`${baseClass} ${className}`.trim()}
+  {...props}
+>
+  <slot />
+</label>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+<Label />
+
+
+## Props
+
+- class (default: '')
+- for

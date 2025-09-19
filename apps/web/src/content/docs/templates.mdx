@@ -1,0 +1,41 @@
+---
+title: The UI system for Astro. Copy. Customize. Ship.
+description: Get started building your docs site with Starlight.
+template: splash
+hero:
+  tagline: Congrats on setting up a new Starlight project!
+  image:
+    file: ../../assets/houston.webp
+  actions:
+    - text: Example Guide
+      link: /docs/introduction/
+      icon: right-arrow
+    - text: Read the Starlight docs
+      link: https://starlight.astro.build
+      icon: external
+      variant: minimal
+---
+
+import Footer from '@bejamas/ui/components/Footer.astro';
+import FooterLinks from '@bejamas/ui/components/FooterLinks.astro';
+
+
+<Footer>
+  <div class="grid grid-cols-4 gap-4">
+  <div>Acme, Inc. Logo</div>
+  <FooterLinks
+    title="Resources"
+    items={[
+      { label: "Blog", href: "/blog" },
+      { label: "Documentation", href: "/docs" }
+    ]}
+  />
+  <FooterLinks
+    title="Company"
+    items={[
+      { label: "Home", href: "/" },
+      { label: "About", href: "/about" }
+    ]}
+  />
+  </div>
+</Footer>

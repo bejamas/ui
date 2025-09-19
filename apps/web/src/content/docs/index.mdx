@@ -1,0 +1,28 @@
+---
+title: The UI system for Astro. Copy. Customize. Ship.
+description: Get started building your docs site with Starlight.
+template: splash
+hero:
+  tagline: The UI system for Astro. Copy. Customize. Ship.
+  actions:
+    - text: Get Started
+      link: /docs/introduction
+      icon: right-arrow
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+import Button from "@bejamas/ui/components/Button.astro";
+import CanvasHero from "@/components/CanvasHero.astro";
+
+<div class="not-content relative py-20 w-full flex justify-center flex-col left-0 top-0 items-center z-10 pointer-events-none">
+  <h1 class="text-5xl font-medium text-center text-balance block mb-10 max-w-2xl">
+    The UI system for Astro. Copy. Customize. Ship.
+  </h1>
+  <div class="flex justify-center">
+    <Button as="a" href="/docs/introduction" class="pointer-events-auto">
+      Get Started
+    </Button>
+  </div>
+</div>
+
+<CanvasHero />

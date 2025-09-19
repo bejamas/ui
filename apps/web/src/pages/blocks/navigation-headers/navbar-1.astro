@@ -1,0 +1,122 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import Button from "@bejamas/ui/components/Button.astro";
+import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
+import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
+import StickySurface from "@bejamas/ui/components/StickySurface.astro";
+import Breadcrumbs from "@bejamas/ui/components/Breadcrumbs.astro";
+import { SlashIcon } from "@lucide/astro";
+
+import "../../../styles/global.css";
+---
+
+<BlockExampleLayout>
+  <div class="bg-muted min-h-[1500px]">
+    <StickySurface
+      threshold="1rem"
+      observeStuck
+      class="top-5 [&.is-stuck]:shadow-sm [&.is-stuck]:max-w-2xl max-w-5xl rounded-2xl h-16 mx-auto"
+      effects={["elevate"]}
+      style="--stuck-shadow: var(--shadow-sm)"
+    >
+      <NavigationMenu
+        class="rounded-2xl bg-transparent group-[.is-stuck]/surface:bg-white/40 h-16 backdrop-blur-sm mx-auto transition-all duration-200 ease-out"
+      >
+        <div slot="logo" class="flex items-center h-full">
+          <img
+            src="https://cdn.prod.website-files.com/624380709031623bfe4aee60/668b2b16e18e604c50a1362c_Logo-wide.svg"
+            alt="Acme, Inc."
+            class="h-7"
+          />
+        </div>
+        <ul slot="links" class="flex items-center space-x-2">
+          <li><Button as="a" href="/" variant="ghost">Home</Button></li>
+          <li>
+            <MenuDropdown>
+              <span slot="trigger">Company</span>
+              <div slot="content" class="grid grid-cols-12 gap-2 w-120">
+                <ul class="col-span-5">
+                  <li>
+                    <a
+                      href="#"
+                      class="w-full justify-start flex-wrap hover:bg-accent flex py-2 px-2 rounded-lg"
+                    >
+                      <p class="font-medium">About</p>
+                      <div class="text-muted-foreground text-sm">
+                        Read more about our company
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      class="w-full justify-start flex-wrap hover:bg-accent flex py-2 px-2 rounded-lg"
+                    >
+                      <p class="font-medium w-full">Team</p>
+                      <div class="text-muted-foreground text-sm">
+                        Meet our heroes
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      class="w-full justify-start flex-wrap hover:bg-accent flex py-2 px-2 rounded-lg"
+                    >
+                      <p class="font-medium w-full">Blog</p>
+                      <div class="text-muted-foreground text-sm">
+                        Read our latest news
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      class="w-full justify-start flex-wrap hover:bg-accent flex py-2 px-2 rounded-lg"
+                    >
+                      <p class="font-medium w-full">Careers</p>
+                      <div class="text-muted-foreground text-sm">
+                        Join our team
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+                <div
+                  class="bg-accent p-4 rounded-lg flex items-end relative col-span-7"
+                >
+                  <p class="font-medium relative z-10 text-white">Company</p>
+                  <img
+                    src="https://plus.unsplash.com/premium_photo-1755155931545-87b694f49769?q=80&w=2224&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    class="w-full h-full object-cover absolute top-0 left-0 rounded-lg"
+                  />
+                </div>
+              </div>
+            </MenuDropdown>
+          </li>
+          <li>
+            <Button as="a" href="/contact" variant="ghost">Contact</Button>
+          </li>
+        </ul>
+        <div slot="actions" class="flex items-center gap-2">
+          <Button
+            variant="outline"
+            class="group-[.is-stuck]/surface:opacity-0 group-[.is-stuck]/surface:blur-sm transition-all duration-300 ease-out"
+            >Log in</Button
+          >
+          <Button
+            class="w-20 group-[.is-stuck]/surface:w-25 duration-500 ease-out"
+          >
+            <span
+              class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out"
+              >Contact</span
+            >
+            <span
+              class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 group-[.is-stuck]/surface:block opacity-0 transition-all hidden blur-sm transition-discrete duration-500 ease-out"
+              >Get a demo</span
+            >
+          </Button>
+        </div>
+      </NavigationMenu>
+    </StickySurface>
+  </div>
+</BlockExampleLayout>

@@ -1,0 +1,47 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+import Button from "virtual:starlight-theme-bejamas/components/Button.astro";
+
+const { dir, pagination } = Astro.locals.starlightRoute;
+const { prev, next } = pagination;
+const isRtl = dir === "rtl";
+---
+
+<div class="flex justify-between print:hidden" dir={dir}>
+  {
+    prev && (
+      <Button as="a" href={prev.href} rel="prev" variant="outline">
+        <Icon name={isRtl ? "right-arrow" : "left-arrow"} size="1.25rem" />
+        {prev.label}
+      </Button>
+    )
+  }
+  {
+    next && (
+      <Button as="a" href={next.href} rel="next" variant="outline">
+        <Icon name={isRtl ? "left-arrow" : "right-arrow"} size="1.25rem" />
+        {next.label}
+      </Button>
+    )
+  }
+</div>
+
+<style>
+  @layer starlight.core {
+    .pagination-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+      gap: 1rem;
+    }
+
+    [rel="next"] {
+      justify-content: end;
+      text-align: end;
+      flex-direction: row-reverse;
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+</style>

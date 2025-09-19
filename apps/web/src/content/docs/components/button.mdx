@@ -1,0 +1,389 @@
+---
+title: Button
+description: Displays a button or a component that looks like a button.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import Button from '@bejamas/ui/components/Button.astro';
+import Badge from '@bejamas/ui/components/Badge.astro';
+
+Displays a button or a component that looks like a button.
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Button>Click me</Button>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Button>Click me</Button>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add button
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add button
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add button
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add button
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+/**
+ * @component Button
+ * @title Button
+ * @description Displays a button or a component that looks like a button.
+ * @status stable
+ * @since 0.1.0
+ * 
+ * @example
+ * 
+ * <Button>Click me</Button>
+ * 
+ * @props
+ * - as?: "button" | "a" | "div" | "span" — Element to render. Default: "button"
+ * - className?: string — If set, adds a class to the component.
+ * - variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" — Sets style. Default: "default"
+ * - size?: "default" | "sm" | "lg" | "icon" — Sets size. Default: "default"
+ * 
+ * @a11y
+ * - Uses focus-visible outline
+ * - Honors prefers-reduced-motion
+ * 
+ * 
+ * @usage
+ * 
+ * ## Usage
+ * 
+ * ```astro
+ * ---
+ * import Button from '@/ui/components/Button.astro';
+ * ---
+ * ```
+ * ```astro
+ * <Button>Click me</Button>
+ * ```
+ * 
+ * ## Link
+ * 
+ * You can use the `as` prop to render the component as an anchor.
+ * 
+ * ```astro
+ * import Button from '@/ui/components/Button.astro';
+ * 
+ * <Button as="a" href="https://bejamas.com">Click me</Button>
+ * ```
+ * 
+ * @examples
+ * 
+ * ### Sizes
+ * 
+ * <div class="flex gap-2 items-center">
+ *   <Button variant="default" size="sm">Click me</Button>
+ *   <Button variant="default">Click me</Button>
+ *   <Button variant="default" size="lg">Click me</Button>
+ * </div>
+ * ### With badge
+ * 
+ * <Button variant="default">
+ *   Click me
+ *   <Badge variant="secondary" shape="pill">Value</Badge>
+ * </Button>
+ * 
+ * ### Destructive
+ * 
+ * <Button variant="destructive">Click me</Button>
+ * 
+ * ### Outline
+ * 
+ * <Button variant="outline">Click me</Button>
+ * 
+ * ### Secondary
+ * 
+ * <Button variant="secondary">Click me</Button>
+ * 
+ * ### Ghost
+ * 
+ * <Button variant="ghost">Click me</Button>
+ * 
+ * ### Link
+ * 
+ * <Button variant="link">Click me</Button>
+ * 
+ * ### Default
+ * 
+ * <Button>Click me</Button>
+ * 
+ */
+
+import { cva } from 'class-variance-authority'
+import { cn } from "@bejamas/ui/lib/utils"
+
+const {
+	variant = "default",
+	size = "default",
+	as = "button",
+	class: className = "",
+	// Deprecated: asChild (no-op). Use `as` instead.
+	asChild, // eslint-disable-line @typescript-eslint/no-unused-vars
+	...props
+} = Astro.props;
+
+const buttonVariants = cva(
+	"inline-flex ease-in-out border-border items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive active:scale-98",
+	{
+		variants: {
+			variant: {
+				default:
+					"bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+				destructive:
+					"bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+				outline:
+					"border shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+				secondary:
+					"bg-secondary shadow-xs text-secondary-foreground hover:bg-secondary/80",
+				ghost:
+					"hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+				link: "text-accent-foreground underline-offset-4 hover:underline p-0",
+			},
+			size: {
+				default: "h-9.5 px-3 py-2 has-[>svg]:px-3 text-sm has-[.badge:last-child]:pr-1.5 has-[.badge:first-child]:pl-1.5",
+				sm: "h-8.5 text-xs rounded-lg gap-1.5 px-3 has-[>svg]:px-2.5",
+				lg: "h-10 text-sm rounded-lg px-4 has-[>svg]:px-4 has-[.badge:last-child]:pr-3 [&_.badge:last-child]:ml-1.5",
+				icon: "size-9.5",
+			},
+		},
+		defaultVariants: {
+			variant: "default",
+			size: "default",
+		},
+	}
+)
+---
+
+{as === "a" ? (
+	<a class={cn(buttonVariants({ variant, size, className }))} {...props}>
+		<slot />
+	</a>
+) : as === "div" ? (
+	<div class={cn(buttonVariants({ variant, size, className }))} {...props}>
+		<slot />
+	</div>
+) : as === "span" ? (
+	<span class={cn(buttonVariants({ variant, size, className }))} {...props}>
+		<slot />
+	</span>
+) : (
+	<button class={cn(buttonVariants({ variant, size, className }))} {...props}>
+		<slot />
+	</button>
+)}
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro
+---
+import Button from '@bejamas/ui/components/Button.astro';
+---
+```
+```astro
+<Button>Click me</Button>
+```
+
+## Link
+
+You can use the `as` prop to render the component as an anchor.
+
+```astro
+import Button from '@bejamas/ui/components/Button.astro';
+
+<Button as="a" href="https://bejamas.com">Click me</Button>
+```
+
+## Props
+
+- variant (default: "default")
+- size (default: "default")
+- as (default: "button")
+- class (default: "")
+- asChild
+
+## Examples
+
+### Sizes
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<div class="flex gap-2 items-center">
+  <Button variant="default" size="sm">Click me</Button>
+  <Button variant="default">Click me</Button>
+  <Button variant="default" size="lg">Click me</Button>
+</div>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<div class="flex gap-2 items-center">
+  <Button variant="default" size="sm">Click me</Button>
+  <Button variant="default">Click me</Button>
+  <Button variant="default" size="lg">Click me</Button>
+</div>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+### With badge
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Button variant="default">
+  Click me
+  <Badge variant="secondary" shape="pill">Value</Badge>
+</Button>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Button variant="default">
+  Click me
+  <Badge variant="secondary" shape="pill">Value</Badge>
+</Button>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+### Destructive
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Button variant="destructive">Click me</Button>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Button variant="destructive">Click me</Button>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+### Outline
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Button variant="outline">Click me</Button>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Button variant="outline">Click me</Button>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+### Secondary
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Button variant="secondary">Click me</Button>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Button variant="secondary">Click me</Button>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+### Ghost
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Button variant="ghost">Click me</Button>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Button variant="ghost">Click me</Button>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+### Link
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Button variant="link">Click me</Button>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Button variant="link">Click me</Button>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+### Default
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Button>Click me</Button>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Button>Click me</Button>
+```
+  </DocsTabItem>
+</DocsTabs>

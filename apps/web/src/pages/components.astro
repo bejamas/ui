@@ -1,0 +1,22 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { getCollection } from 'astro:content';
+import Button from '@bejamas/ui/components/Button.astro';
+
+const docs = await getCollection('docs');
+const components = docs.filter((doc) => doc.id.startsWith('components/'));
+
+---
+
+<StarlightPage frontmatter={{ title: 'Components' }}>
+  <p>Here you can find all the components available in the library.</p>
+  <div class="not-content mt-10">
+    <ul class="list-none grid grid-cols-3 gap-4">
+      {components.map((component) => (
+        <li>
+          <Button as="a" href={`/components/${component.id.replace('components/', '')}`} variant="link" size="lg" class="w-full text-lg justify-start px-0">{component.data.title}</Button>
+        </li>
+      ))}
+    </ul>
+  </div>
+</StarlightPage>

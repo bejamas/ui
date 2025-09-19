@@ -1,0 +1,128 @@
+---
+/**
+ * @component Card
+ * @title Card
+ * @description UI container for grouping content with header, footer, etc.
+ * @status stable
+ * 
+ * @example
+ * 
+ * <Card class="w-full max-w-sm not-content" footerClass="flex-col gap-2">
+ *   <Fragment slot="header">
+ *     <h3 class="text-xl font-medium mb-3 leading-none">Login to your account</h3>
+ *     <p class="text-muted-foreground text-sm">Enter your email below to login to your account</p>
+ *   </Fragment>
+ *
+ *   <Fragment slot="content">
+ *     <form>
+ *       <div class="flex flex-col gap-6">
+ *         <div class="grid gap-2">
+ *           <Label for="email">Email</Label>
+ *           <Input type="email" placeholder="m@example.com" required />
+ *         </div>
+ *         <div class="grid gap-2">
+ *           <Label for="password">Password</Label>
+ *           <Input type="password" placeholder="Password" required />
+ *           <div class="flex items-center">
+ *             <a href="#" class="ml-auto text-sm underline-offset-4 hover:underline">Forgot your password?</a>
+ *           </div>
+ *         </div>
+ *       </div>
+ *     </form>
+ *   </Fragment>
+ *
+ *   <Fragment slot="footer">
+ *     <Button type="submit" class="w-full">Login</Button>
+ *     <Button variant="outline" class="w-full">Login with Google</Button>
+ *   </Fragment>
+ * </Card>
+ * 
+ * @usage
+ * ## Usage
+ * Update the import path to match your project setup.
+ * 
+ * ```astro
+ * ---
+ * import Card from '@/components/ui/Card.astro';
+ * ---
+ * ```
+ * 
+ * ```astro
+ * <Card>
+ *   <Fragment slot="header">
+ *     <h3 class="text-xl font-medium mb-3 leading-none">Card Title</h3>
+ *     <p class="text-muted-foreground text-sm">Card Description</p>
+ *   </Fragment>
+ * 
+ *   <Fragment slot="content">
+ *     Card Content
+ *   </Fragment>
+ * 
+ *   <Fragment slot="footer">
+ *     Card Footer
+ *   </Fragment>
+ * </Card>
+ * ```
+ */
+
+import { cva } from "class-variance-authority";
+import { cn } from "../lib/utils";
+const { variant = "default", class: className = "" } = Astro.props;
+
+const buttonVariants = cva(
+	"text-card-foreground flex flex-col gap-6 rounded-xl py-5",
+	{
+		variants: {
+			variant: {
+				default:
+					"bg-card border border-border shadow-sm",
+				ghost:
+					"",
+			},
+		},
+		defaultVariants: {
+			variant: "default",
+		},
+	}
+)
+
+const headerVariants = cva(
+	"@container/card-header text-pretty grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+	{
+		variants: {
+			variant: {
+				default: "px-4",
+			},
+		},
+	},
+);
+---
+
+<!-- Card container -->
+<div class={cn(buttonVariants({ variant, className }))}>
+  {Astro.slots.media && (
+    <div class:list={['', Astro.props.mediaClass]} slot="media">
+      <slot name="media" />
+    </div>
+  )}
+  {Astro.slots.header && (
+    <div
+      class={cn(headerVariants({ variant, className: Astro.props.headerClass }))}
+      slot="header"
+    >
+      <slot name="header" />
+    </div>
+  )}
+  {Astro.slots.content && (
+    <div class={cn([{
+      "px-4": variant === "default"}, Astro.props.contentClass ])} 
+    slot="content">
+      <slot name="content" />
+    </div>
+  )}
+  {Astro.slots.footer && (
+    <div class:list={['flex items-center px-4 [.border-t]:pt-6 flex-col gap-2', Astro.props.footerClass]} slot="footer">
+      <slot name="footer" />
+    </div>
+  )}
+</div>

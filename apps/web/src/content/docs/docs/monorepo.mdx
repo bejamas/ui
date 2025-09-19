@@ -1,0 +1,91 @@
+---
+title: Monorepo
+description: A guide in my new Starlight docs site.
+sidebar:
+  order: 5
+---
+
+import { FileTree } from "@astrojs/starlight/components";
+
+`bejamas/ui` works good in a monorepo setup. In fact, it's the recommended way to use it.
+
+### Create a new monorepo project
+
+To create a new monorepo project, run the `init` command. You will be prompted
+to select the type of project you are creating.
+
+```bash
+npx bejamas@latest init
+```
+
+Select the `Astro (Monorepo)` option.
+
+```bash
+? Would you like to start a new project?
+    Astro
+❯   Astro (Monorepo)
+    Astro with Component Docs (Monorepo)
+```
+
+This will create a new monorepo project with two workspaces: `web` and `ui`,
+and [Turborepo](https://turbo.build/repo/docs) as the build system.
+
+Everything is set up for you, so you can start adding components to your project.
+
+Note: The monorepo uses Astro v5 and Tailwind CSS v4.
+
+### Add components to your project
+
+To add components to your project, run the `add` command **in the path of your app**.
+
+```bash
+cd apps/web
+```
+
+```bash
+npx bejamas@latest add [COMPONENT]
+```
+
+The CLI will figure out what type of component you are adding and install the
+correct files to the correct path.
+
+For example, if you run `npx bejamas@latest add button`, the CLI will install the button component under `packages/ui` and update the import path for components in `apps/web`.
+
+If you run `npx bejamas@latest add hero-01`, the CLI will install the `button`, `label`, `input` and `card` components under `packages/ui` and the `hero-01` component under `apps/web/components`.
+
+### Add components to your project
+
+To add components to your project, run the add command in the path of your app.
+
+The CLI will figure out what type of component you are adding and install the correct files to the correct path.
+
+For example, if you run `npx bejamas add button`, the CLI will install the button component under `packages/ui` and update the import path for components in apps/web.
+
+If you run `npx bejamas add login-01`, the CLI will install the button, label, input and card components under `packages/ui` and the login-form component under `apps/web/components`.
+
+## File Structure
+
+<FileTree>
+
+- apps
+  - web # Your Astro project goes here.
+    - pages
+      - index.astro
+    - components
+      - Welcome.astro
+    - components.json
+    - package.json
+  - packages
+    - ui # Your components and dependencies are installed here
+      - src
+        - components
+          - Button.astro
+    - lib
+      - utils.ts
+    - styles
+      - globals.css
+  - components.json
+- package.json
+- turbo.json
+
+</FileTree>

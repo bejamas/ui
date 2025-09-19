@@ -1,0 +1,42 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import BlockPreview from "@/components/BlockPreview.astro";
+import Button from "@bejamas/ui/components/Button.astro";
+
+const blocks = await getCollection("blocks");
+
+const currentBlock = Astro.url.pathname.split("/").pop();
+---
+
+<div class="not-content mb-20">
+  <ul class="list-none flex gap-2">
+    <li>
+      <Button
+        as="a"
+        href="/blocks"
+        variant={currentBlock === "blocks" ? "secondary" : "ghost"}
+      >
+        All blocks
+      </Button>
+    </li>
+    {
+      blocks.map((block) => (
+        <li>
+          <Button
+            as="a"
+            href={`/blocks/${block.id.replace("blocks/", "")}`}
+            variant={
+              currentBlock === block.id.replace("blocks/", "")
+                ? "secondary"
+                : "ghost"
+            }
+          >
+            {block.data.label}{" "}
+            <span class="text-muted-foreground">{block.data.items.length}</span>
+          </Button>
+        </li>
+      ))
+    }
+  </ul>
+</div>

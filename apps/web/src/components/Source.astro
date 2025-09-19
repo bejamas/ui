@@ -1,0 +1,275 @@
+---
+import { readFileSync, existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+// import { Code } from "astro:components";
+import { Code } from "@astrojs/starlight/components";
+import SourceTree from "@/components/SourceTree.astro";
+import { Icon } from "@astrojs/starlight/components";
+//
+
+interface FileEntry {
+  path: string;
+  displayName: string;
+  code: string;
+}
+
+const { href } = Astro.props as { href: string };
+
+// Resolve the main block file from the href, e.g. "/blocks/features/1" -> src/pages/blocks/features/1.astro
+function resolveFileUrlFromHref(blockHref: string): URL {
+  const candidates = [
+    blockHref.endsWith(".astro") ? blockHref : `${blockHref}.astro`,
+    `${blockHref}/index.astro`,
+  ];
+  for (const candidate of candidates) {
+    const url = new URL(`../pages${candidate}`, import.meta.url);
+    try {
+      if (existsSync(fileURLToPath(url))) return url;
+    } catch {}
+  }
+  // Fallback to the first candidate
+  return new URL(`../pages${candidates[0]}`, import.meta.url);
+}
+
+function sanitizeCode(source: string): string {
+  // Keep all imports and code intact for the preview.
+  return source;
+}
+
+const importRegex = /(^|\n)\s*import\s+[^;]*from\s+["']([^"']+)["'];?/g;
+
+function tryResolveRelativeImport(
+  baseFileUrl: URL,
+  importPath: string,
+): URL | null {
+  // Only consider relative imports for inclusion
+  if (!importPath.startsWith("./") && !importPath.startsWith("../"))
+    return null;
+
+  const candidates = [
+    importPath,
+    `${importPath}.astro`,
+    `${importPath}.ts`,
+    `${importPath}.tsx`,
+    `${importPath}.css`,
+  ];
+
+  for (const candidate of candidates) {
+    const url = new URL(candidate, baseFileUrl);
+    if (existsSync(fileURLToPath(url))) return url;
+  }
+  return null;
+}
+
+function collectFiles(entryUrl: URL): FileEntry[] {
+  const seen = new Set<string>();
+  const queue: URL[] = [entryUrl];
+  const files: FileEntry[] = [];
+
+  while (queue.length) {
+    const url = queue.shift()!;
+    const fsPath = fileURLToPath(url);
+    if (seen.has(fsPath)) continue;
+    seen.add(fsPath);
+
+    let raw = readFileSync(fsPath, "utf-8");
+    const sanitized = sanitizeCode(raw);
+    const displayName =
+      fsPath.split("/src/")[1] ?? fsPath.split("/").slice(-2).join("/");
+    files.push({ path: fsPath, displayName, code: sanitized });
+
+    // Parse imports and enqueue relative ones
+    let match: RegExpExecArray | null;
+    while ((match = importRegex.exec(raw))) {
+      const spec = match[2];
+      const childUrl = tryResolveRelativeImport(url, spec);
+      if (childUrl) queue.push(childUrl);
+    }
+  }
+  return files;
+}
+
+let files: FileEntry[] = [];
+try {
+  const entryUrl = resolveFileUrlFromHref(href);
+  files = collectFiles(entryUrl);
+} catch (e) {
+  files = [];
+}
+
+// Build labeled files relative to the root folder of the entry file
+type LabeledFile = FileEntry & { label: string };
+const entryFile =
+  files.find(
+    (f) =>
+      f.displayName.endsWith("/index.astro") ||
+      f.displayName.endsWith("index.astro"),
+  ) ?? files[0];
+const rootDir = entryFile
+  ? entryFile.displayName.slice(0, entryFile.displayName.lastIndexOf("/"))
+  : "";
+
+let labeledFiles: LabeledFile[] = files.map((f) => {
+  let label = f.displayName;
+  if (rootDir && label.startsWith(rootDir + "/")) {
+    label = label.slice(rootDir.length + 1);
+  } else {
+    label = label.split("/").slice(-1)[0];
+  }
+  return { ...f, label };
+});
+
+// Sort with index.astro first, then alphabetically
+labeledFiles = labeledFiles.sort((a, b) => {
+  const aIsIndex = a.label === "index.astro";
+  const bIsIndex = b.label === "index.astro";
+  if (aIsIndex && !bIsIndex) return -1;
+  if (!aIsIndex && bIsIndex) return 1;
+  return a.label.localeCompare(b.label);
+});
+
+// Build a serializable folder/file tree
+type TreeNode =
+  | { type: "folder"; name: string; path: string; children: TreeNode[] }
+  | { type: "file"; name: string; path: string; label: string };
+
+function buildTree(filesIn: LabeledFile[]): TreeNode[] {
+  const root: any = {
+    type: "folder",
+    name: "__root__",
+    path: "",
+    children: [],
+  };
+  for (const f of filesIn) {
+    const segments = f.label.split("/");
+    let current = root;
+    for (let i = 0; i < segments.length; i++) {
+      const seg = segments[i];
+      const isFile = i === segments.length - 1;
+      if (isFile) {
+        current.children.push({
+          type: "file",
+          name: seg,
+          path: segments.slice(0, i + 1).join("/"),
+          label: f.label,
+        });
+      } else {
+        const path = segments.slice(0, i + 1).join("/");
+        let next = current.children.find(
+          (c: any) => c.type === "folder" && c.name === seg,
+        );
+        if (!next) {
+          next = { type: "folder", name: seg, path, children: [] };
+          current.children.push(next);
+        }
+        current = next;
+      }
+    }
+  }
+  const sortChildren = (nodes: TreeNode[]) => {
+    nodes.sort((a, b) => {
+      if (a.type !== b.type) return a.type === "folder" ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+    for (const n of nodes)
+      if (n.type === "folder") sortChildren((n as any).children);
+  };
+  sortChildren(root.children);
+  return root.children as TreeNode[];
+}
+
+const tree = buildTree(labeledFiles);
+const defaultActiveLabel =
+  (labeledFiles.find((f) => f.label === "index.astro") ?? labeledFiles[0])
+    ?.label ?? "";
+const openInitObj: Record<string, boolean> = {};
+// Open all folders by default
+function markAllFoldersOpen(nodes: TreeNode[]): void {
+  for (const n of nodes) {
+    if (n.type === "folder") {
+      openInitObj[n.path] = true;
+      markAllFoldersOpen((n as any).children as TreeNode[]);
+    }
+  }
+}
+markAllFoldersOpen(tree as TreeNode[]);
+
+function getLangFromPath(path: string): string {
+  const lower = path.toLowerCase();
+  if (lower.endsWith(".astro")) return "astro";
+  if (lower.endsWith(".tsx")) return "tsx";
+  if (lower.endsWith(".ts")) return "ts";
+  if (lower.endsWith(".js")) return "js";
+  if (lower.endsWith(".css")) return "css";
+  return "txt";
+}
+---
+
+{
+  labeledFiles.length === 0 ? (
+    <div class="text-sm text-muted-foreground">No source found.</div>
+  ) : (
+    <div
+      class="grid md:grid-cols-[220px_1fr] bg-card rounded-xl border border-border"
+      x-data={`{ active: '${defaultActiveLabel}', open: ${JSON.stringify(openInitObj)} }`}
+    >
+      <aside class="h-max">
+        <div class="px-5 py-2 bg-muted/50 border-b border-border text-sm font-medium h-12 flex items-center">
+          Files
+        </div>
+        <ul class="space-y-1 p-3">
+          <SourceTree nodes={tree} />
+        </ul>
+      </aside>
+
+      <div class="space-y-4">
+        {labeledFiles.map((f) => (
+          <div
+            x-show={`active === '${f.label}'`}
+            class="border-l border-border overflow-hidden mb-0 bg-[var(--code-background)]"
+          >
+            <div class="flex items-center justify-between px-5 py-2 bg-muted/50 border-b border-border h-12">
+              <span class="font-medium text-sm truncate flex items-center gap-2">
+                <Icon name="astro" class="size-4" />
+                {f.displayName}
+              </span>
+              <button
+                type="button"
+                class="text-xs px-2 py-1 rounded-md bg-secondary hover:bg-secondary/80"
+                on:click={`navigator.clipboard.writeText(${JSON.stringify(f.code)})`}
+              >
+                Copy
+              </button>
+            </div>
+            <div class="text-xs leading-relaxed">
+              <Code
+                code={f.code}
+                lang={getLangFromPath(f.displayName)}
+                class="h-[800px] max-w-full overflow-y-auto overflow-x-auto rounded-none"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+<style is:global>
+  @reference "tailwindcss";
+
+  .frame pre {
+    counter-reset: line;
+  }
+  .ec-line {
+    counter-increment: line;
+  }
+
+  .ec-line::before {
+    content: counter(line);
+    display: block;
+    color: var(--color-muted-foreground);
+
+    @apply text-right w-10 mr-3 opacity-50;
+  }
+</style>

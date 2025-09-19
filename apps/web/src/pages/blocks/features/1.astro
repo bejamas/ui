@@ -1,0 +1,109 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import Footer from "@bejamas/ui/components/Footer.astro";
+import FooterLinks from "@bejamas/ui/components/FooterLinks.astro";
+import Button from "@bejamas/ui/components/Button.astro";
+import Separator from "@bejamas/ui/components/Separator.astro";
+import Card from "@bejamas/ui/components/Card.astro";
+import { ArrowRight } from "@lucide/astro";
+---
+
+<BlockExampleLayout>
+  <div class="max-w-5xl mx-auto [container-type:inline-size] text-foreground">
+    <h2 class="font-medium mb-5 leading-none text-[clamp(2rem,12cqw,6rem)]">
+      you can just eat eggs
+    </h2>
+
+    <div class="grid grid-cols-4 gap-4">
+      <Card variant="ghost">
+        <div slot="media" class="relative">
+          <img
+            src="https://pbs.twimg.com/media/G0x-gkSbcAAaH3Z?format=jpg&name=large"
+            class="rounded-xl"
+          />
+          <span
+            class="absolute top-4 left-4 bg-primary text-primary-foreground px-2 py-1 text-sm font-mono rounded-md"
+          >
+            01
+          </span>
+        </div>
+        <Fragment slot="header">
+          <h3 class="text-2xl font-medium mb-1 leading-none">
+            Healthy breakfast
+          </h3>
+          <p class="text-muted-foreground text-sm">
+            Eggs are a great source of protein.
+          </p>
+        </Fragment>
+      </Card>
+
+      <Card variant="ghost">
+        <div slot="media" class="relative">
+          <img
+            src="https://pbs.twimg.com/media/G0x-gj6bAAAJkHH?format=jpg&name=large"
+            class="rounded-xl"
+          />
+          <span
+            class="absolute top-4 left-4 bg-primary text-primary-foreground px-2 py-1 text-sm font-mono rounded-md"
+          >
+            02
+          </span>
+        </div>
+        <Fragment slot="header">
+          <h3 class="text-2xl font-medium mb-1 leading-none">Healthy lunch</h3>
+          <p class="text-muted-foreground text-sm">
+            Egg benefits your heart and brain.
+          </p>
+        </Fragment>
+      </Card>
+
+      <Card variant="ghost">
+        <div slot="media" class="relative">
+          <img
+            src="https://pbs.twimg.com/media/G0x-gkLaUAA1pnb?format=jpg&name=large"
+            class="rounded-xl"
+          />
+          <span
+            class="absolute top-4 left-4 bg-primary text-primary-foreground px-2 py-1 text-sm font-mono rounded-md"
+          >
+            03
+          </span>
+        </div>
+        <Fragment slot="header">
+          <h3 class="text-2xl font-medium mb-1 leading-none">Healthy dinner</h3>
+          <p class="text-muted-foreground text-sm">
+            Egg is a good source of protein.
+          </p>
+        </Fragment>
+      </Card>
+
+      <Card variant="ghost">
+        <div slot="media" class="relative">
+          <img
+            src="https://pbs.twimg.com/media/G0x-gkXbcAQMBaT?format=jpg&name=large"
+            class="rounded-xl"
+          />
+          <span
+            class="absolute top-4 left-4 bg-primary text-primary-foreground px-2 py-1 text-sm font-mono rounded-md"
+          >
+            04
+          </span>
+        </div>
+        <Fragment slot="header">
+          <h3 class="text-2xl font-medium mb-1 leading-none">Healthy snack</h3>
+          <p class="text-muted-foreground text-sm">
+            Egg is a good base for a snack.
+          </p>
+        </Fragment>
+      </Card>
+    </div>
+    <div
+      class="border-t border-border pt-3 mt-1 flex justify-between items-center gap-4"
+    >
+      <p class="text-sm">It's time to eat some eggs</p>
+      <Button variant="secondary">
+        Make omelette <ArrowRight class="size-4" />
+      </Button>
+    </div>
+  </div>
+</BlockExampleLayout>

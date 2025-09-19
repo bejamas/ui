@@ -1,0 +1,45 @@
+{
+  "name": "starlight-theme-bejamas",
+  "author": "Bejamas",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "A Starlight theme using bejamas/ui",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./config": "./src/config.ts",
+    "./styles/theme.css": "./src/styles/theme.css",
+    "./overrides/Header.astro": "./src/overrides/Header.astro",
+    "./overrides/PageFrame.astro": "./src/overrides/PageFrame.astro",
+    "./overrides/SiteTitle.astro": "./src/overrides/SiteTitle.astro",
+    "./overrides/Pagination.astro": "./src/overrides/Pagination.astro",
+    "./overrides/PageTitle.astro": "./src/overrides/PageTitle.astro",
+    "./overrides/Hero.astro": "./src/overrides/Hero.astro"
+  },
+  "scripts": {},
+  "keywords": [
+    "starlight",
+    "theme",
+    "bejamas",
+    "bejamas/ui",
+    "astro",
+    "astro-component",
+    "withastro"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bejamas/ui.git",
+    "directory": "packages/starlight-theme-bejamas"
+  },
+  "bugs": "https://github.com/bejamas/ui/issues",
+  "peerDependencies": {
+    "@astrojs/starlight": ">=0.33.0",
+    "astro": ">=5.5.0"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource/inter": "^5.2.8",
+    "add": "^2.0.6",
+    "bun": "^1.2.22"
+  }
+}

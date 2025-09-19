@@ -1,0 +1,326 @@
+---
+title: Dialog
+description: Accessible dialog/modal component using the native `<dialog>` element, with open/close logic.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import Dialog from '@bejamas/ui/components/Dialog.astro';
+import Button from '@bejamas/ui/components/Button.astro';
+import Checkbox from '@bejamas/ui/components/Checkbox.astro';
+import Label from '@bejamas/ui/components/Label.astro';
+
+Accessible dialog/modal component using the native `<dialog>` element, with open/close logic.
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Button onclick="myDialog.open()">Manage Cookies</Button>
+<Dialog id="myDialog" class="backdrop-blur-md">
+  <Fragment slot="title">Manage Cookies</Fragment>
+  <Fragment slot="description">Using websites and apps involves storing and retrieving information from your device, including cookies and other identifiers, which can be shared with third parties, for various activities. We provide a simple tool below allowing you to tailor your choices as you deem fit. You can change your consent at any time. Learn more.</Fragment>
+  <Fragment slot="content">
+    <div class="mt-5">
+      <div class="flex items-center gap-3">
+        <Checkbox id="cookies-necessary" name="cookies-necessary" disabled checked />
+        <Label for="cookies-necessary">Strictly Necessary Cookies (always active)</Label>
+      </div>
+      <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies are essential for the site to function and cannot be toggled off. They assist with security, user authentication, customer support, etc.</p>
+    </div>
+    <div class="mt-5">
+      <div class="flex items-center gap-3">
+        <Checkbox id="cookies-analytics" name="cookies-analytics" />
+        <Label for="cookies-analytics">Analytics Cookies</Label>
+      </div>
+      <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us understand how visitors interact with our site. They allow us to measure traffic and improve site performance.</p>
+    </div>
+    <div class="mt-5">
+      <div class="flex items-center gap-3">
+        <Checkbox id="cookies-marketing-performance" name="cookies-marketing-performance" />
+        <Label for="cookies-marketing-performance">Marketing Performance Cookies</Label>
+      </div>
+      <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us measure the effectiveness of our marketing campaigns.</p>
+    </div>
+  </Fragment>
+  <Fragment slot="footer">
+    <Button variant="outline" data-dialog-close class="mt-4">Close</Button>
+    <Button data-dialog-close class="mt-4">Save changes</Button>
+  </Fragment>
+</Dialog>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Button onclick="myDialog.open()">Manage Cookies</Button>
+<Dialog id="myDialog" class="backdrop-blur-md">
+  <Fragment slot="title">Manage Cookies</Fragment>
+  <Fragment slot="description">Using websites and apps involves storing and retrieving information from your device, including cookies and other identifiers, which can be shared with third parties, for various activities. We provide a simple tool below allowing you to tailor your choices as you deem fit. You can change your consent at any time. Learn more.</Fragment>
+  <Fragment slot="content">
+    <div class="mt-5">
+      <div class="flex items-center gap-3">
+        <Checkbox id="cookies-necessary" name="cookies-necessary" disabled checked />
+        <Label for="cookies-necessary">Strictly Necessary Cookies (always active)</Label>
+      </div>
+      <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies are essential for the site to function and cannot be toggled off. They assist with security, user authentication, customer support, etc.</p>
+    </div>
+    <div class="mt-5">
+      <div class="flex items-center gap-3">
+        <Checkbox id="cookies-analytics" name="cookies-analytics" />
+        <Label for="cookies-analytics">Analytics Cookies</Label>
+      </div>
+      <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us understand how visitors interact with our site. They allow us to measure traffic and improve site performance.</p>
+    </div>
+    <div class="mt-5">
+      <div class="flex items-center gap-3">
+        <Checkbox id="cookies-marketing-performance" name="cookies-marketing-performance" />
+        <Label for="cookies-marketing-performance">Marketing Performance Cookies</Label>
+      </div>
+      <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us measure the effectiveness of our marketing campaigns.</p>
+    </div>
+  </Fragment>
+  <Fragment slot="footer">
+    <Button variant="outline" data-dialog-close class="mt-4">Close</Button>
+    <Button data-dialog-close class="mt-4">Save changes</Button>
+  </Fragment>
+</Dialog>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add dialog
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add dialog
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add dialog
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add dialog
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+/**
+ * @component Dialog
+ * @title Dialog
+ * @description Accessible dialog/modal component using the native `<dialog>` element, with open/close logic.
+ * 
+ * @prop {boolean} [open] - Whether the dialog is open (controlled).
+ * @prop {function} [onOpenChange] - Callback when open state changes.
+ * @prop {string} [class] - Additional classes for the dialog element.
+ * @prop {string} [backdropClass] - Additional classes for the backdrop.
+ * @prop {string} [containerClass] - Additional classes for the dialog container.
+ * @prop {boolean} [closeOnBackdrop=true] - Whether clicking the backdrop closes the dialog.
+ * 
+ * @example
+ * 
+ * <Button onclick="myDialog.open()">Manage Cookies</Button>
+ * <Dialog id="myDialog" class="backdrop-blur-md">
+ *   <Fragment slot="title">Manage Cookies</Fragment>
+ *   <Fragment slot="description">Using websites and apps involves storing and retrieving information from your device, including cookies and other identifiers, which can be shared with third parties, for various activities. We provide a simple tool below allowing you to tailor your choices as you deem fit. You can change your consent at any time. Learn more.</Fragment>
+ *   <Fragment slot="content">
+ *     <div class="mt-5">
+ *       <div class="flex items-center gap-3">
+ *         <Checkbox id="cookies-necessary" name="cookies-necessary" disabled checked />
+ *         <Label for="cookies-necessary">Strictly Necessary Cookies (always active)</Label>
+ *       </div>
+ *       <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies are essential for the site to function and cannot be toggled off. They assist with security, user authentication, customer support, etc.</p>
+ *     </div>
+ *     <div class="mt-5">
+ *       <div class="flex items-center gap-3">
+ *         <Checkbox id="cookies-analytics" name="cookies-analytics" />
+ *         <Label for="cookies-analytics">Analytics Cookies</Label>
+ *       </div>
+ *       <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us understand how visitors interact with our site. They allow us to measure traffic and improve site performance.</p>
+ *     </div>
+  *     <div class="mt-5">
+ *       <div class="flex items-center gap-3">
+ *         <Checkbox id="cookies-marketing-performance" name="cookies-marketing-performance" />
+ *         <Label for="cookies-marketing-performance">Marketing Performance Cookies</Label>
+ *       </div>
+ *       <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us measure the effectiveness of our marketing campaigns.</p>
+ *     </div>
+ *   </Fragment>
+ *   <Fragment slot="footer">
+ *     <Button variant="outline" data-dialog-close class="mt-4">Close</Button>
+ *     <Button data-dialog-close class="mt-4">Save changes</Button>
+ *   </Fragment>
+ * </Dialog>
+ */
+
+ import { cn } from "../lib/utils";
+
+const {
+  open = false,
+  onOpenChange = null,
+  class: className = "",
+  backdropClass = "",
+  containerClass = "",
+  closeOnBackdrop = true,
+  id: providedId,
+  ...props
+} = Astro.props;
+
+const id = providedId ?? `dialog-${Math.random().toString(36).slice(2, 10)}`;
+---
+
+<dialog
+  id={id}
+  class={cn("group grid place-items-center opacity-0 open:opacity-100 visibility-hidden open:visibility-visible open:pointer-events-auto pointer-events-none transition-discrete max-w-screen max-h-screen bg-transparent transition-all duration-150 ease-in-out fixed z-50 left-0 top-0 w-full h-full", className)}
+  {...props}
+>
+
+  <div
+    class={[
+      "relative z-10 bg-background rounded-xl shadow-lg p-6 max-w-lg w-full row-start-1 col-start-1",
+      // motion
+      "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95 transition-all duration-150 ease-in-out",
+      "group-open:opacity-100 group-open:translate-y-0 group-open:sm:scale-100",
+      containerClass,
+    ].join(" ")}
+    role="document"
+  >
+    <Fragment>
+          {Astro.slots.title && (
+            <div class="mb-4 font-medium text-xl">
+              <slot name="title" />        
+            </div>
+          )}
+          {Astro.slots.description && (
+            <p class="text-sm text-muted-foreground">
+              <slot name="description" />
+            </p>
+          )}
+          {Astro.slots.content && (
+            <div class="mb-6">
+              <slot name="content" />
+            </div>
+          )}
+          {Astro.slots.footer && (
+            <div class="flex justify-end gap-2">
+              <slot name="footer" />
+            </div>
+          )}
+        </>
+    </Fragment>
+  </div>
+  <div
+  class={[
+    "transition-discrete fixed inset-0 bg-black/50 opacity-0 duration-200 ease-in-out",
+    "group-data-[state=open]:opacity-100 group-data-[state=closed]:opacity-0",
+    backdropClass,
+  ].join(" ")}
+  tabIndex="-1"
+></div>
+
+  <form method="dialog" class="grid row-start-1 col-start-1 place-self-stretch -z-1 opacity-0">
+    <button data-dialog-close>Close</button>
+  </form>
+</dialog>
+
+<script type="module" define:vars={{ id, open, closeOnBackdrop }}>
+  const dialog = /** @type {HTMLDialogElement|null} */ (document.getElementById(id));
+  if (!dialog) {
+    console.warn(`[Dialog] Element with id "${id}" not found.`);
+  } else {
+
+    const openDialog = () => {
+      // Make it visible but keep in closed state for first paint
+      // dialog.classList.remove('hidden');
+      // dialog.classList.add('flex');
+      if (!dialog.open) dialog.showModal();
+    };
+
+    const animateClose = () => {
+      dialog.setAttribute('data-state', 'closed');
+      if (dialog.open) dialog.close();
+    };
+
+    // Backdrop click to close
+    if (closeOnBackdrop) {
+      const backdrop = dialog.querySelector('[data-dialog-backdrop]');
+      if (backdrop) {
+        backdrop.addEventListener('click', () => animateClose());
+      }
+    }
+
+    // [data-dialog-close] elements
+    dialog.querySelectorAll('[data-dialog-close]').forEach((btn) => {
+      btn.addEventListener('click', () => animateClose());
+    });
+
+    // Dispatch custom events and manage visibility
+    dialog.addEventListener('close', () => {
+      // dialog.classList.add('hidden');
+      // dialog.classList.remove('flex');
+      dialog.dispatchEvent(new CustomEvent('dialog-close', { bubbles: true }));
+    });
+    dialog.addEventListener('cancel', (e) => {
+      // ESC key: prevent default to allow animated close
+      e.preventDefault();
+      dialog.dispatchEvent(new CustomEvent('dialog-cancel', { bubbles: true }));
+      animateClose();
+    });
+
+    // Expose a global controller to match <Button onclick={myDialog.open()}>
+    // window[id].open() / close() / toggle() / isOpen()
+    const controller = {
+      open: () => openDialog(),
+      close: () => animateClose(),
+      toggle: () => (dialog.open ? animateClose() : openDialog()),
+      isOpen: () => dialog.open,
+      el: dialog,
+    };
+    try {
+      // Define as non-configurable to avoid accidental overwrites
+      Object.defineProperty(window, id, { value: controller, writable: false, configurable: false });
+    } catch {
+      // Fallback assignment if property already exists
+      window[id] = controller;
+    }
+  }
+</script>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+<Dialog />
+
+
+## Props
+
+- open (default: false)
+- onOpenChange (default: null)
+- class (default: "")
+- backdropClass (default: "")
+- containerClass (default: "")
+- closeOnBackdrop (default: true)
+- id

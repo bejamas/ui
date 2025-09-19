@@ -1,0 +1,89 @@
+---
+import Button from "@bejamas/ui/components/Button.astro";
+import Dropdown from "@bejamas/ui/components/Dropdown.astro";
+import Select from "@bejamas/ui/components/Select.astro";
+import { Sun, Moon, Laptop } from "@lucide/astro";
+---
+
+<div class="relative">
+  <div class="absolute z-10 left-3 top-2.75">
+    <Sun class="size-4 dark:hidden" />
+    <Moon class="size-4 hidden dark:block" />
+  </div>
+  <Select
+    id="theme-switcher"
+    class="pl-9 w-32"
+    trigger={{ variant: "secondary" }}
+    showCheckmark={false}
+    onchange="window.toggleTheme(this.value)"
+  >
+    <option value="light" class="px-2.5 py-2 rounded-sm"
+      ><Sun class="size-4" /> Light</option
+    >
+    <option value="dark" class="px-2.5 py-2 rounded-sm"
+      ><Moon class="size-4" /> Dark</option
+    >
+    <option value="auto" class="px-2.5 py-2 rounded-sm"
+      ><Laptop class="size-4" /> Auto</option
+    >
+  </Select>
+</div>
+
+<script>
+  const storageKey = "starlight-theme";
+
+  const parseTheme = (theme) =>
+    theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
+
+  const loadTheme = () => {
+    try {
+      return parseTheme(
+        typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
+      );
+    } catch {
+      return "auto";
+    }
+  };
+
+  function storeTheme(theme) {
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem(
+          storageKey,
+          theme === "light" || theme === "dark" ? theme : "",
+        );
+      }
+    } catch {}
+  }
+
+  const getPreferredColorScheme = () =>
+    matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+
+  function applyTheme(theme) {
+    const effective = theme === "auto" ? getPreferredColorScheme() : theme;
+    document.documentElement.dataset.theme = effective;
+    storeTheme(theme);
+    const select = document.getElementById("theme-select");
+    if (select instanceof HTMLSelectElement) select.value = theme;
+  }
+
+  // Initialize
+  applyTheme(loadTheme());
+
+  // UI: select changes
+  const select = document.getElementById("theme-select");
+  if (select instanceof HTMLSelectElement) {
+    select.addEventListener("change", (e) => {
+      if (e.currentTarget instanceof HTMLSelectElement) {
+        applyTheme(parseTheme(e.currentTarget.value));
+      }
+    });
+  }
+
+  window.toggleTheme = (theme) => applyTheme(parseTheme(theme));
+
+  // React to system scheme changes while in 'auto'
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
+    if (loadTheme() === "auto") applyTheme("auto");
+  });
+</script>

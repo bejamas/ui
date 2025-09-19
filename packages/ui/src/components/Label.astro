@@ -1,0 +1,31 @@
+---
+/**
+ * @component Label
+ * @title Label
+ * @description Accessible and flexible label component with support for disabled states.
+ * @status stable
+ * @since 0.1.0
+ * 
+ * @example
+ * 
+ * <div class="flex items-center space-x-2">
+ *   <Checkbox id="terms" />
+ *   <Label for="terms">Accept terms and conditions</Label>
+ * </div>
+ * 
+ */
+
+ const { class: className = '', for: htmlFor, ...props } = Astro.props;
+
+const baseClass =
+  "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50";
+---
+
+<label
+  for={htmlFor}
+  data-slot="label"
+  class={`${baseClass} ${className}`.trim()}
+  {...props}
+>
+  <slot />
+</label>

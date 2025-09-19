@@ -1,0 +1,43 @@
+---
+title: Installation
+description: A guide in my new Starlight docs site.
+sidebar:
+  order: 2
+---
+
+import {
+  Tabs as DocsTabs,
+  TabItem as DocsTabItem,
+} from "@astrojs/starlight/components";
+
+## Prerequisites
+
+`bejamas/ui` is a component system designed to be working with [Astro framework](https://astro.build) only.
+
+## Create new project
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas@latest init
+  ```
+  </DocsTabItem>
+
+  <DocsTabItem label="npm">
+    ```bash
+    npx bejamas@latest init
+    ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+    ```bash
+    pnpm dlx bejamas@latest init
+    ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+    ```bash
+    yarn dlx bejamas@latest init
+    ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Add to existing project

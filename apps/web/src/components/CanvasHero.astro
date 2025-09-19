@@ -1,0 +1,83 @@
+---
+import Button from "@bejamas/ui/components/Button.astro";
+import { Plus, Minus } from "@lucide/astro";
+---
+
+<section
+  id="canvas-hero"
+  aria-label="Interactive mood board of UI components"
+  class="mt-0 not-content"
+>
+  <canvas id="ui-canvas" aria-label="Interactive mood board of UI components"
+  ></canvas>
+
+  <!-- Visually hidden but focusable links for keyboard and screen reader users -->
+  <!-- <div id="canvas-a11y">
+    <a href="/docs/demo1">Demo 1</a>
+    <a href="/docs/demo2">Demo 2</a>
+    <a href="/docs/demo3">Demo 3</a>
+    <a href="/docs/demo4">Demo 4</a>
+    <a href="/docs/demo5">Demo 5</a>
+    <a href="/docs/demo6">Demo 6</a>
+  </div> -->
+
+  <script hoist>
+    import "./CanvasHero.client.ts";
+  </script>
+
+  <!-- Zoom controls -->
+  <div
+    id="canvas-controls"
+    aria-label="Canvas controls"
+    role="group"
+    class="absolute right-4 bottom-4 flex gap-2 flex-col"
+  >
+    <Button id="zoom-in" aria-label="Zoom in" type="button" variant="secondary">
+      <Plus class="size-4" />
+    </Button>
+    <Button
+      id="zoom-out"
+      aria-label="Zoom out"
+      type="button"
+      variant="secondary"
+    >
+      <Minus class="size-4" />
+    </Button>
+  </div>
+</section>
+
+<style>
+  /* Full-bleed section and canvas */
+  #canvas-hero {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+  #ui-canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    touch-action: none; /* enable custom pan/pinch via Pointer Events */
+    cursor: grab;
+  }
+
+  /* Visually hidden container for links; still focusable for keyboard users */
+  #canvas-a11y {
+    position: absolute;
+    inset: 0;
+  }
+  #canvas-a11y a {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    white-space: nowrap;
+    clip-path: inset(50%);
+    clip: rect(0 0 0 0);
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Button from "@/ui/Button.astro";
+---
+
+<Layout>
+  <div
+    class="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20"
+  >
+    <div class="flex flex-col gap-6 row-start-2 items-center sm:items-start">
+      <img src="/bejamas.svg" alt="bejamas/ui" class="w-8 dark:invert" />
+      <div class="space-y-2">
+        <p class="font-mono text-sm">
+          Welcome to <code
+            class="font-mono font-bold relative bg-muted rounded p-1"
+            >@bejamas/ui</code
+          > Astro project.
+        </p>
+        <p class="font-mono text-sm">
+          Get started by editing src/pages/index.astro.
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <Button as="a" href="https://ui.bejamas.com/docs">Read docs</Button>
+        <Button as="a" href="https://bejamas.com/get-in-touch" variant="outline"
+          >Get custom demo</Button
+        >
+      </div>
+    </div>
+  </div>
+</Layout>

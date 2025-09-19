@@ -1,0 +1,197 @@
+---
+title: Avatar
+description: A circular avatar component for displaying user images or initials, inspired by shadcn/ui.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import Avatar from '@bejamas/ui/components/Avatar.astro';
+
+A circular avatar component for displaying user images or initials, inspired by shadcn/ui.
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<div class="flex flex-row flex-wrap items-center gap-12">
+  <Avatar>
+    <img slot="avatar-image" src="https://github.com/bejamas.png" alt="@bejamas" />
+    <span slot="fallback">BJ</span>
+  </Avatar>
+  <Avatar class="rounded-lg">
+    <img slot="avatar-image" src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+    <span slot="fallback">ER</span>
+  </Avatar>
+  <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+    <Avatar>
+      <img slot="avatar-image" src="https://github.com/withastro.png" alt="@withastro" />
+      <span slot="fallback">AW</span>
+    </Avatar>
+    <Avatar>
+      <img slot="avatar-image" src="https://github.com/shadcn.png" alt="@shadcn" />
+      <span slot="fallback">SH</span>
+    </Avatar>
+    <Avatar>
+      <img slot="avatar-image" src="https://github.com/fredkschott.png" alt="@fredkschott" />
+      <span slot="fallback">ER</span>
+    </Avatar>
+  </div>
+</div>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<div class="flex flex-row flex-wrap items-center gap-12">
+  <Avatar>
+    <img slot="avatar-image" src="https://github.com/bejamas.png" alt="@bejamas" />
+    <span slot="fallback">BJ</span>
+  </Avatar>
+  <Avatar class="rounded-lg">
+    <img slot="avatar-image" src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+    <span slot="fallback">ER</span>
+  </Avatar>
+  <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+    <Avatar>
+      <img slot="avatar-image" src="https://github.com/withastro.png" alt="@withastro" />
+      <span slot="fallback">AW</span>
+    </Avatar>
+    <Avatar>
+      <img slot="avatar-image" src="https://github.com/shadcn.png" alt="@shadcn" />
+      <span slot="fallback">SH</span>
+    </Avatar>
+    <Avatar>
+      <img slot="avatar-image" src="https://github.com/fredkschott.png" alt="@fredkschott" />
+      <span slot="fallback">ER</span>
+    </Avatar>
+  </div>
+</div>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add avatar
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add avatar
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add avatar
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add avatar
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+/**
+ * @component Avatar
+ * @description A circular avatar component for displaying user images or initials, inspired by shadcn/ui.
+ * 
+ * @prop {string} [src] - The image source URL.
+ * @prop {string} [alt] - The alt text for the image.
+ * @prop {string} [fallback] - The fallback text or initials to display if the image fails to load.
+ * @prop {string} [class] - Additional classes for the avatar container.
+ * @prop {string} [imageClass] - Additional classes for the image element.
+ * @prop {string} [fallbackClass] - Additional classes for the fallback element.
+ * 
+ * @example
+ * <div class="flex flex-row flex-wrap items-center gap-12">
+ *   <Avatar>
+ *     <img slot="avatar-image" src="https://github.com/bejamas.png" alt="@bejamas" />
+ *     <span slot="fallback">BJ</span>
+ *   </Avatar>
+ *   <Avatar class="rounded-lg">
+ *     <img slot="avatar-image" src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *     <span slot="fallback">ER</span>
+ *   </Avatar>
+ *   <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+ *     <Avatar>
+ *       <img slot="avatar-image" src="https://github.com/withastro.png" alt="@withastro" />
+ *       <span slot="fallback">AW</span>
+ *     </Avatar>
+ *     <Avatar>
+ *       <img slot="avatar-image" src="https://github.com/shadcn.png" alt="@shadcn" />
+ *       <span slot="fallback">SH</span>
+ *     </Avatar>
+ *     <Avatar>
+ *       <img slot="avatar-image" src="https://github.com/fredkschott.png" alt="@fredkschott" />
+ *       <span slot="fallback">ER</span>
+ *     </Avatar>
+ *   </div>
+ * </div>
+ */
+const {
+  src = "",
+  alt = "",
+  fallback = "",
+  class: className = "",
+  imageClass = "",
+  fallbackClass = "",
+  ...props
+} = Astro.props;
+const hasAvatarImageSlot = Astro.slots.has("avatar-image");
+---
+
+<div
+  data-slot="avatar"
+  class={["relative flex size-8 shrink-0 overflow-hidden rounded-full", className].join(" ")}
+  {...props}
+>
+  {hasAvatarImageSlot ? (
+    <slot name="avatar-image" />
+  ) : src ? (
+    <img
+      src={src}
+      alt={alt}
+      class={["aspect-square size-full object-cover", imageClass].join(" ")}
+      loading="lazy"
+    />
+  ) : (
+    <span
+      class={["bg-muted flex size-full items-center justify-center rounded-full text-muted-foreground font-medium uppercase select-none", fallbackClass].join(" ")}
+    >
+      <slot name="fallback">{fallback}</slot>
+    </span>
+  )}
+</div>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+<Avatar />
+
+
+## Props
+
+- src (default: "")
+- alt (default: "")
+- fallback (default: "")
+- class (default: "")
+- imageClass (default: "")
+- fallbackClass (default: "")
