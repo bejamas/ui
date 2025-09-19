@@ -50,12 +50,7 @@ export default defineConfig({
           autogenerate: { directory: "components" },
         },
       ],
-      customCss: [
-        // "@fontsource-variable/inter",
-        "./src/styles/global.css",
-        // "@bejamas/ui/styles/globals.css",
-        // "../../node_modules/@bejamas/ui/src/styles/globals.css",
-      ],
+      customCss: ["./src/styles/global.css"],
       logo: {
         light: "./src/assets/logo.svg",
         dark: "./src/assets/logo-dark.svg",
@@ -67,6 +62,9 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    ssr: {
+      noExternal: ["zod"],
+    },
   },
   adapter: vercel(),
 });
