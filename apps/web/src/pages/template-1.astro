@@ -1,22 +1,24 @@
 ---
-import Footer from '@bejamas/ui/components/Footer.astro';
-import FooterLinks from '@bejamas/ui/components/FooterLinks.astro';
-import Button from '@bejamas/ui/components/Button.astro';
-import Separator from '@bejamas/ui/components/Separator.astro';
-import Card from '@bejamas/ui/components/Card.astro';
-import NavigationMenu from '@bejamas/ui/components/NavigationMenu.astro';
-import MenuDropdown from '@bejamas/ui/components/Dropdown.astro';
-import StickySurface from '@bejamas/ui/components/StickySurface.astro';
-import Breadcrumbs from '@bejamas/ui/components/Breadcrumbs.astro';
-import { SlashIcon } from '@lucide/astro';
-
-import '../styles/global.css';
+import Footer from "@bejamas/ui/components/Footer.astro";
+import FooterLinks from "@bejamas/ui/components/FooterLinks.astro";
+import Button from "@bejamas/ui/components/Button.astro";
+import Separator from "@bejamas/ui/components/Separator.astro";
+import Card from "@bejamas/ui/components/Card.astro";
+import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
+import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
+import StickySurface from "@bejamas/ui/components/StickySurface.astro";
+import Breadcrumbs from "@bejamas/ui/components/Breadcrumbs.astro";
+import { SlashIcon } from "@lucide/astro";
 ---
 
 <StickySurface effects={["elevate"]} threshold="1rem" observeStuck>
   <NavigationMenu>
     <div slot="logo" class="flex items-center h-full">
-      <img src="https://cdn.prod.website-files.com/624380709031623bfe4aee60/668b2b16e18e604c50a1362c_Logo-wide.svg" alt="Acme, Inc." class="h-8" />
+      <img
+        src="https://cdn.prod.website-files.com/624380709031623bfe4aee60/668b2b16e18e604c50a1362c_Logo-wide.svg"
+        alt="Acme, Inc."
+        class="h-8"
+      />
     </div>
     <ul slot="links" class="flex items-center space-x-2">
       <li><Button as="a" href="/" variant="ghost">Home</Button></li>
@@ -24,20 +26,54 @@ import '../styles/global.css';
         <MenuDropdown>
           <span slot="trigger">Company</span>
           <ul slot="content">
-            <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">About</Button></li>
-            <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Team</Button></li>
-            <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Blog</Button></li>
-            <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Careers</Button></li>
+            <li>
+              <Button
+                href="#"
+                as="a"
+                variant="ghost"
+                class="w-full justify-start">About</Button>
+            </li>
+            <li>
+              <Button
+                href="#"
+                as="a"
+                variant="ghost"
+                class="w-full justify-start">Team</Button>
+            </li>
+            <li>
+              <Button
+                href="#"
+                as="a"
+                variant="ghost"
+                class="w-full justify-start">Blog</Button>
+            </li>
+            <li>
+              <Button
+                href="#"
+                as="a"
+                variant="ghost"
+                class="w-full justify-start">Careers</Button>
+            </li>
           </ul>
         </MenuDropdown>
-    </li>
+      </li>
       <li><Button as="a" href="/contact" variant="ghost">Contact</Button></li>
     </ul>
     <div slot="actions" class="flex items-center gap-2">
-      <Button variant="outline" class="group-[.is-stuck]/surface:opacity-0 group-[.is-stuck]/surface:blur-sm transition-all duration-300 ease-out">Log in</Button>
+      <Button
+        variant="outline"
+        class="group-[.is-stuck]/surface:opacity-0 group-[.is-stuck]/surface:blur-sm transition-all duration-300 ease-out"
+        >Log in</Button
+      >
       <Button class="w-20 group-[.is-stuck]/surface:w-25 duration-500 ease-out">
-        <span class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out">Contact</span>
-        <span class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 group-[.is-stuck]/surface:block opacity-0 transition-all hidden blur-sm transition-discrete duration-500 ease-out">Get a demo</span>
+        <span
+          class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out"
+          >Contact</span
+        >
+        <span
+          class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 group-[.is-stuck]/surface:block opacity-0 transition-all hidden blur-sm transition-discrete duration-500 ease-out"
+          >Get a demo</span
+        >
       </Button>
     </div>
   </NavigationMenu>
@@ -48,25 +84,33 @@ import '../styles/global.css';
 </section>
 
 <section class="py-5 max-w-5xl mx-auto">
-
-<Breadcrumbs>
-  <li><Button href="/" as="a" variant="link">Home</Button></li>
-  <li><SlashIcon class="size-4" /></li>
-  <li><Button href="/docs" as="a" variant="link">Docs</Button></li>
-   <li><SlashIcon class="size-4" /></li>
-  <li>
- <MenuDropdown trigger={{ variant: 'link' }}>
-  <span slot="trigger">Menu</span>
-  <ul slot="content">
-    <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 1</Button></li>
-    <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 2</Button></li>
-    <li><Button href="#" as="a" variant="ghost" class="w-full justify-start">Item 3</Button></li>
-  </ul>
-</MenuDropdown>
-</li>
- <li><SlashIcon class="size-4" /></li>
-  <li><Button as="span" variant="link">Current Page</Button></li>
-</Breadcrumbs>
+  <Breadcrumbs>
+    <li><Button href="/" as="a" variant="link">Home</Button></li>
+    <li><SlashIcon class="size-4" /></li>
+    <li><Button href="/docs" as="a" variant="link">Docs</Button></li>
+    <li><SlashIcon class="size-4" /></li>
+    <li>
+      <MenuDropdown trigger={{ variant: "link" }}>
+        <span slot="trigger">Menu</span>
+        <ul slot="content">
+          <li>
+            <Button href="#" as="a" variant="ghost" class="w-full justify-start"
+              >Item 1</Button>
+          </li>
+          <li>
+            <Button href="#" as="a" variant="ghost" class="w-full justify-start"
+              >Item 2</Button>
+          </li>
+          <li>
+            <Button href="#" as="a" variant="ghost" class="w-full justify-start"
+              >Item 3</Button>
+          </li>
+        </ul>
+      </MenuDropdown>
+    </li>
+    <li><SlashIcon class="size-4" /></li>
+    <li><Button as="span" variant="link">Current Page</Button></li>
+  </Breadcrumbs>
 </section>
 
 <!-- <div class="overflow-y-auto max-h-[320px] w-full bg-border px-8  border-border">
@@ -98,14 +142,19 @@ import '../styles/global.css';
         <h3>Feature 1</h3>
       </div>
       <div slot="content">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
+          quos.
+        </p>
       </div>
     </Card>
   </div>
 </section>
 
 <Footer class="rounded-t-xl">
-  <div class="flex flex-col items-center gap-4 py-20 border-b border-footer-border">
+  <div
+    class="flex flex-col items-center gap-4 py-20 border-b border-footer-border"
+  >
     <h3 class="text-4xl mb-2">Get started with ChatGPT</h3>
     <Button>Download</Button>
   </div>
@@ -113,24 +162,24 @@ import '../styles/global.css';
     <div>Acme, Inc. Logo</div>
     <div>
       <FooterLinks
-      title="Resources"
-      items={[
-        { label: "Blog", href: "/blog" },
-        { label: "Documentation", href: "/docs" },
-        { label: "Pricing", href: "/pricing" },
-        { label: "Support", href: "/support" }
-      ]}
-    />
-    <FooterLinks
-    title="Resources"
-    items={[
-      { label: "Blog", href: "/blog" },
-      { label: "Documentation", href: "/docs" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "Support", href: "/support" }
-    ]}
-  />
-</div>
+        title="Resources"
+        items={[
+          { label: "Blog", href: "/blog" },
+          { label: "Documentation", href: "/docs" },
+          { label: "Pricing", href: "/pricing" },
+          { label: "Support", href: "/support" },
+        ]}
+      />
+      <FooterLinks
+        title="Resources"
+        items={[
+          { label: "Blog", href: "/blog" },
+          { label: "Documentation", href: "/docs" },
+          { label: "Pricing", href: "/pricing" },
+          { label: "Support", href: "/support" },
+        ]}
+      />
+    </div>
 
     <FooterLinks
       title="Company"
@@ -139,14 +188,14 @@ import '../styles/global.css';
         { label: "About", href: "/about" },
         { label: "Contact", href: "/contact" },
         { label: "Careers", href: "/careers" },
-        { label: "Press", href: "/press" }
+        { label: "Press", href: "/press" },
       ]}
     />
     <FooterLinks
       title="Legal"
       items={[
         { label: "Privacy Policy", href: "/privacy-policy" },
-        { label: "Terms of Service", href: "/terms-of-service" }
+        { label: "Terms of Service", href: "/terms-of-service" },
       ]}
     />
   </div>

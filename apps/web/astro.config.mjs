@@ -60,7 +60,7 @@ export default defineConfig({
     mdx(),
   ],
   vite: {
-    plugins: [tailwindcss({ applyBaseStyles: false })],
+    plugins: [tailwindcss()],
     ssr: {
       noExternal: ["zod"],
     },

@@ -1,4 +1,4 @@
-@layer base, starlight, bejamas, theme, components, utilities;
+@layer base, starlight.reset, starlight, bejamas, theme, components, utilities;
 
 @import "@astrojs/starlight-tailwind";
 @import "tailwindcss/theme.css" layer(theme);

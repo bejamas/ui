@@ -1,5 +1,4 @@
 ---
-import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import { getCollection } from "astro:content";
 import cssSource from "@bejamas/ui/styles/globals.css?raw";
 import Select from "@bejamas/ui/components/Select.astro";
@@ -7,14 +6,13 @@ import { defaultPresets } from "../utils/themes/presets";
 import Label from "@bejamas/ui/components/Label.astro";
 import Button from "@bejamas/ui/components/Button.astro";
 import { ArrowLeft, ArrowRight, CodeXml } from "@lucide/astro";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
 const docs = await getCollection("docs");
 const components = docs.filter((doc) => doc.id.startsWith("components/"));
 
 const isTextToken = (token) =>
   token === "foreground" || token.endsWith("-foreground");
-
-import "@/styles/global.css";
 
 // Load CSS variables from the UI package at build-time (via Vite raw import)
 
