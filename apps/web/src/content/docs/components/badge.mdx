@@ -11,7 +11,7 @@ A small badge for status or labeling, with variants.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
 <div class="flex flex-col items-center gap-3">
   <div class="flex w-full flex-wrap gap-3">
     <Badge>Badge</Badge>
@@ -139,13 +139,13 @@ A small badge for status or labeling, with variants.
 /**
  * @component Badge
  * @description A small badge for status or labeling, with variants.
- * 
+ *
  * @prop {string} [variant] - Visual style of the badge. One of "default", "secondary", "destructive", "outline". Default: "default".
  * @prop {string} [class] - Additional classes to apply.
  * @prop {string} [as] - Semantic tag override (e.g. "span", "a", "div"). Default: "span".
- * 
+ *
  * @example
- * 
+ *
  * <div class="flex flex-col items-center gap-3">
  *   <div class="flex w-full flex-wrap gap-3">
  *     <Badge>Badge</Badge>
@@ -184,7 +184,7 @@ A small badge for status or labeling, with variants.
  *     </Badge>
  *   </div>
  * </div>
- * 
+ *
  */
 
 import type { HTMLTag, Polymorphic } from "astro/types";
@@ -214,42 +214,42 @@ const badgeVariants = cva(
     "[&>svg]:size-3 gap-1 [&>svg]:pointer-events-none",
     "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
     "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-    "transition-[color,box-shadow] overflow-hidden"
+    "transition-[color,box-shadow] overflow-hidden",
   ],
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
-        secondary: "border-border bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
-        destructive: "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline: "text-foreground border-none shadow-sm [a&]:hover:bg-accent [a&]:hover:text-accent-foreground"
+        default:
+          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+        secondary:
+          "border-border bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+        destructive:
+          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "text-foreground border-none shadow-sm [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
       },
       shape: {
         default: "rounded-md",
-        pill: "rounded-full"
+        pill: "rounded-full",
       },
       size: {
         default: "text-sm h-6",
-        sm: "text-xs h-5"
-      }
+        sm: "text-xs h-5",
+      },
     },
     defaultVariants: {
       variant: "default",
       shape: "default",
-      size: "default"
-    }
-  }
+      size: "default",
+    },
+  },
 );
 
 const Tag = as;
 const classes = cn(badgeVariants({ variant, shape, size }), className);
 ---
 
-<Tag
-  data-slot="badge"
-  class={classes}
-  {...props}
->
+<Tag class={classes} {...props}>
   <slot />
 </Tag>
 ```

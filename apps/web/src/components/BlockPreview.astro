@@ -1,7 +1,7 @@
 ---
 import Tabs from "@bejamas/ui/components/Tabs.astro";
 import Button from "@bejamas/ui/components/Button.astro";
-import { Laptop, Tablet, Smartphone } from "@lucide/astro";
+import { Laptop, Tablet, Smartphone, Terminal, Check } from "@lucide/astro";
 import Source from "@/components/Source.astro";
 
 const item = Astro.props.item;
@@ -9,30 +9,31 @@ const item = Astro.props.item;
 
 <div x-data="{ size: 'desktop' }">
   <Tabs>
-    <div class="flex justify-between">
-      <div slot="tablist" class="space-x-2 mb-4">
+    <div class="flex justify-between mb-3 items-center">
+      <div slot="tablist" class="space-x-0.5">
         <Button
           role="tab"
           size="sm"
           aria-selected="true"
           variant="ghost"
-          class="aria-selected:bg-primary aria-selected:text-primary-foreground"
+          class="aria-selected:bg-primary aria-selected:text-primary-foreground h-8 px-2.5"
           >Preview</Button
         >
         <Button
           role="tab"
           size="sm"
           variant="ghost"
-          class="aria-selected:bg-primary aria-selected:text-primary-foreground"
+          class="aria-selected:bg-primary aria-selected:text-primary-foreground h-8 px-2.5"
           >Source</Button
         >
       </div>
-      <div class="flex space-x-2">
+      <div class="flex space-x-0.5 items-center">
         <Button
           size="sm"
           size="icon"
           variant="ghost"
           title="Desktop"
+          class="size-8"
           @click="size = 'desktop'"
         >
           <Laptop class="size-4" />
@@ -42,6 +43,7 @@ const item = Astro.props.item;
           size="icon"
           variant="ghost"
           title="Tablet"
+          class="size-8"
           @click="size = 'tablet'"
         >
           <Tablet class="size-4" />
@@ -51,10 +53,21 @@ const item = Astro.props.item;
           size="icon"
           variant="ghost"
           title="Smartphone"
+          class="size-8"
           @click="size = 'smartphone'"
         >
           <Smartphone class="size-4" />
         </Button>
+        <button
+          x-data="{ copied: false }"
+          @click="navigator.clipboard.writeText('bunx bejamas@latest add {item.id}'); copied = true; setTimeout(() => copied = false, 2000)"
+          class="bg-muted/50 ml-2 border flex items-center rounded-md text-xs px-2 py-2 cursor-pointer select-none hover:bg-muted/80 h-8 transition-colors duration-200 ease-out"
+          title="Copy install command"
+        >
+          <span x-show="!copied"><Terminal class="size-4 mr-2" /></span>
+          <span x-show="copied"><Check class="size-4 mr-2" /></span>
+          <code>bunx bejamas@latest add {item.id}</code>
+        </button>
       </div>
     </div>
     <div role="tabpanel">

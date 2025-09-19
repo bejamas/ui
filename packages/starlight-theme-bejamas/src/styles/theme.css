@@ -237,4 +237,27 @@
     align-items: center;
     background-color: var(--background);
   }
+
+  .expressive-code pre {
+    counter-reset: line;
+  }
+
+  .expressive-code pre .ec-line {
+    counter-increment: line;
+  }
+
+  .expressive-code pre .ec-line::before {
+    content: counter(line);
+    display: inline-block;
+    width: 2rem;
+    margin-right: 1rem;
+    color: var(--muted-foreground);
+    text-align: right;
+    padding-left: 0.5rem;
+    opacity: 0.75;
+  }
+
+  .expressive-code .frame pre {
+    background-color: color-mix(in oklab, var(--muted) 50%, transparent);
+  }
 }

@@ -175,11 +175,11 @@ function getLangFromPath(path: string): string {
         </ul>
       </aside>
 
-      <div class="space-y-4">
+      <div class="space-y-4 min-w-0">
         {labeledFiles.map((f) => (
           <div
             x-show={`active === '${f.label}'`}
-            class="border-l border-border overflow-hidden mb-0"
+            class="border-l border-border mb-0 min-w-0"
           >
             <div class="flex items-center justify-between px-5 py-2 bg-muted/50 border-b border-border h-12">
               <span class="font-medium text-sm truncate">{f.displayName}</span>
@@ -191,11 +191,11 @@ function getLangFromPath(path: string): string {
                 Copy
               </button>
             </div>
-            <div class="overflow-x-auto text-xs leading-relaxed">
+            <div class="overflow-x-auto text-xs leading-relaxed min-w-0 w-full">
               <Code
                 code={f.code}
                 lang={getLangFromPath(f.displayName)}
-                class="h-[800px] overflow-y-auto rounded-none"
+                class="h-[800px] overflow-y-auto rounded-none [&_pre]:rounded-none"
               />
             </div>
           </div>
