@@ -130,13 +130,13 @@ export function applyThemeToCss(themeState: ThemeEditorState): string {
   const darkShadows = getShadowMap({ ...themeState, currentMode: "dark" });
 
   const rootBlock = [
-    ":root {",
+    "html:root {",
     buildCssVars({ ...commonVars, ...lightColorVars, ...lightShadows }),
     "}",
   ].join("\n");
 
   const darkBlock = [
-    '[data-theme="dark"], .dark {',
+    'html[data-theme="dark"], html.dark {',
     buildCssVars({ ...darkColorVars, ...darkShadows }),
     "}",
   ].join("\n");

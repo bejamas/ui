@@ -22,13 +22,11 @@ export default defineConfig({
           ],
           components: {
             Button: "@bejamas/ui/components/Button.astro",
-            PageFrame: "./src/components/PageFrame.astro",
             ThemeSelect: "./src/components/ThemeSwitcher.astro",
           },
         }),
       ],
       components: {
-        PageFrame: "./src/components/PageFrame.astro",
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
       },
       title: "bejamas/ui",
@@ -55,6 +53,15 @@ export default defineConfig({
         dark: "./src/assets/logo-dark.svg",
         replacesTitle: true,
       },
+      head: [
+        {
+          tag: "link",
+          attrs: {
+            href: "/r/themes/current-theme.css",
+            rel: "stylesheet",
+          },
+        },
+      ],
       expressiveCode: true,
     }),
     mdx(),

@@ -23,7 +23,6 @@ export async function GET({
   try {
     const cookies = parseCookies(request);
     const currentTheme = cookies.theme;
-    const entries = await getCollection("themes");
 
     if (!currentTheme) {
       return new Response("No theme found", {
@@ -51,11 +50,11 @@ export async function GET({
         status: 200,
         headers: {
           "Access-Control-Allow-Origin": "*",
-          "Cache-Control": "public, s-maxage=3600",
+          "Cache-Control": "s-maxage=3600",
           Vary: "Cookie",
           "Content-Type": "text/css",
         },
-      }
+      },
     );
   } catch (e) {
     console.error("Error fetching the theme registry item:", e);
