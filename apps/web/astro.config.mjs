@@ -72,5 +72,7 @@ export default defineConfig({
       noExternal: ["zod"],
     },
   },
-  adapter: vercel(),
+  adapter: vercel({
+    skewProtection: true,
+  }),
 });
