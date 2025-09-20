@@ -152,7 +152,7 @@ const sections = [
           <Select id="theme-presets" class="w-[180px]">
             {
               Object.entries(leanPresets).map(([key, preset]) => (
-                <option value={key}>
+                <option value={key} class="px-3 py-2 rounded-md">
                   <div class="flex gap-1 items-center">
                     <div
                       class="size-4 rounded-full"
@@ -189,8 +189,7 @@ const sections = [
           size="icon"
           aria-label="Next preset"><ArrowRight class="size-4" /></Button
         >
-        <Button variant="secondary">Copy Code <CodeXml class="size-4" /></Button
-        >
+        <Button variant="outline">Copy Code <CodeXml class="size-4" /></Button>
       </div>
     </div>
     <div class="not-content mt-10">
