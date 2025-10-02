@@ -58,11 +58,3 @@ This spectrum has practical consequences. On one side, we provide a codified the
 On the other side, we provide blocks, templates, and examples that show how visuals and tone come together in practice.
 
 Developers get a reliable foundation. Designers and marketers get expressive levers. And brands get the best of both worlds: a system that scales, without sacrificing uniqueness.
-
----
-
-## Closing
-
-A theme in **bejamas/ui** is both systematic and expressive.
-
-By codifying what can be automated, and guiding what must be designed, we ensure that marketing websites scale without losing their unique identity.
