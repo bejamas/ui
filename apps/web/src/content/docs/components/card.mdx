@@ -215,7 +215,7 @@ UI container for grouping content with header, footer, etc.
  * 
  *   <Fragment slot="header">
  *     <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
- *     <p class="text-sm">loves long walks</p>
+ *     <p class="text-sm text-muted-foreground">loves long walks</p>
  *   </Fragment>
  *
  *   <Fragment slot="footer">
@@ -231,12 +231,12 @@ UI container for grouping content with header, footer, etc.
  *     <img
  *       alt="Happy pet"
  *       aria-hidden="true"
- *       src="https://images.unsplash.com/photo-1755899850036-084006cbc1c2?q=80&w=2288&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+ *       src="https://images.unsplash.com/photo-1759223293091-f4c757c79f6c?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
  *     />
  *   </Fragment>
  *   <Fragment slot="header">
- *     <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
- *     <p class="text-sm">loves long walks</p>
+ *     <h3 class="text-xl font-medium leading-none">New breakthrough in AI</h3>
+ *     <p class="text-sm text-muted-foreground"><span class="font-medium">Aug 10, 2025</span> · 10 min read</p>
  *   </Fragment>
  * </Card>
  *
@@ -247,12 +247,12 @@ import { cn } from "../lib/utils";
 const { variant = "default", class: className = "" } = Astro.props;
 
 const cardVariants = cva(
-  "text-card-foreground overflow-clip p-5 relative flex flex-col rounded-xl",
+  "text-card-foreground overflow-clip relative flex flex-col",
   {
     variants: {
       variant: {
-        default: "bg-card border border-border shadow-sm",
-        ghost: "",
+        default: "bg-card border p-5 border-border shadow-sm rounded-xl",
+        ghost: "[&_img]:rounded-xl",
       },
     },
     defaultVariants: {
@@ -260,6 +260,15 @@ const cardVariants = cva(
     },
   },
 );
+
+const mediaVariants = cva("z-0", {
+  variants: {
+    variant: {
+      default: "",
+      ghost: "mb-5",
+    },
+  },
+});
 
 const headerVariants = cva(
   "@container/card-header relative z-1 text-pretty grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
@@ -277,7 +286,12 @@ const headerVariants = cva(
 <div class={cn(cardVariants({ variant, className }))}>
   {
     Astro.slots.media && (
-      <div class:list={["z-0", Astro.props.mediaClass]} slot="media">
+      <div
+        class={cn(
+          mediaVariants({ variant, className: Astro.props.mediaClass }),
+        )}
+        slot="media"
+      >
         <slot name="media" />
       </div>
     )
@@ -387,7 +401,7 @@ import Card from '@/components/ui/Card.astro';
 
   <Fragment slot="header">
     <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
-    <p class="text-sm">loves long walks</p>
+    <p class="text-sm text-muted-foreground">loves long walks</p>
   </Fragment>
 
   <Fragment slot="footer">
@@ -426,7 +440,7 @@ import Card from '@/components/ui/Card.astro';
 
   <Fragment slot="header">
     <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
-    <p class="text-sm">loves long walks</p>
+    <p class="text-sm text-muted-foreground">loves long walks</p>
   </Fragment>
 
   <Fragment slot="footer">
@@ -448,12 +462,12 @@ import Card from '@/components/ui/Card.astro';
     <img
       alt="Happy pet"
       aria-hidden="true"
-      src="https://images.unsplash.com/photo-1755899850036-084006cbc1c2?q=80&w=2288&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      src="https://images.unsplash.com/photo-1759223293091-f4c757c79f6c?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     />
   </Fragment>
   <Fragment slot="header">
-    <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
-    <p class="text-sm">loves long walks</p>
+    <h3 class="text-xl font-medium leading-none">New breakthrough in AI</h3>
+    <p class="text-sm text-muted-foreground"><span class="font-medium">Aug 10, 2025</span> · 10 min read</p>
   </Fragment>
 </Card>
     </div>
@@ -466,12 +480,12 @@ import Card from '@/components/ui/Card.astro';
     <img
       alt="Happy pet"
       aria-hidden="true"
-      src="https://images.unsplash.com/photo-1755899850036-084006cbc1c2?q=80&w=2288&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      src="https://images.unsplash.com/photo-1759223293091-f4c757c79f6c?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     />
   </Fragment>
   <Fragment slot="header">
-    <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
-    <p class="text-sm">loves long walks</p>
+    <h3 class="text-xl font-medium leading-none">New breakthrough in AI</h3>
+    <p class="text-sm text-muted-foreground"><span class="font-medium">Aug 10, 2025</span> · 10 min read</p>
   </Fragment>
 </Card>
 ```

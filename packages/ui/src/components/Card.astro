@@ -94,7 +94,7 @@
  * 
  *   <Fragment slot="header">
  *     <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
- *     <p class="text-sm">loves long walks</p>
+ *     <p class="text-sm text-muted-foreground">loves long walks</p>
  *   </Fragment>
  *
  *   <Fragment slot="footer">
@@ -110,12 +110,12 @@
  *     <img
  *       alt="Happy pet"
  *       aria-hidden="true"
- *       src="https://images.unsplash.com/photo-1755899850036-084006cbc1c2?q=80&w=2288&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+ *       src="https://images.unsplash.com/photo-1759223293091-f4c757c79f6c?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
  *     />
  *   </Fragment>
  *   <Fragment slot="header">
- *     <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
- *     <p class="text-sm">loves long walks</p>
+ *     <h3 class="text-xl font-medium leading-none">New breakthrough in AI</h3>
+ *     <p class="text-sm text-muted-foreground"><span class="font-medium">Aug 10, 2025</span> · 10 min read</p>
  *   </Fragment>
  * </Card>
  *
@@ -126,12 +126,12 @@ import { cn } from "../lib/utils";
 const { variant = "default", class: className = "" } = Astro.props;
 
 const cardVariants = cva(
-  "text-card-foreground overflow-clip relative flex flex-col rounded-xl",
+  "text-card-foreground overflow-clip relative flex flex-col",
   {
     variants: {
       variant: {
-        default: "bg-card border p-5 border-border shadow-sm",
-        ghost: "",
+        default: "bg-card border p-5 border-border shadow-sm rounded-xl",
+        ghost: "[&_img]:rounded-xl",
       },
     },
     defaultVariants: {
