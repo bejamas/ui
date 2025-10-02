@@ -5,18 +5,18 @@
  * @description Accessible checkbox with custom styling and indicator.
  * @status stable
  * @since 0.1.0
- * 
+ *
  * @example
- * 
+ *
  * <div class="flex flex-col gap-6 not-content">
  * <div class="flex items-center gap-3">
  *   <Checkbox id="terms" />
  *   <Label for="terms">Accept terms and conditions</Label>
  * </div>
- * 
+ *
  * <div class="flex items-start gap-3">
  *   <Checkbox id="terms-2" defaultChecked />
- *   <div class="grid gap-2 pt-1">
+ *   <div class="grid gap-2">
  *     <Label for="terms-2">Accept terms and conditions</Label>
  *     <p class="text-muted-foreground text-sm">
  *       By clicking this checkbox, you agree to the terms and conditions.
@@ -24,13 +24,13 @@
  *   </div>
  * </div>
  *
- * <div class="flex items-start gap-3">
+ * <div class="flex items-center gap-3">
  *   <Checkbox id="toggle" disabled />
  *   <Label for="toggle">Enable notifications</Label>
  * </div>
  *
  * <Label
- *   class="hover:bg-accent/50 border-border flex items-start gap-3 rounded-lg border p-3 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:border-blue-900 dark:has-[:checked]:bg-blue-950"
+ *   class="hover:bg-accent/20 border-border flex items-start gap-3 rounded-lg border p-3 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:border-blue-900 dark:has-[:checked]:bg-blue-950"
  * >
  *   <Checkbox
  *     id="toggle-2"
@@ -46,10 +46,10 @@
  * </Label>
  * </div>
  */
- 
-const { class: className = '', id = '', name = id, ...props } = Astro.props;
 
-import { Check } from "@lucide/astro"
+const { class: className = "", id = "", name = id, ...props } = Astro.props;
+
+import { Check } from "@lucide/astro";
 import { cn } from "../lib/utils";
 
 const baseWrapper =

@@ -7,6 +7,7 @@ import {
   type StarlightThemeBejamasUserConfig,
 } from "./config";
 import { vitePluginStarlightThemeBejamas } from "./lib/vite";
+import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 
 export default function starlightThemeBejamas(
   userConfig: StarlightThemeBejamasUserConfig,
@@ -35,6 +36,14 @@ export default function starlightThemeBejamas(
           starlightConfig.expressiveCode === true
             ? {}
             : starlightConfig.expressiveCode;
+
+        console.log({ plugins: starlightConfig.plugins });
+
+        starlightConfig.plugins?.push(
+          pluginLineNumbers({
+            showLineNumbers: true,
+          }),
+        );
 
         const componentOverrides: typeof config.components = {};
 
@@ -107,6 +116,19 @@ export default function starlightThemeBejamas(
                       ...userExpressiveCodeConfig?.styleOverrides?.textMarkers,
                     },
                   },
+                  // plugins: [
+                  //   pluginLineNumbers({
+                  //     showLineNumbers: false,
+                  //   }),
+                  // ],
+                  defaultProps: {
+                    showLineNumbers: false,
+                    overridesByLang: {
+                      astro: {
+                        showLineNumbers: true,
+                      },
+                    },
+                  },
                 },
         });
 
@@ -115,7 +137,9 @@ export default function starlightThemeBejamas(
           hooks: {
             "astro:config:setup": ({ updateConfig }) => {
               updateConfig({
-                vite: { plugins: [vitePluginStarlightThemeBejamas(config)] },
+                vite: {
+                  plugins: [vitePluginStarlightThemeBejamas(config)],
+                },
               });
             },
           },

@@ -1,6 +1,6 @@
 ---
 import Footer from "@bejamas/ui/components/Footer.astro";
-import FooterLinks from "@bejamas/ui/components/FooterLinks.astro";
+import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
 import Button from "@bejamas/ui/components/Button.astro";
 import Separator from "@bejamas/ui/components/Separator.astro";
 import Card from "@bejamas/ui/components/Card.astro";
@@ -8,10 +8,11 @@ import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
 import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
 import StickySurface from "@bejamas/ui/components/StickySurface.astro";
 import Breadcrumbs from "@bejamas/ui/components/Breadcrumbs.astro";
+import Marquee from "@bejamas/ui/components/Marquee.astro";
 import { SlashIcon } from "@lucide/astro";
 ---
 
-<StickySurface effects={["elevate"]} threshold="1rem" observeStuck>
+<StickySurface effects={["elevate"]} asd="asd" threshold="1rem" observeStuck>
   <NavigationMenu>
     <div slot="logo" class="flex items-center h-full">
       <img
@@ -20,6 +21,29 @@ import { SlashIcon } from "@lucide/astro";
         class="h-8"
       />
     </div>
+    <Marquee asd="asd">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Sonos_%28Unternehmen%29_logo.svg/1600px-Sonos_%28Unternehmen%29_logo.svg.png?20180715211759"
+        alt="Netflix"
+        class="h-5 self-center mx-10"
+      />
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Uber_logo_2018.svg/1600px-Uber_logo_2018.svg.png?20180914002846"
+        alt="Uber"
+        class="h-5 self-center mx-10"
+      />
+      <img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10" />
+      <img
+        src="/demo/logo/coca-cola.svg"
+        alt="Coca-Cola"
+        class="h-6 self-center mx-10"
+      />
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/1600px-Logo_NIKE.svg.png?20220908234918"
+        alt="Nike"
+        class="h-5 self-center mx-10"
+      />
+    </Marquee>
     <ul slot="links" class="flex items-center space-x-2">
       <li><Button as="a" href="/" variant="ghost">Home</Button></li>
       <li>
@@ -31,28 +55,32 @@ import { SlashIcon } from "@lucide/astro";
                 href="#"
                 as="a"
                 variant="ghost"
-                class="w-full justify-start">About</Button>
+                class="w-full justify-start">About</Button
+              >
             </li>
             <li>
               <Button
                 href="#"
                 as="a"
                 variant="ghost"
-                class="w-full justify-start">Team</Button>
+                class="w-full justify-start">Team</Button
+              >
             </li>
             <li>
               <Button
                 href="#"
                 as="a"
                 variant="ghost"
-                class="w-full justify-start">Blog</Button>
+                class="w-full justify-start">Blog</Button
+              >
             </li>
             <li>
               <Button
                 href="#"
                 as="a"
                 variant="ghost"
-                class="w-full justify-start">Careers</Button>
+                class="w-full justify-start">Careers</Button
+              >
             </li>
           </ul>
         </MenuDropdown>
@@ -95,15 +123,18 @@ import { SlashIcon } from "@lucide/astro";
         <ul slot="content">
           <li>
             <Button href="#" as="a" variant="ghost" class="w-full justify-start"
-              >Item 1</Button>
+              >Item 1</Button
+            >
           </li>
           <li>
             <Button href="#" as="a" variant="ghost" class="w-full justify-start"
-              >Item 2</Button>
+              >Item 2</Button
+            >
           </li>
           <li>
             <Button href="#" as="a" variant="ghost" class="w-full justify-start"
-              >Item 3</Button>
+              >Item 3</Button
+            >
           </li>
         </ul>
       </MenuDropdown>
@@ -161,7 +192,7 @@ import { SlashIcon } from "@lucide/astro";
   <div class="py-10 grid grid-cols-4 gap-4 mx-auto max-w-5xl">
     <div>Acme, Inc. Logo</div>
     <div>
-      <FooterLinks
+      <LinkGroup
         title="Resources"
         items={[
           { label: "Blog", href: "/blog" },
@@ -170,7 +201,7 @@ import { SlashIcon } from "@lucide/astro";
           { label: "Support", href: "/support" },
         ]}
       />
-      <FooterLinks
+      <LinkGroup
         title="Resources"
         items={[
           { label: "Blog", href: "/blog" },
@@ -181,7 +212,7 @@ import { SlashIcon } from "@lucide/astro";
       />
     </div>
 
-    <FooterLinks
+    <LinkGroup
       title="Company"
       items={[
         { label: "Home", href: "/" },
@@ -191,7 +222,7 @@ import { SlashIcon } from "@lucide/astro";
         { label: "Press", href: "/press" },
       ]}
     />
-    <FooterLinks
+    <LinkGroup
       title="Legal"
       items={[
         { label: "Privacy Policy", href: "/privacy-policy" },

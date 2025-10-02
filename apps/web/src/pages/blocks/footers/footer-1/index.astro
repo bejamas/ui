@@ -1,7 +1,7 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
 import Footer from "@bejamas/ui/components/Footer.astro";
-import FooterLinks from "@bejamas/ui/components/FooterLinks.astro";
+import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
 import Button from "@bejamas/ui/components/Button.astro";
 import Separator from "@bejamas/ui/components/Separator.astro";
 import CTA from "./components/cta.astro";
@@ -13,7 +13,7 @@ import CTA from "./components/cta.astro";
     <div class="py-10 grid grid-cols-4 gap-4 mx-auto max-w-5xl">
       <div>Acme, Inc. Logo</div>
       <div class="space-y-6">
-        <FooterLinks
+        <LinkGroup
           title="Resources"
           items={[
             { label: "Blog", href: "/blog" },
@@ -22,7 +22,7 @@ import CTA from "./components/cta.astro";
             { label: "Support", href: "/support" },
           ]}
         />
-        <FooterLinks
+        <LinkGroup
           title="Resources"
           items={[
             { label: "Blog", href: "/blog" },
@@ -33,7 +33,7 @@ import CTA from "./components/cta.astro";
         />
       </div>
 
-      <FooterLinks
+      <LinkGroup
         title="Company"
         items={[
           { label: "Home", href: "/" },
@@ -43,7 +43,7 @@ import CTA from "./components/cta.astro";
           { label: "Press", href: "/press" },
         ]}
       />
-      <FooterLinks
+      <LinkGroup
         title="Legal"
         items={[
           { label: "Privacy Policy", href: "/privacy-policy" },

@@ -1,6 +1,36 @@
 import { ThemePreset } from "../types/theme";
 
 export const defaultPresets: Record<string, ThemePreset> = {
+  rome: {
+    label: "Rome",
+    createdAt: "2025-09-30",
+    styles: {
+      light: {
+        background: "#F1E7D7",
+        foreground: "#370808",
+        card: "#fff",
+        "card-foreground": "#370808",
+        primary: "#370808",
+        "primary-foreground": "#fff",
+        secondary: "#fff",
+        "secondary-foreground": "#370808",
+        muted: "#e0d7c6",
+        "muted-foreground": "#370808",
+        accent: "#EBA91C",
+        "accent-foreground": "#370808",
+        border: "#CCC0AD",
+        input: "#CCC0AD",
+        radius: "1.25rem",
+        "shadow-color": "oklch(0 0 0)",
+        "shadow-opacity": "0.1",
+        "shadow-blur": "3px",
+        "shadow-spread": "0px",
+        "shadow-offset-x": "0",
+        "shadow-offset-y": "1px",
+        "letter-spacing": "0em",
+      },
+    },
+  },
   default: {
     label: "Default",
     createdAt: "2025-09-10",

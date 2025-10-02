@@ -39,7 +39,7 @@ export function toIdentifier(name: string): string {
 }
 
 export function parseJsDocMetadata(
-  frontmatterCode: string
+  frontmatterCode: string,
 ): Record<string, any> {
   const jsDocMatch = frontmatterCode.match(/\/\*\*([\s\S]*?)\*\//);
   if (!jsDocMatch) return {};
@@ -102,26 +102,60 @@ export function parseJsDocMetadata(
   return meta;
 }
 
-export function extractPropsFromAstroProps(
-  sourceFile: SourceFile
-): Array<{
+export function extractPropsFromAstroProps(sourceFile: SourceFile): Array<{
   name?: string;
   isRest?: boolean;
   hasDefault?: boolean;
   defaultValue?: string;
   alias?: string;
 }> {
+  // Helper: unwrap expressions like `(Astro.props as Props)`, `Astro.props as Props`,
+  // `<Props>Astro.props`, `(Astro.props)!`, and parenthesized variants until we reach
+  // the underlying PropertyAccessExpression.
+  function unwrapAstroProps(node: any): any | null {
+    let current: any = node;
+    // Unwrap layers that can wrap the property access
+    // AsExpression, TypeAssertion, SatisfiesExpression, NonNullExpression, ParenthesizedExpression
+    // Keep drilling down via getExpression()
+    // Guard against cycles by limiting iterations
+    for (let i = 0; i < 10; i += 1) {
+      const kind = current.getKind();
+      if (kind === SyntaxKind.PropertyAccessExpression) {
+        const expr = current.getExpression();
+        if (
+          expr &&
+          expr.getText() === "Astro" &&
+          current.getName() === "props"
+        ) {
+          return current;
+        }
+        return null;
+      }
+      if (
+        kind === SyntaxKind.AsExpression ||
+        kind === SyntaxKind.TypeAssertion ||
+        // @ts-ignore - SatisfiesExpression may not exist in older TS versions
+        kind === (SyntaxKind as any).SatisfiesExpression ||
+        kind === SyntaxKind.NonNullExpression ||
+        kind === SyntaxKind.ParenthesizedExpression
+      ) {
+        const next = current.getExpression && current.getExpression();
+        if (!next) return null;
+        current = next;
+        continue;
+      }
+      return null;
+    }
+    return null;
+  }
+
   const declarations = sourceFile.getDescendantsOfKind(
-    SyntaxKind.VariableDeclaration
+    SyntaxKind.VariableDeclaration,
   );
   const target = declarations.find((decl) => {
     const init = decl.getInitializer();
     if (!init) return false;
-    if (init.getKind() !== SyntaxKind.PropertyAccessExpression) return false;
-    const expr: any = init;
-    return (
-      expr.getExpression().getText() === "Astro" && expr.getName() === "props"
-    );
+    return !!unwrapAstroProps(init);
   });
   if (!target) return [];
   const nameNode: any = target.getNameNode();
@@ -139,6 +173,44 @@ export function extractPropsFromAstroProps(
     if (initializer) defaultValue = initializer.getText();
     return { name: propName, hasDefault: initializer != null, defaultValue };
   });
+}
+
+export function extractPropsFromDeclaredProps(sourceFile: SourceFile): Array<{
+  name: string;
+  type: string;
+  optional: boolean;
+}> {
+  // Prefer interface Props
+  const iface = sourceFile.getInterface("Props");
+  if (iface) {
+    const properties = iface.getProperties();
+    return properties.map((prop) => {
+      const name = prop.getName();
+      const typeNode = prop.getTypeNode();
+      const typeText = typeNode ? typeNode.getText() : prop.getType().getText();
+      const optional = prop.hasQuestionToken();
+      return { name, type: typeText, optional };
+    });
+  }
+
+  // Fallback: type Props = { ... }
+  const typeAlias = sourceFile.getTypeAlias("Props");
+  if (typeAlias) {
+    const typeNode = typeAlias.getTypeNode();
+    if (typeNode && typeNode.getKind() === SyntaxKind.TypeLiteral) {
+      const literal = typeNode.asKindOrThrow(SyntaxKind.TypeLiteral);
+      const properties = literal.getProperties();
+      return properties.map((prop) => {
+        const name = prop.getName();
+        const tn = prop.getTypeNode();
+        const typeText = tn ? tn.getText() : prop.getType().getText();
+        const optional = prop.hasQuestionToken();
+        return { name, type: typeText, optional };
+      });
+    }
+  }
+
+  return [];
 }
 
 export function resolveUiRoot(cwd: string): string {
@@ -183,12 +255,12 @@ export function resolveOutDir(cwd: string): string {
 
 export function detectHasImportTopLevel(
   block: string,
-  pascalName: string
+  pascalName: string,
 ): boolean {
   if (!block) return false;
   let inFence = false;
   const importLineRegex = new RegExp(
-    `^\\s*import\\s+.*\\bfrom\\s+['"][^'"]+\\b${pascalName}\\.astro['"]`
+    `^\\s*import\\s+.*\\bfrom\\s+['"][^'"]+\\b${pascalName}\\.astro['"]`,
   );
   for (const line of block.split("\n")) {
     const trimmed = line.trim();
@@ -203,16 +275,16 @@ export function detectHasImportTopLevel(
 
 export function hasImportOfTopLevel(
   block: string,
-  componentName: string
+  componentName: string,
 ): boolean {
   if (!block) return false;
   let inFence = false;
   const importRegex = new RegExp(
-    `^\\s*import\\s+[^;]*\\b${componentName}\\b[^;]*from\\s+['"][^'"]*(?:/|^)${componentName}\\.astro['"]`
+    `^\\s*import\\s+[^;]*\\b${componentName}\\b[^;]*from\\s+['"][^'"]*(?:/|^)${componentName}\\.astro['"]`,
   );
   const lucideIconRegex = /Icon$/.test(componentName)
     ? new RegExp(
-        `^\\s*import\\s+\\{[^}]*\\b${componentName}\\b[^}]*\\}\\s+from\\s+['"]@lucide/astro['"]`
+        `^\\s*import\\s+\\{[^}]*\\b${componentName}\\b[^}]*\\}\\s+from\\s+['"]@lucide/astro['"]`,
       )
     : null;
   for (const line of block.split("\n")) {
@@ -231,7 +303,7 @@ export function normalizeBlockMDX(block: string): string {
   if (!block) return "";
   return block.replace(
     /from\s+['"]@\/ui\/components\//g,
-    "from '@bejamas/ui/components/"
+    "from '@bejamas/ui/components/",
   );
 }
 
@@ -263,7 +335,7 @@ export function replaceDocsComponentTags(block: string): string {
 
 export function normalizeUsageMDX(
   usageMDX: string,
-  pascalName: string
+  pascalName: string,
 ): { text: string; hasImport: boolean } {
   const normalized = normalizeBlockMDX(usageMDX);
   const hasImport = detectHasImportTopLevel(normalized, pascalName);
@@ -293,11 +365,11 @@ export function extractComponentTagsFromMDX(block: string): string[] {
 
 export async function discoverExamples(
   componentFilePath: string,
-  componentsDir: string
+  componentsDir: string,
 ): Promise<string[]> {
   const fileBase = path.basename(
     componentFilePath,
-    path.extname(componentFilePath)
+    path.extname(componentFilePath),
   );
   const kebabBase = slugify(fileBase);
   const candidates = [
@@ -324,7 +396,7 @@ export async function discoverExamples(
 }
 
 export function createSourceFileFromFrontmatter(
-  frontmatterCode: string
+  frontmatterCode: string,
 ): SourceFile {
   const project = new Project({ useInMemoryFileSystem: true });
   return project.createSourceFile("Component.ts", frontmatterCode, {

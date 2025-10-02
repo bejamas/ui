@@ -4,13 +4,6 @@
  * @title Sticky Surface
  * @description A sticky surface component with scroll-based effects (border, shadow, surface swap, shrink, glass).
  * 
- * @prop {string} as - Semantic tag override (default: "div")
- * @prop {string|number} threshold - Scroll threshold for effects (default: "16px")
- * @prop {Array<string>} effects - Effects to apply. Options: "line", "elevate", "surface", "backdrop"
- * @prop {string} class - Additional classes
- * @prop {object} style - Inline styles
- * @prop {boolean} observeStuck - Whether to observe the stuck state of the surface
- * 
  * @example
  * 
  * <div class="overflow-y-auto max-h-[320px] w-full bg-border px-8 border-border">
@@ -94,8 +87,8 @@ const effectClasses = cn(
 );
 
 const styleVars = Object.entries(defaultVars)
-  .map(([k, v]) => `${k}:${v}`)
-  .join(";");
+  ?.map(([k, v]) => `${k}:${v}`)
+  ?.join(";");
 ---
 
 <Tag

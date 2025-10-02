@@ -153,7 +153,7 @@ const sections = [
             {
               Object.entries(leanPresets).map(([key, preset]) => (
                 <option value={key} class="px-3 py-2 rounded-md">
-                  <div class="flex gap-1 items-center">
+                  <div class="flex -space-x-1 items-center">
                     <div
                       class="size-4 rounded-full"
                       style={`background: ${preset.styles.light.background}`}
@@ -168,7 +168,7 @@ const sections = [
                     />
                     <div
                       class="size-4 rounded-full"
-                      style={`background: ${preset.styles.light.border}`}
+                      style={`background: ${preset.styles.light.accent}`}
                     />
                   </div>
                   {preset.label}

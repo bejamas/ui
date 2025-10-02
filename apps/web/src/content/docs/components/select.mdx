@@ -99,6 +99,19 @@ import { ChevronDown } from "@lucide/astro";
 import { cva } from "class-variance-authority";
 import { cn } from "../lib/utils";
 
+interface Props {
+  label?: string;
+  value?: string;
+  name?: string;
+  id?: string;
+  required?: boolean;
+  disabled?: boolean;
+  variant?: "default" | "ghost" | "neutral";
+  optionClass?: string;
+  class?: string;
+  showCheckmark?: boolean;
+}
+
 const {
   label = "",
   options = [],
@@ -243,21 +256,18 @@ const controlId =
   </DocsTabItem>
 </DocsTabs>
 
-## Usage
-
-<Select />
-
 
 ## Props
 
-- label (default: "")
-- options (default: [])
-- value (default: "")
-- name (default: "")
-- id (default: "")
-- required (default: false)
-- disabled (default: false)
-- variant (default: "default")
-- optionClass (default: "")
-- class (default: "")
-- showCheckmark (default: true)
+| Name | Type | Required | Default | Description |
+|---|---|:---:|---|---|
+| label | `string` | No | "" |  |
+| value | `string` | No | "" |  |
+| name | `string` | No | "" |  |
+| id | `string` | No | "" |  |
+| required | `boolean` | No | false |  |
+| disabled | `boolean` | No | false |  |
+| variant | `"default" \| "ghost" \| "neutral"` | No | "default" |  |
+| optionClass | `string` | No | "" |  |
+| class | `string` | No | "" |  |
+| showCheckmark | `boolean` | No | true |  |

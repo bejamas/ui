@@ -86,8 +86,6 @@ Displays a button or a component that looks like a button.
  *
  * @usage
  *
- * ## Usage
- *
  * ```astro
  * ---
  * import Button from '@/ui/components/Button.astro';
@@ -110,6 +108,16 @@ Displays a button or a component that looks like a button.
  * ```
  *
  * @examples
+ *
+ * ### Variants
+ *
+ * <div class="flex gap-3 items-center">
+ *   <Button variant="default">Default</Button>
+ *   <Button variant="secondary">Secondary</Button>
+ *   <Button variant="outline">Outline</Button>
+ *   <Button variant="ghost">Ghost</Button>
+ *   <Button variant="destructive">Destructive</Button>
+ * </div>
  *
  * ### Sizes
  *
@@ -196,8 +204,8 @@ const buttonVariants = cva(
       },
       size: {
         default:
-          "h-9.5 px-3 py-2 has-[>svg]:px-3 text-sm has-[.badge:last-child]:pr-1.5 has-[.badge:first-child]:pl-1.5",
-        sm: "h-8.5 text-xs rounded-lg gap-1.5 px-3 has-[>svg]:px-2.5",
+          "h-9.5 px-4 py-2 text-sm has-[.badge:last-child]:pr-1.5 has-[.badge:first-child]:pl-1.5",
+        sm: "h-8.5 text-xs rounded-lg gap-1.5 px-3.5 has-[>svg]:px-2.5",
         lg: "h-10 text-sm rounded-lg px-4 has-[>svg]:px-4 has-[.badge:last-child]:pr-3 [&_.badge:last-child]:ml-1.5",
         icon: "size-9.5",
       },
@@ -243,6 +251,34 @@ import Button from '@bejamas/ui/components/Button.astro';
 ```
 
 ## Examples
+
+### Variants
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<div class="flex gap-3 items-center">
+  <Button variant="default">Default</Button>
+  <Button variant="secondary">Secondary</Button>
+  <Button variant="outline">Outline</Button>
+  <Button variant="ghost">Ghost</Button>
+  <Button variant="destructive">Destructive</Button>
+</div>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<div class="flex gap-3 items-center">
+  <Button variant="default">Default</Button>
+  <Button variant="secondary">Secondary</Button>
+  <Button variant="outline">Outline</Button>
+  <Button variant="ghost">Ghost</Button>
+  <Button variant="destructive">Destructive</Button>
+</div>
+```
+  </DocsTabItem>
+</DocsTabs>
 
 ### Sizes
 

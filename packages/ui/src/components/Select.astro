@@ -22,6 +22,19 @@ import { ChevronDown } from "@lucide/astro";
 import { cva } from "class-variance-authority";
 import { cn } from "../lib/utils";
 
+interface Props {
+  label?: string;
+  value?: string;
+  name?: string;
+  id?: string;
+  required?: boolean;
+  disabled?: boolean;
+  variant?: "default" | "ghost" | "neutral";
+  optionClass?: string;
+  class?: string;
+  showCheckmark?: boolean;
+}
+
 const {
   label = "",
   options = [],

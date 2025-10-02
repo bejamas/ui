@@ -87,14 +87,14 @@
   }
 
   .sidebar-content a[aria-current="page"] > span {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
     font-weight: 500;
   }
 
   .sidebar-content a:not([aria-current="page"]):hover > span {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
   }
 
   .sidebar-content ul ul li {
@@ -116,7 +116,7 @@
 
   .content-panel:first-child {
     padding-bottom: 0;
-    padding-top: 3rem;
+    padding-top: 2.5rem;
   }
 
   .right-sidebar-panel h2 {
@@ -195,7 +195,11 @@
   }
 
   .sl-heading-wrapper.level-h2 {
-    margin-top: 5rem;
+    margin-top: 4rem;
+  }
+
+  .sl-heading-wrapper.level-h3 {
+    margin-top: 3rem;
   }
 
   .sl-markdown-content a:not(:where(.not-content *)) {
@@ -207,6 +211,15 @@
     border-color: var(--border);
     color: var(--foreground);
     box-shadow: var(--shadow-xs);
+    background-color: var(--background);
+    height: 2.375rem;
+  }
+
+  button[data-open-modal] kbd {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+    border-radius: calc(var(--radius) - 4px);
+    gap: 0;
   }
 
   .tablist-wrapper ~ [role="tabpanel"] {
@@ -238,29 +251,6 @@
     justify-content: center;
     align-items: center;
     background-color: var(--background);
-  }
-
-  .expressive-code pre {
-    counter-reset: line;
-  }
-
-  .expressive-code pre .ec-line {
-    counter-increment: line;
-  }
-
-  .expressive-code pre .ec-line::before {
-    content: counter(line);
-    display: inline-block;
-    width: 2rem;
-    margin-right: 1rem;
-    color: var(--muted-foreground);
-    text-align: right;
-    padding-left: 0.5rem;
-    opacity: 0.75;
-  }
-
-  .expressive-code .frame pre {
-    background-color: color-mix(in oklab, var(--muted) 50%, transparent);
   }
 
   .sl-markdown-content ul:not(:where(.not-content *)) {

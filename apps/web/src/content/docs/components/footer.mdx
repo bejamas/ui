@@ -6,7 +6,7 @@ description: Footer component for the page.
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
 import Footer from '@bejamas/ui/components/Footer.astro';
 import Button from '@bejamas/ui/components/Button.astro';
-import FooterLinks from '@bejamas/ui/components/FooterLinks.astro';
+import LinkGroup from '@bejamas/ui/components/LinkGroup.astro';
 
 Footer component for the page.
 
@@ -20,14 +20,14 @@ Footer component for the page.
   </div>
   <div class="grid grid-cols-4 gap-4">
   <div>Acme, Inc. Logo</div>
-  <FooterLinks
+  <LinkGroup
     title="Resources"
     items={[
       { label: "Blog", href: "/blog" },
       { label: "Documentation", href: "/docs" }
     ]}
   />
-  <FooterLinks
+  <LinkGroup
     title="Company"
     items={[
       { label: "Home", href: "/" },
@@ -48,14 +48,14 @@ Footer component for the page.
   </div>
   <div class="grid grid-cols-4 gap-4">
   <div>Acme, Inc. Logo</div>
-  <FooterLinks
+  <LinkGroup
     title="Resources"
     items={[
       { label: "Blog", href: "/blog" },
       { label: "Documentation", href: "/docs" }
     ]}
   />
-  <FooterLinks
+  <LinkGroup
     title="Company"
     items={[
       { label: "Home", href: "/" },
@@ -113,9 +113,9 @@ Footer component for the page.
  * @description Footer component for the page.
  * @status stable
  * @since 0.1.0
- * 
+ *
  * @example
- * 
+ *
  * <Footer>
  *   <div slot="cta">
  *     <h2>Call to action</h2>
@@ -123,14 +123,14 @@ Footer component for the page.
  *   </div>
  *   <div class="grid grid-cols-4 gap-4">
  *   <div>Acme, Inc. Logo</div>
- *   <FooterLinks
+ *   <LinkGroup
  *     title="Resources"
  *     items={[
  *       { label: "Blog", href: "/blog" },
  *       { label: "Documentation", href: "/docs" }
  *     ]}
  *   />
- *   <FooterLinks
+ *   <LinkGroup
  *     title="Company"
  *     items={[
  *       { label: "Home", href: "/" },
@@ -139,51 +139,57 @@ Footer component for the page.
  *   />
  *   </div>
  * </Footer>
- * 
+ *
  * @usage
- * 
+ *
  * ## Structure
- * 
+ *
  * A Footer component is composed of the following parts:
  *
  * - `Footer.astro` - The footer container.
- * - `FooterLinks.astro` - Links within the footer.
+ * - `LinkGroup.astro` - Links within the footer.
  *
  * ```astro
  * ---
  * import Footer from '@bejamas/ui/components/Footer.astro';
  * ---
- * 
+ *
  * <Footer />
- * 
+ *
  * ```
- * 
+ *
  */
 
 import { cn } from "../lib/utils";
 
 const { class: className = "", ...props } = Astro.props;
-
 ---
 
-<footer class={cn("bg-footer text-footer-foreground w-full", className)} {...props}>
-  {Astro.slots.cta && (
-    <div class="flex justify-center">
-      <slot name="cta" />
-    </div>
-  )}
+<footer
+  class={cn("bg-footer text-footer-foreground w-full", className)}
+  {...props}
+>
+  {
+    Astro.slots.cta && (
+      <div class="flex justify-center">
+        <slot name="cta" />
+      </div>
+    )
+  }
   <slot />
 </footer>
 ```
   </DocsTabItem>
 </DocsTabs>
 
+## Usage
+
 ## Structure
 
 A Footer component is composed of the following parts:
 
 - `Footer.astro` - The footer container.
-- `FooterLinks.astro` - Links within the footer.
+- `LinkGroup.astro` - Links within the footer.
 
 ```astro
 ---
@@ -193,7 +199,3 @@ import Footer from '@bejamas/ui/components/Footer.astro';
 <Footer />
 
 ```
-
-## Props
-
-- class (default: "")

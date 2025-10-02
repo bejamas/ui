@@ -6,6 +6,13 @@ export function buildMdx(params: {
   usageMDX: string;
   hasImport: boolean;
   propsList: string;
+  propsTable?: Array<{
+    name: string;
+    type?: string;
+    required?: boolean;
+    defaultValue?: string | null;
+    description?: string | null;
+  }>;
   examples: Array<{
     importName: string;
     importPath: string;
@@ -27,6 +34,7 @@ export function buildMdx(params: {
     usageMDX,
     hasImport,
     propsList,
+    propsTable,
     examples,
     examplesBlocks,
     autoImports,
@@ -168,10 +176,19 @@ ${componentSource}
     primaryExampleSection ? "" : null,
     installationSection,
     "",
-    usageMDX && usageMDX.length ? usageMDX : `## Usage\n\n<${importName} />\n`,
+    usageMDX && usageMDX.length ? `## Usage\n\n${usageMDX}` : null,
     "",
-    propsList ? `## Props\n\n${propsList}` : null,
-    propsList ? "" : null,
+    propsTable && propsTable.length
+      ? `## Props\n\n| Name | Type | Required | Default | Description |\n|---|---|:---:|---|---|\n${propsTable
+          .map(
+            (p) =>
+              `| ${p.name} | \`${(p.type || "").replace(/\|/g, "\\|")}\` | ${p.required ? "Yes" : "No"} | ${p.defaultValue ?? ""} | ${p.description ?? ""} |`,
+          )
+          .join("\n")}`
+      : propsList
+        ? `## Props\n\n${propsList}`
+        : null,
+    (propsTable && propsTable.length) || propsList ? "" : null,
     exampleSections.length
       ? `## Examples\n\n` + exampleSections.join("\n\n")
       : null,

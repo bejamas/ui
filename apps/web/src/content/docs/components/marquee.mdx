@@ -1,0 +1,262 @@
+---
+title: Marquee
+description: A horizontally scrolling marquee for displaying content.
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+import Marquee from '@bejamas/ui/components/Marquee.astro';
+
+A horizontally scrolling marquee for displaying content.
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<Marquee class="dark:invert">
+  <img src="/demo/logo/sonos.svg" alt="Netflix" class="h-5 self-center mx-10"/>
+  <img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/>
+  <img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10"/>
+  <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="h-6 self-center mx-10"/>
+  <img src="/demo/logo/nike.svg" alt="Nike" class="h-5 self-center mx-10"/>
+</Marquee>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<Marquee class="dark:invert">
+  <img src="/demo/logo/sonos.svg" alt="Netflix" class="h-5 self-center mx-10"/>
+  <img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/>
+  <img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10"/>
+  <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="h-6 self-center mx-10"/>
+  <img src="/demo/logo/nike.svg" alt="Nike" class="h-5 self-center mx-10"/>
+</Marquee>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Installation
+<DocsTabs syncKey="installation">
+   <DocsTabItem label="CLI">
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+
+```bash
+ bunx bejamas add marquee
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+
+```bash
+ npx bejamas add marquee
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+
+```bash
+ pnpm dlx bejamas add marquee
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+
+```bash
+ yarn dlx bejamas add marquee
+```
+
+  </DocsTabItem>
+</DocsTabs>
+</DocsTabItem>
+<DocsTabItem label="Manual">
+
+```astro
+---
+/**
+ * @component Marquee
+ * @title Marquee
+ * @description A horizontally scrolling marquee for displaying content.
+ * @status stable
+ *
+ * @example
+ *
+ *
+ * <Marquee class="dark:invert">
+ *   <img src="/demo/logo/sonos.svg" alt="Netflix" class="h-5 self-center mx-10"/>
+ *   <img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/>
+ *   <img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10"/>
+ *   <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="h-6 self-center mx-10"/>
+ *   <img src="/demo/logo/nike.svg" alt="Nike" class="h-5 self-center mx-10"/>
+ * </Marquee>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import Marquee from '@/components/ui/Marquee.astro';
+ * ---
+ * <Marquee>
+ *   <!-- Your content here -->
+ * </Marquee>
+ * ```
+ *
+ * @examples
+ *
+ * ### Direction
+ *
+ * <div class="flex gap-6 h-60">
+ *   <Marquee class="[&_.marquee-content]:space-y-8 space-y-8" direction="top">
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/sonos.svg" alt="Sonos" class="h-5 self-center mx-10"/></div>
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/></div>
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10"/></div>
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="h-6 self-center mx-10"/></div>
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/nike.svg" alt="Nike" class="h-5 self-center mx-10"/></div>
+ *   </Marquee>
+ *   <Marquee class="[&_.marquee-content]:space-y-8 space-y-8" direction="bottom">
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/sonos.svg" alt="Sonos" class="h-5 self-center mx-10"/></div>
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/></div>
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10"/></div>
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="h-6 self-center mx-10"/></div>
+ *     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/nike.svg" alt="Nike" class="h-5 self-center mx-10"/></div>
+ *   </Marquee>
+ * </div>
+ */
+
+import { cva } from "class-variance-authority";
+import { cn } from "../lib/utils";
+
+interface Props {
+  direction?: "left" | "right" | "top" | "bottom";
+  time?: number | string;
+  variant?: "gradient" | "solid";
+  class?: string;
+  props?: Astro.ComponentProps<"div">;
+}
+
+const {
+  class: className = "",
+  direction = "left",
+  time = 30,
+  variant = "gradient",
+  ...props
+} = Astro.props as Props;
+
+const marqueeVariants = cva("relative w-full", {
+  variants: {
+    variant: {
+      gradient:
+        "[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] [&[data-direction=top]]:[mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [&[data-direction=top]]:[-webkit-mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [&[data-direction=bottom]]:[mask-image:linear-gradient(to_top,transparent,black_10%,black_90%,transparent)] [&[data-direction=bottom]]:[-webkit-mask-image:linear-gradient(to_top,transparent,black_10%,black_90%,transparent)]",
+      solid: "",
+    },
+  },
+  defaultVariants: {
+    variant: "gradient",
+  },
+});
+---
+
+<div
+  data-marquee
+  data-direction={direction}
+  class={cn(
+    // container utilities
+    "group flex overflow-hidden w-full [&[data-direction=top]]:flex-col [&[data-direction=bottom]]:flex-col",
+    marqueeVariants({ variant }),
+    className,
+  )}
+  style={` --duration:${typeof time === "number" ? `${time}s` : time};`}
+  {...props}
+>
+  <div
+    class={cn(
+      "marquee-content shrink-0 flex justify-around min-w-full will-change-transform whitespace-nowrap [animation:marquee-x_var(--duration,_20s)_linear_infinite] motion-reduce:[animation-play-state:paused] group-data-[direction=right]:[animation-direction:reverse] group-data-[direction=top]:[animation:marquee-y_var(--duration,_20s)_linear_infinite] group-data-[direction=bottom]:[animation:marquee-y_var(--duration,_20s)_linear_infinite] [&[data-direction=top]]:min-h-full [&[data-direction=bottom]]:min-h-full [&[data-direction=top]]:flex-col [&[data-direction=bottom]]:flex-col group-data-[direction=bottom]:[animation-direction:reverse]",
+      direction === "top" && "flex-col",
+      direction === "bottom" && "flex-col",
+    )}
+  >
+    <slot />
+  </div>
+  <div
+    class={cn(
+      "marquee-content shrink-0 flex justify-around min-w-full will-change-transform whitespace-nowrap [animation:marquee-x_var(--duration,_20s)_linear_infinite] motion-reduce:[animation-play-state:paused] group-data-[direction=right]:[animation-direction:reverse] group-data-[direction=top]:[animation:marquee-y_var(--duration,_20s)_linear_infinite] group-data-[direction=bottom]:[animation:marquee-y_var(--duration,_20s)_linear_infinite] [&[data-direction=top]]:min-h-full [&[data-direction=bottom]]:min-h-full [&[data-direction=top]]:flex-col [&[data-direction=bottom]]:flex-col group-data-[direction=bottom]:[animation-direction:reverse]",
+      direction === "top" && "flex-col",
+      direction === "bottom" && "flex-col",
+    )}
+    aria-hidden="true"
+  >
+    <slot />
+  </div>
+</div>
+```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro
+---
+import Marquee from '@/components/ui/Marquee.astro';
+---
+<Marquee>
+  <!-- Your content here -->
+</Marquee>
+```
+
+## Props
+
+| Name | Type | Required | Default | Description |
+|---|---|:---:|---|---|
+| direction | `"left" \| "right" \| "top" \| "bottom"` | No | "left" |  |
+| time | `number \| string` | No | 30 |  |
+| variant | `"gradient" \| "solid"` | No | "gradient" |  |
+| class | `string` | No | "" |  |
+| props | `Astro.ComponentProps<"div">` | No |  |  |
+
+## Examples
+
+### Direction
+
+<DocsTabs>
+  <DocsTabItem label="Preview">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+<div class="flex gap-6 h-60">
+  <Marquee class="[&_.marquee-content]:space-y-8 space-y-8" direction="top">
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/sonos.svg" alt="Sonos" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="h-6 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/nike.svg" alt="Nike" class="h-5 self-center mx-10"/></div>
+  </Marquee>
+  <Marquee class="[&_.marquee-content]:space-y-8 space-y-8" direction="bottom">
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/sonos.svg" alt="Sonos" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="h-6 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/nike.svg" alt="Nike" class="h-5 self-center mx-10"/></div>
+  </Marquee>
+</div>
+    </div>
+  </DocsTabItem>
+  <DocsTabItem label="Source">
+
+```astro
+<div class="flex gap-6 h-60">
+  <Marquee class="[&_.marquee-content]:space-y-8 space-y-8" direction="top">
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/sonos.svg" alt="Sonos" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="h-6 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/nike.svg" alt="Nike" class="h-5 self-center mx-10"/></div>
+  </Marquee>
+  <Marquee class="[&_.marquee-content]:space-y-8 space-y-8" direction="bottom">
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/sonos.svg" alt="Sonos" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/visa.svg" alt="Visa" class="h-5 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="h-6 self-center mx-10"/></div>
+    <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/nike.svg" alt="Nike" class="h-5 self-center mx-10"/></div>
+  </Marquee>
+</div>
+```
+  </DocsTabItem>
+</DocsTabs>

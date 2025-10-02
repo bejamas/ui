@@ -1,20 +1,20 @@
 ---
 /**
- * @component FooterLinks
- * @title FooterLinks
+ * @component LinkGroup
+ * @title Link Group
  * @description Renders a group of footer links, optionally with a title.
  * @status stable
  * @since 0.1.0
- * 
+ *
  * @props
  * - title?: string - Optional title for the link group.
  * - items: Array<{ label: string, href: string }> - List of links to display.
  * - class?: string - Additional classes for the container.
- * 
+ *
  * @usage
- * 
+ *
  * ```astro
- * <FooterLinks
+ * <LinkGroup
  *   title="Company"
  *   items={[
  *     { label: "Home", href: "/" },
@@ -24,23 +24,23 @@
  * ```
  */
 
-const { title, items = [], class: className = '', ...props } = Astro.props;
+const { title, items = [], class: className = "", ...props } = Astro.props;
 ---
 
 <div class={`flex flex-col gap-2 ${className}`.trim()} {...props}>
-  {title && (
-    <h4 class="text-lg mb-2 text-current">{title}</h4>
-  )}
+  {title && <h4 class="text-lg mb-2 text-current">{title}</h4>}
   <ul class="flex flex-col gap-1">
-    {items.map((item: { label: string, href: string }) => (
-      <li>
-        <a
-          href={item.href}
-          class="transition-colors underline-offset-4 hover:underline text-footer-primary/60"
-        >
-          {item.label}
-        </a>
-      </li>
-    ))}
+    {
+      items.map((item: { label: string; href: string }) => (
+        <li>
+          <a
+            href={item.href}
+            class="transition-colors underline-offset-4 hover:underline text-footer-primary/60"
+          >
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
   </ul>
 </div>

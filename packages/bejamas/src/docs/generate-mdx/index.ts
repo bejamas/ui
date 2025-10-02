@@ -8,6 +8,7 @@ import {
   toIdentifier,
   parseJsDocMetadata,
   extractPropsFromAstroProps,
+  extractPropsFromDeclaredProps,
   resolveUiRoot,
   resolveOutDir,
   normalizeUsageMDX,
@@ -66,19 +67,30 @@ async function main() {
     const frontmatterCode = extractFrontmatter(astroFile);
     const sourceFile = createSourceFileFromFrontmatter(frontmatterCode);
     const meta = parseJsDocMetadata(frontmatterCode);
-    const props = extractPropsFromAstroProps(sourceFile);
+    const declaredProps = extractPropsFromDeclaredProps(sourceFile);
+    const destructuredProps = extractPropsFromAstroProps(sourceFile);
+
+    // Build props table preferring declared types; merge defaults from destructuring
+    const defaultsMap = new Map<string, string | null>();
+    for (const p of destructuredProps) {
+      if (p.name && p.hasDefault) {
+        defaultsMap.set(p.name, p.defaultValue || null);
+      }
+    }
+
+    const propsTable = (declaredProps.length ? declaredProps : []).map((p) => ({
+      name: p.name,
+      type: p.type,
+      required: !p.optional,
+      defaultValue: defaultsMap.has(p.name) ? defaultsMap.get(p.name)! : null,
+    }));
 
     const slug = `${slugify(f.name)}`;
     const pascal = f.name.replace(/\.(astro)$/i, "");
     const title = meta.title || meta.name || pascal;
     const description = meta.description || "";
-    const propsList = props
-      .filter((p) => !p.isRest)
-      .map(
-        (p) =>
-          `- ${p.name}${p.hasDefault ? ` (default: ${p.defaultValue})` : ""}`,
-      )
-      .join("\n");
+    // Do not display props if there is no declared Props
+    const propsList = "";
 
     const importName = pascal;
     const importPath = `@bejamas/ui/components/${pascal}.astro`;
@@ -150,6 +162,7 @@ async function main() {
       usageMDX,
       hasImport,
       propsList,
+      propsTable,
       examples,
       examplesBlocks: parseExamplesBlocks(examplesBlocksRaw),
       autoImports: uiAutoImports,
