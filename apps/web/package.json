@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "bun run build:docs && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "build:registry": "bunx shadcn@latest registry:build",
-    "build:docs": "bunx shadcn@latest build --docs"
+    "build:registry": "bun x shadcn@latest registry:build",
+    "build:docs": "bun x bejamas@canary docs:build"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
