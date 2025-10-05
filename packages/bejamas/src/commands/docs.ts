@@ -69,8 +69,28 @@ async function generateDocs({
         try {
           const raw = readFileSync(candidate, "utf-8");
           const config = JSON.parse(raw);
-          // If UI root not provided via CLI, try to infer from tailwind.css
-          if (!cwd && config?.tailwind?.css) {
+          // If UI root not provided via CLI, try to infer from aliases.ui first
+          if (!cwd && !process.env.BEJAMAS_UI_ROOT && config?.aliases?.ui) {
+            const mapped: string = String(config.aliases.ui);
+            let uiAbs: string | null = null;
+            if (
+              mapped.startsWith("./") ||
+              mapped.startsWith("../") ||
+              isAbsolute(mapped)
+            ) {
+              uiAbs = resolve(projectRoot, mapped);
+            } else {
+              uiAbs = resolveAliasPathUsingTsConfig(mapped, projectRoot);
+            }
+            if (!uiAbs && mapped.startsWith("@/")) {
+              uiAbs = resolve(projectRoot, "src", mapped.slice(2));
+            }
+            if (uiAbs) {
+              process.env.BEJAMAS_UI_ROOT = uiAbs;
+            }
+          }
+          // Fallback: infer UI root from tailwind.css
+          if (!cwd && !process.env.BEJAMAS_UI_ROOT && config?.tailwind?.css) {
             const cssRaw = String(config.tailwind.css);
             let cssAbs: string | null = null;
             if (
@@ -107,8 +127,10 @@ async function generateDocs({
             if (!outResolved && mapped.startsWith("@/")) {
               outResolved = mapped.replace(/^@\//, "src/");
             }
-            if (outResolved) {
-              process.env.BEJAMAS_DOCS_OUT_DIR = outResolved;
+            // As a last resort, use the mapped value as-is so we do not prompt for output
+            const finalOut = outResolved ?? mapped;
+            if (finalOut && !process.env.BEJAMAS_DOCS_OUT_DIR) {
+              process.env.BEJAMAS_DOCS_OUT_DIR = finalOut;
               process.env.BEJAMAS_DOCS_CWD = projectRoot;
             }
           }
