@@ -192,14 +192,11 @@ async function generateDocs({
       process.env.BEJAMAS_DOCS_OUT_DIR = out;
       process.env.BEJAMAS_DOCS_CWD = process.env.BEJAMAS_DOCS_CWD || shellCwd;
     }
-    const generatorAbs = resolve(
-      __dirname,
-      "../src/docs/generate-mdx/index.ts",
-    );
-    const generatorUrl = pathToFileURL(generatorAbs).href;
+    // Ensure the generator does not auto-run upon import; we'll invoke it explicitly
+    process.env.BEJAMAS_SKIP_AUTO_RUN = "1";
     logger.info(`Generating docs...`);
     if (DEBUG) {
-      logger.info(`Generator entry: ${generatorAbs}`);
+      logger.info(`Generator entry: @/src/docs/generate-mdx/index`);
       if (process.env.BEJAMAS_UI_ROOT)
         logger.info(`UI root: ${process.env.BEJAMAS_UI_ROOT}`);
       if (process.env.BEJAMAS_DOCS_CWD)
@@ -207,7 +204,14 @@ async function generateDocs({
       if (process.env.BEJAMAS_DOCS_OUT_DIR)
         logger.info(`Docs out: ${process.env.BEJAMAS_DOCS_OUT_DIR}`);
     }
-    await import(generatorUrl);
+    const mod = await import("@/src/docs/generate-mdx/index");
+    if (typeof mod.runDocsGenerator === "function") {
+      await mod.runDocsGenerator();
+    } else {
+      throw new Error(
+        "Failed to load docs generator. Export 'runDocsGenerator' not found.",
+      );
+    }
   } catch (err: any) {
     logger.error(err?.message || String(err));
     process.exit(1);

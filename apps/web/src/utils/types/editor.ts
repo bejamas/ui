@@ -28,13 +28,3 @@ export interface ThemeEditorState extends BaseEditorState {
 
 // Type for available editors
 export type EditorType = "button" | "input" | "card" | "dialog" | "theme";
-
-// Interface for editor configuration
-export interface EditorConfig {
-  type: EditorType;
-  name: string;
-  description: string;
-  defaultState: BaseEditorState;
-  controls: React.ComponentType<any>;
-  preview: React.ComponentType<any>;
-}
