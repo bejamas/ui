@@ -34,7 +34,7 @@ jobs:
         run: bun run build:packages
 
       - name: Setup npmrc
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
 
       - name: Publish canary packages
         run: |
@@ -53,4 +53,4 @@ jobs:
             fi
           done
         env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
