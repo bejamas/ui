@@ -1,7 +1,5 @@
 ---
-import type {
-  GetStaticPaths,
-} from "astro";
+import type { GetStaticPaths } from "astro";
 
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
@@ -16,8 +14,8 @@ export async function getStaticPaths() {
 
   return blocks.map((block) => ({
     params: { slug: block.id },
-  }));
-} satisfies GetStaticPaths;
+  })) satisfies GetStaticPaths;
+}
 ---
 
 <script src="//unpkg.com/alpinejs" defer></script>
