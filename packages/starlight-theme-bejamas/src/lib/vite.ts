@@ -2,7 +2,7 @@ import type { ViteUserConfig } from "astro";
 import type { StarlightThemeBejamasConfig } from "../config";
 
 export function vitePluginStarlightThemeBejamas(
-  config: StarlightThemeBejamasConfig
+  config: StarlightThemeBejamasConfig,
 ): VitePlugin {
   const moduleId = "virtual:starlight-theme-bejamas/user-config";
   const resolvedModuleId = `\0${moduleId}`;
@@ -23,7 +23,6 @@ export function vitePluginStarlightThemeBejamas(
         const componentName = componentId.replace(/\.astro$/, "");
         const target = config.components?.[componentName];
 
-        console.log({ target });
         if (!target) {
           return `export default (()=>{ throw new Error(\"starlight-theme-bejamas: No component mapping found for '${componentName}'. Add it under 'components' in your starlightThemeBejamas config.\"); })()`;
         }

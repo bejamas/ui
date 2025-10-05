@@ -37,8 +37,6 @@ export default function starlightThemeBejamas(
             ? {}
             : starlightConfig.expressiveCode;
 
-        console.log({ plugins: starlightConfig.plugins });
-
         starlightConfig.plugins?.push(
           pluginLineNumbers({
             showLineNumbers: true,
