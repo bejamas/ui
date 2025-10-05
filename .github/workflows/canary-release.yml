@@ -38,18 +38,28 @@ jobs:
 
       - name: Publish canary packages
         run: |
+          # Get changed files in this commit
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+
           cd packages
           for package in */; do
             if [ -f "${package}package.json" ]; then
-              cd "$package"
-              PACKAGE_NAME=$(cat package.json | grep '"name"' | head -1 | cut -d'"' -f4)
-              IS_PRIVATE=$(cat package.json | grep -o '"private"[[:space:]]*:[[:space:]]*true' || echo "")
+              PACKAGE_NAME=$(cat "${package}package.json" | grep '"name"' | head -1 | cut -d'"' -f4)
+              IS_PRIVATE=$(cat "${package}package.json" | grep -o '"private"[[:space:]]*:[[:space:]]*true' || echo "")
               
               if [ -z "$IS_PRIVATE" ]; then
-                echo "📦 Publishing $PACKAGE_NAME..."
-                bun publish --tag canary --access public 2>&1 || echo "⚠️  Failed to publish $PACKAGE_NAME (may already exist)"
+                # Check if this package has changes
+                PACKAGE_CHANGED=$(echo "$CHANGED_FILES" | grep "^packages/${package%/}/" || echo "")
+                
+                if [ -n "$PACKAGE_CHANGED" ]; then
+                  cd "$package"
+                  echo "📦 Publishing $PACKAGE_NAME (has changes)..."
+                  bun publish --tag canary --access public 2>&1 || echo "⚠️  Failed to publish $PACKAGE_NAME"
+                  cd ..
+                else
+                  echo "⏭️  Skipping $PACKAGE_NAME (no changes)"
+                fi
               fi
-              cd ..
             fi
           done
         env:
