@@ -4,19 +4,24 @@ description: Base textarea field used in forms.
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
 import Textarea from '@bejamas/ui/components/Textarea.astro';
 
 Base textarea field used in forms.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Textarea placeholder="Type your message here..." />
     </div>
   </DocsTabItem>
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Textarea from '@bejamas/ui/components/Textarea.astro';
+---
+
 <Textarea placeholder="Type your message here..." />
 ```
   </DocsTabItem>

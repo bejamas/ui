@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { execSync } from "node:child_process";
 import { URL } from "node:url";
 import { logger } from "@/src/utils/logger";
+import { getPackageRunner } from "@/src/utils/get-package-manager";
 
 function shellQuote(arg: string): string {
   if (arg === "") return "''";
@@ -35,7 +36,7 @@ function extractOptionsForShadcn(rawArgv: string[]): string[] {
   return forwarded;
 }
 
-function addComponents(
+async function addComponents(
   packages: string[],
   forwardedOptions: string[],
   isVerbose: boolean,
@@ -53,7 +54,11 @@ function addComponents(
     const url = new URL(`r/${packageName}.json`, "http://localhost:4321");
 
     const extra = forwardedOptions.map((t) => shellQuote(t)).join(" ");
-    const cmd = `npx -y shadcn@latest add ${url.toString()}${extra ? ` ${extra}` : ""}`;
+    const runner = await getPackageRunner(process.cwd());
+    const isNpx = runner === "npx";
+    const cmd = `${runner} ${isNpx ? "-y " : ""}shadcn@latest add ${url.toString()}${
+      extra ? ` ${extra}` : ""
+    }`;
     if (isVerbose) {
       logger.info(`[bejamas-ui] ${cmd}`);
     }
@@ -86,10 +91,10 @@ export const add = new Command()
   )
   // .option("--css-variables", "use css variables for theming.", true)
   // .option("--no-css-variables", "do not use css variables for theming.")
-  .action(function action(packages: string[], _opts, cmd) {
+  .action(async function action(packages: string[], _opts, cmd) {
     const root = cmd?.parent;
     const verbose = Boolean(root?.opts?.().verbose);
     const rawArgv = process.argv.slice(2);
     const forwardedOptions = extractOptionsForShadcn(rawArgv);
-    addComponents(packages || [], forwardedOptions, verbose);
+    await addComponents(packages || [], forwardedOptions, verbose);
   });

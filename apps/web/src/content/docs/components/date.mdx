@@ -4,6 +4,7 @@ description: Formats and displays a raw date string in a human-friendly way.
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
 import Date from '@bejamas/ui/components/Date.astro';
 import Separator from '@bejamas/ui/components/Separator.astro';
 
@@ -11,7 +12,7 @@ Formats and displays a raw date string in a human-friendly way.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div class="grid grid-cols-2 gap-4">
   <div>Default:</div> <Date date="2024-06-01T12:00:00Z" />
   <Separator class="col-span-2" />
@@ -30,6 +31,11 @@ Formats and displays a raw date string in a human-friendly way.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Date from '@bejamas/ui/components/Date.astro';
+import Separator from '@bejamas/ui/components/Separator.astro';
+---
+
 <div class="grid grid-cols-2 gap-4">
   <div>Default:</div> <Date date="2024-06-01T12:00:00Z" />
   <Separator class="col-span-2" />
@@ -236,7 +242,7 @@ import Date from '@bejamas/ui/components/Date.astro';
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Date date="2024-06-01T12:00:00Z" includeTime>
   {({ date, time }) => <span>{time} · {date}</span>}
 </Date>
@@ -245,6 +251,10 @@ import Date from '@bejamas/ui/components/Date.astro';
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Date from '@bejamas/ui/components/Date.astro';
+---
+
 <Date date="2024-06-01T12:00:00Z" includeTime>
   {({ date, time }) => <span>{time} · {date}</span>}
 </Date>
@@ -256,7 +266,7 @@ import Date from '@bejamas/ui/components/Date.astro';
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Date date="2024-06-01T12:00:00Z" locale="fr-FR" />
 <Date date="2024-06-01T12:00:00Z" locale="de-DE" />
 <Date date="2024-06-01T12:00:00Z" locale="es-ES" />
@@ -266,6 +276,10 @@ import Date from '@bejamas/ui/components/Date.astro';
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Date from '@bejamas/ui/components/Date.astro';
+---
+
 <Date date="2024-06-01T12:00:00Z" locale="fr-FR" />
 <Date date="2024-06-01T12:00:00Z" locale="de-DE" />
 <Date date="2024-06-01T12:00:00Z" locale="es-ES" />

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "breadcrumbs",
+  "type": "registry:ui",
+  "author": "Thom Krupa <thom@bejamas.com>",
+  "dependencies": [],
+  "files": [
+    {
+      "path": "../../packages/ui/src/components/Breadcrumbs.astro",
+      "content": "---\n/**\n * @component Breadcrumbs\n * @description A composable breadcrumbs navigation component for Astro, using slots for items.\n * \n * @prop {string} [class] - Additional classes for the breadcrumbs container.\n * \n * @example\n * \n * <Breadcrumbs>\n *   <li><Button href=\"/\" as=\"a\" variant=\"link\">Home</Button></li>\n *   <li><ChevronRightIcon /></li>\n *   <li><Button href=\"/docs\" as=\"a\" variant=\"link\">Docs</Button></li>\n *   <li>\n *     <Dropdown>\n *       <span slot=\"trigger\">Menu</span>\n *       <ul slot=\"content\">\n *         <li><Button href=\"#\" as=\"a\" variant=\"ghost\" class=\"w-full justify-start\">Item 1</Button></li>\n *         <li><Button href=\"#\" as=\"a\" variant=\"ghost\" class=\"w-full justify-start\">Item 2</Button></li>\n *         <li><Button href=\"#\" as=\"a\" variant=\"ghost\" class=\"w-full justify-start\">Item 3</Button></li>\n *       </ul>\n *     </Dropdown>\n *   </li>\n *   <li><Button as=\"span\" variant=\"link\">Current Page</Button></li>\n * </Breadcrumbs>\n */\n\nimport { cn } from \"../lib/utils\";\n\nconst {\n  class: className = \"\",\n  ...props\n} = Astro.props;\n\n---\n\n<nav\n  aria-label=\"Breadcrumb\"\n  class={cn(\"w-full flex items-center text-sm\", className)}\n  {...props}\n>\n  <ol class=\"flex items-center\">\n    <slot />\n  </ol>\n</nav>\n\n\n\n",
+      "type": "registry:ui"
+    }
+  ]
+}

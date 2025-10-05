@@ -3,17 +3,18 @@ title: Breadcrumbs
 description: A composable breadcrumbs navigation component for Astro, using slots for items.
 ---
 
+import { ChevronRightIcon } from '@lucide/astro';
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
 import Breadcrumbs from '@bejamas/ui/components/Breadcrumbs.astro';
 import Button from '@bejamas/ui/components/Button.astro';
 import Dropdown from '@bejamas/ui/components/Dropdown.astro';
-import { ChevronRightIcon } from '@lucide/astro';
 
 A composable breadcrumbs navigation component for Astro, using slots for items.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Breadcrumbs>
   <li><Button href="/" as="a" variant="link">Home</Button></li>
   <li><ChevronRightIcon /></li>
@@ -35,6 +36,14 @@ A composable breadcrumbs navigation component for Astro, using slots for items.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import { ChevronRightIcon } from '@lucide/astro';
+
+import Breadcrumbs from '@bejamas/ui/components/Breadcrumbs.astro';
+import Button from '@bejamas/ui/components/Button.astro';
+import Dropdown from '@bejamas/ui/components/Dropdown.astro';
+---
+
 <Breadcrumbs>
   <li><Button href="/" as="a" variant="link">Home</Button></li>
   <li><ChevronRightIcon /></li>

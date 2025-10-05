@@ -4,13 +4,14 @@ description: A circular avatar component for displaying user images or initials,
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
 import Avatar from '@bejamas/ui/components/Avatar.astro';
 
 A circular avatar component for displaying user images or initials, inspired by shadcn/ui.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div class="flex flex-row flex-wrap items-center gap-12">
   <Avatar>
     <img slot="avatar-image" src="https://github.com/bejamas.png" alt="@bejamas" />
@@ -40,6 +41,10 @@ A circular avatar component for displaying user images or initials, inspired by 
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Avatar from '@bejamas/ui/components/Avatar.astro';
+---
+
 <div class="flex flex-row flex-wrap items-center gap-12">
   <Avatar>
     <img slot="avatar-image" src="https://github.com/bejamas.png" alt="@bejamas" />

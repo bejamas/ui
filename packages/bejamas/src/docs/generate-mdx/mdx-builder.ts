@@ -44,32 +44,96 @@ export function buildMdx(params: {
     commandName,
   } = params;
 
-  const importLines = [
+  const sortedLucide = (lucideIcons ?? []).slice().sort();
+  const lucideTopLine = sortedLucide.length
+    ? `import { ${sortedLucide.join(", ")} } from '@lucide/astro';`
+    : null;
+  const externalTopImports = [
     `import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';`,
+    lucideTopLine,
+  ]
+    .filter((v) => v != null)
+    .slice()
+    .sort((a, b) => String(a).localeCompare(String(b)));
+  const sortedUiAuto = (autoImports ?? []).slice().sort();
+  const uiAutoLines = sortedUiAuto.map(
+    (name) => `import ${name} from '@bejamas/ui/components/${name}.astro';`,
+  );
+  const exampleLines = (examples ?? [])
+    .map((ex) => `import ${ex.importName} from '${ex.importPath}';`)
+    .sort((a, b) => a.localeCompare(b));
+  const internalTopImports = [
     !hasImport ? `import ${importName} from '${importPath}';` : null,
-    ...(autoImports?.map(
-      (name) => `import ${name} from '@bejamas/ui/components/${name}.astro';`,
-    ) ?? []),
-    ...(lucideIcons && lucideIcons.length
-      ? [`import { ${lucideIcons.join(", ")} } from '@lucide/astro';`]
-      : []),
-    ...(examples?.map(
-      (ex) => `import ${ex.importName} from '${ex.importPath}';`,
-    ) ?? []),
+    ...uiAutoLines,
+    ...exampleLines,
+  ]
+    .filter((v) => v != null)
+    .slice()
+    .sort((a, b) => String(a).localeCompare(String(b)));
+  const importLines = [
+    ...externalTopImports,
+    externalTopImports.length && internalTopImports.length ? "" : null,
+    ...internalTopImports,
   ].filter((v) => v !== null && v !== undefined);
+
+  // Helper: build per-snippet imports so code fences are minimal and copy-pasteable
+  const extractTags = (snippet: string): Set<string> => {
+    const found = new Set<string>();
+    const tagRegex = /<([A-Z][A-Za-z0-9_]*)\b/g;
+    let m: RegExpExecArray | null;
+    while ((m = tagRegex.exec(snippet)) !== null) {
+      found.add(m[1]);
+    }
+    return found;
+  };
+
+  const buildSnippetImportLines = (snippet: string): string[] => {
+    if (!snippet || !snippet.length) return [];
+    const used = extractTags(snippet);
+    const usedIcons = sortedLucide.filter((n) => used.has(n));
+    const usedUi = (autoImports ?? [])
+      .filter((n) => used.has(n))
+      .slice()
+      .sort();
+    const includeMain = !hasImport && used.has(importName);
+
+    const external: string[] = [];
+    if (usedIcons.length) {
+      external.push(`import { ${usedIcons.join(", ")} } from '@lucide/astro';`);
+    }
+    const internal: string[] = [];
+    if (includeMain)
+      internal.push(`import ${importName} from '${importPath}';`);
+    internal.push(
+      ...usedUi.map(
+        (name) => `import ${name} from '@bejamas/ui/components/${name}.astro';`,
+      ),
+    );
+
+    const externalSorted = external.slice().sort((a, b) => a.localeCompare(b));
+    const internalSorted = internal.slice().sort((a, b) => a.localeCompare(b));
+    return [
+      ...externalSorted,
+      externalSorted.length && internalSorted.length ? "" : null,
+      ...internalSorted,
+    ].filter((v) => v !== null && v !== undefined) as string[];
+  };
 
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length
       ? `<DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 ${primaryExampleMDX}
     </div>
   </DocsTabItem>
   <DocsTabItem label="Source">
 
 \`\`\`astro
-${primaryExampleMDX}
+${(() => {
+  const lines = buildSnippetImportLines(primaryExampleMDX);
+  return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
+})()}${primaryExampleMDX}
 \`\`\`
   </DocsTabItem>
 </DocsTabs>`
@@ -83,14 +147,17 @@ ${primaryExampleMDX}
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 ${blk.body}
     </div>
   </DocsTabItem>
   <DocsTabItem label="Source">
 
 \`\`\`astro
-${blk.body}
+${(() => {
+  const lines = buildSnippetImportLines(blk.body);
+  return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
+})()}${blk.body}
 \`\`\`
   </DocsTabItem>
 </DocsTabs>`,
@@ -118,6 +185,33 @@ ${ex.source}
       );
     }
   }
+
+  const formatDefault = (val: unknown): string => {
+    if (val == null) return "";
+    let raw = String(val).trim();
+    if (!raw.length) return "";
+    // Normalize curly quotes to ASCII
+    raw = raw
+      .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+      .replace(/[\u2018\u2019]/g, "'");
+    const isSingleQuoted = /^'[^']*'$/.test(raw);
+    const isDoubleQuoted = /^"[^"]*"$/.test(raw);
+    const isBacktickSimple = /^`[^`]*`$/.test(raw) && raw.indexOf("${") === -1;
+
+    let content = raw;
+    if (isSingleQuoted || isDoubleQuoted || isBacktickSimple) {
+      const inner = raw.slice(1, -1);
+      // Re-quote with standard double quotes
+      content = `"${inner}"`;
+    }
+    // Escape table pipes
+    content = content.replace(/\|/g, "\\|");
+    // Choose a backtick fence that doesn't appear in content
+    const hasTick = content.includes("`");
+    const hasDoubleTick = content.includes("``");
+    const fence = !hasTick ? "`" : !hasDoubleTick ? "``" : "```";
+    return `${fence}${content}${fence}`;
+  };
 
   const installationSection = `## Installation
 <DocsTabs syncKey="installation">
@@ -179,10 +273,10 @@ ${componentSource}
     usageMDX && usageMDX.length ? `## Usage\n\n${usageMDX}` : null,
     "",
     propsTable && propsTable.length
-      ? `## Props\n\n| Name | Type | Required | Default | Description |\n|---|---|:---:|---|---|\n${propsTable
+      ? `## Props\n\n| Prop | Type | Default |\n|---|---|---|\n${propsTable
           .map(
             (p) =>
-              `| ${p.name} | \`${(p.type || "").replace(/\|/g, "\\|")}\` | ${p.required ? "Yes" : "No"} | ${p.defaultValue ?? ""} | ${p.description ?? ""} |`,
+              `| <code>${p.name}</code> | \`${(p.type || "").replace(/\|/g, "\\|")}\` | ${formatDefault(p.defaultValue)} |`,
           )
           .join("\n")}`
       : propsList

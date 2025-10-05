@@ -4,13 +4,14 @@ description: A horizontally scrolling marquee for displaying content.
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
 import Marquee from '@bejamas/ui/components/Marquee.astro';
 
 A horizontally scrolling marquee for displaying content.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Marquee class="dark:invert">
   <img src="/demo/logo/sonos.svg" alt="Netflix" class="h-5 self-center mx-10"/>
   <img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/>
@@ -23,6 +24,10 @@ A horizontally scrolling marquee for displaying content.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Marquee from '@bejamas/ui/components/Marquee.astro';
+---
+
 <Marquee class="dark:invert">
   <img src="/demo/logo/sonos.svg" alt="Netflix" class="h-5 self-center mx-10"/>
   <img src="/demo/logo/uber.svg" alt="Uber" class="h-5 self-center mx-10"/>
@@ -205,13 +210,13 @@ import Marquee from '@/components/ui/Marquee.astro';
 
 ## Props
 
-| Name | Type | Required | Default | Description |
-|---|---|:---:|---|---|
-| direction | `"left" \| "right" \| "top" \| "bottom"` | No | "left" |  |
-| time | `number \| string` | No | 30 |  |
-| variant | `"gradient" \| "solid"` | No | "gradient" |  |
-| class | `string` | No | "" |  |
-| props | `Astro.ComponentProps<"div">` | No |  |  |
+| Prop | Type | Default |
+|---|---|---|
+| <code>direction</code> | `"left" \| "right" \| "top" \| "bottom"` | `"left"` |
+| <code>time</code> | `number \| string` | `30` |
+| <code>variant</code> | `"gradient" \| "solid"` | `"gradient"` |
+| <code>class</code> | `string` | `""` |
+| <code>props</code> | `Astro.ComponentProps<"div">` |  |
 
 ## Examples
 
@@ -219,7 +224,7 @@ import Marquee from '@/components/ui/Marquee.astro';
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div class="flex gap-6 h-60">
   <Marquee class="[&_.marquee-content]:space-y-8 space-y-8" direction="top">
     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/sonos.svg" alt="Sonos" class="h-5 self-center mx-10"/></div>
@@ -241,6 +246,10 @@ import Marquee from '@/components/ui/Marquee.astro';
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Marquee from '@bejamas/ui/components/Marquee.astro';
+---
+
 <div class="flex gap-6 h-60">
   <Marquee class="[&_.marquee-content]:space-y-8 space-y-8" direction="top">
     <div class="bg-muted px-10 py-7 rounded-lg flex items-center justify-center"><img src="/demo/logo/sonos.svg" alt="Sonos" class="h-5 self-center mx-10"/></div>

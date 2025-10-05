@@ -30,6 +30,7 @@ export default defineConfig({
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
       },
       title: "bejamas/ui",
+      titleDelimiter: "-",
       social: [
         {
           icon: "github",

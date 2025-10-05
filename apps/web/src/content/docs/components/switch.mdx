@@ -4,14 +4,15 @@ description: Accessible toggle switch with custom styling.
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
-import Switch from '@bejamas/ui/components/Switch.astro';
+
 import Label from '@bejamas/ui/components/Label.astro';
+import Switch from '@bejamas/ui/components/Switch.astro';
 
 Accessible toggle switch with custom styling.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div class="flex items-center gap-3">
   <Switch id="notifications" />
   <Label for="notifications">Enable notifications</Label>
@@ -21,6 +22,11 @@ Accessible toggle switch with custom styling.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Label from '@bejamas/ui/components/Label.astro';
+import Switch from '@bejamas/ui/components/Switch.astro';
+---
+
 <div class="flex items-center gap-3">
   <Switch id="notifications" />
   <Label for="notifications">Enable notifications</Label>

@@ -4,13 +4,14 @@ description: Visual separator for grouping content, supporting horizontal and ve
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
 import Separator from '@bejamas/ui/components/Separator.astro';
 
 Visual separator for grouping content, supporting horizontal and vertical orientation.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div>
   <div class="space-y-1">
     <h4 class="text-sm leading-none font-medium">Radix Primitives</h4>
@@ -32,6 +33,10 @@ Visual separator for grouping content, supporting horizontal and vertical orient
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Separator from '@bejamas/ui/components/Separator.astro';
+---
+
 <div>
   <div class="space-y-1">
     <h4 class="text-sm leading-none font-medium">Radix Primitives</h4>

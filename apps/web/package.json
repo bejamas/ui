@@ -6,13 +6,14 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "build:registry": "bunx shadcn@latest registry:build",
     "build:docs": "bunx shadcn@latest build --docs"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^4.3.4",
     "@astrojs/starlight": "^0.35.3",
     "@astrojs/starlight-tailwind": "^4.0.1",
@@ -24,7 +25,8 @@
     "sharp": "^0.34.2",
     "starlight-cooler-credit": "^0.4.0",
     "starlight-theme-bejamas": "workspace:*",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "tw-animate-css": "^1.3.8"

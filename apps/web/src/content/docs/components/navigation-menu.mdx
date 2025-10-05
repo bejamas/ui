@@ -4,15 +4,16 @@ description: Responsive navigation menu with support for slots and custom stylin
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
-import NavigationMenu from '@bejamas/ui/components/NavigationMenu.astro';
+
 import Button from '@bejamas/ui/components/Button.astro';
 import Dropdown from '@bejamas/ui/components/Dropdown.astro';
+import NavigationMenu from '@bejamas/ui/components/NavigationMenu.astro';
 
 Responsive navigation menu with support for slots and custom styling.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <NavigationMenu>
   <div slot="logo">
     <p>Acme, Inc.</p>
@@ -42,6 +43,12 @@ Responsive navigation menu with support for slots and custom styling.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Button from '@bejamas/ui/components/Button.astro';
+import Dropdown from '@bejamas/ui/components/Dropdown.astro';
+import NavigationMenu from '@bejamas/ui/components/NavigationMenu.astro';
+---
+
 <NavigationMenu>
   <div slot="logo">
     <p>Acme, Inc.</p>

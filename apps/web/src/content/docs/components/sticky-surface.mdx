@@ -4,14 +4,15 @@ description: A sticky surface component with scroll-based effects (border, shado
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
-import StickySurface from '@bejamas/ui/components/StickySurface.astro';
+
 import Button from '@bejamas/ui/components/Button.astro';
+import StickySurface from '@bejamas/ui/components/StickySurface.astro';
 
 A sticky surface component with scroll-based effects (border, shadow, surface swap, shrink, glass).
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div class="overflow-y-auto max-h-[320px] w-full bg-border px-8 border-border">
   <div class="h-[1000px] bg-muted">
     <StickySurface effects={["line", "elevate"]} threshold="1rem" observeStuck class="bg-background p-4 flex justify-between items-center">
@@ -31,6 +32,11 @@ A sticky surface component with scroll-based effects (border, shadow, surface sw
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Button from '@bejamas/ui/components/Button.astro';
+import StickySurface from '@bejamas/ui/components/StickySurface.astro';
+---
+
 <div class="overflow-y-auto max-h-[320px] w-full bg-border px-8 border-border">
   <div class="h-[1000px] bg-muted">
     <StickySurface effects={["line", "elevate"]} threshold="1rem" observeStuck class="bg-background p-4 flex justify-between items-center">
@@ -115,8 +121,8 @@ import type { HTMLTag, Polymorphic } from "astro/types";
 import { cva } from "class-variance-authority";
 import { cn } from "../lib/utils";
 
-type Props<Tag extends HTMLTag> = Polymorphic<{ 
-  as: Tag;
+type Props = { 
+  as: HTMLTag;
   threshold?: string | number;
   effects?: Array<"line" | "elevate" | "backdrop">;
   class?: string;
@@ -227,3 +233,14 @@ const styleVars = Object.entries(defaultVars)
 ```
   </DocsTabItem>
 </DocsTabs>
+
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>as</code> | `HTMLTag` | `"div"` |
+| <code>threshold</code> | `string \| number` | `"16px"` |
+| <code>effects</code> | `Array<"line" \| "elevate" \| "backdrop">` | `[]` |
+| <code>class</code> | `string` | `""` |
+| <code>observeStuck</code> | `boolean` |  |

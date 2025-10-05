@@ -3,15 +3,16 @@ title: Badge
 description: A small badge for status or labeling, with variants.
 ---
 
+import { BadgeCheckIcon, XIcon } from '@lucide/astro';
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
 import Badge from '@bejamas/ui/components/Badge.astro';
-import { XIcon, BadgeCheckIcon } from '@lucide/astro';
 
 A small badge for status or labeling, with variants.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div class="flex flex-col items-center gap-3">
   <div class="flex w-full flex-wrap gap-3">
     <Badge>Badge</Badge>
@@ -55,6 +56,12 @@ A small badge for status or labeling, with variants.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import { BadgeCheckIcon, XIcon } from '@lucide/astro';
+
+import Badge from '@bejamas/ui/components/Badge.astro';
+---
+
 <div class="flex flex-col items-center gap-3">
   <div class="flex w-full flex-wrap gap-3">
     <Badge>Badge</Badge>

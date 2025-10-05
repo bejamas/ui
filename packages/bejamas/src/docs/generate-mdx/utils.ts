@@ -180,6 +180,10 @@ export function extractPropsFromDeclaredProps(sourceFile: SourceFile): Array<{
   type: string;
   optional: boolean;
 }> {
+  function normalizeTypeText(text: string | undefined): string {
+    if (!text) return "";
+    return text.replace(/\s+/g, " ").replace(/;\s*$/, "").trim();
+  }
   // Prefer interface Props
   const iface = sourceFile.getInterface("Props");
   if (iface) {
@@ -187,7 +191,8 @@ export function extractPropsFromDeclaredProps(sourceFile: SourceFile): Array<{
     return properties.map((prop) => {
       const name = prop.getName();
       const typeNode = prop.getTypeNode();
-      const typeText = typeNode ? typeNode.getText() : prop.getType().getText();
+      const rawType = typeNode ? typeNode.getText() : prop.getType().getText();
+      const typeText = normalizeTypeText(rawType);
       const optional = prop.hasQuestionToken();
       return { name, type: typeText, optional };
     });
@@ -203,7 +208,8 @@ export function extractPropsFromDeclaredProps(sourceFile: SourceFile): Array<{
       return properties.map((prop) => {
         const name = prop.getName();
         const tn = prop.getTypeNode();
-        const typeText = tn ? tn.getText() : prop.getType().getText();
+        const rawType = tn ? tn.getText() : prop.getType().getText();
+        const typeText = normalizeTypeText(rawType);
         const optional = prop.hasQuestionToken();
         return { name, type: typeText, optional };
       });

@@ -4,16 +4,17 @@ description: UI container for grouping content with header, footer, etc.
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
-import Card from '@bejamas/ui/components/Card.astro';
+
 import Button from '@bejamas/ui/components/Button.astro';
-import Label from '@bejamas/ui/components/Label.astro';
+import Card from '@bejamas/ui/components/Card.astro';
 import Input from '@bejamas/ui/components/Input.astro';
+import Label from '@bejamas/ui/components/Label.astro';
 
 UI container for grouping content with header, footer, etc.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Card class="w-full max-w-sm not-content" footerClass="flex-col gap-2">
   <Fragment slot="header">
     <h3 class="text-xl font-medium leading-none">Login to your account</h3>
@@ -48,6 +49,13 @@ UI container for grouping content with header, footer, etc.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Button from '@bejamas/ui/components/Button.astro';
+import Card from '@bejamas/ui/components/Card.astro';
+import Input from '@bejamas/ui/components/Input.astro';
+import Label from '@bejamas/ui/components/Label.astro';
+---
+
 <Card class="w-full max-w-sm not-content" footerClass="flex-col gap-2">
   <Fragment slot="header">
     <h3 class="text-xl font-medium leading-none">Login to your account</h3>
@@ -374,7 +382,7 @@ import Card from '@/components/ui/Card.astro';
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Card class="relative aspect-[320/390] bg-gray-100 dark:bg-gray-800 w-full max-w-[320px]">
   <Fragment slot="media">
     <img
@@ -414,6 +422,11 @@ import Card from '@/components/ui/Card.astro';
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Button from '@bejamas/ui/components/Button.astro';
+import Card from '@bejamas/ui/components/Card.astro';
+---
+
 <Card class="relative aspect-[320/390] bg-gray-100 dark:bg-gray-800 w-full max-w-[320px]">
   <Fragment slot="media">
     <img
@@ -456,7 +469,7 @@ import Card from '@/components/ui/Card.astro';
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Card variant="ghost" class="max-w-[320px]">
   <Fragment slot="media">
     <img
@@ -475,6 +488,10 @@ import Card from '@/components/ui/Card.astro';
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Card from '@bejamas/ui/components/Card.astro';
+---
+
 <Card variant="ghost" class="max-w-[320px]">
   <Fragment slot="media">
     <img

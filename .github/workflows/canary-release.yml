@@ -1,0 +1,56 @@
+name: Canary Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    if: github.repository_owner == 'bejamas'
+    name: Build & Publish a canary release to NPM
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Set canary versions
+        run: bun .github/version-release-canary.ts
+
+      - name: Build packages
+        run: bun run build:packages
+
+      - name: Setup npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+      - name: Publish canary packages
+        run: |
+          cd packages
+          for package in */; do
+            if [ -f "${package}package.json" ]; then
+              cd "$package"
+              PACKAGE_NAME=$(cat package.json | grep '"name"' | head -1 | cut -d'"' -f4)
+              IS_PRIVATE=$(cat package.json | grep -o '"private"[[:space:]]*:[[:space:]]*true' || echo "")
+              
+              if [ -z "$IS_PRIVATE" ]; then
+                echo "📦 Publishing $PACKAGE_NAME..."
+                bun publish --tag canary --access public 2>&1 || echo "⚠️  Failed to publish $PACKAGE_NAME (may already exist)"
+              fi
+              cd ..
+            fi
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

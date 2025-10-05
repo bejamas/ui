@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "footer",
+  "type": "registry:ui",
+  "author": "Thom Krupa <thom@bejamas.com>",
+  "dependencies": [],
+  "files": [
+    {
+      "path": "../../packages/ui/src/components/Footer.astro",
+      "content": "---\n/**\n * @component Footer\n * @title Footer\n * @description Footer component for the page.\n * @status stable\n * @since 0.1.0\n *\n * @example\n *\n * <Footer>\n *   <div slot=\"cta\">\n *     <h2>Call to action</h2>\n *     <Button>Call to action</Button>\n *   </div>\n *   <div class=\"grid grid-cols-4 gap-4\">\n *   <div>Acme, Inc. Logo</div>\n *   <LinkGroup\n *     title=\"Resources\"\n *     items={[\n *       { label: \"Blog\", href: \"/blog\" },\n *       { label: \"Documentation\", href: \"/docs\" }\n *     ]}\n *   />\n *   <LinkGroup\n *     title=\"Company\"\n *     items={[\n *       { label: \"Home\", href: \"/\" },\n *       { label: \"About\", href: \"/about\" }\n *     ]}\n *   />\n *   </div>\n * </Footer>\n *\n * @usage\n *\n * ## Structure\n *\n * A Footer component is composed of the following parts:\n *\n * - `Footer.astro` - The footer container.\n * - `LinkGroup.astro` - Links within the footer.\n *\n * ```astro\n * ---\n * import Footer from '@bejamas/ui/components/Footer.astro';\n * ---\n *\n * <Footer />\n *\n * ```\n *\n */\n\nimport { cn } from \"../lib/utils\";\n\nconst { class: className = \"\", ...props } = Astro.props;\n---\n\n<footer\n  class={cn(\"bg-footer text-footer-foreground w-full\", className)}\n  {...props}\n>\n  {\n    Astro.slots.cta && (\n      <div class=\"flex justify-center\">\n        <slot name=\"cta\" />\n      </div>\n    )\n  }\n  <slot />\n</footer>\n",
+      "type": "registry:ui"
+    }
+  ]
+}

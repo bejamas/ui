@@ -3,15 +3,16 @@ title: Alert
 description: Displays a alert or a component that looks like a alert.
 ---
 
-import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
-import Alert from '@bejamas/ui/components/Alert.astro';
 import { AlertCircleIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import Alert from '@bejamas/ui/components/Alert.astro';
 
 Displays a alert or a component that looks like a alert.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div class="grid w-full max-w-xl items-start gap-4">
   <Alert>
     <Fragment slot="icon">
@@ -44,6 +45,12 @@ Displays a alert or a component that looks like a alert.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import { AlertCircleIcon } from '@lucide/astro';
+
+import Alert from '@bejamas/ui/components/Alert.astro';
+---
+
 <div class="grid w-full max-w-xl items-start gap-4">
   <Alert>
     <Fragment slot="icon">

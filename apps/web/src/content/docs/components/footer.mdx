@@ -4,15 +4,16 @@ description: Footer component for the page.
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
-import Footer from '@bejamas/ui/components/Footer.astro';
+
 import Button from '@bejamas/ui/components/Button.astro';
+import Footer from '@bejamas/ui/components/Footer.astro';
 import LinkGroup from '@bejamas/ui/components/LinkGroup.astro';
 
 Footer component for the page.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Footer>
   <div slot="cta">
     <h2>Call to action</h2>
@@ -41,6 +42,12 @@ Footer component for the page.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Button from '@bejamas/ui/components/Button.astro';
+import Footer from '@bejamas/ui/components/Footer.astro';
+import LinkGroup from '@bejamas/ui/components/LinkGroup.astro';
+---
+
 <Footer>
   <div slot="cta">
     <h2>Call to action</h2>

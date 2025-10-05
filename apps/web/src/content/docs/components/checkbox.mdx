@@ -4,6 +4,7 @@ description: Accessible checkbox with custom styling and indicator.
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
 import Checkbox from '@bejamas/ui/components/Checkbox.astro';
 import Label from '@bejamas/ui/components/Label.astro';
 
@@ -11,7 +12,7 @@ Accessible checkbox with custom styling and indicator.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div class="flex flex-col gap-6 not-content">
 <div class="flex items-center gap-3">
   <Checkbox id="terms" />
@@ -54,6 +55,11 @@ Accessible checkbox with custom styling and indicator.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Checkbox from '@bejamas/ui/components/Checkbox.astro';
+import Label from '@bejamas/ui/components/Label.astro';
+---
+
 <div class="flex flex-col gap-6 not-content">
 <div class="flex items-center gap-3">
   <Checkbox id="terms" />

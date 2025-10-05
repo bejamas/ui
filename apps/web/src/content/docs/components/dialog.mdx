@@ -4,16 +4,17 @@ description: Accessible dialog/modal component using the native `<dialog>` eleme
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
-import Dialog from '@bejamas/ui/components/Dialog.astro';
+
 import Button from '@bejamas/ui/components/Button.astro';
 import Checkbox from '@bejamas/ui/components/Checkbox.astro';
+import Dialog from '@bejamas/ui/components/Dialog.astro';
 import Label from '@bejamas/ui/components/Label.astro';
 
 Accessible dialog/modal component using the native `<dialog>` element, with open/close logic.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <Button onclick="myDialog.open()">Manage Cookies</Button>
 <Dialog id="myDialog" class="backdrop-blur-md">
   <Fragment slot="title">Manage Cookies</Fragment>
@@ -51,6 +52,13 @@ Accessible dialog/modal component using the native `<dialog>` element, with open
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Button from '@bejamas/ui/components/Button.astro';
+import Checkbox from '@bejamas/ui/components/Checkbox.astro';
+import Dialog from '@bejamas/ui/components/Dialog.astro';
+import Label from '@bejamas/ui/components/Label.astro';
+---
+
 <Button onclick="myDialog.open()">Manage Cookies</Button>
 <Dialog id="myDialog" class="backdrop-blur-md">
   <Fragment slot="title">Manage Cookies</Fragment>

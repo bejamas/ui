@@ -4,14 +4,15 @@ description: Accessible and flexible label component with support for disabled s
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
-import Label from '@bejamas/ui/components/Label.astro';
+
 import Checkbox from '@bejamas/ui/components/Checkbox.astro';
+import Label from '@bejamas/ui/components/Label.astro';
 
 Accessible and flexible label component with support for disabled states.
 
 <DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border border-dashed rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 <div class="flex items-center space-x-2">
   <Checkbox id="terms" />
   <Label for="terms">Accept terms and conditions</Label>
@@ -21,6 +22,11 @@ Accessible and flexible label component with support for disabled states.
   <DocsTabItem label="Source">
 
 ```astro
+---
+import Checkbox from '@bejamas/ui/components/Checkbox.astro';
+import Label from '@bejamas/ui/components/Label.astro';
+---
+
 <div class="flex items-center space-x-2">
   <Checkbox id="terms" />
   <Label for="terms">Accept terms and conditions</Label>
