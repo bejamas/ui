@@ -132,6 +132,7 @@
       var(--tw-inset-shadow), var(--tw-inset-ring-shadow),
       var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     border-radius: calc(var(--radius) - 2px);
+    max-width: calc(var(--spacing) * 50);
   }
 
   .expressive-code .frame {

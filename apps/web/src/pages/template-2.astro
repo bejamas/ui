@@ -1,4 +1,5 @@
 ---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
 import Button from "@bejamas/ui/components/Button.astro";
 import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
 import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
@@ -7,125 +8,136 @@ import Breadcrumbs from "@bejamas/ui/components/Breadcrumbs.astro";
 import { SlashIcon } from "@lucide/astro";
 ---
 
-<div class="bg-muted">
-  <StickySurface
-    threshold="1rem"
-    observeStuck
-    class="top-5 [&.is-stuck]:shadow-sm [&.is-stuck]:max-w-2xl max-w-5xl rounded-2xl h-16 mx-auto"
-    effects={["elevate"]}
-    style="--stuck-shadow: var(--shadow-sm)"
-  >
-    <NavigationMenu
-      class="rounded-2xl bg-transparent group-[.is-stuck]/surface:bg-white/40 h-16 backdrop-blur-sm mx-auto transition-all duration-200 ease-out"
+<BlockExampleLayout>
+  <div class="bg-muted">
+    <StickySurface
+      threshold="1rem"
+      observeStuck
+      class="top-5 [&.is-stuck]:shadow-sm [&.is-stuck]:max-w-2xl max-w-5xl rounded-2xl h-16 mx-auto"
+      effects={["elevate"]}
+      style="--stuck-shadow: var(--shadow-sm)"
     >
-      <div slot="logo" class="flex items-center h-full">
-        <img
-          src="https://cdn.prod.website-files.com/624380709031623bfe4aee60/668b2b16e18e604c50a1362c_Logo-wide.svg"
-          alt="Acme, Inc."
-          class="h-7"
-        />
-      </div>
-      <ul slot="links" class="flex items-center space-x-2">
-        <li><Button as="a" href="/" variant="ghost">Home</Button></li>
+      <NavigationMenu
+        class="rounded-2xl bg-transparent group-[.is-stuck]/surface:bg-white/40 h-16 backdrop-blur-sm mx-auto transition-all duration-200 ease-out"
+      >
+        <div slot="logo" class="flex items-center h-full">
+          <img
+            src="https://cdn.prod.website-files.com/624380709031623bfe4aee60/668b2b16e18e604c50a1362c_Logo-wide.svg"
+            alt="Acme, Inc."
+            class="h-7"
+          />
+        </div>
+        <ul slot="links" class="flex items-center space-x-2">
+          <li><Button as="a" href="/" variant="ghost">Home</Button></li>
+          <li>
+            <MenuDropdown>
+              <span slot="trigger">Company</span>
+              <ul slot="content">
+                <li>
+                  <Button
+                    href="#"
+                    as="a"
+                    variant="ghost"
+                    class="w-full justify-start">About</Button
+                  >
+                </li>
+                <li>
+                  <Button
+                    href="#"
+                    as="a"
+                    variant="ghost"
+                    class="w-full justify-start">Team</Button
+                  >
+                </li>
+                <li>
+                  <Button
+                    href="#"
+                    as="a"
+                    variant="ghost"
+                    class="w-full justify-start">Blog</Button
+                  >
+                </li>
+                <li>
+                  <Button
+                    href="#"
+                    as="a"
+                    variant="ghost"
+                    class="w-full justify-start">Careers</Button
+                  >
+                </li>
+              </ul>
+            </MenuDropdown>
+          </li>
+          <li>
+            <Button as="a" href="/contact" variant="ghost">Contact</Button>
+          </li>
+        </ul>
+        <div slot="actions" class="flex items-center gap-2">
+          <Button
+            variant="outline"
+            class="group-[.is-stuck]/surface:opacity-0 group-[.is-stuck]/surface:blur-sm transition-all duration-300 ease-out"
+            >Log in</Button
+          >
+          <Button
+            class="w-20 group-[.is-stuck]/surface:w-25 duration-500 ease-out"
+          >
+            <span
+              class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out"
+              >Contact</span
+            >
+            <span
+              class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 group-[.is-stuck]/surface:block opacity-0 transition-all hidden blur-sm transition-discrete duration-500 ease-out"
+              >Get a demo</span
+            >
+          </Button>
+        </div>
+      </NavigationMenu>
+    </StickySurface>
+
+    <section class="h-[1200px] bg-muted">
+      <!-- <img src="https://mlmpfwlw7qjc.i.optimole.com/cb:DhbJ.417/w:1920/h:1076/q:mauto/https://blog.designhero.tv/wp-content/uploads/2025/05/herodirector_Pixar-style_3D_character_quirky_villain_with_a_top_hat-01.avif" /> -->
+    </section>
+
+    <section class="py-5 max-w-5xl mx-auto">
+      <Breadcrumbs>
+        <li><Button href="/" as="a" variant="link">Home</Button></li>
+        <li><SlashIcon class="size-4" /></li>
+        <li><Button href="/docs" as="a" variant="link">Docs</Button></li>
+        <li><SlashIcon class="size-4" /></li>
         <li>
-          <MenuDropdown>
-            <span slot="trigger">Company</span>
+          <MenuDropdown trigger={{ variant: "link" }}>
+            <span slot="trigger">Menu</span>
             <ul slot="content">
               <li>
                 <Button
                   href="#"
                   as="a"
                   variant="ghost"
-                  class="w-full justify-start">About</Button>
+                  class="w-full justify-start">Item 1</Button
+                >
               </li>
               <li>
                 <Button
                   href="#"
                   as="a"
                   variant="ghost"
-                  class="w-full justify-start">Team</Button>
+                  class="w-full justify-start">Item 2</Button
+                >
               </li>
               <li>
                 <Button
                   href="#"
                   as="a"
                   variant="ghost"
-                  class="w-full justify-start">Blog</Button>
-              </li>
-              <li>
-                <Button
-                  href="#"
-                  as="a"
-                  variant="ghost"
-                  class="w-full justify-start">Careers</Button>
+                  class="w-full justify-start">Item 3</Button
+                >
               </li>
             </ul>
           </MenuDropdown>
         </li>
-        <li><Button as="a" href="/contact" variant="ghost">Contact</Button></li>
-      </ul>
-      <div slot="actions" class="flex items-center gap-2">
-        <Button
-          variant="outline"
-          class="group-[.is-stuck]/surface:opacity-0 group-[.is-stuck]/surface:blur-sm transition-all duration-300 ease-out"
-          >Log in</Button
-        >
-        <Button
-          class="w-20 group-[.is-stuck]/surface:w-25 duration-500 ease-out"
-        >
-          <span
-            class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out"
-            >Contact</span
-          >
-          <span
-            class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 group-[.is-stuck]/surface:block opacity-0 transition-all hidden blur-sm transition-discrete duration-500 ease-out"
-            >Get a demo</span
-          >
-        </Button>
-      </div>
-    </NavigationMenu>
-  </StickySurface>
-
-  <section class="h-[1200px] bg-muted">
-    <!-- <img src="https://mlmpfwlw7qjc.i.optimole.com/cb:DhbJ.417/w:1920/h:1076/q:mauto/https://blog.designhero.tv/wp-content/uploads/2025/05/herodirector_Pixar-style_3D_character_quirky_villain_with_a_top_hat-01.avif" /> -->
-  </section>
-
-  <section class="py-5 max-w-5xl mx-auto">
-    <Breadcrumbs>
-      <li><Button href="/" as="a" variant="link">Home</Button></li>
-      <li><SlashIcon class="size-4" /></li>
-      <li><Button href="/docs" as="a" variant="link">Docs</Button></li>
-      <li><SlashIcon class="size-4" /></li>
-      <li>
-        <MenuDropdown trigger={{ variant: "link" }}>
-          <span slot="trigger">Menu</span>
-          <ul slot="content">
-            <li>
-              <Button
-                href="#"
-                as="a"
-                variant="ghost"
-                class="w-full justify-start">Item 1</Button>
-            </li>
-            <li>
-              <Button
-                href="#"
-                as="a"
-                variant="ghost"
-                class="w-full justify-start">Item 2</Button>
-            </li>
-            <li>
-              <Button
-                href="#"
-                as="a"
-                variant="ghost"
-                class="w-full justify-start">Item 3</Button>
-            </li>
-          </ul>
-        </MenuDropdown>
-      </li>
-      <li><SlashIcon class="size-4" /></li>
-      <li><Button as="span" variant="link">Current Page</Button></li>
-    </Breadcrumbs>
-  </section>
-</div>
+        <li><SlashIcon class="size-4" /></li>
+        <li><Button as="span" variant="link">Current Page</Button></li>
+      </Breadcrumbs>
+    </section>
+  </div>
+</BlockExampleLayout>

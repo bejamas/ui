@@ -1,0 +1,173 @@
+---
+import Separator from "@bejamas/ui/components/Separator.astro";
+import { defaultPresets } from "../utils/themes/presets";
+
+const tabs = [
+  {
+    label: "vira.fintech",
+    icon: "globe",
+    theme: "violet-bloom",
+    preview: "/fintech",
+  },
+  {
+    label: "vira.ai",
+    icon: "heart",
+    theme: "t3-chat",
+    preview: "/ai",
+  },
+  {
+    label: "vira.health",
+    icon: "heart",
+    theme: "rome",
+    preview: "/health",
+  },
+];
+
+const componentsShowreel = {
+  label: "components showreel",
+  icon: "globe",
+  theme: "default",
+  preview: "/components-showreel",
+};
+
+// Lean presets payload for the client (label + styles only)
+const leanPresets = Object.fromEntries(
+  Object.entries(defaultPresets).map(([key, p]) => [
+    key,
+    {
+      label: p.label ?? key,
+      styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
+    },
+  ]),
+);
+---
+
+<script hoist>
+  import { applyThemeToCss } from "../utils/themes/apply-theme.ts";
+  // expose CSS generator for client usage
+  window.bejamas = window.bejamas || {};
+  window.bejamas.applyThemeCss = applyThemeToCss;
+</script>
+<script src="https://unpkg.com/alpinejs@3.x.x" defer></script>
+<script type="module" define:vars={{ leanPresets, componentsShowreel }}>
+  window.BEJAMAS_PRESETS = leanPresets;
+  window.__getCurrentMode = () => {
+    if (window.astroThemeToggle?.getTheme)
+      return window.astroThemeToggle.getTheme();
+    const el = document.documentElement;
+    const attr = el.getAttribute("data-theme");
+    if (attr === "dark" || attr === "light") return attr;
+    return el.classList.contains("dark") ? "dark" : "light";
+  };
+  window.applyPresetByKey = (key) => {
+    const preset = window.BEJAMAS_PRESETS?.[key];
+    if (!preset || !window.bejamas?.applyThemeCss) return;
+    const cssText = window.bejamas.applyThemeCss({
+      ...preset,
+      currentMode: window.__getCurrentMode(),
+    });
+    const id = "hero-theme-css";
+    let styleEl = document.getElementById(id);
+    if (!styleEl) {
+      styleEl = document.createElement("style");
+      styleEl.id = id;
+      document.head.appendChild(styleEl);
+    }
+    styleEl.textContent = cssText;
+  };
+</script>
+<div
+  x-data="{
+    activeIndex: 0,
+    init() {
+      const first = this.$root.querySelector('[data-key]');
+      if (first?.dataset.key) window.applyPresetByKey(first.dataset.key);
+    },
+    setActive(i, key) {
+      this.activeIndex = Number(i);
+      window.applyPresetByKey && window.applyPresetByKey(key);
+    },
+  }"
+  class="browser not-content relative z-10 h-[90svh] rounded-t-3xl overflow-clip flex flex-col"
+>
+  <div
+    class="bg-background/10 dark:bg-foreground/10 backdrop-blur-xl not-content px-5 py-3 grid grid-cols-12"
+  >
+    <div class="flex items-center gap-x-2 col-span-1">
+      <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
+      <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
+      <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
+    </div>
+    <div class="col-span-11 flex items-center justify-between">
+      <button
+        type="button"
+        data-key={componentsShowreel.theme}
+        data-index={0}
+        data-preview={componentsShowreel.preview}
+        class="rounded-lg min-w-44 px-3 py-1 flex items-center cursor-pointer select-none transition-colors"
+        x-on:click="setActive(0, 'default')"
+        x-bind:class="{
+          'bg-background dark:bg-foreground/20 shadow-xs text-muted-foreground': activeIndex === 0,
+          'bg-muted-foreground/10 dark:bg-background/50 text-muted-foreground': activeIndex !== 0
+        }"
+      >
+        <div class="size-5 mr-2 rounded-sm bg-foreground"></div>
+        bejamas/ui components
+      </button>
+      <div class="flex items-center justify-center gap-x-3">
+        <Separator class="h-6" orientation="vertical" />
+        <p class="text-muted-foreground my-2 text-sm">example aesthetics</p>
+        {
+          tabs.map((tab, i) => (
+            <button
+              type="button"
+              data-key={tab.theme}
+              data-index={i + 1}
+              data-preview={tab.preview}
+              x-on:click="setActive($event.currentTarget.dataset.index, $event.currentTarget.dataset.key)"
+              x-bind:class="{
+                'bg-background dark:bg-foreground/20 shadow-xs text-muted-foreground': activeIndex === Number($el.dataset.index),
+                'bg-muted-foreground/10 dark:bg-background/50 text-muted-foreground': activeIndex !== Number($el.dataset.index)
+              }"
+              class="rounded-lg min-w-40 px-3 py-1 flex items-center cursor-pointer select-none transition-colors"
+            >
+              <div class="size-5 mr-2 rounded-sm bg-foreground" />
+              {tab.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+  <div class="bg-white flex-1">
+    <iframe
+      src={componentsShowreel.preview}
+      x-show={`activeIndex === 0`}
+      x-bind:aria-hidden={`activeIndex !== 0`}
+      class="w-full h-full"
+      loading="lazy"></iframe>
+    {
+      tabs.map((tab, i) => (
+        <iframe
+          src={tab.preview}
+          x-show={`activeIndex === ${i + 1}`}
+          x-bind:aria-hidden={`activeIndex !== ${i + 1}`}
+          class="w-full h-full"
+          loading="lazy"
+        />
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .browser {
+    box-shadow:
+      0px 0px 0px 1.18145px rgba(5, 23, 41, 0.08),
+      0px 1.18145px 1.18145px rgba(5, 23, 41, 0.03),
+      0px 2.36289px 2.36289px rgba(5, 23, 41, 0.04),
+      0px 4.72579px 4.72579px rgba(5, 23, 41, 0.05),
+      0px 9.45157px 28.3547px rgba(5, 23, 41, 0.07),
+      0px 1.18145px 0px rgba(5, 23, 41, 0.08);
+  }
+</style>

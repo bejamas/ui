@@ -1,0 +1,144 @@
+---
+import { Card, CardGrid } from "@astrojs/starlight/components";
+import Button from "@bejamas/ui/components/Button.astro";
+import CanvasHero from "@/components/CanvasHero.astro";
+import BrowserHero from "@/components/BrowserHero.astro";
+
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "The UI system for Astro. Copy. Customize. Ship.",
+    template: "splash",
+    hero: {
+      actions: [
+        {
+          text: "Get Started",
+          link: "/docs/introduction",
+          icon: "right-arrow",
+        },
+      ],
+    },
+  }}
+>
+  <BrowserHero />
+  <div class="h-full fixed bg-muted top-12 border left-5 right-5 rounded-t-2xl">
+  </div>
+  <!-- <div
+    class="h-60 z-20 fixed mix-blend-hard-light pointer-events-none bg-gradient-to-t from-muted to-transparent bottom-0 left-5 right-5 scroll-fade-out"
+  >
+  </div> -->
+</StarlightPage>
+
+<style is:global>
+  @reference "tailwindcss";
+
+  h1 {
+    letter-spacing: calc(var(--letter-spacing) - 0.025em);
+    @apply text-5xl font-medium text-left text-balance block max-w-xl;
+  }
+
+  .main-frame {
+    height: 100svh;
+  }
+
+  .main-frame > .lg\:sl-flex,
+  .main-frame main[data-pagefind-body],
+  .main-frame main > .content-panel:last-child,
+  .main-frame main > .content-panel:last-child > .sl-container,
+  .main-frame
+    main
+    > .content-panel:last-child
+    > .sl-container
+    > .sl-markdown-content {
+    @apply h-full;
+  }
+
+  /* .main-frame main > .content-panel:last-child {
+    background-color: var(--muted);
+    border-radius: calc(var(--radius) - 2px);
+    bordder-radius-bottom-left: 0;
+    border-radius-bottom-right: 0;
+
+    @apply pt-0 mx-6 sticky top-10;
+  } */
+
+  .hero {
+    animation: fadeOutAtBottom ease-out both;
+    animation-timeline: scroll(root block);
+    animation-range: 40% 80%;
+    transform-origin: left center;
+
+    @apply sticky top-40 px-5 py-0 mb-20 z-10 pt-0 max-w-[1500px] mx-auto;
+  }
+
+  .sl-container {
+    @apply max-w-full;
+  }
+
+  .sl-markdown-content {
+    /* animation: maxWidthFull linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 20% 100%;
+    transform: scale(0.95); */
+    max-width: calc(100% - 3rem);
+
+    @apply pt-10 mx-auto;
+  }
+
+  .fade {
+    @apply hidden;
+  }
+
+  footer.sl-flex {
+    @apply hidden;
+  }
+
+  @keyframes fadeOutAtBottom {
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  @keyframes fadeOutAtBottomAndMoveBottom {
+    to {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes maxWidthFull {
+    to {
+      transform: scale(1);
+    }
+  }
+
+  .scroll-fade-out {
+    animation: fadeOutAtBottomAndMoveBottom linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 40% 80%;
+  }
+
+  .browser {
+    transform: scale(0.9);
+    animation: maxWidthFull linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0% 100%;
+    transform-origin: center top;
+  }
+
+  .browser iframe {
+    pointer-events: none;
+    animation: enablePointerEvents linear both;
+    animation-timeline: scroll(root block);
+    animation-range: entry 90% entry 100%;
+  }
+
+  @keyframes enablePointerEvents {
+    to {
+      pointer-events: auto;
+    }
+  }
+</style>
