@@ -9,11 +9,13 @@ import { TEMPLATES, createProject } from "@/src/utils/create-project";
 import * as ERRORS from "@/src/utils/errors";
 import { getConfig, createConfig, type Config } from "@/src/utils/get-config";
 import { getProjectConfig, getProjectInfo } from "@/src/utils/get-project-info";
+import { getPackageRunner } from "@/src/utils/get-package-manager";
 import { handleError } from "@/src/utils/handle-error";
 import { highlighter } from "@/src/utils/highlighter";
 import { logger } from "@/src/utils/logger";
 import { Command } from "commander";
 import { execa } from "execa";
+import fsExtra from "fs-extra";
 import { z } from "zod";
 
 // process.on("exit", (code) => {
@@ -145,7 +147,7 @@ export async function runInit(
       "astro-monorepo": "apps/web",
       "astro-with-component-docs-monorepo": "apps/web",
       astro: "",
-    };
+    } as const;
     options.cwd = path.resolve(options.cwd, projectPath[newProjectTemplate]);
 
     logger.log(
@@ -159,8 +161,66 @@ export async function runInit(
 
   const projectConfig = await getProjectConfig(options.cwd, projectInfo);
 
-  await execa("npx", ["shadcn@latest", "init", "--base-color", "neutral"], {
-    stdio: "inherit",
-    cwd: options.cwd,
-  });
+  const shadcnBin = process.platform === "win32" ? "shadcn.cmd" : "shadcn";
+  const localShadcnPath = path.resolve(
+    options.cwd,
+    "node_modules",
+    ".bin",
+    shadcnBin,
+  );
+
+  if (await fsExtra.pathExists(localShadcnPath)) {
+    await execa(localShadcnPath, ["init", "--base-color", "neutral"], {
+      stdio: "inherit",
+      cwd: options.cwd,
+    });
+  } else {
+    // Prefer local shadcn binary if available in the target project
+    const shadcnBin = process.platform === "win32" ? "shadcn.cmd" : "shadcn";
+    const localShadcnPath = path.resolve(
+      options.cwd,
+      "node_modules",
+      ".bin",
+      shadcnBin,
+    );
+
+    if (await fsExtra.pathExists(localShadcnPath)) {
+      await execa(localShadcnPath, ["init", "--base-color", "neutral"], {
+        stdio: "inherit",
+        cwd: options.cwd,
+      });
+    } else {
+      // Follow user's runner preference (npx, bunx, pnpm dlx)
+      const runner = await getPackageRunner(options.cwd);
+      if (runner === "bunx") {
+        await execa(
+          "bunx",
+          ["shadcn@latest", "init", "--base-color", "neutral"],
+          {
+            stdio: "inherit",
+            cwd: options.cwd,
+          },
+        );
+      } else if (runner === "pnpm dlx") {
+        await execa(
+          "pnpm",
+          ["dlx", "shadcn@latest", "init", "--base-color", "neutral"],
+          {
+            stdio: "inherit",
+            cwd: options.cwd,
+          },
+        );
+      } else {
+        // default to npx; add -y to skip install prompt
+        await execa(
+          "npx",
+          ["-y", "shadcn@latest", "init", "--base-color", "neutral"],
+          {
+            stdio: "inherit",
+            cwd: options.cwd,
+          },
+        );
+      }
+    }
+  }
 }

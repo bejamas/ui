@@ -51,7 +51,10 @@ async function addComponents(
     if (!packageName) continue;
     logger.info(`Adding ${packageName} component...`);
 
-    const url = new URL(`r/${packageName}.json`, "http://localhost:4321");
+    const url = new URL(
+      `r/${packageName}.json`,
+      "https://ui-web-nine.vercel.app",
+    );
 
     const extra = forwardedOptions.map((t) => shellQuote(t)).join(" ");
     const runner = await getPackageRunner(process.cwd());
