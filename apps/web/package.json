@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "bun run build:docs && astro dev",
     "start": "astro dev",
-    "build": "bun run build:docs && astro build",
+    "build": "bun run build:registry && bun run build:docs && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "build:registry": "bun x shadcn@latest registry:build",
