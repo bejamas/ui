@@ -1,9 +1,8 @@
 import os from "os";
 import path from "path";
+import dotenv from "dotenv";
 import { initOptionsSchema } from "@/src/commands/init";
-// import { fetchRegistry } from "@/src/registry/fetcher"
 import { getPackageManager } from "@/src/utils/get-package-manager";
-import { getPackageRunner } from "@/src/utils/get-package-manager";
 import { handleError } from "@/src/utils/handle-error";
 import { highlighter } from "@/src/utils/highlighter";
 import { logger } from "@/src/utils/logger";
@@ -13,14 +12,14 @@ import fs from "fs-extra";
 import prompts from "prompts";
 import { z } from "zod";
 
-const MONOREPO_TEMPLATE_URL =
-  "https://codeload.github.com/bejamas/ui/tar.gz/main";
-
 export const TEMPLATES = {
   astro: "astro",
   "astro-monorepo": "astro-monorepo",
   "astro-with-component-docs-monorepo": "astro-with-component-docs-monorepo",
 } as const;
+
+const MONOREPO_TEMPLATE_URL =
+  "https://codeload.github.com/bejamas/ui/tar.gz/main";
 
 export async function createProject(
   options: Pick<
@@ -37,33 +36,12 @@ export async function createProject(
     options.template && TEMPLATES[options.template as keyof typeof TEMPLATES]
       ? (options.template as keyof typeof TEMPLATES)
       : "astro";
-  let projectName: string =
-    template === TEMPLATES.astro ? "my-app" : "my-monorepo";
-  let astroVersion = "latest";
+
+  let projectName: string = "my-app";
 
   const isRemoteComponent =
     options.components?.length === 1 &&
     !!options.components[0].match(/\/chat\/b\//);
-
-  // if (options.components && isRemoteComponent) {
-  //   try {
-  //     const [result] = await fetchRegistry(options.components)
-  //     const { meta } = z
-  //       .object({
-  //         meta: z.object({
-  //           astroVersion: z.string(),
-  //         }),
-  //       })
-  //       .parse(result)
-  //     astroVersion = meta.astroVersion
-
-  //     // Force template to astro for remote components.
-  //     template = TEMPLATES.astro
-  //   } catch (error) {
-  //     logger.break()
-  //     handleError(error)
-  //   }
-  // }
 
   if (!options.force) {
     const { type, name } = await prompts([
@@ -87,7 +65,17 @@ export async function createProject(
         type: "text",
         name: "name",
         message: "What is your project named?",
-        initial: projectName,
+        initial: (_prev: any, values: any) => {
+          const selectedTemplate: string =
+            (options.template &&
+              TEMPLATES[options.template as keyof typeof TEMPLATES] &&
+              options.template) ||
+            values.type ||
+            template;
+          return selectedTemplate?.endsWith("monorepo")
+            ? "my-monorepo"
+            : "my-app";
+        },
         format: (value: string) => value.trim(),
         validate: (value: string) =>
           value.length > 128
@@ -131,20 +119,11 @@ export async function createProject(
     process.exit(1);
   }
 
-  if (template === TEMPLATES.astro) {
-    await createAstroProject(projectPath, {
-      version: astroVersion,
-      cwd: options.cwd,
-      packageManager,
-      srcDir: !!options.srcDir,
-    });
-  }
-
-  if (template === TEMPLATES["astro-monorepo"]) {
-    await createMonorepoProject(projectPath, {
-      packageManager,
-    });
-  }
+  await createProjectFromTemplate(projectPath, {
+    templateKey: template,
+    packageManager,
+    cwd: options.cwd,
+  });
 
   return {
     projectPath,
@@ -153,101 +132,100 @@ export async function createProject(
   };
 }
 
-async function createAstroProject(
+async function createProjectFromTemplate(
   projectPath: string,
   options: {
-    version: string;
+    templateKey: keyof typeof TEMPLATES;
+    packageManager: string;
     cwd: string;
-    packageManager: string;
-    srcDir: boolean;
   },
 ) {
   const createSpinner = spinner(
-    `Creating a new Astro project. This may take a few minutes.`,
+    `Creating a new project from template. This may take a few minutes.`,
   ).start();
 
-  const args = ["--yes", "--install", "--skip-houston"];
+  const TEMPLATE_TAR_SUBPATH: Record<keyof typeof TEMPLATES, string> = {
+    astro: "ui-main/templates/astro",
+    "astro-monorepo": "ui-main/templates/monorepo-astro",
+    "astro-with-component-docs-monorepo":
+      "ui-main/templates/monorepo-astro-with-docs",
+  };
 
   try {
-    const runner = await getPackageRunner(options.cwd);
-    await execa(
-      runner,
-      [`create-astro@${options.version}`, projectPath, ...args],
-      {
-        cwd: options.cwd,
-      },
-    );
-
-    // Add Tailwind integration to the new Astro project
-    await execa(runner, ["astro", "add", "tailwind", "--yes"], {
-      cwd: path.resolve(options.cwd, projectPath),
-    });
-  } catch (error) {
-    logger.break();
-    logger.error(
-      `Something went wrong creating a new Astro project. Please try again.`,
-    );
-    process.exit(1);
-  }
-
-  createSpinner?.succeed("Creating a new Astro project.");
-}
-
-async function createMonorepoProject(
-  projectPath: string,
-  options: {
-    packageManager: string;
-  },
-) {
-  const createSpinner = spinner(
-    `Creating a new Astro monorepo. This may take a few minutes.`,
-  ).start();
-
-  try {
-    // Get the template.
+    // Load local .env if present to allow GITHUB_TOKEN/GH_TOKEN
+    dotenv.config({ quiet: true });
     const templatePath = path.join(
       os.tmpdir(),
       `bejamas-template-${Date.now()}`,
     );
     await fs.ensureDir(templatePath);
-    const response = await fetch(MONOREPO_TEMPLATE_URL);
-    if (!response.ok) {
-      throw new Error(`Failed to download template: ${response.statusText}`);
+
+    // Auth via environment variables (.env supported)
+    const authToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+    const usedAuth = Boolean(authToken);
+    const headers: Record<string, string> = {
+      "User-Agent": "bejamas-cli",
+    };
+    if (authToken) {
+      headers["Authorization"] = `Bearer ${authToken}`;
     }
 
-    // Write the tar file
+    const response = await fetch(MONOREPO_TEMPLATE_URL, { headers });
+    if (!response.ok) {
+      if (
+        response.status === 401 ||
+        response.status === 403 ||
+        (!usedAuth && response.status === 404)
+      ) {
+        throw new Error(
+          "Unauthorized to access private template. Set GITHUB_TOKEN or GH_TOKEN (in .env or env) with repo access and try again.",
+        );
+      }
+      if (response.status === 404) {
+        throw new Error("Failed to download template: not found.");
+      }
+      throw new Error(
+        `Failed to download template: ${response.status} ${response.statusText}`,
+      );
+    }
+
     const tarPath = path.resolve(templatePath, "template.tar.gz");
     await fs.writeFile(tarPath, Buffer.from(await response.arrayBuffer()));
+
+    const tarSubpath = TEMPLATE_TAR_SUBPATH[options.templateKey];
+    const leafName = tarSubpath.split("/").pop() as string;
+
     await execa("tar", [
       "-xzf",
       tarPath,
       "-C",
       templatePath,
       "--strip-components=2",
-      "ui-main/templates/monorepo-next",
+      tarSubpath,
     ]);
-    const extractedPath = path.resolve(templatePath, "monorepo-next");
+
+    const extractedPath = path.resolve(templatePath, leafName);
     await fs.move(extractedPath, projectPath);
     await fs.remove(templatePath);
 
-    // Run install.
     await execa(options.packageManager, ["install"], {
       cwd: projectPath,
     });
 
-    // Try git init.
-    const cwd = process.cwd();
-    await execa("git", ["--version"], { cwd: projectPath });
-    await execa("git", ["init"], { cwd: projectPath });
-    await execa("git", ["add", "-A"], { cwd: projectPath });
-    await execa("git", ["commit", "-m", "Initial commit"], {
-      cwd: projectPath,
-    });
-    // await execa("cd", [cwd])
+    try {
+      await execa("git", ["--version"], { cwd: projectPath });
+      await execa("git", ["init"], { cwd: projectPath });
+      await execa("git", ["add", "-A"], { cwd: projectPath });
+      await execa("git", ["commit", "-m", "Initial commit"], {
+        cwd: projectPath,
+      });
+    } catch (_) {}
 
-    createSpinner?.succeed("Creating a new Astro monorepo.");
+    createSpinner?.succeed("Creating a new project from template.");
   } catch (error) {
-    createSpinner?.fail("Something went wrong creating a new Astro monorepo.");
+    createSpinner?.fail(
+      "Something went wrong creating a new project from template.",
+    );
     handleError(error);
   }
 }
