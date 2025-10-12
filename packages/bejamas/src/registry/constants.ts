@@ -1,10 +1,10 @@
-import { registryConfigSchema } from "shadcn/schema"
-import { z } from "zod"
+import { registryConfigSchema } from "shadcn/schema";
+import { z } from "zod";
 
 export const REGISTRY_URL =
-  process.env.REGISTRY_URL ?? "http://localhost:4321/r"
+  process.env.REGISTRY_URL ?? "http://localhost:4321/r";
 
-export const FALLBACK_STYLE = "new-york-v4"
+export const FALLBACK_STYLE = "new-york-v4";
 
 export const BASE_COLORS = [
   {
@@ -27,12 +27,12 @@ export const BASE_COLORS = [
     name: "slate",
     label: "Slate",
   },
-] as const
+] as const;
 
 // Built-in registries that are always available and cannot be overridden
 export const BUILTIN_REGISTRIES: z.infer<typeof registryConfigSchema> = {
   "@bejamas": `${REGISTRY_URL}/{name}.json`,
-}
+};
 
 export const BUILTIN_MODULES = new Set([
   [
@@ -156,7 +156,7 @@ export const BUILTIN_MODULES = new Set([
     "bun:jsc",
     "bun:internal",
   ],
-])
+]);
 
 export const DEPRECATED_COMPONENTS = [
   {
@@ -171,4 +171,4 @@ export const DEPRECATED_COMPONENTS = [
     message:
       "The toaster component is deprecated. Use the sonner component instead.",
   },
-]
+];

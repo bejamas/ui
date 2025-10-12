@@ -3,5 +3,5 @@ export const ICON_LIBRARIES = {
     name: "@lucide/astro",
     package: "@lucide/astro",
     import: "@lucide/astro",
-  }
-}
+  },
+};
