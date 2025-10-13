@@ -170,21 +170,7 @@ export async function runInit(
     shadcnBin,
   );
 
-  if (await fsExtra.pathExists(localShadcnPath)) {
-    await execa(localShadcnPath, ["init", "--base-color", "neutral"], {
-      stdio: "inherit",
-      cwd: options.cwd,
-    });
-  } else {
-    // Prefer local shadcn binary if available in the target project
-    const shadcnBin = process.platform === "win32" ? "shadcn.cmd" : "shadcn";
-    const localShadcnPath = path.resolve(
-      options.cwd,
-      "node_modules",
-      ".bin",
-      shadcnBin,
-    );
-
+  try {
     if (await fsExtra.pathExists(localShadcnPath)) {
       await execa(localShadcnPath, ["init", "--base-color", "neutral"], {
         stdio: "inherit",
@@ -201,5 +187,8 @@ export async function runInit(
         },
       );
     }
+  } catch (err) {
+    // shadcn already printed the detailed error to stdio, avoid double-reporting
+    process.exit(1);
   }
 }
