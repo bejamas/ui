@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "bun run build:docs && astro dev",
     "start": "astro dev",
-    "build": "bun run build:registry && bun run build:docs && astro build",
+    "build": "bun run build:registry && bun run normalize-component-paths-in-registry && bun run build:docs && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "build:registry": "bun x shadcn@latest registry:build",
-    "build:docs": "bun x bejamas@canary docs:build"
+    "build:docs": "bun x bejamas@canary docs:build",
+    "normalize-component-paths-in-registry": "bun run scripts/normalize-paths.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
