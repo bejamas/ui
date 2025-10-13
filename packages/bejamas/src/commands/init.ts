@@ -171,10 +171,15 @@ export async function runInit(
   );
 
   try {
+    const env = { ...process.env };
+    if (process.env.REGISTRY_URL) {
+      env.REGISTRY_URL = process.env.REGISTRY_URL;
+    }
     if (await fsExtra.pathExists(localShadcnPath)) {
       await execa(localShadcnPath, ["init", "--base-color", "neutral"], {
         stdio: "inherit",
         cwd: options.cwd,
+        env,
       });
     } else {
       // Follow user's runner preference (npx, bunx, pnpm dlx)
@@ -184,6 +189,7 @@ export async function runInit(
         {
           stdio: "inherit",
           cwd: options.cwd,
+          env,
         },
       );
     }

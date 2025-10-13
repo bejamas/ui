@@ -1,14 +1,12 @@
 import { Command } from "commander";
-import { execSync } from "node:child_process";
-import { URL } from "node:url";
+import { execa } from "execa";
 import { logger } from "@/src/utils/logger";
 import { getPackageRunner } from "@/src/utils/get-package-manager";
 
-function shellQuote(arg: string): string {
-  if (arg === "") return "''";
-  if (/^[A-Za-z0-9_@%+=:,./-]+$/.test(arg)) return arg;
-  return `'${arg.replace(/'/g, `'\\''`)}'`;
-}
+// Default fallback registry endpoint for shadcn (expects /r)
+const DEFAULT_REGISTRY_URL = "https://ui-web-nine.vercel.app/r";
+
+// No quoting helper needed; we pass args array directly to execa
 
 function extractOptionsForShadcn(rawArgv: string[]): string[] {
   const addIndex = rawArgv.findIndex((arg) => arg === "add");
@@ -22,6 +20,7 @@ function extractOptionsForShadcn(rawArgv: string[]): string[] {
       break;
     }
     if (token.startsWith("-")) {
+      // Filter CLI-only flags not meant for shadcn (keep --all and others)
       if (token === "-v" || token === "--verbose") continue;
       forwarded.push(token);
       const next = rest[i + 1];
@@ -41,31 +40,35 @@ async function addComponents(
   forwardedOptions: string[],
   isVerbose: boolean,
 ) {
-  if (!packages || packages.length === 0) {
-    logger.info("Usage: bejamas add [...packages]");
-    process.exit(1);
+  // Build the command by passing through all args to shadcn
+  const runner = await getPackageRunner(process.cwd());
+  const env = {
+    ...process.env,
+    REGISTRY_URL: process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL,
+  };
+  const baseArgs = ["shadcn@latest", "add", ...packages, ...forwardedOptions];
+
+  let cmd = "npx";
+  let args: string[] = ["-y", ...baseArgs];
+  if (runner === "bunx") {
+    cmd = "bunx";
+    args = baseArgs;
+  } else if (runner === "pnpm dlx") {
+    cmd = "pnpm";
+    args = ["dlx", ...baseArgs];
+  } else if (runner === "npx") {
+    cmd = "npx";
+    args = ["-y", ...baseArgs];
   }
 
-  for (const pkg of packages) {
-    const packageName = String(pkg || "").trim();
-    if (!packageName) continue;
-    logger.info(`Adding ${packageName} component...`);
-
-    const url = new URL(
-      `r/${packageName}.json`,
-      "https://ui-web-nine.vercel.app",
-    );
-
-    const extra = forwardedOptions.map((t) => shellQuote(t)).join(" ");
-    const runner = await getPackageRunner(process.cwd());
-    const isNpx = runner === "npx";
-    const cmd = `${runner} ${isNpx ? "-y " : ""}shadcn@latest add ${url.toString()}${
-      extra ? ` ${extra}` : ""
-    }`;
-    if (isVerbose) {
-      logger.info(`[bejamas-ui] ${cmd}`);
-    }
-    execSync(cmd, { stdio: "inherit" });
+  if (isVerbose) {
+    logger.info(`[bejamas-ui] ${cmd} ${args.join(" ")}`);
+  }
+  try {
+    await execa(cmd, args, { stdio: "inherit", env });
+  } catch (err) {
+    // shadcn prints detailed error to stdio; avoid double-reporting
+    process.exit(1);
   }
 }
 
@@ -99,5 +102,6 @@ export const add = new Command()
     const verbose = Boolean(root?.opts?.().verbose);
     const rawArgv = process.argv.slice(2);
     const forwardedOptions = extractOptionsForShadcn(rawArgv);
+    // Pass packages and all flags directly to shadcn
     await addComponents(packages || [], forwardedOptions, verbose);
   });
