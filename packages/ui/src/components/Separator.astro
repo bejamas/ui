@@ -4,7 +4,7 @@
  * @title Separator
  * @description Visual separator for grouping content, supporting horizontal and vertical orientation.
  * @status stable
- * 
+ *
  * @example
  * <div>
  *   <div class="space-y-1">
@@ -24,7 +24,7 @@
  * </div>
  */
 
-import { cn } from "../lib/utils";
+import { cn } from "@bejamas/ui/lib/utils";
 
 const {
   class: className = "",
@@ -39,10 +39,9 @@ const {
   aria-hidden={decorative ? "true" : undefined}
   class={cn(
     "bg-border shrink-0",
-    orientation === "vertical"
-      ? "h-full w-px"
-      : "h-px w-full",
-    className
+    orientation === "vertical" ? "h-full w-px" : "h-px w-full",
+    className,
   )}
   {...props}
-/>
+>
+</div>

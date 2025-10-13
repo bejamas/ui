@@ -5,15 +5,15 @@
  * @description Displays a alert or a component that looks like a alert.
  * @status stable
  * @since 0.1.0
- * 
+ *
  * @example
- * 
+ *
  * <div class="grid w-full max-w-xl items-start gap-4">
  *   <Alert>
  *     <Fragment slot="icon">
  *       <AlertCircleIcon className="size-3" />
  *     </Fragment>
- *     <Fragment slot="title">  
+ *     <Fragment slot="title">
  *       Success! Your changes have been saved
  *     </Fragment>
  *     <Fragment slot="description">
@@ -35,9 +35,9 @@
  *     </Fragment>
  *   </Alert>
  * </div>
- * 
+ *
  */
-import { cn } from "../lib/utils";
+import { cn } from "@bejamas/ui/lib/utils";
 const { variant = "default", class: className = "" } = Astro.props;
 
 const baseClass =
@@ -60,29 +60,31 @@ const variantClass =
   <!-- Slot for alert icon -->
   <slot name="icon" />
   <!-- Slot for alert title -->
-  {Astro.slots.title && (
-    <div
-      data-slot="alert-title"
-      class={cn(
-        "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight"
-      )}
-    >
-      <slot name="title" />
-    </div>
-  )}
+  {
+    Astro.slots.title && (
+      <div
+        data-slot="alert-title"
+        class={cn(
+          "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
+        )}
+      >
+        <slot name="title" />
+      </div>
+    )
+  }
   <!-- Slot for alert description -->
-  {Astro.slots.description && (
-    <div
-      data-slot="alert-description"
-      class={cn(
-        "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed"
-      )}
-    >
-      <slot name="description" />
-    </div>
-  )}
+  {
+    Astro.slots.description && (
+      <div
+        data-slot="alert-description"
+        class={cn(
+          "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
+        )}
+      >
+        <slot name="description" />
+      </div>
+    )
+  }
   <!-- Default slot for additional content (e.g., icon, actions) -->
   <slot />
 </div>
-
-

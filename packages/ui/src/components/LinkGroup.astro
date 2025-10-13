@@ -28,14 +28,14 @@ const { title, items = [], class: className = "", ...props } = Astro.props;
 ---
 
 <div class={`flex flex-col gap-2 ${className}`.trim()} {...props}>
-  {title && <h4 class="text-lg mb-2 text-current">{title}</h4>}
+  {title && <h4 class="title text-lg mb-2 text-current">{title}</h4>}
   <ul class="flex flex-col gap-1">
     {
       items.map((item: { label: string; href: string }) => (
         <li>
           <a
             href={item.href}
-            class="transition-colors underline-offset-4 hover:underline text-footer-primary/60"
+            class="transition-colors underline-offset-4 hover:underline text-footer-primary/60 text-muted-foreground"
           >
             {item.label}
           </a>

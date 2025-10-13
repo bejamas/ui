@@ -1,12 +1,12 @@
 ---
-import { cn } from "../lib/utils";
+import { cn } from "@bejamas/ui/lib/utils";
 
 /**
  * @component NavigationMenu
  * @title Navigation Menu
  * @description Responsive navigation menu with support for slots and custom styling.
  * @status stable
- * 
+ *
  * @example
  * <NavigationMenu>
  *   <div slot="logo">
@@ -48,87 +48,97 @@ const {
 } = Astro.props;
 
 // get all classes with prefix sticky:
-const userStickyClasses = Astro.props.class?.split(' ').filter((cls: string) => cls.startsWith('sticky:')).join(' ');
+const userStickyClasses = Astro.props.class
+  ?.split(" ")
+  .filter((cls: string) => cls.startsWith("sticky:"))
+  .join(" ");
 
 // remove all classes with prefix sticky:
-const userClasses = Astro.props.class?.split(' ').filter((cls: string) => !cls.startsWith('sticky:')).join(' ');
+const userClasses = Astro.props.class
+  ?.split(" ")
+  .filter((cls: string) => !cls.startsWith("sticky:"))
+  .join(" ");
 
-const stickyClasses = cn(`sticky top-0 z-50
+const stickyClasses = cn(
+  `sticky top-0 z-50
          after:content-[''] after:pointer-events-none
          after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-black/15 after:opacity-0
          supports-[animation-timeline:scroll()]:after:[animation:show-line_linear_both]
          supports-[animation-timeline:scroll()]:after:[animation-timeline:scroll(root_block)]
-         supports-[animation-timeline:scroll()]:after:[animation-range:0_12px]`, userStickyClasses)
+         supports-[animation-timeline:scroll()]:after:[animation-range:0_12px]`,
+  userStickyClasses,
+);
 
-const headerVariants = cva(
-	"w-full header",
-	{
-		variants: {
-			variant: {
-				default:
-					"bg-background",
-				transparent:
-					"bg-transparent",
-				glass:
-					"bg-white/60 backdrop-blur",
-			},
-      behavior: {
-        static: "relative",
-        sticky: stickyClasses,
-        fixed: "fixed top-0 z-50",
-      },
-      width: {
-        default: "w-full",
-        container: "container",
-        boxed: "max-w-screen-2xl mx-auto rounded-xl mt-4 top-4 border border-border after:hidden",
-      },
-			size: {
-				default: "h-20",
-				sm: "h-9 text-sm rounded-lg gap-1.5 px-3 has-[>svg]:px-2.5",
-				lg: "h-10 text-lg rounded-lg px-6 has-[>svg]:px-4",
-				icon: "size-9",
-			},
-		},
-		defaultVariants: {
-			variant: "default",
-			size: "default",
-      behavior: "static",
-		},
-	}
-)
+const headerVariants = cva("w-full header", {
+  variants: {
+    variant: {
+      default: "bg-background",
+      transparent: "bg-transparent",
+      glass: "bg-white/60 backdrop-blur",
+    },
+    behavior: {
+      static: "relative",
+      sticky: stickyClasses,
+      fixed: "fixed top-0 z-50",
+    },
+    width: {
+      default: "w-full",
+      container: "container",
+      boxed:
+        "max-w-screen-2xl mx-auto rounded-xl mt-4 top-4 border border-border after:hidden",
+    },
+    size: {
+      // default: "h-20",
+      sm: "h-9 text-sm rounded-lg gap-1.5 px-3 has-[>svg]:px-2.5",
+      lg: "h-10 text-lg rounded-lg px-6 has-[>svg]:px-4",
+      icon: "size-9",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+    behavior: "static",
+  },
+});
 ---
 
-<nav class={cn(headerVariants({
-  variant,
-  behavior,
-  width,
-  size,
-}), userClasses)} {...props}>
-    <div class:list={["grid grid-cols-12 py-4 px-6", containerClass]}>
-      <div class="col-span-2">
-        {Astro.slots.logo ? <slot name="logo" /> : null}
-      </div>
-      <div class="col-span-8 flex justify-center">
-        {Astro.slots.links ? <slot name="links" /> : null}
-      </div>
-      <div class="col-span-2 flex justify-end">
-        {Astro.slots.actions ? <slot name="actions" /> : null}
-      </div>
-    </div>
+<nav
+  class={cn(
+    headerVariants({
+      variant,
+      behavior,
+      width,
+      size,
+    }),
+    userClasses,
+  )}
+  {...props}
+>
+  <div class:list={["grid grid-cols-12 py-4 px-6", containerClass]}>
+    {Astro.slots.logo ? <slot name="logo" /> : null}
+    {Astro.slots.links ? <slot name="links" /> : null}
+    {Astro.slots.actions ? <slot name="actions" /> : null}
+  </div>
 </nav>
 
 <style>
-/* draw a line but keep it hidden initially */
-/* .site-header::after{
+  /* draw a line but keep it hidden initially */
+  /* .site-header::after{
   content:"";
   position: absolute; inset-inline: 0; inset-block-end: 0;
   height: 1px; background: rgba(0,0,0,.14);
   opacity: 0; pointer-events: none;
 } */
 
-/* fade the line in after the first ~12px of page scroll */
-@supports (animation-timeline: scroll()){
-
-  @keyframes show-line { from { opacity: 0 } to { opacity: 1 } }
-}
+  /* fade the line in after the first ~12px of page scroll */
+  @supports (animation-timeline: scroll()) {
+    @keyframes show-line {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
 </style>

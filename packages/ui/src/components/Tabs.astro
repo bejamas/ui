@@ -4,7 +4,7 @@
  * @title Tabs
  * @description Minimal accessible tabs component with vanilla JS and Tailwind CSS.
  * @status stable
- * 
+ *
  * @example
  * <Tabs>
  *   <div slot="tablist" class="space-x-2 mb-4">
@@ -24,9 +24,9 @@
  * </Tabs>
  */
 
-import { cn } from "../lib/utils";
+import { cn } from "@bejamas/ui/lib/utils";
 
-const { class: className = '', ...props } = Astro.props;
+const { class: className = "", ...props } = Astro.props;
 ---
 
 <div data-tabs>
@@ -37,58 +37,65 @@ const { class: className = '', ...props } = Astro.props;
   <slot />
 </div>
 
-
-</style>
 <script type="module">
   (() => {
     const init = (container) => {
-      const tabs   = Array.from(container.querySelectorAll('[role="tab"]'));
-      const panels = Array.from(container.querySelectorAll('[role="tabpanel"]'));
+      const tabs = Array.from(container.querySelectorAll('[role="tab"]'));
+      const panels = Array.from(
+        container.querySelectorAll('[role="tabpanel"]'),
+      );
       if (!tabs.length || !panels.length) return;
-  
+
       const count = Math.min(tabs.length, panels.length);
-  
+
       // give stable IDs and link them
-      const uid = container.id || ('tabs-' + Math.random().toString(36).slice(2,8));
+      const uid =
+        container.id || "tabs-" + Math.random().toString(36).slice(2, 8);
       tabs.slice(0, count).forEach((tab, i) => {
         if (!tab.id) tab.id = `${uid}-tab-${i}`;
         if (!panels[i].id) panels[i].id = `${uid}-panel-${i}`;
-        tab.setAttribute('aria-controls', panels[i].id);
-        panels[i].setAttribute('aria-labelledby', tab.id);
-        if (tab.tagName === 'BUTTON' && !tab.hasAttribute('type')) tab.type = 'button';
+        tab.setAttribute("aria-controls", panels[i].id);
+        panels[i].setAttribute("aria-labelledby", tab.id);
+        if (tab.tagName === "BUTTON" && !tab.hasAttribute("type"))
+          tab.type = "button";
       });
-  
-      let active = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+
+      let active = tabs.findIndex(
+        (t) => t.getAttribute("aria-selected") === "true",
+      );
       if (active < 0) active = 0;
-  
+
       const setActive = (i, focus = false) => {
         for (let j = 0; j < count; j++) {
           const on = j === i;
-          tabs[j].setAttribute('aria-selected', on ? 'true' : 'false');
+          tabs[j].setAttribute("aria-selected", on ? "true" : "false");
           tabs[j].tabIndex = on ? 0 : -1;
           panels[j].hidden = !on;
         }
         if (focus) tabs[i].focus();
         active = i;
       };
-  
+
       tabs.slice(0, count).forEach((tab, i) => {
-        tab.addEventListener('click', (e) => {
-          if (tab.tagName === 'A' && tab.hash) e.preventDefault(); // avoid jumping
+        tab.addEventListener("click", (e) => {
+          if (tab.tagName === "A" && tab.hash) e.preventDefault(); // avoid jumping
           setActive(i, false);
         });
-        tab.addEventListener('keydown', (e) => {
-          if (e.key === 'ArrowRight') { e.preventDefault(); setActive((active + 1) % count, true); }
-          if (e.key === 'ArrowLeft')  { e.preventDefault(); setActive((active - 1 + count) % count, true); }
+        tab.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowRight") {
+            e.preventDefault();
+            setActive((active + 1) % count, true);
+          }
+          if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            setActive((active - 1 + count) % count, true);
+          }
         });
       });
-  
+
       setActive(active, false);
     };
-  
-    document.querySelectorAll('[data-tabs]').forEach(init);
+
+    document.querySelectorAll("[data-tabs]").forEach(init);
   })();
-  </script>
-  
-
-
+</script>

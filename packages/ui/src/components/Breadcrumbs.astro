@@ -2,11 +2,11 @@
 /**
  * @component Breadcrumbs
  * @description A composable breadcrumbs navigation component for Astro, using slots for items.
- * 
+ *
  * @prop {string} [class] - Additional classes for the breadcrumbs container.
- * 
+ *
  * @example
- * 
+ *
  * <Breadcrumbs>
  *   <li><Button href="/" as="a" variant="link">Home</Button></li>
  *   <li><ChevronRightIcon /></li>
@@ -25,13 +25,9 @@
  * </Breadcrumbs>
  */
 
-import { cn } from "../lib/utils";
+import { cn } from "@bejamas/ui/lib/utils";
 
-const {
-  class: className = "",
-  ...props
-} = Astro.props;
-
+const { class: className = "", ...props } = Astro.props;
 ---
 
 <nav
@@ -43,6 +39,3 @@ const {
     <slot />
   </ol>
 </nav>
-
-
-

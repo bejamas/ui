@@ -23,11 +23,23 @@ const files = getAllJsonFiles(baseDir);
 
 for (const file of files) {
   const content = readFileSync(file, "utf8");
-  if (content.includes("../../packages/ui/src/components/")) {
-    const newContent = content.replace(
+  let newContent = content;
+
+  if (newContent.includes("../../packages/ui/src/components/")) {
+    newContent = newContent.replace(
       /(\.\.\/\.\.\/packages\/ui\/src\/components\/)/g,
       "ui/",
     );
+  }
+
+  if (newContent.includes("@bejamas/ui/lib/utils")) {
+    newContent = newContent.replace(
+      /@bejamas\/ui\/lib\/utils/g,
+      "@\/lib\/utils",
+    );
+  }
+
+  if (newContent !== content) {
     writeFileSync(file, newContent, "utf8");
     console.log(`Updated: ${file}`);
   }

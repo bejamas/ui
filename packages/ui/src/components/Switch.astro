@@ -5,18 +5,18 @@
  * @description Accessible toggle switch with custom styling.
  * @status stable
  * @since 0.1.0
- * 
+ *
  * @example
- * 
+ *
  * <div class="flex items-center gap-3">
  *   <Switch id="notifications" />
  *   <Label for="notifications">Enable notifications</Label>
  * </div>
  */
 
-const { class: className = '', id = '', name = id, ...props } = Astro.props;
+const { class: className = "", id = "", name = id, ...props } = Astro.props;
 
-import { cn } from "../lib/utils";
+import { cn } from "@bejamas/ui/lib/utils";
 
 const trackClass =
   "relative inline-flex h-5 w-8 shrink-0 items-center rounded-full border border-transparent bg-input transition-colors outline-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-focus-visible:border-ring peer-checked:bg-primary dark:bg-input/80";
@@ -36,9 +36,8 @@ const thumbClass =
       {...props}
       aria-checked={props.checked ?? undefined}
     />
-    <span class={cn(trackClass, className)} aria-hidden="true" />
-    <span class={thumbClass} aria-hidden="true" />
+    <span class={cn(trackClass, className)} aria-hidden="true"></span>
+    <span class={thumbClass} aria-hidden="true"></span>
   </span>
   <slot />
 </label>
-
