@@ -213,13 +213,24 @@ async function createProjectFromTemplate(
     });
 
     try {
-      await execa("git", ["--version"], { cwd: projectPath });
-      await execa("git", ["init"], { cwd: projectPath });
-      await execa("git", ["add", "-A"], { cwd: projectPath });
-      await execa("git", ["commit", "-m", "Initial commit"], {
-        cwd: projectPath,
-      });
-    } catch (_) {}
+      // Detect if we're inside an existing git repo; if yes, skip initializing a nested repo
+      const { stdout } = await execa(
+        "git",
+        ["rev-parse", "--is-inside-work-tree"],
+        { cwd: projectPath },
+      );
+      const insideExistingRepo = stdout.trim() === "true";
+
+      if (!insideExistingRepo) {
+        await execa("git", ["init"], { cwd: projectPath });
+        await execa("git", ["add", "-A"], { cwd: projectPath });
+        await execa("git", ["commit", "-m", "Initial commit"], {
+          cwd: projectPath,
+        });
+      }
+    } catch (_) {
+      // ignore git detection/initialization failures
+    }
 
     createSpinner?.succeed("Creating a new project from template.");
   } catch (error) {

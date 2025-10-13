@@ -128,6 +128,7 @@ export async function runInit(
   let newProjectTemplate;
   if (!options.skipPreflight) {
     const preflight = await preFlightInit(options);
+
     if (preflight.errors[ERRORS.MISSING_DIR_OR_EMPTY_PROJECT]) {
       const { projectPath, template } = await createProject(options);
       if (!projectPath) {
@@ -159,7 +160,7 @@ export async function runInit(
     return await getConfig(options.cwd);
   }
 
-  const projectConfig = await getProjectConfig(options.cwd, projectInfo);
+  // const projectConfig = await getProjectConfig(options.cwd, projectInfo);
 
   const shadcnBin = process.platform === "win32" ? "shadcn.cmd" : "shadcn";
   const localShadcnPath = path.resolve(
@@ -191,36 +192,14 @@ export async function runInit(
       });
     } else {
       // Follow user's runner preference (npx, bunx, pnpm dlx)
-      const runner = await getPackageRunner(options.cwd);
-      if (runner === "bunx") {
-        await execa(
-          "bunx",
-          ["shadcn@latest", "init", "--base-color", "neutral"],
-          {
-            stdio: "inherit",
-            cwd: options.cwd,
-          },
-        );
-      } else if (runner === "pnpm dlx") {
-        await execa(
-          "pnpm",
-          ["dlx", "shadcn@latest", "init", "--base-color", "neutral"],
-          {
-            stdio: "inherit",
-            cwd: options.cwd,
-          },
-        );
-      } else {
-        // default to npx; add -y to skip install prompt
-        await execa(
-          "npx",
-          ["-y", "shadcn@latest", "init", "--base-color", "neutral"],
-          {
-            stdio: "inherit",
-            cwd: options.cwd,
-          },
-        );
-      }
+      await execa(
+        "npx",
+        ["-y", "shadcn@latest", "init", "--base-color", "neutral"],
+        {
+          stdio: "inherit",
+          cwd: options.cwd,
+        },
+      );
     }
   }
 }
