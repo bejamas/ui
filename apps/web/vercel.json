@@ -10,5 +10,11 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/r/styles/:style/:name.json",
+      "destination": "/r/:name.json"
+    }
   ]
 }
