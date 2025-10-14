@@ -79,16 +79,36 @@ const leanPresets = Object.fromEntries(
 <div
   x-data="{
     activeIndex: 0,
+    iframeActive: false,
+    observer: null,
     init() {
       const first = this.$root.querySelector('[data-key]');
-      if (first?.dataset.key) window.applyPresetByKey(first.dataset.key);
+      if (first?.dataset.key && typeof window.applyPresetByKey === 'function') window.applyPresetByKey(first.dataset.key);
+
+      const panel = this.$refs.panel || this.$root;
+      const onIntersect = (entries) => {
+        console.log(entries);
+        for (const entry of entries) {
+          this.iframeActive = entry.isIntersecting && entry.intersectionRatio >= 0.9;
+        }
+      };
+      this.observer = new IntersectionObserver(onIntersect, { threshold: [0, 0.5, 0.9, 1] });
+      this.observer.observe(panel);
     },
     setActive(i, key) {
       this.activeIndex = Number(i);
-      window.applyPresetByKey && window.applyPresetByKey(key);
+      if (typeof window.applyPresetByKey === 'function') window.applyPresetByKey(key);
+    },
+    activateIframe() {
+    console.log('activateIframe');
+    console.log(this.activeIndex);
+      const panel = this.$refs.panel || this.$root;
+      const panelEnd = document.getElementById('browser-hero-panel-end');
+      panelEnd.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+      this.iframeActive = true;
     },
   }"
-  class="browser will-change-transform not-content relative z-10 h-[90svh] rounded-t-2xl overflow-clip flex flex-col"
+  class="browser will-change-transform not-content relative z-10 h-[calc(100svh_-_var(--spacing)_*_23)] rounded-t-2xl overflow-clip flex flex-col"
 >
   <div
     class="bg-background/10 dark:bg-foreground/10 backdrop-blur-xl not-content px-5 py-3 grid grid-cols-12"
@@ -104,7 +124,7 @@ const leanPresets = Object.fromEntries(
         data-key={componentsShowreel.theme}
         data-index={0}
         data-preview={componentsShowreel.preview}
-        class="rounded-lg text-sm min-w-44 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
+        class="rounded-lg text-sm min-w-44 px-3 py-1 flex items-center cursor-pointer select-none transition-colors"
         x-on:click="setActive(0, 'default')"
         x-bind:class="{
           'bg-background dark:bg-foreground/20 shadow-xs text-muted-foreground': activeIndex === 0,
@@ -139,7 +159,13 @@ const leanPresets = Object.fromEntries(
       </div>
     </div>
   </div>
-  <div class="flex-1">
+  <div class="flex-1 relative" x-ref="panel">
+    <button
+      type="button"
+      x-show="!iframeActive"
+      class="absolute inset-0 z-10 cursor-zoom-in"
+      x-on:click.prevent.stop="activateIframe"
+      aria-label="Activate preview"></button>
     <iframe
       src={componentsShowreel.preview}
       x-show={`activeIndex === 0`}
@@ -162,6 +188,7 @@ const leanPresets = Object.fromEntries(
 
 <style>
   .browser {
+    scroll-snap-align: center;
     box-shadow:
       0px 0px 0px 1.18145px rgba(5, 23, 41, 0.08),
       0px 1.18145px 1.18145px rgba(5, 23, 41, 0.03),
