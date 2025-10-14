@@ -26,6 +26,7 @@
         "@astrojs/starlight-tailwind": "^4.0.1",
         "@astrojs/vercel": "^8.2.7",
         "@bejamas/ui": "workspace:*",
+        "@lucide/astro": "^0.545.0",
         "@tailwindcss/vite": "^4.1.11",
         "astro": "^5.13.8",
         "culori": "^4.0.2",
@@ -2584,7 +2585,7 @@
 
     "@bejamas/ui/typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
-    "@bejamas/web/tw-animate-css": ["tw-animate-css@1.3.8", "", {}, "sha512-Qrk3PZ7l7wUcGYhwZloqfkWCmaXZAoqjkdbIDvzfGshwGtexa/DAs9koXxIkrpEasyevandomzCBAV1Yyop5rw=="],
+    "@bejamas/web/@lucide/astro": ["@lucide/astro@0.545.0", "", { "peerDependencies": { "astro": "^4 || ^5" } }, "sha512-uhBiJCVXH+YmZdiTncV3I8e2gA4iqA/YLCKyMfxl1pWLleyrJWrQY5Avmt1qKjtYEMah0uJiQzaYtaeekaCdCw=="],
 
     "@bejamas/web/typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
 
