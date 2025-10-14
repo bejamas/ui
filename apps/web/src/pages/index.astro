@@ -73,13 +73,19 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   } */
 
   .hero {
-    animation: fadeOutAtBottom ease-out both;
-    animation-timeline: scroll(root block);
-    animation-range: 40% 80%;
+    opacity: 1;
     transform-origin: left center;
     scroll-snap-align: center;
 
     @apply sticky top-40 px-5 py-0 mb-28 z-10 pt-0 max-w-[1500px] mx-auto;
+  }
+
+  @supports (animation-timeline: auto) {
+    .hero {
+      animation: fadeOutAtBottom ease-out both;
+      animation-timeline: scroll(root block);
+      animation-range: 40% 80%;
+    }
   }
 
   .sl-container {
