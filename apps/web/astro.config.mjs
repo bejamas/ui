@@ -7,6 +7,9 @@ import starlightCoolerCredit from "starlight-cooler-credit";
 import starlightThemeBejamas from "starlight-theme-bejamas";
 
 import vercel from "@astrojs/vercel";
+import netlify from "@astrojs/netlify";
+
+const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
   // output: 'server',
@@ -73,7 +76,9 @@ export default defineConfig({
       noExternal: ["zod"],
     },
   },
-  adapter: vercel({
-    skewProtection: true,
-  }),
+  adapter: isVercel
+    ? vercel({
+        skewProtection: true,
+      })
+    : netlify(),
 });
