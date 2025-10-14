@@ -89,7 +89,7 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "text-foreground border-none shadow-sm [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+          "text-foreground border [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
       },
       shape: {
         default: "rounded-md",
@@ -109,7 +109,7 @@ const badgeVariants = cva(
 );
 
 const Tag = as;
-const classes = cn(badgeVariants({ variant, shape, size }), className);
+const classes = cn(badgeVariants({ variant, shape, size, className }));
 ---
 
 <Tag class={classes} {...props}>

@@ -12,6 +12,8 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     title: "The UI system for Astro. Copy. Customize. Ship.",
     template: "splash",
     hero: {
+      title:
+        'The UI system for Astro. Copy. <em class="font-serif">Customize.</em> Ship.',
       actions: [
         {
           text: "Get Started",
@@ -23,12 +25,12 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   }}
 >
   <BrowserHero />
-  <div class="h-full fixed bg-muted top-12 border left-5 right-5 rounded-t-2xl">
+  <div class="h-full fixed bg-muted top-14 border left-5 right-5 rounded-t-2xl">
   </div>
-  <!-- <div
+  <div
     class="h-60 z-20 fixed mix-blend-hard-light pointer-events-none bg-gradient-to-t from-muted to-transparent bottom-0 left-5 right-5 scroll-fade-out"
   >
-  </div> -->
+  </div>
 </StarlightPage>
 
 <style is:global>
@@ -70,7 +72,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     animation-range: 40% 80%;
     transform-origin: left center;
 
-    @apply sticky top-40 px-5 py-0 mb-20 z-10 pt-0 max-w-[1500px] mx-auto;
+    @apply sticky top-40 px-5 py-0 mb-28 z-10 pt-0 max-w-[1500px] mx-auto;
   }
 
   .sl-container {
@@ -98,7 +100,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   @keyframes fadeOutAtBottom {
     to {
       opacity: 0;
-      transform: scale(0.95);
+      transform: scale(0.99);
     }
   }
 
@@ -111,7 +113,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
   @keyframes maxWidthFull {
     to {
-      transform: scale(1);
+      transform: scale(1) translateZ(0);
     }
   }
 
@@ -122,7 +124,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   }
 
   .browser {
-    transform: scale(0.9);
+    transform: scale(0.92) translateZ(0);
     animation: maxWidthFull linear both;
     animation-timeline: scroll(root block);
     animation-range: 0% 100%;

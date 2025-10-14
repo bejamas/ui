@@ -1,6 +1,8 @@
 ---
 import "@/styles/blocks.css";
 import "@bejamas/ui/styles/globals.css";
+
+const { theme = "current-theme" } = Astro.props;
 ---
 
 <html class="bg-background">
@@ -42,7 +44,7 @@ import "@bejamas/ui/styles/globals.css";
     </script>
   </head>
   <body class="antialiased bg-background">
-    <link rel="stylesheet" href="/r/themes/current-theme.css" />
+    <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
 
     <slot />
   </body>

@@ -5,12 +5,265 @@ import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
 import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
 import StickySurface from "@bejamas/ui/components/StickySurface.astro";
 import Breadcrumbs from "@bejamas/ui/components/Breadcrumbs.astro";
+import Separator from "@bejamas/ui/components/Separator.astro";
+import Footer from "@bejamas/ui/components/Footer.astro";
+import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
+import Input from "@bejamas/ui/components/Input.astro";
+import Label from "@bejamas/ui/components/Label.astro";
+import Card from "@bejamas/ui/components/Card.astro";
 import { SlashIcon } from "@lucide/astro";
 ---
 
-<BlockExampleLayout>
-  <img
-    src="/demo/e94eae8075202bacfd6584ec916e442cc01bc8cb.png"
-    class="w-full h-full object-contain"
-  />
+<BlockExampleLayout theme="violet-bloom">
+  <StickySurface
+    observeStuck
+    class="[&.is-stuck]:shadow-sm bg-background"
+    effects={["elevate"]}
+    style="--stuck-shadow: var(--shadow-sm)"
+  >
+    <NavigationMenu class="max-w-6xl mx-auto">
+      <div slot="logo" class="col-span-2">
+        <p class="text-3xl font-extrabold tracking-tighter">VIRA</p>
+      </div>
+      <ul
+        slot="links"
+        class="flex col-span-8 items-center justify-center space-x-2"
+      >
+        <li>
+          <Button as="a" href="/" variant="ghost" class="text-base"
+            >Developers</Button
+          >
+        </li>
+        <li>
+          <Button as="a" href="/" variant="ghost" class="text-base"
+            >Business</Button
+          >
+        </li>
+        <li>
+          <Button as="a" href="/" variant="ghost" class="text-base"
+            >Resources</Button
+          >
+        </li>
+        <li>
+          <Button as="a" href="/" variant="ghost" class="text-base"
+            >Pricing</Button
+          >
+        </li>
+        <li>
+          <Button as="a" href="/" variant="ghost" class="text-base"
+            >Contact</Button
+          >
+        </li>
+      </ul>
+      <div
+        slot="actions"
+        class="flex col-span-2 justify-end items-center gap-2"
+      >
+        <Button
+          variant="ghost"
+          class="group-[.is-stuck]/surface:bg-primary group-[.is-stuck]/surface:text-primary-foreground text-base"
+          >Get Started</Button
+        >
+        <!-- <Button
+          class="w-20 group-[.is-stuck]/surface:w-25 duration-500 ease-out"
+        >
+          <span
+            class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out"
+            >Contact</span
+          >
+          <span
+            class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 group-[.is-stuck]/surface:block opacity-0 transition-all hidden blur-sm transition-discrete duration-500 ease-out"
+            >Get a demo</span
+          >
+        </Button> -->
+      </div>
+    </NavigationMenu>
+  </StickySurface>
+
+  <section class="py-20 relative z-10 max-w-6xl mx-auto px-5 grid grid-cols-12">
+    <div class="col-span-8">
+      <h1 class="text-7xl font-medium tracking-tight">
+        Your wealth.<br />Fully accounted.
+      </h1>
+    </div>
+    <div class="col-span-4 mb-10">
+      <p class="text-3xl">
+        A powerful combination of efficiency, quality and flexibility for anyone
+        looking to streamline their design workflow.
+      </p>
+    </div>
+
+    <div class="col-span-8">
+      <p
+        class="text-[7.5rem] leading-none text-primary font-extrabold col-span-8"
+      >
+        V
+      </p>
+    </div>
+    <div class="col-span-4">
+      <Button size="lg">Book a demo</Button>
+    </div>
+
+    <Separator class="col-span-12 mt-10 mb-5" />
+
+    <p class="text-[7.5rem] leading-none font-medium col-span-8">
+      21.37<sup class="text-6xl -top-10 ml-2 relative">%</sup>
+    </p>
+
+    <div class="col-span-4">
+      <p class="text-muted-foreground text-xl">
+        * Approximate earning in year 2025
+      </p>
+    </div>
+  </section>
+  <!-- Background lines  -->
+  <svg
+    width="1600"
+    height="826"
+    viewBox="0 0 1600 826"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    class="absolute top-64 left-0 w-full h-full pointer-events-none z-0"
+  >
+    <path
+      d="M3457.91 783.176L1424.29 62.0501C1194.73 -19.35 944.175 -19.35 714.616 62.0501L-1319 783.176M2200.91 801.327L1353.1 151.964C1185.75 23.7805 953.227 23.7805 785.868 151.964L-61.9319 801.327M2118.67 1201L1361.27 258.894C1211.41 72.4857 927.586 72.4857 777.726 258.894L20.3268 1201"
+      stroke="#666666"
+      stroke-opacity="0.48"></path>
+  </svg>
+
+  <section class="pt-20 pb-40">
+    <div
+      class="mx-auto max-w-[37.5rem] aspect-[1.586] relative rounded-3xl overflow-clip"
+    >
+      <video
+        src="/demo/card.mp4"
+        muted
+        loop
+        autoplay
+        class="w-full h-full object-cover"></video>
+
+      <p
+        class="absolute top-12 left-16 text-5xl font-extrabold text-foreground tracking-tighter"
+      >
+        VIRA
+      </p>
+      <!-- Wireless Icon -->
+      <svg
+        width="41"
+        height="41"
+        viewBox="0 0 41 41"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        class="absolute top-13 right-16"
+      >
+        <path
+          d="M5.46191 15.4229C5.96191 16.0491 6.33691 16.8006 6.58691 17.5521C6.83691 18.3036 6.96191 19.1804 6.96191 20.0571C6.96191 20.9339 6.83691 21.8107 6.58691 22.5622C6.33691 23.3137 5.96191 24.0652 5.46191 24.6914C4.83691 25.5682 4.96191 26.8207 5.83691 27.4469C6.71191 28.0732 7.96191 27.9479 8.58691 27.0712C9.33691 26.0692 9.83691 25.0672 10.3369 23.8147C10.8369 22.5622 10.9619 21.3097 10.9619 20.0571C10.9619 18.8046 10.7119 17.5521 10.3369 16.2996C9.96191 15.1724 9.33691 14.0451 8.58691 13.0431C7.96191 12.1664 6.71191 12.0411 5.83691 12.6674C4.96191 13.2936 4.83691 14.5461 5.46191 15.4229Z"
+          fill="#7433FF"></path>
+        <path
+          d="M12.3369 11.7906C13.8369 14.1704 14.7119 17.0511 14.7119 20.0571C14.7119 23.0632 13.8369 25.9439 12.3369 28.3237C11.7119 29.2004 12.0869 30.453 12.9619 31.0792C13.9619 31.7055 15.0869 31.3297 15.7119 30.453C17.5869 27.4469 18.7119 23.9399 18.7119 20.0571C18.7119 16.2996 17.5869 12.6673 15.7119 9.66133C15.0869 8.78457 13.8369 8.40882 12.9619 9.03507C12.0869 9.66133 11.7119 10.7886 12.3369 11.7906Z"
+          fill="#7433FF"></path>
+        <path
+          d="M19.5869 8.03307C21.7119 11.5401 22.8369 15.6734 22.8369 20.0571C22.8369 24.4409 21.5869 28.5742 19.5869 32.0812C19.0869 33.0832 19.3369 34.2105 20.3369 34.8367C21.3369 35.3377 22.4619 35.0872 23.0869 34.0852C25.5869 29.952 26.9619 25.1924 26.9619 20.0571C26.9619 14.9219 25.5869 10.1623 23.0869 6.02906C22.5869 5.02705 21.3369 4.77655 20.3369 5.27756C19.3369 5.90381 19.0869 7.03107 19.5869 8.03307Z"
+          fill="#7433FF"></path>
+        <path
+          d="M26.8368 4.27555C29.4619 8.90983 31.0868 14.2956 31.0868 20.0571C31.0868 25.8187 29.5869 31.2045 26.8368 35.8387C26.3368 36.8408 26.5869 37.968 27.5869 38.5943C28.5869 39.0953 29.7119 38.8448 30.3369 37.8428C33.3369 32.5822 35.0869 26.5702 35.0869 20.0571C35.0869 13.5441 33.3369 7.53207 30.3369 2.27154C29.8369 1.26953 28.5869 1.01903 27.5869 1.52003C26.5869 2.02104 26.3368 3.27354 26.8368 4.27555Z"
+          fill="#7433FF"></path>
+      </svg>
+
+      <img
+        src="/demo/card-code.png"
+        class="absolute top-40 left-16"
+        width="73"
+        height="55"
+      />
+
+      <div
+        class="absolute text-2xl font-medium bottom-0 inset-x-0 bg-[#252525] text-white px-16 py-5"
+      >
+        <p>Thom Krupa</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <Card
+      class="relative aspect-[320/390] bg-gray-100 dark:bg-gray-800 w-full max-w-[320px] border-none"
+    >
+      <Fragment slot="media">
+        <img
+          alt="Team Member"
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-0 h-full w-full select-none object-cover"
+          src="/demo/team/5fccb1d99609bb713db5b36177a98320f1a438e5.png"
+        />
+        <div
+          aria-hidden="true"
+          class="pointer-events-none absolute bottom-0 left-0 right-0 h-[64px]"
+        >
+          <div
+            class="absolute inset-0 h-[200%] backdrop-blur-sm"
+            style={{
+              WebkitMaskImage:
+                "linear-gradient(to top, black 80%, transparent)",
+              maskImage: "linear-gradient(to top, black 80%, transparent)",
+              maskRepeat: "no-repeat",
+              maskSize: "100% 100%",
+            }}
+          >
+          </div>
+        </div>
+      </Fragment>
+    </Card>
+  </section>
+
+  <Footer class="mx-auto max-w-6xl px-5">
+    <div class="grid grid-cols-12 gap-4">
+      <LinkGroup
+        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
+        title="How it works"
+        items={[
+          { label: "Blog", href: "/blog" },
+          { label: "Documentation", href: "/docs" },
+          { label: "Pricing", href: "/pricing" },
+          { label: "Support", href: "/support" },
+        ]}
+      />
+      <LinkGroup
+        title="Information"
+        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
+        items={[
+          { label: "Home", href: "/" },
+          { label: "About", href: "/about" },
+          { label: "Contact", href: "/contact" },
+          { label: "Careers", href: "/careers" },
+          { label: "Press", href: "/press" },
+        ]}
+      />
+      <LinkGroup
+        title="Company"
+        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
+        items={[
+          { label: "About", href: "/about" },
+          { label: "Contact", href: "/contact" },
+          { label: "Careers", href: "/careers" },
+          { label: "Press", href: "/press" },
+        ]}
+      />
+    </div>
+    <div class="max-w-sm mt-28 pb-12">
+      <div class="flex items-center gap-2">
+        <Input placeholder="Enter your email" />
+        <Button variant="secondary">Subscribe</Button>
+      </div>
+      <p class="text-muted-foreground text-sm mt-6">
+        By creating an account, you agree to our Terms and have read and
+        acknowledge Privacy Statement. We’ll send you only what matters — no
+        noise, no spam.
+      </p>
+    </div>
+    <Separator />
+    <div class="py-11">
+      <p class="text-4xl font-extrabold tracking-tighter">VIRA</p>
+    </div>
+  </Footer>
 </BlockExampleLayout>

@@ -88,7 +88,7 @@ const leanPresets = Object.fromEntries(
       window.applyPresetByKey && window.applyPresetByKey(key);
     },
   }"
-  class="browser not-content relative z-10 h-[90svh] rounded-t-3xl overflow-clip flex flex-col"
+  class="browser will-change-transform not-content relative z-10 h-[90svh] rounded-t-2xl overflow-clip flex flex-col"
 >
   <div
     class="bg-background/10 dark:bg-foreground/10 backdrop-blur-xl not-content px-5 py-3 grid grid-cols-12"
@@ -104,7 +104,7 @@ const leanPresets = Object.fromEntries(
         data-key={componentsShowreel.theme}
         data-index={0}
         data-preview={componentsShowreel.preview}
-        class="rounded-lg min-w-44 px-3 py-1 flex items-center cursor-pointer select-none transition-colors"
+        class="rounded-lg text-sm min-w-44 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
         x-on:click="setActive(0, 'default')"
         x-bind:class="{
           'bg-background dark:bg-foreground/20 shadow-xs text-muted-foreground': activeIndex === 0,
@@ -129,7 +129,7 @@ const leanPresets = Object.fromEntries(
                 'bg-background dark:bg-foreground/20 shadow-xs text-muted-foreground': activeIndex === Number($el.dataset.index),
                 'bg-muted-foreground/10 dark:bg-background/50 text-muted-foreground': activeIndex !== Number($el.dataset.index)
               }"
-              class="rounded-lg min-w-40 px-3 py-1 flex items-center cursor-pointer select-none transition-colors"
+              class="rounded-lg text-sm min-w-40 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
             >
               <div class="size-5 mr-2 rounded-sm bg-foreground" />
               {tab.label}
@@ -139,7 +139,7 @@ const leanPresets = Object.fromEntries(
       </div>
     </div>
   </div>
-  <div class="bg-white flex-1">
+  <div class="flex-1">
     <iframe
       src={componentsShowreel.preview}
       x-show={`activeIndex === 0`}

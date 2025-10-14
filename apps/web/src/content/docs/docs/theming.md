@@ -15,7 +15,7 @@ For marketing websites, this matters because a theme isn’t decoration. It’s 
 
 ## Theming as a Spectrum
 
-<img src="/theming-spectrum.png" alt="Theming spectrum diagram" class="dark:invert" />
+<img src="/docs/theming-spectrum.png" alt="Theming spectrum diagram" class="dark:invert" />
 
 Theming spans a spectrum, from highly codified to loosely expressive:
 

@@ -5,12 +5,162 @@ import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
 import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
 import StickySurface from "@bejamas/ui/components/StickySurface.astro";
 import Breadcrumbs from "@bejamas/ui/components/Breadcrumbs.astro";
-import { SlashIcon } from "@lucide/astro";
+import Separator from "@bejamas/ui/components/Separator.astro";
+import Footer from "@bejamas/ui/components/Footer.astro";
+import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
+import Input from "@bejamas/ui/components/Input.astro";
+import Label from "@bejamas/ui/components/Label.astro";
+import Badge from "@bejamas/ui/components/Badge.astro";
+
+import { SlashIcon, ArrowDownIcon, MenuIcon } from "@lucide/astro";
 ---
 
-<BlockExampleLayout>
-  <img
-    src="/demo/fa8b6723d440fa5a3b35c372175e9e4480c228c8.png"
-    class="w-full h-full object-contain"
-  />
+<BlockExampleLayout theme="rome">
+  <StickySurface
+    observeStuck
+    class="[&.is-stuck]:shadow-sm [&.is-stuck]:bg-primary/80 [&.is-stuck]:backdrop-blur fixed top-0 left-0 bg-transparent w-full"
+    effects={["elevate"]}
+    style="--stuck-shadow: var(--shadow-sm)"
+  >
+    <NavigationMenu class="bg-transparent text-white px-0">
+      <div slot="logo" class="col-span-4 px-8 flex items-center gap-2">
+        <p class="text-4xl font-extrabold tracking-tighter">VIRA</p>
+        <p class="mx-auto">+ a healthcare company</p>
+      </div>
+
+      <ul slot="links" class="flex col-span-6 px-8 items-center space-x-2">
+        <li>
+          <Button as="a" href="/" class="bg-accent font-serif"
+            >Join the waitlist
+            <Badge variant="default" class="font-sans"
+              ><span class="size-1.5 rounded-full mr-0.5 bg-current"></span>2026
+            </Badge>
+          </Button>
+        </li>
+        <li>
+          <Button as="a" href="/" variant="secondary" class="font-serif"
+            >Log in</Button
+          >
+        </li>
+      </ul>
+      <div
+        slot="actions"
+        class="flex col-span-2 px-8 justify-end items-center gap-2"
+      >
+        <Button
+          variant="secondary"
+          class="group-[.is-stuck]/surface:bg-primary group-[.is-stuck]/surface:text-primary-foreground tracking-tight"
+          ><span class="uppercase text-sm transition-all duration-200 ease-out"
+            >Menu</span
+          >
+          <MenuIcon
+            class="size-4 group-[.is-stuck]/surface:opacity-100 transition-all duration-200 ease-out"
+          /></Button
+        >
+        <!-- <Button
+          class="w-20 group-[.is-stuck]/surface:w-25 duration-500 ease-out"
+        >
+          <span
+            class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out"
+            >Contact</span
+          >
+          <span
+            class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 group-[.is-stuck]/surface:block opacity-0 transition-all hidden blur-sm transition-discrete duration-500 ease-out"
+            >Get a demo</span
+          >
+        </Button> -->
+      </div>
+    </NavigationMenu>
+  </StickySurface>
+
+  <section class="pt-10 relative z-10 grid grid-cols-12 w-full text-white">
+    <img
+      src="/demo/health/hero-01.png"
+      class="object-cover absolute left-0 z-0 h-full w-full"
+    />
+    <div class="col-span-8 relative z-10 px-8 pt-30 pb-40">
+      <h1 class="text-8xl max-w-3xl text-balance tracking-tight">
+        It's time you own your <span
+          class="italic font-serif underline underline-offset-10 decoration-1 decoration-border/50"
+          >skin care.</span
+        >
+      </h1>
+    </div>
+
+    <div
+      class="col-span-12 relative z-10 border-t border-border/50 grid grid-cols-12"
+    >
+      <div class="col-span-4 border-r border-border/50 px-8 py-10">
+        <p class="text-xl font-serif">Introduction</p>
+        <img
+          src="/demo/health/hero-02.png"
+          class="w-full h-auto max-w-xs rounded-xl mt-10"
+        />
+      </div>
+      <div class="col-span-8 px-8 py-10">
+        <div class="flex items-center gap-2 w-full">
+          <Badge variant="outline" class="text-current">1</Badge>
+          <Separator orientation="horizontal" class="w-10" />
+          <p class="text-xl font-serif">The mission</p>
+          <ArrowDownIcon class="size-6 ml-auto" />
+        </div>
+        <p class="text-4xl max-w-2xl mt-10">
+          A predictive, presonalised health platform - for <span
+            class="font-serif">people</span
+          > and practitioners.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Footer class="px-8 pt-20">
+    <div class="grid grid-cols-12 gap-4">
+      <LinkGroup
+        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
+        title="How it works"
+        items={[
+          { label: "Blog", href: "/blog" },
+          { label: "Documentation", href: "/docs" },
+          { label: "Pricing", href: "/pricing" },
+          { label: "Support", href: "/support" },
+        ]}
+      />
+      <LinkGroup
+        title="Information"
+        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
+        items={[
+          { label: "Home", href: "/" },
+          { label: "About", href: "/about" },
+          { label: "Contact", href: "/contact" },
+          { label: "Careers", href: "/careers" },
+          { label: "Press", href: "/press" },
+        ]}
+      />
+      <LinkGroup
+        title="Company"
+        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
+        items={[
+          { label: "About", href: "/about" },
+          { label: "Contact", href: "/contact" },
+          { label: "Careers", href: "/careers" },
+          { label: "Press", href: "/press" },
+        ]}
+      />
+    </div>
+    <div class="max-w-sm mt-28 pb-12">
+      <div class="flex items-center gap-2">
+        <Input placeholder="Enter your email" />
+        <Button variant="secondary">Subscribe</Button>
+      </div>
+      <p class="text-muted-foreground text-sm mt-6">
+        By creating an account, you agree to our Terms and have read and
+        acknowledge Privacy Statement. We’ll send you only what matters — no
+        noise, no spam.
+      </p>
+    </div>
+    <Separator />
+    <div class="py-11">
+      <p class="text-4xl font-extrabold tracking-tighter">VIRA</p>
+    </div>
+  </Footer>
 </BlockExampleLayout>

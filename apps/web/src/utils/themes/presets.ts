@@ -28,6 +28,8 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "shadow-offset-x": "0",
         "shadow-offset-y": "1px",
         "letter-spacing": "0em",
+        "font-serif":
+          "'Besley', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif",
       },
     },
   },
@@ -79,6 +81,13 @@ export const defaultPresets: Record<string, ThemePreset> = {
 
         "letter-spacing": "0em",
         spacing: "0.25rem",
+
+        "font-sans":
+          "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+        "font-serif":
+          "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+        "font-mono":
+          "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
       },
       dark: {
         background: "oklch(0.145 0 0)",
@@ -310,7 +319,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "sidebar-accent-foreground": "#000000",
         "sidebar-border": "#ebebeb",
         "sidebar-ring": "#000000",
-        radius: "1.4rem",
+        radius: "0.25rem",
         "shadow-color": "hsl(0 0% 0%)",
         "shadow-opacity": "0.16",
         "shadow-blur": "3px",
@@ -380,7 +389,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "card-foreground": "#501854",
         popover: "#ffffff",
         "popover-foreground": "#501854",
-        primary: "#a84370",
+        primary: "#CD0496",
         "primary-foreground": "#ffffff",
         secondary: "#f1c4e6",
         "secondary-foreground": "#77347c",
