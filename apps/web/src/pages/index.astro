@@ -27,10 +27,12 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   <BrowserHero />
   <div id="browser-hero-panel-end" class="w-full mt-[-1px] h-px bottom-0 -z-10">
   </div>
-  <div class="h-full fixed bg-muted top-14 border left-5 right-5 rounded-t-2xl">
+  <div
+    class="h-full fixed scroll-fade-out bg-muted top-14 border left-6 right-6 rounded-t-2xl"
+  >
   </div>
   <div
-    class="h-60 z-20 fixed mix-blend-hard-light pointer-events-none bg-gradient-to-t from-muted to-transparent bottom-0 left-5 right-5 scroll-fade-out"
+    class="h-60 z-20 fixed mix-blend-hard-light pointer-events-none bg-gradient-to-t from-muted to-transparent bottom-0 left-5 right-5 scroll-fade-out-and-move-bottom"
   >
   </div>
 </StarlightPage>
@@ -97,9 +99,9 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     animation-timeline: scroll(root block);
     animation-range: 20% 100%;
     transform: scale(0.95); */
-    max-width: calc(100% - var(--spacing) * 10);
+    /* max-width: calc(100% - var(--spacing) * 10); */
     padding-top: calc(var(--spacing) * 12);
-    @apply mx-auto;
+    @apply mx-auto max-w-full;
   }
 
   .fade {
@@ -131,6 +133,12 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   }
 
   .scroll-fade-out {
+    animation: fadeOutAtBottom linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 40% 80%;
+  }
+
+  .scroll-fade-out-and-move-bottom {
     animation: fadeOutAtBottomAndMoveBottom linear both;
     animation-timeline: scroll(root block);
     animation-range: 40% 80%;

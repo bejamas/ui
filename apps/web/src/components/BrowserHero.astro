@@ -108,10 +108,10 @@ const leanPresets = Object.fromEntries(
       this.iframeActive = true;
     },
   }"
-  class="browser will-change-transform not-content relative z-10 h-[calc(100svh_-_var(--spacing)_*_23)] rounded-t-2xl overflow-clip flex flex-col"
+  class="browser will-change-transform not-content relative z-10 h-[calc(100svh_-_var(--spacing)_*_18)] rounded-t-2xl overflow-clip flex flex-col"
 >
   <div
-    class="bg-background/10 dark:bg-foreground/10 backdrop-blur-xl not-content px-5 py-3 grid grid-cols-12"
+    class="bg-muted dark:bg-foreground/10 backdrop-blur-xl not-content px-5 py-3 grid grid-cols-12"
   >
     <div class="flex items-center gap-x-2 col-span-1">
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
@@ -149,7 +149,7 @@ const leanPresets = Object.fromEntries(
                 'bg-background dark:bg-foreground/20 shadow-xs text-muted-foreground': activeIndex === Number($el.dataset.index),
                 'bg-muted-foreground/10 dark:bg-background/50 text-muted-foreground': activeIndex !== Number($el.dataset.index)
               }"
-              class="rounded-lg text-sm min-w-40 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
+              class="rounded-lg text-sm min-w-32 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
             >
               <div class="size-5 mr-2 rounded-sm bg-foreground" />
               {tab.label}
