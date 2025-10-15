@@ -22,7 +22,7 @@ export async function GET({
 }) {
   try {
     const cookies = parseCookies(request);
-    const currentTheme = cookies.theme;
+    const currentTheme = cookies.theme || "default";
 
     if (!currentTheme) {
       return new Response("No theme found", {
