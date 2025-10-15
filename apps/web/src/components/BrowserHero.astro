@@ -62,6 +62,10 @@ const leanPresets = Object.fromEntries(
   window.applyPresetByKey = (key) => {
     const preset = window.BEJAMAS_PRESETS?.[key];
     if (!preset || !window.bejamas?.applyThemeCss) return;
+
+    // save to cookie
+    document.cookie = `theme=${key}; path=/;`;
+
     const cssText = window.bejamas.applyThemeCss({
       ...preset,
       currentMode: window.__getCurrentMode(),
