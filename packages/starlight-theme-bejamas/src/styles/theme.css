@@ -45,7 +45,8 @@
     --sl-color-text-accent: var(--primary);
     --sl-color-accent: var(--primary);
 
-    --sl-nav-height: auto;
+    --sl-nav-height: calc(var(--spacing) * 18);
+    /* --sl-nav-height: auto; */
     --sl-nav-pad-y: calc(var(--spacing) * 4);
   }
 }

@@ -123,10 +123,14 @@
 
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
-const { variant = "default", class: className = "" } = Astro.props;
+const {
+  variant = "default",
+  hoverVariant = "default",
+  class: className = "",
+} = Astro.props;
 
 const cardVariants = cva(
-  "text-card-foreground overflow-clip relative flex flex-col",
+  "group/card text-card-foreground overflow-clip relative flex flex-col",
   {
     variants: {
       variant: {
@@ -155,6 +159,19 @@ const headerVariants = cva(
     variants: {
       variant: {
         // default: "px-4",
+      },
+    },
+  },
+);
+
+const hiddenContentVariants = cva(
+  "inset-0 absolute z-10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 ease-out",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary",
+        glass: "bg-primary/70 backdrop-blur-sm",
+        ghost: "",
       },
     },
   },
@@ -212,6 +229,21 @@ const headerVariants = cva(
         slot="footer"
       >
         <slot name="footer" />
+      </div>
+    )
+  }
+  {
+    Astro.slots.hiddenContent && (
+      <div
+        class={cn(
+          hiddenContentVariants({
+            variant: hoverVariant,
+            className: Astro.props.hiddenContentClass,
+          }),
+        )}
+        slot="hidden-content"
+      >
+        <slot name="hidden-content" />
       </div>
     )
   }

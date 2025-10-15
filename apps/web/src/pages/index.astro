@@ -40,17 +40,26 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 <style is:global>
   @reference "tailwindcss";
 
-  h1 {
+  :root {
+    --sl-nav-height: auto;
+  }
+
+  .hero h1 {
     letter-spacing: calc(var(--letter-spacing) - 0.025em);
-    @apply text-5xl font-medium text-left text-balance block max-w-xl;
+    @apply text-4xl font-medium text-left text-balance block max-w-xl;
   }
 
   html {
     scroll-snap-type: y mandatory;
   }
 
+  .content-panel:first-child {
+    @apply pt-12;
+  }
+
   .main-frame {
     height: 100svh;
+    padding-top: 0;
   }
 
   .main-frame > .lg\:sl-flex,
@@ -79,7 +88,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     transform-origin: left center;
     scroll-snap-align: center;
 
-    @apply sticky top-40 px-5 py-0 mb-28 z-10 pt-0 max-w-[1500px] mx-auto;
+    @apply sticky top-18 px-5 py-20 z-10 max-w-[1500px] mx-auto;
   }
 
   @supports (animation-timeline: auto) {
@@ -100,8 +109,8 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     animation-range: 20% 100%;
     transform: scale(0.95); */
     /* max-width: calc(100% - var(--spacing) * 10); */
-    padding-top: calc(var(--spacing) * 12);
-    @apply mx-auto max-w-full;
+    /* padding-top: calc(var(--spacing) * 4); */
+    @apply mx-auto max-w-full mt-0 pt-0;
   }
 
   .fade {

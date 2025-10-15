@@ -188,6 +188,7 @@ import { SlashIcon } from "@lucide/astro";
   <section class="max-w-6xl px-5 mx-auto py-20">
     <Card
       class="relative aspect-[320/390] bg-gray-100 dark:bg-gray-800 w-full max-w-[320px] border-none"
+      hoverVariant="glass"
     >
       <Fragment slot="media">
         <img
@@ -198,21 +199,22 @@ import { SlashIcon } from "@lucide/astro";
         />
         <div
           aria-hidden="true"
-          class="pointer-events-none absolute bottom-0 left-0 right-0 h-[64px]"
+          class="pointer-events-none absolute bottom-0 left-0 right-0 h-[64px] bg-gradient-to-t from-black/50 to-transparent"
         >
-          <div
-            class="absolute inset-0 h-[200%] backdrop-blur-sm"
-            style={{
-              WebkitMaskImage:
-                "linear-gradient(to top, black 80%, transparent)",
-              maskImage: "linear-gradient(to top, black 80%, transparent)",
-              maskRepeat: "no-repeat",
-              maskSize: "100% 100%",
-            }}
-          >
-          </div>
         </div>
       </Fragment>
+      <div slot="footer" class="text-white">
+        <p class="text-lg">John Doe</p>
+        <p class="opacity-80 text-sm">john.doe@example.com</p>
+      </div>
+
+      <div
+        slot="hiddenContent"
+        class="bg-primary inset-0 absolute z-10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300"
+      >
+        <p class="text-sm">John Doe</p>
+        <p class="text-muted-foreground text-sm">john.doe@example.com</p>
+      </div>
     </Card>
   </section>
 
