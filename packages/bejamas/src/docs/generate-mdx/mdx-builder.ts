@@ -119,12 +119,18 @@ export function buildMdx(params: {
     ].filter((v) => v !== null && v !== undefined) as string[];
   };
 
+  const toMdxPreview = (snippet: string): string => {
+    if (!snippet) return snippet;
+    // Convert HTML comments to MDX comment blocks for preview sections
+    return snippet.replace(/<!--([\s\S]*?)-->/g, "{/*$1*/}");
+  };
+
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length
       ? `<DocsTabs>
   <DocsTabItem label="Preview">
     <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
-${primaryExampleMDX}
+${toMdxPreview(primaryExampleMDX)}
     </div>
   </DocsTabItem>
   <DocsTabItem label="Source">
@@ -142,13 +148,14 @@ ${(() => {
   const exampleSections: string[] = [];
   if (examplesBlocks && examplesBlocks.length) {
     for (const blk of examplesBlocks) {
+      const previewBody = toMdxPreview(blk.body);
       exampleSections.push(
         `### ${blk.title}
 
 <DocsTabs>
   <DocsTabItem label="Preview">
     <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
-${blk.body}
+${previewBody}
     </div>
   </DocsTabItem>
   <DocsTabItem label="Source">
