@@ -14,7 +14,9 @@ const isRtl = dir === "rtl";
     entry.data.template === "splash" && "mt-10",
   ]}
 >
-  <h1 id="_top" class="test">{Astro.locals.starlightRoute.entry.data.title}</h1>
+  <h1 id="_top" class="tracking-tight">
+    {Astro.locals.starlightRoute.entry.data.title}
+  </h1>
 
   {
     entry.data.template !== "splash" && (

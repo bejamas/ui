@@ -156,10 +156,14 @@
     border-bottom: 1px solid var(--color-border);
 
     padding-top: 0.5rem;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
     font-family: var(--sl-font-mono);
     font-size: 0.875rem;
+  }
+
+  .expressive-code pre {
+    border-radius: var(--radius-lg);
   }
 
   starlight-tabs[data-sync-key="pkg"] .tablist-wrapper ul {
