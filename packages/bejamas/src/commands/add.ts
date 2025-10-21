@@ -7,7 +7,6 @@ import { getPackageRunner } from "@/src/utils/get-package-manager";
 const DEFAULT_REGISTRY_URL = "https://ui-web-nine.vercel.app/r";
 
 // No quoting helper needed; we pass args array directly to execa
-
 function extractOptionsForShadcn(rawArgv: string[]): string[] {
   const addIndex = rawArgv.findIndex((arg) => arg === "add");
   if (addIndex === -1) return [];
