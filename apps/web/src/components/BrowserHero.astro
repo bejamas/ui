@@ -27,7 +27,7 @@ const componentsShowreel = {
   label: "components showreel",
   icon: "globe",
   theme: "default",
-  preview: "/components-showreel",
+  preview: "/ui-demo",
 };
 
 // Lean presets payload for the client (label + styles only)
@@ -122,13 +122,13 @@ const leanPresets = Object.fromEntries(
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
     </div>
-    <div class="col-span-11 flex items-center justify-between">
+    <div class="col-span-11 flex items-center">
       <button
         type="button"
         data-key={componentsShowreel.theme}
         data-index={0}
         data-preview={componentsShowreel.preview}
-        class="rounded-lg text-sm min-w-44 px-3 py-1 flex items-center cursor-pointer select-none transition-colors"
+        class="rounded-lg text-sm min-w-32 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
         x-on:click="setActive(0, 'default')"
         x-bind:class="{
           'bg-background dark:bg-foreground/20 shadow-xs text-muted-foreground': activeIndex === 0,
@@ -139,8 +139,7 @@ const leanPresets = Object.fromEntries(
         bejamas/ui components
       </button>
       <div class="flex items-center justify-center gap-x-3">
-        <Separator class="h-6" orientation="vertical" />
-        <p class="text-muted-foreground my-2 text-sm">example aesthetics</p>
+        <Separator class="h-6 ml-5 mr-2" orientation="vertical" />
         {
           tabs.map((tab, i) => (
             <button

@@ -180,7 +180,6 @@ import { SlashIcon } from "@lucide/astro";
       <div
         class="absolute text-2xl font-medium bottom-0 inset-x-0 bg-[#252525] text-white px-16 py-5"
       >
-        <p>Thom Krupa</p>
       </div>
     </div>
   </section>
@@ -210,10 +209,17 @@ import { SlashIcon } from "@lucide/astro";
 
       <div
         slot="hiddenContent"
-        class="bg-primary inset-0 absolute z-10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300"
+        class="bg-primary flex flex-col inset-0 absolute z-10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 p-6 text-white"
       >
-        <p class="text-sm">John Doe</p>
-        <p class="text-muted-foreground text-sm">john.doe@example.com</p>
+        <p class="text-xl font-medium">Thom Krupa</p>
+        <p class="opacity-80 text-sm mt-6">
+          Damian is an Investment Analyst with over 7 years of experience in
+          market research and portfolio management, helping clients make
+          informed investment decisions.
+        </p>
+        <div class="self-end mt-auto">
+          <Button variant="outline">View Profile</Button>
+        </div>
       </div>
     </Card>
   </section>

@@ -1,0 +1,179 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import Button from "@bejamas/ui/components/Button.astro";
+import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
+import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
+import StickySurface from "@bejamas/ui/components/StickySurface.astro";
+import Breadcrumbs from "@bejamas/ui/components/Breadcrumbs.astro";
+import Separator from "@bejamas/ui/components/Separator.astro";
+import Footer from "@bejamas/ui/components/Footer.astro";
+import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
+import Input from "@bejamas/ui/components/Input.astro";
+import Label from "@bejamas/ui/components/Label.astro";
+import Card from "@bejamas/ui/components/Card.astro";
+import { SlashIcon, BookmarkIcon, AlertCircleIcon } from "@lucide/astro";
+import Avatar from "@bejamas/ui/components/Avatar.astro";
+import ButtonGroup from "@bejamas/ui/components/ButtonGroup.astro";
+import Textarea from "@bejamas/ui/components/Textarea.astro";
+import Switch from "@bejamas/ui/components/Switch.astro";
+import Badge from "@bejamas/ui/components/Badge.astro";
+import Checkbox from "@bejamas/ui/components/Checkbox.astro";
+import Marquee from "@bejamas/ui/components/Marquee.astro";
+import Alert from "@bejamas/ui/components/Alert.astro";
+---
+
+<BlockExampleLayout theme="default">
+  <section class="max-w-7xl py-20 mx-auto px-5 grid grid-cols-12 gap-8">
+    <div class="col-span-3 space-y-6">
+      <h1 class="text-6xl font-medium leading-none">Aa</h1>
+      <ButtonGroup>
+        <Button variant="outline"
+          ><BookmarkIcon class="size-4" /> Bookmark</Button
+        >
+        <Button variant="outline" as="span">120</Button>
+      </ButtonGroup>
+
+      <div class="flex items-center gap-3">
+        <Switch id="notifications" />
+        <Label for="notifications">Enable notifications</Label>
+      </div>
+    </div>
+    <div class="col-span-5 space-y-6">
+      <Textarea placeholder="Write a comment..." class="max-w-sm" />
+      <Card class="w-full max-w-sm" footerClass="flex-col gap-2">
+        <Fragment slot="header">
+          <h3 class="text-xl font-medium leading-none">
+            Login to your account
+          </h3>
+          <p class="text-muted-foreground text-sm">
+            Enter your email below to login to your account
+          </p>
+        </Fragment>
+
+        <Fragment slot="content">
+          <form>
+            <div class="flex flex-col gap-6">
+              <div class="grid gap-2">
+                <Label for="email">Email</Label>
+                <Input type="email" placeholder="m@example.com" required />
+              </div>
+              <div class="grid gap-2">
+                <Label for="password">Password</Label>
+                <Input type="password" placeholder="Password" required />
+                <div class="flex items-center">
+                  <a
+                    href="#"
+                    class="ml-auto text-sm underline-offset-4 hover:underline"
+                    >Forgot your password?</a
+                  >
+                </div>
+              </div>
+            </div>
+          </form>
+        </Fragment>
+
+        <Fragment slot="footer">
+          <Button type="submit" class="w-full">Login</Button>
+          <Button variant="outline" class="w-full">Login with Google</Button>
+        </Fragment>
+      </Card>
+
+      <Alert>
+        <Fragment slot="icon">
+          <AlertCircleIcon className="size-3" />
+        </Fragment>
+        <Fragment slot="title">
+          Success! Your changes have been saved
+        </Fragment>
+        <Fragment slot="description">
+          This is an alert with icon, title and description.
+        </Fragment>
+      </Alert>
+    </div>
+    <div class="col-span-4 space-y-6">
+      <div
+        class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale"
+      >
+        <Avatar>
+          <img
+            slot="avatar-image"
+            src="https://github.com/withastro.png"
+            alt="@withastro"
+          />
+          <span slot="fallback">AW</span>
+        </Avatar>
+        <Avatar>
+          <img
+            slot="avatar-image"
+            src="https://github.com/shadcn.png"
+            alt="@shadcn"
+          />
+          <span slot="fallback">SH</span>
+        </Avatar>
+        <Avatar>
+          <img
+            slot="avatar-image"
+            src="https://github.com/fredkschott.png"
+            alt="@fredkschott"
+          />
+          <span slot="fallback">ER</span>
+        </Avatar>
+      </div>
+
+      <div class="flex w-full flex-wrap gap-3">
+        <Badge>Badge</Badge>
+        <Badge variant="secondary">Secondary</Badge>
+        <Badge variant="destructive">Destructive</Badge>
+        <Badge variant="outline">Outline</Badge>
+      </div>
+
+      <div>
+        <Label
+          class="hover:bg-accent/20 border-border flex items-start gap-3 rounded-lg border p-3 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:border-blue-900 dark:has-[:checked]:bg-blue-950"
+        >
+          <Checkbox
+            id="toggle-2"
+            defaultChecked
+            class="checked:border-blue-600 checked:bg-blue-600 dark:checked:border-blue-700 dark:checked:bg-blue-700"
+          />
+          <div class="grid gap-1.5 font-normal">
+            <p class="text-sm leading-none font-medium">Enable notifications</p>
+            <p class="text-muted-foreground text-sm">
+              You can enable or disable notifications at any time.
+            </p>
+          </div>
+        </Label>
+      </div>
+
+      <div class="mt-20">
+        <Marquee class="dark:invert">
+          <img
+            src="/demo/logo/sonos.svg"
+            alt="Netflix"
+            class="h-5 self-center mx-10"
+          />
+          <img
+            src="/demo/logo/uber.svg"
+            alt="Uber"
+            class="h-5 self-center mx-10"
+          />
+          <img
+            src="/demo/logo/visa.svg"
+            alt="Visa"
+            class="h-5 self-center mx-10"
+          />
+          <img
+            src="/demo/logo/coca-cola.svg"
+            alt="Coca-Cola"
+            class="h-6 self-center mx-10"
+          />
+          <img
+            src="/demo/logo/nike.svg"
+            alt="Nike"
+            class="h-5 self-center mx-10"
+          />
+        </Marquee>
+      </div>
+    </div>
+  </section>
+</BlockExampleLayout>

@@ -1,0 +1,127 @@
+---
+/**
+ * @component Carousel
+ * @title Carousel
+ * @description A CSS scroll-snap carousel using only Tailwind classes (no JS).
+ * @status stable
+ *
+ * @example
+ *
+ * <!-- Horizontal images with center snapping -->
+ * <Carousel class="gap-4 p-2">
+ *   <img src="https://images.unsplash.com/photo-1759332978018-a6efdacf4d11?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1290" alt="Example" class="w-64 h-96 object-cover rounded-lg shrink-0" />
+ *   <img src="https://plus.unsplash.com/premium_photo-1760541740387-e0af5182d805?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1335" alt="Example" class="w-64 h-96 object-cover rounded-lg shrink-0" />
+ *   <img src="https://images.unsplash.com/photo-1760659391924-86d657118008?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340" alt="Example" class="w-120 h-96 object-cover rounded-lg shrink-0" />
+ *   <img src="https://images.unsplash.com/photo-1760479099629-fececb1db0cb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1287" alt="Example" class="w-64 h-96 object-cover rounded-lg shrink-0" />
+ *   <img src="https://images.unsplash.com/photo-1760386366148-4876115c0c34?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340" alt="Example" class="w-120 h-96 object-cover rounded-lg shrink-0" />
+ * </Carousel>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import Carousel from '@/components/ui/Carousel.astro';
+ * ---
+ *
+ * <Carousel>
+ *   <!-- Your items as direct children; give them widths (e.g., w-64) and set shrink-0 -->
+ *   <div class="w-72 shrink-0 bg-muted rounded-xl p-6">Item 1</div>
+ *   <div class="w-72 shrink-0 bg-muted rounded-xl p-6">Item 2</div>
+ *   <div class="w-72 shrink-0 bg-muted rounded-xl p-6">Item 3</div>
+ * </Carousel>
+ * ```
+ *
+ * @props
+ * - axis?: "x" | "y" — Scroll direction. Default: "x".
+ * - snapType?: "mandatory" | "proximity" — Scroll-snap behavior. Default: "mandatory".
+ * - align?: "start" | "center" | "end" — Child snap alignment. Default: "start".
+ * - fade?: boolean — Add edge fade via CSS mask on the scroll axis. Default: false.
+ *   You can customize the fade via Tailwind mask utilities on the class prop.
+ * - class?: string — Additional classes for the container.
+ *
+ * @examples
+ *
+ * ### Vertical list, proximity snapping
+ *
+ * <Carousel axis="y" align="center" snapType="proximity" class="h-64 gap-3 p-3">
+ *   <Card class="w-full shrink-0"> <Fragment slot="content">A</Fragment> </Card>
+ *   <Card class="w-full shrink-0"> <Fragment slot="content">B</Fragment> </Card>
+ *   <Card class="w-full shrink-0"> <Fragment slot="content">C</Fragment> </Card>
+ *   <Card class="w-full shrink-0"> <Fragment slot="content">D</Fragment> </Card>
+ *   <Card class="w-full shrink-0"> <Fragment slot="content">E</Fragment> </Card>
+ * </Carousel>
+ *
+ * ### With fade
+ *
+ * <Carousel fade fadeSize="5%" class="gap-6 p-4">
+ *   <div class="w-72 shrink-0 bg-muted rounded-xl p-6">Item 1</div>
+ *   <div class="w-72 shrink-0 bg-muted rounded-xl p-6">Item 2</div>
+ *   <div class="w-72 shrink-0 bg-muted rounded-xl p-6">Item 3</div>
+ *   <div class="w-72 shrink-0 bg-muted rounded-xl p-6">Item 4</div>
+ * </Carousel>
+ */
+
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props {
+  axis?: "x" | "y";
+  snapType?: "mandatory" | "proximity";
+  align?: "start" | "center" | "end";
+  fade?: boolean;
+  class?: string;
+  props?: Astro.ComponentProps<"div">;
+}
+
+const {
+  axis = "x",
+  snapType = "mandatory",
+  align = "start",
+  fade = false,
+  class: className = "",
+  ...props
+} = Astro.props as Props;
+
+const carouselVariants = cva(
+  // Base container: overflow scroll, hide scrollbar, smooth scroll on supported browsers
+  "relative w-full overflow-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+  {
+    variants: {
+      axis: {
+        x: "flex flex-row snap-x",
+        y: "flex flex-col snap-y",
+      },
+      snapType: {
+        mandatory: "snap-mandatory",
+        proximity: "snap-proximity",
+      },
+      align: {
+        start: "[&>*]:snap-start [&>*]:shrink-0",
+        center: "[&>*]:snap-center [&>*]:shrink-0",
+        end: "[&>*]:snap-end [&>*]:shrink-0",
+      },
+    },
+    defaultVariants: {
+      axis: "x",
+      snapType: "mandatory",
+      align: "start",
+    },
+  },
+);
+
+// Default fade utilities; users can override by passing their own mask classes via `class`.
+const defaultFadeX = "mask-x-from-80% mask-x-to-95%";
+const defaultFadeY = "mask-y-from-80% mask-y-to-95%";
+---
+
+<div
+  class={cn(
+    carouselVariants({ axis, snapType, align }),
+    fade && axis === "x" && defaultFadeX,
+    fade && axis === "y" && defaultFadeY,
+    className,
+  )}
+  {...props}
+>
+  <slot />
+</div>
