@@ -1,0 +1,93 @@
+---
+/**
+ * @component Accordion
+ * @title Accordion
+ * @description Accessible accordion built on native `<details>` and `<summary>`, styled with Tailwind only.
+ *
+ * @example
+ *
+ * <Accordion class="w-full max-w-[420px] self-start">
+ *   <Fragment slot="summary">Is it accessible?</Fragment>
+ *   <Fragment slot="content">
+ *     <div class="pt-0 pb-4">Yes. It uses native details/summary for toggle and no JS.</div>
+ *   </Fragment>
+ * </Accordion>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import Accordion from '@/components/ui/Accordion.astro';
+ * ---
+ * <Accordion class="max-w-xl">
+ *   <Fragment slot="summary">Question</Fragment>
+ *   <Fragment slot="icon"><ChevronDownIcon class="size-4" /></Fragment>
+ *   <Fragment slot="content"><div class="pt-0 pb-4">Answer</div></Fragment>
+ * </Accordion>
+ * ```
+ *
+ * @props
+ * - open?: boolean — Whether the accordion is open by default. Default: false.
+ * - class?: string — Additional classes for the container.
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends Astro.ComponentProps<"div"> {
+  open?: boolean;
+  class?: string;
+}
+
+const { open = false, class: className = "", ...props } = Astro.props as Props;
+
+// Styles are applied via descendant selectors to <details>, <summary>, and content wrapper
+const base = [
+  "[&>details]:border-b [&>details:last-child]:border-b-0",
+  // Trigger (summary)
+  "[&>summary]:flex [&>summary]:w-full [&>summary]:items-start [&>summary]:justify-between [&>summary]:gap-4",
+  "[&>summary]:rounded-md [&>summary]:py-4 [&>summary]:text-left [&>summary]:font-medium",
+  "[&>summary]:transition-all [&>summary]:outline-none",
+  "focus-visible:[&>summary]:ring-[3px] focus-visible:[&>summary]:ring-ring/50 focus-visible:[&>summary]:border-ring",
+  "disabled:[&>summary]:pointer-events-none disabled:[&>summary]:opacity-50",
+  // Hide default disclosure marker
+  "[&>summary]:marker:content-['']",
+  // Rotation handled via group-open on the icon wrapper
+  // Content wrapper (no animation)
+  "[&>[data-slot='accordion-content']]:block",
+].join(" ");
+---
+
+<details
+  open={open}
+  data-slot="accordion-item"
+  class={cn(base, "group", className)}
+>
+  <summary data-slot="accordion-trigger">
+    <span class="flex-1">
+      {Astro.slots.summary ? <slot name="summary" /> : <slot />}
+    </span>
+    {
+      Astro.slots.icon ? (
+        <span class="accordion-chevron inline-flex items-center justify-center transition-transform duration-200 group-open:rotate-180">
+          <slot name="icon" />
+        </span>
+      ) : (
+        <svg
+          class="accordion-chevron size-4 shrink-0 text-muted-foreground translate-y-0.5 transition-transform duration-200 group-open:rotate-180"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      )
+    }
+  </summary>
+  <div data-slot="accordion-content">
+    {Astro.slots.content ? <slot name="content" /> : <slot />}
+  </div>
+</details>
