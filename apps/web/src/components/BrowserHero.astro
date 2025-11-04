@@ -131,8 +131,8 @@ const leanPresets = Object.fromEntries(
         class="rounded-lg text-sm min-w-32 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
         x-on:click="setActive(0, 'default')"
         x-bind:class="{
-          'bg-background dark:bg-foreground/20 shadow-xs text-muted-foreground': activeIndex === 0,
-          'bg-muted-foreground/10 dark:bg-background/50 text-muted-foreground': activeIndex !== 0
+          'bg-background dark:bg-foreground/20 shadow-xs text-foreground': activeIndex === 0,
+          'bg-muted border dark:bg-background/50 text-foreground': activeIndex !== 0
         }"
       >
         <div class="size-5 mr-2 rounded-sm bg-foreground"></div>
@@ -149,8 +149,8 @@ const leanPresets = Object.fromEntries(
               data-preview={tab.preview}
               x-on:click="setActive($event.currentTarget.dataset.index, $event.currentTarget.dataset.key)"
               x-bind:class="{
-                'bg-background dark:bg-foreground/20 shadow-xs text-muted-foreground': activeIndex === Number($el.dataset.index),
-                'bg-muted-foreground/10 dark:bg-background/50 text-muted-foreground': activeIndex !== Number($el.dataset.index)
+                'bg-background dark:bg-foreground/20 shadow-xs text-foreground': activeIndex === Number($el.dataset.index),
+                'bg-muted border dark:bg-background/50 text-foreground': activeIndex !== Number($el.dataset.index)
               }"
               class="rounded-lg text-sm min-w-32 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
             >

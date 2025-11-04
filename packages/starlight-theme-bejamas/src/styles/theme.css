@@ -58,6 +58,14 @@
     padding-top: 3rem;
   }
 
+  .right-sidebar-panel a {
+    color: var(--muted-foreground);
+  }
+
+  .right-sidebar-panel a:hover {
+    color: var(--foreground);
+  }
+
   .right-sidebar,
   .sidebar .sidebar-pane {
     border: 0;

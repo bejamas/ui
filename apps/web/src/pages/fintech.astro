@@ -11,10 +11,30 @@ import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
 import Input from "@bejamas/ui/components/Input.astro";
 import Label from "@bejamas/ui/components/Label.astro";
 import Card from "@bejamas/ui/components/Card.astro";
-import { SlashIcon } from "@lucide/astro";
+import Marquee from "@bejamas/ui/components/Marquee.astro";
+import Accordion from "@bejamas/ui/components/Accordion.astro";
+
+import { SlashIcon, ChevronDownIcon } from "@lucide/astro";
+
+const faq = [
+  {
+    question: "What services does Vira offer?",
+    answer: "Vira offers a range of services to help you manage your finances.",
+  },
+  {
+    question: "How does Vira’s piricing work?",
+    answer:
+      "Vira’s pricing is based on the number of users and the features you need. We offer a free trial for 14 days, so you can try it out before you buy.",
+  },
+  {
+    question: "What is the minimum number of users required?",
+    answer:
+      "The minimum number of users required is 1. You can add more users as needed.",
+  },
+];
 ---
 
-<BlockExampleLayout theme="violet-bloom">
+<BlockExampleLayout theme="berlin">
   <StickySurface
     observeStuck
     class="[&.is-stuck]:shadow-sm bg-background"
@@ -222,6 +242,60 @@ import { SlashIcon } from "@lucide/astro";
         </div>
       </div>
     </Card>
+  </section>
+
+  <section class="max-w-6xl px-5 mx-auto py-20">
+    <h2 class="text-4xl">Frequently asked questions</h2>
+    <div class="grid grid-cols-12 gap-4 text-xl mt-10">
+      <div class="col-span-4 pt-4">
+        <p>General</p>
+      </div>
+      <Accordion class="col-span-8">
+        {
+          faq.map((item) => (
+            <details class="border-b">
+              <summary>
+                {item.question}
+                <ChevronDownIcon class="size-4" />
+              </summary>
+              <div data-slot="accordion-content" class="pb-10">
+                <p>{item.answer}</p>
+              </div>
+            </details>
+          ))
+        }
+      </Accordion>
+    </div>
+  </section>
+
+  <section>
+    <Separator class="my-20" />
+    <Marquee class="lg:text-[6rem]" time={90}>
+      {
+        Array.from({ length: 3 }).map(() => (
+          <Fragment>
+            <p class="mx-10">Get ready to talk</p>
+            <p class="mx-10 text-primary relative">
+              v
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 13 13"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="absolute right-0 top-0"
+              >
+                <path
+                  d="M3.05943 6.33327C3.05943 5.71753 3.20786 5.15952 3.50474 4.65924C3.80711 4.15895 4.21118 3.76038 4.71696 3.4635C5.22274 3.16114 5.78075 3.00995 6.39099 3.00995C6.92976 3.00995 7.42454 3.12815 7.87535 3.36455C8.33165 3.60095 8.70549 3.92256 8.99687 4.32938C9.29374 4.73621 9.46966 5.19801 9.52464 5.71478H7.64445C7.58398 5.4509 7.43279 5.23649 7.1909 5.07156C6.9545 4.90113 6.68786 4.81592 6.39099 4.81592C6.11611 4.81592 5.86322 4.88464 5.63232 5.02208C5.40142 5.15402 5.21725 5.33545 5.07981 5.56635C4.94237 5.79175 4.87365 6.04189 4.87365 6.31677C4.87365 6.59715 4.94237 6.85279 5.07981 7.08369C5.21725 7.30909 5.40142 7.49052 5.63232 7.62796C5.86322 7.7654 6.11611 7.83412 6.39099 7.83412C6.69336 7.83412 6.95725 7.75165 7.18265 7.58672C7.41355 7.4163 7.55649 7.20189 7.61146 6.9435H9.4999C9.44492 7.45478 9.27175 7.91383 8.98037 8.32066C8.6945 8.72748 8.32616 9.04909 7.87535 9.28549C7.42454 9.52189 6.92976 9.64284 6.39099 9.64833C5.78075 9.64284 5.22274 9.49165 4.71696 9.19478C4.21118 8.89791 3.80711 8.49933 3.50474 7.99905C3.20786 7.49326 3.05943 6.938 3.05943 6.33327ZM6.33327 12.6665C5.46464 12.6665 4.64549 12.5016 3.87583 12.1717C3.11166 11.8419 2.4382 11.3883 1.85545 10.8111C1.2727 10.2283 0.816398 9.55487 0.48654 8.7907C0.16218 8.02654 0 7.20739 0 6.33327C0.00549763 5.45914 0.173175 4.64 0.503033 3.87583C0.83289 3.10616 1.28644 2.4327 1.8637 1.85545C2.44644 1.2727 3.1199 0.819146 3.88407 0.494786C4.64824 0.164929 5.46464 0 6.33327 0C7.21289 0 8.03478 0.164929 8.79895 0.494786C9.56312 0.819146 10.2338 1.2727 10.8111 1.85545C11.3938 2.4327 11.8474 3.10616 12.1717 3.87583C12.5016 4.64 12.6665 5.45914 12.6665 6.33327C12.672 7.20739 12.5098 8.02654 12.18 8.7907C11.8556 9.55487 11.4021 10.2283 10.8193 10.8111C10.2421 11.3883 9.56862 11.8419 8.79895 12.1717C8.03478 12.5016 7.21289 12.6665 6.33327 12.6665ZM6.33327 10.4565C6.90502 10.4565 7.44104 10.3493 7.94132 10.1349C8.4471 9.92047 8.88966 9.62634 9.269 9.25251C9.64833 8.87317 9.94521 8.43611 10.1596 7.94132C10.374 7.44104 10.4812 6.90502 10.4812 6.33327C10.4812 5.76151 10.374 5.22549 10.1596 4.72521C9.94521 4.21943 9.64559 3.77687 9.26075 3.39753C8.88142 3.0182 8.44161 2.72407 7.94132 2.51516C7.44654 2.30076 6.91052 2.19355 6.33327 2.19355C5.76701 2.19355 5.23374 2.30076 4.73346 2.51516C4.23867 2.72957 3.80161 3.02644 3.42227 3.40578C3.04294 3.78512 2.74606 4.22493 2.53166 4.72521C2.31725 5.22549 2.21005 5.76151 2.21005 6.33327C2.21005 6.89952 2.3145 7.43279 2.52341 7.93307C2.73782 8.43336 3.03469 8.87317 3.41403 9.25251C3.79336 9.63184 4.23042 9.92871 4.72521 10.1431C5.22549 10.352 5.76151 10.4565 6.33327 10.4565Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </p>
+          </Fragment>
+        ))
+      }
+    </Marquee>
+    <Separator class="my-20" />
   </section>
 
   <Footer class="mx-auto max-w-6xl px-5">

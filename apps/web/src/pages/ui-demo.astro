@@ -11,7 +11,12 @@ import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
 import Input from "@bejamas/ui/components/Input.astro";
 import Label from "@bejamas/ui/components/Label.astro";
 import Card from "@bejamas/ui/components/Card.astro";
-import { SlashIcon, BookmarkIcon, AlertCircleIcon } from "@lucide/astro";
+import {
+  SlashIcon,
+  BookmarkIcon,
+  AlertCircleIcon,
+  BadgeCheckIcon,
+} from "@lucide/astro";
 import Avatar from "@bejamas/ui/components/Avatar.astro";
 import ButtonGroup from "@bejamas/ui/components/ButtonGroup.astro";
 import Textarea from "@bejamas/ui/components/Textarea.astro";
@@ -20,11 +25,12 @@ import Badge from "@bejamas/ui/components/Badge.astro";
 import Checkbox from "@bejamas/ui/components/Checkbox.astro";
 import Marquee from "@bejamas/ui/components/Marquee.astro";
 import Alert from "@bejamas/ui/components/Alert.astro";
+import Dialog from "@bejamas/ui/components/Dialog.astro";
 ---
 
 <BlockExampleLayout theme="default">
-  <section class="max-w-7xl py-20 mx-auto px-5 grid grid-cols-12 gap-8">
-    <div class="col-span-3 space-y-6">
+  <section class="max-w-7xl py-20 mx-auto px-5 grid grid-cols-12 gap-10">
+    <div class="col-span-4 space-y-6">
       <h1 class="text-6xl font-medium leading-none">Aa</h1>
       <ButtonGroup>
         <Button variant="outline"
@@ -37,10 +43,82 @@ import Alert from "@bejamas/ui/components/Alert.astro";
         <Switch id="notifications" />
         <Label for="notifications">Enable notifications</Label>
       </div>
+
+      <Button onclick="myDialog.open()" variant="secondary"
+        >Manage Cookies</Button
+      >
+      <Dialog id="myDialog" class="backdrop-blur-md">
+        <Fragment slot="title">Manage Cookies</Fragment>
+        <Fragment slot="description"
+          >Using websites and apps involves storing and retrieving information
+          from your device, including cookies and other identifiers, which can
+          be shared with third parties, for various activities. We provide a
+          simple tool below allowing you to tailor your choices as you deem fit.
+          You can change your consent at any time. Learn more.</Fragment
+        >
+        <Fragment slot="content">
+          <div class="mt-5">
+            <div class="flex items-center gap-3">
+              <Checkbox
+                id="cookies-necessary"
+                name="cookies-necessary"
+                disabled
+                checked
+              />
+              <Label for="cookies-necessary"
+                >Strictly Necessary Cookies (always active)</Label
+              >
+            </div>
+            <p class="text-sm text-muted-foreground ml-8 mt-1">
+              These cookies are essential for the site to function and cannot be
+              toggled off. They assist with security, user authentication,
+              customer support, etc.
+            </p>
+          </div>
+          <div class="mt-5">
+            <div class="flex items-center gap-3">
+              <Checkbox id="cookies-analytics" name="cookies-analytics" />
+              <Label for="cookies-analytics">Analytics Cookies</Label>
+            </div>
+            <p class="text-sm text-muted-foreground ml-8 mt-1">
+              These cookies help us understand how visitors interact with our
+              site. They allow us to measure traffic and improve site
+              performance.
+            </p>
+          </div>
+          <div class="mt-5">
+            <div class="flex items-center gap-3">
+              <Checkbox
+                id="cookies-marketing-performance"
+                name="cookies-marketing-performance"
+              />
+              <Label for="cookies-marketing-performance"
+                >Marketing Performance Cookies</Label
+              >
+            </div>
+            <p class="text-sm text-muted-foreground ml-8 mt-1">
+              These cookies help us measure the effectiveness of our marketing
+              campaigns.
+            </p>
+          </div>
+        </Fragment>
+        <Fragment slot="footer">
+          <Button variant="outline" data-dialog-close class="mt-4">Close</Button
+          >
+          <Button data-dialog-close class="mt-4">Save changes</Button>
+        </Fragment>
+      </Dialog>
+
+      <Alert>
+        <Fragment slot="icon">
+          <BadgeCheckIcon size={40} color="var(--color-green-600)" />
+        </Fragment>
+        <Fragment slot="title">Your profile has been verified. </Fragment>
+      </Alert>
     </div>
-    <div class="col-span-5 space-y-6">
-      <Textarea placeholder="Write a comment..." class="max-w-sm" />
-      <Card class="w-full max-w-sm" footerClass="flex-col gap-2">
+    <div class="col-span-4 space-y-6">
+      <Textarea placeholder="Write a comment..." />
+      <Card class="w-full" footerClass="flex-col gap-2">
         <Fragment slot="header">
           <h3 class="text-xl font-medium leading-none">
             Login to your account
@@ -120,7 +198,7 @@ import Alert from "@bejamas/ui/components/Alert.astro";
         </Avatar>
       </div>
 
-      <div class="flex w-full flex-wrap gap-3">
+      <div class="flex w-full flex-wrap gap-3 mt-10">
         <Badge>Badge</Badge>
         <Badge variant="secondary">Secondary</Badge>
         <Badge variant="destructive">Destructive</Badge>
@@ -145,7 +223,7 @@ import Alert from "@bejamas/ui/components/Alert.astro";
         </Label>
       </div>
 
-      <div class="mt-20">
+      <div class="mt-10">
         <Marquee class="dark:invert">
           <img
             src="/demo/logo/sonos.svg"
@@ -174,6 +252,45 @@ import Alert from "@bejamas/ui/components/Alert.astro";
           />
         </Marquee>
       </div>
+
+      <Card
+        class="relative ml-auto mt-10 aspect-[320/390] bg-gray-100 dark:bg-gray-800 w-full max-w-[320px]"
+      >
+        <Fragment slot="media">
+          <img
+            alt="Happy pet"
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-0 h-full w-full select-none object-cover"
+            src="/demo/doggo.png"
+          />
+          <div
+            aria-hidden="true"
+            class="pointer-events-none absolute bottom-0 left-0 right-0 h-[64px]"
+          >
+            <div
+              class="absolute inset-0 h-[200%] backdrop-blur-sm"
+              style={{
+                WebkitMaskImage:
+                  "linear-gradient(to top, black 80%, transparent)",
+                maskImage: "linear-gradient(to top, black 80%, transparent)",
+                maskRepeat: "no-repeat",
+                maskSize: "100% 100%",
+              }}
+            >
+            </div>
+          </div>
+        </Fragment>
+
+        <Fragment slot="header">
+          <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
+          <p class="text-sm text-muted-foreground">loves long walks</p>
+        </Fragment>
+
+        <Fragment slot="footer">
+          <p class="text-sm">3 years old</p>
+          <Button variant="secondary">Adopt me</Button>
+        </Fragment>
+      </Card>
     </div>
   </section>
 </BlockExampleLayout>

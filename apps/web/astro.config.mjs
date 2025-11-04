@@ -54,7 +54,7 @@ export default defineConfig({
       customCss: ["./src/styles/global.css", "@bejamas/ui/styles/globals.css"],
       logo: {
         light: "./src/assets/logo-3.svg",
-        dark: "./src/assets/logo-dark.svg",
+        dark: "./src/assets/logo-3-dark.svg",
         replacesTitle: true,
       },
       head: [
