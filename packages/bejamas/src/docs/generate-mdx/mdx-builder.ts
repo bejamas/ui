@@ -158,7 +158,7 @@ export function buildMdx(params: {
     primaryExampleMDX && primaryExampleMDX.length
       ? `<DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center [&_input]:max-w-xs">
 ${toMdxPreview(primaryExampleMDX)}
     </div>
   </DocsTabItem>
@@ -195,7 +195,7 @@ ${descriptionMD}`.trim(),
 
 ${descriptionMD ? `${descriptionMD}\n\n` : ""}<DocsTabs>
   <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
+    <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center [&_input]:max-w-xs">
 ${previewBody}
     </div>
   </DocsTabItem>
@@ -312,8 +312,8 @@ ${componentSource}
     "",
     ...importLines,
     importLines.length ? "" : null,
-    description ? description : null,
-    description ? "" : null,
+    // description ? description : null,
+    // description ? "" : null,
     primaryExampleSection,
     primaryExampleSection ? "" : null,
     installationSection,
