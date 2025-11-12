@@ -174,10 +174,14 @@
     border-radius: var(--radius-lg);
   }
 
+  .expressive-code .frame.is-terminal pre {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
   starlight-tabs[data-sync-key="pkg"] .tablist-wrapper ul {
     padding-bottom: 0.5rem;
     padding-inline: 0.75rem;
-    border-bottom: 0;
+    border-bottom: 1px solid var(--border);
     gap: 0;
   }
 

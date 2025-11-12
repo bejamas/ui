@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight } from "@lucide/astro";
 const { dir, pagination, template, entry } = Astro.locals.starlightRoute;
 const { prev, next } = pagination;
 const isRtl = dir === "rtl";
+
+console.log({ entry });
 ---
 
 <div
@@ -21,9 +23,6 @@ const isRtl = dir === "rtl";
   {
     entry.data.template !== "splash" && (
       <div class="sl-bejamas-docs-title-buttons">
-        <Button as="a" size="sm" href="#content" variant="secondary">
-          Copy Markdown
-        </Button>
         {prev && (
           <Button
             as="a"
@@ -47,6 +46,14 @@ const isRtl = dir === "rtl";
       </div>
     )
   }
+
+  {
+    entry.data.description && (
+      <p class="text-muted-foreground mt-4 mb-2 w-full">
+        {entry.data.description}
+      </p>
+    )
+  }
 </div>
 
 <style>
@@ -54,6 +61,7 @@ const isRtl = dir === "rtl";
     .sl-bejamas-docs-title {
       display: flex;
       justify-content: space-between;
+      flex-wrap: wrap;
       margin-top: 0.5rem;
     }
     .sl-bejamas-docs-title-buttons {
