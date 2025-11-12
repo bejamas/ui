@@ -2,15 +2,27 @@
 /**
  * @component Accordion
  * @title Accordion
- * @description Accessible accordion built on native `<details>` and `<summary>`, styled with Tailwind only.
+ * @description A vertically stacked set of interactive headings that each reveal a section of content. Built on native `<details>`/`<summary>`.
  *
  * @example
  *
  * <Accordion class="w-full max-w-[420px] self-start">
- *   <Fragment slot="summary">Is it accessible?</Fragment>
- *   <Fragment slot="content">
- *     <div class="pt-0 pb-4">Yes. It uses native details/summary for toggle and no JS.</div>
- *   </Fragment>
+ *   <Accordion part="item" open>
+ *     <Accordion part="trigger">
+ *       Is it accessible?
+ *     </Accordion>
+ *     <Accordion part="content">
+ *       Yes. It uses native details/summary and no JS.
+ *     </Accordion>
+ *   </Accordion>
+ *   <Accordion part="item">
+ *     <Accordion part="trigger">
+ *       Can I customize the icon?
+ *     </Accordion>
+ *     <Accordion part="content">
+ *       Yes you can.
+ *     </Accordion>
+ *   </Accordion>
  * </Accordion>
  *
  * @usage
@@ -19,61 +31,117 @@
  * ---
  * import Accordion from '@/components/ui/Accordion.astro';
  * ---
- * <Accordion class="max-w-xl">
- *   <Fragment slot="summary">Question</Fragment>
- *   <Fragment slot="icon"><ChevronDownIcon class="size-4" /></Fragment>
- *   <Fragment slot="content"><div class="pt-0 pb-4">Answer</div></Fragment>
+ *
+ * <Accordion class="w-full max-w-[420px] self-start">
+ *   <Accordion part="item" open>
+ *     <Accordion part="trigger">
+ *       Is it accessible?
+ *     </Accordion>
+ *     <Accordion part="content">
+ *       Yes. It uses native details/summary and no JS.
+ *     </Accordion>
+ *   </Accordion>
  * </Accordion>
  * ```
- *
- * @props
- * - open?: boolean — Whether the accordion is open by default. Default: false.
- * - class?: string — Additional classes for the container.
  */
 
+import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
 
-interface Props extends Astro.ComponentProps<"div"> {
+type AccordionPart = "root" | "item" | "trigger" | "content";
+
+type AccordionRootProps = {
+  part?: "root";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type AccordionItemProps = {
+  part: "item";
   open?: boolean;
   class?: string;
-}
+} & HTMLAttributes<"details">;
 
-const { open = false, class: className = "", ...props } = Astro.props as Props;
+type AccordionTriggerProps = {
+  part: "trigger";
+  class?: string;
+} & HTMLAttributes<"summary">;
 
-// Styles are applied via descendant selectors to <details>, <summary>, and content wrapper
-const base = [
-  "[&>details]:border-b [&>details:last-child]:border-b-0",
-  // Trigger (summary)
-  "[&>summary]:flex [&>summary]:w-full [&>summary]:items-start [&>summary]:justify-between [&>summary]:gap-4",
-  "[&>summary]:rounded-md [&>summary]:py-4 [&>summary]:text-left [&>summary]:font-medium",
-  "[&>summary]:transition-all [&>summary]:outline-none",
-  "focus-visible:[&>summary]:ring-[3px] focus-visible:[&>summary]:ring-ring/50 focus-visible:[&>summary]:border-ring",
-  "disabled:[&>summary]:pointer-events-none disabled:[&>summary]:opacity-50",
-  // Hide default disclosure marker
-  "[&>summary]:marker:content-['']",
-  // Rotation handled via group-open on the icon wrapper
-  // Content wrapper (no animation)
-  "[&>[data-slot='accordion-content']]:block",
-].join(" ");
+type AccordionContentProps = {
+  part: "content";
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type Props =
+  | AccordionRootProps
+  | AccordionItemProps
+  | AccordionTriggerProps
+  | AccordionContentProps;
+
+const {
+  part: rawPart,
+  as: Tag = "div" as HTMLTag,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const part = (rawPart ?? "root") as AccordionPart;
+
+// Variants (shadcn-equivalent)
+const itemVariants = cva("border-b last:border-b-0");
+const triggerVariants = cva(
+  "flex w-full items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring disabled:pointer-events-none disabled:opacity-50 marker:content-['']",
+);
+const contentOuterVariants = cva(
+  // Keeping animation classes optional; native details doesn't provide state attributes
+  "overflow-hidden text-sm",
+);
 ---
 
-<details
-  open={open}
-  data-slot="accordion-item"
-  class={cn(base, "group", className)}
->
-  <summary data-slot="accordion-trigger">
-    <span class="flex-1">
-      {Astro.slots.summary ? <slot name="summary" /> : <slot />}
-    </span>
-    {
-      Astro.slots.icon ? (
-        <span class="accordion-chevron inline-flex items-center justify-center transition-transform duration-200 group-open:rotate-180">
+{
+  part === "root" && (
+    <Tag {...rest} data-slot="accordion" class={cn(className)}>
+      <slot name="item" />
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "item" && (
+    <details
+      {...rest}
+      open={(rest as any).open ?? false}
+      slot="item"
+      data-slot="accordion-item"
+      class={cn(itemVariants(), "group/accordion", className)}
+    >
+      <slot name="trigger" />
+      <slot name="content" />
+      <slot />
+    </details>
+  )
+}
+
+{
+  part === "trigger" && (
+    <summary
+      {...rest}
+      slot="trigger"
+      data-slot="accordion-trigger"
+      class={cn(triggerVariants(), className)}
+    >
+      <span class="flex-1">
+        <slot />
+      </span>
+      {Astro.slots.icon ? (
+        <span class="inline-flex items-center justify-center transition-transform duration-200 group-open/accordion:rotate-180">
           <slot name="icon" />
         </span>
       ) : (
         <svg
-          class="accordion-chevron size-4 shrink-0 text-muted-foreground translate-y-0.5 transition-transform duration-200 group-open:rotate-180"
+          class="size-4 shrink-0 text-muted-foreground translate-y-0.5 transition-transform duration-200 group-open/accordion:rotate-180"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -84,10 +152,22 @@ const base = [
         >
           <path d="m6 9 6 6 6-6" />
         </svg>
-      )
-    }
-  </summary>
-  <div data-slot="accordion-content">
-    {Astro.slots.content ? <slot name="content" /> : <slot />}
-  </div>
-</details>
+      )}
+    </summary>
+  )
+}
+
+{
+  part === "content" && (
+    <div
+      {...rest}
+      slot="content"
+      data-slot="accordion-content"
+      class={cn(contentOuterVariants())}
+    >
+      <div class={cn("pt-0 pb-4", className)}>
+        <slot />
+      </div>
+    </div>
+  )
+}

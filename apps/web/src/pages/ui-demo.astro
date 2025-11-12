@@ -48,15 +48,15 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
         >Manage Cookies</Button
       >
       <Dialog id="myDialog" class="backdrop-blur-md">
-        <Fragment slot="title">Manage Cookies</Fragment>
-        <Fragment slot="description"
+        <Dialog part="title">Manage Cookies</Dialog>
+        <Dialog part="description"
           >Using websites and apps involves storing and retrieving information
           from your device, including cookies and other identifiers, which can
           be shared with third parties, for various activities. We provide a
           simple tool below allowing you to tailor your choices as you deem fit.
-          You can change your consent at any time. Learn more.</Fragment
+          You can change your consent at any time. Learn more.</Dialog
         >
-        <Fragment slot="content">
+        <Dialog part="content">
           <div class="mt-5">
             <div class="flex items-center gap-3">
               <Checkbox
@@ -101,129 +101,63 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
               campaigns.
             </p>
           </div>
-        </Fragment>
-        <Fragment slot="footer">
+        </Dialog>
+        <Dialog part="footer">
           <Button variant="outline" data-dialog-close class="mt-4">Close</Button
           >
           <Button data-dialog-close class="mt-4">Save changes</Button>
-        </Fragment>
+        </Dialog>
       </Dialog>
 
       <Alert>
-        <Fragment slot="icon">
-          <BadgeCheckIcon size={40} color="var(--color-green-600)" />
-        </Fragment>
-        <Fragment slot="title">Your profile has been verified. </Fragment>
+        <BadgeCheckIcon size={40} color="var(--color-green-600)" />
+        <Alert part="title">Your profile has been verified. </Alert>
       </Alert>
     </div>
     <div class="col-span-4 space-y-6">
       <Textarea placeholder="Write a comment..." />
       <Card class="w-full" footerClass="flex-col gap-2">
-        <Fragment slot="header">
-          <h3 class="text-xl font-medium leading-none">
-            Login to your account
-          </h3>
-          <p class="text-muted-foreground text-sm">
-            Enter your email below to login to your account
-          </p>
-        </Fragment>
+        <Card part="header">
+          <Card part="title"> Get the latest updates </Card>
+          <Card part="description">
+            Enter your email below to get the latest updates
+          </Card>
+        </Card>
 
-        <Fragment slot="content">
+        <Card part="content">
           <form>
             <div class="flex flex-col gap-6">
               <div class="grid gap-2">
                 <Label for="email">Email</Label>
-                <Input type="email" placeholder="m@example.com" required />
+                <Input type="email" placeholder="m@bejamas.com" required />
               </div>
               <div class="grid gap-2">
-                <Label for="password">Password</Label>
-                <Input type="password" placeholder="Password" required />
-                <div class="flex items-center">
-                  <a
-                    href="#"
-                    class="ml-auto text-sm underline-offset-4 hover:underline"
-                    >Forgot your password?</a
-                  >
-                </div>
+                <Label for="name"
+                  >Name <span class="text-muted-foreground">(optional)</span
+                  ></Label
+                >
+                <Input type="name" placeholder="John Doe" />
               </div>
             </div>
           </form>
-        </Fragment>
 
-        <Fragment slot="footer">
-          <Button type="submit" class="w-full">Login</Button>
-          <Button variant="outline" class="w-full">Login with Google</Button>
-        </Fragment>
+          <p class="text-muted-foreground text-xs mt-4">
+            By joining our newsletter, you agree to our <a
+              href="#"
+              class="underline-offset-4 hover:underline">Terms</a
+            > and have read and acknowledge our <a
+              href="#"
+              class="underline-offset-4 hover:underline">Privacy Statement</a
+            >.
+          </p>
+        </Card>
+
+        <Card part="footer">
+          <Button type="submit" class="w-full">Join our newsletter</Button>
+        </Card>
       </Card>
 
-      <Alert>
-        <Fragment slot="icon">
-          <AlertCircleIcon className="size-3" />
-        </Fragment>
-        <Fragment slot="title">
-          Success! Your changes have been saved
-        </Fragment>
-        <Fragment slot="description">
-          This is an alert with icon, title and description.
-        </Fragment>
-      </Alert>
-    </div>
-    <div class="col-span-4 space-y-6">
-      <div
-        class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale"
-      >
-        <Avatar>
-          <img
-            slot="avatar-image"
-            src="https://github.com/withastro.png"
-            alt="@withastro"
-          />
-          <span slot="fallback">AW</span>
-        </Avatar>
-        <Avatar>
-          <img
-            slot="avatar-image"
-            src="https://github.com/shadcn.png"
-            alt="@shadcn"
-          />
-          <span slot="fallback">SH</span>
-        </Avatar>
-        <Avatar>
-          <img
-            slot="avatar-image"
-            src="https://github.com/fredkschott.png"
-            alt="@fredkschott"
-          />
-          <span slot="fallback">ER</span>
-        </Avatar>
-      </div>
-
-      <div class="flex w-full flex-wrap gap-3 mt-10">
-        <Badge>Badge</Badge>
-        <Badge variant="secondary">Secondary</Badge>
-        <Badge variant="destructive">Destructive</Badge>
-        <Badge variant="outline">Outline</Badge>
-      </div>
-
-      <div>
-        <Label
-          class="hover:bg-accent/20 border-border flex items-start gap-3 rounded-lg border p-3 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:border-blue-900 dark:has-[:checked]:bg-blue-950"
-        >
-          <Checkbox
-            id="toggle-2"
-            defaultChecked
-            class="checked:border-blue-600 checked:bg-blue-600 dark:checked:border-blue-700 dark:checked:bg-blue-700"
-          />
-          <div class="grid gap-1.5 font-normal">
-            <p class="text-sm leading-none font-medium">Enable notifications</p>
-            <p class="text-muted-foreground text-sm">
-              You can enable or disable notifications at any time.
-            </p>
-          </div>
-        </Label>
-      </div>
-
-      <div class="mt-10">
+      <div class="my-10">
         <Marquee class="dark:invert">
           <img
             src="/demo/logo/sonos.svg"
@@ -253,44 +187,71 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
         </Marquee>
       </div>
 
-      <Card
-        class="relative ml-auto mt-10 aspect-[320/390] bg-gray-100 dark:bg-gray-800 w-full max-w-[320px]"
+      <Alert>
+        <AlertCircleIcon size={32} />
+        <Alert part="title"> Success! Your changes have been saved </Alert>
+        <Alert part="description">
+          This is an alert with icon, title and description.
+        </Alert>
+      </Alert>
+    </div>
+    <div class="col-span-4 space-y-6">
+      <div
+        class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale items-center"
       >
-        <Fragment slot="media">
-          <img
-            alt="Happy pet"
-            aria-hidden="true"
-            class="pointer-events-none absolute inset-0 h-full w-full select-none object-cover"
-            src="/demo/doggo.png"
+        <Avatar>
+          <Avatar part="image">
+            <img src="https://github.com/withastro.png" alt="@withastro" />
+          </Avatar>
+          <Avatar part="fallback">AW</Avatar>
+        </Avatar>
+        <Avatar>
+          <Avatar part="image">
+            <img src="https://github.com/shadcn.png" alt="@shadcn" />
+          </Avatar>
+          <Avatar part="fallback">SH</Avatar>
+        </Avatar>
+        <Avatar>
+          <Avatar part="image">
+            <img src="https://github.com/fredkschott.png" alt="@fredkschott" />
+          </Avatar>
+          <Avatar part="fallback">ER</Avatar>
+        </Avatar>
+
+        <div class="flex ml-5 gap-0.5 flex-col">
+          <p class="text-sm font-medium leading-none">Team</p>
+          <p class="text-muted-foreground text-sm leading-none">10 members</p>
+        </div>
+      </div>
+
+      <div class="flex w-full flex-wrap gap-3 mt-10">
+        <Badge>Badge</Badge>
+        <Badge variant="secondary">Secondary</Badge>
+        <Badge variant="destructive">Destructive</Badge>
+        <Badge variant="outline">Outline</Badge>
+      </div>
+
+      <div>
+        <Label
+          class="hover:bg-blue-50 shadow border-border flex items-start gap-3 rounded-lg border p-3 hover:border-blue-600 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:border-blue-900 dark:has-[:checked]:bg-blue-950 dark:hover:bg-blue-950"
+        >
+          <Checkbox
+            id="toggle-2"
+            defaultChecked
+            class="checked:border-blue-600 checked:bg-blue-600 dark:checked:border-blue-700 dark:checked:bg-blue-700 dark:hover:border-blue-700"
           />
-          <div
-            aria-hidden="true"
-            class="pointer-events-none absolute bottom-0 left-0 right-0 h-[64px]"
-          >
-            <div
-              class="absolute inset-0 h-[200%] backdrop-blur-sm"
-              style={{
-                WebkitMaskImage:
-                  "linear-gradient(to top, black 80%, transparent)",
-                maskImage: "linear-gradient(to top, black 80%, transparent)",
-                maskRepeat: "no-repeat",
-                maskSize: "100% 100%",
-              }}
-            >
-            </div>
+          <div class="grid gap-1.5 font-normal">
+            <p class="text-sm leading-none font-medium">Enable notifications</p>
+            <p class="text-muted-foreground text-sm">
+              You can enable or disable notifications at any time.
+            </p>
           </div>
-        </Fragment>
+        </Label>
+      </div>
 
-        <Fragment slot="header">
-          <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
-          <p class="text-sm text-muted-foreground">loves long walks</p>
-        </Fragment>
-
-        <Fragment slot="footer">
-          <p class="text-sm">3 years old</p>
-          <Button variant="secondary">Adopt me</Button>
-        </Fragment>
-      </Card>
+      <div class="mt-10">
+        <Input type="url" placeholder="https://bejamas.com" />
+      </div>
     </div>
   </section>
 </BlockExampleLayout>

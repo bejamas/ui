@@ -4,20 +4,15 @@
  * @title Dialog
  * @description Accessible dialog/modal component using the native `<dialog>` element, with open/close logic.
  *
- * @prop {boolean} [open] - Whether the dialog is open (controlled).
- * @prop {function} [onOpenChange] - Callback when open state changes.
- * @prop {string} [class] - Additional classes for the dialog element.
- * @prop {string} [backdropClass] - Additional classes for the backdrop.
- * @prop {string} [containerClass] - Additional classes for the dialog container.
- * @prop {boolean} [closeOnBackdrop=true] - Whether clicking the backdrop closes the dialog.
- *
  * @example
  *
  * <Button onclick="myDialog.open()">Manage Cookies</Button>
  * <Dialog id="myDialog" class="backdrop-blur-md">
- *   <Fragment slot="title">Manage Cookies</Fragment>
- *   <Fragment slot="description">Using websites and apps involves storing and retrieving information from your device, including cookies and other identifiers, which can be shared with third parties, for various activities. We provide a simple tool below allowing you to tailor your choices as you deem fit. You can change your consent at any time. Learn more.</Fragment>
- *   <Fragment slot="content">
+ *   <Dialog part="title">Manage Cookies</Dialog>
+ *   <Dialog part="description">
+ *     Using websites and apps involves storing and retrieving information from your device, including cookies and other identifiers, which can be shared with third parties, for various activities. We provide a simple tool below allowing you to tailor your choices as you deem fit. You can change your consent at any time. Learn more.
+ *   </Dialog>
+ *   <Dialog part="content">
  *     <div class="mt-5">
  *       <div class="flex items-center gap-3">
  *         <Checkbox id="cookies-necessary" name="cookies-necessary" disabled checked />
@@ -39,161 +34,257 @@
  *       </div>
  *       <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us measure the effectiveness of our marketing campaigns.</p>
  *     </div>
- *   </Fragment>
- *   <Fragment slot="footer">
- *     <Button variant="outline" data-dialog-close class="mt-4">Close</Button>
+ *   </Dialog>
+ *   <Dialog part="footer">
+ *     <Dialog part="close" class="mt-4">Close</Dialog>
  *     <Button data-dialog-close class="mt-4">Save changes</Button>
- *   </Fragment>
+ *   </Dialog>
  * </Dialog>
  */
 
 import { cn } from "@bejamas/ui/lib/utils";
+ import type { HTMLAttributes, HTMLTag } from "astro/types";
+ 
+ type DialogPart = "root" | "content" | "footer" | "title" | "description" | "close";
+ 
+ type DialogRootProps = {
+   part?: "root";
+   id?: string;
+   open?: boolean;
+   onOpenChange?: ((open: boolean) => void) | null;
+   class?: string;
+   backdropClass?: string;
+   containerClass?: string;
+   closeOnBackdrop?: boolean;
+ } & HTMLAttributes<"dialog">;
+ 
+ type DialogContentProps = {
+   part: "content";
+   as?: HTMLTag;
+   class?: string;
+ } & HTMLAttributes<"div">;
+ 
+ type DialogFooterProps = {
+   part: "footer";
+   as?: HTMLTag;
+   class?: string;
+ } & HTMLAttributes<"div">;
+ 
+ type DialogTitleProps = {
+   part: "title";
+   as?: HTMLTag;
+   class?: string;
+ } & HTMLAttributes<"div">;
+ 
+ type DialogDescriptionProps = {
+   part: "description";
+   as?: HTMLTag;
+   class?: string;
+ } & HTMLAttributes<"p">;
+ 
+ type DialogCloseProps = {
+   part: "close";
+   as?: HTMLTag;
+   class?: string;
+ } & HTMLAttributes<"button">;
+ 
+ type Props =
+   | DialogRootProps
+   | DialogContentProps
+   | DialogFooterProps
+   | DialogTitleProps
+   | DialogDescriptionProps
+   | DialogCloseProps;
 
-const {
-  open = false,
-  onOpenChange = null,
-  class: className = "",
-  backdropClass = "",
-  containerClass = "",
-  closeOnBackdrop = true,
-  id: providedId,
-  ...props
-} = Astro.props;
+ const {
+   part: rawPart,
+   open = false,
+   onOpenChange = null,
+   class: className = "",
+   backdropClass = "",
+   containerClass = "",
+   closeOnBackdrop = true,
+   id: providedId,
+   as: Tag = "div" as HTMLTag,
+   ...rest
+ } = Astro.props as Props;
+ 
+ const part = (rawPart ?? "root") as DialogPart;
 
 const id = providedId ?? `dialog-${Math.random().toString(36).slice(2, 10)}`;
 ---
-
-<dialog
-  id={id}
-  class={cn(
-    "group grid place-items-center opacity-0 open:opacity-100 visibility-hidden open:visibility-visible open:pointer-events-auto pointer-events-none transition-discrete max-w-screen max-h-screen bg-transparent transition-all duration-150 ease-in-out fixed z-50 left-0 top-0 w-full h-full",
-    className,
-  )}
-  {...props}
->
-  <div
-    class={[
-      "relative z-10 bg-background rounded-xl shadow-lg p-6 max-w-lg w-full row-start-1 col-start-1",
-      // motion
-      "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95 transition-all duration-150 ease-in-out",
-      "group-open:opacity-100 group-open:translate-y-0 group-open:sm:scale-100",
-      containerClass,
-    ].join(" ")}
-    role="document"
-  >
-    <Fragment>
-      {
-        Astro.slots.title && (
-          <div class="mb-4 font-medium text-xl">
-            <slot name="title" />
-          </div>
-        )
-      }
-      {
-        Astro.slots.description && (
-          <p class="text-sm text-muted-foreground">
-            <slot name="description" />
-          </p>
-        )
-      }
-      {
-        Astro.slots.content && (
-          <div class="mb-6">
-            <slot name="content" />
-          </div>
-        )
-      }
-      {
-        Astro.slots.footer && (
-          <div class="flex justify-end gap-2">
-            <slot name="footer" />
-          </div>
-        )
-      }
-    </Fragment>
-  </div>
-</dialog>
-<div
-  class={[
-    "transition-discrete fixed inset-0 bg-black/50 opacity-0 duration-200 ease-in-out",
-    "group-data-[state=open]:opacity-100 group-data-[state=closed]:opacity-0",
-    backdropClass,
-  ].join(" ")}
-  tabIndex="-1"
->
-</div>
-
-<form
-  method="dialog"
-  class="grid row-start-1 col-start-1 place-self-stretch -z-1 opacity-0"
->
-  <button data-dialog-close>Close</button>
-</form>
-
-<script type="module" define:vars={{ id, open, closeOnBackdrop }}>
-  const dialog = /** @type {HTMLDialogElement|null} */ (
-    document.getElementById(id)
-  );
-  if (!dialog) {
-    console.warn(`[Dialog] Element with id "${id}" not found.`);
-  } else {
-    const openDialog = () => {
-      // Make it visible but keep in closed state for first paint
-      // dialog.classList.remove('hidden');
-      // dialog.classList.add('flex');
-      if (!dialog.open) dialog.showModal();
-    };
-
-    const animateClose = () => {
-      dialog.setAttribute("data-state", "closed");
-      if (dialog.open) dialog.close();
-    };
-
-    // Backdrop click to close
-    if (closeOnBackdrop) {
-      const backdrop = dialog.querySelector("[data-dialog-backdrop]");
-      if (backdrop) {
-        backdrop.addEventListener("click", () => animateClose());
-      }
-    }
-
-    // [data-dialog-close] elements
-    dialog.querySelectorAll("[data-dialog-close]").forEach((btn) => {
-      btn.addEventListener("click", () => animateClose());
-    });
-
-    // Dispatch custom events and manage visibility
-    dialog.addEventListener("close", () => {
-      // dialog.classList.add('hidden');
-      // dialog.classList.remove('flex');
-      dialog.dispatchEvent(new CustomEvent("dialog-close", { bubbles: true }));
-    });
-    dialog.addEventListener("cancel", (e) => {
-      // ESC key: prevent default to allow animated close
-      e.preventDefault();
-      dialog.dispatchEvent(new CustomEvent("dialog-cancel", { bubbles: true }));
-      animateClose();
-    });
-
-    // Expose a global controller to match <Button onclick={myDialog.open()}>
-    // window[id].open() / close() / toggle() / isOpen()
-    const controller = {
-      open: () => openDialog(),
-      close: () => animateClose(),
-      toggle: () => (dialog.open ? animateClose() : openDialog()),
-      isOpen: () => dialog.open,
-      el: dialog,
-    };
-    try {
-      // Define as non-configurable to avoid accidental overwrites
-      Object.defineProperty(window, id, {
-        value: controller,
-        writable: false,
-        configurable: false,
-      });
-    } catch {
-      // Fallback assignment if property already exists
-      window[id] = controller;
-    }
-  }
-</script>
+ 
+ {
+   part === "root" && (
+     <Fragment>
+       <dialog
+         id={id}
+         class={cn(
+           "group grid place-items-center opacity-0 open:opacity-100 visibility-hidden open:visibility-visible open:pointer-events-auto pointer-events-none transition-discrete max-w-screen max-h-screen bg-transparent transition-all duration-150 ease-in-out fixed z-50 left-0 top-0 w-full h-full",
+           className,
+         )}
+         {...rest}
+       >
+         <div
+           class={[
+             "relative z-10 bg-background rounded-xl shadow-lg p-6 max-w-lg w-full row-start-1 col-start-1",
+             // motion
+             "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95 transition-all duration-150 ease-in-out",
+             "group-open:opacity-100 group-open:translate-y-0 group-open:sm:scale-100",
+             containerClass,
+           ].join(" ")}
+           role="document"
+         >
+          <slot />
+        </div>
+ 
+         <form
+           method="dialog"
+           class="grid row-start-1 col-start-1 place-self-stretch -z-1 opacity-0"
+         >
+           <button data-dialog-close>Close</button>
+         </form>
+       </dialog>
+ 
+       <script type="module" define:vars={{ id, open, closeOnBackdrop }}>
+         const dialog = /** @type {HTMLDialogElement|null} */ (
+           document.getElementById(id)
+         );
+         if (!dialog) {
+           console.warn(`[Dialog] Element with id "${id}" not found.`);
+         } else {
+           const openDialog = () => {
+             // Make it visible but keep in closed state for first paint
+             // dialog.classList.remove('hidden');
+             // dialog.classList.add('flex');
+             if (!dialog.open) dialog.showModal();
+           };
+ 
+           const animateClose = () => {
+             dialog.setAttribute("data-state", "closed");
+             if (dialog.open) dialog.close();
+           };
+ 
+           // Backdrop click to close
+           if (closeOnBackdrop) {
+             const backdrop = dialog.querySelector("[data-dialog-backdrop]");
+             if (backdrop) {
+               backdrop.addEventListener("click", () => animateClose());
+             }
+           }
+ 
+           // [data-dialog-close] elements
+           dialog.querySelectorAll("[data-dialog-close]").forEach((btn) => {
+             btn.addEventListener("click", () => animateClose());
+           });
+ 
+           // Dispatch custom events and manage visibility
+           dialog.addEventListener("close", () => {
+             // dialog.classList.add('hidden');
+             // dialog.classList.remove('flex');
+             dialog.dispatchEvent(new CustomEvent("dialog-close", { bubbles: true }));
+           });
+           dialog.addEventListener("cancel", (e) => {
+             // ESC key: prevent default to allow animated close
+             e.preventDefault();
+             dialog.dispatchEvent(new CustomEvent("dialog-cancel", { bubbles: true }));
+             animateClose();
+           });
+ 
+           // Expose a global controller to match <Button onclick={myDialog.open()}>
+           // window[id].open() / close() / toggle() / isOpen()
+           const controller = {
+             open: () => openDialog(),
+             close: () => animateClose(),
+             toggle: () => (dialog.open ? animateClose() : openDialog()),
+             isOpen: () => dialog.open,
+             el: dialog,
+           };
+           try {
+             // Define as non-configurable to avoid accidental overwrites
+             Object.defineProperty(window, id, {
+               value: controller,
+               writable: false,
+               configurable: false,
+             });
+           } catch {
+             // Fallback assignment if property already exists
+             window[id] = controller;
+           }
+           if (open) {
+             openDialog();
+           }
+         }
+       </script>
+     </Fragment>
+   )
+ }
+ 
+ {
+   part === "title" && (
+     <Tag
+       {...rest}
+       slot="title"
+       data-slot="dialog-title"
+       class={cn("mb-4 font-medium text-xl", className)}
+     >
+       <slot />
+     </Tag>
+   )
+ }
+ 
+ {
+   part === "description" && (
+     <Tag
+       {...rest}
+       slot="description"
+       data-slot="dialog-description"
+       class={cn("text-sm text-muted-foreground", className)}
+     >
+       <slot />
+     </Tag>
+   )
+ }
+ 
+ {
+   part === "content" && (
+     <Tag
+       {...rest}
+       slot="content"
+       data-slot="dialog-content"
+       class={cn("mb-6", className)}
+     >
+       <slot />
+     </Tag>
+   )
+ }
+ 
+ {
+   part === "footer" && (
+     <Tag
+       {...rest}
+       slot="footer"
+       data-slot="dialog-footer"
+       class={cn("flex justify-end gap-2", className)}
+     >
+       <slot />
+     </Tag>
+   )
+ }
+ 
+ {
+   part === "close" && (
+     <Tag
+       {...rest}
+       data-slot="dialog-close"
+       data-dialog-close
+       class={cn(
+         "ring-offset-background focus:ring-ring rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden inline-flex items-center gap-2",
+         className,
+       )}
+     >
+       <slot />
+       {!Astro.slots.default && <span class="sr-only">Close</span>}
+     </Tag>
+   )
+ }

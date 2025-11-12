@@ -20,5 +20,7 @@ const baseClass =
 import { cn } from "@bejamas/ui/lib/utils";
 ---
 
-<textarea data-slot="textarea" class={cn(baseClass, className)} {...props}
-></textarea>
+<textarea
+  data-slot={props["data-slot"] ?? "textarea"}
+  class={cn(baseClass, className)}
+  {...props}></textarea>

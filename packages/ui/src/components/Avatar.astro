@@ -1,72 +1,135 @@
 ---
 /**
  * @component Avatar
- * @description A circular avatar component for displaying user images or initials, inspired by shadcn/ui.
- * 
- * @prop {string} [src] - The image source URL.
- * @prop {string} [alt] - The alt text for the image.
- * @prop {string} [fallback] - The fallback text or initials to display if the image fails to load.
- * @prop {string} [class] - Additional classes for the avatar container.
- * @prop {string} [imageClass] - Additional classes for the image element.
- * @prop {string} [fallbackClass] - Additional classes for the fallback element.
- * 
+ * @title Avatar
+ * @description An image element with a fallback for representing the user.
+ *
  * @example
  * <div class="flex flex-row flex-wrap items-center gap-12">
  *   <Avatar>
- *     <img slot="avatar-image" src="https://github.com/bejamas.png" alt="@bejamas" />
- *     <span slot="fallback">BJ</span>
+ *     <Avatar part="image">
+ *       <img src="https://github.com/bejamas.png" alt="@bejamas" />
+ *     </Avatar>
+ *     <Avatar part="fallback">BJ</Avatar>
  *   </Avatar>
  *   <Avatar class="rounded-lg">
- *     <img slot="avatar-image" src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
- *     <span slot="fallback">ER</span>
+ *     <Avatar part="image">
+ *       <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *     </Avatar>
+ *     <Avatar part="fallback">TK</Avatar>
  *   </Avatar>
  *   <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
  *     <Avatar>
- *       <img slot="avatar-image" src="https://github.com/withastro.png" alt="@withastro" />
- *       <span slot="fallback">AW</span>
+ *       <Avatar part="image">
+ *         <img src="https://github.com/withastro.png" alt="@withastro" />
+ *       </Avatar>
+ *       <Avatar part="fallback">WA</Avatar>
  *     </Avatar>
  *     <Avatar>
- *       <img slot="avatar-image" src="https://github.com/shadcn.png" alt="@shadcn" />
- *       <span slot="fallback">SH</span>
+ *       <Avatar part="image">
+ *         <img src="https://github.com/shadcn.png" alt="@shadcn" />
+ *       </Avatar>
+ *       <Avatar part="fallback">SH</Avatar>
  *     </Avatar>
  *     <Avatar>
- *       <img slot="avatar-image" src="https://github.com/fredkschott.png" alt="@fredkschott" />
- *       <span slot="fallback">ER</span>
+ *       <Avatar part="image">
+ *         <img src="https://github.com/fredkschott.png" alt="@fredkschott" />
+ *       </Avatar>
+ *       <Avatar part="fallback">FS</Avatar>
  *     </Avatar>
  *   </div>
  * </div>
+ * 
+ * @usage
+ * 
+ * ```astro
+ * ---
+ * import Avatar from '@/components/ui/Avatar.astro';
+ * ---
+ * 
+ * <Avatar>
+ *   <Avatar part="image">
+ *     <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *   </Avatar>
+ *   <Avatar part="fallback">TK</Avatar>
+ * </Avatar>
+ * ```
  */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type AvatarPart = "root" | "image" | "fallback";
+
+type AvatarRootProps = {
+  part?: "root";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type AvatarImageProps = {
+  part: "image";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type AvatarFallbackProps = {
+  part: "fallback";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type Props = AvatarRootProps | AvatarImageProps | AvatarFallbackProps;
+
 const {
-  src = "",
-  alt = "",
-  fallback = "",
+  part: rawPart,
+  as: Tag = "div" as HTMLTag,
   class: className = "",
-  imageClass = "",
-  fallbackClass = "",
-  ...props
-} = Astro.props;
-const hasAvatarImageSlot = Astro.slots.has("avatar-image");
+  ...rest
+} = Astro.props as Props;
+
+const part = (rawPart ?? "root") as AvatarPart;
 ---
 
-<div
-  data-slot="avatar"
-  class={["relative flex size-8 shrink-0 overflow-hidden rounded-full", className].join(" ")}
-  {...props}
->
-  {hasAvatarImageSlot ? (
-    <slot name="avatar-image" />
-  ) : src ? (
-    <img
-      src={src}
-      alt={alt}
-      class={["aspect-square size-full object-cover", imageClass].join(" ")}
-      loading="lazy"
-    />
-  ) : (
-    <span
-      class={["bg-muted flex size-full items-center justify-center rounded-full text-muted-foreground font-medium uppercase select-none", fallbackClass].join(" ")}
+{
+  part === "root" && (
+    <Tag
+      {...rest}
+      data-slot="avatar"
+      class={cn("relative flex size-8 shrink-0 overflow-hidden rounded-full", className)}
     >
-      <slot name="fallback">{fallback}</slot>
-    </span>
-  )}
-</div>
+      <!-- New pattern slots -->
+      <slot name="image" />
+      <slot name="fallback" />
+      <!-- Back-compat named slots -->
+      <slot name="avatar-image" />
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "image" && (
+    <Tag
+      {...rest}
+      slot="image"
+      data-slot="avatar-image"
+      class={cn("relative z-10 aspect-square size-full [&_img]:size-full [&_img]:object-cover", className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "fallback" && (
+    <Tag
+      {...rest}
+      slot="fallback"
+      data-slot="avatar-fallback"
+      class={cn("absolute inset-0 bg-muted flex size-full items-center justify-center rounded-full text-muted-foreground font-medium uppercase select-none", className)}
+    >
+      <slot />
+    </Tag>
+  )
+}

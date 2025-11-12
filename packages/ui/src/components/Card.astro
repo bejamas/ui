@@ -3,38 +3,49 @@
  * @component Card
  * @title Card
  * @description UI container for grouping content with header, footer, etc.
- * @status stable
  *
  * @example
  *
- * <Card class="w-full max-w-sm not-content" footerClass="flex-col gap-2">
- *   <Fragment slot="header">
- *     <h3 class="text-xl font-medium leading-none">Login to your account</h3>
- *     <p class="text-muted-foreground text-sm">Enter your email below to login to your account</p>
- *   </Fragment>
- *
- *   <Fragment slot="content">
- *     <form>
- *       <div class="flex flex-col gap-6">
- *         <div class="grid gap-2">
- *           <Label for="email">Email</Label>
- *           <Input type="email" placeholder="m@example.com" required />
- *         </div>
- *         <div class="grid gap-2">
- *           <Label for="password">Password</Label>
- *           <Input type="password" placeholder="Password" required />
- *           <div class="flex items-center">
- *             <a href="#" class="ml-auto text-sm underline-offset-4 hover:underline">Forgot your password?</a>
- *           </div>
- *         </div>
+ * <Card class="w-full max-w-sm">
+ *   <Card part="media" class="m-1">
+ *     <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340" alt="Everest" class="w-full h-full object-cover" />
+ *   </Card>
+ *   <Card part="header" class="gap-y-6">
+ *     <div class="flex items-center gap-2 justify-between mb-2">
+ *       <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+ *         <Avatar>
+ *           <img slot="avatar-image" src="https://github.com/withastro.png" alt="@withastro" />
+ *           <span slot="fallback">AW</span>
+ *         </Avatar>
+ *         <Avatar>
+ *           <img slot="avatar-image" src="https://github.com/shadcn.png" alt="@shadcn" />
+ *           <span slot="fallback">SH</span>
+ *         </Avatar>
+ *         <Avatar>
+ *           <img slot="avatar-image" src="https://github.com/fredkschott.png" alt="@fredkschott" />
+ *           <span slot="fallback">ER</span>
+ *         </Avatar>
  *       </div>
- *     </form>
- *   </Fragment>
+ *       <Date date="2025-08-24T12:00:00Z" class="text-sm text-muted-foreground" />
+ *     </div>
+ *     <Card part="title">Danone’s Alpro Path to Cutting-Edge Composable Web</Card>
+ *   </Card>
  *
- *   <Fragment slot="footer">
- *     <Button type="submit" class="w-full">Login</Button>
- *     <Button variant="outline" class="w-full">Login with Google</Button>
- *   </Fragment>
+ *   <Card part="content">
+ *     <Card part="description" class="mb-6">A while back, they challenged the norm for enterprises and replaced monolithic architecture with a modern tech stack. But they didn't stop there.</Card>
+ *     <Button variant="outline" as="a" href="#">Read more</Button>
+ *   </Card>
+ * 
+ *   <Separator />
+ * 
+ *   <Card part="footer">
+ *     <p class="text-sm text-muted-foreground">Categories</p>
+ *     <div class="flex items-center gap-2">
+ *       <Badge variant="secondary">Marketing</Badge>
+ *       <Badge variant="secondary">UI Design</Badge>
+ *       <Badge variant="secondary">AI</Badge>
+ *     </div>
+ *   </Card>
  * </Card>
  *
  * @usage
@@ -49,27 +60,40 @@
  *
  * ```astro
  * <Card>
- *   <Fragment slot="header">
- *     <h3 class="text-xl font-medium leading-none">Card Title</h3>
- *     <p class="text-muted-foreground text-sm">Card Description</p>
- *   </Fragment>
- *
- *   <Fragment slot="content">
- *     Card Content
- *   </Fragment>
- *
- *   <Fragment slot="footer">
- *     Card Footer
- *   </Fragment>
+ *   <Card part="header">
+ *     <Card part="title">Card Title</Card>
+ *     <Card part="description">Card Description</Card>
+ *     <Card part="action">
+ *       <button>Action</button>
+ *     </Card>
+ *   </Card>
+ *   <Card part="content">
+ *     Card content goes here.
+ *   </Card>
+ *   <Card part="footer">
+ *     <button>OK</button>
+ *   </Card>
  * </Card>
  * ```
 
  * @examples
  *
- * ### With background image
+ * ### Background image
  *
  * <Card class="relative aspect-[320/390] bg-gray-100 dark:bg-gray-800 w-full max-w-[320px]">
- *   <Fragment slot="media">
+
+ * 
+ *   <Card part="header">
+ *     <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
+ *     <p class="text-sm text-muted-foreground">loves long walks</p>
+ *   </Card>
+ *
+ *   <Card part="footer">
+ *     <p class="text-sm">3 years old</p>
+ *     <Button variant="secondary">Adopt me</Button>
+ *   </Card>
+ * 
+  *   <Card part="media">
  *     <img
  *       alt="Happy pet"
  *       aria-hidden="true"
@@ -90,160 +114,393 @@
  *         }}
  *       />
  *     </div>
- *   </Fragment>
- * 
- *   <Fragment slot="header">
- *     <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
- *     <p class="text-sm text-muted-foreground">loves long walks</p>
- *   </Fragment>
- *
- *   <Fragment slot="footer">
- *     <p class="text-sm">3 years old</p>
- *     <Button variant="secondary">Adopt me</Button>
- *   </Fragment>
+ *   </Card>
  * </Card>
  * 
- * ### Ghost variant
+ * ### Orientation
+ * 
+ * <Card class="w-full max-w-xl gap-0 pb-2" orientation="horizontal" as="a" href="#">
+ *   <Card part="media" class="m-1 h-full max-w-[240px]">
+ *     <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340" alt="Everest" class="w-full h-full object-cover" />
+ *   </Card>
+ *   <div class="flex flex-1 flex-col gap-3">
+ *   <Card part="header" class="gap-y-6 pt-6 block">
+ *     <div class="flex items-center gap-2 justify-between mb-4">
+ *       <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+ *         <Avatar>
+ *           <img slot="avatar-image" src="https://github.com/withastro.png" alt="@withastro" />
+ *           <span slot="fallback">AW</span>
+ *         </Avatar>
+ *         <Avatar>
+ *           <img slot="avatar-image" src="https://github.com/shadcn.png" alt="@shadcn" />
+ *           <span slot="fallback">SH</span>
+ *         </Avatar>
+ *         <Avatar>
+ *           <img slot="avatar-image" src="https://github.com/fredkschott.png" alt="@fredkschott" />
+ *           <span slot="fallback">ER</span>
+ *         </Avatar>
+ *       </div>
+ *       <Date date="2025-08-24T12:00:00Z" class="text-sm text-muted-foreground" />
+ *     </div>
+ *     <Card part="title">Danone’s Alpro Path to Cutting-Edge Composable Web</Card>
+ *   </Card>
+ *   </div>
+ * </Card>
+ * 
+ * ### Ghost
  *
  * <Card variant="ghost" class="max-w-[320px]">
- *   <Fragment slot="media">
+ *   <Card part="media">
  *     <img
  *       alt="Happy pet"
  *       aria-hidden="true"
  *       src="https://images.unsplash.com/photo-1759223293091-f4c757c79f6c?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
  *     />
- *   </Fragment>
- *   <Fragment slot="header">
+ *   </Card>
+ *   <Card part="header">
  *     <h3 class="text-xl font-medium leading-none">New breakthrough in AI</h3>
  *     <p class="text-sm text-muted-foreground"><span class="font-medium">Aug 10, 2025</span> · 10 min read</p>
- *   </Fragment>
+ *   </Card>
  * </Card>
+ * 
+ * ### Form
+ * 
+ * <Card class="w-full max-w-sm">
+ *   <Card part="header">
+ *     <Card part="title">Login to your account</Card>
+ *     <Card part="description">Enter your email below to login to your account</Card>
+ *   </Card>
  *
+ *   <Card part="content">
+ *     <form>
+ *       <div class="flex flex-col gap-6">
+ *         <div class="grid gap-2">
+ *           <Label for="email">Email</Label>
+ *           <Input type="email" placeholder="m@example.com" required />
+ *         </div>
+ *         <div class="grid gap-2">
+ *           <Label for="password">Password</Label>
+ *           <Input type="password" placeholder="Password" required />
+ *           <div class="flex items-center">
+ *             <a href="#" class="ml-auto text-sm underline-offset-4 hover:underline">Forgot your password?</a>
+ *           </div>
+ *         </div>
+ *       </div>
+ *     </form>
+ *   </Card>
+ *
+ *   <Card part="footer" class="flex-col gap-2">
+ *     <Button type="submit" class="w-full">Login</Button>
+ *     <Button variant="outline" class="w-full">Login with Google</Button>
+ *   </Card>
+ * </Card>
+ * 
+ * ### Overlay
+ * 
+ * <Card variant="glass" class="max-w-[320px] w-full h-[240px]">
+ *   <Card part="media" class="absolute inset-0 h-full w-full object-cover">
+ *     <img src="https://images.unsplash.com/photo-1527430253228-e93688616381?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2834" alt="Happy pet" />
+ *   </Card>
+ *   <Card part="header" class="z-10 mt-auto">
+ *     <Card part="title" class="text-white">Thom Krupa</Card>
+ *     <Card part="description" class="text-white">Co-founder at Bejamas</Card>
+ *   </Card>
+ *   <Card part="overlay" variant="glass">
+ *     <p>Thom Krupa is a co-founder at Bejamas, a company that builds web applications.</p>
+ *   </Card>
+ * </Card>
  */
 
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type CardRootVariant = "default" | "ghost";
+type CardOverlayVariant = "default" | "glass";
+type CardRootOrientation = "vertical" | "horizontal";
+
+type CardPart =
+  | "root"
+  | "media"
+  | "header"
+  | "title"
+  | "description"
+  | "action"
+  | "content"
+  | "footer"
+  | "overlay";
+
+/**
+ * Root — main card container
+ */
+type CardRootProps = {
+  part?: "root";
+  as?: HTMLTag;
+  variant?: CardRootVariant;
+  orientation?: CardRootOrientation;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+/**
+ * Root-level slotted parts
+ * (plugged into the root via `slot=""`)
+ */
+type CardMediaProps = {
+  part: "media";
+  as?: HTMLTag;
+  variant?: never;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type CardHeaderProps = {
+  part: "header";
+  as?: HTMLTag;
+  variant?: never;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type CardContentProps = {
+  part: "content";
+  as?: HTMLTag;
+  variant?: never;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type CardFooterProps = {
+  part: "footer";
+  as?: HTMLTag;
+  variant?: never;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+/**
+ * Nested primitives (inside header / content)
+ * They DO NOT use `slot`; they just render markup,
+ * exactly like shadcn's CardTitle, CardDescription, CardAction.
+ */
+type CardTitleProps = {
+  part: "title";
+  as?: HTMLTag;
+  variant?: never;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type CardDescriptionProps = {
+  part: "description";
+  as?: HTMLTag;
+  variant?: never;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type CardActionProps = {
+  part: "action";
+  as?: HTMLTag;
+  variant?: never;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+/**
+ * Overlay layer
+ */
+type CardOverlayProps = {
+  part: "overlay";
+  as?: HTMLTag;
+  variant?: CardOverlayVariant;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type Props =
+  | CardRootProps
+  | CardMediaProps
+  | CardHeaderProps
+  | CardTitleProps
+  | CardDescriptionProps
+  | CardActionProps
+  | CardContentProps
+  | CardFooterProps
+  | CardOverlayProps;
+
+const props = Astro.props as Props;
 const {
-  variant = "default",
-  hoverVariant = "default",
+  part: rawPart,
   class: className = "",
-} = Astro.props;
+  variant,
+  orientation,
+  as: Tag = "div" as HTMLTag,
+  ...rest
+} = props as any;
+
+const part: CardPart = rawPart ?? "root";
+
+/**
+ * Variants
+ */
 
 const cardVariants = cva(
-  "group/card text-card-foreground overflow-clip relative flex flex-col",
+  "group/card relative bg-card overflow-clip text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm group/card [&:has(>_[data-slot=card-media]:first-child_img)]:pt-0 [a]:hover:bg-accent/5 [a]:transition-colors duration-100",
   {
     variants: {
       variant: {
-        default: "bg-card border p-5 border-border shadow-sm rounded-xl",
-        ghost: "[&_img]:rounded-xl",
+        default: "",
+        ghost: "border-transparent bg-transparent shadow-none",
+      },
+      orientation: {
+        vertical: "flex-col",
+        horizontal:
+          "grid grid-cols-[auto_1fr] [&>[data-slot=card-header]]:col-start-2 [&>[data-slot=card-content]]:col-start-2 [&>[data-slot=card-footer]]:col-start-2 [&>:not([data-slot=card-media])]:col-start-2",
       },
     },
     defaultVariants: {
       variant: "default",
+      orientation: "vertical",
     },
   },
 );
 
-const mediaVariants = cva("z-0", {
-  variants: {
-    variant: {
-      default: "",
-      ghost: "mb-5",
-    },
-  },
-});
+const mediaVariants = cva(
+  "z-0 rounded-lg overflow-hidden [&_img]:size-full [&_img]:object-cover",
+);
 
 const headerVariants = cva(
-  "@container/card-header relative z-1 text-pretty grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
-  {
-    variants: {
-      variant: {
-        // default: "px-4",
-      },
-    },
-  },
+  "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
 );
 
-const hiddenContentVariants = cva(
-  "inset-0 absolute z-10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 ease-out",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary",
-        glass: "bg-primary/70 backdrop-blur-sm",
-        ghost: "",
-      },
-    },
-  },
+const titleVariants = cva("leading-none font-medium text-lg text-balance");
+
+const descriptionVariants = cva("text-muted-foreground text-sm");
+
+const actionVariants = cva(
+  "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+);
+
+const contentVariants = cva("px-6");
+
+const footerVariants = cva(
+  "flex items-center justify-between px-6 [.border-t]:pt-6",
 );
 ---
 
-<!-- Card container -->
-<div class={cn(cardVariants({ variant, className }))}>
-  {
-    Astro.slots.media && (
-      <div
-        class={cn(
-          mediaVariants({ variant, className: Astro.props.mediaClass }),
-        )}
-        slot="media"
-      >
-        <slot name="media" />
-      </div>
-    )
-  }
-  {
-    Astro.slots.header && (
-      <div
-        class={cn(
-          headerVariants({ variant, className: Astro.props.headerClass }),
-        )}
-        slot="header"
-      >
-        <slot name="header" />
-      </div>
-    )
-  }
-  {
-    Astro.slots.content && (
-      <div
-        class={cn([
-          {
-            "py-5": variant === "default",
-          },
-          Astro.props.contentClass,
-        ])}
-        slot="content"
-      >
-        <slot name="content" />
-      </div>
-    )
-  }
-  {
-    Astro.slots.footer && (
-      <div
-        class:list={[
-          "flex items-center relative z-1 [.border-t]:pt-6 justify-between gap-2 mt-auto",
-          Astro.props.footerClass,
-        ]}
-        slot="footer"
-      >
-        <slot name="footer" />
-      </div>
-    )
-  }
-  {
-    Astro.slots.hiddenContent && (
-      <div
-        class={cn(
-          hiddenContentVariants({
-            variant: hoverVariant,
-            className: Astro.props.hiddenContentClass,
-          }),
-        )}
-      >
-        <slot name="hiddenContent" />
-      </div>
-    )
-  }
-</div>
+{
+  part === "root" && (
+    <Tag
+      {...rest}
+      data-slot="card"
+      class={cn(
+        cardVariants({
+          variant: (variant as CardRootVariant) ?? "default",
+          orientation: (orientation as CardRootOrientation) ?? "vertical",
+        }),
+        className,
+      )}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "media" && (
+    <Tag
+      {...rest}
+      slot="media"
+      data-slot="card-media"
+      class={cn(mediaVariants(), className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "header" && (
+    <Tag
+      {...rest}
+      slot="header"
+      data-slot="card-header"
+      class={cn(headerVariants(), className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "title" && (
+    <Tag
+      {...rest}
+      data-slot="card-title"
+      class={cn(titleVariants(), className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "description" && (
+    <Tag
+      {...rest}
+      data-slot="card-description"
+      class={cn(descriptionVariants(), className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "action" && (
+    <Tag
+      {...rest}
+      data-slot="card-action"
+      class={cn(actionVariants(), className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "content" && (
+    <Tag
+      {...rest}
+      slot="content"
+      data-slot="card-content"
+      class={cn(contentVariants(), className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "footer" && (
+    <Tag
+      {...rest}
+      slot="footer"
+      data-slot="card-footer"
+      class={cn(footerVariants(), className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "overlay" && (
+    <Tag
+      {...rest}
+      slot="overlay"
+      data-slot="card-overlay"
+      class={cn(
+        "inset-0 absolute z-10 opacity-0 p-6 group-hover/card:opacity-100 transition-opacity duration-300 ease-out",
+        (variant as CardOverlayVariant) === "glass"
+          ? "bg-primary/70 backdrop-blur-sm text-primary-foreground"
+          : "bg-primary text-primary-foreground",
+        className,
+      )}
+    >
+      <slot />
+    </Tag>
+  )
+}

@@ -2,13 +2,7 @@
 /**
  * @component Date
  * @description Formats and displays a raw date string in a human-friendly way.
- * 
- * @prop {string|Date} date - The raw date value (string or Date object).
- * @prop {string} [format] - Optional format string (defaults to "long" date).
- * @prop {boolean} [includeTime] - When true, also include time alongside the date.
- * @prop {string} [locale="en-US"] - BCP47 locale used for formatting.
- * @prop {string} [class] - Additional classes for the date element.
- * 
+ *
  * @example
  * <div class="grid grid-cols-2 gap-4">
  *   <div>Default:</div> <Date date="2024-06-01T12:00:00Z" />
@@ -23,27 +17,27 @@
  *   <Separator class="col-span-2" />
  *   <div>Long with time:</div> <Date date="2024-06-01T12:00:00Z" format="long" includeTime />
  * </div>
- * 
+ *
  * @usage
- * 
+ *
  * ## Usage
- * 
+ *
  * ```astro
  * import Date from '@/ui/components/Date.astro';
- * 
+ *
  * <Date date="2024-06-01T12:00:00Z" />
  * ```
- * 
+ *
  * @examples
- * 
+ *
  * ### Render-function slot example (custom order/separator)
- * 
+ *
  * <Date date="2024-06-01T12:00:00Z" includeTime>
  *   {({ date, time }) => <span>{time} · {date}</span>}
  * </Date>
- * 
+ *
  * ### Custom locale example
- * 
+ *
  * <Date date="2024-06-01T12:00:00Z" locale="fr-FR" />
  * <Date date="2024-06-01T12:00:00Z" locale="de-DE" />
  * <Date date="2024-06-01T12:00:00Z" locale="es-ES" />
@@ -96,36 +90,43 @@ if (parsedDate) {
     dateText = new Intl.DateTimeFormat(locale, dateOptions).format(parsedDate);
   }
   if (includeTime || format === "time") {
-    timeText = new Intl.DateTimeFormat(locale, { timeStyle: "short" }).format(parsedDate);
+    timeText = new Intl.DateTimeFormat(locale, { timeStyle: "short" }).format(
+      parsedDate,
+    );
   }
-  formatted = format === "time" ? timeText : includeTime && timeText ? `${dateText}, ${timeText}` : dateText;
+  formatted =
+    format === "time"
+      ? timeText
+      : includeTime && timeText
+        ? `${dateText}, ${timeText}`
+        : dateText;
 
   if (Astro.slots.has("default")) {
-    html = await Astro.slots.render("default", [{
-      date: dateText,
-      time: timeText,
-      formatted,
-      iso: parsedDate.toISOString(),
-      dateObj: parsedDate,
-    }]);
+    html = await Astro.slots.render("default", [
+      {
+        date: dateText,
+        time: timeText,
+        formatted,
+        iso: parsedDate.toISOString(),
+        dateObj: parsedDate,
+      },
+    ]);
   }
 }
 ---
 
-{parsedDate ? (
-  Astro.slots.has("default") ? (
-    <Fragment set:html={html} />
+{
+  parsedDate ? (
+    Astro.slots.has("default") ? (
+      <Fragment set:html={html} />
+    ) : (
+      <time dateTime={parsedDate.toISOString()} class={className} {...props}>
+        {formatted}
+      </time>
+    )
   ) : (
-    <time
-      dateTime={parsedDate.toISOString()}
-      class={className}
-      {...props}
-    >
-      {formatted}
-    </time>
+    <span class={["text-destructive", className].join(" ")} {...props}>
+      Invalid date
+    </span>
   )
-) : (
-  <span class={["text-destructive", className].join(" ")} {...props}>
-    Invalid date
-  </span>
-)}
+}

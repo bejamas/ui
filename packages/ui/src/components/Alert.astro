@@ -2,89 +2,146 @@
 /**
  * @component Alert
  * @title Alert
- * @description Displays a alert or a component that looks like a alert.
- * @status stable
- * @since 0.1.0
+ * @description Displays a callout for user attention.
  *
  * @example
  *
  * <div class="grid w-full max-w-xl items-start gap-4">
  *   <Alert>
- *     <Fragment slot="icon">
- *       <AlertCircleIcon className="size-3" />
- *     </Fragment>
- *     <Fragment slot="title">
- *       Success! Your changes have been saved
- *     </Fragment>
- *     <Fragment slot="description">
- *       This is an alert with icon, title and description.
- *     </Fragment>
+ *     <CircleCheckIcon size={32} />
+ *     <Alert part="title">Success! Your changes have been saved</Alert>
+ *     <Alert part="description">This is an alert with title and description.</Alert>
  *   </Alert>
+ *
  *   <Alert>
- *     <Fragment slot="title">This Alert has a title and an icon. No description.</Fragment>
+ *     <Alert part="title">This Alert has a title and an icon. No description.</Alert>
  *   </Alert>
+ *
  *   <Alert variant="destructive">
- *     <Fragment slot="title">Unable to process your payment.</Fragment>
- *     <Fragment slot="description">
+ *     <Alert part="title">Unable to process your payment.</Alert>
+ *     <Alert part="description">
  *       <p>Please verify your billing information and try again.</p>
  *       <ul class="list-inside list-disc text-sm">
  *         <li>Check your card details</li>
  *         <li>Ensure sufficient funds</li>
  *         <li>Verify billing address</li>
  *       </ul>
- *     </Fragment>
+ *     </Alert>
  *   </Alert>
  * </div>
  *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import Alert from '@/components/ui/Alert.astro';
+ * ---
+ * <Alert variant="default">
+ *   <CircleCheckIcon size={32} />
+ *   <Alert part="title">Heads up!</Alert>
+ *   <Alert part="description">Something happened successfully.</Alert>
+ * </Alert>
+ * ```
  */
+import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
-const { variant = "default", class: className = "" } = Astro.props;
+import type { HTMLAttributes, HTMLTag } from "astro/types";
 
-const baseClass =
-  "relative w-full rounded-xl border border-border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current";
-const variantClass =
-  variant === "destructive"
-    ? "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90"
-    : "bg-card text-card-foreground";
+type AlertVariant = "default" | "destructive";
+type AlertPart = "root" | "title" | "description";
+
+type AlertRootProps = {
+  part?: "root";
+  as?: HTMLTag;
+  variant?: AlertVariant;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type AlertTitleProps = {
+  part: "title";
+  as?: HTMLTag;
+  variant?: never;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type AlertDescriptionProps = {
+  part: "description";
+  as?: HTMLTag;
+  variant?: never;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type Props = AlertRootProps | AlertTitleProps | AlertDescriptionProps;
+
+const {
+  part: rawPart,
+  as: Tag = "div" as HTMLTag,
+  class: className = "",
+  variant,
+  ...rest
+} = Astro.props as Props;
+
+const part = (rawPart ?? "root") as AlertPart;
+
+const alertVariants = cva(
+  "relative w-full rounded-xl border border-border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  {
+    variants: {
+      variant: {
+        default: "bg-card text-card-foreground",
+        destructive:
+          "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  },
+);
 ---
 
-<!--
-  Alert component container.
-  Applies variant-based styling and supports slots for title, description, and additional content.
--->
-<div
-  data-slot="alert"
-  role="alert"
-  class={cn(baseClass, variantClass, className)}
->
-  <!-- Slot for alert icon -->
-  <slot name="icon" />
-  <!-- Slot for alert title -->
-  {
-    Astro.slots.title && (
-      <div
-        data-slot="alert-title"
-        class={cn(
-          "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
-        )}
-      >
-        <slot name="title" />
-      </div>
-    )
-  }
-  <!-- Slot for alert description -->
-  {
-    Astro.slots.description && (
-      <div
-        data-slot="alert-description"
-        class={cn(
-          "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
-        )}
-      >
-        <slot name="description" />
-      </div>
-    )
-  }
-  <!-- Default slot for additional content (e.g., icon, actions) -->
-  <slot />
-</div>
+{
+  part === "root" && (
+    <Tag
+      {...rest}
+      data-slot="alert"
+      role="alert"
+      class={cn(
+        alertVariants({ variant: (variant as AlertVariant) ?? "default" }),
+        className,
+      )}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "title" && (
+    <Tag
+      {...rest}
+      data-slot="alert-title"
+      class={cn(
+        "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
+        className,
+      )}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "description" && (
+    <Tag
+      {...rest}
+      data-slot="alert-description"
+      class={cn(
+        "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
+        className,
+      )}
+    >
+      <slot />
+    </Tag>
+  )
+}

@@ -1,0 +1,168 @@
+---
+/**
+ * @component Breadcrumb
+ * @title Breadcrumb
+ * @description Displays the path to the current resource using a hierarchy of links.
+ *
+ * @example
+ *
+ * <Breadcrumb>
+ *   <Breadcrumb part="list">
+ *     <Breadcrumb part="item"><a class="hover:text-foreground transition-colors" href="/">Home</a></Breadcrumb>
+ *     <Breadcrumb part="separator" />
+ *     <Breadcrumb part="item"><a class="hover:text-foreground transition-colors" href="/docs">Docs</a></Breadcrumb>
+ *     <Breadcrumb part="separator" />
+ *     <Breadcrumb part="item"><span class="text-foreground font-normal" aria-current="page">Page</span></Breadcrumb>
+ *   </Breadcrumb>
+ * </Breadcrumb>
+ *
+ * @examples
+ *
+ * ### Custom separator
+ *
+ *  <Breadcrumb>
+ *    <Breadcrumb part="list">
+ *       <Breadcrumb part="item"><a class="hover:text-foreground transition-colors" href="/">Home</a></Breadcrumb>
+ *       <Breadcrumb part="separator">
+ *         <SlashIcon />
+ *       </Breadcrumb>
+ *       <Breadcrumb part="item"><a class="hover:text-foreground transition-colors" href="/docs">Docs</a></Breadcrumb>
+ *       <Breadcrumb part="separator">
+ *         <SlashIcon />
+ *       </Breadcrumb>
+ *       <Breadcrumb part="item"><span class="text-foreground font-normal" aria-current="page">Page</span></Breadcrumb>
+ *   </Breadcrumb>
+ * </Breadcrumb>
+ *
+ */
+
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type BreadcrumbPart = "root" | "list" | "item" | "separator";
+
+type BreadcrumbRootProps = {
+  part?: "root";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"nav">;
+
+/**
+ * Root-level slotted part
+ */
+type BreadcrumbListProps = {
+  part: "list";
+  as?: HTMLTag;
+  class?: string;
+  variant?: never;
+} & HTMLAttributes<"ol">;
+
+/**
+ * Nested primitives (inside list)
+ */
+type BreadcrumbItemProps = {
+  part: "item";
+  as?: HTMLTag;
+  class?: string;
+  variant?: never;
+} & HTMLAttributes<"li">;
+
+type BreadcrumbSeparatorProps = {
+  part: "separator";
+  as?: HTMLTag;
+  class?: string;
+  variant?: never;
+} & HTMLAttributes<"li">;
+
+type Props =
+  | BreadcrumbRootProps
+  | BreadcrumbListProps
+  | BreadcrumbItemProps
+  | BreadcrumbSeparatorProps;
+
+const {
+  part: rawPart,
+  as: Tag = "div" as HTMLTag,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const part = (rawPart ?? "root") as BreadcrumbPart;
+
+/**
+ * Styles (shadcn-equivalent)
+ */
+const listVariants = cva(
+  "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5",
+);
+const itemVariants = cva("inline-flex items-center gap-1.5");
+const separatorVariants = cva("[&>svg]:size-3.5");
+---
+
+{
+  part === "root" && (
+    <Tag
+      {...rest}
+      aria-label="breadcrumb"
+      data-slot="breadcrumb"
+      class={cn(className)}
+    >
+      <slot name="list" />
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "list" && (
+    <Tag
+      {...rest}
+      slot="list"
+      data-slot="breadcrumb-list"
+      class={cn(listVariants(), className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "item" && (
+    <Tag
+      {...rest}
+      data-slot="breadcrumb-item"
+      class={cn(itemVariants(), className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "separator" && (
+    <Tag
+      {...rest}
+      role="presentation"
+      aria-hidden="true"
+      data-slot="breadcrumb-separator"
+      class={cn(separatorVariants(), className)}
+    >
+      <slot>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="size-3.5"
+          aria-hidden="true"
+        >
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </slot>
+    </Tag>
+  )
+}

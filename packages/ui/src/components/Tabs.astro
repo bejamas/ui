@@ -2,40 +2,158 @@
 /**
  * @component Tabs
  * @title Tabs
- * @description Minimal accessible tabs component with vanilla JS and Tailwind CSS.
+ * @description Single-file Tabs with multi-part API. Minimal accessible tabs with vanilla JS and Tailwind CSS.
  * @status stable
  *
  * @example
  * <Tabs>
- *   <div slot="tablist" class="space-x-2 mb-4">
- *     <Button role="tab" size="sm" aria-selected="true" variant="ghost" class="aria-selected:bg-primary aria-selected:text-primary-foreground">All Posts</Button>
- *     <Button role="tab" size="sm" variant="ghost" class="aria-selected:bg-primary aria-selected:text-primary-foreground">Company News</Button>
- *     <Button role="tab" size="sm" variant="ghost" class="aria-selected:bg-primary aria-selected:text-primary-foreground">Changelog</Button>
- *   </div>
- *   <div role="tabpanel">
- *     <Card><div slot="content">test 1</div></Card>
- *   </div>
- *   <div role="tabpanel" hidden>
- *     <Card><div slot="content">test 2</div></Card>
- *   </div>
- *   <div role="tabpanel" hidden>
- *     <Card><div slot="content">test 3</div></Card>
- *   </div>
+ *   <Tabs part="list" class="mb-4">
+ *     <Tabs part="trigger" aria-selected="true">All Posts</Tabs>
+ *     <Tabs part="trigger">Company News</Tabs>
+ *     <Tabs part="trigger">Changelog</Tabs>
+ *   </Tabs>
+ *   <Tabs part="content">
+ *     <Card><Card part="content">Tab 1</Card></Card>
+ *   </Tabs>
+ *   <Tabs part="content" hidden>
+ *     <Card><Card part="content">Tab 2</Card></Card>
+ *   </Tabs>
+ *   <Tabs part="content" hidden>
+ *     <Card><Card part="content">Tab 3</Card></Card>
+ *   </Tabs>
  * </Tabs>
  */
 
 import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import Button from "@bejamas/ui/components/Button.astro";
 
-const { class: className = "", ...props } = Astro.props;
+type TabsPart = "root" | "list" | "trigger" | "content";
+
+type TabsRootProps = {
+  part?: "root";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type TabsListProps = {
+  part: "list";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type TabsTriggerProps = {
+  part: "trigger";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"button">;
+
+type TabsContentProps = {
+  part: "content";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type Props =
+  | TabsRootProps
+  | TabsListProps
+  | TabsTriggerProps
+  | TabsContentProps;
+
+const {
+  part: rawPart,
+  as: rawTag,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const part: TabsPart = (rawPart ?? "root") as TabsPart;
 ---
 
-<div data-tabs>
-  <div role="tablist">
-    <slot name="tablist" />
-  </div>
+{
+  part === "root" &&
+    (() => {
+      const Tag = (rawTag as HTMLTag) ?? "div";
+      return (
+        <Tag {...rest} data-slot="tabs" data-tabs class={cn(className)}>
+          <slot name="list" />
+          <slot />
+        </Tag>
+      );
+    })()
+}
 
-  <slot />
-</div>
+{
+  part === "list" &&
+    (() => {
+      const Tag = (rawTag as HTMLTag) ?? "div";
+      return (
+        <Tag
+          {...rest}
+          slot="list"
+          role="tablist"
+          data-slot="tabs-list"
+          class={cn("flex gap-2", className)}
+        >
+          <slot />
+        </Tag>
+      );
+    })()
+}
+
+{
+  part === "trigger" &&
+    (() => {
+      const TriggerTag = (rawTag as HTMLTag) ?? undefined;
+      if (TriggerTag) {
+        return (
+          <TriggerTag
+            {...rest}
+            role="tab"
+            data-slot="tabs-trigger"
+            class={cn(
+              "inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm transition-colors aria-selected:bg-primary aria-selected:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+              className,
+            )}
+          >
+            <slot />
+          </TriggerTag>
+        );
+      }
+      return (
+        <Button
+          role="tab"
+          variant="ghost"
+          size="sm"
+          data-slot="tabs-trigger"
+          class={cn(
+            "aria-selected:bg-primary aria-selected:text-primary-foreground",
+            className,
+          )}
+          {...(rest as any)}
+        >
+          <slot />
+        </Button>
+      );
+    })()
+}
+
+{
+  part === "content" &&
+    (() => {
+      const Tag = (rawTag as HTMLTag) ?? "div";
+      return (
+        <Tag
+          {...rest}
+          role="tabpanel"
+          data-slot="tabs-content"
+          class={cn("", className)}
+        >
+          <slot />
+        </Tag>
+      );
+    })()
+}
 
 <script type="module">
   (() => {

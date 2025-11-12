@@ -2,45 +2,142 @@
 /**
  * @component LinkGroup
  * @title Link Group
- * @description Renders a group of footer links, optionally with a title.
+ * @description Single-file LinkGroup with multi-part API for footer/menus.
  * @status stable
- * @since 0.1.0
  *
- * @props
- * - title?: string - Optional title for the link group.
- * - items: Array<{ label: string, href: string }> - List of links to display.
- * - class?: string - Additional classes for the container.
+ * Parts:
+ * - root (default): wrapper container
+ * - title: section title
+ * - list: list wrapper
+ * - item: list item wrapper
+ *
+ * @example
+ *
+ * <LinkGroup>
+ *   <LinkGroup part="title">Company</LinkGroup>
+ *   <LinkGroup part="list">
+ *     <LinkGroup part="item">
+ *       <a href="/">Home</a>
+ *     </LinkGroup>
+ *     <LinkGroup part="item">
+ *       <a href="/about">About</a>
+ *     </LinkGroup>
+ *   </LinkGroup>
+ * </LinkGroup>
  *
  * @usage
  *
+ * Use parts to compose the group:
+ *
  * ```astro
- * <LinkGroup
- *   title="Company"
- *   items={[
- *     { label: "Home", href: "/" },
- *     { label: "About", href: "/about" }
- *   ]}
- * />
+ * ---
+ * import LinkGroup from '@/components/ui/LinkGroup.astro';
+ * ---
+ * <LinkGroup>
+ *   <LinkGroup part="title">Company</LinkGroup>
+ *   <LinkGroup part="list">
+ *     <LinkGroup part="item">
+ *       <a href="/">Home</a>
+ *     </LinkGroup>
+ *   </LinkGroup>
+ * </LinkGroup>
  * ```
  */
 
-const { title, items = [], class: className = "", ...props } = Astro.props;
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type LinkGroupPart = "root" | "title" | "list" | "item";
+
+type LinkGroupRootProps = {
+  part?: "root";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type LinkGroupTitleProps = {
+  part: "title";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"h4">;
+
+type LinkGroupListProps = {
+  part: "list";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"ul">;
+
+type LinkGroupItemProps = {
+  part: "item";
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"li">;
+
+type Props =
+  | LinkGroupRootProps
+  | LinkGroupTitleProps
+  | LinkGroupListProps
+  | LinkGroupItemProps;
+
+const {
+  part: rawPart,
+  as: Tag = "div" as HTMLTag,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const part = (rawPart ?? "root") as LinkGroupPart;
 ---
 
-<div class={`flex flex-col gap-2 ${className}`.trim()} {...props}>
-  {title && <h4 class="title text-lg mb-2 text-current">{title}</h4>}
-  <ul class="flex flex-col gap-1">
-    {
-      items.map((item: { label: string; href: string }) => (
-        <li>
-          <a
-            href={item.href}
-            class="transition-colors underline-offset-4 hover:underline text-footer-primary/60 text-muted-foreground"
-          >
-            {item.label}
-          </a>
-        </li>
-      ))
-    }
-  </ul>
-</div>
+{
+  part === "root" && (
+    <Tag
+      {...rest}
+      data-slot="link-group"
+      class={cn("flex flex-col gap-2", className)}
+    >
+      <slot name="title" />
+      <slot name="list" />
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "title" && (
+    <Tag
+      {...rest}
+      data-slot="link-group-title"
+      class={cn("text-lg mb-2 text-current", className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "list" && (
+    <Tag
+      {...rest}
+      data-slot="link-group-list"
+      class={cn("flex flex-col gap-1", className)}
+    >
+      <slot />
+    </Tag>
+  )
+}
+
+{
+  part === "item" && (
+    <Tag
+      {...rest}
+      data-slot="link-group-item"
+      class={cn(
+        "[&_a]:transition-colors [&_a]:underline-offset-4 [&_a:hover]:underline [&_a]:text-footer-primary/60 [&_a]:text-muted-foreground",
+        className,
+      )}
+    >
+      <slot />
+    </Tag>
+  )
+}

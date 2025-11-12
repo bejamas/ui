@@ -16,6 +16,8 @@ If you use React, use **shadcn/ui**. If you build content‑heavy sites in **Ast
 
 ## Why
 
+There is no UI library that focuses on Astro components. There are plenty of React libraries, although you can use them in Astro, it's often overkill for content-heavy marketing websites, where performance is crucial.
+
 We like shadcn’s copy‑and‑own approach. This brings the same idea to Astro:
 
 - No React or hydration required
@@ -29,15 +31,15 @@ Components contain structured comments. The docs site reads those and builds MDX
 
 Comment tags:
 
-- `@prop name type description`
-- `@slot name description`
-- `@a11y note`
-- `@usage tip`
-- `@since version`
+- `@component Button`
+- `@description A component that renders a button`
+- `@exampe`
+- `@usage`
+- `@examples`
 
 ## Composition
 
-React libraries often use subcomponents (e.g. `<Card.Header>`). Astro doesn’t. We use **named slots** instead.
+React libraries often use subcomponents (e.g. `<Card.Header>`). Astro doesn’t. We use **component part prop** instead.
 
 **React style**
 
@@ -50,18 +52,18 @@ React libraries often use subcomponents (e.g. `<Card.Header>`). Astro doesn’t.
 </Card>
 ```
 
-**Astro (slots)**
+**Astro (parts)**
 
 ```astro
 <Card>
-  <Fragment slot="header">
-    <h3 class="text-lg font-semibold">Title</h3>
-    <p class="text-sm text-muted-foreground">Description</p>
-  </Fragment>
-</Card>
+  <Card part="header">
+    <Card part="title">Title</Card>
+    <Card part="description">Description</Card>
+  </Card><!-- /header -->
+</Card><!-- /root -->
 ```
 
-We intentionally avoid components like `<CardTitle />`. Slots keep APIs simple and portable.
+We intentionally avoid components like `<CardTitle />`. Parts keep APIs simple and portable.
 
 ## Principles
 

@@ -1,0 +1,132 @@
+---
+/**
+ * @component RadioGroup
+ * @title Radio Group
+ * @description Single-file RadioGroup with multi-part API, using native radios (no JS).
+ *
+ * Parts:
+ * - root (default): wrapper with role="radiogroup"
+ * - item: a single radio option (renders input[type=radio] + visual control)
+ *
+ * @example
+ *
+ * <RadioGroup>
+ *   <div class="flex items-center gap-2">
+ *     <RadioGroup part="item" name="plan" value="free" checked id="free" />
+ *     <Label for="free">Free</Label>
+ *   </div>
+ *   <div class="flex items-center gap-2">
+ *     <RadioGroup part="item" name="plan" value="pro" id="pro" />
+ *     <Label for="pro">Pro</Label>
+ *   </div>
+ * </RadioGroup>
+ */
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type RadioGroupPart = "root" | "item";
+
+type RootProps = {
+  part?: "root";
+  as?: HTMLTag;
+  class?: string;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
+} & HTMLAttributes<"div">;
+
+type ItemProps = {
+  part: "item";
+  as?: HTMLTag;
+  class?: string;
+  name: string;
+  value: string;
+  checked?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  "aria-invalid"?: boolean;
+} & HTMLAttributes<"label">;
+
+type Props = RootProps | ItemProps;
+
+const {
+  part: rawPart,
+  as: rawTag,
+  class: className = "",
+  id: inputId,
+  name,
+  value,
+  checked = false,
+  disabled = false,
+  required = false,
+  "aria-invalid": ariaInvalid,
+  ...rest
+} = Astro.props as Props;
+
+const part: RadioGroupPart = (rawPart ?? "root") as RadioGroupPart;
+---
+
+{
+  part === "root" &&
+    (() => {
+      const Tag = (rawTag as HTMLTag) ?? "div";
+      return (
+        <Tag
+          {...rest}
+          role="radiogroup"
+          data-slot="radio-group"
+          class={cn("grid gap-3", className)}
+        >
+          <slot />
+        </Tag>
+      );
+    })()
+}
+
+{
+  part === "item" &&
+    (() => {
+      const Tag = (rawTag as HTMLTag) ?? "div";
+      return (
+        <Tag
+          {...rest}
+          data-slot="radio-group-item"
+          class={cn("relative inline-grid place-items-center", className)}
+        >
+          <input
+            type="radio"
+            id={inputId as string}
+            name={name as string}
+            value={value as string}
+            checked={checked as boolean}
+            disabled={disabled as boolean}
+            required={required as boolean}
+            aria-invalid={ariaInvalid as boolean}
+            class="peer absolute left-1/2 top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 opacity-0"
+          />
+          <span
+            aria-hidden="true"
+            data-slot="radio-group-control"
+            class={cn(
+              "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+              // mirror aria-invalid and disabled styles from input via peer
+              "peer-focus-visible:border-ring peer-focus-visible:ring-ring/50 peer-focus-visible:ring-[3px]",
+              "peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+              ariaInvalid
+                ? "ring-destructive/20 dark:ring-destructive/40 border-destructive"
+                : "",
+              // show inner dot when the peer (input) is checked
+              "peer-checked:[&>svg]:opacity-100",
+            )}
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 20 20"
+              class="pointer-events-none absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-150 ease-out"
+            >
+              <circle cx="10" cy="10" r="10" class="fill-primary" />
+            </svg>
+          </span>
+        </Tag>
+      );
+    })()
+}

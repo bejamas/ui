@@ -10,6 +10,47 @@
  *
  * <Input type="text" placeholder="Enter your email" />
  *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import Input from '@/ui/components/Input.astro';
+ * ---
+ * <Input type="email" placeholder="Enter your email" />
+ * ```
+ *
+ * @examples
+ *
+ * ### Default
+ *
+ * <Input type="email" placeholder="Enter your email" />
+ *
+ * ### Disabled
+ *
+ * <Input type="email" placeholder="Enter your email" disabled />
+ *
+ * ### File
+ *
+ * <div class="grid w-full max-w-sm items-center gap-3">
+ *   <Label htmlFor="picture">Picture</Label>
+ *   <Input id="picture" type="file" />
+ * </div>
+ *
+ * ### With Label
+ *
+ * <div class="grid w-full max-w-sm items-center gap-3">
+ *   <Label htmlFor="email">Email</Label>
+ *   <Input id="email" type="email" placeholder="Enter your email" />
+ * </div>
+ *
+ * ### With Button
+ *
+ *  <div class="flex w-full max-w-sm items-center gap-2">
+ *    <Input type="email" placeholder="Email" />
+ *    <Button type="submit" variant="outline">
+ *      Subscribe
+ *    </Button>
+ *  </div>
  */
 
 import { cn } from "@bejamas/ui/lib/utils";
@@ -17,12 +58,12 @@ import { cn } from "@bejamas/ui/lib/utils";
 const { class: className = "", type = "text", ...props } = Astro.props;
 
 const baseClass =
-  "file:text-foreground border placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive";
+  "file:text-foreground border placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-lg border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive";
 ---
 
 <input
   type={type}
-  data-slot="input"
+  data-slot={props["data-slot"] ?? "input"}
   class={cn(baseClass, className)}
   {...props}
 />
