@@ -125,6 +125,35 @@ export function buildMdx(params: {
     return snippet.replace(/<!--([\s\S]*?)-->/g, "{/*$1*/}");
   };
 
+  // Split an example body into leading markdown description (paragraphs)
+  // and the Astro/HTML snippet that should be rendered in Preview/Source tabs
+  const splitDescriptionAndSnippet = (
+    body: string,
+  ): { descriptionMD: string; snippet: string } => {
+    if (!body || !body.trim().length) return { descriptionMD: "", snippet: "" };
+    const lines = body.split("\n");
+    let snippetStartIdx = -1;
+    for (let i = 0; i < lines.length; i++) {
+      const ln = lines[i];
+      // Skip empty lines before first meaningful content
+      if (!ln.trim().length) continue;
+      // Heuristic: consider this line the start of the snippet if it looks like Astro/HTML/JSX
+      // e.g. starts with '<' or '{'
+      if (/^\s*[<{]/.test(ln)) {
+        snippetStartIdx = i;
+        break;
+      }
+      // Otherwise it's part of markdown description; keep looking until we hit markup
+    }
+    if (snippetStartIdx <= 0) {
+      // No clear description or snippet starts at the very beginning → treat all as snippet
+      return { descriptionMD: "", snippet: body.trim() };
+    }
+    const descriptionMD = lines.slice(0, snippetStartIdx).join("\n").trim();
+    const snippet = lines.slice(snippetStartIdx).join("\n").trim();
+    return { descriptionMD, snippet };
+  };
+
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length
       ? `<DocsTabs>
@@ -148,11 +177,23 @@ ${(() => {
   const exampleSections: string[] = [];
   if (examplesBlocks && examplesBlocks.length) {
     for (const blk of examplesBlocks) {
-      const previewBody = toMdxPreview(blk.body);
+      const { descriptionMD, snippet } = splitDescriptionAndSnippet(blk.body);
+      const previewBody = toMdxPreview(snippet);
+
+      // If there's no snippet, render only header + description
+      if (!snippet || !snippet.length) {
+        exampleSections.push(
+          `### ${blk.title}
+
+${descriptionMD}`.trim(),
+        );
+        continue;
+      }
+
       exampleSections.push(
         `### ${blk.title}
 
-<DocsTabs>
+${descriptionMD ? `${descriptionMD}\n\n` : ""}<DocsTabs>
   <DocsTabItem label="Preview">
     <div class="not-content sl-bejamas-component-preview flex justify-center p-10 border border-border rounded-xl min-h-[450px] items-center">
 ${previewBody}
@@ -162,9 +203,9 @@ ${previewBody}
 
 \`\`\`astro
 ${(() => {
-  const lines = buildSnippetImportLines(blk.body);
+  const lines = buildSnippetImportLines(snippet);
   return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
-})()}${blk.body}
+})()}${snippet}
 \`\`\`
   </DocsTabItem>
 </DocsTabs>`,
