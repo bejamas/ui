@@ -4,7 +4,7 @@ import Button from "@bejamas/ui/components/Button.astro";
 import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
 import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
 import StickySurface from "@bejamas/ui/components/StickySurface.astro";
-import Breadcrumbs from "@bejamas/ui/components/Breadcrumbs.astro";
+import Breadcrumb from "@bejamas/ui/components/Breadcrumb.astro";
 import { SlashIcon } from "@lucide/astro";
 ---
 
@@ -99,7 +99,7 @@ import { SlashIcon } from "@lucide/astro";
     </section>
 
     <section class="py-5 max-w-5xl mx-auto">
-      <Breadcrumbs>
+      <Breadcrumb>
         <li><Button href="/" as="a" variant="link">Home</Button></li>
         <li><SlashIcon class="size-4" /></li>
         <li><Button href="/docs" as="a" variant="link">Docs</Button></li>
@@ -137,7 +137,7 @@ import { SlashIcon } from "@lucide/astro";
         </li>
         <li><SlashIcon class="size-4" /></li>
         <li><Button as="span" variant="link">Current Page</Button></li>
-      </Breadcrumbs>
+      </Breadcrumb>
     </section>
   </div>
 </BlockExampleLayout>
