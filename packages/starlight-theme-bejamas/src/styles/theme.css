@@ -310,4 +310,15 @@
     border: 1px solid var(--border);
     border-radius: calc(var(--radius) - 2px);
   }
+
+  .main-frame {
+    padding-right: calc(var(--spacing) * 6);
+  }
+
+  .main-frame > div {
+    background-color: color-mix(in oklab, var(--muted) 30%, transparent);
+    border-radius: calc(var(--radius) + 8px) calc(var(--radius) + 8px) 0 0;
+    border: 1px solid var(--border);
+    border-bottom: 0;
+  }
 }
