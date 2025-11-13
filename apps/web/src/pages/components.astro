@@ -4,6 +4,7 @@ import Button from "@bejamas/ui/components/Button.astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
 const docs = await getCollection("docs");
+console.log({ docs });
 const components = docs.filter((doc) => doc.id.startsWith("components/"));
 ---
 
@@ -14,15 +15,12 @@ const components = docs.filter((doc) => doc.id.startsWith("components/"));
       {
         components.map((component) => (
           <li>
-            <Button
-              as="a"
+            <a
               href={`/components/${component.id.replace("components/", "")}`}
-              variant="link"
-              size="lg"
-              class="w-full text-lg justify-start px-0"
+              class="inline-flex items-center gap-2 text-xl font-medium underline-offset-4 hover:underline md:text-base"
             >
               {component.data.title}
-            </Button>
+            </a>
           </li>
         ))
       }
