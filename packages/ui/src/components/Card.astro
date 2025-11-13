@@ -14,16 +14,28 @@
  *     <div class="flex items-center gap-2 justify-between mb-2">
  *       <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
  *         <Avatar>
- *           <img slot="avatar-image" src="https://github.com/withastro.png" alt="@withastro" />
- *           <span slot="fallback">AW</span>
+ *           <Avatar part="image">
+ *             <img src="https://github.com/withastro.png" alt="@withastro" />
+ *           </Avatar>
+ *           <Avatar part="fallback">
+ *             AW
+ *           </Avatar>
  *         </Avatar>
  *         <Avatar>
- *           <img slot="avatar-image" src="https://github.com/shadcn.png" alt="@shadcn" />
- *           <span slot="fallback">SH</span>
+ *           <Avatar part="image">
+ *             <img src="https://github.com/shadcn.png" alt="@shadcn" />
+ *           </Avatar>
+ *           <Avatar part="fallback">
+ *             SH
+ *           </Avatar>
  *         </Avatar>
  *         <Avatar>
- *           <img slot="avatar-image" src="https://github.com/fredkschott.png" alt="@fredkschott" />
- *           <span slot="fallback">ER</span>
+ *           <Avatar part="image">
+ *             <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *           </Avatar>
+ *           <Avatar part="fallback">
+ *             TK
+ *           </Avatar>
  *         </Avatar>
  *       </div>
  *       <Date date="2025-08-24T12:00:00Z" class="text-sm text-muted-foreground" />
@@ -128,16 +140,25 @@
  *     <div class="flex items-center gap-2 justify-between mb-4">
  *       <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
  *         <Avatar>
- *           <img slot="avatar-image" src="https://github.com/withastro.png" alt="@withastro" />
- *           <span slot="fallback">AW</span>
+ *           <Avatar part="image">
+ *             <img src="https://github.com/withastro.png" alt="@withastro" />
+ *           <Avatar part="fallback">AW</Avatar>
  *         </Avatar>
  *         <Avatar>
- *           <img slot="avatar-image" src="https://github.com/shadcn.png" alt="@shadcn" />
- *           <span slot="fallback">SH</span>
+ *           <Avatar part="image">
+ *             <img src="https://github.com/shadcn.png" alt="@shadcn" />
+ *           </Avatar>
+ *           <Avatar part="fallback">
+ *             SH
+ *           </Avatar>
  *         </Avatar>
  *         <Avatar>
- *           <img slot="avatar-image" src="https://github.com/fredkschott.png" alt="@fredkschott" />
- *           <span slot="fallback">ER</span>
+ *           <Avatar part="image">
+ *             <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *           </Avatar>
+ *           <Avatar part="fallback">
+ *             TK
+ *           </Avatar>
  *         </Avatar>
  *       </div>
  *       <Date date="2025-08-24T12:00:00Z" class="text-sm text-muted-foreground" />
