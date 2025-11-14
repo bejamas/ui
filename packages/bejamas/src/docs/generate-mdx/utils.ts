@@ -84,6 +84,11 @@ export function parseJsDocMetadata(
       meta.title = line.replace("@title", "").trim();
     else if (line.trim().startsWith("@description"))
       meta.description = line.replace("@description", "").trim();
+    else if (line.trim().startsWith("@figmaUrl"))
+      meta.figmaUrl = line.replace("@figmaUrl", "").trim();
+    // Backward compatibility: support @figma but map to figmaUrl
+    else if (line.trim().startsWith("@figma"))
+      meta.figmaUrl = line.replace("@figma", "").trim();
     else if (line.trim().startsWith("@usage")) {
       inUsage = true;
       continue;
