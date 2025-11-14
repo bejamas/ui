@@ -121,38 +121,12 @@ export function buildMdx(params: {
     ].filter((v) => v !== null && v !== undefined) as string[];
   };
 
-  const convertTextNodesToExpressions = (snippet: string): string => {
+  const wrapTextNodes = (snippet: string): string => {
     if (!snippet) return snippet;
-    const lines = snippet.split("\n");
-    let insideMultilineTag = false;
-    const processed = lines.map((line) => {
-      const trimmed = line.trim();
-      if (!trimmed.length) return line;
-
-      if (insideMultilineTag) {
-        if (trimmed.includes(">")) insideMultilineTag = false;
-        return line;
-      }
-
-      if (trimmed.startsWith("<")) {
-        const hasClosing = trimmed.includes(">");
-        const isCommentStart =
-          trimmed.startsWith("<!--") && !trimmed.includes("-->");
-        if (!hasClosing || isCommentStart) insideMultilineTag = true;
-        return line;
-      }
-
-      if (trimmed.startsWith("{") || trimmed.startsWith("}")) return line;
-
-      const indentMatch = line.match(/^\s*/);
-      const indent = indentMatch ? indentMatch[0] : "";
-      const content = line.slice(indent.length);
-      return `${indent}{${JSON.stringify(content)}}`;
-    });
-    const joined = processed.join("\n");
-    return joined.replace(/>([^<]+)</g, (match, inner) => {
-      if (!inner.trim()) return match;
-      if (/^\s*\{.*\}\s*$/.test(inner)) return match;
+    return snippet.replace(/>([^<]+)</g, (match, inner) => {
+      const trimmed = inner.trim();
+      if (!trimmed.length) return match;
+      if (/^\{[\s\S]*\}$/.test(trimmed)) return match;
       return `>{${JSON.stringify(inner)}}<`;
     });
   };
@@ -161,7 +135,7 @@ export function buildMdx(params: {
     if (!snippet) return snippet;
     // Convert HTML comments to MDX comment blocks for preview sections
     const withoutComments = snippet.replace(/<!--([\s\S]*?)-->/g, "{/*$1*/}");
-    return convertTextNodesToExpressions(withoutComments);
+    return wrapTextNodes(withoutComments);
   };
 
   // Split an example body into leading markdown description (paragraphs)
