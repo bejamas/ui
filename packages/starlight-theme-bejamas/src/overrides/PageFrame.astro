@@ -24,7 +24,11 @@ const { hasSidebar } = Astro.locals.starlightRoute;
       </nav>
     )
   }
-  <div class="main-frame"><slot /></div>
+  <div class="main-frame">
+    <div class="main-frame-inner">
+      <slot />
+    </div>
+  </div>
 </div>
 
 <style>
@@ -108,6 +112,14 @@ const { hasSidebar } = Astro.locals.starlightRoute;
     .main-frame {
       padding-top: calc(var(--sl-nav-height) + var(--sl-mobile-toc-height));
       padding-inline-start: var(--sl-content-inline-start);
+    }
+
+    .main-frame-inner {
+      background-color: var(--sl-main-frame-inner-background);
+      border: 1px solid var(--sl-main-frame-inner-border);
+      border-radius: calc(var(--radius) - 2px) calc(var(--radius) - 2px) 0 0;
+      border-bottom: 0;
+      min-height: calc(100svh - var(--sl-nav-height));
     }
 
     @media (min-width: 50rem) {

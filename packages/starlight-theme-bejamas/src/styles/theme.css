@@ -48,6 +48,27 @@
     --sl-nav-height: calc(var(--spacing) * 18);
     /* --sl-nav-height: auto; */
     --sl-nav-pad-y: calc(var(--spacing) * 4);
+
+    --sl-main-frame-inner-background: color-mix(
+      in oklab,
+      var(--muted) 100%,
+      transparent
+    );
+    --sl-main-frame-inner-border: var(--border);
+  }
+
+  html[data-theme="dark"],
+  html.dark {
+    --sl-main-frame-inner-background: color-mix(
+      in oklab,
+      var(--muted) 30%,
+      transparent
+    );
+    --sl-main-frame-inner-border: color-mix(
+      in oklab,
+      var(--border) 50%,
+      transparent
+    );
   }
 }
 
@@ -338,18 +359,5 @@
   .main-frame {
     padding-right: calc(var(--spacing) * 6);
     min-height: 100svh;
-  }
-
-  .main-frame > div {
-    background-color: color-mix(in oklab, var(--muted) 100%, transparent);
-    border-radius: calc(var(--radius) - 2px) calc(var(--radius) - 2px) 0 0;
-    border: 1px solid var(--border);
-    border-bottom: 0;
-    min-height: calc(100svh - var(--sl-nav-height));
-  }
-
-  .dark .main-frame > div {
-    background-color: color-mix(in oklab, var(--muted) 30%, transparent);
-    border-color: color-mix(in oklab, var(--border) 50%, transparent);
   }
 }
