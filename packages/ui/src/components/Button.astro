@@ -79,7 +79,7 @@
  *
  * <Button variant="default">
  *   Click me
- *   <Badge variant="secondary" shape="pill">Value</Badge>
+ *   <Badge variant="secondary">Value</Badge>
  * </Button>
  *
  * ### Destructive
@@ -145,12 +145,12 @@ const buttonVariants = cva(
           "border shadow-xs hover:bg-accent hover:border-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        ghost: "hover:bg-secondary",
         link: "text-accent underline-offset-4 hover:underline p-0",
       },
       size: {
-        default: "h-9 px-4 py-2 text-sm has-[.badge:last-child]:pr-1.5 ",
+        default:
+          "h-9 px-3 py-2 text-sm has-[.badge:last-child]:pr-1.5 has-[>svg]:px-2.5",
         sm: "h-8.5 text-sm rounded-lg gap-1.5 px-3 has-[>svg]:px-2",
         lg: "h-10 text-sm rounded-lg px-5 has-[>svg]:px-4 has-[.badge:last-child]:pr-3 [&_.badge:last-child]:ml-1.5",
         icon: "size-9",

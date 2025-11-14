@@ -3,6 +3,7 @@
  * @component Card
  * @title Card
  * @description UI container for grouping content with header, footer, etc.
+ * @figmaUrl https://www.figma.com/design/4SCvaPvZEhlTSiDyfAonrx/-1--Bejamas-UI---Design-System?node-id=54-1310
  *
  * @example
  *
@@ -10,8 +11,8 @@
  *   <Card part="media" class="m-1">
  *     <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340" alt="Everest" class="w-full h-full object-cover" />
  *   </Card>
- *   <Card part="header" class="gap-y-6">
- *     <div class="flex items-center gap-2 justify-between mb-2">
+ *   <Card part="header">
+ *     <div class="flex items-center gap-2 justify-between">
  *       <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
  *         <Avatar>
  *           <Avatar part="image">
@@ -40,11 +41,11 @@
  *       </div>
  *       <Date date="2025-08-24T12:00:00Z" class="text-sm text-muted-foreground" />
  *     </div>
- *     <Card part="title">Danone’s Alpro Path to Cutting-Edge Composable Web</Card>
  *   </Card>
  *
- *   <Card part="content">
- *     <Card part="description" class="mb-6">A while back, they challenged the norm for enterprises and replaced monolithic architecture with a modern tech stack. But they didn't stop there.</Card>
+ *   <Card part="content" class="space-y-5">
+ *     <Card part="title">Danone’s Alpro Path to Cutting-Edge Composable Web</Card>
+ *     <Card part="description">A while back, they challenged the norm for enterprises and replaced monolithic architecture with a modern tech stack. But they didn't stop there.</Card>
  *     <Button variant="outline" as="a" href="#">Read more</Button>
  *   </Card>
  * 
