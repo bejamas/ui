@@ -22,7 +22,7 @@
     --sl-color-gray-5: var(--input);
     --sl-color-black: transparent;
 
-    --code-background: var(--muted);
+    --code-background: var(--background);
     --sl-color-text: var(--foreground);
 
     --sl-text-h1: 2.25rem;
@@ -52,14 +52,22 @@
 }
 
 @layer bejamas {
-  .sidebar-pane .sidebar-content,
+  .sidebar-pane .sidebar-content {
+    --sl-sidebar-item-padding-inline: 1rem;
+    padding-top: calc(var(--spacing) * 11.325);
+  }
+
   .right-sidebar-panel {
     --sl-sidebar-item-padding-inline: 1rem;
-    padding-top: 3rem;
+    padding-top: calc(var(--spacing) * 13);
   }
 
   .right-sidebar-panel a {
     color: var(--muted-foreground);
+  }
+
+  .right-sidebar-panel a[aria-current="true"] {
+    color: var(--foreground);
   }
 
   .right-sidebar-panel a:hover {
@@ -100,7 +108,7 @@
 
   .sidebar-content a[aria-current="page"] > span {
     background-color: var(--secondary);
-    color: var(--secondary-foreground);
+    color: var(--foreground);
     font-weight: 500;
   }
 
@@ -132,7 +140,7 @@
   }
 
   .right-sidebar-panel h2 {
-    color: var(--color-muted-foreground);
+    color: var(--muted-foreground);
     font-size: 0.875rem;
     font-weight: 500;
     padding-inline: 0.5rem;
@@ -151,6 +159,10 @@
     box-shadow: none;
   }
 
+  .expressive-code .frame pre {
+    border: 1px solid var(--border);
+  }
+
   ul.top-level li details ul li:last-child {
     margin-bottom: 1.25rem;
   }
@@ -161,9 +173,10 @@
 
   starlight-tabs[data-sync-key="pkg"] .tablist-wrapper {
     background-color: var(--code-background);
-    border-bottom: 1px solid var(--color-border);
+    border: 1px solid var(--border);
+    border-bottom: 0;
 
-    padding-top: 0.5rem;
+    padding-top: 0;
     border-top-left-radius: var(--radius-lg);
     border-top-right-radius: var(--radius-lg);
     font-family: var(--sl-font-mono);
@@ -179,23 +192,26 @@
   }
 
   starlight-tabs[data-sync-key="pkg"] .tablist-wrapper ul {
-    padding-bottom: 0.5rem;
-    padding-inline: 0.75rem;
-    border-bottom: 1px solid var(--border);
+    padding-block: calc(var(--spacing) * 2);
+    padding-inline: calc(var(--spacing) * 4);
     gap: 0;
+  }
+
+  .tab {
+    margin-bottom: 0;
   }
 
   starlight-tabs[data-sync-key="pkg"] .tablist-wrapper a {
     border-bottom: 0;
-    padding-block: 0.5rem;
-    padding-inline: 0.75rem;
+    padding-block: calc(var(--spacing) * 0.5);
+    padding-inline: calc(var(--spacing) * 2);
   }
 
   starlight-tabs[data-sync-key="pkg"] .tablist-wrapper a[aria-selected="true"] {
-    background-color: var(--color-accent);
-    color: var(--color-accent-foreground);
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
     border-bottom: 0;
-    border-radius: 0.5rem;
+    border-radius: calc(var(--radius) - 4px);
   }
 
   starlight-tabs[data-sync-key="pkg"] .tablist-wrapper ~ div[role="tabpanel"] {
@@ -213,6 +229,10 @@
 
   .tablist-wrapper > ul a {
     padding-inline: 0;
+  }
+
+  .tablist-wrapper > ul a[aria-selected="true"] {
+    font-weight: 500;
   }
 
   .sl-heading-wrapper.level-h2 {
@@ -244,7 +264,11 @@
   }
 
   .tablist-wrapper ~ [role="tabpanel"] {
-    margin-top: 0.5rem;
+    margin-top: calc(var(--spacing) * 2.5);
+  }
+
+  starlight-tabs starlight-tabs {
+    margin-top: 0;
   }
 
   .expressive-code .title {
@@ -313,12 +337,19 @@
 
   .main-frame {
     padding-right: calc(var(--spacing) * 6);
+    min-height: 100svh;
   }
 
   .main-frame > div {
-    background-color: color-mix(in oklab, var(--muted) 30%, transparent);
-    border-radius: calc(var(--radius) + 8px) calc(var(--radius) + 8px) 0 0;
+    background-color: color-mix(in oklab, var(--muted) 100%, transparent);
+    border-radius: calc(var(--radius) - 2px) calc(var(--radius) - 2px) 0 0;
     border: 1px solid var(--border);
     border-bottom: 0;
+    min-height: calc(100svh - var(--sl-nav-height));
+  }
+
+  .dark .main-frame > div {
+    background-color: color-mix(in oklab, var(--muted) 30%, transparent);
+    border-color: color-mix(in oklab, var(--border) 50%, transparent);
   }
 }
