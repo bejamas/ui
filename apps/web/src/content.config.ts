@@ -35,7 +35,14 @@ const themes = defineCollection({
 });
 
 export const collections = {
-  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+  docs: defineCollection({
+    loader: docsLoader(),
+    schema: docsSchema({
+      extend: z.object({
+        figmaUrl: z.string().optional(),
+      }),
+    }),
+  }),
   blocks,
   themes,
 };

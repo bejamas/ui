@@ -8,7 +8,7 @@ console.log({ docs });
 const components = docs.filter((doc) => doc.id.startsWith("components/"));
 ---
 
-<StarlightPage frontmatter={{ title: "Components" }}>
+<StarlightPage frontmatter={{ title: "Components", tableOfContents: false }}>
   <p>Here you can find all the components available in the library.</p>
   <div class="not-content mt-10">
     <ul class="list-none grid grid-cols-3 gap-4">
