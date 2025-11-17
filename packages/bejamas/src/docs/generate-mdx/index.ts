@@ -89,6 +89,7 @@ async function main() {
     const pascal = f.name.replace(/\.(astro)$/i, "");
     const title = meta.title || meta.name || pascal;
     const description = meta.description || "";
+    const descriptionBodyMDX = (meta as any).descriptionBodyMDX || "";
     const figmaUrl = (meta as any).figmaUrl || "";
     // Do not display props if there is no declared Props
     const propsList = "";
@@ -172,6 +173,7 @@ async function main() {
       componentSource: astroFile.trim(),
       commandName: slug,
       figmaUrl,
+      descriptionBodyMDX,
     });
     const outFile = join(outDir, `${slug}.mdx`);
     mkdirSync(dirname(outFile), { recursive: true });

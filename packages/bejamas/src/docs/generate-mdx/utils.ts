@@ -49,9 +49,11 @@ export function parseJsDocMetadata(
   let inUsage = false;
   let inExamples = false;
   let inPrimaryExample = false;
+  let captureDescriptionBody = false;
   const usageLines: string[] = [];
   const examplesLines: string[] = [];
   const primaryExampleLines: string[] = [];
+  const descriptionBodyLines: string[] = [];
   for (const rawLine of lines) {
     const line = rawLine;
     if (inUsage) {
@@ -78,13 +80,23 @@ export function parseJsDocMetadata(
         continue;
       }
     }
+    if (captureDescriptionBody) {
+      if (line.trim().startsWith("@")) {
+        captureDescriptionBody = false;
+      } else {
+        descriptionBodyLines.push(line);
+        continue;
+      }
+    }
     if (line.trim().startsWith("@component"))
       meta.name = line.replace("@component", "").trim();
     else if (line.trim().startsWith("@title"))
       meta.title = line.replace("@title", "").trim();
-    else if (line.trim().startsWith("@description"))
+    else if (line.trim().startsWith("@description")) {
       meta.description = line.replace("@description", "").trim();
-    else if (line.trim().startsWith("@figmaUrl"))
+      captureDescriptionBody = true;
+      continue;
+    } else if (line.trim().startsWith("@figmaUrl"))
       meta.figmaUrl = line.replace("@figmaUrl", "").trim();
     // Backward compatibility: support @figma but map to figmaUrl
     else if (line.trim().startsWith("@figma"))
@@ -104,6 +116,8 @@ export function parseJsDocMetadata(
   if (examplesLines.length) meta.examplesMDX = examplesLines.join("\n").trim();
   if (primaryExampleLines.length)
     meta.primaryExampleMDX = primaryExampleLines.join("\n").trim();
+  if (descriptionBodyLines.length)
+    meta.descriptionBodyMDX = descriptionBodyLines.join("\n").trim();
   return meta;
 }
 

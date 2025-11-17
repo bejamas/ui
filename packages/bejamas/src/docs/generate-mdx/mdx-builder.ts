@@ -3,6 +3,7 @@ export function buildMdx(params: {
   importPath: string;
   title: string;
   description: string;
+  descriptionBodyMDX?: string;
   figmaUrl?: string;
   usageMDX: string;
   hasImport: boolean;
@@ -32,6 +33,7 @@ export function buildMdx(params: {
     importPath,
     title,
     description,
+    descriptionBodyMDX,
     usageMDX,
     hasImport,
     propsList,
@@ -317,18 +319,25 @@ ${componentSource}
   </DocsTabItem>
 </DocsTabs>`;
 
+  const serializeFrontmatter = (
+    label: string,
+    value?: string,
+  ): string | null => {
+    if (!value || !value.length) return null;
+    return `${label}: ${JSON.stringify(value)}`;
+  };
+
   const lines = [
     "---",
-    `title: ${title}`,
-    description ? `description: ${description}` : null,
-    figmaUrl && figmaUrl.length
-      ? `figmaUrl: ${JSON.stringify(figmaUrl)}`
-      : null,
+    serializeFrontmatter("title", title),
+    serializeFrontmatter("description", description),
+    serializeFrontmatter("figmaUrl", figmaUrl),
     "---",
     "",
     ...importLines,
     importLines.length ? "" : null,
-    // description intentionally not repeated under frontmatter
+    descriptionBodyMDX && descriptionBodyMDX.length ? descriptionBodyMDX : null,
+    descriptionBodyMDX && descriptionBodyMDX.length ? "" : null,
     primaryExampleSection,
     primaryExampleSection ? "" : null,
     installationSection,
