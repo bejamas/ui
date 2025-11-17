@@ -5,6 +5,11 @@ sidebar:
   order: 5
 ---
 
+import {
+  Tabs as DocsTabs,
+  TabItem as DocsTabItem,
+} from "@astrojs/starlight/components";
+
 import { FileTree } from "@astrojs/starlight/components";
 
 `bejamas/ui` works good in a monorepo setup. In fact, it's the recommended way to use it.
@@ -14,11 +19,31 @@ import { FileTree } from "@astrojs/starlight/components";
 To create a new monorepo project, run the `init` command. You will be prompted
 to select the type of project you are creating.
 
-```bash
-npx bejamas@latest init
-```
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas@latest init
+  ```
+  </DocsTabItem>
 
-Select the `Astro (Monorepo)` option.
+  <DocsTabItem label="npm">
+    ```bash
+    npx bejamas@latest init
+    ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+    ```bash
+    pnpm dlx bejamas@latest init
+    ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+    ```bash
+    yarn dlx bejamas@latest init
+    ```
+  </DocsTabItem>
+</DocsTabs>
+
+Select the `Astro (Monorepo)` or `Astro with Component Docs (Monorepo)` option.
 
 ```bash
 ? Would you like to start a new project?
@@ -27,8 +52,11 @@ Select the `Astro (Monorepo)` option.
     Astro with Component Docs (Monorepo)
 ```
 
-This will create a new monorepo project with two workspaces: `web` and `ui`,
+`Astro (Monorepo)` will create a new monorepo project with two workspaces: `web` and `ui`,
 and [Turborepo](https://turbo.build/repo/docs) as the build system.
+
+`Astro with Component Docs (Monorepo)` will create a new monorepo project with two workspaces: `web` and `docs`,
+and [Turborepo](https://turbo.build/repo/docs) as the build system. The `docs` workspace will contain the component documentation.
 
 Everything is set up for you, so you can start adding components to your project.
 
@@ -42,9 +70,29 @@ To add components to your project, run the `add` command **in the path of your a
 cd apps/web
 ```
 
-```bash
-npx bejamas@latest add [COMPONENT]
-```
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas@latest add [COMPONENT]
+  ```
+  </DocsTabItem>
+
+  <DocsTabItem label="npm">
+    ```bash
+    npx bejamas@latest add [COMPONENT]
+    ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+    ```bash
+    pnpm dlx bejamas@latest add [COMPONENT]
+    ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+    ```bash
+    yarn dlx bejamas@latest add [COMPONENT]
+    ```
+  </DocsTabItem>
+</DocsTabs>
 
 The CLI will figure out what type of component you are adding and install the
 correct files to the correct path.
@@ -64,6 +112,10 @@ For example, if you run `npx bejamas add button`, the CLI will install the butto
 If you run `npx bejamas add login-01`, the CLI will install the button, label, input and card components under `packages/ui` and the login-form component under `apps/web/components`.
 
 ## File Structure
+
+
+<DocsTabs>
+  <DocsTabItem label="Astro (Monorepo)">
 
 <FileTree>
 
@@ -89,3 +141,41 @@ If you run `npx bejamas add login-01`, the CLI will install the button, label, i
 - turbo.json
 
 </FileTree>
+
+  </DocsTabItem>
+
+  <DocsTabItem label="Astro with Component Docs (Monorepo)">
+
+<FileTree>
+
+- apps
+  - web # Your Astro project goes here.
+    - pages
+      - index.astro
+    - components
+      - Welcome.astro
+    - components.json
+    - package.json
+  - docs
+    - content
+      - docs
+        - components
+          - Button.astro
+    - package.json
+  - packages
+    - ui # Your components and dependencies are installed here
+      - src
+        - components
+          - Button.astro
+    - lib
+      - utils.ts
+    - styles
+      - globals.css
+  - components.json
+- package.json
+- turbo.json
+
+</FileTree>
+
+  </DocsTabItem>
+</DocsTabs>

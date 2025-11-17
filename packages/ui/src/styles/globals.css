@@ -5,6 +5,8 @@
 
 @import "tw-animate-css";
 
+@plugin "tailwindcss-corner-shape/presets/squircle";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
