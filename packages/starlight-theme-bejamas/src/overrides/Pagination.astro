@@ -1,6 +1,8 @@
 ---
-import { Icon } from "@astrojs/starlight/components";
+// import { Icon } from "@astrojs/starlight/components";
 import Button from "virtual:starlight-theme-bejamas/components/Button.astro";
+import ArrowRight from "iconoir/icons/arrow-right.svg";
+import ArrowLeft from "iconoir/icons/arrow-left.svg";
 
 const { dir, pagination } = Astro.locals.starlightRoute;
 const { prev, next } = pagination;
@@ -11,7 +13,7 @@ const isRtl = dir === "rtl";
   {
     prev && (
       <Button as="a" href={prev.href} rel="prev" variant="outline">
-        <Icon name={isRtl ? "right-arrow" : "left-arrow"} size="1.25rem" />
+        {isRtl ? <ArrowRight class="size-3" /> : <ArrowLeft class="size-3" />}
         {prev.label}
       </Button>
     )
@@ -19,11 +21,19 @@ const isRtl = dir === "rtl";
   {
     next && (
       <Button as="a" href={next.href} rel="next" variant="outline">
-        <Icon name={isRtl ? "left-arrow" : "right-arrow"} size="1.25rem" />
+        {isRtl ? <ArrowLeft class="size-3" /> : <ArrowRight class="size-3" />}
         {next.label}
       </Button>
     )
   }
+</div>
+
+<div class="text-center text-sm text-muted-foreground page-footer">
+  <p>
+    Built at <a href="https://bejamas.com" class="underline underline-offset-4"
+      >Bejamas</a
+    >.
+  </p>
 </div>
 
 <style>
@@ -42,6 +52,10 @@ const isRtl = dir === "rtl";
 
     svg {
       flex-shrink: 0;
+    }
+
+    .page-footer {
+      margin-top: calc(var(--spacing) * 6);
     }
   }
 </style>

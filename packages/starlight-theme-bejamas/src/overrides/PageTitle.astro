@@ -1,12 +1,10 @@
 ---
 import Button from "virtual:starlight-theme-bejamas/components/Button.astro";
 import { Icon } from "@astrojs/starlight/components";
-import {
-  ArrowLeft,
-  ArrowRight,
-  SquareArrowOutUpRight,
-  ArrowUpRight,
-} from "@lucide/astro";
+
+import ArrowRight from "iconoir/icons/arrow-right.svg";
+import ArrowLeft from "iconoir/icons/arrow-left.svg";
+import ArrowUpRight from "iconoir/icons/arrow-up-right.svg";
 
 const { dir, pagination, template, entry } = Astro.locals.starlightRoute;
 const { prev, next } = pagination;
@@ -73,7 +71,7 @@ const isRtl = dir === "rtl";
             variant="outline"
             size="icon-sm"
           >
-            <ArrowLeft size="1.5rem" />
+            <ArrowLeft class="size-3" />
           </Button>
         )}
         {next && (
@@ -83,7 +81,7 @@ const isRtl = dir === "rtl";
             variant="outline"
             size="icon-sm"
           >
-            <ArrowRight size="1.5rem" />
+            <ArrowRight class="size-3" />
           </Button>
         )}
       </div>

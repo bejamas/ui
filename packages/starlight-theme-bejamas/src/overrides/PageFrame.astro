@@ -2,6 +2,7 @@
 import MobileMenuToggle from "virtual:starlight/components/MobileMenuToggle";
 
 const { hasSidebar } = Astro.locals.starlightRoute;
+const { template } = Astro.locals.starlightRoute.entry.data;
 ---
 
 <div class="page sl-flex">
@@ -24,10 +25,17 @@ const { hasSidebar } = Astro.locals.starlightRoute;
       </nav>
     )
   }
+
   <div class="main-frame">
-    <div class="main-frame-inner">
-      <slot />
-    </div>
+    {
+      template === "splash" ? (
+        <slot />
+      ) : (
+        <div class="main-frame-inner">
+          <slot />
+        </div>
+      )
+    }
   </div>
 </div>
 
@@ -117,7 +125,7 @@ const { hasSidebar } = Astro.locals.starlightRoute;
     .main-frame-inner {
       background-color: var(--sl-main-frame-inner-background);
       border: 1px solid var(--sl-main-frame-inner-border);
-      border-radius: calc(var(--radius) - 2px) calc(var(--radius) - 2px) 0 0;
+      border-radius: calc(var(--radius) + 12px) calc(var(--radius) + 12px) 0 0;
       border-bottom: 0;
       min-height: calc(100svh - var(--sl-nav-height));
     }

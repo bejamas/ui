@@ -13,7 +13,7 @@
 
     --sl-color-banner-text: var(--foreground);
 
-    --sl-color-bg-inline-code: var(--muted);
+    --sl-color-bg-inline-code: var(--input);
 
     --sl-color-hairline-shade: var(--border);
 
@@ -75,7 +75,7 @@
 @layer bejamas {
   .sidebar-pane .sidebar-content {
     --sl-sidebar-item-padding-inline: 1rem;
-    padding-top: calc(var(--spacing) * 11.325);
+    padding-top: 0;
   }
 
   .right-sidebar-panel {
@@ -274,7 +274,7 @@
     color: var(--foreground);
     box-shadow: var(--shadow-xs);
     background-color: var(--background);
-    height: 2.375rem;
+    height: calc(var(--spacing) * 9);
   }
 
   button[data-open-modal] kbd {
@@ -359,5 +359,53 @@
   .main-frame {
     padding-right: calc(var(--spacing) * 6);
     min-height: 100svh;
+  }
+
+  .sidebar-content::before {
+    content: "";
+    --blur: 4px;
+    --stop: 50%;
+    --height: 40px;
+    position: sticky;
+    pointer-events: none;
+    width: 100%;
+    height: var(--height);
+    user-select: none;
+    -webkit-user-select: none;
+    left: 0;
+    -webkit-backdrop-filter: blur(var(--blur));
+    backdrop-filter: blur(var(--blur));
+
+    background: linear-gradient(to top, transparent, var(--background));
+    mask-image: linear-gradient(
+      to bottom,
+      var(--background) var(--stop),
+      transparent
+    );
+    top: 0;
+  }
+
+  .sidebar-content::after {
+    content: "";
+    --blur: 4px;
+    --stop: 50%;
+    --height: 80px;
+    position: sticky;
+    pointer-events: none;
+    width: 100%;
+    height: var(--height);
+    user-select: none;
+    -webkit-user-select: none;
+    left: 0;
+    -webkit-backdrop-filter: blur(var(--blur));
+    backdrop-filter: blur(var(--blur));
+
+    background: linear-gradient(to bottom, transparent, var(--background));
+    mask-image: linear-gradient(
+      to top,
+      var(--background) var(--stop),
+      transparent
+    );
+    bottom: 0;
   }
 }
