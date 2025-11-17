@@ -13,10 +13,11 @@ import Laptop from "iconoir/icons/laptop.svg";
     <Sun class="size-4 dark:hidden" />
     <Moon class="size-4 hidden dark:block" />
   </div>
-  <Select id="theme-select" showCheckmark={false}>
+  <Select showCheckmark={false}>
     <Select part="indicator" />
     <Select
       onchange="window.toggleTheme(this.value)"
+      id="theme-select"
       part="control"
       showCheckmark={false}
       class="pl-9 w-28"
