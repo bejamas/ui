@@ -1,8 +1,7 @@
 ---
 // import { Icon } from "@astrojs/starlight/components";
 import Button from "virtual:starlight-theme-bejamas/components/Button.astro";
-import ArrowRight from "iconoir/icons/arrow-right.svg";
-import ArrowLeft from "iconoir/icons/arrow-left.svg";
+import { ArrowRight, ArrowLeft } from "@lucide/astro";
 
 const { dir, pagination } = Astro.locals.starlightRoute;
 const { prev, next } = pagination;
@@ -13,7 +12,7 @@ const isRtl = dir === "rtl";
   {
     prev && (
       <Button as="a" href={prev.href} rel="prev" variant="outline">
-        {isRtl ? <ArrowRight class="size-3" /> : <ArrowLeft class="size-3" />}
+        {isRtl ? <ArrowRight class="size-4" /> : <ArrowLeft class="size-4" />}
         {prev.label}
       </Button>
     )
@@ -21,7 +20,7 @@ const isRtl = dir === "rtl";
   {
     next && (
       <Button as="a" href={next.href} rel="next" variant="outline">
-        {isRtl ? <ArrowLeft class="size-3" /> : <ArrowRight class="size-3" />}
+        {isRtl ? <ArrowLeft class="size-4" /> : <ArrowRight class="size-4" />}
         {next.label}
       </Button>
     )

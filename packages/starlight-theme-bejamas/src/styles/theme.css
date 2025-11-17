@@ -3,6 +3,22 @@
 @import "@fontsource-variable/inter/index.css";
 
 @layer bejamas {
+  :root::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    right: calc(var(--spacing) * 6);
+    background: linear-gradient(
+      var(--background) 49.99%,
+      var(--sl-main-frame-inner-background) 50%
+    );
+    z-index: -1;
+  }
+
+  .page {
+    background-color: var(--background);
+  }
+
   :root {
     --sl-font: "Inter Variable", sans-serif;
     --sl-font-mono: "Geist Mono", monospace;
@@ -80,7 +96,7 @@
 
   .right-sidebar-panel {
     --sl-sidebar-item-padding-inline: 1rem;
-    padding-top: calc(var(--spacing) * 13);
+    padding-top: calc(var(--spacing) * 14);
   }
 
   .right-sidebar-panel a {
@@ -98,6 +114,15 @@
   .right-sidebar,
   .sidebar .sidebar-pane {
     border: 0;
+  }
+
+  @media (min-width: 72rem) {
+    .right-sidebar {
+      position: sticky;
+      top: var(--sl-nav-height);
+      padding-top: 0;
+      height: auto;
+    }
   }
 
   .sidebar-content a {
@@ -407,5 +432,21 @@
       transparent
     );
     bottom: 0;
+  }
+
+  starlight-file-tree {
+    --x-space: calc(var(--spacing) * 5);
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  starlight-file-tree ul {
+    border-inline-start-color: var(--border);
+  }
+
+  starlight-file-tree .comment {
+    color: var(--muted-foreground);
+    max-width: calc(var(--spacing) * 150);
   }
 }

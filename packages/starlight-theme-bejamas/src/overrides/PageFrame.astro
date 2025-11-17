@@ -123,11 +123,34 @@ const { template } = Astro.locals.starlightRoute.entry.data;
     }
 
     .main-frame-inner {
+      position: relative;
       background-color: var(--sl-main-frame-inner-background);
       border: 1px solid var(--sl-main-frame-inner-border);
       border-radius: calc(var(--radius) + 12px) calc(var(--radius) + 12px) 0 0;
       border-bottom: 0;
       min-height: calc(100svh - var(--sl-nav-height));
+    }
+
+    .main-frame-inner::before,
+    .main-frame-inner::after {
+      content: "";
+      position: absolute;
+      width: 1px;
+      height: calc(var(--spacing) * 18);
+      background: linear-gradient(
+        to bottom,
+        var(--sl-main-frame-inner-border) 0%,
+        var(--muted) 100%
+      );
+      bottom: 0;
+    }
+
+    .main-frame-inner::before {
+      left: -1px;
+    }
+
+    .main-frame-inner::after {
+      right: -1px;
     }
 
     @media (min-width: 50rem) {
