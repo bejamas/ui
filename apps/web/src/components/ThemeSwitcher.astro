@@ -2,30 +2,29 @@
 import Button from "@bejamas/ui/components/Button.astro";
 import Dropdown from "@bejamas/ui/components/Dropdown.astro";
 import Select from "@bejamas/ui/components/Select.astro";
-import { Sun, Moon, Laptop } from "@lucide/astro";
+
+import Sun from "iconoir/icons/sun-light.svg";
+import Moon from "iconoir/icons/half-moon.svg";
+import Laptop from "iconoir/icons/laptop.svg";
 ---
 
 <div class="relative text-sm">
-  <div class="absolute z-10 left-3 top-2.75">
+  <div class="absolute z-10 left-3 top-2.5">
     <Sun class="size-4 dark:hidden" />
     <Moon class="size-4 hidden dark:block" />
   </div>
-  <Select
-    id="theme-select"
-    class="pl-9 w-28"
-    trigger={{ variant: "secondary" }}
-    showCheckmark={false}
-    onchange="window.toggleTheme(this.value)"
-  >
-    <option value="light" class="px-2.5 py-2 rounded-sm"
-      ><Sun class="size-4" /> Light</option
+  <Select id="theme-select" showCheckmark={false}>
+    <Select part="indicator" />
+    <Select
+      onchange="window.toggleTheme(this.value)"
+      part="control"
+      showCheckmark={false}
+      class="pl-9 w-28"
     >
-    <option value="dark" class="px-2.5 py-2 rounded-sm"
-      ><Moon class="size-4" /> Dark</option
-    >
-    <option value="auto" class="px-2.5 py-2 rounded-sm"
-      ><Laptop class="size-4" /> Auto</option
-    >
+      <Select part="option" value="light"><Sun class="size-4" /> Light</Select>
+      <Select part="option" value="dark"><Moon class="size-4" /> Dark</Select>
+      <Select part="option" value="auto"><Laptop class="size-4" /> Auto</Select>
+    </Select>
   </Select>
 </div>
 

@@ -4,22 +4,25 @@ import { defaultPresets } from "../utils/themes/presets";
 
 const tabs = [
   {
-    label: "vira.fintech",
+    label: "fintech",
     icon: "globe",
     theme: "berlin",
     preview: "/fintech",
+    color: "#e2ebff",
   },
   {
-    label: "vira.ai",
+    label: "ai",
     icon: "heart",
     theme: "tokyo",
     preview: "/ai",
+    color: "#f1c4e6",
   },
   {
-    label: "vira.health",
+    label: "health",
     icon: "heart",
     theme: "rome",
     preview: "/health",
+    color: "#EBA91C",
   },
 ];
 
@@ -28,6 +31,7 @@ const componentsShowreel = {
   icon: "globe",
   theme: "default",
   preview: "/ui-demo",
+  color: "hsl(203.9433 167.9983% 39.1847%)",
 };
 
 // Lean presets payload for the client (label + styles only)
@@ -115,31 +119,34 @@ const leanPresets = Object.fromEntries(
   class="browser will-change-transform mt-0 not-content relative z-10 h-[calc(100svh_-_var(--spacing)_*_18)] rounded-t-2xl overflow-clip flex flex-col"
 >
   <div
-    class="bg-muted dark:bg-foreground/10 backdrop-blur-xl not-content px-5 py-3 grid grid-cols-12"
+    class="bg-input/40 dark:bg-input/30 backdrop-blur-xl not-content px-5 pt-2 flex"
   >
-    <div class="flex items-center gap-x-2 col-span-1">
+    <div class="flex items-center gap-x-2 mb-1.75">
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
     </div>
-    <div class="col-span-11 flex items-center">
+    <div class="ml-18 flex items-center">
       <button
         type="button"
         data-key={componentsShowreel.theme}
         data-index={0}
         data-preview={componentsShowreel.preview}
-        class="rounded-lg text-sm min-w-32 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
+        class="rounded-t-lg text-sm min-w-32 px-3 py-3 flex items-center cursor-pointer select-none transition-colors"
         x-on:click="setActive(0, 'default')"
         x-bind:class="{
-          'bg-background dark:bg-foreground/20 shadow-xs text-foreground': activeIndex === 0,
-          'bg-muted border dark:bg-background/50 text-foreground': activeIndex !== 0
+          'bg-background shadow-xs text-foreground': activeIndex === 0,
+          'bg-background/50 text-foreground hover:bg-background': activeIndex !== 0
         }"
       >
-        <div class="size-5 mr-2 rounded-sm bg-foreground"></div>
+        <div
+          class="size-5 mr-2 rounded-sm bg-foreground"
+          style={`background-color: ${componentsShowreel.color};`}
+        >
+        </div>
         bejamas/ui components
       </button>
-      <div class="flex items-center justify-center gap-x-3">
-        <Separator class="h-6 ml-5 mr-2" orientation="vertical" />
+      <div class="flex items-center justify-center gap-x-1 ml-1">
         {
           tabs.map((tab, i) => (
             <button
@@ -149,12 +156,15 @@ const leanPresets = Object.fromEntries(
               data-preview={tab.preview}
               x-on:click="setActive($event.currentTarget.dataset.index, $event.currentTarget.dataset.key)"
               x-bind:class="{
-                'bg-background dark:bg-foreground/20 shadow-xs text-foreground': activeIndex === Number($el.dataset.index),
-                'bg-muted border dark:bg-background/50 text-foreground': activeIndex !== Number($el.dataset.index)
+                'bg-background shadow-xs text-foreground': activeIndex === Number($el.dataset.index),
+                'bg-background/50 text-foreground hover:bg-background': activeIndex !== Number($el.dataset.index)
               }"
-              class="rounded-lg text-sm min-w-32 px-2 py-2 flex items-center cursor-pointer select-none transition-colors"
+              class="rounded-t-lg text-sm min-w-32 px-3 py-3 flex items-center cursor-pointer select-none transition-colors"
             >
-              <div class="size-5 mr-2 rounded-sm bg-foreground" />
+              <div
+                class="size-5 mr-2 rounded-sm"
+                style={`background-color: ${tab.color};`}
+              />
               {tab.label}
             </button>
           ))

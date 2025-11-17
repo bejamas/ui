@@ -22,7 +22,31 @@
  *     <Item part="actions"><ChevronRightIcon class="size-4" /></Item>
  *   </Item>
  * </div>
+ *
+ * @usage
  * 
+ * ```astro 
+ * ---
+ * import Item from '@/components/ui/Item.astro';
+ * ---
+ *
+ * <Item variant="outline">
+ *   <Item part="header">
+ *     <Item part="title">Basic Item</Item>
+ *     <Item part="description">A simple item with title and description.</Item>
+ *   </Item>
+ *   <Item part="media">
+ *     <BadgeCheckIcon class="size-5" />
+ *   </Item>
+ *   <Item part="content">
+ *     Content
+ *   </Item>
+ *   <Item part="actions">
+ *     Actions
+ *   </Item>
+ *   <Item part="footer">Item Footer</Item>
+ * </Item>
+ * ```
  *
  * @examples
  *

@@ -2,122 +2,341 @@
 /**
  * @component Select
  * @title Select
- * @description Accessible select with custom styling and indicator.
- * @status stable
- * @since 0.1.0
+ * @description A styled dropdown based on the native HTML `<select>` element.
  *
  * @example
  *
  * <div class="flex flex-col gap-2">
- *   <Label for="fruits">Select a fruit</Label>
- *   <Select id="fruits" class="w-[180px]">
- *     <option value="apple">Apple</option>
- *     <option value="banana">Banana</option>
- *     <option value="cherry">Cherry</option>
+ *   <Label for="fruits">Your favorite fruit</Label>
+ *   <Select class="w-[180px]">
+ *     <Select part="indicator" />
+ *     <Select part="control" id="fruits" name="fruits">
+ *       <Select part="placeholder">Select a fruit</Select>
+ *       <Select part="group" label="Fruits">
+ *         <Select part="option" value="apple">Apple</Select>
+ *         <Select part="option" value="banana">Banana</Select>
+ *       </Select>
+ *       <Select part="group" label="Vegetables">
+ *         <Select part="option" value="carrot">Carrot</Select>
+ *         <Select part="option" value="broccoli">Broccoli</Select>
+ *       </Select>
+ *     </Select>
  *   </Select>
  * </div>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import Select from '@/components/ui/Select.astro';
+ * ---
+ *
+ * <Select>
+ *   <Select part="indicator" />
+ *   <Select part="control">
+ *     <Select part="option" value="apple">Apple</Select>
+ *     <Select part="option" value="banana">Banana</Select>
+ *   </Select>
+ * </Select>
+ * ```
+ *
+ * ### Parts
+ *
+ * - root (default): wrapper container (relative)
+ * - control: native `<select>` element
+ * - option: native `<option>` element
+ * - group: native `<optgroup>` element
+ * - placeholder: hidden, selected `<option>` for placeholder text
+ * - indicator: decorative dropdown icon (optional)
+ *
+ * @examples
+ *
+ * ### Default
+ *
+ * <Select>
+ *   <Select part="indicator" />
+ *   <Select part="control">
+ *     <Select part="option" value="apple">Apple</Select>
+ *     <Select part="option" value="banana">Banana</Select>
+ *   </Select>
+ * </Select>
+ *
+ * ### Sizes
+ *
+ * <div class="flex flex-col items-start gap-8 sm:flex-row">
+ *   <Select class="w-[180px]">
+ *     <Select part="control" size="sm">
+ *       <Select part="option" value="apple">Apple</Select>
+ *       <Select part="option" value="banana">Banana</Select>
+ *     </Select>
+ *     <Select part="indicator" />
+ *   </Select>
+ *   <Select class="w-[180px]">
+ *     <Select part="control" size="default">
+ *       <Select part="option" value="apple">Apple</Select>
+ *       <Select part="option" value="banana">Banana</Select>
+ *     </Select>
+ *     <Select part="indicator" />
+ *   </Select>
+ *   <Select class="w-[180px]">
+ *     <Select part="control" size="lg">
+ *       <Select part="option" value="apple">Apple</Select>
+ *       <Select part="option" value="banana">Banana</Select>
+ *     </Select>
+ *     <Select part="indicator" />
+ *   </Select>
+ * </div>
+ *
+ * ### Custom indicator
+ *
+ * <Select class="w-[180px]">
+ *   <Select part="indicator">
+ *     <ChevronsDownIcon class="size-4" />
+ *   </Select>
+ *   <Select part="control" size="default" variant="default">
+ *     <Select part="option" value="apple">Apple</Select>
+ *     <Select part="option" value="banana">Banana</Select>
+ *   </Select>
+ * </Select>
+ *
+ * ### With placeholder
+ *
+ * Placeholder is a hidden, selected `option` for placeholder text, it must be a child of the `control` part.
+ *
+ * <Select class="w-[180px]">
+ *   <Select part="indicator" />
+ *   <Select part="control">
+ *     <Select part="placeholder">Select a fruit</Select>
+ *     <Select part="option" value="apple">Apple</Select>
+ *     <Select part="option" value="banana">Banana</Select>
+ *   </Select>
+ * </Select>
+ *
  */
 
-import { ChevronDown } from "@lucide/astro";
-import type { HTMLAttributes } from "astro/types";
+import ChevronDown from "iconoir/icons/nav-arrow-down.svg";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
-interface Props extends HTMLAttributes<"select"> {
-  variant?: "default" | "ghost" | "neutral";
+type SelectPart =
+  | "root"
+  | "control"
+  | "option"
+  | "group"
+  | "placeholder"
+  | "indicator";
+
+type Variant = "default" | "ghost";
+type Size = "default" | "sm" | "lg";
+
+type RootProps = {
+  part?: "root";
+  class?: string;
+} & HTMLAttributes<"div">;
+
+type ControlProps = {
+  part: "control";
+  variant?: Variant;
+  size?: Size;
   showCheckmark?: boolean;
-  options?: Array<
-    string | { value: string; label?: string; disabled?: boolean }
-  >;
-}
+  class?: string;
+} & HTMLAttributes<"select">;
+
+type OptionProps = {
+  part: "option";
+  class?: string;
+  value: string | number;
+  selected?: boolean;
+  disabled?: boolean;
+} & HTMLAttributes<"option">;
+
+type GroupProps = {
+  part: "group";
+  class?: string;
+  label?: string;
+  disabled?: boolean;
+} & HTMLAttributes<"optgroup">;
+
+type PlaceholderProps = {
+  /** Placeholder inside <select>, renders as a hidden, selected empty <option> */
+  part: "placeholder";
+  class?: string;
+} & HTMLAttributes<"option">;
+
+type IndicatorProps = {
+  part: "indicator";
+  class?: string;
+} & HTMLAttributes<"svg">;
+
+type Props =
+  | RootProps
+  | ControlProps
+  | OptionProps
+  | GroupProps
+  | PlaceholderProps
+  | IndicatorProps;
 
 const {
-  id = "",
-  variant = "default",
+  part: rawPart,
   class: className = "",
+  variant,
+  size,
   showCheckmark = true,
-  options = [],
+  label,
+  value,
+  selected,
+  disabled,
   ...rest
 } = Astro.props as Props;
 
 const baseClasses =
-  "block w-full select appearance-none relative shadow-xs rounded-md bg-background ps-4 pe-10 py-2 text-sm text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring disabled:cursor-not-allowed disabled:opacity-50 [&_option]:rounded-md [&_option]:p-2";
-
-const optionBaseClasses =
-  "px-3 py-1.5 text-foreground hover:bg-foreground/10 active:bg-neutral active:text-neutral-content disabled:text-foreground/40";
+  "block w-full inline-flex items-center select appearance-none relative shadow-xs rounded-md bg-background ps-4 pe-10 py-2 text-sm text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring disabled:cursor-not-allowed disabled:opacity-50 [&_option]:rounded-md [&_option]:p-2";
 
 const selectVariants = cva(baseClasses, {
   variants: {
     variant: {
       default: "border border-border",
       ghost: "border-0 bg-transparent shadow-none focus:bg-background",
-      neutral:
-        "border border-neutral/50 focus:border-neutral focus:ring-neutral",
+    },
+    size: {
+      default: "h-9 px-3 py-2 text-sm",
+      sm: "h-8.5 text-xs rounded-lg gap-1.5 px-3.5 has-[>svg]:px-2.5",
+      lg: "h-10 text-sm rounded-lg px-4 has-[>svg]:px-4 has-[.badge:last-child]:pr-3 [&_.badge:last-child]:ml-1.5",
     },
   },
   defaultVariants: {
     variant: "default",
+    size: "default",
   },
 });
 
-const selectClasses = cn(
-  selectVariants({ variant }),
-  !showCheckmark && "hide-checkmark",
-);
-
-const controlId =
-  id ||
-  (rest as Record<string, any>).name ||
-  `select-${Math.random().toString(36).slice(2, 9)}`;
-
-const selectedValue = (rest as Record<string, any>).value ?? "";
+const part: SelectPart = (rawPart ?? "root") as SelectPart;
 ---
 
-<div class={cn("relative")}>
-  <select
-    id={controlId}
-    class={cn("select", selectClasses, className)}
-    {...rest}
-  >
-    {
-      options.length ? (
-        options.map((opt) => {
-          const isObject = typeof opt === "object";
-          const optionValue = isObject ? opt.value : opt;
-          const optionLabel = isObject ? (opt.label ?? opt.value) : opt;
+{
+  part === "root" &&
+    (() => {
+      return (
+        <div {...rest} data-slot="select" class={cn("relative", className)}>
+          <slot name="control" />
+          <slot name="indicator" />
+          <slot />
+        </div>
+      );
+    })()
+}
 
-          return (
-            <option
-              value={optionValue}
-              selected={selectedValue === optionValue}
-            >
-              {optionLabel}
-            </option>
-          );
-        })
-      ) : (
-        <slot />
-      )
-    }
-  </select>
-  <ChevronDown
-    slot="indicator"
-    class="size-4 text-foreground/60 absolute right-3 top-1/2 -translate-y-1/2"
-  />
-  <!-- <svg
-      aria-hidden="true"
-      class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60"
-      viewBox="0 0 20 20"
-      fill="currentColor"
-    >
-      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
-    </svg> -->
-</div>
+{
+  part === "control" &&
+    (() => {
+      const classes = cn(
+        "select",
+        selectVariants({
+          variant: (variant as Variant) ?? "default",
+          size: (size as Size) ?? "default",
+        }),
+        !showCheckmark && "hide-checkmark",
+        className,
+      );
+      return (
+        <select
+          {...rest}
+          slot="control"
+          data-slot="select-control"
+          class={classes}
+        >
+          <slot name="placeholder" />
+          <slot />
+        </select>
+      );
+    })()
+}
+
+{
+  part === "option" &&
+    (() => {
+      return (
+        <option
+          {...rest}
+          value={value as any}
+          selected={selected as any}
+          disabled={disabled as any}
+          data-slot="select-option"
+          class={cn("text-foreground text-sm", className)}
+        >
+          <slot />
+        </option>
+      );
+    })()
+}
+
+{
+  part === "placeholder" &&
+    (() => {
+      return (
+        <option
+          {...rest}
+          slot="placeholder"
+          data-slot="select-placeholder"
+          value=""
+          disabled
+          selected
+          hidden
+          class={cn("text-muted-foreground", className)}
+        >
+          <slot />
+        </option>
+      );
+    })()
+}
+
+{
+  part === "group" &&
+    (() => {
+      return (
+        <optgroup
+          {...rest}
+          label={(label as any) ?? (rest as any).label}
+          disabled={disabled as any}
+          data-slot="select-group"
+          class={cn(
+            "text-muted-foreground mt-1 [&_+_optgroup]:mt-2 text-xs font-medium [&>option]:first:mt-1.5",
+            className,
+          )}
+        >
+          <slot />
+        </optgroup>
+      );
+    })()
+}
+
+{
+  part === "indicator" &&
+    (() => {
+      return (
+        <span
+          {...rest}
+          slot="indicator"
+          data-slot="select-indicator"
+          class={cn(
+            "pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 z-10",
+            className,
+          )}
+        >
+          <slot>
+            <ChevronDown class="size-4 text-foreground/60" />
+          </slot>
+        </span>
+      );
+    })()
+}
 
 <style>
   @reference "tailwindcss";
   @reference "../styles/globals.css";
 
+  /* Placeholder for checkmark hiding if supported by UA */
   .hide-checkmark {
     option::checkmark {
       @apply hidden;
@@ -134,11 +353,6 @@ const selectedValue = (rest as Record<string, any>).value ?? "";
     }
     &::picker-icon {
       @apply hidden;
-    }
-    :where(optgroup) :where(option) {
-      &:nth-child(1) {
-        @apply mt-[0.5em];
-      }
     }
 
     :where(option) {

@@ -12,8 +12,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     title: "The UI system for Astro. Copy. Customize. Ship.",
     template: "splash",
     hero: {
-      title:
-        'The UI system for Astro. Copy. <em class="font-serif">Customize.</em> Ship.',
+      title: `The UI system for Astro. Copy. <em class="font-serif relative inline-block pr-0.5"><div class="absolute top-1 w-full pointer-events-none h-12 border-2 border-accent"><span class="absolute -left-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -left-2 -bottom-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -bottom-2 size-2 border-2 border-accent"></span></div>Customize.</em> Ship.`,
       actions: [
         {
           text: "Get Started",
@@ -28,7 +27,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   <div id="browser-hero-panel-end" class="w-full mt-[-1px] h-px bottom-0 -z-10">
   </div>
   <div
-    class="h-full fixed scroll-fade-out bg-muted top-14 border left-6 right-6 rounded-t-md"
+    class="h-full fixed scroll-fade-out bg-muted top-14 border left-6 right-6 rounded-t-3xl"
   >
   </div>
   <div
@@ -46,7 +45,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
   .hero h1 {
     letter-spacing: calc(var(--letter-spacing) - 0.025em);
-    @apply text-4xl font-medium text-left text-balance block max-w-xl;
+    @apply text-5xl font-medium text-left text-balance block max-w-xl leading-[1.15];
   }
 
   html {
@@ -94,7 +93,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     transform-origin: left center;
     scroll-snap-align: center;
 
-    @apply sticky top-18 px-5 pt-14 pb-20 z-10 max-w-[1500px] mx-auto;
+    @apply sticky top-18 px-0 pt-12 pb-18 z-10 max-w-[92%] mx-auto;
   }
 
   @supports (animation-timeline: auto) {
