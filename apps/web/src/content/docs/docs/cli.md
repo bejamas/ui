@@ -2,7 +2,7 @@
 title: CLI
 description: Astro-first wrapper around shadcn for init/add and docs generation.
 sidebar:
-  order: 5
+  order: 7
 ---
 
 The `bejamas` CLI is a thin Astro-first wrapper over shadcn. Use it for:

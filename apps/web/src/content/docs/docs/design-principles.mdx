@@ -1,0 +1,41 @@
+---
+title: Design Principles
+description: The design principles behind the Bejamas UI library.
+sidebar:
+  order: 3
+---
+
+## Composition
+
+React libraries often use subcomponents (e.g. `<Card.Header>`). Astro doesn’t. We use **component part prop** instead.
+
+**React style**
+
+```jsx
+<Card>
+  <CardHeader>
+    <CardTitle>Title</CardTitle>
+    <CardDescription>Description</CardDescription>
+  </CardHeader>
+</Card>
+```
+
+**Astro (parts)**
+
+```astro
+<Card>
+  <Card part="header">
+    <Card part="title">Title</Card>
+    <Card part="description">Description</Card>
+  </Card><!-- /header -->
+</Card><!-- /root -->
+```
+
+We intentionally avoid components like `<CardTitle />`. Parts keep APIs simple and portable.
+
+## Principles
+
+1. **One file = one component.** Markup + variants + docs live together.
+2. **Docs in code.** Comments power the docs; no duplication.
+3. **Themeable.** Token‑based classes (e.g. `bg-background`, `text-primary`).
+4. **Composable.** Primitives over abstractions; easy to read and modify.

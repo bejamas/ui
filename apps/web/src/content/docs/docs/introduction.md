@@ -1,87 +1,40 @@
 ---
 title: Introduction
-description: Astro-native UI components inspired by shadcn/ui.
+description: bejamas/ui is a set of Astro components built on top of Tailwind CSS v4.
 sidebar:
   order: 1
 ---
 
-`bejamas/ui` is a set of **Astro‑native components and blocks** inspired by shadcn/ui.
+`bejamas/ui` is an Astro-native UI component library built on Tailwind CSS v4.  
+Instead of a black-box dependency, it gives you copyable components that live in your codebase, follow your conventions, and evolve with your design system.
 
-- Files are **copied into your repo** (no runtime dependency).
-- **Zero‑JS by default**; add interactivity only when needed.
-- Built with **Tailwind v4** and **design tokens**.
-- **Docs generate from comments** in the component files.
+## Philosophy
 
-If you use React, use **shadcn/ui**. If you build content‑heavy sites in **Astro**, use this.
+`bejamas/ui` is inspired by the “copy the code, own the code” approach popularized by [shadcn/ui](https://ui.shadcn.com/docs), adapted for Astro and zero-JS, content-focused sites.
 
-## Why
+The library encourages minimal abstractions: components are mostly HTML, Astro, and Tailwind utilities. Styling and structure are always visible and editable, so you can start from sensible defaults and grow into a full design system without fighting an opaque API.
 
-There is no UI library that focuses on Astro components. There are plenty of React libraries, although you can use them in Astro, it's often overkill for content-heavy marketing websites, where performance is crucial.
+Even if you’ve never used shadcn/ui, the mental model stays simple: you copy a component into your project, make it yours, and keep it under version control alongside the rest of your code.
 
-We like shadcn’s copy‑and‑own approach. This brings the same idea to Astro:
+## Single-File, AI-Ready Components
 
-- No React or hydration required
-- Tokenized, utility‑first styling
-- Copy, edit, and keep under version control
-- Docs stay in sync with code
+Each `bejamas/ui` component is designed as a single, self-contained `.astro` file that brings together markup, styles, variants, metadata, and examples.
 
-## Auto‑generated docs
+This structure makes components easy to reason about for both humans and AI tools. When everything lives in one place, it’s straightforward to:
 
-Components contain structured comments. The docs site reads those and builds MDX pages.
+- understand how a component works at a glance,
+- refactor markup or Tailwind classes safely,
+- align components with your design tokens and layout patterns,
+- generate or update documentation from the source.
 
-Comment tags:
+There are no hidden helpers or fragmented configuration files to track down — what you see in the component file is what you ship.
 
-- `@component Button`
-- `@description A component that renders a button`
-- `@exampe`
-- `@usage`
-- `@examples`
+## Why `bejamas/ui`?
 
-## Composition
+`bejamas/ui` is tailored for Astro projects that care about performance, content, and long-term maintainability.
 
-React libraries often use subcomponents (e.g. `<Card.Header>`). Astro doesn’t. We use **component part prop** instead.
+It is Astro-native and zero-JS by default, making it a strong fit for marketing sites, documentation, and content-heavy projects. Tailwind CSS v4 provides the utility layer, while `bejamas/ui` supplies opinionated but flexible building blocks you can reuse across brands and repositories.
 
-**React style**
+For agencies and teams, this approach supports a shared design language without enforcing a rigid framework: you can copy components between projects, keep them in sync as needed, and still adapt them freely to each client’s needs.
 
-```jsx
-<Card>
-  <CardHeader>
-    <CardTitle>Title</CardTitle>
-    <CardDescription>Description</CardDescription>
-  </CardHeader>
-</Card>
-```
-
-**Astro (parts)**
-
-```astro
-<Card>
-  <Card part="header">
-    <Card part="title">Title</Card>
-    <Card part="description">Description</Card>
-  </Card><!-- /header -->
-</Card><!-- /root -->
-```
-
-We intentionally avoid components like `<CardTitle />`. Parts keep APIs simple and portable.
-
-## Principles
-
-1. **One file = one component.** Markup + variants + docs live together.
-2. **Docs in code.** Comments power the docs; no duplication.
-3. **Themeable.** Token‑based classes (e.g. `bg-background`, `text-primary`).
-4. **Composable.** Primitives over abstractions; easy to read and modify.
-
-## Use this when
-
-- Building **marketing/docs/blog** sites in Astro
-- You want **utility‑first**, slot‑based composition
-- You prefer **copy‑paste ownership** over a library dependency
-- You use **Tailwind** and token theming
-
-## Consider alternatives when
-
-- You’re building **app‑level UIs** that need complex interactions out of the box
-- You’re using **React** (use shadcn/ui instead)
-- You want a **versioned npm package** rather than vendored files
-- You’re **not using Tailwind**
+As your system grows, `bejamas/ui` components can serve as the foundation of a fully documented design system, with source-of-truth code that remains readable, portable, and easy to extend.

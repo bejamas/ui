@@ -2,7 +2,7 @@
 title: Theming
 description: Why theming in bejamas/ui goes beyond colors.
 sidebar:
-  order: 3
+  order: 5
 ---
 
 In **bejamas/ui**, theming is how a brand’s identity is expressed through the system.
