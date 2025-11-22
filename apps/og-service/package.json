@@ -5,6 +5,7 @@
   "scripts": {
     "vercel:dev": "vercel dev",
     "vercel:version": "vercel --version",
+    "build": "node scripts/postinstall.mjs",
     "postinstall": "node scripts/postinstall.mjs"
   },
   "dependencies": {
