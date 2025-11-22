@@ -1,0 +1,23 @@
+{
+  "name": "og-service",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vercel:dev": "vercel dev",
+    "vercel:version": "vercel --version"
+  },
+  "dependencies": {
+    "@sparticuz/chromium-min": "^123.0.0",
+    "@vercel/og": "^0.8.5",
+    "puppeteer-core": "^23.0.0",
+    "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.6",
+    "@vercel/node": "^3.0.0",
+    "puppeteer": "^23.0.0",
+    "typescript": "^5.9.3",
+    "vercel": "^48.10.6"
+  }
+}
