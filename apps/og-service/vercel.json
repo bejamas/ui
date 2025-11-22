@@ -1,4 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "bunVersion": "1.x"
+  "bunVersion": "1.x",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://ui.bejamas.com",
+      "permanent": true
+    }
+  ]
 }

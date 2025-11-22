@@ -4,7 +4,8 @@ import { ImageResponse } from "@vercel/og";
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
 const LARGE_SCREENSHOT_THRESHOLD = 420;
-const PREVIEW_TOP_PADDING = 40;
+const PREVIEW_TOP_PADDING = 32;
+const TWITTER_FOOTER_HEIGHT = 116;
 
 export default {
   async fetch(req: Request) {
@@ -13,6 +14,7 @@ export default {
     const url = searchParams.get("url");
     const title = searchParams.get("title") ?? "Component";
     const siteTitle = searchParams.get("siteTitle") ?? "bejamas/ui";
+    const showTwitterFooter = searchParams.get("x") === "1";
 
     if (!url) {
       return new Response("Missing `url` query param", { status: 400 });
@@ -41,6 +43,7 @@ export default {
     const displayWidth = Math.max(originalWidth, 1);
     const displayHeight = Math.max(originalHeight, 1);
     const isLargeScreenshot = displayHeight >= LARGE_SCREENSHOT_THRESHOLD;
+    const previewBorderRadius = showTwitterFooter ? "24px 24px 0 0" : 24;
 
     return new ImageResponse(
       (
@@ -77,7 +80,7 @@ export default {
               style={{
                 padding: "8px 20px 10px",
                 borderRadius: 999,
-                border: "2px solid rgba(105, 115, 125, 0.25)",
+                border: "2px solid rgb(219, 230, 242)",
                 fontSize: 24,
               }}
             >
@@ -88,12 +91,13 @@ export default {
           <div
             style={{
               flex: 1,
-              borderRadius: "24px 24px 0 0",
+              borderRadius: previewBorderRadius,
               boxSizing: "border-box",
               display: "flex",
               border: "2px solid rgb(219, 230, 242)",
               overflow: "hidden",
-              paddingTop: isLargeScreenshot ? PREVIEW_TOP_PADDING : 0,
+              paddingTop: isLargeScreenshot ? (showTwitterFooter ? PREVIEW_TOP_PADDING / 2 : PREVIEW_TOP_PADDING) : 0,
+              paddingBottom: showTwitterFooter ? TWITTER_FOOTER_HEIGHT / 2 : 0,
               backgroundColor: "#fff",
               alignItems: isLargeScreenshot ? "flex-start" : "center",
               justifyContent: "center",
@@ -110,7 +114,35 @@ export default {
                 maxWidth: "80%"
               }}
             />
+       
           </div>
+          <div
+            style={{
+              width: "100%",
+              height: 100,
+              background: "linear-gradient(to top, #f4f5f8, rgba(255, 255, 255, 0))",
+              position: "absolute",
+              bottom: showTwitterFooter ? TWITTER_FOOTER_HEIGHT : 0,
+              left: 0,
+              right: 0,
+              zIndex: 1000,
+            }} 
+          />
+          {showTwitterFooter ? (
+            <div
+              style={{
+                width: "100%",
+                height: TWITTER_FOOTER_HEIGHT,
+                borderTop: "2px solid rgb(219, 230, 242)",
+                backgroundColor: "#f4f5f8",
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 1000,
+              }}
+            />
+          ) : null}
         </div>
       ),
       {
@@ -173,7 +205,7 @@ function getPngDimensions(buffer: ArrayBuffer): Dimensions | null {
 }
 
 async function loadGoogleFont (font: string, text: string) {
-  const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(text)}`
+  const url = `https://fonts.googleapis.com/css2?family=${font}:wght@500&text=${encodeURIComponent(text)}`
   const css = await (await fetch(url)).text()
   const resource = css.match(/src: url\((.+)\) format\('(opentype|truetype)'\)/)
  
