@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "vercel:dev": "vercel dev",
-    "vercel:version": "vercel --version"
+    "vercel:version": "vercel --version",
+    "postinstall": "node scripts/postinstall.mjs"
   },
   "dependencies": {
     "@sparticuz/chromium-min": "^123.0.0",
