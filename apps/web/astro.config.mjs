@@ -67,6 +67,50 @@ export default defineConfig({
             rel: "stylesheet",
           },
         },
+        {
+          tag: "link",
+          attrs: {
+            href: "/manifest.webmanifest",
+            rel: "manifest",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "theme-color",
+            media: "(prefers-color-scheme: light)",
+            content: "#ffffff",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "theme-color",
+            media: "(prefers-color-scheme: dark)",
+            content: "#0f171f",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "apple-mobile-web-app-capable",
+            content: "yes",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "apple-mobile-web-app-title",
+            content: "bejamas/ui",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "apple-mobile-web-app-status-bar-style",
+            content: "default",
+          },
+        },
       ],
       expressiveCode: true,
     }),
