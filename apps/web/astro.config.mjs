@@ -3,11 +3,11 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
-import starlightCoolerCredit from "starlight-cooler-credit";
 import starlightThemeBejamas from "starlight-theme-bejamas";
-
 import vercel from "@astrojs/vercel";
 import netlify from "@astrojs/netlify";
+import sitemap from "@astrojs/sitemap";
+import robotsTxt from "astro-robots-txt";
 
 const isVercel = process.env.VERCEL === "1";
 
@@ -71,6 +71,8 @@ export default defineConfig({
       expressiveCode: true,
     }),
     mdx(),
+    sitemap(),
+    robotsTxt(),
   ],
   vite: {
     plugins: [tailwindcss()],
