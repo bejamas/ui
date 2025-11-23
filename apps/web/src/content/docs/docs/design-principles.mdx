@@ -1,41 +1,229 @@
 ---
 title: Design Principles
-description: The design principles behind the Bejamas UI library.
+description: The design principles behind the bejamas/ui library.
 sidebar:
   order: 3
 ---
 
+`bejamas/ui` is an Astro-native component library. The way components are structured is as important as how they look.
+
+1. **Flat-file structure.** One file = one component. Markup, variants, and multi-part parts live together.
+2. **Docs in code.** Comments power the docs; there’s no separate source of truth to maintain.
+3. **Themeable.** Components use token-based classes (e.g. `bg-background`, `text-primary`) instead of hard-coded colors.
+4. **Composable.** We prefer small primitives over heavy abstractions. Code should be easy to read, copy, and modify.
+5. **Astro-native, zero-JS by default.** Components are server-first and ship no client JavaScript unless they truly need it.
+6. **Framework-agnostic.** We don’t bundle React, Vue, or any other client framework. You’re free to add your own islands or framework of choice on top where needed.
+7. **shadcn/ui aligned.** Where it makes sense we mirror shadcn’s DOM structure, class names, and `data-slot` attributes so we can reuse ideas, examples, and registry content.
+
+---
+
 ## Composition
 
-React libraries often use subcomponents (e.g. `<Card.Header>`). Astro doesn’t. We use **component part prop** instead.
+React libraries often use subcomponents, for example:
 
-**React style**
+```tsx
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@bejamas/ui/components/card";
 
-```jsx
 <Card>
   <CardHeader>
     <CardTitle>Title</CardTitle>
     <CardDescription>Description</CardDescription>
   </CardHeader>
-</Card>
+</Card>;
 ```
 
-**Astro (parts)**
+Astro doesn't support `<Card.Header>` syntax, and we want to keep one file per component, not one file per subcomponent.
+
+Instead, we use a `part` prop on the same component.
 
 ```astro
+---
+import Card from "@bejamas/ui/components/card";
+---
+
 <Card>
   <Card part="header">
     <Card part="title">Title</Card>
     <Card part="description">Description</Card>
-  </Card><!-- /header -->
-</Card><!-- /root -->
+  </Card>
+
+  <Card part="content"> Card content </Card>
+
+  <Card part="footer"> Footer actions </Card>
+</Card>
 ```
 
-We intentionally avoid components like `<CardTitle />`. Parts keep APIs simple and portable.
+Here:
 
-## Principles
+- `Card` without `part` is the `root` card.
+- `Card part="header"` renders the `header` part and is slotted into the `root`.
+- `Card part="title"` and `Card part="description"` are smaller primitives rendered inside the `header`.
+- `Card part="content"` and `Card part="footer"` do the same for `content` and `footer`.
 
-1. **One file = one component.** Markup + variants + docs live together.
-2. **Docs in code.** Comments power the docs; no duplication.
-3. **Themeable.** Token‑based classes (e.g. `bg-background`, `text-primary`).
-4. **Composable.** Primitives over abstractions; easy to read and modify.
+All of this is implemented in a single `Card.astro` file.
+
+### How `part` works internally
+
+The same component file switches on `part` and renders the right fragment:
+
+```astro
+---
+type CardPart =
+  | "root"
+  | "header"
+  | "title"
+  | "description"
+  | "content"
+  | "footer";
+
+export type Props = {
+  part?: CardPart;
+  class?: string;
+  // …
+};
+
+const { part = "root", class: className = "", ...rest } = Astro.props as Props;
+---
+
+{
+  part === "root" && (
+    <div class="card-root" {...rest}>
+      <slot name="header" />
+      <slot name="content" />
+      <slot name="footer" />
+    </div>
+  )
+}
+
+{
+  part === "header" && (
+    <div slot="header" class="card-header" {...rest}>
+      <slot />
+    </div>
+  )
+}
+
+{
+  part === "title" && (
+    <div data-slot="card-title" class="card-title" {...rest}>
+      <slot />
+    </div>
+  )
+}
+
+{
+  part === "description" && (
+    <div data-slot="card-description" class="card-description" {...rest}>
+      <slot />
+    </div>
+  )
+}
+
+{
+  part === "content" && (
+    <div slot="content" class="card-content" {...rest}>
+      <slot />
+    </div>
+  )
+}
+
+{
+  part === "footer" && (
+    <div slot="footer" class="card-footer" {...rest}>
+      <slot />
+    </div>
+  )
+}
+```
+
+This gives us:
+
+- a single, copy-and-pasteable file,
+- multiple "subcomponents" via `part`,
+- and predictable DOM/slots for styling and theming.
+
+### Why not use slots alone?
+
+We experimented with a slots-only API and ran into several limitations.
+
+1. **Slots can't be nested.** You can't express a header that contains its own named slots for title and description:
+
+```astro
+<!-- This won't work -->
+<div>
+  <slot name="header">
+    <slot name="title" />
+    <slot name="description" />
+  </slot>
+</div>
+```
+
+2. **Slots can't receive props.** You can't pass layout or variant information into a slot:
+
+```astro
+<!-- This won't work -->
+<div>
+  <slot name="header" class="text-2xl font-bold" />
+</div>
+```
+
+3. **Styling depends on user wrappers.** With slots, the final DOM changes depending on whether the user wraps content:
+
+```astro
+---
+import Card from "@bejamas/ui/components/card";
+import Button from "@bejamas/ui/components/button";
+---
+
+<Card>
+  <Fragment slot="footer">
+    <Button>Save</Button>
+  </Fragment>
+
+  <div slot="footer">
+    <Button>Save</Button>
+  </div>
+</Card>
+```
+
+In the first case the button is a direct child of the footer; in the second it's wrapped in an extra `<div>`.
+
+This changes how flex, gap, and other layout rules behave and makes consistent styling harder.
+
+4. **Slot order is fixed inside the component.** The order of named slots is decided in the implementation:
+
+```astro
+<div class="card-root">
+  <slot name="header" />
+  <slot name="media" />
+  <slot name="content" />
+  <slot name="footer" />
+</div>
+```
+
+Users can't reorder these sections (for example, putting the `media` above the `content`) without forking the component.
+
+The `part` prop solves these problems:
+
+- layout is defined in one place (the component),
+- parts can be added and composed inside that layout,
+- and the public API stays small and predictable.
+
+### Why not split into many files?
+
+We want components to be **easy to copy into projects** and easy to read in one go.
+
+One file per component means:
+
+- open `Card.astro` and you see `root`, `header`, `title`, `description`, `content`, `footer`, `overlay`, and variants in one place;
+- docs comments live next to the implementation;
+- copying a component doesn't require chasing a tree of imports.
+
+React shadcn uses multiple exports per file (`Card`, `CardHeader`, `CardFooter`, …).
+
+In Astro we get a similar multi-part API by using a single component with a part prop instead of multiple files.
