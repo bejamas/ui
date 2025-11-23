@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ImageResponse } from "@vercel/og";
+import { buildCacheHeaders } from "../lib/cache";
+import { loadGoogleFont } from "../lib/fonts";
+import { arrayBufferToBase64, getPngDimensions } from "../lib/png";
 
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
@@ -15,6 +18,8 @@ export default {
     const title = searchParams.get("title") ?? "Component";
     const siteTitle = searchParams.get("siteTitle") ?? "bejamas/ui";
     const showTwitterFooter = searchParams.get("x") === "1";
+    const buildTime = searchParams.get("buildTime");
+    const isFreshRequest = searchParams.has("fresh");
 
     if (!url) {
       return new Response("Missing `url` query param", { status: 400 });
@@ -24,8 +29,22 @@ export default {
     const base = requestUrl.origin;
 
     // This is what Satori will load as <img>. It hits the Node function above.
-    const screenshotUrl = `${base}/api/screenshot?url=${encodeURIComponent(url)}`;
-    const screenshotResponse = await fetch(screenshotUrl);
+    const screenshotUrl = new URL(`${base}/api/screenshot`);
+    screenshotUrl.searchParams.set("url", url);
+    if (buildTime) {
+      screenshotUrl.searchParams.set("buildTime", buildTime);
+    }
+    if (isFreshRequest) {
+      screenshotUrl.searchParams.set("fresh", "1");
+    }
+
+    const screenshotFetchOptions: RequestInit | undefined = isFreshRequest
+      ? { cache: "no-store" }
+      : undefined;
+    const screenshotResponse = await fetch(
+      screenshotUrl.toString(),
+      screenshotFetchOptions,
+    );
 
     if (!screenshotResponse.ok) {
       return new Response("Failed to capture screenshot", {
@@ -45,7 +64,13 @@ export default {
     const isLargeScreenshot = displayHeight >= LARGE_SCREENSHOT_THRESHOLD;
     const previewBorderRadius = showTwitterFooter ? "24px 24px 0 0" : 24;
 
-    return new ImageResponse(
+    const fontText = `${title} ${siteTitle}`;
+    const [interRegular, interMedium] = await Promise.all([
+      loadGoogleFont("Inter", fontText, 400),
+      loadGoogleFont("Inter", fontText, 500),
+    ]);
+
+    const response = new ImageResponse(
       (
         <div
           style={{
@@ -150,71 +175,26 @@ export default {
         height: OG_HEIGHT,
         fonts: [
           {
-            name: 'Inter',
-            data: await loadGoogleFont('Inter', title + ' ' + siteTitle),
-            style: 'normal',
+            name: "Inter",
+            data: interRegular,
+            style: "normal",
+            weight: 400,
+          },
+          {
+            name: "Inter",
+            data: interMedium,
+            style: "normal",
+            weight: 500,
           },
         ],
       },
     );
+
+    const cacheHeaders = buildCacheHeaders(buildTime, isFreshRequest);
+    Object.entries(cacheHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+
+    return response;
   },
 };
-
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  let binary = "";
-  const bytes = new Uint8Array(buffer);
-  const chunkSize = 0x8000;
-
-  for (let i = 0; i < bytes.byteLength; i += chunkSize) {
-    const chunk = bytes.subarray(i, i + chunkSize);
-    binary += String.fromCharCode(...chunk);
-  }
-
-  return btoa(binary);
-}
-
-type Dimensions = {
-  width: number;
-  height: number;
-};
-
-function getPngDimensions(buffer: ArrayBuffer): Dimensions | null {
-  const signature = new Uint8Array(buffer.slice(0, 8));
-  const pngMagic = [137, 80, 78, 71, 13, 10, 26, 10];
-
-  for (let i = 0; i < pngMagic.length; i += 1) {
-    if (signature[i] !== pngMagic[i]) {
-      return null;
-    }
-  }
-
-  const view = new DataView(buffer);
-
-  try {
-    const width = view.getUint32(16);
-    const height = view.getUint32(20);
-
-    if (Number.isNaN(width) || Number.isNaN(height) || width === 0 || height === 0) {
-      return null;
-    }
-
-    return { width, height };
-  } catch {
-    return null;
-  }
-}
-
-async function loadGoogleFont (font: string, text: string) {
-  const url = `https://fonts.googleapis.com/css2?family=${font}:wght@500&text=${encodeURIComponent(text)}`
-  const css = await (await fetch(url)).text()
-  const resource = css.match(/src: url\((.+)\) format\('(opentype|truetype)'\)/)
- 
-  if (resource) {
-    const response = await fetch(resource[1])
-    if (response.status == 200) {
-      return await response.arrayBuffer()
-    }
-  }
- 
-  throw new Error('failed to load font data')
-}
