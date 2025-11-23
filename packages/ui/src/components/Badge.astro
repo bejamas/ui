@@ -50,13 +50,13 @@ import type { HTMLTag, Polymorphic } from "astro/types";
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props<Tag extends HTMLTag> = Polymorphic<{
-  as: Tag;
+type Props = {
+  as?: HTMLTag;
   variant?: "default" | "secondary" | "destructive" | "outline";
   class?: string;
   shape?: "default" | "pill";
   size?: "default" | "sm";
-}>;
+};
 
 const {
   as = "span",

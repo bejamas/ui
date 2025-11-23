@@ -240,7 +240,6 @@ import type { HTMLAttributes } from "astro/types";
 
 type CardRootVariant = "default" | "ghost";
 type CardOverlayVariant = "default" | "glass";
-type CardRootOrientation = "vertical" | "horizontal";
 
 type CardPart =
   | "root"
@@ -258,11 +257,9 @@ type CardPart =
  */
 type CardRootProps = {
   part?: "root";
-  as?: HTMLTag;
-  variant?: CardRootVariant;
-  orientation?: CardRootOrientation;
-  class?: string;
-} & HTMLAttributes<"div">;
+  variant?: "default" | "ghost";
+  orientation?: "vertical" | "horizontal";
+};
 
 /**
  * Root-level slotted parts
@@ -270,31 +267,27 @@ type CardRootProps = {
  */
 type CardMediaProps = {
   part: "media";
-  as?: HTMLTag;
   variant?: never;
   class?: string;
-} & HTMLAttributes<"div">;
+};
 
 type CardHeaderProps = {
   part: "header";
-  as?: HTMLTag;
   variant?: never;
   class?: string;
-} & HTMLAttributes<"div">;
+};
 
 type CardContentProps = {
   part: "content";
-  as?: HTMLTag;
   variant?: never;
   class?: string;
-} & HTMLAttributes<"div">;
+};
 
 type CardFooterProps = {
   part: "footer";
-  as?: HTMLTag;
   variant?: never;
   class?: string;
-} & HTMLAttributes<"div">;
+};
 
 /**
  * Nested primitives (inside header / content)
@@ -303,55 +296,47 @@ type CardFooterProps = {
  */
 type CardTitleProps = {
   part: "title";
-  as?: HTMLTag;
   variant?: never;
   class?: string;
-} & HTMLAttributes<"div">;
+};
 
 type CardDescriptionProps = {
   part: "description";
-  as?: HTMLTag;
   variant?: never;
   class?: string;
-} & HTMLAttributes<"div">;
+};
 
 type CardActionProps = {
   part: "action";
-  as?: HTMLTag;
   variant?: never;
   class?: string;
-} & HTMLAttributes<"div">;
+};
 
 /**
  * Overlay layer
  */
 type CardOverlayProps = {
   part: "overlay";
-  as?: HTMLTag;
-  variant?: CardOverlayVariant;
+  variant?: "default" | "glass";
   class?: string;
-} & HTMLAttributes<"div">;
+};
 
-type Props =
+// This is what Astro LS “reads” for props
+type Props = (
   | CardRootProps
   | CardMediaProps
   | CardHeaderProps
+  | CardContentProps
+  | CardFooterProps
   | CardTitleProps
   | CardDescriptionProps
   | CardActionProps
-  | CardContentProps
-  | CardFooterProps
-  | CardOverlayProps;
+  | CardOverlayProps
+) &
+  Omit<HTMLAttributes<"div">, "part">;
 
 const props = Astro.props as Props;
-const {
-  part: rawPart,
-  class: className = "",
-  variant,
-  orientation,
-  as: Tag = "div" as HTMLTag,
-  ...rest
-} = props as any;
+const { part: rawPart, class: className = "", variant, ...rest } = props;
 
 const part: CardPart = rawPart ?? "root";
 
@@ -367,15 +352,9 @@ const cardVariants = cva(
         default: "",
         ghost: "border-transparent bg-transparent shadow-none",
       },
-      orientation: {
-        vertical: "flex-col",
-        horizontal:
-          "grid grid-cols-[auto_1fr] [&>[data-slot=card-header]]:col-start-2 [&>[data-slot=card-content]]:col-start-2 [&>[data-slot=card-footer]]:col-start-2 [&>:not([data-slot=card-media])]:col-start-2",
-      },
     },
     defaultVariants: {
       variant: "default",
-      orientation: "vertical",
     },
   },
 );
@@ -405,115 +384,109 @@ const footerVariants = cva(
 
 {
   part === "root" && (
-    <Tag
+    <div
       {...rest}
       data-slot="card"
       class={cn(
         cardVariants({
           variant: (variant as CardRootVariant) ?? "default",
-          orientation: (orientation as CardRootOrientation) ?? "vertical",
         }),
         className,
       )}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }
 
 {
   part === "media" && (
-    <Tag
+    <div
       {...rest}
-      slot="media"
       data-slot="card-media"
       class={cn(mediaVariants(), className)}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }
 
 {
   part === "header" && (
-    <Tag
+    <div
       {...rest}
-      slot="header"
       data-slot="card-header"
       class={cn(headerVariants(), className)}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }
 
 {
   part === "title" && (
-    <Tag
+    <div
       {...rest}
       data-slot="card-title"
       class={cn(titleVariants(), className)}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }
 
 {
   part === "description" && (
-    <Tag
+    <div
       {...rest}
       data-slot="card-description"
       class={cn(descriptionVariants(), className)}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }
 
 {
   part === "action" && (
-    <Tag
+    <div
       {...rest}
       data-slot="card-action"
       class={cn(actionVariants(), className)}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }
 
 {
   part === "content" && (
-    <Tag
+    <div
       {...rest}
-      slot="content"
       data-slot="card-content"
       class={cn(contentVariants(), className)}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }
 
 {
   part === "footer" && (
-    <Tag
+    <div
       {...rest}
-      slot="footer"
       data-slot="card-footer"
       class={cn(footerVariants(), className)}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }
 
 {
   part === "overlay" && (
-    <Tag
+    <div
       {...rest}
-      slot="overlay"
       data-slot="card-overlay"
       class={cn(
         "inset-0 absolute z-10 opacity-0 p-6 group-hover/card:opacity-100 transition-opacity duration-300 ease-out",
@@ -524,6 +497,6 @@ const footerVariants = cva(
       )}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }
