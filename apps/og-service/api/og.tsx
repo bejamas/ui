@@ -3,6 +3,7 @@ import { ImageResponse } from "@vercel/og";
 import { buildCacheHeaders } from "../lib/cache";
 import { loadGoogleFont } from "../lib/fonts";
 import { arrayBufferToBase64, getPngDimensions } from "../lib/png";
+import { decodeQueryValue } from "../lib/query";
 
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
@@ -14,11 +15,12 @@ export default {
   async fetch(req: Request) {
     const requestUrl = new URL(req.url);
     const searchParams = requestUrl.searchParams;
-    const url = searchParams.get("url");
-    const title = searchParams.get("title") ?? "Component";
-    const siteTitle = searchParams.get("siteTitle") ?? "bejamas/ui";
+    const url = decodeQueryValue(searchParams.get("url"));
+    const title = decodeQueryValue(searchParams.get("title")) ?? "Component";
+    const siteTitle =
+      decodeQueryValue(searchParams.get("siteTitle")) ?? "bejamas/ui";
     const showTwitterFooter = searchParams.get("x") === "1";
-    const buildTime = searchParams.get("buildTime");
+    const buildTime = decodeQueryValue(searchParams.get("buildTime"));
     const isFreshRequest = searchParams.has("fresh");
 
     if (!url) {

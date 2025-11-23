@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { applyCacheHeaders } from "../lib/cache";
-import { getStringQueryParam, isTruthyQueryParam } from "../lib/query";
+import {
+  decodeQueryValue,
+  getStringQueryParam,
+  isTruthyQueryParam,
+} from "../lib/query";
 import { capturePreviewScreenshot } from "../lib/screenshot";
 
 // URL to the Chromium binary package hosted in /public.
@@ -82,15 +86,16 @@ export default async function handler(
 
   try {
     const { url, fresh, buildTime } = req.query;
-    if (!url || typeof url !== "string") {
+    const resolvedUrl = decodeQueryValue(getStringQueryParam(url));
+    if (!resolvedUrl) {
       res.status(400).send("Missing `url` query param");
       return;
     }
 
     const isFreshRequest = isTruthyQueryParam(fresh);
-    const buildTimeParam = getStringQueryParam(buildTime);
+    const buildTimeParam = decodeQueryValue(getStringQueryParam(buildTime));
 
-    const targetUrl = resolveTargetUrl(url);
+    const targetUrl = resolveTargetUrl(resolvedUrl);
     if (!targetUrl) {
       res.status(400).send("Invalid URL provided.");
       return;
