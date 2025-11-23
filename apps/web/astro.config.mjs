@@ -13,8 +13,11 @@ const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
   // output: 'server',
+  site: "https://ui-web-nine.vercel.app",
   integrations: [
     starlight({
+      favicon: "/favicon.ico",
+      routeMiddleware: ["./src/route-middleware.ts"],
       plugins: [
         starlightThemeBejamas({
           nav: [
