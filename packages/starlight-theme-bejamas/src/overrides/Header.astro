@@ -29,7 +29,7 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
     <SiteTitle />
     {
       shouldRenderNav && (
-        <nav>
+        <nav class="sl-bejamas-main-nav">
           <ul class="gap-1 flex items-center">
             {options.nav.map((item) => (
               <li>
@@ -74,6 +74,16 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
       z-index: 10;
     }
 
+    .sl-bejamas-main-nav {
+      display: none;
+    }
+
+    @media (min-width: 50rem) {
+      .sl-bejamas-main-nav {
+        display: block;
+      }
+    }
+
     .sl-justify-end {
       justify-content: flex-end;
     }
@@ -98,7 +108,7 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
       border-inline-end: 1px solid var(--sl-color-gray-5);
     }
 
-    @media (min-width: 50rem) {
+    @media (min-width: 64rem) {
       :global(:root[data-has-sidebar]) {
         --__sidebar-pad: calc(2 * var(--sl-nav-pad-x));
       }

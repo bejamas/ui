@@ -1,0 +1,114 @@
+---
+import EditLink from "virtual:starlight/components/EditLink";
+import LastUpdated from "virtual:starlight/components/LastUpdated";
+import Pagination from "virtual:starlight/components/Pagination";
+import config from "virtual:starlight/user-config";
+---
+
+<footer class="sl-flex">
+  <div class="meta sl-flex">
+    <EditLink />
+    <LastUpdated />
+  </div>
+  <Pagination />
+
+  {
+    config.credits && (
+      <a class="kudos sl-flex" href="https://starlight.astro.build">
+        {Astro.locals.t("builtWithStarlight.label")}
+      </a>
+    )
+  }
+
+  <div class="fade"></div>
+</footer>
+
+<style>
+  @layer starlight.core {
+    footer {
+      flex-direction: column;
+      gap: 1.5rem;
+      position: sticky;
+      bottom: 0;
+      width: calc(
+        100% + calc(var(--sl-content-pad-x) * 2) + calc(var(--spacing) * 2)
+      );
+      margin-inline: calc(var(--spacing) * -1 - var(--sl-content-pad-x));
+      background: linear-gradient(to top, var(--background), transparent);
+      padding-inline: calc(var(--sl-content-pad-x) + var(--spacing));
+      padding-block: calc(var(--spacing) * 3);
+      z-index: 10;
+    }
+
+    @media (min-width: 50rem) {
+      footer {
+        position: relative;
+        background: transparent;
+      }
+      .meta {
+        display: flex;
+      }
+    }
+
+    .meta {
+      gap: 0.75rem 3rem;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: 3rem;
+      font-size: var(--sl-text-sm);
+      color: var(--sl-color-gray-3);
+      display: none;
+    }
+
+    .meta > :global(p:only-child) {
+      margin-inline-start: auto;
+    }
+
+    .kudos {
+      align-items: center;
+      gap: 0.5em;
+      margin: 1.5rem auto;
+      font-size: var(--sl-text-xs);
+      text-decoration: none;
+      color: var(--sl-color-gray-3);
+    }
+    .kudos:hover {
+      color: var(--sl-color-white);
+    }
+
+    .fade {
+      --blur: 4px;
+      --stop: 50%;
+      --height: 72px;
+      position: fixed;
+      pointer-events: none;
+      width: 100%;
+      height: var(--height);
+      user-select: none;
+      -webkit-user-select: none;
+      left: 0;
+      -webkit-backdrop-filter: blur(var(--blur));
+      backdrop-filter: blur(var(--blur));
+
+      background: linear-gradient(to bottom, transparent, var(--background));
+      mask-image: linear-gradient(
+        to top,
+        var(--background) var(--stop),
+        transparent
+      );
+      bottom: 0;
+    }
+
+    @media (min-width: 50rem) {
+      .fade {
+        display: none;
+      }
+    }
+  }
+
+  @layer starlight.components {
+    .kudos :global(svg) {
+      color: var(--sl-color-orange);
+    }
+  }
+</style>

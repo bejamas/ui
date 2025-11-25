@@ -87,7 +87,7 @@ const isRtl = dir === "rtl";
 
   {
     entry.data.description && (
-      <p class="text-muted-foreground mt-4 mb-2 w-full">
+      <p class="text-muted-foreground mt-4 mb-2 w-full text-balance">
         {entry.data.description}
       </p>
     )
@@ -104,17 +104,30 @@ const isRtl = dir === "rtl";
       align-items: center;
     }
     .sl-bejamas-docs-title-buttons {
-      display: flex;
       gap: 0.5rem;
+      display: none;
+    }
+
+    @media (min-width: 50rem) {
+      .sl-bejamas-docs-title-buttons {
+        display: flex;
+      }
     }
   }
 
   @layer starlight.core {
     h1 {
-      font-size: var(--sl-text-h1);
-      line-height: var(--sl-line-height-headings);
+      font-size: var(--text-3xl);
+      line-height: var(--tw-leading, var(--text-3xl--line-height));
       font-weight: 500;
       color: var(--sl-color-white);
+    }
+
+    @media (min-width: 50rem) {
+      h1 {
+        font-size: var(--text-4xl);
+        line-height: var(--tw-leading, var(--text-4xl--line-height));
+      }
     }
   }
 </style>

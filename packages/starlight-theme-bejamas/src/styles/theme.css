@@ -3,16 +3,18 @@
 @import "@fontsource-variable/inter/index.css";
 
 @layer bejamas {
-  :root::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    right: calc(var(--spacing) * 6);
-    background: linear-gradient(
-      var(--background) 49.99%,
-      var(--sl-main-frame-inner-background) 50%
-    );
-    z-index: -1;
+  @media (min-width: 50rem) {
+    :root::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      right: calc(var(--spacing) * 6);
+      background: linear-gradient(
+        var(--background) 49.99%,
+        var(--sl-main-frame-inner-background) 50%
+      );
+      z-index: -1;
+    }
   }
 
   .page {
@@ -41,7 +43,7 @@
     --code-background: var(--background);
     --sl-color-text: var(--foreground);
 
-    --sl-text-h1: 2.25rem;
+    --sl-text-h1: var(--text-3xl);
     --sl-text-h2: var(--text-xl);
     --sl-text-h3: var(--text-lg);
 
@@ -61,9 +63,11 @@
     --sl-color-text-accent: var(--primary);
     --sl-color-accent: var(--primary);
 
-    --sl-nav-height: calc(var(--spacing) * 18);
+    --sl-nav-height: calc(var(--spacing) * 15);
     /* --sl-nav-height: auto; */
     --sl-nav-pad-y: calc(var(--spacing) * 4.5);
+    --sl-content-pad-x: calc(var(--spacing) * 5);
+    --sl-nav-pad-x: calc(var(--spacing) * 1 + var(--sl-content-pad-x));
 
     --sl-main-frame-inner-background: color-mix(
       in oklab,
@@ -71,6 +75,22 @@
       transparent
     );
     --sl-main-frame-inner-border: var(--border);
+    --sl-content-inline-start: 0;
+  }
+
+  @media (min-width: 50em) {
+    :root {
+      --sl-nav-height: calc(var(--spacing) * 18);
+    }
+    [data-has-sidebar] {
+      --sl-sidebar-width: 0;
+    }
+  }
+
+  @media (min-width: 64em) {
+    [data-has-sidebar] {
+      --sl-sidebar-width: 18.75rem;
+    }
   }
 
   html[data-theme="dark"],
@@ -182,7 +202,13 @@
 
   .content-panel:first-child {
     padding-bottom: 0;
-    padding-top: 2.5rem;
+    padding-top: calc(var(--spacing) * 5);
+  }
+
+  @media (min-width: 50rem) {
+    .content-panel:first-child {
+      padding-top: calc(var(--spacing) * 12);
+    }
   }
 
   .right-sidebar-panel h2 {
@@ -382,8 +408,20 @@
   }
 
   .main-frame {
-    padding-right: calc(var(--spacing) * 6);
     min-height: 100svh;
+  }
+
+  @media (min-width: 50em) {
+    .main-frame {
+      padding-inline: calc(var(--spacing) * 5);
+    }
+  }
+
+  @media (min-width: 64em) {
+    .main-frame {
+      padding-inline-end: calc(var(--spacing) * 6);
+      padding-inline-start: var(--sl-content-inline-start);
+    }
   }
 
   .sidebar-content::before {
@@ -448,5 +486,38 @@
   starlight-file-tree .comment {
     color: var(--muted-foreground);
     max-width: calc(var(--spacing) * 150);
+  }
+
+  starlight-menu-button button {
+    box-shadow: none;
+    padding: 0;
+    width: calc(var(--spacing) * 5);
+  }
+
+  starlight-menu-button button svg {
+    width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+    font-size: calc(var(--spacing) * 8);
+  }
+
+  #starlight__on-this-page--mobile {
+    /* border-top: 1px solid var(--border); */
+    border-bottom: 0;
+  }
+
+  #starlight__on-this-page--mobile .toggle {
+    border: 0;
+    color: var(--muted-foreground);
+    padding-left: 0;
+  }
+
+  .sl-container {
+    margin-inline: auto;
+  }
+
+  @media (min-width: 64rem) {
+    .sl-container {
+      margin-inline: var(--sl-content-margin-inline, auto);
+    }
   }
 }

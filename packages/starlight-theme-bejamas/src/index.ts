@@ -51,7 +51,9 @@ export default function starlightThemeBejamas(
           | "SiteTitle"
           | "Pagination"
           | "PageTitle"
-          | "Hero";
+          | "Hero"
+          | "MobileTableOfContents"
+          | "Footer";
 
         const overridableComponents: OverridableComponent[] = [
           "Header",
@@ -60,6 +62,8 @@ export default function starlightThemeBejamas(
           "Pagination",
           "PageTitle",
           "Hero",
+          "MobileTableOfContents",
+          "Footer",
         ];
 
         for (const component of overridableComponents) {

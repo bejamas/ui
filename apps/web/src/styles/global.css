@@ -5,6 +5,12 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 .site-title img {
+  max-width: calc(var(--spacing) * 12);
   margin-bottom: calc(var(--spacing) * 1.25);
-  max-width: calc(var(--spacing) * 8);
+}
+
+@media (min-width: 64rem) {
+  .site-title img {
+    max-width: calc(var(--spacing) * 10);
+  }
 }

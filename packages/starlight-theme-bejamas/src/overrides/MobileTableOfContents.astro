@@ -1,0 +1,275 @@
+---
+import TableOfContentsList from "./TableOfContents/TableOfContentsList.astro";
+
+const { toc } = Astro.locals.starlightRoute;
+---
+
+{
+  toc && (
+    <mobile-starlight-toc
+      data-min-h={toc.minHeadingLevel}
+      data-max-h={toc.maxHeadingLevel}
+    >
+      <nav aria-labelledby="starlight__on-this-page--mobile">
+        <div class="border-t starlight__separator" />
+        <details id="starlight__mobile-toc">
+          <summary id="starlight__on-this-page--mobile" class="sl-flex">
+            <span class="toggle sl-flex">
+              <span class="toggle-label sl-flex">
+                <span
+                  class="toc-progress"
+                  role="progressbar"
+                  aria-label="Current section progress"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                >
+                  <span class="toc-progress__fill" aria-hidden="true" />
+                </span>
+                <span class="toggle-text">
+                  {Astro.locals.t("tableOfContents.onThisPage")}
+                </span>
+              </span>
+            </span>
+            <span class="display-current" />
+          </summary>
+          <div class="dropdown">
+            <TableOfContentsList toc={toc.items} isMobile />
+          </div>
+        </details>
+      </nav>
+    </mobile-starlight-toc>
+  )
+}
+
+<style>
+  @layer starlight.core {
+    nav {
+      position: fixed;
+      z-index: var(--sl-z-index-toc);
+      top: calc(var(--sl-nav-height) - 1px);
+      inset-inline: 0;
+      border-top: 1px solid var(--sl-color-gray-5);
+      background-color: var(--sl-color-bg-nav);
+    }
+    @media (min-width: 64rem) {
+      nav {
+        inset-inline-start: var(--sl-content-inline-start, 0);
+      }
+    }
+
+    summary {
+      gap: 0.5rem;
+      align-items: center;
+      height: var(--sl-mobile-toc-height);
+      border-bottom: 1px solid var(--sl-color-hairline-shade);
+      padding: 0.5rem calc(var(--sl-content-pad-x) + var(--spacing));
+      font-size: var(--sl-text-xs);
+      outline-offset: var(--sl-outline-offset-inside);
+    }
+    summary::marker,
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .starlight__separator {
+      margin-inline: calc(var(--spacing) * 6);
+    }
+    @media (min-width: 64rem) {
+      .starlight__separator {
+        margin-left: 0;
+      }
+    }
+
+    .toggle {
+      flex-shrink: 0;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--sl-color-gray-5);
+      border-radius: 0.5rem;
+      padding-block: 0.5rem;
+      padding-inline-start: 0.75rem;
+      padding-inline-end: 0.5rem;
+      line-height: 1;
+      background-color: var(--sl-color-black);
+      user-select: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .toggle-label {
+      gap: calc(var(--spacing) * 2);
+      align-items: center;
+    }
+    .toc-progress {
+      --toc-progress-size: calc(var(--spacing) * 4);
+      --toc-progress-fill: var(--accent);
+      display: inline-flex;
+      width: var(--toc-progress-size);
+      height: var(--toc-progress-size);
+      border-radius: 999px;
+      border: 1px solid var(--toc-progress-fill);
+      align-items: center;
+      justify-content: center;
+      /* background: radial-gradient(
+        circle,
+        rgba(2, 123, 249, 0.25) 0,
+        rgba(2, 123, 249, 0.25) 60%,
+        transparent 60%
+      ); */
+      flex-shrink: 0;
+    }
+    .toc-progress__fill {
+      --toc-progress-angle: 0deg;
+      width: calc(var(--toc-progress-size) - calc(var(--spacing) * 1.5));
+      height: calc(var(--toc-progress-size) - calc(var(--spacing) * 1.5));
+      border-radius: inherit;
+      background: conic-gradient(
+        from -90deg,
+        var(--toc-progress-fill) var(--toc-progress-angle),
+        var(--background) var(--toc-progress-angle)
+      );
+      /* box-shadow: 0 0 2px rgba(2, 123, 249, 0.4); */
+      transition: background 200ms ease-out;
+    }
+    details[open] .toggle {
+      color: var(--sl-color-white);
+      border-color: var(--sl-color-accent);
+    }
+    details .toggle:hover {
+      color: var(--sl-color-white);
+      border-color: var(--sl-color-gray-2);
+    }
+
+    :global([dir="rtl"]) .caret {
+      transform: rotateZ(180deg);
+    }
+    details[open] .caret {
+      transform: rotateZ(90deg);
+    }
+
+    .display-current {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      color: var(--sl-color-white);
+    }
+
+    .dropdown {
+      --border-top: 1px;
+      margin-top: calc(-1 * var(--border-top));
+      border: var(--border-top) solid var(--sl-color-gray-6);
+      border-top-color: var(--sl-color-hairline-shade);
+      max-height: calc(
+        85vh - var(--sl-nav-height) - var(--sl-mobile-toc-height)
+      );
+      overflow-y: auto;
+      background-color: var(--sl-color-black);
+      box-shadow: var(--sl-shadow-md);
+      overscroll-behavior: contain;
+    }
+  }
+</style>
+
+<script>
+  import { StarlightTOC } from "./TableOfContents/starlight-toc";
+
+  class MobileStarlightTOC extends StarlightTOC {
+    private displayCurrent: HTMLSpanElement | null = null;
+    private indicator: HTMLSpanElement | null = null;
+    private indicatorFill: HTMLSpanElement | null = null;
+    private tocLinks: HTMLAnchorElement[] = [];
+
+    override set current(link: HTMLAnchorElement) {
+      super.current = link;
+      this.updateDisplay(link);
+      this.updateProgress(link);
+    }
+
+    constructor() {
+      super();
+      this.displayCurrent = this.querySelector(".display-current");
+      this.indicator = this.querySelector(".toc-progress");
+      this.indicatorFill = this.querySelector(".toc-progress__fill");
+
+      const links = this.getLinks();
+      const initial = links.find(
+        (a) => a.getAttribute("aria-current") === "true",
+      );
+      if (initial) {
+        this.updateDisplay(initial);
+        this.updateProgress(initial);
+      }
+
+      const details = this.querySelector("details");
+      if (!details) return;
+      const closeToC = () => {
+        details.open = false;
+      };
+      // Close the table of contents whenever a link is clicked.
+      links.forEach((a) => {
+        a.addEventListener("click", closeToC);
+      });
+      // Close the table of contents when a user clicks outside of it.
+      window.addEventListener("click", (e) => {
+        if (!details.contains(e.target as Node)) closeToC();
+      });
+      // Or when they press the escape key.
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && details.open) {
+          const hasFocus = details.contains(document.activeElement);
+          closeToC();
+          if (hasFocus) {
+            const summary = details.querySelector("summary");
+            if (summary) summary.focus();
+          }
+        }
+      });
+    }
+
+    private getLinks(): HTMLAnchorElement[] {
+      if (!this.tocLinks.length) {
+        this.tocLinks = Array.from(
+          this.querySelectorAll<HTMLAnchorElement>("details a"),
+        );
+      }
+      return this.tocLinks;
+    }
+
+    private updateDisplay(link: HTMLAnchorElement) {
+      if (!this.displayCurrent) {
+        this.displayCurrent = this.querySelector(
+          ".display-current",
+        ) as HTMLSpanElement | null;
+      }
+      if (!this.displayCurrent) return;
+      const text = (link.textContent || "").trim();
+      this.displayCurrent.textContent = text;
+    }
+
+    private updateProgress(link: HTMLAnchorElement) {
+      if (!this.indicator) {
+        this.indicator = this.querySelector(".toc-progress");
+      }
+      if (!this.indicatorFill) {
+        this.indicatorFill = this.querySelector(
+          ".toc-progress__fill",
+        ) as HTMLSpanElement | null;
+      }
+      const indicator = this.indicator;
+      const fill = this.indicatorFill;
+      const links = this.getLinks();
+      if (!indicator || !fill || !links.length) return;
+      const index = links.indexOf(link);
+      if (index === -1) return;
+      const progress = (index + 1) / links.length;
+      const percent = Math.round(progress * 100);
+      const angle = `${(progress * 360).toFixed(2)}deg`;
+      fill.style.setProperty("--toc-progress-angle", angle);
+      indicator.setAttribute("aria-valuenow", percent.toString());
+      indicator.setAttribute("aria-valuetext", `${percent}% of sections read`);
+    }
+  }
+
+  customElements.define("mobile-starlight-toc", MobileStarlightTOC);
+</script>

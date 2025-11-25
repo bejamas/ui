@@ -17,8 +17,8 @@ import { ArrowRight } from "@lucide/astro";
     </h2>
 
     <div class="grid grid-cols-4 gap-4">
-      <Card variant="ghost">
-        <div slot="media" class="relative">
+      <Card variant="ghost" orientation="horizontal">
+        <Card part="media" class="relative">
           <img
             src="https://pbs.twimg.com/media/G0x-gkSbcAAaH3Z?format=jpg&name=large"
             class="rounded-xl"
@@ -28,15 +28,11 @@ import { ArrowRight } from "@lucide/astro";
           >
             01
           </span>
-        </div>
-        <Fragment slot="header">
-          <h3 class="text-2xl font-medium mb-1 leading-none">
-            Healthy breakfast
-          </h3>
-          <p class="text-muted-foreground text-sm">
-            Eggs are a great source of protein.
-          </p>
-        </Fragment>
+        </Card>
+        <Card part="header" variant="ghost">
+          <Card part="title"> Healthy breakfast </Card>
+          <Card part="description"> Eggs are a great source of protein. </Card>
+        </Card>
       </Card>
 
       <Card variant="ghost">
@@ -57,6 +53,9 @@ import { ArrowRight } from "@lucide/astro";
             Egg benefits your heart and brain.
           </p>
         </Fragment>
+        <Card part="overlay" variant="glass">
+          <p>Egg benefits your heart and brain.</p>
+        </Card>
       </Card>
 
       <Card variant="ghost">
@@ -79,7 +78,7 @@ import { ArrowRight } from "@lucide/astro";
         </Fragment>
       </Card>
 
-      <Card variant="ghost">
+      <Card variant="ghostas">
         <div slot="media" class="relative">
           <img
             src="https://pbs.twimg.com/media/G0x-gkXbcAQMBaT?format=jpg&name=large"

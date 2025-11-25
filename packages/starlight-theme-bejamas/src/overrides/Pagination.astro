@@ -8,7 +8,7 @@ const { prev, next } = pagination;
 const isRtl = dir === "rtl";
 ---
 
-<div class="flex justify-between print:hidden" dir={dir}>
+<div class="flex justify-between print:hidden z-10" dir={dir}>
   {
     prev && (
       <Button as="a" href={prev.href} rel="prev" variant="outline">
@@ -27,13 +27,13 @@ const isRtl = dir === "rtl";
   }
 </div>
 
-<div class="text-center text-sm text-muted-foreground page-footer">
+<!-- <div class="text-center text-sm text-muted-foreground page-footer">
   <p>
     Built at <a href="https://bejamas.com" class="underline underline-offset-4"
       >Bejamas</a
     >.
   </p>
-</div>
+</div> -->
 
 <style>
   @layer starlight.core {

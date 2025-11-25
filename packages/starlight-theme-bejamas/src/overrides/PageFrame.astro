@@ -81,6 +81,16 @@ const { template } = Astro.locals.starlightRoute.entry.data;
       /* background-color: var(--sl-color-bg-nav); */
     }
 
+    .header {
+      background-color: var(--background);
+    }
+
+    @media (min-width: 72rem) {
+      .header {
+        background-color: transparent;
+      }
+    }
+
     :global([data-has-sidebar]) .header {
       padding-inline-end: calc(
         var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size)
@@ -110,7 +120,7 @@ const { template } = Astro.locals.starlightRoute.entry.data;
       gap: 1rem;
     }
 
-    @media (min-width: 50rem) {
+    @media (min-width: 64rem) {
       .sidebar-content::after {
         content: "";
         padding-bottom: 1px;
@@ -119,16 +129,25 @@ const { template } = Astro.locals.starlightRoute.entry.data;
 
     .main-frame {
       padding-top: calc(var(--sl-nav-height) + var(--sl-mobile-toc-height));
-      padding-inline-start: var(--sl-content-inline-start);
+      /* padding-inline-start: var(--sl-content-inline-start); */
     }
 
     .main-frame-inner {
       position: relative;
       background-color: var(--sl-main-frame-inner-background);
       border: 1px solid var(--sl-main-frame-inner-border);
-      border-radius: calc(var(--radius) + 12px) calc(var(--radius) + 12px) 0 0;
       border-bottom: 0;
       min-height: calc(100svh - var(--sl-nav-height));
+      border-radius: calc(var(--radius) + 12px) calc(var(--radius) + 12px) 0 0;
+      margin-inline: calc(var(--spacing) * 1);
+      margin-top: calc(var(--spacing) * 4);
+    }
+
+    @media (min-width: 64rem) {
+      .main-frame-inner {
+        margin-inline: 0;
+        margin-top: 0;
+      }
     }
 
     .main-frame-inner::before,
