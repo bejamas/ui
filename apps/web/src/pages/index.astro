@@ -41,7 +41,13 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
   .hero h1 {
     letter-spacing: calc(var(--letter-spacing) - 0.025em);
-    @apply text-5xl font-medium text-left text-balance block max-w-xl leading-[1.15];
+    @apply text-3xl font-medium text-left text-balance block max-w-xl leading-[1.15];
+  }
+
+  @media (min-width: 50rem) {
+    .hero h1 {
+      @apply text-5xl;
+    }
   }
 
   html {
@@ -89,7 +95,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     transform-origin: left center;
     scroll-snap-align: center;
 
-    @apply sticky top-18 px-0 pt-12 pb-18 z-10 max-w-[92%] mx-auto;
+    @apply sticky top-18 px-4 lg:px-0 pt-8 lg:pt-12 pb-18 z-10 max-w-[92%] mx-auto;
   }
 
   @supports (animation-timeline: auto) {

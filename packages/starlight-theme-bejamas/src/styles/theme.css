@@ -75,7 +75,7 @@
       transparent
     );
     --sl-main-frame-inner-border: var(--border);
-    --sl-content-inline-start: 0;
+    --sl-content-inline-start: 0rem;
   }
 
   @media (min-width: 50em) {
@@ -491,7 +491,9 @@
   starlight-menu-button button {
     box-shadow: none;
     padding: 0;
-    width: calc(var(--spacing) * 5);
+    width: calc(var(--spacing) * 6);
+    background-color: var(--background);
+    color: var(--foreground);
   }
 
   starlight-menu-button button svg {
