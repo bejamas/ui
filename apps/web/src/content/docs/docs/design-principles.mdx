@@ -7,12 +7,12 @@ sidebar:
 
 `bejamas/ui` is an Astro-native component library. The way components are structured is as important as how they look.
 
-1. **Flat-file structure.** One file = one component. Markup, variants, and multi-part parts live together.
-2. **Docs in code.** Comments power the docs; there’s no separate source of truth to maintain.
+1. **Flat-file structure.** One file = one component. Markup, variants, and component parts (e.g. `header`, `content`, `footer`) live together.
+2. **Docs in code.** Docs are auto generated from the comments; there’s no separate source of truth to maintain.
 3. **Themeable.** Components use token-based classes (e.g. `bg-background`, `text-primary`) instead of hard-coded colors.
 4. **Composable.** We prefer small primitives over heavy abstractions. Code should be easy to read, copy, and modify.
 5. **Astro-native, zero-JS by default.** Components are server-first and ship no client JavaScript unless they truly need it.
-6. **Framework-agnostic.** We don’t bundle React, Vue, or any other client framework. You’re free to add your own islands or framework of choice on top where needed.
+6. **Framework-agnostic.** We don’t bundle React, Vue, or any other client framework. You’re free to add your own [Astro islands](https://docs.astro.build/en/concepts/islands/) or framework of choice on top where needed.
 7. **shadcn/ui aligned.** Where it makes sense we mirror shadcn’s DOM structure, class names, and `data-slot` attributes so we can reuse ideas, examples, and registry content.
 
 ---
@@ -93,9 +93,7 @@ const { part = "root", class: className = "", ...rest } = Astro.props as Props;
 {
   part === "root" && (
     <div class="card-root" {...rest}>
-      <slot name="header" />
-      <slot name="content" />
-      <slot name="footer" />
+      <slot />
     </div>
   )
 }

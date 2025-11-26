@@ -1,5 +1,35 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
 
+type HeadTag = {
+  tag: string;
+  attrs?: Record<string, string | boolean | undefined>;
+  [key: string]: unknown;
+};
+
+const upsertMetaTag = (
+  head: HeadTag[],
+  attrKey: "property" | "name",
+  attrValue: string,
+  content: string,
+) => {
+  const existingTag = head.find(
+    (tag) => tag.tag === "meta" && tag.attrs?.[attrKey] === attrValue,
+  );
+
+  if (existingTag) {
+    existingTag.attrs = {
+      ...existingTag.attrs,
+      content,
+    };
+    return;
+  }
+
+  head.push({
+    tag: "meta",
+    attrs: { [attrKey]: attrValue, content },
+  });
+};
+
 export const onRequest = defineRouteMiddleware((context) => {
   // Only add the dynamic og image for components pages.
   if (!context.url.pathname.startsWith("/components/")) {
@@ -25,13 +55,7 @@ export const onRequest = defineRouteMiddleware((context) => {
   // Get the array of all tags to include in the `<head>` of the current page.
   const { head } = context.locals.starlightRoute;
 
-  // Add the `<meta/>` tags for the Open Graph images.
-  head.push({
-    tag: "meta",
-    attrs: { property: "og:image", content: ogImageUrl.href },
-  });
-  head.push({
-    tag: "meta",
-    attrs: { name: "twitter:image", content: `${ogImageUrl.href}?x=1` },
-  });
+  // Ensure we only have a single Open Graph/twitter image meta tag.
+  upsertMetaTag(head, "property", "og:image", ogImageUrl.href);
+  upsertMetaTag(head, "name", "twitter:image", `${ogImageUrl.href}?x=1`);
 });
