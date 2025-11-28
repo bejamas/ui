@@ -1,6 +1,4 @@
 ---
-import Button from "@bejamas/ui/components/Button.astro";
-import Dropdown from "@bejamas/ui/components/Dropdown.astro";
 import Select from "@bejamas/ui/components/Select.astro";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 ---
@@ -32,20 +30,25 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
   </Select>
 </div>
 
-<script>
+<script is:inline>
+  // @ts-nocheck
   const storageKey = "starlight-theme";
+  const themeMetaSelector = 'meta[name="theme-color"][data-theme-managed]';
+  const themeColors = {
+    light: "#ffffff",
+    dark: "#0f171f",
+  };
 
   const parseTheme = (theme) =>
     theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
 
   const loadTheme = () => {
     try {
-      return parseTheme(
-        typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
-      );
-    } catch {
-      return "auto";
-    }
+      if (typeof localStorage !== "undefined") {
+        return parseTheme(localStorage.getItem(storageKey));
+      }
+    } catch {}
+    return "auto";
   };
 
   function storeTheme(theme) {
@@ -59,6 +62,22 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
     } catch {}
   }
 
+  function syncThemeColor(theme) {
+    const color = themeColors[theme];
+    const head = document.head;
+    if (!color || !head) return;
+
+    let meta = head.querySelector(themeMetaSelector);
+    if (!(meta instanceof HTMLMetaElement)) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "theme-color");
+      meta.setAttribute("data-theme-managed", "");
+      head.appendChild(meta);
+    }
+
+    meta.setAttribute("content", color);
+  }
+
   const getPreferredColorScheme = () =>
     matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 
@@ -67,6 +86,7 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
     document.documentElement.dataset.theme = effective;
     document.documentElement.classList.remove("light", "dark");
     document.documentElement.classList.add(effective);
+    syncThemeColor(effective);
     storeTheme(theme);
     const select = document.getElementById("theme-select");
     if (select instanceof HTMLSelectElement) select.value = theme;
