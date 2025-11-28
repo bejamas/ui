@@ -87,7 +87,7 @@ export default defineConfig({
           attrs: {
             name: "theme-color",
             media: "(prefers-color-scheme: dark)",
-            content: "#0f171f",
+            content: "#ffffff",
           },
         },
         {

@@ -33,7 +33,10 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 <script is:inline>
   // @ts-nocheck
   const storageKey = "starlight-theme";
-  const themeMetaSelector = 'meta[name="theme-color"][data-theme-managed]';
+  const themeMetaMedias = [
+    "(prefers-color-scheme: light)",
+    "(prefers-color-scheme: dark)",
+  ];
   const themeColors = {
     light: "#ffffff",
     dark: "#0f171f",
@@ -62,20 +65,35 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
     } catch {}
   }
 
+  function ensureThemeMeta(head, media) {
+    const baseSelector = `meta[name="theme-color"][media="${media}"]`;
+
+    let meta = head.querySelector(`${baseSelector}[data-theme-managed]`);
+    if (meta instanceof HTMLMetaElement) return meta;
+
+    meta = head.querySelector(baseSelector);
+    if (meta instanceof HTMLMetaElement) {
+      meta.setAttribute("data-theme-managed", "");
+      return meta;
+    }
+
+    meta = document.createElement("meta");
+    meta.setAttribute("name", "theme-color");
+    meta.setAttribute("media", media);
+    meta.setAttribute("data-theme-managed", "");
+    head.appendChild(meta);
+    return meta;
+  }
+
   function syncThemeColor(theme) {
     const color = themeColors[theme];
     const head = document.head;
     if (!color || !head) return;
 
-    let meta = head.querySelector(themeMetaSelector);
-    if (!(meta instanceof HTMLMetaElement)) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "theme-color");
-      meta.setAttribute("data-theme-managed", "");
-      head.appendChild(meta);
-    }
-
-    meta.setAttribute("content", color);
+    themeMetaMedias.forEach((media) => {
+      const meta = ensureThemeMeta(head, media);
+      meta.setAttribute("content", color);
+    });
   }
 
   const getPreferredColorScheme = () =>
