@@ -82,6 +82,8 @@ You can generate all component docs using the CLI:
 
 By default, the CLI reads configuration from a `components.json` file at the root of your project.
 
+The `components.json` file configures how the docs generator behaves (paths, aliases, styling). Most projects won’t need to change it.
+
 ```json title="components.json" 
 {
   "$schema": "https://ui.shadcn.com/schema.json",
@@ -115,13 +117,15 @@ These tags form the source of your generated docs pages.
 
 ### Supported tags
 
+These tags control what content appears in the generated MDX page.
+
 - `@component` — canonical component name
 
 - `@title` — human-readable title for the docs page
 
 - `@description` — short description shown at the top
 
-- `@example` — main interactive/example block
+- `@preview` — main interactive preview example shown at the top
 
 - `@usage` — usage example (rendered as a code block)
 

@@ -1,6 +1,6 @@
 ---
 title: Monorepo
-description: A guide in my new Starlight docs site.
+description: A guide for using `bejamas/ui` in a monorepo setup.
 sidebar:
   order: 9
 ---
@@ -12,7 +12,7 @@ import {
 
 import { FileTree } from "@astrojs/starlight/components";
 
-`bejamas/ui` works good in a monorepo setup. In fact, it's the recommended way to use it.
+`bejamas/ui` works well in a monorepo setup. In fact, it's the recommended way to use it.
 
 ### Create a new monorepo project
 
@@ -52,19 +52,18 @@ Select the `Astro (Monorepo)` or `Astro with Component Docs (Monorepo)` option.
     Astro with Component Docs (Monorepo)
 ```
 
-`Astro (Monorepo)` will create a new monorepo project with two workspaces: `web` and `ui`,
-and [Turborepo](https://turbo.build/repo/docs) as the build system.
+**`Astro (Monorepo)`** creates a new monorepo project with two workspaces: `web` and `ui`.
 
-`Astro with Component Docs (Monorepo)` will create a new monorepo project with two workspaces: `web` and `docs`,
-and [Turborepo](https://turbo.build/repo/docs) as the build system. The `docs` workspace will contain the component documentation.
+**`Astro with Component Docs (Monorepo)`** creates a new monorepo project with three workspaces: `web`, `ui`,
+and `docs`. The `docs` workspace contains the component documentation.
+
+Both setups use **Astro v5**, **Tailwind CSS v4**, and **[Turborepo](https://turbo.build/repo/docs)** as the build system.
 
 Everything is set up for you, so you can start adding components to your project.
 
-Note: The monorepo uses Astro v5 and Tailwind CSS v4.
-
 ### Add components to your project
 
-To add components to your project, run the `add` command **in the path of your app**.
+To add components to your project, run the `add` command from your **app directory**.
 
 ```bash
 cd apps/web
@@ -94,22 +93,11 @@ cd apps/web
   </DocsTabItem>
 </DocsTabs>
 
-The CLI will figure out what type of component you are adding and install the
-correct files to the correct path.
+The CLI automatically detects whether a component is a primitive or a block and installs it in the correct location:
 
-For example, if you run `npx bejamas@latest add button`, the CLI will install the button component under `packages/ui` and update the import path for components in `apps/web`.
+- **Primitives** (e.g. button, card, input) — installed in `packages/ui` and automatically update import paths in `apps/web`
+- **Blocks** (e.g. hero-a, hero-b, login-01) — installed in `apps/web/components`. Any primitives the block depends on are installed automatically in `packages/ui`
 
-If you run `npx bejamas@latest add hero-01`, the CLI will install the `button`, `label`, `input` and `card` components under `packages/ui` and the `hero-01` component under `apps/web/components`.
-
-### Add components to your project
-
-To add components to your project, run the add command in the path of your app.
-
-The CLI will figure out what type of component you are adding and install the correct files to the correct path.
-
-For example, if you run `npx bejamas add button`, the CLI will install the button component under `packages/ui` and update the import path for components in apps/web.
-
-If you run `npx bejamas add login-01`, the CLI will install the button, label, input and card components under `packages/ui` and the login-form component under `apps/web/components`.
 
 ## File Structure
 
