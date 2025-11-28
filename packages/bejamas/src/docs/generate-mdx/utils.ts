@@ -107,7 +107,11 @@ export function parseJsDocMetadata(
     } else if (line.trim().startsWith("@examples")) {
       inExamples = true;
       continue;
+    } else if (line.trim().startsWith("@preview")) {
+      inPrimaryExample = true;
+      continue;
     } else if (line.trim().startsWith("@example")) {
+      // backward compatibility with older docs
       inPrimaryExample = true;
       continue;
     }
