@@ -57,5 +57,5 @@ export const onRequest = defineRouteMiddleware((context) => {
 
   // Ensure we only have a single Open Graph/twitter image meta tag.
   upsertMetaTag(head, "property", "og:image", ogImageUrl.href);
-  upsertMetaTag(head, "name", "twitter:image", `${ogImageUrl.href}?x=1`);
+  upsertMetaTag(head, "name", "twitter:image", `${ogImageUrl.href}&x=1`);
 });
