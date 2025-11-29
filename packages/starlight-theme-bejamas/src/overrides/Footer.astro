@@ -5,37 +5,39 @@ import Pagination from "virtual:starlight/components/Pagination";
 import config from "virtual:starlight/user-config";
 ---
 
-<footer class="sl-flex">
+<footer class="sl-flex footer-wide">
   <div class="meta sl-flex">
     <EditLink />
     <LastUpdated />
   </div>
   <Pagination />
-
-  {
-    config.credits && (
-      <a class="kudos sl-flex" href="https://starlight.astro.build">
-        {Astro.locals.t("builtWithStarlight.label")}
-      </a>
-    )
-  }
-
   <div class="fade"></div>
 </footer>
 
+{
+  config.credits && (
+    <a class="kudos sl-flex footer-wide" href="https://ui.bejamas.com">
+      Built at Bejamas
+    </a>
+  )
+}
+
 <style>
   @layer starlight.core {
+    .footer-wide {
+      width: calc(
+        100% + calc(var(--sl-content-pad-x) * 2) + calc(var(--spacing) * 2)
+      );
+      margin-inline: calc(var(--spacing) * -1 - var(--sl-content-pad-x));
+      padding-inline: calc(var(--sl-content-pad-x) + var(--spacing));
+    }
+
     footer {
       flex-direction: column;
       gap: 1.5rem;
       position: sticky;
       bottom: 0;
-      width: calc(
-        100% + calc(var(--sl-content-pad-x) * 2) + calc(var(--spacing) * 2)
-      );
-      margin-inline: calc(var(--spacing) * -1 - var(--sl-content-pad-x));
       background: linear-gradient(to top, var(--background), transparent);
-      padding-inline: calc(var(--sl-content-pad-x) + var(--spacing));
       padding-block: calc(var(--spacing) * 3);
       z-index: 10;
     }
@@ -47,6 +49,9 @@ import config from "virtual:starlight/user-config";
       }
       .meta {
         display: flex;
+      }
+      .kudos {
+        margin-bottom: calc(var(--spacing) * -10);
       }
     }
 
@@ -67,20 +72,30 @@ import config from "virtual:starlight/user-config";
     .kudos {
       align-items: center;
       gap: 0.5em;
-      margin: 1.5rem auto;
+      margin-block: 0;
       font-size: var(--sl-text-xs);
       text-decoration: none;
-      color: var(--sl-color-gray-3);
+      color: var(--muted-foreground);
+      justify-content: center;
+      padding-top: calc(var(--spacing) * 12);
+      padding-bottom: calc(var(--spacing) * 10);
+      background-color: var(--background);
     }
     .kudos:hover {
-      color: var(--sl-color-white);
+      color: var(--foreground);
+    }
+
+    @media (min-width: 50rem) {
+      .kudos {
+        background-color: transparent;
+      }
     }
 
     .fade {
       --blur: 4px;
       --stop: 50%;
       --height: 72px;
-      position: fixed;
+      position: absolute;
       pointer-events: none;
       width: 100%;
       height: var(--height);

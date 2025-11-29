@@ -18,6 +18,7 @@ export default defineConfig({
     starlight({
       favicon: "/favicon.ico",
       routeMiddleware: ["./src/route-middleware.ts"],
+      credits: true,
       plugins: [
         starlightThemeBejamas({
           nav: [
