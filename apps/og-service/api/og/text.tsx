@@ -66,7 +66,7 @@ export default {
             flexDirection: "column",
             justifyContent: "center",
             background: "#F3F5F8",
-            color: "#0f172a",
+            color: "#051729",
             padding: showTwitterFooter
               ? "48px 128px 116px 128px"
               : "96px 128px",
@@ -93,7 +93,7 @@ export default {
           >
             <div
               style={{
-                fontSize: 78,
+                fontSize: 80,
                 fontWeight: 500,
                 letterSpacing: "-0.03em",
                 lineHeight: 1.05,
@@ -105,10 +105,10 @@ export default {
 
             <div
               style={{
-                fontSize: 32,
+                fontSize: 40,
                 fontWeight: 400,
-                color: "#475569",
-                lineHeight: 1.4,
+                color: "#69737d",
+                lineHeight: 1.6,
                 textWrap: "balance",
               }}
             >

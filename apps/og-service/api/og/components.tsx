@@ -81,7 +81,7 @@ export default {
             display: "flex",
             flexDirection: "column",
             background: "#f4f5f8",
-            color: "#000",
+            color: "#051729",
             padding: "56px 56px 0 56px",
             boxSizing: "border-box",
             fontFamily: "Inter",
@@ -97,7 +97,7 @@ export default {
             }}
           >
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ fontSize: 48, fontWeight: 500, color: "#000" }}>
+              <div style={{ fontSize: 48, fontWeight: 500, color: "#051729" }}>
                 {title}
               </div>
             </div>
