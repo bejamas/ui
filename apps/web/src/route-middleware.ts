@@ -97,7 +97,7 @@ const resolveOgConfig = ({
 
   return {
     path: "/api/og/text",
-    params: buildTextParams({ entryTitle, entryDescription, siteTitle }),
+    params: buildTextParams({ entryTitle, entryDescription }),
   };
 };
 
