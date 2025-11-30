@@ -1,9 +1,8 @@
 {
   "$schema": "https://turborepo.com/schema.json",
-  "extends": ["//turbo.json"],
   "tasks": {
     "build": {
-      "outputs": ["dist/**", "public/chromium-pack.tar"]
+      "outputs": ["public/chromium-pack.tar"]
     }
   }
 }
