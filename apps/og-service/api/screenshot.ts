@@ -16,7 +16,7 @@ const CHROMIUM_PACK_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
   : "https://github.com/gabenunez/puppeteer-on-vercel/raw/refs/heads/main/example/chromium-dont-use-in-prod.tar";
 
 // Base URL for your Astro docs, used when `url` is relative (e.g. `/components/button`)
-const DEFAULT_DOCS_BASE_URL = "https://ui-web-nine.vercel.app";
+const DEFAULT_DOCS_BASE_URL = "https://ui.bejamas.com";
 const DOCS_BASE_URL = process.env.DOCS_BASE_URL ?? DEFAULT_DOCS_BASE_URL;
 
 // Always screenshot this element
