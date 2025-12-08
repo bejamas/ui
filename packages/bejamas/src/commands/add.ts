@@ -4,7 +4,7 @@ import { logger } from "@/src/utils/logger";
 import { getPackageRunner } from "@/src/utils/get-package-manager";
 
 // Default fallback registry endpoint for shadcn (expects /r)
-const DEFAULT_REGISTRY_URL = "https://ui-web-nine.vercel.app/r";
+const DEFAULT_REGISTRY_URL = "https://ui.bejamas.com/r";
 
 // No quoting helper needed; we pass args array directly to execa
 function extractOptionsForShadcn(rawArgv: string[]): string[] {

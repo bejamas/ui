@@ -1,0 +1,32 @@
+---
+title: Theming
+description: How to customize colors, tokens, and brand styles in bejamas/ui.
+sidebar:
+  order: 5
+---
+
+import {
+  Tabs as DocsTabs,
+  TabItem as DocsTabItem,
+} from "@astrojs/starlight/components";
+
+`bejamas/ui` uses CSS variables as its theming layer.  
+All components read from the same token set, so updating the theme updates the entire UI.
+
+This page explains where themes live, how to override them, and how to create multiple brand themes.
+
+---
+
+## Where Themes Live
+
+By default, tokens are defined in:
+
+<DocsTabs>
+  <DocsTabItem label="Non-Monorepo">```/src/styles/globals.css```</DocsTabItem>
+  <DocsTabItem label="Monorepo">
+    ```shell /packages/ui/src/styles/globals.css ```
+  </DocsTabItem>
+</DocsTabs>
+
+This file contains all base variables (colors, radii, spacing, etc.).  
+Anything you override here becomes the new global theme.

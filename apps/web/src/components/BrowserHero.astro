@@ -121,12 +121,12 @@ const leanPresets = Object.fromEntries(
   <div
     class="bg-input/40 dark:bg-input/30 backdrop-blur-xl not-content px-5 pt-2 flex"
   >
-    <div class="flex items-center gap-x-2 mb-1.75">
+    <div class="hidden md:flex items-center gap-x-2 mb-1.75">
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
     </div>
-    <div class="ml-18 flex items-center">
+    <div class="md:ml-18 flex items-center">
       <button
         type="button"
         data-key={componentsShowreel.theme}
@@ -144,7 +144,8 @@ const leanPresets = Object.fromEntries(
           style={`background-color: ${componentsShowreel.color};`}
         >
         </div>
-        bejamas/ui components
+        <span class="hidden lg:block">bejamas/ui components</span>
+        <span class="block lg:hidden">components</span>
       </button>
       <div class="flex items-center justify-center gap-x-1 ml-1">
         {
