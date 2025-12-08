@@ -13,7 +13,7 @@ const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
   // output: 'server',
-  site: "https://ui-web-nine.vercel.app",
+  site: "https://ui.bejamas.com",
   integrations: [
     starlight({
       favicon: "/favicon.ico",
@@ -41,7 +41,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/withastro/starlight",
+          href: "https://github.com/bejamas/ui",
         },
       ],
       sidebar: [
@@ -137,14 +137,14 @@ export default defineConfig({
           tag: "meta",
           attrs: {
             property: "og:image",
-            content: "https://ui-web-nine.vercel.app/og-default.png",
+            content: "https://ui.bejamas.com/og-default.png",
           },
         },
         {
           tag: "meta",
           attrs: {
             name: "twitter:image",
-            content: "https://ui-web-nine.vercel.app/og-default.png",
+            content: "https://ui.bejamas.com/og-default.png",
           },
         },
       ],

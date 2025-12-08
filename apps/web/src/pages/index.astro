@@ -10,7 +10,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
       "Clean, lightweight Astro UI components built with Tailwind v4 and zero dependencies. Copy-paste the snippet into your project and fully own the code.",
     template: "splash",
     hero: {
-      title: `The UI system for Astro. Copy. <em class="font-serif relative inline-block pr-0.5"><div class="absolute top-1 w-full pointer-events-none h-12 border-2 border-accent"><span class="absolute -left-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -left-2 -bottom-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -bottom-2 size-2 border-2 border-accent"></span></div>Customize.</em> Ship.`,
+      title: `The UI system for Astro. Copy. <em class="font-serif relative inline-block pr-0.5"><div class="absolute top-0.5 lg:top-1 w-full pointer-events-none h-8 lg:h-12 border-2 border-accent"><span class="absolute -left-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -left-2 -bottom-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -bottom-2 size-2 border-2 border-accent"></span></div>Customize.</em> Ship.`,
       actions: [
         {
           text: "Get Started",
@@ -25,7 +25,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   <div id="browser-hero-panel-end" class="w-full mt-[-1px] h-px bottom-0 -z-10">
   </div>
   <div
-    class="h-full fixed scroll-fade-out bg-muted top-14 border left-6 right-6 rounded-t-3xl"
+    class="hidden lg:block h-full fixed scroll-fade-out bg-muted top-14 border left-6 right-6 rounded-t-3xl"
   >
   </div>
   <div
@@ -50,14 +50,20 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     display: none;
   }
 
+  .hero .copy {
+    @apply items-start;
+  }
+
   @media (min-width: 50rem) {
     .hero h1 {
       @apply text-5xl;
     }
   }
 
-  html {
-    scroll-snap-type: y mandatory;
+  @media (min-width: 64rem) {
+    html {
+      scroll-snap-type: y mandatory;
+    }
   }
 
   .content-panel:first-child {
@@ -87,6 +93,10 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     border: 0;
   }
 
+  .main-pane > main {
+    @apply pb-0;
+  }
+
   /* .main-frame main > .content-panel:last-child {
     background-color: var(--muted);
     border-radius: calc(var(--radius) - 2px);
@@ -99,16 +109,25 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   .hero {
     opacity: 1;
     transform-origin: left center;
-    scroll-snap-align: center;
 
-    @apply sticky top-18 px-4 lg:px-0 pt-8 lg:pt-12 pb-18 z-10 max-w-[92%] mx-auto;
+    @apply px-0 lg:px-4 pt-8 pb-18 z-10 lg:max-w-[92%] mx-auto relative;
+  }
+
+  @media (min-width: 64rem) {
+    .hero {
+      scroll-snap-align: center;
+
+      @apply sticky top-18 px-0 pt-12;
+    }
   }
 
   @supports (animation-timeline: auto) {
-    .hero {
-      animation: fadeOutAtBottom ease-out both;
-      animation-timeline: scroll(root block);
-      animation-range: 40% 80%;
+    @media (min-width: 64rem) {
+      .hero {
+        animation: fadeOutAtBottom ease-out both;
+        animation-timeline: scroll(root block);
+        animation-range: 40% 80%;
+      }
     }
   }
 
@@ -128,6 +147,10 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
   .fade {
     @apply hidden;
+  }
+
+  .actions {
+    @apply justify-start;
   }
 
   footer.sl-flex {
@@ -154,24 +177,26 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     }
   }
 
-  .scroll-fade-out {
-    animation: fadeOutAtBottom linear both;
-    animation-timeline: scroll(root block);
-    animation-range: 40% 80%;
-  }
+  @media (min-width: 64rem) {
+    .scroll-fade-out {
+      animation: fadeOutAtBottom linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 40% 80%;
+    }
 
-  .scroll-fade-out-and-move-bottom {
-    animation: fadeOutAtBottomAndMoveBottom linear both;
-    animation-timeline: scroll(root block);
-    animation-range: 40% 80%;
-  }
+    .scroll-fade-out-and-move-bottom {
+      animation: fadeOutAtBottomAndMoveBottom linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 40% 80%;
+    }
 
-  .browser {
-    transform: scale(0.92) translateZ(0);
-    animation: maxWidthFull linear both;
-    animation-timeline: scroll(root block);
-    animation-range: 0% 100%;
-    transform-origin: center top;
+    .browser {
+      transform: scale(0.92) translateZ(0);
+      animation: maxWidthFull linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0% 100%;
+      transform-origin: center top;
+    }
   }
 
   /* .browser iframe {

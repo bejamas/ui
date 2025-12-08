@@ -25,15 +25,13 @@ type RadioGroupPart = "root" | "item";
 
 type RootProps = {
   part?: "root";
-  as?: HTMLTag;
   class?: string;
   "aria-label"?: string;
   "aria-labelledby"?: string;
-} & HTMLAttributes<"div">;
+};
 
 type ItemProps = {
   part: "item";
-  as?: HTMLTag;
   class?: string;
   name: string;
   value: string;
@@ -41,13 +39,14 @@ type ItemProps = {
   disabled?: boolean;
   required?: boolean;
   "aria-invalid"?: boolean;
-} & HTMLAttributes<"label">;
+};
 
-type Props = RootProps | ItemProps;
+type Props = (RootProps | ItemProps) &
+  HTMLAttributes<"div"> &
+  HTMLAttributes<"input">;
 
 const {
   part: rawPart,
-  as: rawTag,
   class: className = "",
   id: inputId,
   name,
@@ -65,16 +64,15 @@ const part: RadioGroupPart = (rawPart ?? "root") as RadioGroupPart;
 {
   part === "root" &&
     (() => {
-      const Tag = (rawTag as HTMLTag) ?? "div";
       return (
-        <Tag
+        <div
           {...rest}
           role="radiogroup"
           data-slot="radio-group"
           class={cn("grid gap-3", className)}
         >
           <slot />
-        </Tag>
+        </div>
       );
     })()
 }
@@ -82,9 +80,8 @@ const part: RadioGroupPart = (rawPart ?? "root") as RadioGroupPart;
 {
   part === "item" &&
     (() => {
-      const Tag = (rawTag as HTMLTag) ?? "div";
       return (
-        <Tag
+        <div
           {...rest}
           data-slot="radio-group-item"
           class={cn("relative inline-grid place-items-center", className)}
@@ -123,7 +120,7 @@ const part: RadioGroupPart = (rawPart ?? "root") as RadioGroupPart;
               <circle cx="10" cy="10" r="10" class="fill-primary" />
             </svg>
           </span>
-        </Tag>
+        </div>
       );
     })()
 }

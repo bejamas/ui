@@ -125,11 +125,13 @@ const buildTextParams = ({
 }: {
   entryTitle: string;
   entryDescription: string;
-  siteTitle: string;
+  siteTitle?: string;
 }): URLSearchParams => {
   const params = new URLSearchParams();
   params.set("title", entryTitle);
   params.set("description", entryDescription);
-  params.set("siteTitle", siteTitle);
+  if (siteTitle) {
+    params.set("siteTitle", siteTitle);
+  }
   return params;
 };

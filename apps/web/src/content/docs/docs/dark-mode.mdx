@@ -49,59 +49,139 @@ import "../styles/globals.css";
 
 ## Add a mode toggle
 
-```tsx title="src/components/ModeToggle.tsx"
-import * as React from "react";
-import { Moon, Sun } from "lucide-react";
+```astro title="src/components/ThemeSwitcher.astro"
+---
+import Select from "@bejamas/ui/components/Select.astro";
+import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
+---
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+<div class="relative text-sm">
+  <div class="absolute z-10 left-3 top-2.5">
+    <SunIcon class="size-4 dark:hidden" />
+    <MoonIcon class="size-4 hidden dark:block" />
+  </div>
+  <Select showCheckmark={false}>
+    <Select part="indicator" />
+    <Select
+      onchange="window.toggleTheme(this.value)"
+      id="theme-select"
+      part="control"
+      showCheckmark={false}
+      class="pl-9 w-28"
+    >
+      <Select part="option" value="light"
+        ><SunIcon class="size-4" /> Light</Select
+      >
+      <Select part="option" value="dark"
+        ><MoonIcon class="size-4" /> Dark</Select
+      >
+      <Select part="option" value="auto"
+        ><LaptopIcon class="size-4" /> Auto</Select
+      >
+    </Select>
+  </Select>
+</div>
 
-export function ModeToggle() {
-  const [theme, setThemeState] = React.useState<
-    "theme-light" | "dark" | "system"
-  >("theme-light");
+<script is:inline>
+  // @ts-nocheck
+  const storageKey = "starlight-theme";
+  const themeMetaMedias = [
+    "(prefers-color-scheme: light)",
+    "(prefers-color-scheme: dark)",
+  ];
+  const themeColors = {
+    light: "#ffffff",
+    dark: "#0f171f",
+  };
 
-  React.useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setThemeState(isDarkMode ? "dark" : "theme-light");
-  }, []);
+  const parseTheme = (theme) =>
+    theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
 
-  React.useEffect(() => {
-    const isDark =
-      theme === "dark" ||
-      (theme === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-    document.documentElement.classList[isDark ? "add" : "remove"]("dark");
-  }, [theme]);
+  const loadTheme = () => {
+    try {
+      if (typeof localStorage !== "undefined") {
+        return parseTheme(localStorage.getItem(storageKey));
+      }
+    } catch {}
+    return "auto";
+  };
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setThemeState("theme-light")}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setThemeState("dark")}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setThemeState("system")}>
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
+  function storeTheme(theme) {
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem(
+          storageKey,
+          theme === "light" || theme === "dark" ? theme : "",
+        );
+      }
+    } catch {}
+  }
+
+  function ensureThemeMeta(head, media) {
+    const baseSelector = `meta[name="theme-color"][media="${media}"]`;
+
+    let meta = head.querySelector(`${baseSelector}[data-theme-managed]`);
+    if (meta instanceof HTMLMetaElement) return meta;
+
+    meta = head.querySelector(baseSelector);
+    if (meta instanceof HTMLMetaElement) {
+      meta.setAttribute("data-theme-managed", "");
+      return meta;
+    }
+
+    meta = document.createElement("meta");
+    meta.setAttribute("name", "theme-color");
+    meta.setAttribute("media", media);
+    meta.setAttribute("data-theme-managed", "");
+    head.appendChild(meta);
+    return meta;
+  }
+
+  function syncThemeColor(theme) {
+    const color = themeColors[theme];
+    const head = document.head;
+    if (!color || !head) return;
+
+    themeMetaMedias.forEach((media) => {
+      const meta = ensureThemeMeta(head, media);
+      meta.setAttribute("content", color);
+    });
+  }
+
+  const getPreferredColorScheme = () =>
+    matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+
+  function applyTheme(theme) {
+    const effective = theme === "auto" ? getPreferredColorScheme() : theme;
+    document.documentElement.dataset.theme = effective;
+    document.documentElement.classList.remove("light", "dark");
+    document.documentElement.classList.add(effective);
+    syncThemeColor(effective);
+    storeTheme(theme);
+    const select = document.getElementById("theme-select");
+    if (select instanceof HTMLSelectElement) select.value = theme;
+  }
+
+  // Initialize
+  applyTheme(loadTheme());
+
+  // UI: select changes
+  const select = document.getElementById("theme-select");
+  if (select instanceof HTMLSelectElement) {
+    select.addEventListener("change", (e) => {
+      if (e.currentTarget instanceof HTMLSelectElement) {
+        applyTheme(parseTheme(e.currentTarget.value));
+      }
+    });
+  }
+
+  window.toggleTheme = (theme) => applyTheme(parseTheme(theme));
+
+  // React to system scheme changes while in 'auto'
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
+    if (loadTheme() === "auto") applyTheme("auto");
+  });
+</script>
 ```
 
 ## Display the mode toggle
@@ -115,14 +195,14 @@ Place a mode toggle on your site to toggle between light and dark mode.
 ```astro title="src/pages/index.astro"
 ---
 import "../styles/globals.css";
-import { ModeToggle } from "@/components/ModeToggle";
+import ThemeSwitcher from "@/components/ThemeSwitcher.astro";
 ---
 
 <!-- Inline script -->
 <html lang="en">
   <body>
     <h1>Astro</h1>
-    <ModeToggle client:load />
+    <ThemeSwitcher client:load />
   </body>
 </html>
 ```

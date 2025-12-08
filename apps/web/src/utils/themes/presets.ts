@@ -200,7 +200,6 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "shadow-offset-x": "0px",
         "shadow-offset-y": "2px",
         "letter-spacing": "-0.025em",
-        spacing: "0.27rem",
       },
       dark: {
         background: "#1a1b1e",
@@ -246,7 +245,6 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "shadow-offset-x": "0px",
         "shadow-offset-y": "2px",
         "letter-spacing": "-0.025em",
-        spacing: "0.27rem",
       },
     },
   },
