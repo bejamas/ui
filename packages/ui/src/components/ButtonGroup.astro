@@ -88,10 +88,10 @@
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
-interface Props extends Astro.ComponentProps<"div"> {
+type Props = {
   orientation?: "horizontal" | "vertical";
   class?: string;
-}
+};
 
 const {
   orientation = "horizontal",

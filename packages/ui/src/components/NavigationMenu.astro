@@ -1,6 +1,4 @@
 ---
-import { cn } from "@bejamas/ui/lib/utils";
-
 /**
  * @component NavigationMenu
  * @title Navigation Menu
@@ -35,6 +33,7 @@ import { cn } from "@bejamas/ui/lib/utils";
  */
 
 import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
 
 const {
   class: className = "",
@@ -89,6 +88,7 @@ const headerVariants = cva("w-full header grid grid-cols-12 py-4 px-6", {
     },
     size: {
       // default: "h-20",
+      default: "",
       sm: "h-9 text-sm rounded-lg gap-1.5 px-3 has-[>svg]:px-2.5",
       lg: "h-10 text-lg rounded-lg px-6 has-[>svg]:px-4",
       icon: "size-9",
