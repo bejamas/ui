@@ -76,14 +76,11 @@
     );
     --sl-main-frame-inner-border: var(--border);
     --sl-content-inline-start: 0rem;
-
-    --sl-main-pad: 0;
   }
 
   @media (min-width: 50em) {
     :root {
       --sl-nav-height: calc(var(--spacing) * 18);
-      --sl-main-pad: 0 0 calc(var(--spacing) * 10) 0;
     }
     [data-has-sidebar] {
       --sl-sidebar-width: 0;
@@ -137,14 +134,6 @@
   .right-sidebar,
   .sidebar .sidebar-pane {
     border: 0;
-  }
-
-  .social-icons a {
-    margin: 0;
-  }
-
-  .mobile-preferences {
-    margin-inline: calc(var(--spacing) * 2);
   }
 
   @media (min-width: 72rem) {
@@ -214,10 +203,6 @@
   .content-panel:first-child {
     padding-bottom: 0;
     padding-top: calc(var(--spacing) * 5);
-  }
-
-  .content-panel:last-child {
-    padding-bottom: 0;
   }
 
   @media (min-width: 50rem) {
