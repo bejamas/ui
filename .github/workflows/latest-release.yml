@@ -1,0 +1,36 @@
+name: Latest Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write # npm Trusted Publishing (OIDC)
+
+jobs:
+  release:
+    if: github.repository_owner == 'bejamas'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      - run: bun install
+      - run: bun run build:packages
+
+      # This action creates the "Version Packages" PR when needed,
+      # and on merge runs the publish command below.
+      - name: Changesets
+        uses: changesets/action@v1
+        with:
+          publish: ./.github/scripts/publish-with-provenance.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
