@@ -68,7 +68,6 @@
     --sl-nav-pad-y: calc(var(--spacing) * 4.5);
     --sl-content-pad-x: calc(var(--spacing) * 5);
     --sl-nav-pad-x: calc(var(--spacing) * 1 + var(--sl-content-pad-x));
-
     --sl-main-frame-inner-background: color-mix(
       in oklab,
       var(--muted) 100%,
@@ -259,6 +258,10 @@
     border-radius: var(--radius-lg);
   }
 
+  .expressive-code .frame.has-title pre {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
   .expressive-code .frame.is-terminal pre {
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
@@ -307,11 +310,11 @@
     font-weight: 500;
   }
 
-  .sl-heading-wrapper.level-h2 {
+  .sl-heading-wrapper.level-h2:not(:first-child) {
     margin-top: 4rem;
   }
 
-  .sl-heading-wrapper.level-h3 {
+  .sl-heading-wrapper.level-h3:not(:first-child) {
     margin-top: 3rem;
   }
 
@@ -343,16 +346,23 @@
     margin-top: 0;
   }
 
+  /* .expressive-code .header {
+    background-color: var(--background);
+    border: 1px solid var(--border);
+  } */
+
   .expressive-code .title {
-    background-color: var(--color-muted);
-    color: var(--color-muted-foreground);
-    border-color: var(--color-border);
+    background-color: var(--background);
+    color: var(--muted-foreground);
+    border-color: var(--border);
+    border: 1px solid var(--border);
 
     font-family: var(--sl-font-mono);
     width: 100%;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 0;
     font-size: 0.875rem;
     padding-block: 0.75rem;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
 
   .sl-markdown-content :is(h1, h2, h3, h4, h5, h6):not(:where(.not-content *)) {

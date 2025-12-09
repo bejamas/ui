@@ -2,10 +2,7 @@
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
 import Button from "@bejamas/ui/components/Button.astro";
 import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
-import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
 import StickySurface from "@bejamas/ui/components/StickySurface.astro";
-import Breadcrumb from "@bejamas/ui/components/Breadcrumb.astro";
-import { SlashIcon } from "@lucide/astro";
 ---
 
 <BlockExampleLayout theme="tokyo">
@@ -58,18 +55,6 @@ import { SlashIcon } from "@lucide/astro";
           class="group-[.is-stuck]/surface:bg-primary group-[.is-stuck]/surface:text-primary-foreground text-base font-semibold"
           >Get Started</Button
         >
-        <!-- <Button
-        class="w-20 group-[.is-stuck]/surface:w-25 duration-500 ease-out"
-      >
-        <span
-          class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out"
-          >Contact</span
-        >
-        <span
-          class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 group-[.is-stuck]/surface:block opacity-0 transition-all hidden blur-sm transition-discrete duration-500 ease-out"
-          >Get a demo</span
-        >
-      </Button> -->
       </div>
     </NavigationMenu>
   </StickySurface>

@@ -1,10 +1,9 @@
 ---
 import { getCollection } from "astro:content";
-import Button from "@bejamas/ui/components/Button.astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
 const docs = await getCollection("docs");
-console.log({ docs });
+
 const components = docs.filter((doc) => doc.id.startsWith("components/"));
 ---
 

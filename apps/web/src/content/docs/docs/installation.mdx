@@ -12,9 +12,9 @@ import {
 
 ## Prerequisites
 
-`bejamas/ui` is a component system designed to be working with [Astro framework](https://astro.build) only.
+`bejamas/ui` is a component system designed to be working with [Astro framework](https://astro.build) and [Tailwind v4](https://tailwindcss.com) only.
 
-## Create new project
+## Create project
 
 <DocsTabs syncKey="pkg">
   <DocsTabItem label="bun">
@@ -40,4 +40,41 @@ import {
   </DocsTabItem>
 </DocsTabs>
 
-## Add to existing project
+Choose between Astro project or a Monorepo.
+
+## Add components
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas@latest add button
+  ```
+  </DocsTabItem>
+
+  <DocsTabItem label="npm">
+    ```bash
+    npx bejamas@latest add button
+    ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+    ```bash
+    pnpm dlx bejamas@latest add button
+    ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+    ```bash
+    yarn dlx bejamas@latest add button
+    ```
+  </DocsTabItem>
+</DocsTabs>
+
+The command above will add the Button component to your project. 
+
+You can then import it like this:
+
+```astro {2,4} showLineNumbers title="src/pages/index.astro"
+---
+import Button from "@/ui/Button.astro";
+---
+<Button>Click me</Button>
+```

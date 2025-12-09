@@ -2,17 +2,14 @@
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
 import Button from "@bejamas/ui/components/Button.astro";
 import NavigationMenu from "@bejamas/ui/components/NavigationMenu.astro";
-import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
 import StickySurface from "@bejamas/ui/components/StickySurface.astro";
-import Breadcrumb from "@bejamas/ui/components/Breadcrumb.astro";
 import Separator from "@bejamas/ui/components/Separator.astro";
 import Footer from "@bejamas/ui/components/Footer.astro";
 import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
 import Input from "@bejamas/ui/components/Input.astro";
-import Label from "@bejamas/ui/components/Label.astro";
 import Badge from "@bejamas/ui/components/Badge.astro";
 
-import { SlashIcon, ArrowDownIcon, MenuIcon } from "@lucide/astro";
+import { ArrowDownIcon, MenuIcon } from "@lucide/astro";
 ---
 
 <BlockExampleLayout theme="rome">
@@ -57,18 +54,6 @@ import { SlashIcon, ArrowDownIcon, MenuIcon } from "@lucide/astro";
             class="size-4 group-[.is-stuck]/surface:opacity-100 transition-all duration-200 ease-out"
           /></Button
         >
-        <!-- <Button
-          class="w-20 group-[.is-stuck]/surface:w-25 duration-500 ease-out"
-        >
-          <span
-            class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out"
-            >Contact</span
-          >
-          <span
-            class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 group-[.is-stuck]/surface:block opacity-0 transition-all hidden blur-sm transition-discrete duration-500 ease-out"
-            >Get a demo</span
-          >
-        </Button> -->
       </div>
     </NavigationMenu>
   </StickySurface>

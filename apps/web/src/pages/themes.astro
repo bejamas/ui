@@ -207,7 +207,7 @@ const sections = [
                         class="size-15 rounded-md"
                         data-swatch={item.token}
                         data-source={item.source ?? "light"}
-                        style={`background: var(--color-${item.token}); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-foreground) 25%, transparent)`}
+                        style={`background: var(--color-${item.token}); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-${item.token}) 25%, transparent)`}
                       />
                       <div class="text-left">
                         <div class="mb-1 text-sm font-medium">{item.label}</div>
