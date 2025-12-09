@@ -108,30 +108,9 @@
  *
  */
 
-import type { HTMLTag, Polymorphic } from "astro/types";
-import { cva } from "class-variance-authority";
+import type { HTMLAttributes } from "astro/types";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
-
-type Props = {
-  as?: HTMLTag;
-  variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
-  size?: "default" | "sm" | "lg" | "icon";
-  class?: string;
-};
-
-const {
-  as: Tag = "button",
-  variant = "default",
-  size = "default",
-  class: className = "",
-  ...props
-} = Astro.props as Props;
 
 const buttonVariants = cva(
   "inline-flex ease-out duration-150 border-border items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive active:scale-98",
@@ -165,8 +144,41 @@ const buttonVariants = cva(
     },
   },
 );
+
+type ButtonVariantProps = VariantProps<typeof buttonVariants>;
+
+type ButtonAsButton = {
+  as?: "button";
+} & HTMLAttributes<"button">;
+
+type ButtonAsAnchor = {
+  as: "a";
+} & HTMLAttributes<"a">;
+
+type ButtonOwnProps = ButtonVariantProps & {
+  // you can add custom props here
+};
+
+export type Props = (ButtonAsButton | ButtonAsAnchor) & ButtonOwnProps;
+
+const {
+  as: Tag = "button",
+  variant,
+  size,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
 ---
 
-<Tag class={cn(buttonVariants({ variant, size, className }))} {...props}>
+{
+  /*
+  TS can't reconcile our discriminated union props with a dynamic intrinsic Tag.
+  The public Props type *is* strict (href only allowed when as="a"),
+  but JSX wants an intersection of button+anchor attributes here.
+  We deliberately suppress this internal error and rely on Props for caller safety.
+*/
+}
+<!-- @ts-expect-error – union Props + dynamic Tag confuse JSX typing (see comment above) -->
+<Tag class={cn(buttonVariants({ variant, size }), className)} {...rest}>
   <slot />
 </Tag>
