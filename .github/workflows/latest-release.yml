@@ -26,6 +26,9 @@ jobs:
       - run: bun install
       - run: bun run build:packages
 
+      - name: Setup npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
+
       # This action creates the "Version Packages" PR when needed,
       # and on merge runs the publish command below.
       - name: Changesets
@@ -34,3 +37,4 @@ jobs:
           publish: ./.github/scripts/publish-with-provenance.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
