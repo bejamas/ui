@@ -8,6 +8,7 @@ import vercel from "@astrojs/vercel";
 import netlify from "@astrojs/netlify";
 import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
+import { posthog } from "./src/utils/posthog";
 
 const isVercel = process.env.VERCEL === "1";
 
@@ -146,6 +147,14 @@ export default defineConfig({
             name: "twitter:image",
             content: "https://ui.bejamas.com/og-default.png",
           },
+        },
+        {
+          tag: "script",
+          attrs: {
+            type: "text/javascript",
+            id: "posthog-js",
+          },
+          content: posthog,
         },
       ],
       expressiveCode: true,
