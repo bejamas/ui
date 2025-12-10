@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { execa } from "execa";
 import { logger } from "@/src/utils/logger";
 import { getPackageRunner } from "@/src/utils/get-package-manager";
+import { fixAstroImports } from "@/src/utils/astro-imports";
 
 // Default fallback registry endpoint for shadcn (expects /r)
 const DEFAULT_REGISTRY_URL = "https://ui.bejamas.com/r";
@@ -153,6 +154,15 @@ export const add = new Command()
     const verbose = Boolean(root?.opts?.().verbose);
     const rawArgv = process.argv.slice(2);
     const forwardedOptions = extractOptionsForShadcn(rawArgv, cmd);
+    const opts =
+      typeof cmd.optsWithGlobals === "function"
+        ? cmd.optsWithGlobals()
+        : (cmd.opts?.() ?? {});
+    const cwd = opts.cwd || process.cwd();
+
     // Pass packages and all flags directly to shadcn
     await addComponents(packages || [], forwardedOptions, verbose);
+
+    // Fix aliases inside Astro files until upstream adds .astro support.
+    await fixAstroImports(cwd, verbose);
   });
