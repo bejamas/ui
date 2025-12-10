@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "index",
+  "type": "registry:style",
+  "author": "bejamas (https://ui.bejamas.com)",
+  "dependencies": [
+    "tailwindcss-animate",
+    "class-variance-authority",
+    "@lucide/astro"
+  ],
+  "registryDependencies": ["utils"],
+  "files": [],
+  "tailwind": {
+    "config": {
+      "plugins": ["require(\"tailwindcss-animate\")"]
+    }
+  },
+  "cssVars": {}
+}
