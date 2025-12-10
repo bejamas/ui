@@ -30,6 +30,9 @@ import { z } from "zod";
 //   return restoreFileBackup(filePath)
 // })
 
+// Default fallback registry endpoint for shadcn (expects /r)
+const DEFAULT_REGISTRY_URL = "https://ui.bejamas.com/r";
+
 export const initOptionsSchema = z.object({
   cwd: z.string(),
   components: z.array(z.string()).optional(),
@@ -171,10 +174,10 @@ export async function runInit(
   );
 
   try {
-    const env = { ...process.env };
-    if (process.env.REGISTRY_URL) {
-      env.REGISTRY_URL = process.env.REGISTRY_URL;
-    }
+    const env = {
+      ...process.env,
+      REGISTRY_URL: process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL,
+    };
     if (await fsExtra.pathExists(localShadcnPath)) {
       await execa(localShadcnPath, ["init", "--base-color", "neutral"], {
         stdio: "inherit",
