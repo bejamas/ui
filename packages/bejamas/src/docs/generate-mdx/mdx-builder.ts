@@ -27,6 +27,7 @@ export function buildMdx(params: {
   primaryExampleMDX: string;
   componentSource: string;
   commandName: string;
+  componentsAlias: string;
 }): string {
   const {
     importName,
@@ -46,6 +47,7 @@ export function buildMdx(params: {
     componentSource,
     commandName,
     figmaUrl,
+    componentsAlias,
   } = params;
 
   const sortedLucide = (lucideIcons ?? []).slice().sort();
@@ -61,7 +63,7 @@ export function buildMdx(params: {
     .sort((a, b) => String(a).localeCompare(String(b)));
   const sortedUiAuto = (autoImports ?? []).slice().sort();
   const uiAutoLines = sortedUiAuto.map(
-    (name) => `import ${name} from '@bejamas/ui/components/${name}.astro';`,
+    (name) => `import ${name} from '${componentsAlias}/${name}.astro';`,
   );
   const exampleLines = (examples ?? [])
     .map((ex) => `import ${ex.importName} from '${ex.importPath}';`)
@@ -109,9 +111,7 @@ export function buildMdx(params: {
     if (includeMain)
       internal.push(`import ${importName} from '${importPath}';`);
     internal.push(
-      ...usedUi.map(
-        (name) => `import ${name} from '@bejamas/ui/components/${name}.astro';`,
-      ),
+      ...usedUi.map((name) => `import ${name} from '${componentsAlias}/${name}.astro';`),
     );
 
     const externalSorted = external.slice().sort((a, b) => a.localeCompare(b));

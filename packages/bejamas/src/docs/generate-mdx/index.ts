@@ -1,4 +1,4 @@
-import { mkdirSync } from "fs";
+import { mkdirSync, existsSync } from "fs";
 import { readdir, writeFile } from "fs/promises";
 import { join, extname, dirname, relative } from "path";
 import {
@@ -21,6 +21,7 @@ import {
 import { buildMdx } from "./mdx-builder";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
+import { getConfig } from "@/src/utils/get-config";
 
 async function main() {
   const DEBUG =
@@ -29,8 +30,24 @@ async function main() {
     process.env.BEJAMAS_DOCS_CWD && process.env.BEJAMAS_DOCS_CWD.length
       ? (process.env.BEJAMAS_DOCS_CWD as string)
       : process.cwd();
-  const uiRoot = resolveUiRoot(cwd);
-  const componentsDir = join(uiRoot, "src", "components");
+  const config = await getConfig(cwd);
+  const componentsAlias = (
+    config?.aliases?.ui ||
+    config?.aliases?.components ||
+    "@bejamas/ui/components"
+  ).replace(/\/$/, "");
+  const componentsDirFromConfig =
+    config?.resolvedPaths?.ui || config?.resolvedPaths?.components;
+  let uiRoot = resolveUiRoot(cwd);
+  let componentsDir = join(uiRoot, "src", "components");
+  if (componentsDirFromConfig) {
+    componentsDir = componentsDirFromConfig;
+    uiRoot = dirname(dirname(componentsDirFromConfig));
+  }
+  if (!existsSync(componentsDir)) {
+    // Fallback to ui package components if the configured path is missing.
+    componentsDir = join(uiRoot, "src", "components");
+  }
   const outDir = resolveOutDir(cwd);
   mkdirSync(outDir, { recursive: true });
 
@@ -95,7 +112,7 @@ async function main() {
     const propsList = "";
 
     const importName = pascal;
-    const importPath = `@bejamas/ui/components/${pascal}.astro`;
+    const importPath = `${componentsAlias}/${pascal}.astro`;
     const { text: usageMDX, hasImport: hasImportUsage } = normalizeUsageMDX(
       meta.usageMDX || "",
       pascal,
@@ -123,7 +140,7 @@ async function main() {
         const posixRel = rel
           .split(require("path").sep)
           .join(require("path").posix.sep);
-        const importPath = `@bejamas/ui/components/${posixRel}`;
+        const importPath = `${componentsAlias}/${posixRel}`;
         const abs = join(componentsDir, rel);
         const source = require("fs").readFileSync(abs, "utf-8");
         const base = toIdentifier(
@@ -174,6 +191,7 @@ async function main() {
       commandName: slug,
       figmaUrl,
       descriptionBodyMDX,
+      componentsAlias,
     });
     const outFile = join(outDir, `${slug}.mdx`);
     mkdirSync(dirname(outFile), { recursive: true });
