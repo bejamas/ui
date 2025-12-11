@@ -48,9 +48,9 @@
  *     <Card part="description">A while back, they challenged the norm for enterprises and replaced monolithic architecture with a modern tech stack. But they didn't stop there.</Card>
  *     <Button variant="outline" as="a" href="#">Read more</Button>
  *   </Card>
- * 
+ *
  *   <Separator />
- * 
+ *
  *   <Card part="footer">
  *     <p class="text-sm text-muted-foreground">Categories</p>
  *     <div class="flex items-center gap-2">
@@ -88,88 +88,9 @@
  *   </Card>
  * </Card>
  * ```
-
+ *
  * @examples
  *
- * ### Background image
- *
- * <Card class="relative aspect-[320/390] bg-gray-100 dark:bg-gray-800 w-full max-w-[320px]">
-
- * 
- *   <Card part="header">
- *     <h3 class="text-xl font-medium leading-none">Jacky good boi</h3>
- *     <p class="text-sm text-muted-foreground">loves long walks</p>
- *   </Card>
- *
- *   <Card part="footer">
- *     <p class="text-sm">3 years old</p>
- *     <Button variant="secondary">Adopt me</Button>
- *   </Card>
- * 
-  *   <Card part="media">
- *     <img
- *       alt="Happy pet"
- *       aria-hidden="true"
- *       class="pointer-events-none absolute inset-0 h-full w-full select-none object-cover"
- *       src="/demo/doggo.png"
- *     />
- *     <div
- *       aria-hidden="true"
- *       class="pointer-events-none absolute bottom-0 left-0 right-0 h-[64px]"
- *     >
- *       <div
- *         class="absolute inset-0 h-[200%] backdrop-blur-sm"
- *         style={{
- *           WebkitMaskImage: "linear-gradient(to top, black 80%, transparent)",
- *           maskImage: "linear-gradient(to top, black 80%, transparent)",
- *           maskRepeat: "no-repeat",
- *           maskSize: "100% 100%",
- *         }}
- *       />
- *     </div>
- *   </Card>
- * </Card>
- * 
- * ### Orientation
- * 
- * <Card class="w-full max-w-xl gap-0 pb-2" orientation="horizontal" as="a" href="#">
- *   <Card part="media" class="m-1 h-full max-w-[240px]">
- *     <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340" alt="Everest" class="w-full h-full object-cover" />
- *   </Card>
- *   <div class="flex flex-1 flex-col gap-3">
- *     <Card part="header" class="gap-y-6 pt-6 block">
- *       <div class="flex items-center gap-2 justify-between mb-4">
- *         <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
- *           <Avatar>
- *             <Avatar part="image">
- *               <img src="https://github.com/withastro.png" alt="@withastro" />
- *             </Avatar>
- *             <Avatar part="fallback">AW</Avatar>
- *           </Avatar>
- *           <Avatar>
- *             <Avatar part="image">
- *               <img src="https://github.com/shadcn.png" alt="@shadcn" />
- *             </Avatar>
- *             <Avatar part="fallback">
- *               SH
- *             </Avatar>
- *           </Avatar>
- *           <Avatar>
- *             <Avatar part="image">
- *               <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
- *             </Avatar>
- *             <Avatar part="fallback">
- *               TK
- *             </Avatar>
- *           </Avatar>
- *         </div>
- *         <Date date="2025-08-24T12:00:00Z" class="text-sm text-muted-foreground" />
- *       </div>
- *       <Card part="title">Danone’s Alpro Path to Cutting-Edge Composable Web</Card>
- *     </Card>
- *   </div>
- * </Card>
- * 
  * ### Ghost
  *
  * <Card variant="ghost" class="max-w-[320px]">
@@ -185,9 +106,9 @@
  *     <p class="text-sm text-muted-foreground"><span class="font-medium">Aug 10, 2025</span> · 10 min read</p>
  *   </Card>
  * </Card>
- * 
+ *
  * ### Form
- * 
+ *
  * <Card class="w-full max-w-sm">
  *   <Card part="header">
  *     <Card part="title">Login to your account</Card>
@@ -217,9 +138,9 @@
  *     <Button variant="outline" class="w-full">Login with Google</Button>
  *   </Card>
  * </Card>
- * 
+ *
  * ### Overlay
- * 
+ *
  * <Card variant="glass" class="max-w-[320px] w-full h-[240px]">
  *   <Card part="media" class="absolute inset-0 h-full w-full object-cover">
  *     <img src="https://images.unsplash.com/photo-1527430253228-e93688616381?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2834" alt="Happy pet" />

@@ -227,7 +227,7 @@ const id = providedId ?? `dialog-${Math.random().toString(36).slice(2, 10)}`;
        {...rest}
        slot="title"
        data-slot="dialog-title"
-       class={cn("mb-4 font-medium text-xl", className)}
+       class={cn("mb-4 font-medium text-xl text-foreground", className)}
      >
        <slot />
      </Tag>
