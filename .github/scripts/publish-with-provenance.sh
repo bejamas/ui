@@ -1,21 +1,46 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Apply versions from the "Version Packages" commit
-bunx changeset version
+# This script assumes versions are already bumped by the merged "Version Packages" PR.
+# DO NOT call `changeset version` here.
 
-# Rebuild with bumped versions
+# Build fresh artifacts
+bun install
 bun run build:packages
 
-# Pack & publish each public package with provenance
 cd packages
-for dir in */; do
-  pkg="$dir/package.json"
-  [ -f "$pkg" ] || continue
-  if [ "$(jq -r '.private // false' "$pkg")" != "true" ]; then
-    (cd "$dir" && bun pm pack)
-    name=$(jq -r '.name' "$pkg" | sed 's/@//; s/\//-/g')
-    ver=$(jq -r '.version' "$pkg")
-    npm publish "$dir/$name-$ver.tgz" --provenance --access public
+shopt -s nullglob
+published_any=false
+
+for dir in */ ; do
+  pkg="${dir}package.json"
+  [[ -f "$pkg" ]] || continue
+
+  if [[ "$(jq -r '.private // false' "$pkg")" == "true" ]]; then
+    echo "⏭️  $(jq -r .name "$pkg") (private)"
+    continue
   fi
+
+  name=$(jq -r .name "$pkg")
+  ver=$(jq -r .version "$pkg")
+
+  # Skip if this exact version is already on npm
+  if npm view "${name}@${ver}" version >/dev/null 2>&1; then
+    echo "⏭️  ${name}@${ver} already published"
+    continue
+  fi
+
+  echo "📦 Packing ${name}@${ver}…"
+  (cd "$dir" && bun pm pack)
+  base=$(sed -e 's/@//' -e 's/\//-/' <<< "$name")
+  tarball="${dir}${base}-${ver}.tgz"
+  [[ -f "$tarball" ]] || { echo "❌ Missing tarball $tarball"; exit 1; }
+
+  echo "⬆️  Publishing ${name}@${ver} (latest, provenance)…"
+  npm publish "$tarball" --access public --provenance
+  published_any=true
 done
+
+if [[ "$published_any" == "false" ]]; then
+  echo "✅ Nothing to publish (all versions already on npm)."
+fi
