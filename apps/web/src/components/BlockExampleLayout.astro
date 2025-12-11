@@ -27,6 +27,9 @@ const { theme = "current-theme" } = Astro.props;
       function applyTheme(theme) {
         const effective = theme === "auto" ? getPreferredColorScheme() : theme;
         document.documentElement.dataset.theme = effective;
+        // add class to body
+        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.add(effective);
       }
       // Initialize on load
       applyTheme(loadTheme());

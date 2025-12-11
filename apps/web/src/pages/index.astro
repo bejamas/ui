@@ -110,6 +110,10 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
       @apply sticky top-18 px-0 pt-12;
     }
+
+    .main-pane > main {
+      padding: var(--sl-main-pad);
+    }
   }
 
   @supports (animation-timeline: auto) {
