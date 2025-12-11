@@ -46,7 +46,7 @@ const leanPresets = Object.fromEntries(
 );
 ---
 
-<script hoist>
+<script>
   import { applyThemeToCss } from "../utils/themes/apply-theme.ts";
   // expose CSS generator for client usage
   window.bejamas = window.bejamas || {};
@@ -69,6 +69,9 @@ const leanPresets = Object.fromEntries(
 
     // save to cookie
     document.cookie = `theme=${key}; path=/;`;
+    try {
+      localStorage.setItem("theme-preset", key);
+    } catch (e) {}
 
     const cssText = window.bejamas.applyThemeCss({
       ...preset,
@@ -89,9 +92,41 @@ const leanPresets = Object.fromEntries(
     activeIndex: 0,
     iframeActive: false,
     observer: null,
+    themeIndexMap: {},
+    getPersistedThemeKey() {
+      const stored = localStorage.getItem('theme-preset');
+      if (stored) return stored;
+      const match = document.cookie.match(/(?:^|;)\s*theme=([^;]+)/);
+      return match ? decodeURIComponent(match[1]) : null;
+    },
+    setActiveByThemeKey(key) {
+      if (!key) return;
+      const idx = this.themeIndexMap?.[key];
+      if (typeof idx === 'number') this.setActive(idx, key);
+    },
     init() {
-      const first = this.$root.querySelector('[data-key]');
-      if (first?.dataset.key && typeof window.applyPresetByKey === 'function') window.applyPresetByKey(first.dataset.key);
+      this.themeIndexMap = {};
+      this.$root.querySelectorAll('[data-key][data-index]').forEach((btn) => {
+        if (btn.dataset.key && btn.dataset.index !== undefined) {
+          this.themeIndexMap[btn.dataset.key] = Number(btn.dataset.index);
+        }
+      });
+
+      const persistedKey = this.getPersistedThemeKey();
+      if (persistedKey && this.themeIndexMap[persistedKey] !== undefined) {
+        this.setActive(this.themeIndexMap[persistedKey], persistedKey);
+      } else {
+        const first = this.$root.querySelector('[data-key]');
+        if (first?.dataset.key && typeof window.applyPresetByKey === 'function') {
+          window.applyPresetByKey(first.dataset.key);
+        }
+      }
+
+      window.addEventListener('storage', (event) => {
+        if (event.key === 'theme-preset' && event.newValue) {
+          this.setActiveByThemeKey(event.newValue);
+        }
+      });
 
       const panel = this.$refs.panel || this.$root;
       const onIntersect = (entries) => {

@@ -11,23 +11,23 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 const docs = await getCollection("docs");
 const components = docs.filter((doc) => doc.id.startsWith("components/"));
 
-const isTextToken = (token) =>
+const isTextToken = (token: string) =>
   token === "foreground" || token.endsWith("-foreground");
 
 // Load CSS variables from the UI package at build-time (via Vite raw import)
 
-function extractThemeBlock(css) {
+function extractThemeBlock(css: string) {
   const match = css.match(/@theme\s*\{([\s\S]*?)\}/);
   return match ? match[1] : css;
 }
 
-function extractDarkBlock(css) {
+function extractDarkBlock(css: string) {
   const match = css.match(/\[data-theme="dark"\]\s*\{([\s\S]*?)\}/);
   return match ? match[1] : "";
 }
 
-function parseTokenBlock(block) {
-  const tokens = {};
+function parseTokenBlock(block: string) {
+  const tokens: Record<string, string> = {};
   const re = /--color-([a-z0-9-]+)\s*:\s*([^;]+);/gi;
   let m;
   while ((m = re.exec(block))) {
@@ -105,40 +105,40 @@ const sections = [
       { label: "Chart 5", token: "chart-5" },
     ],
   },
-  {
-    title: "Footer Colors",
-    items: [
-      { label: "Footer Background", token: "footer", source: "dark" },
-      {
-        label: "Footer Foreground",
-        token: "footer-foreground",
-        source: "dark",
-      },
-      { label: "Footer Primary", token: "footer-primary", source: "dark" },
-      {
-        label: "Footer Primary Foreground",
-        token: "footer-primary-foreground",
-        source: "dark",
-      },
-      { label: "Footer Accent", token: "footer-accent", source: "dark" },
-      {
-        label: "Footer Accent Foreground",
-        token: "footer-accent-foreground",
-        source: "dark",
-      },
-      { label: "Footer Border", token: "footer-border", source: "dark" },
-      { label: "Footer Ring", token: "footer-ring", source: "dark" },
-    ],
-  },
+  // {
+  //   title: "Footer Colors",
+  //   items: [
+  //     { label: "Footer Background", token: "footer", source: "dark" },
+  //     {
+  //       label: "Footer Foreground",
+  //       token: "footer-foreground",
+  //       source: "dark",
+  //     },
+  //     { label: "Footer Primary", token: "footer-primary", source: "dark" },
+  //     {
+  //       label: "Footer Primary Foreground",
+  //       token: "footer-primary-foreground",
+  //       source: "dark",
+  //     },
+  //     { label: "Footer Accent", token: "footer-accent", source: "dark" },
+  //     {
+  //       label: "Footer Accent Foreground",
+  //       token: "footer-accent-foreground",
+  //       source: "dark",
+  //     },
+  //     { label: "Footer Border", token: "footer-border", source: "dark" },
+  //     { label: "Footer Ring", token: "footer-ring", source: "dark" },
+  //   ],
+  // },
 ];
 ---
 
-<script hoist>
+<script>
   import "../utils/themes/apply-theme.ts";
 </script>
 
 <!-- Removed IndexedDB population; lean presets are used directly -->
-<StarlightPage frontmatter={{ title: "Theming", template: "splash" }}>
+<StarlightPage frontmatter={{ title: "Themes", template: "splash" }}>
   <!-- {JSON.stringify(leanPresets)} -->
   <div>
     <div class="not-content">
@@ -147,32 +147,40 @@ const sections = [
           <Label for="theme-presets" class="mb-2 font-medium"
             >Theme Presets</Label
           >
-          <Select id="theme-presets" class="w-[180px]">
-            {
-              Object.entries(leanPresets).map(([key, preset]) => (
-                <option value={key} class="px-3 py-2 rounded-md">
-                  <div class="flex -space-x-1 items-center">
-                    <div
-                      class="size-4 rounded-full"
-                      style={`background: ${preset.styles.light.background}`}
-                    />
-                    <div
-                      class="size-4 rounded-full"
-                      style={`background: ${preset.styles.light.primary}`}
-                    />
-                    <div
-                      class="size-4 rounded-full"
-                      style={`background: ${preset.styles.light.secondary}`}
-                    />
-                    <div
-                      class="size-4 rounded-full"
-                      style={`background: ${preset.styles.light.accent}`}
-                    />
-                  </div>
-                  {preset.label}
-                </option>
-              ))
-            }
+          <Select class="w-[180px]">
+            <Select part="indicator" />
+
+            <Select part="control" id="theme-presets">
+              {
+                Object.entries(leanPresets).map(([key, preset]) => (
+                  <Select
+                    part="option"
+                    value={key}
+                    class="px-3 py-2 rounded-md"
+                  >
+                    <div class="flex -space-x-1 items-center">
+                      <div
+                        class="size-4 rounded-full"
+                        style={`background: ${preset.styles.light.background}`}
+                      />
+                      <div
+                        class="size-4 rounded-full"
+                        style={`background: ${preset.styles.light.primary}`}
+                      />
+                      <div
+                        class="size-4 rounded-full"
+                        style={`background: ${preset.styles.light.secondary}`}
+                      />
+                      <div
+                        class="size-4 rounded-full"
+                        style={`background: ${preset.styles.light.accent}`}
+                      />
+                    </div>
+                    {preset.label}
+                  </Select>
+                ))
+              }
+            </Select>
           </Select>
         </div>
         <Button
@@ -187,7 +195,7 @@ const sections = [
           size="icon"
           aria-label="Next preset"><ArrowRight class="size-4" /></Button
         >
-        <Button variant="outline">Copy Code <CodeXml class="size-4" /></Button>
+        <!-- <Button variant="outline">Copy Code <CodeXml class="size-4" /></Button> -->
       </div>
     </div>
     <div class="not-content mt-10">
@@ -296,6 +304,11 @@ const sections = [
   document.addEventListener("DOMContentLoaded", async () => {
     const select = document.getElementById("theme-presets");
 
+    const getCookiePreset = () => {
+      const match = document.cookie.match(/(?:^|;)\s*theme=([^;]+)/);
+      return match ? decodeURIComponent(match[1]) : "";
+    };
+
     // If there is a saved preset key, use from lean presets
     const savedKey = localStorage.getItem("theme-preset");
     // Nothing to fetch; PRESETS already has everything we need
@@ -352,43 +365,84 @@ const sections = [
       // set selected preset in cookies
       document.cookie = `theme=${key}; path=/;`;
     };
+    let isReapplyingPreset = false;
     const saved = localStorage.getItem("theme-preset");
+    const savedCookie = getCookiePreset();
     const initialFromSelect = (select && select.value) || "";
-    const initial = saved || initialFromSelect || Object.keys(PRESETS)[0] || "";
+    const initial =
+      saved ||
+      savedCookie ||
+      initialFromSelect ||
+      Object.keys(PRESETS)[0] ||
+      "";
     if (initial) applyPreset(initial);
     if (select)
       select.addEventListener("change", (e) => applyPreset(e.target.value));
 
     const previousPreset = document.getElementById("previous-preset");
     const nextPreset = document.getElementById("next-preset");
+    const getPresetKeys = () => Object.keys(PRESETS);
+
     if (previousPreset)
       previousPreset.addEventListener("click", () => {
+        const keys = getPresetKeys();
+        if (!keys.length) return;
         const current = select.value;
-        const index = Object.keys(PRESETS).indexOf(current);
-        const previous = Object.keys(PRESETS)[index - 1];
-        if (previous) applyPreset(previous);
+        const index = keys.indexOf(current);
+        const currentIndex = index === -1 ? 0 : index;
+        const previousIndex = (currentIndex - 1 + keys.length) % keys.length;
+        applyPreset(keys[previousIndex]);
       });
     if (nextPreset)
       nextPreset.addEventListener("click", () => {
+        const keys = getPresetKeys();
+        if (!keys.length) return;
         const current = select.value;
-        const index = Object.keys(PRESETS).indexOf(current);
-        const next = Object.keys(PRESETS)[index + 1];
-        if (next) applyPreset(next);
+        const index = keys.indexOf(current);
+        const currentIndex = index === -1 ? 0 : index;
+        const nextIndex = (currentIndex + 1) % keys.length;
+        applyPreset(keys[nextIndex]);
       });
 
     // Re-apply currently selected preset when theme mode changes
-    const reapplyCurrentPreset = () => {
+    const reapplyCurrentPreset = async () => {
+      if (isReapplyingPreset) return;
+      isReapplyingPreset = true;
       const current = (select && select.value) || Object.keys(PRESETS)[0] || "";
-      if (current) applyPreset(current);
+      try {
+        if (current) await applyPreset(current);
+      } finally {
+        isReapplyingPreset = false;
+      }
     };
 
     window.addEventListener("theme-toggle-changed", reapplyCurrentPreset);
     document.addEventListener("astro:after-swap", reapplyCurrentPreset);
     window.addEventListener("storage", (event) => {
-      if (event.key === "theme-toggle") reapplyCurrentPreset();
+      if (event.key === "theme-toggle" || event.key === "starlight-theme")
+        reapplyCurrentPreset();
+      if (event.key === "theme-preset" && event.newValue)
+        applyPreset(event.newValue);
     });
 
-    // const mo = new MutationObserver(reapplyCurrentPreset);
-    // mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+    let lastCookiePreset = getCookiePreset();
+    const syncFromCookie = () => {
+      const cookiePreset = getCookiePreset();
+      if (cookiePreset && cookiePreset !== lastCookiePreset) {
+        lastCookiePreset = cookiePreset;
+        applyPreset(cookiePreset);
+      }
+    };
+    window.addEventListener("focus", syncFromCookie);
+
+    // Also respond to DOM theme markers used by ThemeSelect
+    const themeDomObserver = new MutationObserver(() => {
+      // Ignore observer-triggered loops while we're already applying
+      if (!isReapplyingPreset) reapplyCurrentPreset();
+    });
+    themeDomObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme", "class", "data-theme-choice"],
+    });
   });
 </script>

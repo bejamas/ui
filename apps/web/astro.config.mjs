@@ -14,7 +14,7 @@ const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
   // output: 'server',
-  site: "https://ui.bejamas.com",
+  site: "https://ui.bejamas.comm",
   integrations: [
     starlight({
       favicon: "/favicon.ico",
@@ -29,7 +29,8 @@ export default defineConfig({
           ],
           components: {
             Button: "@bejamas/ui/components/Button.astro",
-            ThemeSelect: "./src/components/ThemeSwitcher.astro",
+            Select: "@bejamas/ui/components/Select.astro",
+            // ThemeSelect: "./src/components/ThemeSwitcher.astro",
           },
         }),
       ],
@@ -55,7 +56,7 @@ export default defineConfig({
           autogenerate: { directory: "components" },
         },
       ],
-      customCss: ["./src/styles/global.css", "@bejamas/ui/styles/globals.css"],
+      customCss: ["./src/styles/globals.css", "@bejamas/ui/styles/globals.css"],
       logo: {
         light: "./src/assets/logo-3.svg",
         dark: "./src/assets/logo-3-dark.svg",
