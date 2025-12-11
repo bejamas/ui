@@ -1,0 +1,120 @@
+---
+import Select from "virtual:starlight-theme-bejamas/components/Select.astro";
+
+import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
+---
+
+<starlight-theme-select>
+  <div class="relative text-sm">
+    <div class="sl-bejamas-theme-select-icons">
+      <SunIcon class="theme-icon theme-icon-light size-4" />
+      <MoonIcon class="theme-icon theme-icon-dark size-4" />
+      <LaptopIcon class="theme-icon theme-icon-auto size-4" />
+    </div>
+    <Select showCheckmark={false}>
+      <Select part="indicator" />
+      <Select
+        part="control"
+        showCheckmark={false}
+        class="sl-bejamas-theme-select-control"
+      >
+        <Select part="option" value="light"
+          ><SunIcon class="size-4" /> Light</Select
+        >
+        <Select part="option" value="dark"
+          ><MoonIcon class="size-4" /> Dark</Select
+        >
+        <Select part="option" value="auto"
+          ><LaptopIcon class="size-4" /> Auto</Select
+        >
+      </Select>
+    </Select>
+  </div>
+</starlight-theme-select>
+
+<script is:inline>
+  StarlightThemeProvider.updatePickers();
+</script>
+
+<script>
+  type Theme = "auto" | "dark" | "light";
+  const storageKey = "starlight-theme";
+
+  const parseTheme = (theme: unknown): Theme =>
+    theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
+
+  const loadTheme = (): Theme =>
+    parseTheme(
+      typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
+    );
+
+  function storeTheme(theme: Theme): void {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(
+        storageKey,
+        theme === "light" || theme === "dark" ? theme : "",
+      );
+    }
+  }
+
+  const getPreferredColorScheme = (): Theme =>
+    matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+
+  function onThemeChange(theme: Theme): void {
+    const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
+    StarlightThemeProvider.updatePickers(theme);
+    document.documentElement.dataset.theme = resolved;
+    document.documentElement.dataset.themeChoice = theme;
+    document.documentElement.classList.toggle("dark", resolved === "dark");
+    storeTheme(theme);
+  }
+
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
+    if (loadTheme() === "auto") onThemeChange("auto");
+  });
+
+  class StarlightThemeSelect extends HTMLElement {
+    constructor() {
+      super();
+      onThemeChange(loadTheme());
+      this.querySelector("select")?.addEventListener("change", (e) => {
+        if (e.currentTarget instanceof HTMLSelectElement) {
+          onThemeChange(parseTheme(e.currentTarget.value));
+        }
+      });
+    }
+  }
+
+  customElements.define("starlight-theme-select", StarlightThemeSelect);
+</script>
+
+<style>
+  .theme-icon {
+    display: none;
+  }
+
+  :global(html[data-theme-choice="light"]) .theme-icon-light {
+    display: block;
+  }
+
+  :global(html[data-theme-choice="dark"]) .theme-icon-dark {
+    display: block;
+  }
+
+  :global(html[data-theme-choice="auto"]) .theme-icon-auto {
+    display: block;
+  }
+
+  .sl-bejamas-theme-select-icons {
+    position: absolute;
+    z-index: 10;
+    left: calc(var(--spacing) * 3);
+    top: calc(var(--spacing) * 2.5);
+    pointer-events: none;
+  }
+
+  .sl-bejamas-theme-select-control {
+    padding-left: calc(var(--spacing) * 9);
+    width: calc(var(--spacing) * 28);
+  }
+</style>

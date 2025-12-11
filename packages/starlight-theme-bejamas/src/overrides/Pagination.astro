@@ -8,7 +8,7 @@ const { prev, next } = pagination;
 const isRtl = dir === "rtl";
 ---
 
-<div class="flex justify-between print:hidden z-10" dir={dir}>
+<div class="sl-flex sl-justify-between print:hidden z-10" dir={dir}>
   {
     prev && (
       <Button as="a" href={prev.href} rel="prev" variant="outline">
@@ -55,6 +55,10 @@ const isRtl = dir === "rtl";
 
     .page-footer {
       margin-top: calc(var(--spacing) * 6);
+    }
+
+    .sl-justify-between {
+      justify-content: space-between;
     }
   }
 </style>

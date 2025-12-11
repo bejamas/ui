@@ -16,7 +16,9 @@
     "./overrides/PageTitle.astro": "./src/overrides/PageTitle.astro",
     "./overrides/Hero.astro": "./src/overrides/Hero.astro",
     "./overrides/MobileTableOfContents.astro": "./src/overrides/MobileTableOfContents.astro",
-    "./overrides/Footer.astro": "./src/overrides/Footer.astro"
+    "./overrides/Footer.astro": "./src/overrides/Footer.astro",
+    "./overrides/ThemeSelect.astro": "./src/overrides/ThemeSelect.astro",
+    "./overrides/ThemeProvider.astro": "./src/overrides/ThemeProvider.astro"
   },
   "scripts": {},
   "keywords": [
@@ -42,8 +44,6 @@
     "@expressive-code/plugin-line-numbers": "^0.41.3",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
-    "@lucide/astro": "^0.545.0",
-    "add": "^2.0.6",
-    "bun": "^1.2.22"
+    "@lucide/astro": "^0.545.0"
   }
 }

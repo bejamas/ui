@@ -1,0 +1,106 @@
+{/* This is intentionally inlined to avoid FOUC. */}
+<script is:inline>
+  window.StarlightThemeProvider = (() => {
+    const themeMetaMedias = [
+      "(prefers-color-scheme: light)",
+      "(prefers-color-scheme: dark)",
+    ];
+    const fallbackThemeColors = {
+      light: "#ffffff",
+      dark: "#0f171f",
+    };
+
+    const themeColors = (() => {
+      const html = document.documentElement;
+      const prevTheme = html.dataset.theme;
+      const prevDark = html.classList.contains("dark");
+
+      const readBackground = (theme) => {
+        html.dataset.theme = theme;
+        html.classList.toggle("dark", theme === "dark");
+        return (
+          getComputedStyle(html).getPropertyValue("--background").trim() ||
+          undefined
+        );
+      };
+
+      const light = readBackground("light") || fallbackThemeColors.light;
+      const dark = readBackground("dark") || fallbackThemeColors.dark;
+
+      if (prevTheme !== undefined && prevTheme !== "") {
+        html.dataset.theme = prevTheme;
+        html.classList.toggle("dark", prevDark);
+      } else {
+        html.removeAttribute("data-theme");
+        html.classList.toggle("dark", prevDark);
+      }
+
+      return { light, dark };
+    })();
+
+    function ensureThemeMeta(head, media) {
+      const baseSelector = `meta[name="theme-color"][media="${media}"]`;
+      let meta = head.querySelector(`${baseSelector}[data-theme-managed]`);
+      if (meta instanceof HTMLMetaElement) return meta;
+
+      meta = head.querySelector(baseSelector);
+      if (meta instanceof HTMLMetaElement) {
+        meta.setAttribute("data-theme-managed", "");
+        return meta;
+      }
+
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "theme-color");
+      meta.setAttribute("media", media);
+      meta.setAttribute("data-theme-managed", "");
+      head.appendChild(meta);
+      return meta;
+    }
+
+    function syncThemeColor(theme) {
+      const color = themeColors[theme];
+      const head = document.head;
+      if (!color || !head) return;
+
+      themeMetaMedias.forEach((media) => {
+        const meta = ensureThemeMeta(head, media);
+        meta.setAttribute("content", color);
+      });
+    }
+
+    const storedTheme =
+      typeof localStorage !== "undefined" &&
+      localStorage.getItem("starlight-theme");
+    const theme =
+      storedTheme ||
+      (window.matchMedia("(prefers-color-scheme: light)").matches
+        ? "light"
+        : "dark");
+    const effectiveTheme = theme === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = effectiveTheme;
+    document.documentElement.classList.toggle(
+      "dark",
+      effectiveTheme === "dark",
+    );
+    syncThemeColor(effectiveTheme);
+    return {
+      updatePickers(theme = storedTheme || "auto") {
+        document
+          .querySelectorAll("starlight-theme-select")
+          .forEach((picker) => {
+            const select = picker.querySelector("select");
+            if (select) select.value = theme;
+            /** @type {HTMLTemplateElement | null} */
+            const tmpl = document.querySelector(`#theme-icons`);
+            const newIcon = tmpl && tmpl.content.querySelector("." + theme);
+            if (newIcon) {
+              const oldIcon = picker.querySelector("svg.label-icon");
+              if (oldIcon) {
+                oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+              }
+            }
+          });
+      },
+    };
+  })();
+</script>

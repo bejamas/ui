@@ -75,6 +75,8 @@
     );
     --sl-main-frame-inner-border: var(--border);
     --sl-content-inline-start: 0rem;
+
+    --sl-icon-color: var(--foreground);
   }
 
   @media (min-width: 50em) {
@@ -532,5 +534,10 @@
     .sl-container {
       margin-inline: var(--sl-content-margin-inline, auto);
     }
+  }
+
+  .size-4 {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
   }
 }

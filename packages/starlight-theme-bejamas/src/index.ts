@@ -1,4 +1,8 @@
-import type { StarlightPlugin } from "@astrojs/starlight/types";
+import type {
+  StarlightPlugin,
+  StarlightUserConfig,
+} from "@astrojs/starlight/types";
+import type { AstroIntegration, AstroIntegrationLogger } from "astro";
 
 import { createInlineSvgUrl } from "@astrojs/starlight/expressive-code";
 
@@ -7,7 +11,7 @@ import {
   type StarlightThemeBejamasUserConfig,
 } from "./config";
 import { vitePluginStarlightThemeBejamas } from "./lib/vite";
-import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
+// import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 
 export default function starlightThemeBejamas(
   userConfig: StarlightThemeBejamasUserConfig,
@@ -16,7 +20,9 @@ export default function starlightThemeBejamas(
 
   if (!parsedConfig.success) {
     throw new Error(
-      `The provided plugin configuration is invalid.\n${parsedConfig.error.issues.map((issue) => issue.message).join("\n")}`,
+      `The provided plugin configuration is invalid.\n${parsedConfig.error.issues
+        .map((issue: { message: string }) => issue.message)
+        .join("\n")}`,
     );
   }
 
@@ -30,6 +36,11 @@ export default function starlightThemeBejamas(
         logger,
         updateConfig,
         addIntegration,
+      }: {
+        config: StarlightUserConfig;
+        logger: AstroIntegrationLogger;
+        updateConfig: (config: StarlightUserConfig) => void;
+        addIntegration: (integration: AstroIntegration) => void;
       }) {
         const userExpressiveCodeConfig =
           starlightConfig.expressiveCode === false ||
@@ -37,11 +48,11 @@ export default function starlightThemeBejamas(
             ? {}
             : starlightConfig.expressiveCode;
 
-        starlightConfig.plugins?.push(
-          pluginLineNumbers({
-            showLineNumbers: true,
-          }),
-        );
+        // starlightConfig.plugins?.push(
+        //   pluginLineNumbers({
+        //     showLineNumbers: true,
+        //   }),
+        // );
 
         const componentOverrides: typeof config.components = {};
 
@@ -53,7 +64,9 @@ export default function starlightThemeBejamas(
           | "PageTitle"
           | "Hero"
           | "MobileTableOfContents"
-          | "Footer";
+          | "Footer"
+          | "ThemeSelect"
+          | "ThemeProvider";
 
         const overridableComponents: OverridableComponent[] = [
           "Header",
@@ -64,6 +77,8 @@ export default function starlightThemeBejamas(
           "Hero",
           "MobileTableOfContents",
           "Footer",
+          "ThemeSelect",
+          "ThemeProvider",
         ];
 
         for (const component of overridableComponents) {
@@ -86,11 +101,8 @@ export default function starlightThemeBejamas(
             "@fontsource/inter/400.css",
             "@fontsource/inter/500.css",
             "@fontsource/inter/700.css",
-            // "@fontsource-variable/inter",
             ...(starlightConfig.customCss ?? []),
-            // "starlight-theme-bejamas/styles/layers",
             "starlight-theme-bejamas/styles/theme.css",
-            // "starlight-theme-bejamas/styles/base",
           ],
           expressiveCode:
             starlightConfig.expressiveCode === false
@@ -118,11 +130,6 @@ export default function starlightThemeBejamas(
                       ...userExpressiveCodeConfig?.styleOverrides?.textMarkers,
                     },
                   },
-                  // plugins: [
-                  //   pluginLineNumbers({
-                  //     showLineNumbers: false,
-                  //   }),
-                  // ],
                   defaultProps: {
                     showLineNumbers: false,
                     overridesByLang: {
