@@ -4,8 +4,9 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
+    "start": "npm run build:docs && astro dev",
+    "build": "npm run build:docs && astro build",
+    "build:docs": "npx bejamas@canary docs:build",
     "preview": "astro preview",
     "astro": "astro"
   },

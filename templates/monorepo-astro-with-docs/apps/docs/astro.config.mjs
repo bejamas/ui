@@ -1,8 +1,8 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
-
 import tailwindcss from "@tailwindcss/vite";
+
 import starlightThemeBejamas from "starlight-theme-bejamas";
 
 // https://astro.build/config
@@ -18,16 +18,18 @@ export default defineConfig({
             },
           ],
           components: {
+            // This is needed if you want to use your UI components in the docs site
             Button: "@repo/ui/components/Button.astro",
+            Select: "@repo/ui/components/Select.astro",
           },
         }),
       ],
-      title: "my ui docs",
+      title: "Acme/ui",
       social: [
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/withastro/starlight",
+          href: "https://github.com/bejamas/ui",
         },
       ],
       sidebar: [
@@ -43,22 +45,10 @@ export default defineConfig({
           autogenerate: { directory: "components" },
         },
       ],
-      customCss: ["@repo/ui/styles/globals.css"],
+      customCss: ["./src/styles/globals.css", "@repo/ui/globals.css"],
     }),
   ],
   vite: {
     plugins: [tailwindcss()], // Tailwind is needed to properly display UI components
-    server: {
-      fs: {
-        allow: [
-          // always current project
-          // process.cwd(),
-          // add your monorepo root (the one from the 403 path)
-          "/Users/thom/dev/bejamas-ui-turbo",
-        ],
-        // (optional) brute-force during dev:
-        // strict: false,
-      },
-    },
   },
 });
