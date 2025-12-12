@@ -43,7 +43,7 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
       )
     }
   </div>
-  <div class="sl-flex sl-justify-end print:hidden">
+  <div class="sl-flex sl-bejamas-header-search sl-justify-end print:hidden">
     {shouldRenderSearch && <Search />}
   </div>
   <div class="sl-hidden md:sl-flex print:hidden right-group">
@@ -62,8 +62,11 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
       align-items: center;
       gap: 1.25rem;
     }
-  }
-  @layer bejamas {
+
+    .sl-bejamas-header-search {
+      margin-left: auto;
+    }
+
     .header {
       display: flex;
       gap: var(--sl-nav-gap);
