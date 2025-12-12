@@ -4,7 +4,7 @@ Astro-Native Building Blocks for Modern Design Systems.
 
 ## Documentation
 
-Visit [https://ui.bejamas.com/docs](https://ui.bejamas.com/docs) to view the documentation.
+Visit [https://ui.bejamas.com/docs/introduction](https://ui.bejamas.com/docs/introduction) to view the documentation.
 
 ## Contributing
 
