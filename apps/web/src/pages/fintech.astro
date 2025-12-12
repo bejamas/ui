@@ -2,14 +2,11 @@
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
 import Button from "@bejamas/ui/components/Button.astro";
 import NavigationMenu from "@/ui-next/NavigationMenu.astro";
-import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
 import StickySurface from "@bejamas/ui/components/StickySurface.astro";
-import Breadcrumb from "@bejamas/ui/components/Breadcrumb.astro";
 import Separator from "@bejamas/ui/components/Separator.astro";
 import Footer from "@/ui-next/Footer.astro";
 import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
 import Input from "@bejamas/ui/components/Input.astro";
-import Label from "@bejamas/ui/components/Label.astro";
 import Card from "@bejamas/ui/components/Card.astro";
 import Marquee from "@bejamas/ui/components/Marquee.astro";
 import Accordion from "@bejamas/ui/components/Accordion.astro";
@@ -47,7 +44,7 @@ const faq = [
       </div>
       <ul
         slot="links"
-        class="flex col-span-8 items-center justify-center space-x-2"
+        class="hidden lg:flex col-span-8 items-center justify-center space-x-2"
       >
         <li>
           <Button as="a" href="/" variant="ghost" class="text-base"
@@ -88,7 +85,9 @@ const faq = [
     </NavigationMenu>
   </StickySurface>
 
-  <section class="py-20 relative z-10 max-w-6xl mx-auto px-5 grid grid-cols-12">
+  <section
+    class="py-20 relative z-10 max-w-6xl mx-auto px-5 grid grid-cols-1 lg:grid-cols-12"
+  >
     <div class="col-span-8">
       <h1 class="text-7xl font-medium tracking-tight">
         Your wealth.<br />Fully accounted.
@@ -192,70 +191,6 @@ const faq = [
     </div>
   </section>
 
-  <section class="max-w-6xl px-5 mx-auto py-20">
-    <Card
-      class="relative aspect-[320/390] bg-gray-100 dark:bg-gray-800 w-full max-w-[320px] border-none"
-      hoverVariant="glass"
-    >
-      <Fragment slot="media">
-        <img
-          alt="Team Member"
-          aria-hidden="true"
-          class="pointer-events-none absolute inset-0 h-full w-full select-none object-cover"
-          src="/demo/team/5fccb1d99609bb713db5b36177a98320f1a438e5.png"
-        />
-        <div
-          aria-hidden="true"
-          class="pointer-events-none absolute bottom-0 left-0 right-0 h-[64px] bg-gradient-to-t from-black/50 to-transparent"
-        >
-        </div>
-      </Fragment>
-      <div slot="footer" class="text-white">
-        <p class="text-lg">John Doe</p>
-        <p class="opacity-80 text-sm">john.doe@example.com</p>
-      </div>
-
-      <div
-        slot="hiddenContent"
-        class="bg-primary flex flex-col inset-0 absolute z-10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 p-6 text-white"
-      >
-        <p class="text-xl font-medium">Thom Krupa</p>
-        <p class="opacity-80 text-sm mt-6">
-          Damian is an Investment Analyst with over 7 years of experience in
-          market research and portfolio management, helping clients make
-          informed investment decisions.
-        </p>
-        <div class="self-end mt-auto">
-          <Button variant="outline">View Profile</Button>
-        </div>
-      </div>
-    </Card>
-  </section>
-
-  <section class="max-w-6xl px-5 mx-auto py-20">
-    <h2 class="text-4xl">Frequently asked questions</h2>
-    <div class="grid grid-cols-12 gap-4 text-xl mt-10">
-      <div class="col-span-4 pt-4">
-        <p>General</p>
-      </div>
-      <Accordion class="col-span-8">
-        {
-          faq.map((item) => (
-            <details class="border-b">
-              <summary>
-                {item.question}
-                <ChevronDownIcon class="size-4" />
-              </summary>
-              <div data-slot="accordion-content" class="pb-10">
-                <p>{item.answer}</p>
-              </div>
-            </details>
-          ))
-        }
-      </Accordion>
-    </div>
-  </section>
-
   <section>
     <Separator class="my-20" />
     <Marquee class="lg:text-[6rem]" time={90}>
@@ -286,7 +221,7 @@ const faq = [
     <Separator class="my-20" />
   </section>
 
-  <Footer class="mx-auto max-w-6xl px-5">
+  <Footer class="hidden lg:block mx-auto max-w-6xl px-5">
     <div class="grid grid-cols-12 gap-4">
       <LinkGroup
         class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
