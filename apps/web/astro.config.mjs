@@ -14,7 +14,10 @@ const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
   // output: 'server',
-  site: "https://ui.bejamas.comm",
+  site: "https://ui.bejamas.com",
+  redirects: {
+    "/docs": "/docs/introduction",
+  },
   integrations: [
     starlight({
       favicon: "/favicon.ico",
