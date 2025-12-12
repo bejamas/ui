@@ -50,7 +50,29 @@ const leanPresets = Object.fromEntries(
   ]),
 );
 
-const sections = [
+type ThemeSectionItemInput = {
+  label: string;
+  token: string;
+  source?: "light" | "dark";
+};
+
+type ThemeSectionInput = {
+  title: string;
+  items: ThemeSectionItemInput[];
+};
+
+type ThemeSectionItem = {
+  label: string;
+  token: string;
+  source: "light" | "dark";
+};
+
+type ThemeSection = {
+  title: string;
+  items: ThemeSectionItem[];
+};
+
+const rawSections: ThemeSectionInput[] = [
   {
     title: "Primary Theme Colors",
     items: [
@@ -131,6 +153,15 @@ const sections = [
   //   ],
   // },
 ];
+
+const sections: ThemeSection[] = rawSections.map((section) => ({
+  ...section,
+  items: section.items.map((item) => ({
+    source: item.source ?? "light",
+    label: item.label,
+    token: item.token,
+  })),
+}));
 ---
 
 <script>
@@ -215,7 +246,7 @@ const sections = [
                         class="size-15 rounded-md"
                         data-swatch={item.token}
                         data-source={item.source ?? "light"}
-                        style={`background: var(--color-${item.token}); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-${item.token}) 25%, transparent)`}
+                        style={`background: var(--${item.token}); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 15%, transparent);`}
                       />
                       <div class="text-left">
                         <div class="mb-1 text-sm font-medium">{item.label}</div>
@@ -312,6 +343,72 @@ const sections = [
     // If there is a saved preset key, use from lean presets
     const savedKey = localStorage.getItem("theme-preset");
     // Nothing to fetch; PRESETS already has everything we need
+    const parseRgb = (cssColor) => {
+      // Expected: rgb(r, g, b) or rgba(r, g, b, a)
+      const m = cssColor
+        .replace(/\s+/g, "")
+        .match(/^rgba?\((\d+),(\d+),(\d+)(?:,([0-9.]+))?\)$/i);
+      if (!m) return null;
+      return {
+        r: Number(m[1]),
+        g: Number(m[2]),
+        b: Number(m[3]),
+        a: m[4] === undefined ? 1 : Number(m[4]),
+      };
+    };
+
+    const srgbToLinear = (c) => {
+      const v = c / 255;
+      return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    };
+
+    const relativeLuminance = (rgb) => {
+      const r = srgbToLinear(rgb.r);
+      const g = srgbToLinear(rgb.g);
+      const b = srgbToLinear(rgb.b);
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+
+    const contrastRatio = (a, b) => {
+      const L1 = relativeLuminance(a);
+      const L2 = relativeLuminance(b);
+      const lighter = Math.max(L1, L2);
+      const darker = Math.min(L1, L2);
+      return (lighter + 0.05) / (darker + 0.05);
+    };
+
+    const getPageBackgroundColor = () => {
+      const doc = getComputedStyle(document.documentElement).backgroundColor;
+      const body = getComputedStyle(document.body).backgroundColor;
+      // Prefer non-transparent if one is transparent
+      const docRgb = parseRgb(doc);
+      if (docRgb && docRgb.a === 0) return body;
+      return doc || body;
+    };
+
+    const updateSwatchBorders = (map) => {
+      // Only apply border when the swatch is too close to page background.
+      // This keeps high-contrast tokens clean while still making "background-ish" swatches readable.
+      const pageBg = getPageBackgroundColor();
+      const pageRgb = parseRgb(pageBg);
+      if (!pageRgb) return;
+
+      const border = map.border || "rgba(0,0,0,0.15)";
+      const fg = map.foreground || "rgb(0,0,0)";
+
+      document.querySelectorAll("[data-swatch]").forEach((el) => {
+        const swatchBg = getComputedStyle(el).backgroundColor;
+        const swatchRgb = parseRgb(swatchBg);
+        if (!swatchRgb) return;
+
+        const ratio = contrastRatio(swatchRgb, pageRgb);
+        const needsBorder = ratio < 1.7;
+        el.style.boxShadow = needsBorder
+          ? `inset 0 0 0 1px color-mix(in oklch, ${border} 70%, ${fg} 30%)`
+          : "none";
+      });
+    };
+
     const updateUIForPreset = (key) => {
       const preset = PRESETS[key];
       if (!preset) return;
@@ -333,6 +430,9 @@ const sections = [
         const v = map[token];
         if (v) el.style.background = v;
       });
+      // update swatch borders once styles are applied and computed colors are available
+      const currentMap = mode === "dark" ? dark : light;
+      // requestAnimationFrame(() => updateSwatchBorders(currentMap));
       // keep select UI in sync
       if (select && select.value !== key) select.value = key;
     };
