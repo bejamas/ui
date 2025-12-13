@@ -12,6 +12,7 @@ permissions:
 jobs:
   release:
     if: github.repository_owner == 'bejamas'
+    name: Build & Publish a latest release to NPM
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,20 +24,18 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org
 
-      - run: bun install
-      - run: bun run build:packages
-
-      - name: Setup npmrc
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > ~/.npmrc
-
       # This action creates the "Version Packages" PR when needed,
       # and on merge runs the publish command below.
       - name: Changesets
+        id: cs
         uses: changesets/action@v1
         with:
-          publish: ./.github/scripts/publish-with-provenance.sh
+          publish: bun install && bun run build:packages && npx changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
+          NPM_CONFIG_PROVENANCE: true
+
+      - if: ${{ steps.cs.outputs.published == 'true' }}
+        run: echo "Published to latest"
