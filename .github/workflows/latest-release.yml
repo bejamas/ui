@@ -24,13 +24,17 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org
 
+      - run: bun install
+
+      - run: bun run build:packages
+
       # This action creates the "Version Packages" PR when needed,
       # and on merge runs the publish command below.
       - name: Changesets
         id: cs
         uses: changesets/action@v1
         with:
-          publish: bun install && bun run build:packages && npx changeset publish
+          publish: npx changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
