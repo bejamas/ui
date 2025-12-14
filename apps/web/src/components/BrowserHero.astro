@@ -151,17 +151,17 @@ const leanPresets = Object.fromEntries(
       this.iframeActive = true;
     },
   }"
-  class="browser will-change-transform mt-0 not-content relative z-10 h-[calc(100svh_-_var(--spacing)_*_18)] rounded-t-lg lg:rounded-t-2xl overflow-clip flex flex-col"
+  class="browser will-change-transform mt-0 not-content relative z-10 md:h-[calc(100svh_-_var(--spacing)_*_18)] rounded-t-lg md:rounded-t-xl lg:rounded-t-2xl overflow-clip flex flex-col"
 >
   <div
-    class="bg-input/40 dark:bg-input/30 backdrop-blur-xl not-content px-5 lg:pt-2 flex"
+    class="bg-input/40 dark:bg-input/30 backdrop-blur-xl not-content px-5 md:pt-2 flex"
   >
-    <div class="hidden lg:flex items-center gap-x-2 mb-1.75">
+    <div class="hidden md:flex items-center gap-x-2 mb-1.75">
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
       <div class="size-3 bg-muted-foreground/20 rounded-full"></div>
     </div>
-    <div class="md:ml-18 hidden lg:flex items-center">
+    <div class="md:ml-18 hidden md:flex items-center">
       <button
         type="button"
         data-key={componentsShowreel.theme}
@@ -212,14 +212,14 @@ const leanPresets = Object.fromEntries(
     <button
       type="button"
       x-show="!iframeActive"
-      class="absolute inset-0 z-10 cursor-zoom-in"
+      class="hidden md:block absolute inset-0 z-10 cursor-zoom-in"
       x-on:click.prevent.stop="activateIframe"
       aria-label="Activate preview"></button>
     <iframe
       src={componentsShowreel.preview}
       x-show={`activeIndex === 0`}
       x-bind:aria-hidden={`activeIndex !== 0`}
-      class="w-full h-full"
+      class="w-full h-[1418px] md:h-full"
       loading="lazy"></iframe>
     {
       tabs.map((tab, i) => (
@@ -245,5 +245,7 @@ const leanPresets = Object.fromEntries(
       0px 4.72579px 4.72579px rgba(5, 23, 41, 0.05),
       0px 9.45157px 28.3547px rgba(5, 23, 41, 0.07),
       0px 1.18145px 0px rgba(5, 23, 41, 0.08);
+
+    top: calc(var(--spacing) * 7);
   }
 </style>

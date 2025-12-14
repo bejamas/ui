@@ -28,7 +28,7 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
 
 <BlockExampleLayout theme="default">
   <section
-    class="max-w-7xl py-20 mx-auto px-5 grid grid-cols-1 lg:grid-cols-12 gap-10"
+    class="max-w-7xl pt-0 px-0 pb-10 md:pt-10 lg:py-20 mx-auto md:px-5 grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-10"
   >
     <div class="col-span-4 space-y-6">
       <h1 class="text-6xl font-medium leading-none">Aa</h1>
@@ -111,12 +111,13 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
 
       <Alert>
         <BadgeCheckIcon size={40} color="var(--color-green-600)" />
-        <Alert part="title">Your profile has been verified. </Alert>
+        <Alert part="title">Designed for CMS-driven, long-lived websites.</Alert
+        >
       </Alert>
     </div>
     <div class="col-span-4 space-y-6">
-      <Textarea placeholder="Write a comment..." />
-      <Card class="w-full" footerClass="flex-col gap-2">
+      <Textarea placeholder="Additional information (optional)…" />
+      <Card class="w-full">
         <Card part="header">
           <Card part="title"> Get the latest updates </Card>
           <Card part="description">
@@ -157,7 +158,16 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
         </Card>
       </Card>
 
-      <div class="my-10">
+      <Alert>
+        <AlertCircleIcon size={32} />
+        <Alert part="title">Cookie preferences updated</Alert>
+        <Alert part="description">
+          You can change your settings at any time.
+        </Alert>
+      </Alert>
+    </div>
+    <div class="col-span-4 space-y-6">
+      <div class="mb-10">
         <Marquee class="dark:invert">
           <img
             src="/demo/logo/sonos.svg"
@@ -187,15 +197,6 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
         </Marquee>
       </div>
 
-      <Alert>
-        <AlertCircleIcon size={32} />
-        <Alert part="title"> Success! Your changes have been saved </Alert>
-        <Alert part="description">
-          This is an alert with icon, title and description.
-        </Alert>
-      </Alert>
-    </div>
-    <div class="col-span-4 space-y-6">
       <div
         class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale items-center"
       >
@@ -207,15 +208,15 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
         </Avatar>
         <Avatar>
           <Avatar part="image">
-            <img src="https://github.com/shadcn.png" alt="@shadcn" />
+            <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
           </Avatar>
-          <Avatar part="fallback">SH</Avatar>
+          <Avatar part="fallback">TK</Avatar>
         </Avatar>
         <Avatar>
           <Avatar part="image">
-            <img src="https://github.com/fredkschott.png" alt="@fredkschott" />
+            <img src="https://github.com/bejamas.png" alt="@bejamas" />
           </Avatar>
-          <Avatar part="fallback">ER</Avatar>
+          <Avatar part="fallback">BJ</Avatar>
         </Avatar>
 
         <div class="flex ml-5 gap-0.5 flex-col">
