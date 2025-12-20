@@ -1,5 +1,15 @@
 [
   {
+    "name": "accordion",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Accordion.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
     "name": "alert",
     "type": "registry:ui",
     "files": [
@@ -30,11 +40,11 @@
     ]
   },
   {
-    "name": "breadcrumbs",
+    "name": "breadcrumb",
     "type": "registry:ui",
     "files": [
       {
-        "path": "ui/Breadcrumbs.astro",
+        "path": "ui/Breadcrumb.astro",
         "type": "registry:ui"
       }
     ]
@@ -45,6 +55,216 @@
     "files": [
       {
         "path": "ui/Button.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "button-group",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/ButtonGroup.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "card",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Card.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "carousel",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Carousel.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "checkbox",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Checkbox.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "date",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Date.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "dialog",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Dialog.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "dropdown",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Dropdown.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "input",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Input.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "input-group",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/InputGroup.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "item",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Item.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "label",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Label.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "link-group",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/LinkGroup.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "marquee",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Marquee.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "navigation-menu",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/NavigationMenu.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "radio-group",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/RadioGroup.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "select",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Select.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "separator",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Separator.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "sticky-surface",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/StickySurface.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "switch",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Switch.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "tabs",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Tabs.astro",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "textarea",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/Textarea.astro",
         "type": "registry:ui"
       }
     ]

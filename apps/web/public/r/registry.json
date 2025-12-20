@@ -3,21 +3,11 @@
   "homepage": "https://ui.bejamas.com",
   "items": [
     {
-      "name": "button",
+      "name": "accordion",
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Button.astro",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "dropdown",
-      "type": "registry:ui",
-      "files": [
-        {
-          "path": "../../packages/ui/src/components/Dropdown.astro",
+          "path": "../../packages/ui/src/components/Accordion.astro",
           "type": "registry:ui"
         }
       ]
@@ -63,11 +53,41 @@
       ]
     },
     {
+      "name": "button",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/Button.astro",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button-group",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/ButtonGroup.astro",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "card",
       "type": "registry:ui",
       "files": [
         {
           "path": "../../packages/ui/src/components/Card.astro",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/Carousel.astro",
           "type": "registry:ui"
         }
       ]
@@ -84,7 +104,6 @@
     },
     {
       "name": "date",
-
       "type": "registry:ui",
       "files": [
         {
@@ -95,11 +114,20 @@
     },
     {
       "name": "dialog",
-
       "type": "registry:ui",
       "files": [
         {
           "path": "../../packages/ui/src/components/Dialog.astro",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dropdown",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/Dropdown.astro",
           "type": "registry:ui"
         }
       ]
@@ -110,6 +138,26 @@
       "files": [
         {
           "path": "../../packages/ui/src/components/Input.astro",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input-group",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/InputGroup.astro",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "item",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/Item.astro",
           "type": "registry:ui"
         }
       ]
@@ -140,6 +188,26 @@
       "files": [
         {
           "path": "../../packages/ui/src/components/Marquee.astro",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/NavigationMenu.astro",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/RadioGroup.astro",
           "type": "registry:ui"
         }
       ]
@@ -201,17 +269,6 @@
         {
           "path": "../../packages/ui/src/components/Textarea.astro",
           "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "features-01",
-      "type": "registry:block",
-      "files": [
-        {
-          "path": "src/pages/blocks/features/01.astro",
-          "type": "registry:component",
-          "target": ""
         }
       ]
     }
