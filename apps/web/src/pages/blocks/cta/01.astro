@@ -1,0 +1,66 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import Button from "@bejamas/ui/components/Button.astro";
+import Card from "@bejamas/ui/components/Card.astro";
+import { ArrowRight } from "@lucide/astro";
+---
+
+<BlockExampleLayout>
+
+  <div>
+    <Card variant="ghost" class="gap-8 py-8 px-8 rounded-none">
+      <Card part="media" class="rounded-none">
+        <img
+          alt="Happy pet"
+          aria-hidden="true"
+          src="https://images.unsplash.com/photo-1759223293091-f4c757c79f6c?q=80&w=1536&h=660&auto=format&fit=crop"
+        />
+      </Card>
+      <Card part="content" class="flex flex-col items-center justify-center p-4 md:py-32">
+        <Card part="title" class="text-3xl md:text-6xl">Your Wealth. Fully accounted</Card>
+        <Card part="description" class="mt-6 text-center max-w-[60ch]">A powerful combination of efficiency, quality and flexibility for anyone looking to streamline their design workflow.</Card>
+        <Button as="a" href="#" class="mt-8">
+          Order now
+          <ArrowRight class="size-4" />
+        </Button>
+      </Card>
+    </Card>
+  </div>
+
+
+  <div
+    class="max-w-5xl py-20 mx-auto [container-type:inline-size] text-foreground"
+  >
+    <h2 class="font-medium mb-5 leading-none text-[clamp(2rem,12cqw,6rem)]">
+      you can just eat eggs
+    </h2>
+
+    <div class="grid grid-cols-4 gap-4">
+      <Card variant="ghost" orientation="horizontal">
+        <Card part="media" class="relative">
+          <img
+            src="https://pbs.twimg.com/media/G0x-gkSbcAAaH3Z?format=jpg&name=large"
+            class="rounded-xl"
+          />
+          <span
+            class="absolute top-4 left-4 bg-primary text-primary-foreground px-2 py-1 text-sm font-mono rounded-md"
+          >
+            01
+          </span>
+        </Card>
+        <Card part="header" variant="ghost">
+          <Card part="title"> Healthy breakfast </Card>
+          <Card part="description"> Eggs are a great source of protein. </Card>
+        </Card>
+      </Card>
+    </div>
+    <div
+      class="border-t border-border pt-3 mt-1 flex justify-between items-center gap-4"
+    >
+      <p class="text-sm">It's time to eat some eggs</p>
+      <Button variant="secondary">
+        Make omelette <ArrowRight class="size-4" />
+      </Button>
+    </div>
+  </div>
+</BlockExampleLayout>

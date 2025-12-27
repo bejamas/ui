@@ -1,13 +1,13 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "textarea",
-  "type": "registry:ui",
   "dependencies": [],
   "files": [
     {
-      "path": "../../packages/ui/src/components/Textarea.astro",
-      "content": "---\n/**\n * @component Textarea\n * @title Textarea\n * @description Base textarea field used in forms.\n * @status stable\n * @since 0.1.0\n *\n * @example\n *\n * <Textarea placeholder=\"Type your message here...\" />\n *\n */\n\nconst { class: className = \"\", ...props } = Astro.props;\n\nconst baseClass =\n  \"border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\";\n\nimport { cn } from \"@bejamas/ui/lib/utils\";\n---\n\n<textarea\n  data-slot={props[\"data-slot\"] ?? \"textarea\"}\n  class={cn(baseClass, className)}\n  {...props}></textarea>\n",
+      "path": "ui/Textarea.astro",
+      "content": "---\r\n/**\r\n * @component Textarea\r\n * @title Textarea\r\n * @description A multi-line input field for longer user content.\r\n * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2508-2555&t=YFStJ3V8fXEO8QD8-4\r\n * @status stable\r\n * @since 0.1.0\r\n *\r\n * @preview\r\n *\r\n * <Textarea placeholder=\"Type your message here...\" />\r\n *\r\n */\r\n\r\nconst { class: className = \"\", ...props } = Astro.props;\r\n\r\nconst baseClass =\r\n  \"border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\";\r\n\r\nimport { cn } from \"@/lib/utils\";\r\n---\r\n\r\n<textarea\r\n  data-slot={props[\"data-slot\"] ?? \"textarea\"}\r\n  class={cn(baseClass, className)}\r\n  {...props}></textarea>\r\n",
       "type": "registry:ui"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }
