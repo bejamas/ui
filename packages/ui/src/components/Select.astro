@@ -335,7 +335,6 @@ const part: SelectPart = (rawPart ?? "root") as SelectPart;
 
 <style>
   @reference "tailwindcss";
-  @reference "../styles/globals.css";
 
   /* Placeholder for checkmark hiding if supported by UA */
   .hide-checkmark {
@@ -350,7 +349,9 @@ const part: SelectPart = (rawPart ?? "root") as SelectPart;
         appearance: base-select;
       }
       border-color: var(--border);
-      @apply rounded-lg my-2 p-1 shadow-lg bg-popover text-popover-foreground;
+      background-color: var(--popover);
+      color: var(--popover-foreground);
+      @apply rounded-lg my-2 p-1 shadow-lg;
     }
     &::picker-icon {
       @apply hidden;
