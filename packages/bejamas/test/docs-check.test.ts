@@ -332,3 +332,75 @@ describe("docs:check with all complete components", () => {
     expect(exitCode).toBe(0);
   });
 });
+
+describe("docs:check error scenarios", () => {
+  test("exits with error when components directory does not exist", async () => {
+    const emptyFixturesDir = path.resolve(__dirname, "fixtures/docs-check-empty");
+    fs.mkdirSync(emptyFixturesDir, { recursive: true });
+    fs.writeFileSync(
+      path.resolve(emptyFixturesDir, "package.json"),
+      JSON.stringify({ name: "test-empty-ui", version: "1.0.0" }, null, 2),
+    );
+    // Note: intentionally NOT creating src/components
+
+    try {
+      const proc = Bun.spawn(["bun", cliEntry, "docs:check"], {
+        cwd: packageDir,
+        stdout: "pipe",
+        stderr: "pipe",
+        env: {
+          ...process.env,
+          BEJAMAS_UI_ROOT: emptyFixturesDir,
+          NO_COLOR: "1",
+        },
+      });
+
+      const [stdout, stderr, exitCode] = await Promise.all([
+        new Response(proc.stdout).text(),
+        new Response(proc.stderr).text(),
+        proc.exited,
+      ]);
+
+      expect(exitCode).toBe(1);
+      expect(stdout + stderr).toMatch(/not found|expected structure/i);
+    } finally {
+      fs.rmSync(emptyFixturesDir, { recursive: true, force: true });
+    }
+  });
+
+  test("exits gracefully when no astro files found", async () => {
+    const noAstroDir = path.resolve(__dirname, "fixtures/docs-check-no-astro");
+    const componentsDir = path.resolve(noAstroDir, "src/components");
+    fs.mkdirSync(componentsDir, { recursive: true });
+    fs.writeFileSync(
+      path.resolve(noAstroDir, "package.json"),
+      JSON.stringify({ name: "test-no-astro", version: "1.0.0" }, null, 2),
+    );
+    // Create a non-astro file
+    fs.writeFileSync(path.resolve(componentsDir, "utils.ts"), "export const x = 1;");
+
+    try {
+      const proc = Bun.spawn(["bun", cliEntry, "docs:check"], {
+        cwd: packageDir,
+        stdout: "pipe",
+        stderr: "pipe",
+        env: {
+          ...process.env,
+          BEJAMAS_UI_ROOT: noAstroDir,
+          NO_COLOR: "1",
+        },
+      });
+
+      const [stdout, stderr, exitCode] = await Promise.all([
+        new Response(proc.stdout).text(),
+        new Response(proc.stderr).text(),
+        proc.exited,
+      ]);
+
+      expect(exitCode).toBe(0);
+      expect(stdout + stderr).toMatch(/no .astro|no component/i);
+    } finally {
+      fs.rmSync(noAstroDir, { recursive: true, force: true });
+    }
+  });
+});

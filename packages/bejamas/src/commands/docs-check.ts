@@ -25,7 +25,6 @@ interface ComponentDocStatus {
   status: "complete" | "incomplete" | "missing";
   missingRequired: string[];
   missingRecommended: string[];
-  missingOptional: string[];
 }
 
 interface CheckResult {
@@ -41,7 +40,6 @@ const RECOMMENDED_FIELDS = [
   "usageMDX",
   "figmaUrl",
 ] as const;
-const OPTIONAL_FIELDS = ["examplesMDX"] as const;
 
 const FIELD_LABELS: Record<string, string> = {
   name: "@component",
@@ -50,7 +48,6 @@ const FIELD_LABELS: Record<string, string> = {
   primaryExampleMDX: "@preview",
   usageMDX: "@usage",
   figmaUrl: "@figmaUrl",
-  examplesMDX: "@examples",
 };
 
 function checkComponentDocs(
@@ -64,7 +61,6 @@ function checkComponentDocs(
   const componentName = fileName.replace(/\.astro$/i, "");
   const missingRequired: string[] = [];
   const missingRecommended: string[] = [];
-  const missingOptional: string[] = [];
 
   for (const field of REQUIRED_FIELDS) {
     const value = meta[field];
@@ -77,13 +73,6 @@ function checkComponentDocs(
     const value = meta[field];
     if (!value || (typeof value === "string" && !value.trim())) {
       missingRecommended.push(FIELD_LABELS[field] || field);
-    }
-  }
-
-  for (const field of OPTIONAL_FIELDS) {
-    const value = meta[field];
-    if (!value || (typeof value === "string" && !value.trim())) {
-      missingOptional.push(FIELD_LABELS[field] || field);
     }
   }
 
@@ -102,7 +91,6 @@ function checkComponentDocs(
     status,
     missingRequired,
     missingRecommended,
-    missingOptional,
   };
 }
 
@@ -191,7 +179,11 @@ async function checkDocs({
 
     const componentsDir = join(uiRoot, "src", "components");
     if (!existsSync(componentsDir)) {
-      logger.error(`Components directory not found: ${componentsDir}`);
+      logger.error(
+        `Components directory not found: ${componentsDir}\n\n` +
+          `Expected structure: <uiRoot>/src/components/*.astro\n` +
+          `Use --cwd to specify a different UI package root.`,
+      );
       process.exit(1);
     }
 
