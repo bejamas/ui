@@ -4,6 +4,7 @@ import { Command } from "commander";
 import { createRequire } from "module";
 import { init } from "@/src/commands/init";
 import { docs } from "@/src/commands/docs";
+import { docsCheck } from "@/src/commands/docs-check";
 import { add } from "@/src/commands/add";
 
 const require = createRequire(import.meta.url);
@@ -20,6 +21,7 @@ const program = new Command()
 program.addCommand(init);
 program.addCommand(add);
 program.addCommand(docs);
+program.addCommand(docsCheck);
 
 program.parse(process.argv);
 
