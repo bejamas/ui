@@ -10,6 +10,7 @@ The `bejamas` CLI is a thin Astro-first wrapper over shadcn. Use it for:
 - **`init`**: scaffold Astro (single app or monorepo).
 - **`add`**: install from registries with short names.
 - **`docs:build`**: generate MDX docs from `.astro` comments.
+- **`docs:check`**: validate documentation completeness for components.
 
 For advanced registry browsing, use the **shadcn** CLI (`view`, `search`, `list`, `build`).
 
@@ -82,3 +83,36 @@ Example (in a `.astro` file)
  */
 ---
 ```
+
+### docs:check
+
+Validate documentation completeness for all components. Reports missing required fields, incomplete docs, and provides a summary.
+
+#### Usage
+
+```bash
+npx bejamas docs:check [--cwd <path>] [--json]
+```
+
+#### Options
+
+- `--cwd <path>` - Path to UI working directory
+- `--json` - Output results as JSON for CI integration
+
+#### Documentation Fields
+
+**Required:**
+
+- `@component` - Component name
+- `@title` - Display title
+- `@description` - Short description
+
+**Recommended:**
+
+- `@preview` - Primary visual example
+- `@usage` - Code usage examples
+- `@figmaUrl` - Figma design URL
+
+**Optional:**
+
+- `@examples` - Additional examples
