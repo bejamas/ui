@@ -28,6 +28,7 @@ export default defineConfig({
           nav: [
             { label: "Docs", href: "/docs/introduction" },
             { label: "Components", href: "/components" },
+            { label: "Blocks", href: "/blocks" },
             { label: "Themes", href: "/themes" },
           ],
           components: {
