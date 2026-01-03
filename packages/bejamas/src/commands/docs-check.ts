@@ -12,10 +12,7 @@ import {
   white,
 } from "kleur/colors";
 import { logger } from "@/src/utils/logger";
-import {
-  readTsConfig,
-  resolveAliasPathUsingTsConfig,
-} from "@/src/utils/tsconfig-utils";
+import { resolveAliasPathUsingTsConfig } from "@/src/utils/tsconfig-utils";
 import {
   extractFrontmatter,
   parseJsDocMetadata,
