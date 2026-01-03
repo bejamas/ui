@@ -1,17 +1,26 @@
 import { Command } from "commander";
-import { dirname, resolve, isAbsolute, join, extname } from "node:path";
+import { resolve, isAbsolute, join, extname } from "node:path";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { cyan, green, red, yellow, dim, bold, magenta, white } from "kleur/colors";
+import {
+  cyan,
+  green,
+  red,
+  yellow,
+  dim,
+  bold,
+  magenta,
+  white,
+} from "kleur/colors";
 import { logger } from "@/src/utils/logger";
+import {
+  readTsConfig,
+  resolveAliasPathUsingTsConfig,
+} from "@/src/utils/tsconfig-utils";
 import {
   extractFrontmatter,
   parseJsDocMetadata,
   resolveUiRoot,
 } from "@/src/docs/generate-mdx/utils";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 interface ComponentDocStatus {
   name: string;
@@ -30,7 +39,11 @@ interface CheckResult {
 }
 
 const REQUIRED_FIELDS = ["name", "title", "description"] as const;
-const RECOMMENDED_FIELDS = ["primaryExampleMDX", "usageMDX", "figmaUrl"] as const;
+const RECOMMENDED_FIELDS = [
+  "primaryExampleMDX",
+  "usageMDX",
+  "figmaUrl",
+] as const;
 const OPTIONAL_FIELDS = ["examplesMDX"] as const;
 
 const FIELD_LABELS: Record<string, string> = {
@@ -42,40 +55,6 @@ const FIELD_LABELS: Record<string, string> = {
   figmaUrl: "@figmaUrl",
   examplesMDX: "@examples",
 };
-
-function readTsConfig(projectRoot: string): any | null {
-  try {
-    const tsconfigPath = resolve(projectRoot, "tsconfig.json");
-    if (!existsSync(tsconfigPath)) return null;
-    const raw = readFileSync(tsconfigPath, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function resolveAliasPathUsingTsConfig(
-  inputPath: string,
-  projectRoot: string,
-): string | null {
-  const cfg = readTsConfig(projectRoot);
-  if (!cfg || !cfg.compilerOptions) return null;
-  const baseUrl: string = cfg.compilerOptions.baseUrl || ".";
-  const paths: Record<string, string[] | string> =
-    cfg.compilerOptions.paths || {};
-  for (const [key, values] of Object.entries(paths)) {
-    const pattern = key.replace(/\*/g, "(.*)");
-    const re = new RegExp(`^${pattern}$`);
-    const match = inputPath.match(re);
-    if (!match) continue;
-    const wildcard = match[1] || "";
-    const first = Array.isArray(values) ? values[0] : values;
-    if (!first) continue;
-    const target = String(first).replace(/\*/g, wildcard);
-    return resolve(projectRoot, baseUrl, target);
-  }
-  return null;
-}
 
 function checkComponentDocs(
   filePath: string,
@@ -249,6 +228,10 @@ async function checkDocs({
 
     if (json) {
       console.log(JSON.stringify(checkResult, null, 2));
+      // Exit with error code if there are components missing required docs
+      if (missing.length > 0) {
+        process.exit(1);
+      }
       return;
     }
 
@@ -258,7 +241,13 @@ async function checkDocs({
 
     logger.break();
     console.log(dim("┌" + "─".repeat(termWidth - 2) + "┐"));
-    console.log(dim("│") + bold(cyan("  docs:check")) + dim(" — Component Documentation Status") + " ".repeat(Math.max(0, termWidth - 47)) + dim("│"));
+    console.log(
+      dim("│") +
+        bold(cyan("  docs:check")) +
+        dim(" — Component Documentation Status") +
+        " ".repeat(Math.max(0, termWidth - 47)) +
+        dim("│"),
+    );
     console.log(dim("└" + "─".repeat(termWidth - 2) + "┘"));
     logger.break();
 
@@ -268,28 +257,50 @@ async function checkDocs({
 
     // Complete components
     if (complete.length > 0) {
-      console.log(green(`✓ Complete (${complete.length} component${complete.length === 1 ? "" : "s"}):`));
-      const names = complete.map((c) => formatComponentName(c.name)).join(dim(", "));
+      console.log(
+        green(
+          `✓ Complete (${complete.length} component${complete.length === 1 ? "" : "s"}):`,
+        ),
+      );
+      const names = complete
+        .map((c) => formatComponentName(c.name))
+        .join(dim(", "));
       console.log(`  ${names}`);
       logger.break();
     }
 
     // Incomplete components (missing recommended fields)
     if (incomplete.length > 0) {
-      console.log(yellow(`⚠ Incomplete (${incomplete.length} component${incomplete.length === 1 ? "" : "s"}):`));
+      console.log(
+        yellow(
+          `⚠ Incomplete (${incomplete.length} component${incomplete.length === 1 ? "" : "s"}):`,
+        ),
+      );
       for (const comp of incomplete) {
-        const missingFields = comp.missingRecommended.map(formatTag).join(dim(", "));
-        console.log(`  ${formatComponentName(comp.name)} ${dim("-")} ${dim("missing:")} ${missingFields}`);
+        const missingFields = comp.missingRecommended
+          .map(formatTag)
+          .join(dim(", "));
+        console.log(
+          `  ${formatComponentName(comp.name)} ${dim("-")} ${dim("missing:")} ${missingFields}`,
+        );
       }
       logger.break();
     }
 
     // Missing docs (missing required fields)
     if (missing.length > 0) {
-      console.log(red(`✗ Missing Docs (${missing.length} component${missing.length === 1 ? "" : "s"}):`));
+      console.log(
+        red(
+          `✗ Missing Docs (${missing.length} component${missing.length === 1 ? "" : "s"}):`,
+        ),
+      );
       for (const comp of missing) {
-        const missingFields = comp.missingRequired.map(formatTag).join(dim(", "));
-        console.log(`  ${formatComponentName(comp.name)} ${dim("-")} ${dim("missing:")} ${missingFields}`);
+        const missingFields = comp.missingRequired
+          .map(formatTag)
+          .join(dim(", "));
+        console.log(
+          `  ${formatComponentName(comp.name)} ${dim("-")} ${dim("missing:")} ${missingFields}`,
+        );
       }
       logger.break();
     }
@@ -297,9 +308,17 @@ async function checkDocs({
     // Summary
     console.log(dim(headerLine));
     const completeText = green(`${complete.length}/${results.length} complete`);
-    const incompleteText = incomplete.length > 0 ? yellow(`${incomplete.length} incomplete`) : dim(`${incomplete.length} incomplete`);
-    const missingText = missing.length > 0 ? red(`${missing.length} missing docs`) : dim(`${missing.length} missing docs`);
-    console.log(`${bold("Summary:")} ${completeText} ${dim("|")} ${incompleteText} ${dim("|")} ${missingText}`);
+    const incompleteText =
+      incomplete.length > 0
+        ? yellow(`${incomplete.length} incomplete`)
+        : dim(`${incomplete.length} incomplete`);
+    const missingText =
+      missing.length > 0
+        ? red(`${missing.length} missing docs`)
+        : dim(`${missing.length} missing docs`);
+    console.log(
+      `${bold("Summary:")} ${completeText} ${dim("|")} ${incompleteText} ${dim("|")} ${missingText}`,
+    );
     logger.break();
 
     // Exit with error code if there are components missing required docs
@@ -323,4 +342,3 @@ export const docsCheck = new Command()
       json: Boolean(opts.json),
     });
   });
-

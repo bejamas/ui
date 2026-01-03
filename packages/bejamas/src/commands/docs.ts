@@ -1,46 +1,9 @@
 import { Command } from "commander";
-import { dirname, resolve, isAbsolute, relative } from "node:path";
+import { resolve, isAbsolute, relative } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
-import { fileURLToPath, pathToFileURL } from "node:url";
 import { logger } from "@/src/utils/logger";
+import { resolveAliasPathUsingTsConfig } from "@/src/utils/tsconfig-utils";
 import prompts from "prompts";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-function readTsConfig(projectRoot: string): any | null {
-  try {
-    const tsconfigPath = resolve(projectRoot, "tsconfig.json");
-    if (!existsSync(tsconfigPath)) return null;
-    const raw = readFileSync(tsconfigPath, "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function resolveAliasPathUsingTsConfig(
-  inputPath: string,
-  projectRoot: string,
-): string | null {
-  const cfg = readTsConfig(projectRoot);
-  if (!cfg || !cfg.compilerOptions) return null;
-  const baseUrl: string = cfg.compilerOptions.baseUrl || ".";
-  const paths: Record<string, string[] | string> =
-    cfg.compilerOptions.paths || {};
-  for (const [key, values] of Object.entries(paths)) {
-    const pattern = key.replace(/\*/g, "(.*)");
-    const re = new RegExp(`^${pattern}$`);
-    const match = inputPath.match(re);
-    if (!match) continue;
-    const wildcard = match[1] || "";
-    const first = Array.isArray(values) ? values[0] : values;
-    if (!first) continue;
-    const target = String(first).replace(/\*/g, wildcard);
-    return resolve(projectRoot, baseUrl, target);
-  }
-  return null;
-}
 
 async function generateDocs({
   cwd,

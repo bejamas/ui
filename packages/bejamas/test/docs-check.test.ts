@@ -195,8 +195,9 @@ describe("docs:check command", () => {
   test("outputs JSON with --json flag", async () => {
     const { stdout, exitCode } = await runCli(["docs:check", "--json"]);
 
-    // Should exit with 0 for JSON output (doesn't exit 1 on missing)
-    // Actually let's check the actual behavior
+    // Should exit with 1 when there are missing docs (for CI integration)
+    expect(exitCode).toBe(1);
+
     const result = JSON.parse(stdout);
 
     expect(result).toHaveProperty("total");
@@ -281,6 +282,9 @@ describe("docs:check command", () => {
       "--json",
     ]);
 
+    // Should exit with 1 because fixtures have missing docs
+    expect(exitCode).toBe(1);
+
     const result = JSON.parse(stdout);
     expect(result.total).toBe(4);
   });
@@ -328,4 +332,3 @@ describe("docs:check with all complete components", () => {
     expect(exitCode).toBe(0);
   });
 });
-
