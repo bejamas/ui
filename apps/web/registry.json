@@ -5,9 +5,26 @@
     {
       "name": "accordion",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/accordion"],
       "files": [
         {
-          "path": "../../packages/ui/src/components/Accordion.astro",
+          "path": "../../packages/ui/src/components/accordion/Accordion.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/accordion/AccordionContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/accordion/AccordionItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/accordion/AccordionTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/accordion/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -17,7 +34,19 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Alert.astro",
+          "path": "../../packages/ui/src/components/alert/Alert.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/alert/AlertTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/alert/AlertDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/alert/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -27,7 +56,19 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Avatar.astro",
+          "path": "../../packages/ui/src/components/avatar/Avatar.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/avatar/AvatarImage.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/avatar/AvatarFallback.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/avatar/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -37,7 +78,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Badge.astro",
+          "path": "../../packages/ui/src/components/badge/Badge.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/badge/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -47,7 +92,23 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Breadcrumb.astro",
+          "path": "../../packages/ui/src/components/breadcrumb/Breadcrumb.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/breadcrumb/BreadcrumbList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/breadcrumb/BreadcrumbItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/breadcrumb/BreadcrumbSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/breadcrumb/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -57,7 +118,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Button.astro",
+          "path": "../../packages/ui/src/components/button/Button.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/button/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -67,7 +132,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/ButtonGroup.astro",
+          "path": "../../packages/ui/src/components/button-group/ButtonGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/button-group/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -77,7 +146,43 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Card.astro",
+          "path": "../../packages/ui/src/components/card/Card.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/card/CardAction.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/card/CardContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/card/CardDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/card/CardFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/card/CardHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/card/CardMedia.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/card/CardOverlay.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/card/CardTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/card/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -87,7 +192,15 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Carousel.astro",
+          "path": "../../packages/ui/src/components/carousel/Carousel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/carousel/CarouselSlide.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/carousel/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -97,7 +210,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Checkbox.astro",
+          "path": "../../packages/ui/src/components/checkbox/Checkbox.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/checkbox/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -107,7 +224,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Date.astro",
+          "path": "../../packages/ui/src/components/date/Date.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/date/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -115,9 +236,46 @@
     {
       "name": "dialog",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/dialog"],
       "files": [
         {
-          "path": "../../packages/ui/src/components/Dialog.astro",
+          "path": "../../packages/ui/src/components/dialog/Dialog.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dialog/DialogClose.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dialog/DialogContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dialog/DialogDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dialog/DialogFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dialog/DialogHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dialog/DialogOverlay.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dialog/DialogTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dialog/DialogTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dialog/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -127,7 +285,19 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Dropdown.astro",
+          "path": "../../packages/ui/src/components/dropdown/Dropdown.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dropdown/DropdownContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dropdown/DropdownTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dropdown/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -137,7 +307,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Input.astro",
+          "path": "../../packages/ui/src/components/input/Input.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/input/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -147,7 +321,31 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/InputGroup.astro",
+          "path": "../../packages/ui/src/components/input-group/InputGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/input-group/InputGroupAddon.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/input-group/InputGroupButton.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/input-group/InputGroupInput.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/input-group/InputGroupText.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/input-group/InputGroupTextarea.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/input-group/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -157,7 +355,47 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Item.astro",
+          "path": "../../packages/ui/src/components/item/Item.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/ItemActions.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/ItemContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/ItemDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/ItemFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/ItemGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/ItemHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/ItemMedia.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/ItemSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/ItemTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/item/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -167,7 +405,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Label.astro",
+          "path": "../../packages/ui/src/components/label/Label.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/label/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -177,7 +419,23 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/LinkGroup.astro",
+          "path": "../../packages/ui/src/components/link-group/LinkGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/link-group/LinkGroupTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/link-group/LinkGroupList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/link-group/LinkGroupItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/link-group/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -187,17 +445,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Marquee.astro",
+          "path": "../../packages/ui/src/components/marquee/Marquee.astro",
           "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "navigation-menu",
-      "type": "registry:ui",
-      "files": [
+        },
         {
-          "path": "../../packages/ui/src/components/NavigationMenu.astro",
+          "path": "../../packages/ui/src/components/marquee/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -207,7 +459,15 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/RadioGroup.astro",
+          "path": "../../packages/ui/src/components/radio-group/RadioGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/radio-group/RadioGroupItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/radio-group/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -217,7 +477,31 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Select.astro",
+          "path": "../../packages/ui/src/components/select/Select.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/select/SelectControl.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/select/SelectGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/select/SelectIndicator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/select/SelectOption.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/select/SelectPlaceholder.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/select/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -227,7 +511,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Separator.astro",
+          "path": "../../packages/ui/src/components/separator/Separator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/separator/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -237,7 +525,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/StickySurface.astro",
+          "path": "../../packages/ui/src/components/sticky-surface/StickySurface.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/sticky-surface/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -247,7 +539,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Switch.astro",
+          "path": "../../packages/ui/src/components/switch/Switch.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/switch/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -257,7 +553,27 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Tabs.astro",
+          "path": "../../packages/ui/src/components/tabs/Tabs.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/tabs/TabsContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/tabs/TabsIndicator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/tabs/TabsList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/tabs/TabsTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/tabs/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -267,7 +583,11 @@
       "type": "registry:ui",
       "files": [
         {
-          "path": "../../packages/ui/src/components/Textarea.astro",
+          "path": "../../packages/ui/src/components/textarea/Textarea.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/textarea/index.ts",
           "type": "registry:ui"
         }
       ]
