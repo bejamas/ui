@@ -1,5 +1,10 @@
 ---
-import Select from "@bejamas/ui/components/Select.astro";
+import {
+  Select,
+  SelectControl,
+  SelectOption,
+  SelectIndicator,
+} from "@bejamas/ui/components/select";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 ---
 
@@ -9,24 +14,23 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
     <MoonIcon class="size-4 hidden dark:block" />
   </div>
   <Select showCheckmark={false}>
-    <Select part="indicator" />
-    <Select
+    <SelectIndicator />
+    <SelectControl
       onchange="window.toggleTheme(this.value)"
       id="theme-select"
-      part="control"
       showCheckmark={false}
       class="pl-9 w-28"
     >
-      <Select part="option" value="light"
-        ><SunIcon class="size-4" /> Light</Select
+      <SelectOption value="light"
+        ><SunIcon class="size-4" /> Light</SelectOption
       >
-      <Select part="option" value="dark"
-        ><MoonIcon class="size-4" /> Dark</Select
+      <SelectOption value="dark"
+        ><MoonIcon class="size-4" /> Dark</SelectOption
       >
-      <Select part="option" value="auto"
-        ><LaptopIcon class="size-4" /> Auto</Select
+      <SelectOption value="auto"
+        ><LaptopIcon class="size-4" /> Auto</SelectOption
       >
-    </Select>
+    </SelectControl>
   </Select>
 </div>
 

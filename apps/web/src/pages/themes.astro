@@ -1,10 +1,15 @@
 ---
 import { getCollection } from "astro:content";
 import cssSource from "@bejamas/ui/styles/globals.css?raw";
-import Select from "@bejamas/ui/components/Select.astro";
+import {
+  Select,
+  SelectControl,
+  SelectOption,
+  SelectIndicator,
+} from "@bejamas/ui/components/select";
 import { defaultPresets } from "../utils/themes/presets";
-import Label from "@bejamas/ui/components/Label.astro";
-import Button from "@bejamas/ui/components/Button.astro";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
 import { ArrowLeft, ArrowRight, CodeXml } from "@lucide/astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
@@ -179,16 +184,12 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
             >Theme Presets</Label
           >
           <Select class="w-[180px]">
-            <Select part="indicator" />
+            <SelectIndicator />
 
-            <Select part="control" id="theme-presets">
+            <SelectControl id="theme-presets">
               {
                 Object.entries(leanPresets).map(([key, preset]) => (
-                  <Select
-                    part="option"
-                    value={key}
-                    class="px-3 py-2 rounded-md"
-                  >
+                  <SelectOption value={key} class="px-3 py-2 rounded-md">
                     <div class="flex -space-x-1 items-center">
                       <div
                         class="size-4 rounded-full"
@@ -208,10 +209,10 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
                       />
                     </div>
                     {preset.label}
-                  </Select>
+                  </SelectOption>
                 ))
               }
-            </Select>
+            </SelectControl>
           </Select>
         </div>
         <Button

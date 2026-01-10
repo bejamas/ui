@@ -1,13 +1,13 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
-import Button from "@bejamas/ui/components/Button.astro";
+import { Button } from "@bejamas/ui/components/button";
 import NavigationMenu from "@/ui-next/NavigationMenu.astro";
-import StickySurface from "@bejamas/ui/components/StickySurface.astro";
-import Separator from "@bejamas/ui/components/Separator.astro";
+import { StickySurface } from "@bejamas/ui/components/sticky-surface";
+import { Separator } from "@bejamas/ui/components/separator";
 import Footer from "@/ui-next/Footer.astro";
-import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
-import Input from "@bejamas/ui/components/Input.astro";
-import Badge from "@bejamas/ui/components/Badge.astro";
+import { LinkGroup, LinkGroupTitle, LinkGroupList, LinkGroupItem } from "@bejamas/ui/components/link-group";
+import { Input } from "@bejamas/ui/components/input";
+import { Badge } from "@bejamas/ui/components/badge";
 
 import { ArrowDownIcon, MenuIcon } from "@lucide/astro";
 ---
@@ -100,37 +100,34 @@ import { ArrowDownIcon, MenuIcon } from "@lucide/astro";
 
   <Footer class="px-8 pt-20">
     <div class="grid grid-cols-12 gap-4">
-      <LinkGroup
-        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
-        title="How it works"
-        items={[
-          { label: "Blog", href: "/blog" },
-          { label: "Documentation", href: "/docs" },
-          { label: "Pricing", href: "/pricing" },
-          { label: "Support", href: "/support" },
-        ]}
-      />
-      <LinkGroup
-        title="Information"
-        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
-        items={[
-          { label: "Home", href: "/" },
-          { label: "About", href: "/about" },
-          { label: "Contact", href: "/contact" },
-          { label: "Careers", href: "/careers" },
-          { label: "Press", href: "/press" },
-        ]}
-      />
-      <LinkGroup
-        title="Company"
-        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
-        items={[
-          { label: "About", href: "/about" },
-          { label: "Contact", href: "/contact" },
-          { label: "Careers", href: "/careers" },
-          { label: "Press", href: "/press" },
-        ]}
-      />
+      <LinkGroup class="col-span-3 text-lg">
+        <LinkGroupTitle class="text-xl font-medium">How it works</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem><a href="/blog">Blog</a></LinkGroupItem>
+          <LinkGroupItem><a href="/docs">Documentation</a></LinkGroupItem>
+          <LinkGroupItem><a href="/pricing">Pricing</a></LinkGroupItem>
+          <LinkGroupItem><a href="/support">Support</a></LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+      <LinkGroup class="col-span-3 text-lg">
+        <LinkGroupTitle class="text-xl font-medium">Information</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem><a href="/">Home</a></LinkGroupItem>
+          <LinkGroupItem><a href="/about">About</a></LinkGroupItem>
+          <LinkGroupItem><a href="/contact">Contact</a></LinkGroupItem>
+          <LinkGroupItem><a href="/careers">Careers</a></LinkGroupItem>
+          <LinkGroupItem><a href="/press">Press</a></LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+      <LinkGroup class="col-span-3 text-lg">
+        <LinkGroupTitle class="text-xl font-medium">Company</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem><a href="/about">About</a></LinkGroupItem>
+          <LinkGroupItem><a href="/contact">Contact</a></LinkGroupItem>
+          <LinkGroupItem><a href="/careers">Careers</a></LinkGroupItem>
+          <LinkGroupItem><a href="/press">Press</a></LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
     </div>
     <div class="max-w-sm mt-28 pb-12">
       <div class="flex items-center gap-2">
@@ -139,7 +136,7 @@ import { ArrowDownIcon, MenuIcon } from "@lucide/astro";
       </div>
       <p class="text-muted-foreground text-sm mt-6">
         By creating an account, you agree to our Terms and have read and
-        acknowledge Privacy Statement. We’ll send you only what matters — no
+        acknowledge Privacy Statement. We'll send you only what matters — no
         noise, no spam.
       </p>
     </div>

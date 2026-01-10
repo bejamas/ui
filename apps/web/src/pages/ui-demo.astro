@@ -1,29 +1,29 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
-import Button from "@bejamas/ui/components/Button.astro";
-import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
-import StickySurface from "@bejamas/ui/components/StickySurface.astro";
-import Breadcrumb from "@bejamas/ui/components/Breadcrumb.astro";
-import Separator from "@bejamas/ui/components/Separator.astro";
-import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
-import Input from "@bejamas/ui/components/Input.astro";
-import Label from "@bejamas/ui/components/Label.astro";
-import Card from "@bejamas/ui/components/Card.astro";
+import { Button } from "@bejamas/ui/components/button";
+import { Dropdown, DropdownTrigger, DropdownContent } from "@bejamas/ui/components/dropdown";
+import { StickySurface } from "@bejamas/ui/components/sticky-surface";
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbSeparator } from "@bejamas/ui/components/breadcrumb";
+import { Separator } from "@bejamas/ui/components/separator";
+import { LinkGroup, LinkGroupTitle, LinkGroupList, LinkGroupItem } from "@bejamas/ui/components/link-group";
+import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/ui/components/label";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@bejamas/ui/components/card";
 import {
   SlashIcon,
   BookmarkIcon,
   AlertCircleIcon,
   BadgeCheckIcon,
 } from "@lucide/astro";
-import Avatar from "@bejamas/ui/components/Avatar.astro";
-import ButtonGroup from "@bejamas/ui/components/ButtonGroup.astro";
-import Textarea from "@bejamas/ui/components/Textarea.astro";
-import Switch from "@bejamas/ui/components/Switch.astro";
-import Badge from "@bejamas/ui/components/Badge.astro";
-import Checkbox from "@bejamas/ui/components/Checkbox.astro";
-import Marquee from "@bejamas/ui/components/Marquee.astro";
-import Alert from "@bejamas/ui/components/Alert.astro";
-import Dialog from "@bejamas/ui/components/Dialog.astro";
+import { Avatar, AvatarImage, AvatarFallback } from "@bejamas/ui/components/avatar";
+import { ButtonGroup } from "@bejamas/ui/components/button-group";
+import { Textarea } from "@bejamas/ui/components/textarea";
+import { Switch } from "@bejamas/ui/components/switch";
+import { Badge } from "@bejamas/ui/components/badge";
+import { Checkbox } from "@bejamas/ui/components/checkbox";
+import { Marquee } from "@bejamas/ui/components/marquee";
+import { Alert, AlertTitle, AlertDescription } from "@bejamas/ui/components/alert";
+import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter } from "@bejamas/ui/components/dialog";
 ---
 
 <BlockExampleLayout theme="default">
@@ -48,15 +48,15 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
         >Manage Cookies</Button
       >
       <Dialog id="myDialog" class="backdrop-blur-md">
-        <Dialog part="title">Manage Cookies</Dialog>
-        <Dialog part="description"
+        <DialogTitle>Manage Cookies</DialogTitle>
+        <DialogDescription
           >Using websites and apps involves storing and retrieving information
           from your device, including cookies and other identifiers, which can
           be shared with third parties, for various activities. We provide a
           simple tool below allowing you to tailor your choices as you deem fit.
-          You can change your consent at any time. Learn more.</Dialog
+          You can change your consent at any time. Learn more.</DialogDescription
         >
-        <Dialog part="content">
+        <DialogContent>
           <div class="mt-5">
             <div class="flex items-center gap-3">
               <Checkbox
@@ -101,31 +101,30 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
               campaigns.
             </p>
           </div>
-        </Dialog>
-        <Dialog part="footer">
+        </DialogContent>
+        <DialogFooter>
           <Button variant="outline" data-dialog-close class="mt-4">Close</Button
           >
           <Button data-dialog-close class="mt-4">Save changes</Button>
-        </Dialog>
+        </DialogFooter>
       </Dialog>
 
       <Alert>
         <BadgeCheckIcon size={40} color="var(--color-green-600)" />
-        <Alert part="title">Designed for CMS-driven, long-lived websites.</Alert
-        >
+        <AlertTitle>Designed for CMS-driven, long-lived websites.</AlertTitle>
       </Alert>
     </div>
     <div class="col-span-4 space-y-6">
       <Textarea placeholder="Additional information (optional)…" />
       <Card class="w-full">
-        <Card part="header">
-          <Card part="title"> Get the latest updates </Card>
-          <Card part="description">
+        <CardHeader>
+          <CardTitle> Get the latest updates </CardTitle>
+          <CardDescription>
             Enter your email below to get the latest updates
-          </Card>
-        </Card>
+          </CardDescription>
+        </CardHeader>
 
-        <Card part="content">
+        <CardContent>
           <form>
             <div class="flex flex-col gap-6">
               <div class="grid gap-2">
@@ -151,19 +150,19 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
               class="underline-offset-4 hover:underline">Privacy Statement</a
             >.
           </p>
-        </Card>
+        </CardContent>
 
-        <Card part="footer">
+        <CardFooter>
           <Button type="submit" class="w-full">Join our newsletter</Button>
-        </Card>
+        </CardFooter>
       </Card>
 
       <Alert>
         <AlertCircleIcon size={32} />
-        <Alert part="title">Cookie preferences updated</Alert>
-        <Alert part="description">
+        <AlertTitle>Cookie preferences updated</AlertTitle>
+        <AlertDescription>
           You can change your settings at any time.
-        </Alert>
+        </AlertDescription>
       </Alert>
     </div>
     <div class="col-span-4 space-y-6">
@@ -201,22 +200,22 @@ import Dialog from "@bejamas/ui/components/Dialog.astro";
         class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale items-center"
       >
         <Avatar>
-          <Avatar part="image">
+          <AvatarImage>
             <img src="https://github.com/withastro.png" alt="@withastro" />
-          </Avatar>
-          <Avatar part="fallback">AW</Avatar>
+          </AvatarImage>
+          <AvatarFallback>AW</AvatarFallback>
         </Avatar>
         <Avatar>
-          <Avatar part="image">
+          <AvatarImage>
             <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
-          </Avatar>
-          <Avatar part="fallback">TK</Avatar>
+          </AvatarImage>
+          <AvatarFallback>TK</AvatarFallback>
         </Avatar>
         <Avatar>
-          <Avatar part="image">
+          <AvatarImage>
             <img src="https://github.com/bejamas.png" alt="@bejamas" />
-          </Avatar>
-          <Avatar part="fallback">BJ</Avatar>
+          </AvatarImage>
+          <AvatarFallback>BJ</AvatarFallback>
         </Avatar>
 
         <div class="flex ml-5 gap-0.5 flex-col">

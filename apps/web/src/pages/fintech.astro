@@ -1,15 +1,15 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
-import Button from "@bejamas/ui/components/Button.astro";
+import { Button } from "@bejamas/ui/components/button";
 import NavigationMenu from "@/ui-next/NavigationMenu.astro";
-import StickySurface from "@bejamas/ui/components/StickySurface.astro";
-import Separator from "@bejamas/ui/components/Separator.astro";
+import { StickySurface } from "@bejamas/ui/components/sticky-surface";
+import { Separator } from "@bejamas/ui/components/separator";
 import Footer from "@/ui-next/Footer.astro";
-import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
-import Input from "@bejamas/ui/components/Input.astro";
-import Card from "@bejamas/ui/components/Card.astro";
-import Marquee from "@bejamas/ui/components/Marquee.astro";
-import Accordion from "@bejamas/ui/components/Accordion.astro";
+import { LinkGroup, LinkGroupTitle, LinkGroupList, LinkGroupItem } from "@bejamas/ui/components/link-group";
+import { Input } from "@bejamas/ui/components/input";
+import { Card } from "@bejamas/ui/components/card";
+import { Marquee } from "@bejamas/ui/components/marquee";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@bejamas/ui/components/accordion";
 
 import { SlashIcon, ChevronDownIcon } from "@lucide/astro";
 
@@ -19,9 +19,9 @@ const faq = [
     answer: "Vira offers a range of services to help you manage your finances.",
   },
   {
-    question: "How does Vira’s piricing work?",
+    question: "How does Vira's piricing work?",
     answer:
-      "Vira’s pricing is based on the number of users and the features you need. We offer a free trial for 14 days, so you can try it out before you buy.",
+      "Vira's pricing is based on the number of users and the features you need. We offer a free trial for 14 days, so you can try it out before you buy.",
   },
   {
     question: "What is the minimum number of users required?",
@@ -223,37 +223,34 @@ const faq = [
 
   <Footer class="hidden lg:block mx-auto max-w-6xl px-5">
     <div class="grid grid-cols-12 gap-4">
-      <LinkGroup
-        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
-        title="How it works"
-        items={[
-          { label: "Blog", href: "#" },
-          { label: "Documentation", href: "#" },
-          { label: "Pricing", href: "#" },
-          { label: "Support", href: "#" },
-        ]}
-      />
-      <LinkGroup
-        title="Information"
-        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
-        items={[
-          { label: "Home", href: "#" },
-          { label: "About", href: "#" },
-          { label: "Contact", href: "#" },
-          { label: "Careers", href: "#" },
-          { label: "Press", href: "#" },
-        ]}
-      />
-      <LinkGroup
-        title="Company"
-        class="col-span-3 text-lg [&_.title]:text-xl [&_.title]:font-medium"
-        items={[
-          { label: "About", href: "#" },
-          { label: "Contact", href: "#" },
-          { label: "Careers", href: "#" },
-          { label: "Press", href: "#" },
-        ]}
-      />
+      <LinkGroup class="col-span-3 text-lg">
+        <LinkGroupTitle class="text-xl font-medium">How it works</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem><a href="#">Blog</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">Documentation</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">Pricing</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">Support</a></LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+      <LinkGroup class="col-span-3 text-lg">
+        <LinkGroupTitle class="text-xl font-medium">Information</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem><a href="#">Home</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">About</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">Contact</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">Careers</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">Press</a></LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+      <LinkGroup class="col-span-3 text-lg">
+        <LinkGroupTitle class="text-xl font-medium">Company</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem><a href="#">About</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">Contact</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">Careers</a></LinkGroupItem>
+          <LinkGroupItem><a href="#">Press</a></LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
     </div>
     <div class="max-w-sm mt-28 pb-12">
       <div class="flex items-center gap-2">
@@ -262,7 +259,7 @@ const faq = [
       </div>
       <p class="text-muted-foreground text-sm mt-6">
         By creating an account, you agree to our Terms and have read and
-        acknowledge Privacy Statement. We’ll send you only what matters — no
+        acknowledge Privacy Statement. We'll send you only what matters — no
         noise, no spam.
       </p>
     </div>
