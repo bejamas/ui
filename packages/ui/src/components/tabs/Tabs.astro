@@ -43,7 +43,6 @@
 
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
-import { autoTabs } from "headless-vanilla-ui/tabs";
 
 type Props = {
   class?: string;
@@ -52,12 +51,7 @@ type Props = {
 const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<div
-  {...rest}
-  data-slot="tabs"
-  data-component="tabs"
-  class={cn("flex flex-col gap-2", className)}
->
+<div {...rest} data-slot="tabs" class={cn("flex flex-col gap-2", className)}>
   <slot />
 </div>
 
