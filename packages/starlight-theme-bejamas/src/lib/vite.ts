@@ -27,6 +27,16 @@ export function vitePluginStarlightThemeBejamas(
           return `export default (()=>{ throw new Error(\"starlight-theme-bejamas: No component mapping found for '${componentName}'. Add it under 'components' in your starlightThemeBejamas config.\"); })()`;
         }
 
+        // Check if target is a barrel import (no .astro extension) or old-style file import
+        const isBarrelImport = !target.endsWith(".astro");
+
+        if (isBarrelImport) {
+          // For barrel imports, the component is exported as a named export
+          // We need to re-export it as default for compatibility
+          return `export { ${componentName} as default, ${componentName} } from "${target}"; export * from "${target}";`;
+        }
+
+        // Old pattern: .astro file with default export
         return `export { default } from "${target}"; export * from "${target}";`;
       }
 

@@ -1,6 +1,5 @@
 ---
-// import { Icon } from "@astrojs/starlight/components";
-import Button from "virtual:starlight-theme-bejamas/components/Button.astro";
+import { Button } from "virtual:starlight-theme-bejamas/components/button";
 import { ArrowRight, ArrowLeft } from "@lucide/astro";
 
 const { dir, pagination } = Astro.locals.starlightRoute;
@@ -26,14 +25,6 @@ const isRtl = dir === "rtl";
     )
   }
 </div>
-
-<!-- <div class="text-center text-sm text-muted-foreground page-footer">
-  <p>
-    Built at <a href="https://bejamas.com" class="underline underline-offset-4"
-      >Bejamas</a
-    >.
-  </p>
-</div> -->
 
 <style>
   @layer starlight.core {
