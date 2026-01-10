@@ -335,7 +335,10 @@ describe("docs:check with all complete components", () => {
 
 describe("docs:check error scenarios", () => {
   test("exits with error when components directory does not exist", async () => {
-    const emptyFixturesDir = path.resolve(__dirname, "fixtures/docs-check-empty");
+    const emptyFixturesDir = path.resolve(
+      __dirname,
+      "fixtures/docs-check-empty",
+    );
     fs.mkdirSync(emptyFixturesDir, { recursive: true });
     fs.writeFileSync(
       path.resolve(emptyFixturesDir, "package.json"),
@@ -377,7 +380,10 @@ describe("docs:check error scenarios", () => {
       JSON.stringify({ name: "test-no-astro", version: "1.0.0" }, null, 2),
     );
     // Create a non-astro file
-    fs.writeFileSync(path.resolve(componentsDir, "utils.ts"), "export const x = 1;");
+    fs.writeFileSync(
+      path.resolve(componentsDir, "utils.ts"),
+      "export const x = 1;",
+    );
 
     try {
       const proc = Bun.spawn(["bun", cliEntry, "docs:check"], {

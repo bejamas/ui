@@ -1,6 +1,6 @@
 import { mkdirSync, existsSync } from "fs";
-import { readdir, writeFile } from "fs/promises";
-import { join, extname, dirname, relative } from "path";
+import { readdir, readFile, writeFile } from "fs/promises";
+import { join, extname, dirname, relative, basename } from "path";
 import {
   RESERVED_COMPONENTS,
   slugify,
@@ -22,6 +22,125 @@ import { buildMdx } from "./mdx-builder";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
 import { getConfig } from "@/src/utils/get-config";
+
+interface ComponentEntry {
+  /** The main component name (PascalCase), e.g., "Card" */
+  name: string;
+  /** Path to the main .astro file */
+  filePath: string;
+  /** The folder name (lowercase/kebab-case), e.g., "card" */
+  folderName: string;
+  /** Whether this is a folder-based component with barrel exports */
+  isFolder: boolean;
+  /** List of subcomponent names exported from the barrel, e.g., ["CardHeader", "CardTitle"] */
+  namedExports: string[];
+}
+
+/**
+ * Discover components in the components directory.
+ * Supports both:
+ * - Old pattern: flat .astro files in components/
+ * - New pattern: folders with index.ts barrel exports
+ */
+async function discoverComponents(
+  componentsDir: string,
+): Promise<ComponentEntry[]> {
+  const entries: ComponentEntry[] = [];
+  const dirEntries = await readdir(componentsDir, { withFileTypes: true });
+
+  for (const entry of dirEntries) {
+    if (entry.isDirectory()) {
+      // New pattern: folder with barrel exports
+      const folderPath = join(componentsDir, entry.name);
+      const indexPath = join(folderPath, "index.ts");
+
+      if (existsSync(indexPath)) {
+        // Parse the barrel file to find exports
+        const indexContent = await readFile(indexPath, "utf-8");
+        const namedExports = parseBarrelExports(indexContent);
+
+        // Find the main component (first export or the one matching folder name)
+        const mainComponentName = findMainComponent(namedExports, entry.name);
+
+        if (mainComponentName) {
+          const mainFilePath = join(folderPath, `${mainComponentName}.astro`);
+
+          if (existsSync(mainFilePath)) {
+            // Filter out the main component from namedExports (it will be imported separately)
+            const subComponents = namedExports.filter(
+              (n) => n !== mainComponentName,
+            );
+
+            entries.push({
+              name: mainComponentName,
+              filePath: mainFilePath,
+              folderName: entry.name,
+              isFolder: true,
+              namedExports: subComponents,
+            });
+          }
+        }
+      }
+    } else if (entry.isFile() && extname(entry.name).toLowerCase() === ".astro") {
+      // Old pattern: flat .astro file
+      const componentName = entry.name.replace(/\.astro$/i, "");
+      entries.push({
+        name: componentName,
+        filePath: join(componentsDir, entry.name),
+        folderName: "",
+        isFolder: false,
+        namedExports: [],
+      });
+    }
+  }
+
+  return entries;
+}
+
+/**
+ * Parse a barrel (index.ts) file to extract named exports.
+ * Handles patterns like:
+ * - export { default as Card } from "./Card.astro";
+ * - export { default as CardHeader } from "./CardHeader.astro";
+ */
+function parseBarrelExports(content: string): string[] {
+  const exports: string[] = [];
+
+  // Match: export { default as ComponentName } from "..."
+  const exportRegex = /export\s*\{\s*default\s+as\s+(\w+)\s*\}/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = exportRegex.exec(content)) !== null) {
+    exports.push(match[1]);
+  }
+
+  return exports;
+}
+
+/**
+ * Find the main component from a list of exports.
+ * The main component is typically the one that matches the folder name (PascalCase).
+ */
+function findMainComponent(
+  exports: string[],
+  folderName: string,
+): string | null {
+  if (exports.length === 0) return null;
+
+  // Convert folder name to PascalCase for comparison
+  // e.g., "card" -> "Card", "input-group" -> "InputGroup"
+  const expectedName = folderName
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+
+  // First, try to find exact match
+  const exactMatch = exports.find((e) => e === expectedName);
+  if (exactMatch) return exactMatch;
+
+  // Otherwise, return the first export (usually the main component)
+  return exports[0];
+}
 
 async function main() {
   const DEBUG =
@@ -58,29 +177,29 @@ async function main() {
     logger.info(`[docs-generator] outDir: ${outDir}`);
   }
 
-  const entriesDir = await readdir(componentsDir, { withFileTypes: true });
-  const files = entriesDir.filter(
-    (e) => e.isFile() && extname(e.name).toLowerCase() === ".astro",
-  );
+  // Discover all components (both flat files and folders)
+  const components = await discoverComponents(componentsDir);
+
   if (DEBUG) {
-    logger.info(`[docs-generator] components found: ${files.length}`);
-    if (files.length)
+    logger.info(`[docs-generator] components found: ${components.length}`);
+    if (components.length) {
       logger.info(
-        `[docs-generator] first few: ${files
+        `[docs-generator] first few: ${components
           .slice(0, 5)
-          .map((f) => f.name)
+          .map((c) => c.name)
           .join(", ")}`,
       );
+    }
   }
 
   let generatedCount = 0;
-  const total = files.length;
+  const total = components.length;
   const spin = spinner(`Generating docs (0/${total})`).start();
-  for (const f of files) {
-    const filePath = join(componentsDir, f.name);
-    const astroFile = await (
-      await import("fs/promises")
-    ).readFile(filePath, "utf-8");
+
+  for (const component of components) {
+    const { name: pascal, filePath, folderName, isFolder, namedExports } = component;
+
+    const astroFile = await readFile(filePath, "utf-8");
     const frontmatterCode = extractFrontmatter(astroFile);
     const sourceFile = createSourceFileFromFrontmatter(frontmatterCode);
     const meta = parseJsDocMetadata(frontmatterCode);
@@ -102,8 +221,7 @@ async function main() {
       defaultValue: defaultsMap.has(p.name) ? defaultsMap.get(p.name)! : null,
     }));
 
-    const slug = `${slugify(f.name)}`;
-    const pascal = f.name.replace(/\.(astro)$/i, "");
+    const slug = slugify(pascal);
     const title = meta.title || meta.name || pascal;
     const description = meta.description || "";
     const descriptionBodyMDX = (meta as any).descriptionBodyMDX || "";
@@ -112,7 +230,11 @@ async function main() {
     const propsList = "";
 
     const importName = pascal;
-    const importPath = `${componentsAlias}/${pascal}.astro`;
+    // Use folder-based barrel import for new pattern, file-based for old pattern
+    const importPath = isFolder
+      ? `${componentsAlias}/${folderName}`
+      : `${componentsAlias}/${pascal}.astro`;
+
     const { text: usageMDX, hasImport: hasImportUsage } = normalizeUsageMDX(
       meta.usageMDX || "",
       pascal,
@@ -140,15 +262,15 @@ async function main() {
         const posixRel = rel
           .split(require("path").sep)
           .join(require("path").posix.sep);
-        const importPath = `${componentsAlias}/${posixRel}`;
+        const importPathEx = `${componentsAlias}/${posixRel}`;
         const abs = join(componentsDir, rel);
         const source = require("fs").readFileSync(abs, "utf-8");
         const base = toIdentifier(
           require("path").basename(rel, require("path").extname(rel)),
         );
-        const importName = `${pascal}${base}`;
-        const title = base;
-        return { importName, importPath, title, source };
+        const importNameEx = `${pascal}${base}`;
+        const titleEx = base;
+        return { importName: importNameEx, importPath: importPathEx, title: titleEx, source };
       });
     }
 
@@ -166,6 +288,19 @@ async function main() {
       ...usedInExamples,
       ...usedInPrimary,
     ]);
+
+    // For folder-based components, add subcomponents used in examples to namedExports
+    const usedNamedExports = isFolder
+      ? namedExports.filter((n) => autoSet.has(n))
+      : [];
+
+    // Remove subcomponents from autoSet (they'll be included via namedExports)
+    if (isFolder) {
+      for (const n of namedExports) {
+        autoSet.delete(n);
+      }
+    }
+
     const autoImports = Array.from(autoSet)
       .filter((name) => !RESERVED_COMPONENTS.has(name))
       .filter((name) => true);
@@ -192,6 +327,8 @@ async function main() {
       figmaUrl,
       descriptionBodyMDX,
       componentsAlias,
+      // Pass subcomponents as named exports for folder-based components
+      namedExports: isFolder ? usedNamedExports : undefined,
     });
     const outFile = join(outDir, `${slug}.mdx`);
     mkdirSync(dirname(outFile), { recursive: true });
@@ -204,9 +341,9 @@ async function main() {
     `Created ${generatedCount} file${generatedCount === 1 ? "" : "s"}:`,
   );
   // log all files with relative paths, sorted alphabetically
-  const relPaths = files
-    .map((f) => {
-      const slug = `${slugify(f.name)}`;
+  const relPaths = components
+    .map((c) => {
+      const slug = slugify(c.name);
       const outFile = join(outDir, `${slug}.mdx`);
       return relative(cwd, outFile);
     })

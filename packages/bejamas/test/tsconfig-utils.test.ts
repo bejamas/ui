@@ -30,7 +30,10 @@ describe("readTsConfig", () => {
   test("returns null for invalid JSON", () => {
     const invalidDir = path.join(fixturesDir, "invalid-json");
     fs.mkdirSync(invalidDir, { recursive: true });
-    fs.writeFileSync(path.join(invalidDir, "tsconfig.json"), "{ invalid json }");
+    fs.writeFileSync(
+      path.join(invalidDir, "tsconfig.json"),
+      "{ invalid json }",
+    );
 
     const result = readTsConfig(invalidDir);
     expect(result).toBeNull();
@@ -106,10 +109,7 @@ describe("resolveAliasPathUsingTsConfig", () => {
   });
 
   test("resolves @components/* alias pattern", () => {
-    const result = resolveAliasPathUsingTsConfig(
-      "@components/Button",
-      testDir,
-    );
+    const result = resolveAliasPathUsingTsConfig("@components/Button", testDir);
     expect(result).toBe(path.resolve(testDir, "src/components/Button"));
   });
 
@@ -157,4 +157,3 @@ describe("resolveAliasPathUsingTsConfig", () => {
     expect(result).toBe(path.resolve(customBaseDir, "src/components"));
   });
 });
-
