@@ -1,3 +1,99 @@
+/**
+ * Check if an import path uses the new barrel export pattern (no .astro extension)
+ */
+function isBarrelImport(path: string): boolean {
+  return !path.endsWith(".astro");
+}
+
+/**
+ * Convert a PascalCase component name to its folder path (kebab-case).
+ * Examples:
+ *   - "Card" → "card"
+ *   - "CardHeader" → "card"
+ *   - "InputGroup" → "input-group"
+ *   - "InputGroupAddon" → "input-group"
+ *   - "StickySurface" → "sticky-surface"
+ *   - "RadioGroup" → "radio-group"
+ *   - "RadioGroupItem" → "radio-group"
+ */
+function componentToFolder(name: string): string {
+  // Known multi-word component families (in PascalCase order)
+  // These map to kebab-case folder names
+  const multiWordFamilies = [
+    "InputGroup",
+    "LinkGroup",
+    "RadioGroup",
+    "ButtonGroup",
+    "StickySurface",
+  ];
+
+  // Check for multi-word families first (order matters - longer matches first)
+  const sortedFamilies = multiWordFamilies.sort((a, b) => b.length - a.length);
+  for (const family of sortedFamilies) {
+    if (name === family || name.startsWith(family)) {
+      // InputGroup → input-group
+      return family.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+    }
+  }
+
+  // For regular names, extract the base component (first PascalCase word)
+  // CardHeader → Card → card
+  // AvatarFallback → Avatar → avatar
+  const baseMatch = name.match(/^[A-Z][a-z]*/);
+  return baseMatch ? baseMatch[0].toLowerCase() : name.toLowerCase();
+}
+
+/**
+ * Group component names by their folder path
+ */
+function groupComponentsByFolder(components: string[]): Map<string, string[]> {
+  const groups = new Map<string, string[]>();
+  for (const comp of components) {
+    const folder = componentToFolder(comp);
+    if (!groups.has(folder)) {
+      groups.set(folder, []);
+    }
+    groups.get(folder)!.push(comp);
+  }
+  return groups;
+}
+
+/**
+ * Generate import lines for UI components using the barrel import pattern
+ */
+function generateBarrelImports(
+  components: string[],
+  componentsAlias: string,
+): string[] {
+  const groups = groupComponentsByFolder(components);
+  const lines: string[] = [];
+
+  // Sort folders alphabetically for consistent output
+  const sortedFolders = Array.from(groups.keys()).sort();
+
+  for (const folder of sortedFolders) {
+    const names = groups.get(folder)!.sort();
+    lines.push(
+      `import { ${names.join(", ")} } from '${componentsAlias}/${folder}';`,
+    );
+  }
+
+  return lines;
+}
+
+/**
+ * Generate import lines for UI components using the old default import pattern
+ */
+function generateDefaultImports(
+  components: string[],
+  componentsAlias: string,
+): string[] {
+  return components
+    .slice()
+    .sort()
+    .map((name) => `import ${name} from '${componentsAlias}/${name}.astro';`);
+}
+
 export function buildMdx(params: {
   importName: string;
   importPath: string;
@@ -28,6 +124,12 @@ export function buildMdx(params: {
   componentSource: string;
   commandName: string;
   componentsAlias: string;
+  /**
+   * Optional: additional named exports from the main component's barrel.
+   * Used when the main component has subcomponents (e.g., Card, CardHeader, CardTitle).
+   * If provided, these will be included in the main import statement.
+   */
+  namedExports?: string[];
 }): string {
   const {
     importName,
@@ -48,7 +150,11 @@ export function buildMdx(params: {
     commandName,
     figmaUrl,
     componentsAlias,
+    namedExports,
   } = params;
+
+  // Detect if we should use the new barrel import pattern
+  const useBarrelPattern = isBarrelImport(importPath);
 
   const sortedLucide = (lucideIcons ?? []).slice().sort();
   const lucideTopLine = sortedLucide.length
@@ -61,21 +167,36 @@ export function buildMdx(params: {
     .filter((v) => v != null)
     .slice()
     .sort((a, b) => String(a).localeCompare(String(b)));
+
   const sortedUiAuto = (autoImports ?? []).slice().sort();
-  const uiAutoLines = sortedUiAuto.map(
-    (name) => `import ${name} from '${componentsAlias}/${name}.astro';`,
-  );
+
+  // Generate UI component imports based on pattern
+  const uiAutoLines = useBarrelPattern
+    ? generateBarrelImports(sortedUiAuto, componentsAlias)
+    : generateDefaultImports(sortedUiAuto, componentsAlias);
+
   const exampleLines = (examples ?? [])
     .map((ex) => `import ${ex.importName} from '${ex.importPath}';`)
     .sort((a, b) => a.localeCompare(b));
-  const internalTopImports = [
-    !hasImport ? `import ${importName} from '${importPath}';` : null,
-    ...uiAutoLines,
-    ...exampleLines,
-  ]
+
+  // Build main component import
+  let mainImportLine: string | null = null;
+  if (!hasImport) {
+    if (useBarrelPattern) {
+      // New pattern: named exports
+      const exports = [importName, ...(namedExports ?? [])].sort();
+      mainImportLine = `import { ${exports.join(", ")} } from '${importPath}';`;
+    } else {
+      // Old pattern: default export
+      mainImportLine = `import ${importName} from '${importPath}';`;
+    }
+  }
+
+  const internalTopImports = [mainImportLine, ...uiAutoLines, ...exampleLines]
     .filter((v) => v != null)
     .slice()
     .sort((a, b) => String(a).localeCompare(String(b)));
+
   const importLines = [
     ...externalTopImports,
     externalTopImports.length && internalTopImports.length ? "" : null,
@@ -97,22 +218,58 @@ export function buildMdx(params: {
     if (!snippet || !snippet.length) return [];
     const used = extractTags(snippet);
     const usedIcons = sortedLucide.filter((n) => used.has(n));
-    const usedUi = (autoImports ?? [])
-      .filter((n) => used.has(n))
-      .slice()
-      .sort();
+
+    // Find UI components used in snippet
+    const usedUi = (autoImports ?? []).filter((n) => used.has(n));
+
+    // Check if main component (and its subcomponents) are used
     const includeMain = !hasImport && used.has(importName);
+
+    // For new pattern, also check for subcomponents from the main barrel
+    const usedNamedExports =
+      useBarrelPattern && namedExports
+        ? namedExports.filter((n) => used.has(n))
+        : [];
 
     const external: string[] = [];
     if (usedIcons.length) {
       external.push(`import { ${usedIcons.join(", ")} } from '@lucide/astro';`);
     }
+
     const internal: string[] = [];
-    if (includeMain)
-      internal.push(`import ${importName} from '${importPath}';`);
-    internal.push(
-      ...usedUi.map((name) => `import ${name} from '${componentsAlias}/${name}.astro';`),
-    );
+
+    if (useBarrelPattern) {
+      // New pattern: group by folder and use named imports
+
+      // Main component and its subcomponents
+      if (includeMain || usedNamedExports.length > 0) {
+        const mainExports = [
+          ...(includeMain ? [importName] : []),
+          ...usedNamedExports,
+        ].sort();
+        internal.push(
+          `import { ${mainExports.join(", ")} } from '${importPath}';`,
+        );
+      }
+
+      // Other UI components grouped by folder
+      if (usedUi.length > 0) {
+        internal.push(...generateBarrelImports(usedUi, componentsAlias));
+      }
+    } else {
+      // Old pattern: default imports
+      if (includeMain) {
+        internal.push(`import ${importName} from '${importPath}';`);
+      }
+      internal.push(
+        ...usedUi
+          .slice()
+          .sort()
+          .map(
+            (name) => `import ${name} from '${componentsAlias}/${name}.astro';`,
+          ),
+      );
+    }
 
     const externalSorted = external.slice().sort((a, b) => a.localeCompare(b));
     const internalSorted = internal.slice().sort((a, b) => a.localeCompare(b));
