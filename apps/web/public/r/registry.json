@@ -236,6 +236,7 @@
     {
       "name": "dialog",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/dialog"],
       "files": [
         {
           "path": "ui/dialog/Dialog.astro",
