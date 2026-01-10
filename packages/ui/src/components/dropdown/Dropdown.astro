@@ -1,0 +1,55 @@
+---
+/**
+ * @component Dropdown
+ * @title Dropdown
+ * @description A toggleable menu displaying a list of options or actions.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2529-2338&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ * <Dropdown>
+ *   <DropdownTrigger>Menu</DropdownTrigger>
+ *   <DropdownContent>
+ *     <ul class="p-1">
+ *       <li><Button as="a" href="#" variant="ghost" class="w-full justify-start">Item 1</Button></li>
+ *       <li><Button as="a" href="#" variant="ghost" class="w-full justify-start">Item 2</Button></li>
+ *       <li><Button as="a" href="#" variant="ghost" class="w-full justify-start">Item 3</Button></li>
+ *     </ul>
+ *   </DropdownContent>
+ * </Dropdown>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Dropdown, DropdownTrigger, DropdownContent } from '@bejamas/ui/components/dropdown';
+ * import { Button } from '@bejamas/ui/components/button';
+ * ---
+ *
+ * <Dropdown>
+ *   <DropdownTrigger>Menu</DropdownTrigger>
+ *   <DropdownContent>
+ *     <ul class="p-1">
+ *       <li><Button variant="ghost">Item 1</Button></li>
+ *     </ul>
+ *   </DropdownContent>
+ * </Dropdown>
+ * ```
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="dropdown"
+  class={cn("relative inline-block group peer", className)}
+>
+  <slot />
+</div>

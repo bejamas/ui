@@ -1,0 +1,104 @@
+---
+/**
+ * @component Card
+ * @title Card
+ * @description UI container for grouping content with header, footer, etc.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2543-3884&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <Card class="w-full max-w-sm">
+ *   <CardMedia class="m-1">
+ *     <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2340" alt="Everest" class="w-full h-full object-cover" />
+ *   </CardMedia>
+ *   <CardHeader>
+ *     <div class="flex items-center gap-2 justify-between">
+ *       <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+ *         <Avatar>
+ *           <AvatarImage>
+ *             <img src="https://github.com/withastro.png" alt="@withastro" />
+ *           </AvatarImage>
+ *           <AvatarFallback>AW</AvatarFallback>
+ *         </Avatar>
+ *       </div>
+ *       <Date date="2025-08-24T12:00:00Z" class="text-sm text-muted-foreground" />
+ *     </div>
+ *   </CardHeader>
+ *   <CardContent class="space-y-5">
+ *     <CardTitle>Danone's Alpro Path to Cutting-Edge Composable Web</CardTitle>
+ *     <CardDescription>A while back, they challenged the norm for enterprises and replaced monolithic architecture with a modern tech stack.</CardDescription>
+ *     <Button variant="outline" as="a" href="#">Read more</Button>
+ *   </CardContent>
+ *   <Separator />
+ *   <CardFooter>
+ *     <p class="text-sm text-muted-foreground">Categories</p>
+ *     <div class="flex items-center gap-2">
+ *       <Badge variant="secondary">Marketing</Badge>
+ *       <Badge variant="secondary">UI Design</Badge>
+ *     </div>
+ *   </CardFooter>
+ * </Card>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@bejamas/ui/components/card';
+ * ---
+ *
+ * <Card>
+ *   <CardHeader>
+ *     <CardTitle>Card Title</CardTitle>
+ *     <CardDescription>Card Description</CardDescription>
+ *   </CardHeader>
+ *   <CardContent>
+ *     Card content goes here.
+ *   </CardContent>
+ *   <CardFooter>
+ *     <button>OK</button>
+ *   </CardFooter>
+ * </Card>
+ * ```
+ */
+
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type CardVariant = "default" | "ghost";
+
+type Props = {
+  variant?: CardVariant;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  variant = "default",
+  ...rest
+} = Astro.props as Props;
+
+const cardVariants = cva(
+  "group/card relative bg-card overflow-clip text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm group/card [&:has(>_[data-slot=card-media]:first-child_img)]:pt-0 [a]:hover:bg-accent/5 [a]:transition-colors duration-100",
+  {
+    variants: {
+      variant: {
+        default: "",
+        ghost: "border-transparent bg-transparent shadow-none",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  },
+);
+---
+
+<div
+  {...rest}
+  data-slot="card"
+  class={cn(cardVariants({ variant }), className)}
+>
+  <slot />
+</div>
+

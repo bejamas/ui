@@ -1,0 +1,82 @@
+---
+/**
+ * @component Avatar
+ * @title Avatar
+ * @description An image representing a user or entity, with fallback support when unavailable.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/BejamasUI---Design-System?node-id=2531-2620&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ * <div class="flex flex-row flex-wrap items-center gap-12">
+ *   <Avatar>
+ *     <AvatarImage>
+ *       <img src="https://github.com/bejamas.png" alt="@bejamas" />
+ *     </AvatarImage>
+ *     <AvatarFallback>BJ</AvatarFallback>
+ *   </Avatar>
+ *   <Avatar class="rounded-lg">
+ *     <AvatarImage>
+ *       <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *     </AvatarImage>
+ *     <AvatarFallback>TK</AvatarFallback>
+ *   </Avatar>
+ *   <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+ *     <Avatar>
+ *       <AvatarImage>
+ *         <img src="https://github.com/withastro.png" alt="@withastro" />
+ *       </AvatarImage>
+ *       <AvatarFallback>WA</AvatarFallback>
+ *     </Avatar>
+ *     <Avatar>
+ *       <AvatarImage>
+ *         <img src="https://github.com/shadcn.png" alt="@shadcn" />
+ *       </AvatarImage>
+ *       <AvatarFallback>SH</AvatarFallback>
+ *     </Avatar>
+ *     <Avatar>
+ *       <AvatarImage>
+ *         <img src="https://github.com/fredkschott.png" alt="@fredkschott" />
+ *       </AvatarImage>
+ *       <AvatarFallback>FS</AvatarFallback>
+ *     </Avatar>
+ *   </div>
+ * </div>
+ * 
+ * @usage
+ * 
+ * ```astro
+ * ---
+ * import { Avatar, AvatarImage, AvatarFallback } from '@bejamas/ui/components/avatar';
+ * ---
+ * 
+ * <Avatar>
+ *   <AvatarImage>
+ *     <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *   </AvatarImage>
+ *   <AvatarFallback>TK</AvatarFallback>
+ * </Avatar>
+ * ```
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  data-slot="avatar"
+  class={cn("relative flex size-8 shrink-0 overflow-hidden rounded-full", className)}
+>
+  <slot />
+</Tag>
+

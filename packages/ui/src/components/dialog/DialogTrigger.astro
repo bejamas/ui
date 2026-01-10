@@ -1,0 +1,21 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"button">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<button
+  data-slot="dialog-trigger"
+  class={cn(
+    "cursor-pointer select-none outline-none group-focus-within:pointer-events-none inline-flex items-center gap-1",
+    className,
+  )}
+  {...rest}
+>
+  <slot />
+</button>

@@ -1,0 +1,60 @@
+---
+/**
+ * @component Separator
+ * @title Separator
+ * @description Visual separator for grouping content, supporting horizontal and vertical orientation.
+ * @status stable
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2511-5829&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ * <div>
+ *   <div class="space-y-1">
+ *     <h4 class="text-sm leading-none font-medium">bejamas/ui</h4>
+ *     <p class="text-muted-foreground text-sm">
+ *       An open-source UI component library.
+ *     </p>
+ *   </div>
+ *   <Separator class="my-4" />
+ *   <div class="flex h-5 items-center space-x-4 text-sm">
+ *     <div>Blog</div>
+ *     <Separator orientation="vertical" />
+ *     <div>Docs</div>
+ *     <Separator orientation="vertical" />
+ *     <div>Source</div>
+ *   </div>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Separator } from '@bejamas/ui/components/separator';
+ * ---
+ *
+ * <Separator />
+ * <Separator orientation="vertical" />
+ * ```
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+
+const {
+  class: className = "",
+  orientation = "horizontal",
+  decorative = true,
+  ...props
+} = Astro.props;
+---
+
+<div
+  aria-orientation={orientation}
+  aria-hidden={decorative ? "true" : undefined}
+  class={cn(
+    "bg-border shrink-0",
+    orientation === "vertical" ? "h-full w-px" : "h-px w-full",
+    className,
+  )}
+  {...props}
+>
+</div>
+

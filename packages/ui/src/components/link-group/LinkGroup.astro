@@ -1,0 +1,56 @@
+---
+/**
+ * @component LinkGroup
+ * @title Link Group
+ * @description A group of related links with optional title for navigation or footer sections.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2166-6001&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <LinkGroup>
+ *   <LinkGroupTitle>Company</LinkGroupTitle>
+ *   <LinkGroupList>
+ *     <LinkGroupItem><a href="/">Home</a></LinkGroupItem>
+ *     <LinkGroupItem><a href="/about">About</a></LinkGroupItem>
+ *   </LinkGroupList>
+ * </LinkGroup>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { LinkGroup, LinkGroupTitle, LinkGroupList, LinkGroupItem } from '@bejamas/ui/components/link-group';
+ * ---
+ *
+ * <LinkGroup>
+ *   <LinkGroupTitle>Company</LinkGroupTitle>
+ *   <LinkGroupList>
+ *     <LinkGroupItem><a href="/">Home</a></LinkGroupItem>
+ *   </LinkGroupList>
+ * </LinkGroup>
+ * ```
+ */
+
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  data-slot="link-group"
+  class={cn("flex flex-col gap-2", className)}
+>
+  <slot />
+</Tag>
+

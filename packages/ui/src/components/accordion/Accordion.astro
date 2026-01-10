@@ -1,0 +1,122 @@
+---
+/**
+ * @component Accordion
+ * @title Accordion
+ * @description Vertically stacked collapsible sections that let users show and hide content panels by clicking headings.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/BejamasUI---Design-System?node-id=2589-14086&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <Accordion class="w-full max-w-[420px] self-start mt-10" collapsible>
+ *   <AccordionItem value="accordion-item-1">
+ *     <AccordionTrigger>
+ *       Is it accessible?
+ *     </AccordionTrigger>
+ *     <AccordionContent>
+ *       Yes. It uses native details/summary and no JS.
+ *     </AccordionContent>
+ *   </AccordionItem>
+ *   <AccordionItem value="accordion-item-2">
+ *     <AccordionTrigger>
+ *       Can I customize the icon?
+ *     </AccordionTrigger>
+ *     <AccordionContent>
+ *       Yes you can.
+ *     </AccordionContent>
+ *   </AccordionItem>
+ * </Accordion>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@bejamas/ui/components/accordion';
+ * ---
+ *
+ * <Accordion class="w-full max-w-[420px] self-start">
+ *   <AccordionItem open>
+ *     <AccordionTrigger>
+ *       Is it accessible?
+ *     </AccordionTrigger>
+ *     <AccordionContent>
+ *       Yes. It uses native details/summary and no JS.
+ *     </AccordionContent>
+ *   </AccordionItem>
+ * </Accordion>
+ * ```
+ *
+ * @examples
+ *
+ * ### Multiple choice accordion
+ *
+ * <Accordion class="w-full max-w-[420px] self-start" multiple>
+ *   <AccordionItem value="accordion-item-1">
+ *     <AccordionTrigger>
+ *       Is it accessible?
+ *     </AccordionTrigger>
+ *     <AccordionContent>
+ *       Yes. It uses native details/summary and no JS.
+ *     </AccordionContent>
+ *   </AccordionItem>
+ *   <AccordionItem value="accordion-item-2">
+ *     <AccordionTrigger>
+ *       Can I customize the icon?
+ *     </AccordionTrigger>
+ *     <AccordionContent>
+ *       Yes you can.
+ *     </AccordionContent>
+ *   </AccordionItem>
+ *   <AccordionItem value="accordion-item-3">
+ *     <AccordionTrigger>
+ *       Can I customize the icon?
+ *     </AccordionTrigger>
+ *     <AccordionContent>
+ *       Yes you can.
+ *     </AccordionContent>
+ *   </AccordionItem>
+ * </Accordion>
+ *
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+  multiple?: boolean;
+  defaultValue?: string;
+  collapsible?: boolean;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  class: className = "",
+  multiple = false,
+  defaultValue = "",
+  collapsible = false,
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  data-slot="accordion"
+  data-multiple={multiple}
+  data-defaultValue={defaultValue}
+  data-collapsible={collapsible}
+  class={cn(className)}
+>
+  <slot />
+</Tag>
+
+<script>
+  import { createAccordion } from "headless-vanilla-ui/dist/accordion";
+
+  document.querySelectorAll('[data-slot="accordion"]').forEach((el) =>
+    createAccordion(el, {
+      multiple: el.dataset.multiple === "true",
+      collapsible: el.dataset.collapsible === "true",
+    }),
+  );
+</script>

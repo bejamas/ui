@@ -1,0 +1,115 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+  name?: string;
+  id?: string;
+  disabled?: boolean;
+  required?: boolean;
+  variant?: "default" | "ghost";
+  size?: "default" | "sm" | "lg";
+  showCheckmark?: boolean;
+} & Omit<HTMLAttributes<"select">, "id">;
+
+const {
+  class: className = "",
+  id: selectId,
+  name,
+  variant = "default",
+  size = "default",
+  showCheckmark = true,
+  disabled = false,
+  required = false,
+  ...rest
+} = Astro.props as Props;
+
+const baseClasses =
+  "block w-full inline-flex items-center select appearance-none relative shadow-xs rounded-md bg-background ps-4 pe-10 py-2 text-sm text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring disabled:cursor-not-allowed disabled:opacity-50 [&_option]:rounded-md [&_option]:p-2";
+
+const selectControlVariants = cva(baseClasses, {
+  variants: {
+    variant: {
+      default: "border border-border",
+      ghost: "border-0 bg-transparent shadow-none focus:bg-background",
+    },
+    size: {
+      default: "h-9 px-3 py-2 text-sm",
+      sm: "h-8.5 text-xs rounded-lg gap-1.5 px-3.5 has-[>svg]:px-2.5",
+      lg: "h-10 text-sm rounded-lg px-4 has-[>svg]:px-4 has-[.badge:last-child]:pr-3 [&_.badge:last-child]:ml-1.5",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+  },
+});
+---
+
+<select
+  {...rest}
+  data-slot="select-control"
+  id={selectId}
+  name={name}
+  disabled={disabled}
+  required={required}
+  class={cn(
+    "select",
+    selectControlVariants({
+      variant: (variant as Variant) ?? "default",
+      size: (size as Size) ?? "default",
+    }),
+    !showCheckmark && "hide-checkmark",
+    className,
+  )}
+>
+  <slot />
+</select>
+
+<style>
+  @reference "tailwindcss";
+
+  /* Placeholder for checkmark hiding if supported by UA */
+  .hide-checkmark {
+    option::checkmark {
+      @apply hidden;
+    }
+  }
+
+  :where(.select) {
+    &::picker(select) {
+      @supports (appearance: base-select) {
+        appearance: base-select;
+      }
+      border-color: var(--border);
+      background-color: var(--popover);
+      color: var(--popover-foreground);
+      @apply rounded-lg my-2 p-1 shadow-lg;
+    }
+    &::picker-icon {
+      @apply hidden;
+    }
+
+    :where(option) {
+      @apply transition-colors duration-200 ease-in-out;
+
+      &:not(:disabled) {
+        &:hover,
+        &:focus-visible {
+          @apply cursor-pointer outline-hidden;
+        }
+        &:active {
+          box-shadow: 0 2px calc(var(--depth) * 3px) -2px var(--foreground);
+        }
+      }
+    }
+  }
+
+  @supports (appearance: base-select) {
+    select {
+      appearance: base-select;
+    }
+  }
+</style>

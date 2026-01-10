@@ -1,0 +1,39 @@
+---
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import { Textarea } from "../textarea";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"textarea">;
+
+const {
+  as: rawTag,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const Tag = rawTag ?? undefined;
+---
+
+{Tag ? (
+  <Tag
+    {...rest}
+    data-slot="input-group-control"
+    class={cn(
+      "flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent",
+      className,
+    )}
+  />
+) : (
+  <Textarea
+    data-slot="input-group-control"
+    class={cn(
+      "flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent",
+      className,
+    )}
+    {...(rest as any)}
+  />
+)}
+

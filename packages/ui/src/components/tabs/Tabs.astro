@@ -1,0 +1,69 @@
+---
+/**
+ * @component Tabs
+ * @title Tabs
+ * @description Organize content into tabbed panels, rendering one panel at a time.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2523-6067&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <Tabs class="w-full max-w-md">
+ *   <TabsList class="w-full">
+ *     <TabsIndicator />
+ *     <TabsTrigger value="overview" aria-selected="true">Overview</TabsTrigger>
+ *     <TabsTrigger value="analytics">Analytics</TabsTrigger>
+ *     <TabsTrigger value="reports">Reports</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="overview">
+ *     Overview content…
+ *   </TabsContent>
+ *   <TabsContent value="analytics" hidden>
+ *     Analytics content…
+ *   </TabsContent>
+ *   <TabsContent value="reports" hidden>
+ *     Reports content…
+ *   </TabsContent>
+ * </Tabs>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Tabs, TabsList, TabsTrigger, TabsContent } from '@bejamas/ui/components/tabs';
+ * ---
+ *
+ * <Tabs defaultValue="overview">
+ *   <TabsList>
+ *     <TabsTrigger value="overview">Overview</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="overview">Content...</TabsContent>
+ * </Tabs>
+ * ```
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import { autoTabs } from "headless-vanilla-ui/tabs";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="tabs"
+  data-component="tabs"
+  class={cn("flex flex-col gap-2", className)}
+>
+  <slot />
+</div>
+
+<script>
+  import { createTabs } from "@data-slot/tabs";
+  document
+    .querySelectorAll('[data-slot="tabs"]')
+    .forEach((el) => createTabs(el));
+</script>
