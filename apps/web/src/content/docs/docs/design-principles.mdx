@@ -1,19 +1,24 @@
 ---
 title: Design Principles
-description: The design principles behind the bejamas/ui library.
+description: A system for creating UI libraries and design systems with built-in governance, accessibility, and documentation.
 sidebar:
   order: 3
 ---
 
-`bejamas/ui` is an Astro-native component library. The way components are structured is as important as how they look.
+`bejamas/ui` is a system for creating UI libraries and design systems in Astro. It handles governance around UI components, accessibility, and component documentation — providing structure and patterns that scale from small component libraries to full design systems.
 
-1. **Folder-per-component structure.** Each component family lives in its own folder (e.g., `card/`, `dialog/`). Sub-components are separate `.astro` files, and the folder exports them via a barrel `index.ts` file.
-2. **Docs in code.** Documentation is auto-generated from comments within each component file; there's no separate source of truth to maintain.
-3. **Themeable.** Components use token-based classes (e.g. `bg-background`, `text-primary`) instead of hard-coded colors.
-4. **Composable.** We prefer small primitives over heavy abstractions. Code should be easy to read, copy, and modify.
-5. **Astro-native, zero-JS by default.** Components are server-first and ship no client JavaScript unless they truly need it.
-6. **Framework-agnostic.** We don't bundle React, Vue, or any other client framework. You're free to add your own [Astro islands](https://docs.astro.build/en/concepts/islands/) or framework of choice on top where needed.
-7. **shadcn/ui aligned.** We follow shadcn's markup patterns and class naming where useful, so you can reuse component examples and patterns from the shadcn registry and adapt them easily for Astro.
+The way components are structured is as important as how they look.
+
+## Core Principles
+
+1. **Docs in code.** Documentation is auto-generated from structured comments within each component file (inspired by JSDoc). There's no separate source of truth to maintain — the code IS the documentation.
+2. **Accessibility built-in.** Components follow WAI-ARIA design patterns. Interactive components use `@data-slot` libraries that handle focus management, keyboard navigation, and screen reader support out of the box.
+3. **Folder-per-component structure.** Each component family lives in its own folder (e.g., `card/`, `dialog/`). Sub-components are separate `.astro` files, and the folder exports them via a barrel `index.ts` file.
+4. **Themeable.** Components use token-based classes (e.g. `bg-background`, `text-primary`) instead of hard-coded colors, making it easy to adapt to any brand.
+5. **Composable.** We prefer small primitives over heavy abstractions. Code should be easy to read, copy, and modify.
+6. **Astro-native, zero-JS by default.** Components are server-first and ship no client JavaScript unless they truly need it.
+7. **Framework-agnostic.** We don't bundle React, Vue, or any other client framework. You're free to add your own [Astro islands](https://docs.astro.build/en/concepts/islands/) or framework of choice on top where needed.
+8. **shadcn/ui aligned.** We follow shadcn's markup patterns and class naming where useful, so you can reuse component examples and patterns from the shadcn registry and adapt them easily for Astro.
 
 ---
 
@@ -127,6 +132,9 @@ All multi-part components follow the same structure:
 // Dialog
 import {
   Dialog,
+  DialogTrigger,
+  DialogClose,
+  DialogHeader,
   DialogTitle,
   DialogDescription,
   DialogContent,
@@ -134,15 +142,18 @@ import {
 } from "@bejamas/ui/components/dialog";
 ---
 
-<Dialog id="myDialog">
-  <DialogTitle>Dialog Title</DialogTitle>
-  <DialogDescription>Dialog description text.</DialogDescription>
+<Dialog>
+  <DialogTrigger>Open Dialog</DialogTrigger>
   <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Dialog Title</DialogTitle>
+      <DialogDescription>Dialog description text.</DialogDescription>
+    </DialogHeader>
     <p>Dialog body content goes here.</p>
+    <DialogFooter>
+      <DialogClose>Close</DialogClose>
+    </DialogFooter>
   </DialogContent>
-  <DialogFooter>
-    <button data-dialog-close>Close</button>
-  </DialogFooter>
 </Dialog>
 ```
 
@@ -167,3 +178,59 @@ import {
 ```
 
 This consistency makes the library predictable - once you learn one component, you know how to use them all.
+
+---
+
+## JavaScript Interactions
+
+While most components are purely CSS-based, some require JavaScript for interactive behavior like dialogs, accordions, and tabs. Rather than bundling framework-specific code or writing custom scripts for each component, we use [**`@data-slot`**](https://data-slot.com) — a set of headless UI libraries designed and maintained by Bejamas as a separate project.
+
+### What is [@data-slot](https://data-slot.com)?
+
+`@data-slot` is a collection of framework-agnostic, headless UI libraries that provide accessible interactive behavior through simple JavaScript functions. Each library handles a specific UI pattern:
+
+- `@data-slot/dialog` — Modal dialogs with focus trapping, escape-to-close, and backdrop clicks
+- `@data-slot/accordion` — Collapsible sections with keyboard navigation
+- `@data-slot/tabs` — Tabbed interfaces with ARIA support
+
+### How it works
+
+Components that need JavaScript use `data-slot` attributes to mark interactive elements. The corresponding `@data-slot` library initializes these elements with the required behavior:
+
+```astro
+---
+// Dialog.astro
+---
+
+<div data-slot="dialog">
+  <slot />
+</div>
+
+<script>
+  import { createDialog } from "@data-slot/dialog";
+
+  document
+    .querySelectorAll('[data-slot="dialog"]')
+    .forEach((el) => createDialog(el));
+</script>
+```
+
+The Astro component remains purely presentational — it renders HTML with data attributes. The `<script>` tag runs client-side to enhance those elements with JavaScript behavior.
+
+### Why @data-slot?
+
+1. **Separation of concerns.** UI components define structure and styles. Interactive behavior is maintained separately and can be tested independently.
+2. **Framework-agnostic.** Unlike Radix (React-only) or Headless UI (React/Vue), `@data-slot` works with vanilla JavaScript and any framework.
+3. **Progressive enhancement.** Components render server-side with full HTML and CSS. JavaScript adds interactive behavior after hydration.
+4. **Minimal bundle size.** Each library is small and focused. You only ship the JavaScript needed for components you actually use.
+5. **Accessible by default.** All `@data-slot` libraries follow WAI-ARIA design patterns and handle focus management, keyboard navigation, and screen reader support.
+
+### Which components use @data-slot?
+
+Currently, three components use `@data-slot` libraries:
+
+- **Dialog** — Uses `@data-slot/dialog` for modal behavior
+- **Accordion** — Uses `@data-slot/accordion` for collapsible sections
+- **Tabs** — Uses `@data-slot/tabs` for tabbed interfaces
+
+All other components are CSS-only and ship zero JavaScript to the client.
