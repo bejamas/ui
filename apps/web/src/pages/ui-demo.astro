@@ -1,29 +1,65 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
 import { Button } from "@bejamas/ui/components/button";
-import { Dropdown, DropdownTrigger, DropdownContent } from "@bejamas/ui/components/dropdown";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownContent,
+} from "@bejamas/ui/components/dropdown";
 import { StickySurface } from "@bejamas/ui/components/sticky-surface";
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbSeparator } from "@bejamas/ui/components/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbSeparator,
+} from "@bejamas/ui/components/breadcrumb";
 import { Separator } from "@bejamas/ui/components/separator";
-import { LinkGroup, LinkGroupTitle, LinkGroupList, LinkGroupItem } from "@bejamas/ui/components/link-group";
+import {
+  LinkGroup,
+  LinkGroupTitle,
+  LinkGroupList,
+  LinkGroupItem,
+} from "@bejamas/ui/components/link-group";
 import { Input } from "@bejamas/ui/components/input";
 import { Label } from "@bejamas/ui/components/label";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@bejamas/ui/components/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@bejamas/ui/components/card";
 import {
   SlashIcon,
   BookmarkIcon,
   AlertCircleIcon,
   BadgeCheckIcon,
 } from "@lucide/astro";
-import { Avatar, AvatarImage, AvatarFallback } from "@bejamas/ui/components/avatar";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@bejamas/ui/components/avatar";
 import { ButtonGroup } from "@bejamas/ui/components/button-group";
 import { Textarea } from "@bejamas/ui/components/textarea";
 import { Switch } from "@bejamas/ui/components/switch";
 import { Badge } from "@bejamas/ui/components/badge";
 import { Checkbox } from "@bejamas/ui/components/checkbox";
 import { Marquee } from "@bejamas/ui/components/marquee";
-import { Alert, AlertTitle, AlertDescription } from "@bejamas/ui/components/alert";
-import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter } from "@bejamas/ui/components/dialog";
+import {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+} from "@bejamas/ui/components/alert";
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogContent,
+  DialogFooter,
+} from "@bejamas/ui/components/dialog";
 ---
 
 <BlockExampleLayout theme="default">
@@ -44,19 +80,22 @@ import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter } f
         <Label for="notifications">Enable notifications</Label>
       </div>
 
-      <Button onclick="myDialog.open()" variant="secondary"
-        >Manage Cookies</Button
-      >
-      <Dialog id="myDialog" class="backdrop-blur-md">
-        <DialogTitle>Manage Cookies</DialogTitle>
-        <DialogDescription
-          >Using websites and apps involves storing and retrieving information
-          from your device, including cookies and other identifiers, which can
-          be shared with third parties, for various activities. We provide a
-          simple tool below allowing you to tailor your choices as you deem fit.
-          You can change your consent at any time. Learn more.</DialogDescription
+      <Dialog>
+        <Button variant="secondary" data-slot="dialog-trigger"
+          >Manage Cookies</Button
         >
         <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Manage Cookies</DialogTitle>
+            <DialogDescription
+              >Using websites and apps involves storing and retrieving
+              information from your device, including cookies and other
+              identifiers, which can be shared with third parties, for various
+              activities. We provide a simple tool below allowing you to tailor
+              your choices as you deem fit. You can change your consent at any
+              time. Learn more.</DialogDescription
+            >
+          </DialogHeader>
           <div class="mt-5">
             <div class="flex items-center gap-3">
               <Checkbox
@@ -101,12 +140,13 @@ import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter } f
               campaigns.
             </p>
           </div>
+          <DialogFooter>
+            <Button variant="outline" data-slot="dialog-close" class="mt-4"
+              >Close</Button
+            >
+            <Button class="mt-4">Save changes</Button>
+          </DialogFooter>
         </DialogContent>
-        <DialogFooter>
-          <Button variant="outline" data-dialog-close class="mt-4">Close</Button
-          >
-          <Button data-dialog-close class="mt-4">Save changes</Button>
-        </DialogFooter>
       </Dialog>
 
       <Alert>
@@ -114,6 +154,7 @@ import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter } f
         <AlertTitle>Designed for CMS-driven, long-lived websites.</AlertTitle>
       </Alert>
     </div>
+
     <div class="col-span-4 space-y-6">
       <Textarea placeholder="Additional information (optional)…" />
       <Card class="w-full">
