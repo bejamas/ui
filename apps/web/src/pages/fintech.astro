@@ -5,11 +5,21 @@ import NavigationMenu from "@/ui-next/NavigationMenu.astro";
 import { StickySurface } from "@bejamas/ui/components/sticky-surface";
 import { Separator } from "@bejamas/ui/components/separator";
 import Footer from "@/ui-next/Footer.astro";
-import { LinkGroup, LinkGroupTitle, LinkGroupList, LinkGroupItem } from "@bejamas/ui/components/link-group";
+import {
+  LinkGroup,
+  LinkGroupTitle,
+  LinkGroupList,
+  LinkGroupItem,
+} from "@bejamas/ui/components/link-group";
 import { Input } from "@bejamas/ui/components/input";
 import { Card } from "@bejamas/ui/components/card";
 import { Marquee } from "@bejamas/ui/components/marquee";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@bejamas/ui/components/accordion";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@bejamas/ui/components/accordion";
 
 import { SlashIcon, ChevronDownIcon } from "@lucide/astro";
 
@@ -218,54 +228,60 @@ const faq = [
         ))
       }
     </Marquee>
-    <Separator class="my-20" />
+    <Separator class="mt-20" />
   </section>
 
-  <Footer class="hidden lg:block mx-auto max-w-6xl px-5">
-    <div class="grid grid-cols-12 gap-4">
-      <LinkGroup class="col-span-3 text-lg">
-        <LinkGroupTitle class="text-xl font-medium">How it works</LinkGroupTitle>
-        <LinkGroupList>
-          <LinkGroupItem><a href="#">Blog</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">Documentation</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">Pricing</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">Support</a></LinkGroupItem>
-        </LinkGroupList>
-      </LinkGroup>
-      <LinkGroup class="col-span-3 text-lg">
-        <LinkGroupTitle class="text-xl font-medium">Information</LinkGroupTitle>
-        <LinkGroupList>
-          <LinkGroupItem><a href="#">Home</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">About</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">Contact</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">Careers</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">Press</a></LinkGroupItem>
-        </LinkGroupList>
-      </LinkGroup>
-      <LinkGroup class="col-span-3 text-lg">
-        <LinkGroupTitle class="text-xl font-medium">Company</LinkGroupTitle>
-        <LinkGroupList>
-          <LinkGroupItem><a href="#">About</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">Contact</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">Careers</a></LinkGroupItem>
-          <LinkGroupItem><a href="#">Press</a></LinkGroupItem>
-        </LinkGroupList>
-      </LinkGroup>
-    </div>
-    <div class="max-w-sm mt-28 pb-12">
-      <div class="flex items-center gap-2">
-        <Input placeholder="Enter your email" />
-        <Button variant="secondary">Subscribe</Button>
+  <Footer class="hidden lg:block">
+    <div class="mx-auto max-w-6xl px-5 pt-20">
+      <div class="grid grid-cols-12 gap-4">
+        <LinkGroup class="col-span-3 text-lg">
+          <LinkGroupTitle class="text-xl font-medium"
+            >How it works</LinkGroupTitle
+          >
+          <LinkGroupList>
+            <LinkGroupItem><a href="#">Blog</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">Documentation</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">Pricing</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">Support</a></LinkGroupItem>
+          </LinkGroupList>
+        </LinkGroup>
+        <LinkGroup class="col-span-3 text-lg">
+          <LinkGroupTitle class="text-xl font-medium"
+            >Information</LinkGroupTitle
+          >
+          <LinkGroupList>
+            <LinkGroupItem><a href="#">Home</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">About</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">Contact</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">Careers</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">Press</a></LinkGroupItem>
+          </LinkGroupList>
+        </LinkGroup>
+        <LinkGroup class="col-span-3 text-lg">
+          <LinkGroupTitle class="text-xl font-medium">Company</LinkGroupTitle>
+          <LinkGroupList>
+            <LinkGroupItem><a href="#">About</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">Contact</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">Careers</a></LinkGroupItem>
+            <LinkGroupItem><a href="#">Press</a></LinkGroupItem>
+          </LinkGroupList>
+        </LinkGroup>
       </div>
-      <p class="text-muted-foreground text-sm mt-6">
-        By creating an account, you agree to our Terms and have read and
-        acknowledge Privacy Statement. We'll send you only what matters — no
-        noise, no spam.
-      </p>
-    </div>
-    <Separator />
-    <div class="py-11">
-      <p class="text-4xl font-extrabold tracking-tighter">VIRA</p>
+      <div class="max-w-sm mt-28 pb-12">
+        <div class="flex items-center gap-2">
+          <Input placeholder="Enter your email" />
+          <Button variant="secondary">Subscribe</Button>
+        </div>
+        <p class="text-muted-foreground text-sm mt-6">
+          By creating an account, you agree to our Terms and have read and
+          acknowledge Privacy Statement. We'll send you only what matters — no
+          noise, no spam.
+        </p>
+      </div>
+      <Separator />
+      <div class="py-11">
+        <p class="text-4xl font-extrabold tracking-tighter">VIRA</p>
+      </div>
     </div>
   </Footer>
 </BlockExampleLayout>
