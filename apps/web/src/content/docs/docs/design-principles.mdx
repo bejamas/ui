@@ -220,7 +220,7 @@ The Astro component remains purely presentational — it renders HTML with data 
 ### Why @data-slot?
 
 1. **Separation of concerns.** UI components define structure and styles. Interactive behavior is maintained separately and can be tested independently.
-2. **Framework-agnostic.** Unlike Radix (React-only) or Headless UI (React/Vue), `@data-slot` works with vanilla JavaScript and any framework.
+2. **Framework-agnostic.** Unlike Radix (React-only) or Headless UI (React/Vue), `@data-slot` does not require a framework to be installed.
 3. **Progressive enhancement.** Components render server-side with full HTML and CSS. JavaScript adds interactive behavior after hydration.
 4. **Minimal bundle size.** Each library is small and focused. You only ship the JavaScript needed for components you actually use.
 5. **Accessible by default.** All `@data-slot` libraries follow WAI-ARIA design patterns and handle focus management, keyboard navigation, and screen reader support.
