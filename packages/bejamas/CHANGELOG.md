@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.2.1
+
+### Patch Changes
+
+- [#7](https://github.com/bejamas/ui/pull/7) [`a056936`](https://github.com/bejamas/ui/commit/a0569362b095a7348a66f83ae64fd55ac52a37a3) Thanks [@thomkrupa](https://github.com/thomkrupa)! - generate docs from component files in folders
+
 ## 0.2.0
 
 ### Minor Changes
