@@ -1,0 +1,37 @@
+---
+/**
+ * @component Label
+ * @title Label
+ * @description A text label for form controls.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2523-1293&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <div class="flex items-center space-x-2">
+ *   <Checkbox id="terms" />
+ *   <Label for="terms">Accept terms and conditions</Label>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Label } from '@bejamas/ui/components/label';
+ * ---
+ *
+ * <Label for="terms">Accept terms and conditions</Label>
+ * ```
+ */
+
+import { cn } from "@repo/ui/lib/utils";
+
+const { class: className = "", ...props } = Astro.props;
+
+const baseClass =
+  "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-foreground";
+---
+
+<label class={cn(baseClass, className)} {...props}>
+  <slot />
+</label>
+
