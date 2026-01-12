@@ -1,5 +1,13 @@
 # bejamas
 
+## 0.2.2
+
+### Patch Changes
+
+- [#10](https://github.com/bejamas/ui/pull/10) [`92f2b10`](https://github.com/bejamas/ui/commit/92f2b10522fb4738ca056d2731fb14ced08d8a6f) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Improve bejamas add to organize multi-file components into subfolders
+
+- [#12](https://github.com/bejamas/ui/pull/12) [`0486564`](https://github.com/bejamas/ui/commit/04865641291f255556be1b08e40c5bb308b5ab87) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Fix console output and file handling for component reorganization
+
 ## 0.2.1
 
 ### Patch Changes
