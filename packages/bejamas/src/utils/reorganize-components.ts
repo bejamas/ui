@@ -168,6 +168,7 @@ export function rewriteOutputPaths(
 export interface ReorganizeResult {
   totalMoved: number;
   movedFiles: string[]; // e.g., ["avatar/Avatar.astro", "avatar/index.ts"]
+  skippedFiles: string[]; // Files that already existed in subfolder (flat duplicate removed)
 }
 
 /**
@@ -183,7 +184,7 @@ export async function reorganizeComponents(
   registryUrl: string,
   verbose: boolean,
 ): Promise<ReorganizeResult> {
-  const result: ReorganizeResult = { totalMoved: 0, movedFiles: [] };
+  const result: ReorganizeResult = { totalMoved: 0, movedFiles: [], skippedFiles: [] };
 
   if (!uiDir || components.length === 0) {
     return result;
@@ -232,13 +233,20 @@ export async function reorganizeComponents(
           continue;
         }
 
-        // Check if target already exists (don't overwrite)
+        // Check if target already exists (don't overwrite, but clean up flat duplicate)
         if (await pathExists(targetPath)) {
-          // Target exists, skip this file
-          if (verbose) {
-            logger.info(
-              `[bejamas-ui] ${subfolder}/${filename} already exists, skipping`,
-            );
+          // Target exists in subfolder - delete the flat duplicate shadcn just created
+          try {
+            await fs.unlink(flatPath);
+            result.skippedFiles.push(`${subfolder}/${filename}`);
+            if (verbose) {
+              logger.info(
+                `[bejamas-ui] Removed flat duplicate: ${filename} (${subfolder}/${filename} exists)`,
+              );
+            }
+          } catch {
+            // Flat file might not exist or already deleted, but still counts as skipped
+            result.skippedFiles.push(`${subfolder}/${filename}`);
           }
           continue;
         }

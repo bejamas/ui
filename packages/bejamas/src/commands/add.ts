@@ -102,13 +102,29 @@ function extractOptionsForShadcn(rawArgv: string[], cmd: Command): string[] {
   return forwarded;
 }
 
-/** Build a map of filename -> subfolder/filename for path rewriting */
+interface ComponentFileInfo {
+  subfolder: string;
+  files: string[]; // All filenames for this component
+}
+
+interface SubfolderMapResult {
+  // Maps unique filename -> subfolder/filename
+  uniqueMap: Map<string, string>;
+  // Maps component subfolder -> all its files (for grouping)
+  componentInfo: Map<string, ComponentFileInfo>;
+  // Set of shared filenames (like index.ts) that appear in multiple components
+  sharedFilenames: Set<string>;
+}
+
+/** Build maps for path rewriting, handling filename collisions */
 async function buildSubfolderMap(
   components: string[],
   registryUrl: string,
-): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
+): Promise<SubfolderMapResult> {
+  const filenameToSubfolders = new Map<string, string[]>();
+  const componentInfo = new Map<string, ComponentFileInfo>();
 
+  // First pass: collect all filename -> subfolder mappings
   for (const componentName of components) {
     const registryItem = await fetchRegistryItem(componentName, registryUrl);
     if (!registryItem) continue;
@@ -116,38 +132,84 @@ async function buildSubfolderMap(
     const subfolder = getSubfolderFromPaths(registryItem.files);
     if (!subfolder) continue;
 
+    const files: string[] = [];
     for (const file of registryItem.files) {
       if (file.type === "registry:ui") {
         const filename = path.basename(file.path);
-        map.set(filename, `${subfolder}/${filename}`);
+        files.push(filename);
+
+        // Track which subfolders each filename appears in
+        const subfolders = filenameToSubfolders.get(filename) || [];
+        subfolders.push(subfolder);
+        filenameToSubfolders.set(filename, subfolders);
       }
     }
+
+    componentInfo.set(subfolder, { subfolder, files });
   }
 
-  return map;
+  // Build the unique map (only filenames that appear once)
+  const uniqueMap = new Map<string, string>();
+  const sharedFilenames = new Set<string>();
+
+  filenameToSubfolders.forEach((subfolders, filename) => {
+    if (subfolders.length === 1) {
+      // Unique filename - safe to map directly
+      uniqueMap.set(filename, `${subfolders[0]}/${filename}`);
+    } else {
+      // Shared filename (like index.ts) - track for context-based rewriting
+      sharedFilenames.add(filename);
+    }
+  });
+
+  return { uniqueMap, componentInfo, sharedFilenames };
 }
 
-/** Rewrite a file path to include the correct subfolder (only if not already there) */
-function rewritePath(
-  filePath: string,
-  subfolderMap: Map<string, string>,
-): string {
-  const filename = path.basename(filePath);
-  const subfolderFilename = subfolderMap.get(filename);
+/**
+ * Rewrite file paths to include correct subfolders.
+ * Handles shared filenames (like index.ts) by tracking current component context.
+ */
+function rewritePaths(
+  paths: string[],
+  mapResult: SubfolderMapResult,
+): string[] {
+  const { uniqueMap, componentInfo, sharedFilenames } = mapResult;
+  let currentSubfolder: string | null = null;
 
-  if (subfolderFilename) {
-    // Extract expected subfolder name (e.g., "avatar" from "avatar/Avatar.astro")
-    const expectedSubfolder = path.dirname(subfolderFilename);
+  return paths.map((filePath) => {
+    const filename = path.basename(filePath);
     const parentDir = path.basename(path.dirname(filePath));
 
-    // Only rewrite if the parent directory is NOT already the expected subfolder
-    if (parentDir !== expectedSubfolder) {
-      const dir = path.dirname(filePath);
-      return `${dir}/${subfolderFilename}`;
-    }
-  }
+    // Check if this is a unique filename (can map directly)
+    const uniqueMapping = uniqueMap.get(filename);
+    if (uniqueMapping) {
+      const expectedSubfolder = path.dirname(uniqueMapping);
 
-  return filePath;
+      // Update current context for subsequent shared files
+      currentSubfolder = expectedSubfolder;
+
+      // Only rewrite if not already in the correct subfolder
+      if (parentDir !== expectedSubfolder) {
+        const dir = path.dirname(filePath);
+        return `${dir}/${uniqueMapping}`;
+      }
+      return filePath;
+    }
+
+    // Check if this is a shared filename (like index.ts)
+    if (sharedFilenames.has(filename) && currentSubfolder) {
+      // Use the current component context
+      const expectedSubfolder = currentSubfolder;
+
+      // Only rewrite if not already in the correct subfolder
+      if (parentDir !== expectedSubfolder) {
+        const dir = path.dirname(filePath);
+        return `${dir}/${expectedSubfolder}/${filename}`;
+      }
+    }
+
+    return filePath;
+  });
 }
 
 /** Parse shadcn output to extract file lists (stdout has paths, stderr has headers) */
@@ -177,6 +239,18 @@ function parseShadcnOutput(stdout: string, stderr: string): ParsedOutput {
     }
   }
 
+  // Also check stderr for file paths (some shadcn versions output there)
+  for (const line of cleanStderr.split("\n")) {
+    const match = line.match(/^\s+-\s+(.+)$/);
+    if (match) {
+      const filePath = match[1].trim();
+      // Avoid duplicates
+      if (!allPaths.includes(filePath)) {
+        allPaths.push(filePath);
+      }
+    }
+  }
+
   // Assign paths to sections based on counts (order: created, updated, skipped)
   let idx = 0;
   for (let i = 0; i < createdCount && idx < allPaths.length; i++) {
@@ -197,14 +271,26 @@ async function addComponents(
   forwardedOptions: string[],
   isVerbose: boolean,
   isSilent: boolean,
-  subfolderMap: Map<string, string>,
+  subfolderMapResult: SubfolderMapResult,
 ): Promise<ParsedOutput> {
   const runner = await getPackageRunner(process.cwd());
   const env = {
     ...process.env,
     REGISTRY_URL: process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL,
   };
-  const baseArgs = ["shadcn@latest", "add", ...packages, ...forwardedOptions];
+  // Always pass --yes for non-interactive mode (skips "Add components?" confirmation)
+  // Note: we don't pass --overwrite by default to respect user customizations
+  const autoFlags: string[] = [];
+  if (!forwardedOptions.includes("--yes")) {
+    autoFlags.push("--yes");
+  }
+  const baseArgs = [
+    "shadcn@latest",
+    "add",
+    ...packages,
+    ...autoFlags,
+    ...forwardedOptions,
+  ];
 
   let cmd = "npx";
   let args: string[] = ["-y", ...baseArgs];
@@ -228,10 +314,11 @@ async function addComponents(
   registrySpinner.start();
 
   try {
-    // Run shadcn and capture output (explicitly pipe stdout/stderr)
+    // Run shadcn and capture output
+    // Pipe "n" to stdin to answer "no" to any overwrite prompts (respects user customizations)
     const result = await execa(cmd, args, {
       env,
-      stdin: "inherit",
+      input: "n\nn\nn\nn\nn\nn\nn\nn\nn\nn\n", // Answer "no" to up to 10 overwrite prompts
       stdout: "pipe",
       stderr: "pipe",
       reject: false,
@@ -256,44 +343,8 @@ async function addComponents(
 
     const parsed = parseShadcnOutput(stdout, stderr);
 
-    // Rewrite paths and display results
-    if (parsed.created.length > 0) {
-      const rewrittenPaths = parsed.created.map((p) =>
-        rewritePath(p, subfolderMap),
-      );
-      logger.success(
-        `Created ${rewrittenPaths.length} file${rewrittenPaths.length > 1 ? "s" : ""}:`,
-      );
-      for (const file of rewrittenPaths) {
-        logger.log(`  ${highlighter.info("-")} ${file}`);
-      }
-    }
-
-    if (parsed.updated.length > 0) {
-      // Dedupe updated files (shadcn sometimes lists same file twice)
-      const uniqueUpdated = Array.from(new Set(parsed.updated));
-      const rewrittenPaths = uniqueUpdated.map((p) =>
-        rewritePath(p, subfolderMap),
-      );
-      logger.info(
-        `Updated ${rewrittenPaths.length} file${rewrittenPaths.length > 1 ? "s" : ""}:`,
-      );
-      for (const file of rewrittenPaths) {
-        logger.log(`  ${highlighter.info("-")} ${file}`);
-      }
-    }
-
-    if (parsed.skipped.length > 0) {
-      const rewrittenPaths = parsed.skipped.map((p) =>
-        rewritePath(p, subfolderMap),
-      );
-      logger.info(
-        `Skipped ${rewrittenPaths.length} file${rewrittenPaths.length > 1 ? "s" : ""}: (use --overwrite to overwrite)`,
-      );
-      for (const file of rewrittenPaths) {
-        logger.log(`  ${highlighter.info("-")} ${file}`);
-      }
-    }
+    // Return parsed data - display is handled by caller after reorganization
+    // This allows accurate reporting (shadcn says "created" but we may skip)
 
     if (result.exitCode !== 0) {
       // Show any error output
@@ -373,23 +424,114 @@ export const add = new Command()
       );
     }
 
-    // Build subfolder map for path rewriting in output
-    const subfolderMap = await buildSubfolderMap(packages || [], registryUrl);
-
-    // Run shadcn and display results with our own spinners
+    // Process components ONE AT A TIME to avoid index.ts conflicts
+    // When shadcn runs with multiple components, files with same name overwrite each other
     const isSilent = opts.silent || false;
-    await addComponents(
-      packages || [],
-      forwardedOptions,
-      verbose,
-      isSilent,
-      subfolderMap,
-    );
+    const componentsToAdd = packages || [];
+    const totalComponents = componentsToAdd.length;
 
-    // Reorganize multi-file components into subfolders
-    if (uiDir && packages && packages.length > 0) {
-      await reorganizeComponents(packages, uiDir, registryUrl, verbose);
-      // Paths are already corrected in shadcn output, no separate summary needed
+    for (let i = 0; i < componentsToAdd.length; i++) {
+      const component = componentsToAdd[i];
+
+      // Show component header when adding multiple
+      if (totalComponents > 1 && !isSilent) {
+        logger.break();
+        logger.info(
+          highlighter.info(`[${i + 1}/${totalComponents}]`) +
+            ` Adding ${highlighter.success(component)}...`,
+        );
+      }
+
+      // Build subfolder map for this single component
+      const subfolderMapResult = await buildSubfolderMap(
+        [component],
+        registryUrl,
+      );
+
+      // Run shadcn for just this component
+      const parsed = await addComponents(
+        [component],
+        forwardedOptions,
+        verbose,
+        isSilent,
+        subfolderMapResult,
+      );
+
+      // Immediately reorganize this component's files before the next one
+      let skippedCount = 0;
+      if (uiDir) {
+        const reorgResult = await reorganizeComponents(
+          [component],
+          uiDir,
+          registryUrl,
+          verbose,
+        );
+        skippedCount = reorgResult.skippedFiles.length;
+      }
+
+      // Display accurate results (accounting for files we skipped after shadcn "created" them)
+      if (!isSilent) {
+        const relativeUiDir = uiDir ? path.relative(cwd, uiDir) : "";
+
+        // Files that were actually created (shadcn created minus our skipped)
+        const actuallyCreated = Math.max(
+          0,
+          parsed.created.length - skippedCount,
+        );
+
+        if (actuallyCreated > 0) {
+          const createdPaths = rewritePaths(
+            parsed.created.slice(0, actuallyCreated),
+            subfolderMapResult,
+          );
+          logger.success(
+            `Created ${createdPaths.length} file${createdPaths.length > 1 ? "s" : ""}:`,
+          );
+          for (const file of createdPaths) {
+            logger.log(`  ${highlighter.info("-")} ${file}`);
+          }
+        }
+
+        // Updated files (globals.css etc)
+        if (parsed.updated.length > 0) {
+          const uniqueUpdated = Array.from(new Set(parsed.updated));
+          const updatedPaths = rewritePaths(uniqueUpdated, subfolderMapResult);
+          logger.info(
+            `Updated ${updatedPaths.length} file${updatedPaths.length > 1 ? "s" : ""}:`,
+          );
+          for (const file of updatedPaths) {
+            logger.log(`  ${highlighter.info("-")} ${file}`);
+          }
+        }
+
+        // Files skipped because they already exist in subfolder
+        if (skippedCount > 0) {
+          logger.info(
+            `Skipped ${skippedCount} file${skippedCount > 1 ? "s" : ""}: (already exists)`,
+          );
+        }
+
+        // Files shadcn skipped (different from our reorganization skip)
+        if (parsed.skipped.length > 0) {
+          const skippedPaths = rewritePaths(parsed.skipped, subfolderMapResult);
+          logger.info(
+            `Skipped ${skippedPaths.length} file${skippedPaths.length > 1 ? "s" : ""}: (use --overwrite)`,
+          );
+          for (const file of skippedPaths) {
+            logger.log(`  ${highlighter.info("-")} ${file}`);
+          }
+        }
+
+        // Nothing happened
+        if (
+          actuallyCreated === 0 &&
+          parsed.updated.length === 0 &&
+          skippedCount === 0 &&
+          parsed.skipped.length === 0
+        ) {
+          logger.info("Already up to date.");
+        }
+      }
     }
 
     // Fix aliases inside Astro files until upstream adds .astro support.
