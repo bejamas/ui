@@ -1,0 +1,124 @@
+---
+/**
+ * @component Select
+ * @title Select
+ * @description A dropdown control that lets users pick one option from a list.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2549-18530&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <div class="flex flex-col gap-2">
+ *   <Label for="salad">Your favorite salad</Label>
+ *   <Select class="w-[180px]">
+ *     <SelectIndicator />
+ *     <SelectControl name="salad" id="salad">
+ *       <SelectPlaceholder>Select a fruit...</SelectPlaceholder>
+ *       <SelectGroup label="Fruits">
+ *         <SelectOption value="apple">Apple</SelectOption>
+ *         <SelectOption value="banana">Banana</SelectOption>
+ *         <SelectOption value="cherry">Cherry</SelectOption>
+ *       </SelectGroup>
+ *       <SelectGroup label="Vegetables">
+ *         <SelectOption value="carrot">Carrot</SelectOption>
+ *         <SelectOption value="broccoli">Broccoli</SelectOption>
+ *       </SelectGroup>
+ *     </SelectControl>
+ *   </Select>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Select, SelectControl, SelectPlaceholder, SelectOption, SelectIndicator } from '@bejamas/ui/components/select';
+ * ---
+ *
+ * <Select>
+ *   <SelectControl name="fruit">
+ *     <SelectPlaceholder>Select...</SelectPlaceholder>
+ *     <SelectOption value="apple">Apple</SelectOption>
+ *   </SelectControl>
+ *   <SelectIndicator />
+ * </Select>
+ * ```
+ *
+ * @examples
+ *
+ * ### Default
+ *
+ * <Select>
+ *   <SelectIndicator />
+ *   <SelectControl>
+ *     <SelectOption value="apple">Apple</SelectOption>
+ *     <SelectOption value="banana">Banana</SelectOption>
+ *   </SelectControl>
+ * </Select>
+ *
+ * ### Sizes
+ *
+ * <div class="flex flex-col items-start gap-8 sm:flex-row">
+ *   <Select class="w-[180px]">
+ *     <SelectControl size="sm">
+ *       <SelectOption value="apple">Apple</SelectOption>
+ *       <SelectOption value="banana">Banana</SelectOption>
+ *     </SelectControl>
+ *     <SelectIndicator />
+ *   </Select>
+ *   <Select class="w-[180px]">
+ *     <SelectControl size="default">
+ *       <SelectOption value="apple">Apple</SelectOption>
+ *       <SelectOption value="banana">Banana</SelectOption>
+ *     </SelectControl>
+ *     <SelectIndicator />
+ *   </Select>
+ *   <Select class="w-[180px]">
+ *     <SelectControl size="lg">
+ *       <SelectOption value="apple">Apple</SelectOption>
+ *       <SelectOption value="banana">Banana</SelectOption>
+ *     </SelectControl>
+ *     <SelectIndicator />
+ *   </Select>
+ * </div>
+ *
+ * ### Custom indicator
+ *
+ * <Select class="w-[180px]">
+ *   <SelectIndicator>
+ *     <ChevronsDownIcon class="size-4" />
+ *   </SelectIndicator>
+ *   <SelectControl size="default" variant="default">
+ *     <SelectOption value="apple">Apple</SelectOption>
+ *     <SelectOption value="banana">Banana</SelectOption>
+ *   </SelectControl>
+ * </Select>
+ *
+ * ### With placeholder
+ *
+ * Placeholder is a hidden, selected `option` for placeholder text, it must be a child of the `control` part.
+ *
+ * <Select class="w-[180px]">
+ *   <SelectIndicator />
+ *   <SelectControl>
+ *     <SelectPlaceholder>Select a fruit</SelectPlaceholder>
+ *     <SelectOption value="apple">Apple</SelectOption>
+ *     <SelectOption value="banana">Banana</SelectOption>
+ *   </SelectControl>
+ * </Select>
+ */
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@repo/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="select"
+  class={cn("group/select relative inline-flex", className)}
+>
+  <slot />
+</div>

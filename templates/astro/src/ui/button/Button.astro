@@ -18,7 +18,7 @@
  *
  * ```astro
  * ---
- * import Button from '@/ui/components/Button.astro';
+ * import { Button } from '@bejamas/ui/components/button';
  * ---
  *
  * <Button>Click me</Button>
@@ -30,7 +30,7 @@
  *
  * ```astro
  * ---
- * import Button from '@/ui/components/Button.astro';
+ * import { Button } from '@bejamas/ui/components/button';
  * ---
  *
  * <Button as="a" href="https://bejamas.com">Click me</Button>
@@ -110,6 +110,7 @@
 
 import type { HTMLAttributes } from "astro/types";
 import { cva, type VariantProps } from "class-variance-authority";
+
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
@@ -122,7 +123,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border shadow-xs hover:bg-accent hover:border-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border text-foreground shadow-xs hover:bg-accent hover:border-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-secondary",
