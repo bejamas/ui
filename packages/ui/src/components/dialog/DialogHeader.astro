@@ -11,7 +11,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 
 <div
   data-slot="dialog-header"
-  className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+  class={cn("flex flex-col gap-2 text-center sm:text-left", className)}
   {...rest}
 >
   <slot />
