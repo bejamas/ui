@@ -31,9 +31,10 @@ export function vitePluginStarlightThemeBejamas(
         const isBarrelImport = !target.endsWith(".astro");
 
         if (isBarrelImport) {
-          // For barrel imports, the component is exported as a named export
-          // We need to re-export it as default for compatibility
-          return `export { ${componentName} as default, ${componentName} } from "${target}"; export * from "${target}";`;
+          // For barrel imports, the component is exported as a named export in PascalCase
+          // Convert componentName (e.g., 'button') to PascalCase (e.g., 'Button')
+          const pascalCaseName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
+          return `export { ${pascalCaseName} as default, ${pascalCaseName} } from "${target}"; export * from "${target}";`;
         }
 
         // Old pattern: .astro file with default export
