@@ -551,6 +551,7 @@
     {
       "name": "tabs",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/tabs"],
       "files": [
         {
           "path": "ui/tabs/Tabs.astro",
