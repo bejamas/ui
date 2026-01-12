@@ -28,7 +28,7 @@ for (const file of files) {
   if (newContent.includes("../../packages/ui/src/components/")) {
     newContent = newContent.replace(
       /(\.\.\/\.\.\/packages\/ui\/src\/components\/)/g,
-      "ui/",
+      "src/components/ui/",
     );
   }
 
