@@ -338,7 +338,7 @@ export const add = new Command()
   // .option("--no-css-variables", "do not use css variables for theming.")
   .action(async function action(packages: string[], _opts, cmd) {
     const root = cmd?.parent;
-    const verbose = true || Boolean(root?.opts?.().verbose);
+    const verbose = Boolean(root?.opts?.().verbose);
     const rawArgv = process.argv.slice(2);
     const forwardedOptions = extractOptionsForShadcn(rawArgv, cmd);
     const opts =
