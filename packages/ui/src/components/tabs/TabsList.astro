@@ -1,0 +1,29 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const tabsListVariants = cva(
+  "bg-secondary text-secondary-foreground relative inline-flex h-12 w-fit items-center rounded-md p-1",
+);
+---
+
+<Tag
+  {...rest}
+  role="tablist"
+  data-slot="tabs-list"
+  class={cn(tabsListVariants(), className)}
+>
+  <slot />
+</Tag>

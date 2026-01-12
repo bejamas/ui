@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  data-slot="tabs-indicator"
+  class={cn(
+    "indicator bg-background shadow-sm translate-x-[var(--active-tab-left)] left-0 rounded w-[var(--active-tab-width)] absolute h-[calc(100%-var(--spacing)*2)] transition-all duration-300 ease-in-out",
+    className,
+  )}
+  {...rest}
+>
+  <slot />
+</div>

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "item",
+  "dependencies": [],
+  "files": [
+    {
+      "path": "ui/item/Item.astro",
+      "content": "---\n/**\n * @component Item\n * @title Item\n * @description A versatile component for displaying any content, combining elements like title, description, media, and actions.\n * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2525-7378&t=YFStJ3V8fXEO8QD8-4\n *\n * @preview\n *\n * <div class=\"flex w-full max-w-md flex-col gap-6\">\n *   <Item variant=\"outline\">\n *     <ItemContent>\n *       <ItemTitle>Basic Item</ItemTitle>\n *       <ItemDescription>A simple item with title and description.</ItemDescription>\n *     </ItemContent>\n *     <ItemActions><Button variant=\"outline\" size=\"sm\">Action</Button></ItemActions>\n *   </Item>\n * </div>\n *\n * @usage\n *\n * ```astro\n * ---\n * import { Item, ItemContent, ItemTitle, ItemDescription, ItemActions, ItemMedia } from '@bejamas/ui/components/item';\n * ---\n *\n * <Item variant=\"outline\">\n *   <ItemContent>\n *     <ItemTitle>Basic Item</ItemTitle>\n *     <ItemDescription>A simple item.</ItemDescription>\n *   </ItemContent>\n *   <ItemActions>\n *     <Button variant=\"outline\" size=\"sm\">Action</Button>\n *   </ItemActions>\n * </Item>\n * ```\n */\n\nimport type { HTMLAttributes, HTMLTag } from \"astro/types\";\nimport { cva } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\ntype ItemRootVariant = \"default\" | \"outline\" | \"muted\";\ntype ItemRootSize = \"default\" | \"sm\";\n\ntype Props = {\n  as?: HTMLTag;\n  variant?: ItemRootVariant;\n  size?: ItemRootSize;\n  class?: string;\n} & HTMLAttributes<\"div\">;\n\nconst {\n  as: Tag = \"div\",\n  class: className = \"\",\n  variant = \"default\",\n  size = \"default\",\n  ...rest\n} = Astro.props as Props;\n\nconst itemVariants = cva(\n  \"group/item flex items-center border border-transparent text-sm rounded-md transition-colors [a]:hover:bg-accent/5 [a]:transition-colors duration-100 flex-wrap outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-transparent\",\n        outline: \"border-border\",\n        muted: \"bg-muted/50\",\n      },\n      size: {\n        default: \"p-4 gap-4\",\n        sm: \"py-3 px-4 gap-2.5\",\n      },\n    },\n    defaultVariants: {\n      variant: \"default\",\n      size: \"default\",\n    },\n  },\n);\n---\n\n<Tag\n  {...rest}\n  data-slot=\"item\"\n  data-variant={variant}\n  data-size={size}\n  class={cn(itemVariants({ variant, size }), className)}\n>\n  <slot />\n</Tag>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/ItemActions.astro",
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes, HTMLTag } from \"astro/types\";\n\ntype Props = {\n  as?: HTMLTag;\n  class?: string;\n} & HTMLAttributes<\"div\">;\n\nconst {\n  as: Tag = \"div\",\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<Tag\n  {...rest}\n  data-slot=\"item-actions\"\n  class={cn(\"flex items-center gap-2\", className)}\n>\n  <slot />\n</Tag>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/ItemContent.astro",
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes, HTMLTag } from \"astro/types\";\n\ntype Props = {\n  as?: HTMLTag;\n  class?: string;\n} & HTMLAttributes<\"div\">;\n\nconst {\n  as: Tag = \"div\",\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<Tag\n  {...rest}\n  data-slot=\"item-content\"\n  class={cn(\n    \"flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none\",\n    className,\n  )}\n>\n  <slot />\n</Tag>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/ItemDescription.astro",
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes, HTMLTag } from \"astro/types\";\n\ntype Props = {\n  as?: HTMLTag;\n  class?: string;\n} & HTMLAttributes<\"p\">;\n\nconst {\n  as: Tag = \"p\",\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<Tag\n  {...rest}\n  data-slot=\"item-description\"\n  class={cn(\n    \"text-muted-foreground line-clamp-2 text-sm leading-normal font-normal text-balance\",\n    \"[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4\",\n    className,\n  )}\n>\n  <slot />\n</Tag>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/ItemFooter.astro",
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes, HTMLTag } from \"astro/types\";\n\ntype Props = {\n  as?: HTMLTag;\n  class?: string;\n} & HTMLAttributes<\"div\">;\n\nconst {\n  as: Tag = \"div\",\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<Tag\n  {...rest}\n  data-slot=\"item-footer\"\n  class={cn(\n    \"flex basis-full items-center justify-between gap-2\",\n    className,\n  )}\n>\n  <slot />\n</Tag>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/ItemGroup.astro",
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes, HTMLTag } from \"astro/types\";\n\ntype Props = {\n  as?: HTMLTag;\n  class?: string;\n} & HTMLAttributes<\"div\">;\n\nconst {\n  as: Tag = \"div\",\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<Tag\n  {...rest}\n  role=\"list\"\n  data-slot=\"item-group\"\n  class={cn(\"group/item-group flex flex-col\", className)}\n>\n  <slot />\n</Tag>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/ItemHeader.astro",
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes, HTMLTag } from \"astro/types\";\n\ntype Props = {\n  as?: HTMLTag;\n  class?: string;\n} & HTMLAttributes<\"div\">;\n\nconst {\n  as: Tag = \"div\",\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<Tag\n  {...rest}\n  data-slot=\"item-header\"\n  class={cn(\n    \"flex basis-full items-center justify-between gap-2\",\n    className,\n  )}\n>\n  <slot />\n</Tag>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/ItemMedia.astro",
+      "content": "---\nimport { cva } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes, HTMLTag } from \"astro/types\";\n\ntype ItemMediaVariant = \"default\" | \"icon\" | \"image\";\n\ntype Props = {\n  as?: HTMLTag;\n  mediaVariant?: ItemMediaVariant;\n  class?: string;\n} & HTMLAttributes<\"div\">;\n\nconst {\n  as: Tag = \"div\",\n  class: className = \"\",\n  mediaVariant = \"default\",\n  ...rest\n} = Astro.props as Props;\n\nconst itemMediaVariants = cva(\n  \"flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none group-has-[[data-slot=item-description]]/item:translate-y-0.5\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-transparent\",\n        icon: \"size-8 border rounded-sm bg-muted [&_svg:not([class*='size-'])]:size-4\",\n        image:\n          \"size-10 rounded-sm overflow-hidden [&_img]:size-full [&_img]:object-cover\",\n      },\n    },\n    defaultVariants: {\n      variant: \"default\",\n    },\n  },\n);\n---\n\n<Tag\n  {...rest}\n  data-slot=\"item-media\"\n  class={cn(itemMediaVariants({ variant: mediaVariant }), className)}\n>\n  <slot />\n</Tag>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/ItemSeparator.astro",
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport { Separator } from \"../separator\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ntype Props = {\n  class?: string;\n} & HTMLAttributes<\"div\">;\n\nconst {\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<Separator\n  {...rest}\n  data-slot=\"item-separator\"\n  aria-hidden=\"true\"\n  class={cn(\"my-0\", className)}\n/>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/ItemTitle.astro",
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes, HTMLTag } from \"astro/types\";\n\ntype Props = {\n  as?: HTMLTag;\n  class?: string;\n} & HTMLAttributes<\"div\">;\n\nconst {\n  as: Tag = \"div\",\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<Tag\n  {...rest}\n  data-slot=\"item-title\"\n  class={cn(\n    \"flex w-fit items-center gap-2 text-sm leading-snug font-medium\",\n    className,\n  )}\n>\n  <slot />\n</Tag>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/item/index.ts",
+      "content": "export { default as Item } from \"./Item.astro\";\nexport { default as ItemGroup } from \"./ItemGroup.astro\";\nexport { default as ItemSeparator } from \"./ItemSeparator.astro\";\nexport { default as ItemMedia } from \"./ItemMedia.astro\";\nexport { default as ItemContent } from \"./ItemContent.astro\";\nexport { default as ItemTitle } from \"./ItemTitle.astro\";\nexport { default as ItemDescription } from \"./ItemDescription.astro\";\nexport { default as ItemActions } from \"./ItemActions.astro\";\nexport { default as ItemHeader } from \"./ItemHeader.astro\";\nexport { default as ItemFooter } from \"./ItemFooter.astro\";\n\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

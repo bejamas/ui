@@ -1,0 +1,108 @@
+---
+/**
+ * @component InputGroup
+ * @title Input Group
+ * @description An input field with attached addons like icons, buttons, or text labels.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2549-20918&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <div class="grid w-full max-w-sm gap-6">
+ *   <InputGroup>
+ *     <InputGroupInput placeholder="Search..." />
+ *     <InputGroupAddon>
+ *       <SearchIcon />
+ *     </InputGroupAddon>
+ *     <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
+ *   </InputGroup>
+ *
+ *   <InputGroup>
+ *     <InputGroupInput placeholder="example.com" class="!pl-1" />
+ *     <InputGroupAddon>
+ *       <InputGroupText>https://</InputGroupText>
+ *     </InputGroupAddon>
+ *     <InputGroupAddon align="inline-end">
+ *       <InputGroupButton size="xs">Check</InputGroupButton>
+ *     </InputGroupAddon>
+ *   </InputGroup>
+ *
+ *   <InputGroup>
+ *     <InputGroupTextarea placeholder="Ask, Search or Chat..." />
+ *     <InputGroupAddon align="block-end">
+ *       <InputGroupButton size="icon-xs" class="rounded-full">
+ *         <PlusIcon />
+ *       </InputGroupButton>
+ *       <InputGroupButton variant="ghost">Auto</InputGroupButton>
+ *       <InputGroupText class="ml-auto">52% used</InputGroupText>
+ *       <Separator orientation="vertical" class="!h-4" />
+ *       <InputGroupButton size="icon-xs" variant="default" class="rounded-full">
+ *         <ArrowUpIcon />
+ *         <span class="sr-only">Send</span>
+ *       </InputGroupButton>
+ *     </InputGroupAddon>
+ *   </InputGroup>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { InputGroup, InputGroupInput, InputGroupAddon, InputGroupButton, InputGroupText } from '@bejamas/ui/components/input-group';
+ * ---
+ *
+ * <InputGroup>
+ *   <InputGroupInput placeholder="Search..." />
+ *   <InputGroupAddon><SearchIcon /></InputGroupAddon>
+ * </InputGroup>
+ * ```
+ */
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const rootClasses =
+  "group/input-group border-input dark:bg-input/30 relative flex w-full items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none h-9 min-w-0 has-[>textarea]:h-auto has-[>[data-align=inline-start]]:[&>input]:pl-2 has-[>[data-align=inline-end]]:[&>input]:pr-2 has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40";
+---
+
+<Tag
+  {...rest}
+  role="group"
+  data-slot="input-group"
+  class={cn(rootClasses, className)}
+>
+  <slot />
+</Tag>
+
+<script type="module">
+  // Focus the nearest input when clicking on addons (unless clicking a button)
+  document.addEventListener("click", (e) => {
+    const addon = e.target.closest("[data-slot='input-group-addon']");
+    if (!addon) return;
+    if (e.target.closest("button")) return;
+    const root = addon.closest("[data-slot='input-group']");
+    if (!root) return;
+    const input = root.querySelector("[data-slot='input-group-control']");
+    input?.focus();
+  });
+  // Disabled styling passthrough when any control is disabled
+  document.querySelectorAll("[data-slot='input-group']").forEach((group) => {
+    const updateDisabled = () => {
+      const ctrl = group.querySelector("[data-slot='input-group-control']");
+      group.dataset.disabled = ctrl?.hasAttribute("disabled")
+        ? "true"
+        : "false";
+    };
+    updateDisabled();
+    group.addEventListener("change", updateDisabled, { capture: true });
+  });
+</script>

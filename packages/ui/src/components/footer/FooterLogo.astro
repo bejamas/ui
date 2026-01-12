@@ -1,0 +1,53 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type LogoSize = "sm" | "md" | "lg" | "xl";
+type LogoBleed = "none" | "container" | "full";
+
+type Props = {
+  size?: LogoSize;
+  bleed?: LogoBleed;
+  class?: string;
+  style?: string;
+} & Omit<HTMLAttributes<"div">, "style">;
+
+const {
+  class: className = "",
+  style: inlineStyle = "",
+  size = "md",
+  bleed = "none",
+  ...rest
+} = Astro.props as Props;
+
+const logoVariants = cva("flex items-center shrink-0", {
+  variants: {
+    size: {
+      sm: "h-6",
+      md: "h-8",
+      lg: "h-12",
+      xl: "h-20 md:h-28 lg:h-36",
+    },
+    bleed: {
+      none: "",
+      container: "-ml-4 sm:-ml-6 lg:-ml-8",
+      full: "w-full lg:h-full",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+    bleed: "none",
+  },
+});
+---
+
+<div
+  {...rest}
+  data-slot="footer-logo"
+  class={cn(logoVariants({ size, bleed }), className)}
+  style={inlineStyle || undefined}
+>
+  <slot />
+</div>
+

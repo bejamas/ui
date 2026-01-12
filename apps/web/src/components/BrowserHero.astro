@@ -1,5 +1,5 @@
 ---
-import Separator from "@bejamas/ui/components/Separator.astro";
+import { Separator } from "@bejamas/ui/components/separator";
 import { defaultPresets } from "../utils/themes/presets";
 
 const tabs = [
@@ -219,7 +219,7 @@ const leanPresets = Object.fromEntries(
       src={componentsShowreel.preview}
       x-show={`activeIndex === 0`}
       x-bind:aria-hidden={`activeIndex !== 0`}
-      class="w-full h-[1418px] md:h-full"
+      class="w-full h-[1458px] md:h-full"
       loading="lazy"></iframe>
     {
       tabs.map((tab, i) => (

@@ -1,0 +1,28 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+  style?: string;
+} & Omit<HTMLAttributes<"div">, "style">;
+
+const {
+  class: className = "",
+  style: inlineStyle = "",
+  ...rest
+} = Astro.props as Props;
+
+const containerVariants = cva("mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8");
+---
+
+<div
+  {...rest}
+  data-slot="footer-container"
+  class={cn(containerVariants(), className)}
+  style={inlineStyle || undefined}
+>
+  <slot />
+</div>
+

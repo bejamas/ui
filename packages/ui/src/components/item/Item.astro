@@ -1,0 +1,92 @@
+---
+/**
+ * @component Item
+ * @title Item
+ * @description A versatile component for displaying any content, combining elements like title, description, media, and actions.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2525-7378&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <div class="flex w-full max-w-md flex-col gap-6">
+ *   <Item variant="outline">
+ *     <ItemContent>
+ *       <ItemTitle>Basic Item</ItemTitle>
+ *       <ItemDescription>A simple item with title and description.</ItemDescription>
+ *     </ItemContent>
+ *     <ItemActions><Button variant="outline" size="sm">Action</Button></ItemActions>
+ *   </Item>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Item, ItemContent, ItemTitle, ItemDescription, ItemActions, ItemMedia } from '@bejamas/ui/components/item';
+ * ---
+ *
+ * <Item variant="outline">
+ *   <ItemContent>
+ *     <ItemTitle>Basic Item</ItemTitle>
+ *     <ItemDescription>A simple item.</ItemDescription>
+ *   </ItemContent>
+ *   <ItemActions>
+ *     <Button variant="outline" size="sm">Action</Button>
+ *   </ItemActions>
+ * </Item>
+ * ```
+ */
+
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type ItemRootVariant = "default" | "outline" | "muted";
+type ItemRootSize = "default" | "sm";
+
+type Props = {
+  as?: HTMLTag;
+  variant?: ItemRootVariant;
+  size?: ItemRootSize;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  class: className = "",
+  variant = "default",
+  size = "default",
+  ...rest
+} = Astro.props as Props;
+
+const itemVariants = cva(
+  "group/item flex items-center border border-transparent text-sm rounded-md transition-colors [a]:hover:bg-accent/5 [a]:transition-colors duration-100 flex-wrap outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+  {
+    variants: {
+      variant: {
+        default: "bg-transparent",
+        outline: "border-border",
+        muted: "bg-muted/50",
+      },
+      size: {
+        default: "p-4 gap-4",
+        sm: "py-3 px-4 gap-2.5",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+);
+---
+
+<Tag
+  {...rest}
+  data-slot="item"
+  data-variant={variant}
+  data-size={size}
+  class={cn(itemVariants({ variant, size }), className)}
+>
+  <slot />
+</Tag>
+

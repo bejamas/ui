@@ -1,5 +1,10 @@
 ---
-import Select from "virtual:starlight-theme-bejamas/components/Select.astro";
+import {
+  Select,
+  SelectControl,
+  SelectIndicator,
+  SelectOption,
+} from "virtual:starlight-theme-bejamas/components/select";
 
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 ---
@@ -12,22 +17,21 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
       <LaptopIcon class="theme-icon theme-icon-auto size-4" />
     </div>
     <Select showCheckmark={false}>
-      <Select part="indicator" />
-      <Select
-        part="control"
+      <SelectIndicator />
+      <SelectControl
         showCheckmark={false}
         class="sl-bejamas-theme-select-control"
       >
-        <Select part="option" value="light"
-          ><SunIcon class="size-4" /> Light</Select
+        <SelectOption value="light"
+          ><SunIcon class="size-4" /> Light</SelectOption
         >
-        <Select part="option" value="dark"
-          ><MoonIcon class="size-4" /> Dark</Select
+        <SelectOption value="dark"
+          ><MoonIcon class="size-4" /> Dark</SelectOption
         >
-        <Select part="option" value="auto"
-          ><LaptopIcon class="size-4" /> Auto</Select
+        <SelectOption value="auto"
+          ><LaptopIcon class="size-4" /> Auto</SelectOption
         >
-      </Select>
+      </SelectControl>
     </Select>
   </div>
 </starlight-theme-select>

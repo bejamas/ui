@@ -1,0 +1,156 @@
+---
+/**
+ * @component Dialog
+ * @title Dialog
+ * @description An accessible modal window for focused content or user actions with customizable open/close behavior.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2543-9384&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <Dialog>
+ *   <Button data-slot="dialog-trigger">Manage Cookies</Button>
+ *
+ *   <DialogContent class="sm:max-w-lg">
+ *     <DialogHeader>
+ *       <DialogTitle>Manage Cookies</DialogTitle>
+ *       <DialogDescription>
+ *         Using websites and apps involves storing and retrieving information from your device, including cookies and other identifiers.
+ *       </DialogDescription>
+ *     </DialogHeader>
+ *     <div class="mt-3">
+ *       <div class="flex items-center gap-3">
+ *         <Checkbox id="cookies-necessary" name="cookies-necessary" disabled checked />
+ *         <Label for="cookies-necessary">Strictly Necessary Cookies (always active)</Label>
+ *       </div>
+ *       <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies are essential for the site to function and cannot be toggled off. They assist with security, user authentication, customer support, etc.</p>
+ *     </div>
+ *     <div class="mt-3">
+ *       <div class="flex items-center gap-3">
+ *         <Checkbox id="cookies-analytics" name="cookies-analytics" />
+ *         <Label for="cookies-analytics">Analytics Cookies</Label>
+ *       </div>
+ *       <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us understand how visitors interact with our site. They allow us to measure traffic and improve site performance.</p>
+ *     </div>
+ *     <div class="mt-3">
+ *       <div class="flex items-center gap-3">
+ *         <Checkbox id="cookies-marketing-performance" name="cookies-marketing-performance" />
+ *         <Label for="cookies-marketing-performance">Marketing Performance Cookies</Label>
+ *       </div>
+ *       <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us measure the effectiveness of our marketing campaigns.</p>
+ *     </div>
+ *     <DialogFooter>
+ *       <Button data-slot="dialog-close" class="mt-4" variant="outline">Close</Button>
+ *       <Button data-dialog-close class="mt-4">Save changes</Button>
+ *     </DialogFooter>
+ *   </DialogContent>
+ * </Dialog>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter, DialogClose } from '@bejamas/ui/components/dialog';
+ * import { Button } from '@bejamas/ui/components/button';
+ * ---
+ *
+ * <Button>Open Dialog</Button>
+ * <Dialog id="myDialog">
+ *   <DialogTitle>Dialog Title</DialogTitle>
+ *   <DialogDescription>Dialog description.</DialogDescription>
+ *   <DialogContent>Content here</DialogContent>
+ *   <DialogFooter>
+ *     <DialogClose>Close</DialogClose>
+ *   </DialogFooter>
+ * </Dialog>
+ * ```
+ *
+ * @examples
+ *
+ * ### Nested Dialogs
+ *
+ * <Dialog>
+ *   <Button data-slot="dialog-trigger">Open Nested Dialog</Button>
+ *   <DialogContent class="sm:max-w-lg">
+ *     <DialogHeader>
+ *       <DialogTitle>Nested Dialog</DialogTitle>
+ *       <DialogDescription>
+ *         Using websites and apps involves storing and retrieving information from your device, including cookies and other identifiers.
+ *       </DialogDescription>
+ *     </DialogHeader>
+ *     <DialogFooter>
+ *       <Button data-slot="dialog-close" class="mt-4" variant="outline">Close</Button>
+ *       <Dialog>
+ *         <Button data-slot="dialog-trigger" class="mt-4">Open Nested Dialog</Button>
+ *         <DialogContent class="sm:max-w-md border-red-800">
+ *           <DialogHeader>
+ *             <DialogTitle>Nested Dialog</DialogTitle>
+ *             <DialogDescription>
+ *               Using websites and apps involves storing and retrieving information from your device, including cookies and other identifiers.
+ *             </DialogDescription>
+ *           </DialogHeader>
+ *         </DialogContent>
+ *       </Dialog>
+ *     </DialogFooter>
+ *   </DialogContent>
+ * </Dialog>
+ *
+ * ### Trigger outside of Dialog
+ *
+ * <Button data-slot="dialog-trigger" data-for="myDialog-1">Open Dialog</Button>
+ * <Dialog id="myDialog-1">
+ *   <DialogContent>
+ *     <DialogHeader>
+ *       <DialogTitle>Dialog Title</DialogTitle>
+ *       <DialogDescription>Dialog description.</DialogDescription>
+ *     </DialogHeader>
+ *     <DialogFooter>
+ *       <DialogClose>Close</DialogClose>
+ *     </DialogFooter>
+ *   </DialogContent>
+ * </Dialog>
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  defaultOpen?: boolean;
+  class?: string;
+  closeOnClickOutside?: boolean;
+  closeOnEscape?: boolean;
+  lockScroll?: boolean;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  defaultOpen = false,
+  closeOnClickOutside = true,
+  closeOnEscape = true,
+  lockScroll = true,
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  data-slot="dialog"
+  data-default-open={defaultOpen}
+  data-close-on-click-outside={closeOnClickOutside}
+  data-close-on-escape={closeOnEscape}
+  data-lock-scroll={lockScroll}
+  {...rest}
+>
+  <slot />
+</div>
+
+<script>
+  import { createDialog } from "@data-slot/dialog";
+
+  document.querySelectorAll('[data-slot="dialog"]').forEach((el) =>
+    createDialog(el, {
+      defaultOpen: el.dataset.defaultOpen === "true",
+      closeOnClickOutside: el.dataset.closeOnClickOutside === "true",
+      closeOnEscape: el.dataset.closeOnEscape === "true",
+      lockScroll: el.dataset.lockScroll === "true",
+    }),
+  );
+</script>

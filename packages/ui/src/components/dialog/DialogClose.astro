@@ -1,0 +1,28 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"button">;
+
+const {
+  as: Tag = "button",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  data-slot="dialog-close"
+  data-dialog-close
+  class={cn(
+    "ring-offset-background focus-visible:ring-ring rounded-xs opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-offset-2 focus:outline-hidden focus:outline-none focus:ring-0 inline-flex items-center gap-2",
+    className,
+  )}
+>
+  <slot />
+  {!Astro.slots.has("default") && <span class="sr-only">Close</span>}
+</Tag>

@@ -1,13 +1,18 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "textarea",
-  "type": "registry:ui",
   "dependencies": [],
   "files": [
     {
-      "path": "../../packages/ui/src/components/Textarea.astro",
-      "content": "---\n/**\n * @component Textarea\n * @title Textarea\n * @description Base textarea field used in forms.\n * @status stable\n * @since 0.1.0\n *\n * @example\n *\n * <Textarea placeholder=\"Type your message here...\" />\n *\n */\n\nconst { class: className = \"\", ...props } = Astro.props;\n\nconst baseClass =\n  \"border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\";\n\nimport { cn } from \"@bejamas/ui/lib/utils\";\n---\n\n<textarea\n  data-slot={props[\"data-slot\"] ?? \"textarea\"}\n  class={cn(baseClass, className)}\n  {...props}></textarea>\n",
+      "path": "ui/textarea/Textarea.astro",
+      "content": "---\n/**\n * @component Textarea\n * @title Textarea\n * @description A multi-line input field for longer user content.\n * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2508-2555&t=YFStJ3V8fXEO8QD8-4\n * @status stable\n * @since 0.1.0\n *\n * @preview\n *\n * <Textarea placeholder=\"Type your message here...\" />\n *\n * @usage\n *\n * ```astro\n * ---\n * import { Textarea } from '@bejamas/ui/components/textarea';\n * ---\n *\n * <Textarea placeholder=\"Type your message here...\" />\n * ```\n */\n\nconst { class: className = \"\", ...props } = Astro.props;\n\nconst baseClass =\n  \"border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\";\n\nimport { cn } from \"@/lib/utils\";\n---\n\n<textarea\n  data-slot={props[\"data-slot\"] ?? \"textarea\"}\n  class={cn(baseClass, className)}\n  {...props}></textarea>\n\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "ui/textarea/index.ts",
+      "content": "export { default as Textarea } from \"./Textarea.astro\";\n\n",
       "type": "registry:ui"
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

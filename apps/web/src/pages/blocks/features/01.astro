@@ -1,7 +1,7 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
-import Button from "@bejamas/ui/components/Button.astro";
-import Card from "@bejamas/ui/components/Card.astro";
+import { Button } from "@bejamas/ui/components/button";
+import { Card, CardMedia, CardHeader, CardTitle, CardDescription, CardOverlay } from "@bejamas/ui/components/card";
 import { ArrowRight } from "@lucide/astro";
 ---
 
@@ -15,7 +15,7 @@ import { ArrowRight } from "@lucide/astro";
 
     <div class="grid grid-cols-4 gap-4">
       <Card variant="ghost" orientation="horizontal">
-        <Card part="media" class="relative">
+        <CardMedia class="relative">
           <img
             src="https://pbs.twimg.com/media/G0x-gkSbcAAaH3Z?format=jpg&name=large"
             class="rounded-xl"
@@ -25,15 +25,15 @@ import { ArrowRight } from "@lucide/astro";
           >
             01
           </span>
-        </Card>
-        <Card part="header" variant="ghost">
-          <Card part="title"> Healthy breakfast </Card>
-          <Card part="description"> Eggs are a great source of protein. </Card>
-        </Card>
+        </CardMedia>
+        <CardHeader variant="ghost">
+          <CardTitle> Healthy breakfast </CardTitle>
+          <CardDescription> Eggs are a great source of protein. </CardDescription>
+        </CardHeader>
       </Card>
 
       <Card variant="ghost">
-        <div slot="media" class="relative">
+        <CardMedia class="relative">
           <img
             src="https://pbs.twimg.com/media/G0x-gj6bAAAJkHH?format=jpg&name=large"
             class="rounded-xl"
@@ -43,20 +43,20 @@ import { ArrowRight } from "@lucide/astro";
           >
             02
           </span>
-        </div>
-        <Fragment slot="header">
-          <h3 class="text-2xl font-medium mb-1 leading-none">Healthy lunch</h3>
-          <p class="text-muted-foreground text-sm">
+        </CardMedia>
+        <CardHeader>
+          <CardTitle>Healthy lunch</CardTitle>
+          <CardDescription>
             Egg benefits your heart and brain.
-          </p>
-        </Fragment>
-        <Card part="overlay" variant="glass">
+          </CardDescription>
+        </CardHeader>
+        <CardOverlay variant="glass">
           <p>Egg benefits your heart and brain.</p>
-        </Card>
+        </CardOverlay>
       </Card>
 
       <Card variant="ghost">
-        <div slot="media" class="relative">
+        <CardMedia class="relative">
           <img
             src="https://pbs.twimg.com/media/G0x-gkLaUAA1pnb?format=jpg&name=large"
             class="rounded-xl"
@@ -66,17 +66,17 @@ import { ArrowRight } from "@lucide/astro";
           >
             03
           </span>
-        </div>
-        <Fragment slot="header">
-          <h3 class="text-2xl font-medium mb-1 leading-none">Healthy dinner</h3>
-          <p class="text-muted-foreground text-sm">
+        </CardMedia>
+        <CardHeader>
+          <CardTitle>Healthy dinner</CardTitle>
+          <CardDescription>
             Egg is a good source of protein.
-          </p>
-        </Fragment>
+          </CardDescription>
+        </CardHeader>
       </Card>
 
-      <Card variant="ghostas">
-        <div slot="media" class="relative">
+      <Card variant="ghost">
+        <CardMedia class="relative">
           <img
             src="https://pbs.twimg.com/media/G0x-gkXbcAQMBaT?format=jpg&name=large"
             class="rounded-xl"
@@ -86,13 +86,13 @@ import { ArrowRight } from "@lucide/astro";
           >
             04
           </span>
-        </div>
-        <Fragment slot="header">
-          <h3 class="text-2xl font-medium mb-1 leading-none">Healthy snack</h3>
-          <p class="text-muted-foreground text-sm">
+        </CardMedia>
+        <CardHeader>
+          <CardTitle>Healthy snack</CardTitle>
+          <CardDescription>
             Egg is a good base for a snack.
-          </p>
-        </Fragment>
+          </CardDescription>
+        </CardHeader>
       </Card>
     </div>
     <div

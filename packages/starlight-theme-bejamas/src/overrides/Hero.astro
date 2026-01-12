@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import Button from "virtual:starlight-theme-bejamas/components/Button.astro";
+import { Button } from "virtual:starlight-theme-bejamas/components/button";
 
 const { data } = Astro.locals.starlightRoute.entry;
 const { title = data.title, tagline, image, actions = [] } = data.hero || {};

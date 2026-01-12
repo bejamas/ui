@@ -1,0 +1,37 @@
+---
+/**
+ * @component Textarea
+ * @title Textarea
+ * @description A multi-line input field for longer user content.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2508-2555&t=YFStJ3V8fXEO8QD8-4
+ * @status stable
+ * @since 0.1.0
+ *
+ * @preview
+ *
+ * <Textarea placeholder="Type your message here..." />
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Textarea } from '@bejamas/ui/components/textarea';
+ * ---
+ *
+ * <Textarea placeholder="Type your message here..." />
+ * ```
+ */
+
+const { class: className = "", ...props } = Astro.props;
+
+const baseClass =
+  "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
+
+import { cn } from "@bejamas/ui/lib/utils";
+---
+
+<textarea
+  data-slot={props["data-slot"] ?? "textarea"}
+  class={cn(baseClass, className)}
+  {...props}></textarea>
+

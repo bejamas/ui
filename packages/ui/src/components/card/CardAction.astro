@@ -1,0 +1,27 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const actionVariants = cva(
+  "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+);
+---
+
+<div
+  {...rest}
+  data-slot="card-action"
+  class={cn(actionVariants(), className)}
+>
+  <slot />
+</div>
+

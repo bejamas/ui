@@ -27,6 +27,17 @@ export function vitePluginStarlightThemeBejamas(
           return `export default (()=>{ throw new Error(\"starlight-theme-bejamas: No component mapping found for '${componentName}'. Add it under 'components' in your starlightThemeBejamas config.\"); })()`;
         }
 
+        // Check if target is a barrel import (no .astro extension) or old-style file import
+        const isBarrelImport = !target.endsWith(".astro");
+
+        if (isBarrelImport) {
+          // For barrel imports, the component is exported as a named export in PascalCase
+          // Convert componentName (e.g., 'button') to PascalCase (e.g., 'Button')
+          const pascalCaseName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
+          return `export { ${pascalCaseName} as default, ${pascalCaseName} } from "${target}"; export * from "${target}";`;
+        }
+
+        // Old pattern: .astro file with default export
         return `export { default } from "${target}"; export * from "${target}";`;
       }
 

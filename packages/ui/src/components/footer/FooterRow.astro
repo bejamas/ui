@@ -1,0 +1,43 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type RowAlign = "start" | "center" | "between";
+
+type Props = {
+  align?: RowAlign;
+  class?: string;
+  style?: string;
+} & Omit<HTMLAttributes<"div">, "style">;
+
+const {
+  class: className = "",
+  style: inlineStyle = "",
+  align = "between",
+  ...rest
+} = Astro.props as Props;
+
+const rowVariants = cva("flex flex-col gap-4 md:flex-row md:items-center", {
+  variants: {
+    align: {
+      start: "md:justify-start",
+      center: "md:justify-center",
+      between: "md:justify-between",
+    },
+  },
+  defaultVariants: {
+    align: "between",
+  },
+});
+---
+
+<div
+  {...rest}
+  data-slot="footer-row"
+  class={cn(rowVariants({ align }), className)}
+  style={inlineStyle || undefined}
+>
+  <slot />
+</div>
+

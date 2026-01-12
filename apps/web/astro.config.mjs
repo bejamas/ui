@@ -31,8 +31,8 @@ export default defineConfig({
             { label: "Themes", href: "/themes" },
           ],
           components: {
-            Button: "@bejamas/ui/components/Button.astro",
-            Select: "@bejamas/ui/components/Select.astro",
+            button: "@bejamas/ui/components/button",
+            select: "@bejamas/ui/components/select",
             // ThemeSelect: "./src/components/ThemeSwitcher.astro",
           },
         }),
