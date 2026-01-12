@@ -7,21 +7,97 @@
  *
  * @preview
  *
- * <Tabs class="w-full max-w-md">
+ * <Tabs class="w-full max-w-md" defaultValue="features">
  *   <TabsList class="w-full">
  *     <TabsIndicator />
- *     <TabsTrigger value="overview" aria-selected="true">Overview</TabsTrigger>
- *     <TabsTrigger value="analytics">Analytics</TabsTrigger>
- *     <TabsTrigger value="reports">Reports</TabsTrigger>
+ *     <TabsTrigger value="features" aria-selected="true">Features</TabsTrigger>
+ *     <TabsTrigger value="pricing">Pricing</TabsTrigger>
+ *     <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
  *   </TabsList>
- *   <TabsContent value="overview">
- *     Overview content…
+ *   <TabsContent value="features">
+ *     <Card>
+ *       <CardHeader>
+ *         <CardTitle>Powerful Features</CardTitle>
+ *         <CardDescription>Everything you need to grow your business</CardDescription>
+ *       </CardHeader>
+ *       <CardContent>
+ *         <div class="space-y-4">
+ *           <div class="flex items-start gap-3">
+ *             <div>
+ *               <h4 class="font-medium mb-1">Lightning Fast Performance <Badge variant="primary">New</Badge></h4>
+ *               <p class="text-sm text-muted-foreground">Optimized for speed and efficiency</p>
+ *             </div>
+ *           </div>
+ *           <Separator />
+ *           <div class="flex items-start gap-3">
+ *             <div>
+ *               <h4 class="font-medium mb-1">Easy Integration <Badge variant="success">Popular</Badge></h4>
+ *               <p class="text-sm text-muted-foreground">Set up in minutes, not hours</p>
+ *             </div>
+ *           </div>
+ *         </div>
+ *       </CardContent>
+ *       <CardFooter>
+ *         <Button variant="outline" class="w-full">Explore All Features</Button>
+ *       </CardFooter>
+ *     </Card>
  *   </TabsContent>
- *   <TabsContent value="analytics" hidden>
- *     Analytics content…
+ *   <TabsContent value="pricing">
+ *     <Card>
+ *       <CardHeader>
+ *         <div class="flex items-center justify-between">
+ *           <CardTitle>Pro Plan</CardTitle>
+ *           <Badge variant="primary">Most Popular</Badge>
+ *         </div>
+ *         <CardDescription>Perfect for growing teams</CardDescription>
+ *       </CardHeader>
+ *       <CardContent>
+ *         <div class="mb-4">
+ *           <span class="text-4xl font-medium">$49</span>
+ *           <span class="text-muted-foreground">/month</span>
+ *         </div>
+ *         <ul class="space-y-2 text-sm">
+ *           <li class="flex items-center gap-2">
+ *             <CircleCheckIcon class="size-5" />
+ *             Unlimited projects
+ *           </li>
+ *           <li class="flex items-center gap-2">
+ *             <CircleCheckIcon class="size-5" />
+ *             Priority support
+ *           </li>
+ *           <li class="flex items-center gap-2">
+ *             <CircleCheckIcon class="size-5" />
+ *             Advanced analytics
+ *           </li>
+ *         </ul>
+ *       </CardContent>
+ *       <CardFooter class="flex gap-2">
+ *         <Button class="flex-1">Get Started</Button>
+ *         <Button variant="outline">Compare Plans</Button>
+ *       </CardFooter>
+ *     </Card>
  *   </TabsContent>
- *   <TabsContent value="reports" hidden>
- *     Reports content…
+ *   <TabsContent value="testimonials">
+ *     <Card>
+ *       <CardContent>
+ *         <p class="text-lg mb-4 italic">
+ *           "This product transformed how we work. Highly recommended for any growing business!"
+ *         </p>
+ *         <div class="flex items-center gap-3">
+ *           <Avatar>
+ *             <AvatarImage src="/avatars/sarah.jpg" alt="Sarah Johnson" />
+ *             <AvatarFallback>SJ</AvatarFallback>
+ *           </Avatar>
+ *           <div>
+ *             <p class="font-semibold">Sarah Johnson</p>
+ *             <p class="text-sm text-muted-foreground">CEO, TechCorp</p>
+ *           </div>
+ *         </div>
+ *       </CardContent>
+ *       <CardFooter>
+ *         <Button variant="outline" class="w-full">Read More Stories</Button>
+ *       </CardFooter>
+ *     </Card>
  *   </TabsContent>
  * </Tabs>
  *
