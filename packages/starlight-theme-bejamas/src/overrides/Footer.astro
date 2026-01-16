@@ -6,19 +6,20 @@ import config from "virtual:starlight/user-config";
 ---
 
 <footer class="sl-flex footer-wide">
-  <div class="meta sl-flex">
-    <EditLink />
-    <LastUpdated />
-  </div>
+  <div class="meta"><EditLink /><LastUpdated /></div>
   <Pagination />
   <div class="fade"></div>
 </footer>
 
 {
   config.credits && (
-    <a class="kudos sl-flex footer-wide" href="https://ui.bejamas.com">
-      Built at Bejamas
-    </a>
+    <div class="kudos sl-flex footer-wide">
+      <p>
+        Built at <a href="https://bejamas.com?utm_source=ui">Bejamas</a>. The
+        source code is available on{" "}
+        <a href="https://github.com/bejamas/ui">GitHub</a>.
+      </p>
+    </div>
   )
 }
 
@@ -62,6 +63,10 @@ import config from "virtual:starlight/user-config";
       margin-top: 3rem;
       font-size: var(--sl-text-sm);
       color: var(--sl-color-gray-3);
+      display: flex;
+    }
+
+    .meta:empty {
       display: none;
     }
 
@@ -74,15 +79,19 @@ import config from "virtual:starlight/user-config";
       gap: 0.5em;
       margin-block: 0;
       font-size: var(--sl-text-xs);
-      text-decoration: none;
       color: var(--muted-foreground);
       justify-content: center;
       padding-top: calc(var(--spacing) * 12);
-      padding-bottom: calc(var(--spacing) * 10);
+      padding-bottom: 0;
       background-color: var(--background);
       justify-content: center;
     }
-    .kudos:hover {
+    .kudos a {
+      color: var(--muted-foreground);
+      text-decoration: underline;
+      text-underline-offset: 0.1875rem;
+    }
+    .kudos a:hover {
       color: var(--foreground);
     }
 
