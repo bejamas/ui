@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.4
+
+### Patch Changes
+
+- [#17](https://github.com/bejamas/ui/pull/17) [`5751b96`](https://github.com/bejamas/ui/commit/5751b9652384891bc740947a654650cff272c2c1) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve pagination spacing
+
 ## 0.1.3
 
 ### Patch Changes
