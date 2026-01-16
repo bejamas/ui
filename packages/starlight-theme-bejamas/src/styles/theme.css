@@ -213,6 +213,10 @@
     padding-top: calc(var(--spacing) * 5);
   }
 
+  .content-panel:last-child {
+    padding-bottom: 0;
+  }
+
   @media (min-width: 50rem) {
     .content-panel:first-child {
       padding-top: calc(var(--spacing) * 12);
