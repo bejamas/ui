@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.3
+
+### Patch Changes
+
+- [#15](https://github.com/bejamas/ui/pull/15) [`067a92b`](https://github.com/bejamas/ui/commit/067a92bd34171b5403c7033cd2cccd54ad7ffe41) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve codeblock ui
+
 ## 0.1.2
 
 ### Patch Changes
