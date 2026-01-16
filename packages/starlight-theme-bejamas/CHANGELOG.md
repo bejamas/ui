@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.5
+
+### Patch Changes
+
+- [#19](https://github.com/bejamas/ui/pull/19) [`bd4c3a0`](https://github.com/bejamas/ui/commit/bd4c3a0b596718a25aefaf7b30d185d30693618a) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve page footer ui
+
 ## 0.1.4
 
 ### Patch Changes
