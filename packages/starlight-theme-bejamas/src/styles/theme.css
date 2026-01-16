@@ -77,6 +77,9 @@
     --sl-content-inline-start: 0rem;
 
     --sl-icon-color: var(--foreground);
+    --ec-frm-inlBtnBgHoverOrFocusOpa: 1;
+    --ec-frm-trmIcon: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBNSVQuIE1hZGUgYnkgcGhvc3Bob3I6IGh0dHBzOi8vZ2l0aHViLmNvbS9waG9zcGhvci1pY29ucy9waG9zcGhvci1pY29ucyAtLT4KPHN2ZyBmaWxsPSIjMDAwMDAwIiB3aWR0aD0iMThweCIgaGVpZ2h0PSIxOHB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgaWQ9IkZsYXQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTExNy4zMTQ5NCwxMzMuOTc5NDlsLTcyLDY0YTguMDAwMTgsOC4wMDAxOCwwLDAsMS0xMC42Mjk4OC0xMS45NTlMOTkuOTU4NSwxMjgsMzQuNjg1MDYsNjkuOTc5NDlhOC4wMDAxOCw4LjAwMDE4LDAsMCwxLDEwLjYyOTg4LTExLjk1OWw3Miw2NGE4LjAwMDU0LDguMDAwNTQsMCwwLDEsMCwxMS45NTlaTTIxNS45OTQxNCwxODRoLTk2YTgsOCwwLDAsMCwwLDE2aDk2YTgsOCwwLDEsMCwwLTE2WiIvPgo8L3N2Zz4=);
+    --ecGtrBrdWd: 5px;
   }
 
   @media (min-width: 50em) {
@@ -92,6 +95,10 @@
     [data-has-sidebar] {
       --sl-sidebar-width: 18.75rem;
     }
+  }
+
+  html {
+    scrollbar-gutter: stable;
   }
 
   html[data-theme="dark"],
@@ -236,6 +243,37 @@
     border: 1px solid var(--border);
   }
 
+  .expressive-code .frame.is-terminal .header {
+    padding: 0;
+  }
+
+  .expressive-code .copy {
+    top: calc(var(--spacing) * 2);
+  }
+
+  .expressive-code .copy button {
+    opacity: 1;
+  }
+
+  .expressive-code .frame.is-terminal .header::before {
+    width: 1.125rem;
+    height: 1.125rem;
+    background-color: var(--muted-foreground);
+    opacity: 1;
+  }
+
+  .expressive-code .frame.is-terminal .header .title::after {
+    content: "Terminal";
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    margin-left: 2rem;
+    font-family: var(--font-sans);
+  }
+
+  .expressive-code .copy button div {
+    background: var(--secondary);
+  }
+
   ul.top-level li details ul li:last-child {
     margin-bottom: 1.25rem;
   }
@@ -252,8 +290,7 @@
     padding-top: 0;
     border-top-left-radius: var(--radius-lg);
     border-top-right-radius: var(--radius-lg);
-    font-family: var(--sl-font-mono);
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
 
   .expressive-code pre {
@@ -295,8 +332,9 @@
     margin-top: 0;
   }
 
-  starlight-tabs[data-sync-key="pkg"] figcaption.header {
-    display: none;
+  starlight-tabs[data-sync-key="pkg"] figcaption.header .title {
+    border-radius: 0;
+    border-top: 0;
   }
 
   .tablist-wrapper > ul {
@@ -359,10 +397,9 @@
     border-color: var(--border);
     border: 1px solid var(--border);
 
-    font-family: var(--sl-font-mono);
     width: 100%;
     border-bottom: 0;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     padding-block: 0.75rem;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
