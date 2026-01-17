@@ -2,135 +2,135 @@
 import {
   Select,
   SelectControl,
-  SelectOption,
   SelectIndicator,
+  SelectOption,
 } from "@bejamas/ui/components/select";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
+import PresetSwitcher from "./PresetSwitcher.astro";
 ---
 
-<div class="relative text-sm">
-  <div class="absolute z-10 left-3 top-2.5">
-    <SunIcon class="size-4 dark:hidden" />
-    <MoonIcon class="size-4 hidden dark:block" />
-  </div>
-  <Select showCheckmark={false}>
-    <SelectIndicator />
-    <SelectControl
-      onchange="window.toggleTheme(this.value)"
-      id="theme-select"
-      showCheckmark={false}
-      class="pl-9 w-28"
-    >
-      <SelectOption value="light"
-        ><SunIcon class="size-4" /> Light</SelectOption
-      >
-      <SelectOption value="dark"
-        ><MoonIcon class="size-4" /> Dark</SelectOption
-      >
-      <SelectOption value="auto"
-        ><LaptopIcon class="size-4" /> Auto</SelectOption
-      >
-    </SelectControl>
-  </Select>
+<div class="flex items-center gap-2">
+  <PresetSwitcher />
+  <starlight-theme-select>
+    <div class="relative text-sm">
+      <div class="sl-bejamas-theme-select-icons">
+        <SunIcon class="theme-icon theme-icon-light size-4" />
+        <MoonIcon class="theme-icon theme-icon-dark size-4" />
+        <LaptopIcon class="theme-icon theme-icon-auto size-4" />
+      </div>
+      <Select showCheckmark={false}>
+        <SelectIndicator />
+        <SelectControl
+          showCheckmark={false}
+          class="sl-bejamas-theme-select-control"
+        >
+          <SelectOption value="light"
+            ><SunIcon class="size-4" /> Light</SelectOption
+          >
+          <SelectOption value="dark"
+            ><MoonIcon class="size-4" /> Dark</SelectOption
+          >
+          <SelectOption value="auto"
+            ><LaptopIcon class="size-4" /> Auto</SelectOption
+          >
+        </SelectControl>
+      </Select>
+    </div>
+  </starlight-theme-select>
 </div>
 
 <script is:inline>
-  // @ts-nocheck
-  const storageKey = "starlight-theme";
-  const themeMetaMedias = [
-    "(prefers-color-scheme: light)",
-    "(prefers-color-scheme: dark)",
-  ];
-  const themeColors = {
-    light: "#ffffff",
-    dark: "#0f171f",
-  };
+  if (typeof StarlightThemeProvider !== "undefined") {
+    StarlightThemeProvider.updatePickers();
+  }
+</script>
 
-  const parseTheme = (theme) =>
+<script>
+  type Theme = "auto" | "dark" | "light";
+  const storageKey = "starlight-theme";
+
+  const parseTheme = (theme: unknown): Theme =>
     theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
 
-  const loadTheme = () => {
-    try {
-      if (typeof localStorage !== "undefined") {
-        return parseTheme(localStorage.getItem(storageKey));
-      }
-    } catch {}
-    return "auto";
-  };
+  const loadTheme = (): Theme =>
+    parseTheme(
+      typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
+    );
 
-  function storeTheme(theme) {
-    try {
-      if (typeof localStorage !== "undefined") {
-        localStorage.setItem(
-          storageKey,
-          theme === "light" || theme === "dark" ? theme : "",
-        );
-      }
-    } catch {}
-  }
-
-  function ensureThemeMeta(head, media) {
-    const baseSelector = `meta[name="theme-color"][media="${media}"]`;
-
-    let meta = head.querySelector(`${baseSelector}[data-theme-managed]`);
-    if (meta instanceof HTMLMetaElement) return meta;
-
-    meta = head.querySelector(baseSelector);
-    if (meta instanceof HTMLMetaElement) {
-      meta.setAttribute("data-theme-managed", "");
-      return meta;
+  function storeTheme(theme: Theme): void {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(
+        storageKey,
+        theme === "light" || theme === "dark" ? theme : "",
+      );
     }
-
-    meta = document.createElement("meta");
-    meta.setAttribute("name", "theme-color");
-    meta.setAttribute("media", media);
-    meta.setAttribute("data-theme-managed", "");
-    head.appendChild(meta);
-    return meta;
   }
 
-  function syncThemeColor(theme) {
-    const color = themeColors[theme];
-    const head = document.head;
-    if (!color || !head) return;
-
-    themeMetaMedias.forEach((media) => {
-      const meta = ensureThemeMeta(head, media);
-      meta.setAttribute("content", color);
-    });
-  }
-
-  const getPreferredColorScheme = () =>
+  const getPreferredColorScheme = (): Theme =>
     matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 
-  function applyTheme(theme) {
-    const effective = theme === "auto" ? getPreferredColorScheme() : theme;
-    document.documentElement.dataset.theme = effective;
-    document.documentElement.classList.remove("light", "dark");
-    document.documentElement.classList.add(effective);
-    syncThemeColor(effective);
+  function onThemeChange(theme: Theme): void {
+    const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
+    if (typeof StarlightThemeProvider !== "undefined") {
+      StarlightThemeProvider.updatePickers(theme);
+    }
+    document.documentElement.dataset.theme = resolved;
+    document.documentElement.dataset.themeChoice = theme;
+    document.documentElement.classList.toggle("dark", resolved === "dark");
     storeTheme(theme);
-    const select = document.getElementById("theme-select");
-    if (select instanceof HTMLSelectElement) select.value = theme;
+    // Dispatch event for other components (like PresetSwitcher) to react
+    window.dispatchEvent(
+      new CustomEvent("theme-toggle-changed", { detail: { theme: resolved } }),
+    );
   }
 
-  // Initialize
-  applyTheme(loadTheme());
-
-  // UI: select changes
-  const select = document.getElementById("theme-select");
-  if (select instanceof HTMLSelectElement) {
-    select.addEventListener("change", (e) => {
-      if (e.currentTarget instanceof HTMLSelectElement) {
-        applyTheme(parseTheme(e.currentTarget.value));
-      }
-    });
-  }
-
-  window.toggleTheme = (theme) => applyTheme(parseTheme(theme));
-
-  // React to system scheme changes while in 'auto'
   matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
-    if (loadTheme() === "auto") applyTheme("auto");
+    if (loadTheme() === "auto") onThemeChange("auto");
   });
+
+  class StarlightThemeSelect extends HTMLElement {
+    connectedCallback() {
+      onThemeChange(loadTheme());
+      this.querySelector("select")?.addEventListener("change", (e) => {
+        if (e.currentTarget instanceof HTMLSelectElement) {
+          onThemeChange(parseTheme(e.currentTarget.value));
+        }
+      });
+    }
+  }
+
+  if (!customElements.get("starlight-theme-select")) {
+    customElements.define("starlight-theme-select", StarlightThemeSelect);
+  }
 </script>
+
+<style>
+  .theme-icon {
+    display: none;
+  }
+
+  :global(html[data-theme-choice="light"]) .theme-icon-light {
+    display: block;
+  }
+
+  :global(html[data-theme-choice="dark"]) .theme-icon-dark {
+    display: block;
+  }
+
+  :global(html[data-theme-choice="auto"]) .theme-icon-auto {
+    display: block;
+  }
+
+  .sl-bejamas-theme-select-icons {
+    position: absolute;
+    z-index: 10;
+    left: calc(var(--spacing) * 3);
+    top: calc(var(--spacing) * 2.5);
+    pointer-events: none;
+  }
+
+  .sl-bejamas-theme-select-control {
+    padding-left: calc(var(--spacing) * 9);
+    width: calc(var(--spacing) * 28);
+  }
+</style>

@@ -48,34 +48,32 @@ const leanPresets = Object.fromEntries(
 
 <script>
   import { applyThemeToCss } from "../utils/themes/apply-theme.ts";
-  // expose CSS generator for client usage
+  import {
+    setStoredPreset,
+    getStoredPreset,
+    getCurrentMode,
+    PRESET_CHANGE_EVENT,
+  } from "../utils/themes/preset-store.ts";
+
+  // expose CSS generator and preset store for client usage
   window.bejamas = window.bejamas || {};
   window.bejamas.applyThemeCss = applyThemeToCss;
+  window.bejamas.PRESET_CHANGE_EVENT = PRESET_CHANGE_EVENT;
 </script>
 <script src="https://unpkg.com/alpinejs@3.x.x" defer></script>
 <script type="module" define:vars={{ leanPresets, componentsShowreel }}>
   window.BEJAMAS_PRESETS = leanPresets;
-  window.__getCurrentMode = () => {
-    if (window.astroThemeToggle?.getTheme)
-      return window.astroThemeToggle.getTheme();
-    const el = document.documentElement;
-    const attr = el.getAttribute("data-theme");
-    if (attr === "dark" || attr === "light") return attr;
-    return el.classList.contains("dark") ? "dark" : "light";
-  };
+
   window.applyPresetByKey = (key) => {
     const preset = window.BEJAMAS_PRESETS?.[key];
     if (!preset || !window.bejamas?.applyThemeCss) return;
 
-    // save to cookie
-    document.cookie = `theme=${key}; path=/;`;
-    try {
-      localStorage.setItem("theme-preset", key);
-    } catch (e) {}
+    // Use shared preset store (saves to cookie + localStorage + dispatches event)
+    window.bejamas.setPreset(key);
 
     const cssText = window.bejamas.applyThemeCss({
       ...preset,
-      currentMode: window.__getCurrentMode(),
+      currentMode: window.bejamas.getCurrentMode(),
     });
     const id = "hero-theme-css";
     let styleEl = document.getElementById(id);
@@ -94,10 +92,8 @@ const leanPresets = Object.fromEntries(
     observer: null,
     themeIndexMap: {},
     getPersistedThemeKey() {
-      const stored = localStorage.getItem('theme-preset');
-      if (stored) return stored;
-      const match = document.cookie.match(/(?:^|;)\s*theme=([^;]+)/);
-      return match ? decodeURIComponent(match[1]) : null;
+      // Use shared preset store
+      return window.bejamas?.getPreset?.() || null;
     },
     setActiveByThemeKey(key) {
       if (!key) return;
@@ -122,6 +118,14 @@ const leanPresets = Object.fromEntries(
         }
       }
 
+      // Listen for preset changes from PresetSwitcher or other components
+      const presetChangeEvent = window.bejamas?.PRESET_CHANGE_EVENT || 'bejamas:preset-change';
+      window.addEventListener(presetChangeEvent, (event) => {
+        const key = event.detail?.key;
+        if (key) this.setActiveByThemeKey(key);
+      });
+
+      // Also listen for cross-tab storage changes
       window.addEventListener('storage', (event) => {
         if (event.key === 'theme-preset' && event.newValue) {
           this.setActiveByThemeKey(event.newValue);
@@ -130,7 +134,6 @@ const leanPresets = Object.fromEntries(
 
       const panel = this.$refs.panel || this.$root;
       const onIntersect = (entries) => {
-        console.log(entries);
         for (const entry of entries) {
           this.iframeActive = entry.isIntersecting && entry.intersectionRatio >= 0.9;
         }
@@ -143,8 +146,6 @@ const leanPresets = Object.fromEntries(
       if (typeof window.applyPresetByKey === 'function') window.applyPresetByKey(key);
     },
     activateIframe() {
-    console.log('activateIframe');
-    console.log(this.activeIndex);
       const panel = this.$refs.panel || this.$root;
       const panelEnd = document.getElementById('browser-hero-panel-end');
       panelEnd.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });

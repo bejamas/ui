@@ -1,0 +1,263 @@
+---
+import {
+  Select,
+  SelectControl,
+  SelectIndicator,
+  SelectOption,
+} from "@bejamas/ui/components/select";
+import { defaultPresets } from "../utils/themes/presets";
+
+const leanPresets = Object.fromEntries(
+  Object.entries(defaultPresets).map(([key, p]) => [
+    key,
+    {
+      label: p.label ?? key,
+      styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
+    },
+  ]),
+);
+---
+
+<preset-switcher-wrapper data-presets={JSON.stringify(leanPresets)}>
+  <div class="relative">
+    {/* Absolute positioned swatches showing current selection */}
+    <div
+      class="preset-current-swatches absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none flex -space-x-1 items-center"
+    >
+      <div class="preset-swatch-bg size-4 rounded-full"></div>
+      <!-- <div class="preset-swatch-primary size-4 rounded-full"></div> -->
+      <div class="preset-swatch-secondary size-4 rounded-full"></div>
+      <div class="preset-swatch-accent size-4 rounded-full"></div>
+    </div>
+    <Select class="w-[180px]">
+      <SelectIndicator />
+
+      <SelectControl class="preset-switcher-select pl-20">
+        {
+          Object.entries(leanPresets).map(([key, preset]) => (
+            <SelectOption value={key} class="px-3 py-2 rounded-md">
+              {/* Light mode swatches - shown when NOT in dark mode */}
+              <div class="flex -space-x-1 items-center dark:hidden">
+                <div
+                  class="size-4 rounded-full"
+                  style={`background: ${preset.styles.light.background}`}
+                />
+                {/* <div
+                  class="size-4 rounded-full"
+                  style={`background: ${preset.styles.light.primary}`}
+                /> */}
+                <div
+                  class="size-4 rounded-full"
+                  style={`background: ${preset.styles.light.secondary}`}
+                />
+                <div
+                  class="size-4 rounded-full"
+                  style={`background: ${preset.styles.light.accent}`}
+                />
+              </div>
+              {/* Dark mode swatches - shown only in dark mode */}
+              <div class="hidden dark:flex -space-x-1 items-center">
+                <div
+                  class="size-4 rounded-full"
+                  style={`background: ${preset.styles.dark.background}`}
+                />
+                {/* <div
+                  class="size-4 rounded-full"
+                  style={`background: ${preset.styles.dark.primary}`}
+                /> */}
+                <div
+                  class="size-4 rounded-full"
+                  style={`background: ${preset.styles.dark.secondary}`}
+                />
+                <div
+                  class="size-4 rounded-full"
+                  style={`background: ${preset.styles.dark.accent}`}
+                />
+              </div>
+              {preset.label}
+            </SelectOption>
+          ))
+        }
+      </SelectControl>
+    </Select>
+  </div>
+</preset-switcher-wrapper>
+
+<script>
+  import { applyThemeToElement } from "../utils/themes/apply-theme.ts";
+  import {
+    getStoredPreset,
+    setStoredPreset,
+    getCurrentMode,
+    PRESET_CHANGE_EVENT,
+  } from "../utils/themes/preset-store.ts";
+
+  type PresetType = {
+    label: string;
+    styles: { light: Record<string, string>; dark: Record<string, string> };
+  };
+
+  // Global presets cache (populated from first element's data-presets)
+  let PRESETS: Record<string, PresetType> = {};
+
+  // Flag to prevent recursive event handling
+  let isApplyingPreset = false;
+
+  function applyPresetTheme(key: string) {
+    const preset = PRESETS[key];
+    if (!preset) {
+      console.warn(`Preset "${key}" not found`);
+      return;
+    }
+
+    const mode = getCurrentMode();
+
+    // Apply theme CSS variables to document
+    applyThemeToElement(
+      { styles: preset.styles, currentMode: mode },
+      document.documentElement,
+    );
+
+    // Update current swatches display
+    updateCurrentSwatches(key);
+  }
+
+  function updateCurrentSwatches(key: string) {
+    const preset = PRESETS[key];
+    if (!preset) return;
+
+    const mode = getCurrentMode();
+    const styles = mode === "dark" ? preset.styles.dark : preset.styles.light;
+
+    // Update all swatch indicators
+    document
+      .querySelectorAll(".preset-current-swatches")
+      .forEach((container) => {
+        const bg = container.querySelector(".preset-swatch-bg") as HTMLElement;
+        const primary = container.querySelector(
+          ".preset-swatch-primary",
+        ) as HTMLElement;
+        const secondary = container.querySelector(
+          ".preset-swatch-secondary",
+        ) as HTMLElement;
+        const accent = container.querySelector(
+          ".preset-swatch-accent",
+        ) as HTMLElement;
+
+        if (bg) bg.style.background = styles.background || "";
+        if (primary) primary.style.background = styles.primary || "";
+        if (secondary) secondary.style.background = styles.secondary || "";
+        if (accent) accent.style.background = styles.accent || "";
+      });
+  }
+
+  function syncAllSelects(key: string) {
+    // Temporarily set flag to prevent change events from re-triggering
+    isApplyingPreset = true;
+    document
+      .querySelectorAll<HTMLSelectElement>(".preset-switcher-select")
+      .forEach((select) => {
+        if (select.value !== key) {
+          select.value = key;
+        }
+      });
+    // Reset flag after a microtask to ensure change events are processed
+    queueMicrotask(() => {
+      isApplyingPreset = false;
+    });
+  }
+
+  // Global event listeners (only set up once)
+  let globalListenersInitialized = false;
+
+  function initGlobalListeners() {
+    if (globalListenersInitialized) return;
+    globalListenersInitialized = true;
+
+    // Listen for preset changes from other sources (e.g., BrowserHero)
+    window.addEventListener(PRESET_CHANGE_EVENT, ((e: CustomEvent) => {
+      const key = e.detail?.key;
+      if (key && PRESETS[key]) {
+        syncAllSelects(key);
+        applyPresetTheme(key);
+      }
+    }) as EventListener);
+
+    // Sync when localStorage changes (cross-tab)
+    window.addEventListener("storage", (e) => {
+      if (e.key === "theme-preset" && e.newValue && PRESETS[e.newValue]) {
+        applyPresetTheme(e.newValue);
+        syncAllSelects(e.newValue);
+      }
+    });
+
+    // Re-apply preset when theme mode changes (light/dark toggle)
+    window.addEventListener("theme-toggle-changed", () => {
+      const current = getStoredPreset() || Object.keys(PRESETS)[0];
+      if (current) {
+        applyPresetTheme(current);
+        updateCurrentSwatches(current);
+      }
+    });
+
+    // Handle Astro page transitions
+    document.addEventListener("astro:after-swap", () => {
+      const current = getStoredPreset() || Object.keys(PRESETS)[0];
+      if (current) {
+        applyPresetTheme(current);
+        syncAllSelects(current);
+      }
+    });
+  }
+
+  // Custom element for each PresetSwitcher instance
+  class PresetSwitcherWrapper extends HTMLElement {
+    private select: HTMLSelectElement | null = null;
+
+    connectedCallback() {
+      // Parse presets from data attribute (first element populates global cache)
+      if (Object.keys(PRESETS).length === 0) {
+        const presetsJson = this.dataset.presets;
+        if (presetsJson) {
+          try {
+            PRESETS = JSON.parse(presetsJson);
+          } catch (e) {
+            console.error("Failed to parse presets:", e);
+          }
+        }
+      }
+
+      this.select = this.querySelector<HTMLSelectElement>(
+        ".preset-switcher-select",
+      );
+
+      // Initialize global listeners once
+      initGlobalListeners();
+
+      // Get initial preset and apply
+      const stored = getStoredPreset();
+      const initial = stored || Object.keys(PRESETS)[0] || "";
+
+      if (initial) {
+        applyPresetTheme(initial);
+        syncAllSelects(initial);
+      }
+
+      // Handle this select's changes
+      this.select?.addEventListener("change", (e) => {
+        // Skip if this change was triggered programmatically during sync
+        if (isApplyingPreset) return;
+
+        const target = e.target as HTMLSelectElement;
+        const key = target.value;
+        applyPresetTheme(key);
+        setStoredPreset(key); // This dispatches the sync event
+      });
+    }
+  }
+
+  // Register custom element
+  if (!customElements.get("preset-switcher-wrapper")) {
+    customElements.define("preset-switcher-wrapper", PresetSwitcherWrapper);
+  }
+</script>
