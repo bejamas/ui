@@ -1,10 +1,10 @@
 ---
 import {
-  Select,
-  SelectControl,
-  SelectIndicator,
-  SelectOption,
-} from "@bejamas/ui/components/select";
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsIndicator,
+} from "@bejamas/ui/components/tabs";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 import PresetSwitcher from "./PresetSwitcher.astro";
 ---
@@ -12,30 +12,24 @@ import PresetSwitcher from "./PresetSwitcher.astro";
 <div class="flex items-center gap-2">
   <PresetSwitcher />
   <starlight-theme-select>
-    <div class="relative text-sm">
-      <div class="sl-bejamas-theme-select-icons">
-        <SunIcon class="theme-icon theme-icon-light size-4" />
-        <MoonIcon class="theme-icon theme-icon-dark size-4" />
-        <LaptopIcon class="theme-icon theme-icon-auto size-4" />
-      </div>
-      <Select showCheckmark={false}>
-        <SelectIndicator />
-        <SelectControl
-          showCheckmark={false}
-          class="sl-bejamas-theme-select-control"
+    <Tabs class="theme-tabs" id="theme-tabs">
+      <TabsList class="h-9 p-1 rounded-md">
+        <TabsIndicator class="rounded-sm duration-150 transition-transform" />
+        <TabsTrigger value="light" class="theme-tab px-1.5" title="Light theme">
+          <SunIcon class="size-4" />
+        </TabsTrigger>
+        <TabsTrigger value="dark" class="theme-tab px-1.5" title="Dark theme">
+          <MoonIcon class="size-4" />
+        </TabsTrigger>
+        <TabsTrigger
+          value="auto"
+          class="theme-tab px-1.5"
+          title="Auto (system)"
         >
-          <SelectOption value="light"
-            ><SunIcon class="size-4" /> Light</SelectOption
-          >
-          <SelectOption value="dark"
-            ><MoonIcon class="size-4" /> Dark</SelectOption
-          >
-          <SelectOption value="auto"
-            ><LaptopIcon class="size-4" /> Auto</SelectOption
-          >
-        </SelectControl>
-      </Select>
-    </div>
+          <LaptopIcon class="size-4" />
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   </starlight-theme-select>
 </div>
 
@@ -82,6 +76,12 @@ import PresetSwitcher from "./PresetSwitcher.astro";
     window.dispatchEvent(
       new CustomEvent("theme-toggle-changed", { detail: { theme: resolved } }),
     );
+
+    document
+      .querySelector<HTMLDivElement>("#theme-tabs")
+      ?.dispatchEvent(
+        new CustomEvent("tabs:select", { detail: { value: theme } }),
+      ) as HTMLDivElement;
   }
 
   matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
@@ -90,11 +90,12 @@ import PresetSwitcher from "./PresetSwitcher.astro";
 
   class StarlightThemeSelect extends HTMLElement {
     connectedCallback() {
-      onThemeChange(loadTheme());
-      this.querySelector("select")?.addEventListener("change", (e) => {
-        if (e.currentTarget instanceof HTMLSelectElement) {
-          onThemeChange(parseTheme(e.currentTarget.value));
-        }
+      const currentTheme = loadTheme();
+      onThemeChange(currentTheme);
+
+      const el = document.querySelector("#theme-tabs");
+      el?.addEventListener("tabs:change", (e) => {
+        onThemeChange(parseTheme(e.detail.value));
       });
     }
   }
@@ -105,32 +106,15 @@ import PresetSwitcher from "./PresetSwitcher.astro";
 </script>
 
 <style>
-  .theme-icon {
-    display: none;
+  .theme-tabs {
+    gap: 0;
   }
 
-  :global(html[data-theme-choice="light"]) .theme-icon-light {
-    display: block;
+  .theme-tab[data-state="active"] {
+    color: var(--foreground);
   }
 
-  :global(html[data-theme-choice="dark"]) .theme-icon-dark {
-    display: block;
-  }
-
-  :global(html[data-theme-choice="auto"]) .theme-icon-auto {
-    display: block;
-  }
-
-  .sl-bejamas-theme-select-icons {
-    position: absolute;
-    z-index: 10;
-    left: calc(var(--spacing) * 3);
-    top: calc(var(--spacing) * 2.5);
-    pointer-events: none;
-  }
-
-  .sl-bejamas-theme-select-control {
-    padding-left: calc(var(--spacing) * 9);
-    width: calc(var(--spacing) * 28);
+  .theme-tab[data-state="inactive"] {
+    color: var(--muted-foreground);
   }
 </style>

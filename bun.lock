@@ -66,7 +66,7 @@
     },
     "packages/bejamas": {
       "name": "bejamas",
-      "version": "0.1.1",
+      "version": "0.2.2",
       "bin": {
         "bejamas": "./dist/index.js",
       },
@@ -92,7 +92,7 @@
     },
     "packages/starlight-theme-bejamas": {
       "name": "starlight-theme-bejamas",
-      "version": "0.1.1",
+      "version": "0.1.5",
       "dependencies": {
         "@expressive-code/plugin-line-numbers": "^0.41.3",
         "@fontsource-variable/inter": "^5.2.8",
@@ -108,9 +108,9 @@
       "name": "@bejamas/ui",
       "version": "0.1.0",
       "dependencies": {
-        "@data-slot/accordion": "^0.2.0",
-        "@data-slot/dialog": "^0.2.0",
-        "@data-slot/tabs": "^0.2.0",
+        "@data-slot/accordion": "^0.2.1",
+        "@data-slot/dialog": "^0.2.1",
+        "@data-slot/tabs": "^0.2.1",
         "@lion/ui": "^0.14.2",
         "@lucide/astro": "^0.540.0",
         "class-variance-authority": "^0.7.1",
@@ -275,11 +275,11 @@
 
     "@dabh/diagnostics": ["@dabh/diagnostics@2.0.8", "", { "dependencies": { "@so-ric/colorspace": "^1.1.6", "enabled": "2.0.x", "kuler": "^2.0.0" } }, "sha512-R4MSXTVnuMzGD7bzHdW2ZhhdPC/igELENcq5IjEverBvq5hn1SXCWcsi6eSsdWP0/Ur+SItRRjAktmdoX/8R/Q=="],
 
-    "@data-slot/accordion": ["@data-slot/accordion@0.2.0", "", {}, "sha512-F6Zr07KR9XJvNhojnGJ/PlIOV7qO61QATb//TdQDbtkXj+MRAVrSY5idAP99wfg6SWn01GYW8ajhYV7f2I+aHg=="],
+    "@data-slot/accordion": ["@data-slot/accordion@0.2.1", "", {}, "sha512-Ms9eeUgJjc9OWx8snlI2ni9HiKhCljEra8Ze9LHdJiXIasIFmqZq9/5CUaKNpQDe6b8HExm7iK52rpD6aDtT9A=="],
 
-    "@data-slot/dialog": ["@data-slot/dialog@0.2.0", "", {}, "sha512-H2lUpUlXvkOfoL9N9kg/4fgoA/hDF8x04WluBVWYq+IUHwC74LIBPwpXs1g1C6ALNIDsQX6Hw4EkMyo1Ged/hg=="],
+    "@data-slot/dialog": ["@data-slot/dialog@0.2.1", "", {}, "sha512-oeCqHTBFpzTcKm7H5tNkhMdoyl0602VuS3P6yImu4+O1r92HcHsjxW0wxCgV3i3Gx9PmFGDiZQDOfS91g2XWiQ=="],
 
-    "@data-slot/tabs": ["@data-slot/tabs@0.2.0", "", {}, "sha512-L5OY5MtYsXC/TK13YmkzACYAm80GtkVxawEvAV7aHe4jrsbvgURxFkl535NV6T2DFtnMRV2zM4vDw6RwnS+c8w=="],
+    "@data-slot/tabs": ["@data-slot/tabs@0.2.1", "", {}, "sha512-sMugZz1Vo3UyJei72UqJx77KaxQuZ3joQa0CCq3KIuzaJpojR5p6sP6OrH6lF7jvykflY9TrrnSwXn2QYjdcnQ=="],
 
     "@dependents/detective-less": ["@dependents/detective-less@5.0.1", "", { "dependencies": { "gonzales-pe": "^4.3.0", "node-source-walk": "^7.0.1" } }, "sha512-Y6+WUMsTFWE5jb20IFP4YGa5IrGY/+a/FbOSjDF/wz9gepU2hwCYSXRHP/vPwBvwcY3SVMASt4yXxbXNXigmZQ=="],
 

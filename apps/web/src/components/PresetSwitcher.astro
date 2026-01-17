@@ -24,32 +24,38 @@ const leanPresets = Object.fromEntries(
     <div
       class="preset-current-swatches absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none flex -space-x-1 items-center"
     >
-      <div class="preset-swatch-bg size-4 rounded-full"></div>
-      <!-- <div class="preset-swatch-primary size-4 rounded-full"></div> -->
-      <div class="preset-swatch-secondary size-4 rounded-full"></div>
-      <div class="preset-swatch-accent size-4 rounded-full"></div>
+      <!-- <div class="preset-swatch-bg size-4 rounded-full"></div> -->
+      <div
+        class="preset-swatch-primary size-4 rounded-full border-2 border-background"
+      >
+      </div>
+      <!-- <div class="preset-swatch-secondary size-4 rounded-full"></div> -->
+      <div
+        class="preset-swatch-accent size-4 rounded-full border-2 border-background"
+      >
+      </div>
     </div>
-    <Select class="w-[180px]">
+    <Select class="w-[170px]">
       <SelectIndicator />
 
-      <SelectControl class="preset-switcher-select pl-20">
+      <SelectControl class="preset-switcher-select pl-12">
         {
           Object.entries(leanPresets).map(([key, preset]) => (
             <SelectOption value={key} class="px-3 py-2 rounded-md">
               {/* Light mode swatches - shown when NOT in dark mode */}
               <div class="flex -space-x-1 items-center dark:hidden">
-                <div
-                  class="size-4 rounded-full"
-                  style={`background: ${preset.styles.light.background}`}
-                />
                 {/* <div
                   class="size-4 rounded-full"
-                  style={`background: ${preset.styles.light.primary}`}
+                  style={`background: ${preset.styles.light.background}`}
                 /> */}
                 <div
                   class="size-4 rounded-full"
-                  style={`background: ${preset.styles.light.secondary}`}
+                  style={`background: ${preset.styles.light.primary}`}
                 />
+                {/* <div
+                  class="size-4 rounded-full"
+                  style={`background: ${preset.styles.light.muted}`}
+                /> */}
                 <div
                   class="size-4 rounded-full"
                   style={`background: ${preset.styles.light.accent}`}
@@ -57,21 +63,21 @@ const leanPresets = Object.fromEntries(
               </div>
               {/* Dark mode swatches - shown only in dark mode */}
               <div class="hidden dark:flex -space-x-1 items-center">
-                <div
+                {/* <div
                   class="size-4 rounded-full"
                   style={`background: ${preset.styles.dark.background}`}
+                /> */}
+                <div
+                  class="size-4 rounded-full border-2"
+                  style={`background: ${preset.styles.dark.primary}; border-color: ${preset.styles.dark.popover};`}
                 />
                 {/* <div
                   class="size-4 rounded-full"
-                  style={`background: ${preset.styles.dark.primary}`}
+                  style={`background: ${preset.styles.dark.muted}`}
                 /> */}
                 <div
-                  class="size-4 rounded-full"
-                  style={`background: ${preset.styles.dark.secondary}`}
-                />
-                <div
-                  class="size-4 rounded-full"
-                  style={`background: ${preset.styles.dark.accent}`}
+                  class="size-4 rounded-full border-2"
+                  style={`background: ${preset.styles.dark.accent}; border-color: ${preset.styles.dark.popover};`}
                 />
               </div>
               {preset.label}
@@ -143,11 +149,15 @@ const leanPresets = Object.fromEntries(
         const accent = container.querySelector(
           ".preset-swatch-accent",
         ) as HTMLElement;
+        const muted = container.querySelector(
+          ".preset-swatch-muted",
+        ) as HTMLElement;
 
         if (bg) bg.style.background = styles.background || "";
         if (primary) primary.style.background = styles.primary || "";
         if (secondary) secondary.style.background = styles.secondary || "";
         if (accent) accent.style.background = styles.accent || "";
+        if (muted) muted.style.background = styles.muted || "";
       });
   }
 
