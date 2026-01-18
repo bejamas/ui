@@ -33,7 +33,7 @@ export default defineConfig({
           components: {
             button: "@bejamas/ui/components/button",
             select: "@bejamas/ui/components/select",
-            // ThemeSelect: "./src/components/ThemeSwitcher.astro",
+            ThemeSelect: "./src/components/ThemeSwitcher.astro",
           },
         }),
       ],
