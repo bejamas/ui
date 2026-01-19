@@ -53,14 +53,17 @@
  * import { Button } from '@bejamas/ui/components/button';
  * ---
  *
- * <Button>Open Dialog</Button>
+ *
  * <Dialog id="myDialog">
- *   <DialogTitle>Dialog Title</DialogTitle>
- *   <DialogDescription>Dialog description.</DialogDescription>
- *   <DialogContent>Content here</DialogContent>
- *   <DialogFooter>
- *     <DialogClose>Close</DialogClose>
- *   </DialogFooter>
+ *   <DialogTrigger>Open Dialog</DialogTrigger>
+ *   <DialogContent>
+ *     <DialogTitle>Dialog Title</DialogTitle>
+ *     <DialogDescription>Dialog description.</DialogDescription>
+ *     Content here
+ *     <DialogFooter>
+ *       <DialogClose>Close</DialogClose>
+ *     </DialogFooter>
+ *   </DialogContent>
  * </Dialog>
  * ```
  *
@@ -94,20 +97,6 @@
  *   </DialogContent>
  * </Dialog>
  *
- * ### Trigger outside of Dialog
- *
- * <Button data-slot="dialog-trigger" data-for="myDialog-1">Open Dialog</Button>
- * <Dialog id="myDialog-1">
- *   <DialogContent>
- *     <DialogHeader>
- *       <DialogTitle>Dialog Title</DialogTitle>
- *       <DialogDescription>Dialog description.</DialogDescription>
- *     </DialogHeader>
- *     <DialogFooter>
- *       <DialogClose>Close</DialogClose>
- *     </DialogFooter>
- *   </DialogContent>
- * </Dialog>
  */
 
 import { cn } from "@bejamas/ui/lib/utils";

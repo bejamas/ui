@@ -7,6 +7,14 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@bejamas/ui/components/dropdown-menu";
+// Import Dialog and Accordion to ensure their scripts are included for MDX pages
+import { Dialog, DialogContent } from "@bejamas/ui/components/dialog";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@bejamas/ui/components/accordion";
 
 import {
   ArrowRight,
@@ -213,6 +221,19 @@ const options = [...filteredDefaultOptions, ...customOptions];
       <p class="sl-bejamas-description">{entry.data.description}</p>
     )
   }
+</div>
+
+<!-- Hidden component renders to ensure their scripts are included for MDX pages -->
+<div style="display: none;" aria-hidden="true" data-component-scripts>
+  <Dialog>
+    <DialogContent showCloseButton={false} />
+  </Dialog>
+  <Accordion>
+    <AccordionItem>
+      <AccordionTrigger />
+      <AccordionContent />
+    </AccordionItem>
+  </Accordion>
 </div>
 
 <style>
