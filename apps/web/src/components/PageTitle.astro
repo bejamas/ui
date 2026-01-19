@@ -1,0 +1,307 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import { ButtonGroup } from "@bejamas/ui/components/button-group";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "@bejamas/ui/components/dropdown-menu";
+
+import {
+  ArrowRight,
+  ArrowLeft,
+  ArrowUpRight,
+  ChevronDown,
+  Copy,
+  Check,
+} from "@lucide/astro";
+
+import Icon from "./icons/Icon.astro";
+
+import config from "virtual:starlight-page-actions/config";
+
+const { dir, pagination, template, entry } = Astro.locals.starlightRoute;
+const { prev, next } = pagination;
+const isRtl = dir === "rtl";
+
+interface OptionsProps {
+  label: string;
+  href: string;
+  id: "chatgpt" | "claude" | "markdown" | "v0" | "t3chat";
+}
+
+const currentPath = Astro.url.pathname.replace(/\/$/, "");
+const currentUrl = Astro.url.href;
+const { actions, prompt: userPrompt } = config;
+const { pageActions } = (Astro.locals as any).starlightRoute.entry.data;
+
+const prompt = userPrompt?.includes("{url}")
+  ? userPrompt?.replace("{url}", currentUrl)
+  : `${userPrompt} ${currentUrl}`;
+const encodedPrompt = encodeURIComponent(prompt as string);
+
+const defaultOptions: OptionsProps[] = [
+  {
+    label: Astro.locals.t("view.markdown"),
+    href: `${currentPath}.md`,
+    id: "markdown",
+  },
+  {
+    label: Astro.locals.t("open.chatgpt"),
+    href: `https://chatgpt.com/?q=${encodedPrompt}`,
+    id: "chatgpt",
+  },
+  {
+    label: Astro.locals.t("open.claude"),
+    href: `https://claude.ai/new?q=${encodedPrompt}`,
+    id: "claude",
+  },
+  {
+    label: Astro.locals.t("open.t3chat"),
+    href: `https://t3.chat/new?q=${encodedPrompt}`,
+    id: "t3chat",
+  },
+  {
+    label: Astro.locals.t("open.v0"),
+    href: `https://v0.app/?q=${encodedPrompt}`,
+    id: "v0",
+  },
+];
+const filteredDefaultOptions = defaultOptions.filter((option) => {
+  const id = option.id;
+
+  if (actions && actions[id]) {
+    return option;
+  }
+
+  return;
+});
+
+const customOptions: OptionsProps[] = actions?.custom
+  ? Object.entries(actions.custom).map(([key, value]) => {
+      return {
+        label: value.label,
+        href: `${value.href}${encodedPrompt}`,
+        id: key as OptionsProps["id"],
+      };
+    })
+  : [];
+const options = [...filteredDefaultOptions, ...customOptions];
+---
+
+<div
+  class:list={[
+    "sl-bejamas-docs-title",
+    entry.data.template === "splash" && "mt-10",
+  ]}
+>
+  <h1 id="_top" class="tracking-tight">
+    {Astro.locals.starlightRoute.entry.data.title}
+  </h1>
+
+  {
+    entry.data.template !== "splash" && (
+      <div class="sl-bejamas-docs-title-buttons">
+        {entry.data.figmaUrl && (
+          <Button
+            variant="outline"
+            size="sm"
+            as="a"
+            href={entry.data.figmaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg
+              fill="none"
+              height="24"
+              viewBox="0 0 38 57"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+              class="text-lg"
+            >
+              <>
+                <path
+                  d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z"
+                  fill="#1ABCFE"
+                />
+                <path
+                  d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z"
+                  fill="#0ACF83"
+                />
+                <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z" fill="#FF7262" />
+                <path
+                  d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z"
+                  fill="#F24E1E"
+                />
+                <path
+                  d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z"
+                  fill="#A259FF"
+                />
+              </>
+            </svg>
+            Figma
+            <ArrowUpRight />
+          </Button>
+        )}
+        <ButtonGroup>
+          <Button
+            variant="outline"
+            size="sm"
+            id="copy-markdown"
+            data-path={currentPath}
+          >
+            <Copy id="copy-icon" class="size-3.5" />
+            <Check id="check-icon" class="size-3.5 hidden" />
+            Copy page
+          </Button>
+          <DropdownMenu align="end">
+            <Button
+              variant="outline"
+              class="rounded-l-none border-l-0 px-1"
+              size="sm"
+              data-slot="dropdown-menu-trigger"
+            >
+              <ChevronDown class="size-4" />
+            </Button>
+            <DropdownMenuContent class="p-1">
+              {options.map((option) => (
+                <DropdownMenuItem class="p-0">
+                  <Button
+                    as="a"
+                    href={option.href}
+                    variant="ghost"
+                    size="sm"
+                    class="w-full justify-start rounded-sm hover:bg-transparent"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Icon icon={option.id} />
+                    <span>{option.label}</span>
+                  </Button>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </ButtonGroup>
+        {prev && (
+          <Button
+            as="a"
+            href={isRtl ? next.href : prev.href}
+            variant="outline"
+            size="icon-sm"
+          >
+            <ArrowLeft class="size-3.5" />
+          </Button>
+        )}
+        {next && (
+          <Button
+            as="a"
+            href={isRtl ? prev.href : next.href}
+            variant="outline"
+            size="icon-sm"
+          >
+            <ArrowRight class="size-3.5" />
+          </Button>
+        )}
+      </div>
+    )
+  }
+
+  {
+    entry.data.description && (
+      <p class="sl-bejamas-description">{entry.data.description}</p>
+    )
+  }
+</div>
+
+<style>
+  @layer bejamas {
+    .sl-bejamas-docs-title {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: calc(var(--spacing) * 9);
+      align-items: center;
+    }
+    .sl-bejamas-docs-title-buttons {
+      gap: 0.5rem;
+      display: none;
+    }
+
+    @media (min-width: 50rem) {
+      .sl-bejamas-docs-title-buttons {
+        display: flex;
+      }
+    }
+  }
+
+  .sl-bejamas-description {
+    color: var(--muted-foreground);
+    text-wrap: balance;
+    margin-top: calc(var(--spacing) * 4);
+    margin-bottom: calc(var(--spacing) * 2);
+    width: 100%;
+  }
+
+  @layer starlight.core {
+    h1 {
+      font-size: 1.875rem;
+      line-height: 1.2;
+      font-weight: 500;
+      color: var(--sl-color-white);
+    }
+
+    /* @media (min-width: 50rem) {
+      h1 {
+        font-size: 1rem;
+        line-height: calc(2.5 / 2.25);
+      }
+    } */
+  }
+</style>
+
+<script>
+  const copyButton = document.querySelector(
+    "#copy-markdown",
+  ) as HTMLButtonElement;
+  const copyIcon = document.querySelector("#copy-icon") as SVGElement;
+  const checkIcon = document.querySelector("#check-icon") as SVGElement;
+  let copyButttonClass: "copied" | "error" = "copied";
+
+  copyButton?.addEventListener("click", async () => {
+    try {
+      copyButton.disabled = true;
+
+      const currentPath = copyButton.dataset.path;
+      const mdPath = `${currentPath}.md`;
+
+      const res = await fetch(mdPath);
+      const contentForClipboard = await res.text();
+
+      await navigator.clipboard.writeText(contentForClipboard);
+      
+      // Show success icon
+      copyIcon?.classList.add("hidden");
+      checkIcon?.classList.remove("hidden");
+      
+      // Reset to copy icon after 2 seconds
+      setTimeout(() => {
+        copyIcon?.classList.remove("hidden");
+        checkIcon?.classList.add("hidden");
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+      copyButttonClass = "error";
+    } finally {
+      copyButton.classList.add(copyButttonClass);
+      copyButton.disabled = false;
+
+      setTimeout(() => {
+        copyButton.classList.remove(copyButttonClass);
+      }, 3000);
+    }
+  });
+</script>
+
+
