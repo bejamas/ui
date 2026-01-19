@@ -1,0 +1,19 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import { Button } from "../button";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"button">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<Button
+  data-slot="dropdown-menu-trigger"
+  class={cn("inline-flex items-center", className)}
+  {...rest as any}
+>
+  <slot />
+</Button>

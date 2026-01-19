@@ -3,7 +3,16 @@ import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
 
 import { Button } from "@bejamas/ui/components/button";
 import NavigationMenu from "@/ui-next/NavigationMenu.astro";
-import { Dropdown, DropdownTrigger, DropdownContent } from "@bejamas/ui/components/dropdown";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+} from "@bejamas/ui/components/dropdown-menu";
 import { StickySurface } from "@bejamas/ui/components/sticky-surface";
 ---
 
@@ -27,9 +36,9 @@ import { StickySurface } from "@bejamas/ui/components/sticky-surface";
         <ul slot="links" class="flex items-center space-x-2">
           <li><Button as="a" href="/" variant="ghost">Home</Button></li>
           <li>
-            <Dropdown>
-              <DropdownTrigger>Company</DropdownTrigger>
-              <DropdownContent>
+            <DropdownMenu>
+              <DropdownMenuTrigger>Company</DropdownMenuTrigger>
+              <DropdownMenuContent>
                 <ul>
                   <li>
                     <Button
@@ -64,8 +73,8 @@ import { StickySurface } from "@bejamas/ui/components/sticky-surface";
                     >
                   </li>
                 </ul>
-              </DropdownContent>
-            </Dropdown>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </li>
           <li>
             <Button as="a" href="/contact" variant="ghost">Contact</Button>

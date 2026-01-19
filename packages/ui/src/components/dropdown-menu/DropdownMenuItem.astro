@@ -1,0 +1,35 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  disabled?: boolean;
+  inset?: boolean;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  disabled = false,
+  inset = false,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  role="menuitem"
+  tabindex={disabled ? -1 : 0}
+  data-slot="dropdown-menu-item"
+  data-disabled={disabled ? "" : undefined}
+  class={cn(
+    "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none",
+    "data-highlighted:bg-accent data-highlighted:text-accent-foreground",
+    "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+    "group/dropdown-menu-item",
+    inset && "pl-8",
+    className,
+  )}
+>
+  <slot />
+</div>

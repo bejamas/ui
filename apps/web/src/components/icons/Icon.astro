@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import ChatGPT from "./ChatGPT.astro";
+import Claude from "./Claude.astro";
+import Markdown from "./Markdown.astro";
+
+const { icon } = Astro.props as { icon: string };
+---
+
+{
+  icon === "chatgpt" ? (
+    <ChatGPT />
+  ) : icon === "claude" ? (
+    <Claude />
+  ) : icon === "markdown" ? (
+    <Markdown />
+  ) : null
+}

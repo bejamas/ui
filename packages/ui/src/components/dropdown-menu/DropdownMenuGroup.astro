@@ -1,0 +1,19 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  role="group"
+  data-slot="dropdown-menu-group"
+  class={cn("", className)}
+>
+  <slot />
+</div>

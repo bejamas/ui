@@ -281,23 +281,45 @@
       ]
     },
     {
-      "name": "dropdown",
+      "name": "dropdown-menu",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/dropdown-menu"],
+      "registryDependencies": ["button"],
       "files": [
         {
-          "path": "../../packages/ui/src/components/dropdown/Dropdown.astro",
+          "path": "../../packages/ui/src/components/dropdown-menu/DropdownMenu.astro",
           "type": "registry:ui"
         },
         {
-          "path": "../../packages/ui/src/components/dropdown/DropdownContent.astro",
+          "path": "../../packages/ui/src/components/dropdown-menu/DropdownMenuContent.astro",
           "type": "registry:ui"
         },
         {
-          "path": "../../packages/ui/src/components/dropdown/DropdownTrigger.astro",
+          "path": "../../packages/ui/src/components/dropdown-menu/DropdownMenuGroup.astro",
           "type": "registry:ui"
         },
         {
-          "path": "../../packages/ui/src/components/dropdown/index.ts",
+          "path": "../../packages/ui/src/components/dropdown-menu/DropdownMenuItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dropdown-menu/DropdownMenuLabel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dropdown-menu/DropdownMenuSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dropdown-menu/DropdownMenuShortcut.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dropdown-menu/DropdownMenuTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/dropdown-menu/index.ts",
           "type": "registry:ui"
         }
       ]

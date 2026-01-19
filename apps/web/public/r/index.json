@@ -1,272 +1,619 @@
-[
-  {
-    "name": "accordion",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Accordion.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "alert",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Alert.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "avatar",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Avatar.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "badge",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Badge.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "breadcrumb",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Breadcrumb.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "button",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Button.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "button-group",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/ButtonGroup.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "card",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Card.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "carousel",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Carousel.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "checkbox",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Checkbox.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "date",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Date.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "dialog",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Dialog.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "dropdown",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Dropdown.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "input",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Input.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "input-group",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/InputGroup.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "item",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Item.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "label",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Label.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "link-group",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/LinkGroup.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "marquee",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Marquee.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "navigation-menu",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/NavigationMenu.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "radio-group",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/RadioGroup.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "select",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Select.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "separator",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Separator.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "sticky-surface",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/StickySurface.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "switch",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Switch.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "tabs",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Tabs.astro",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "textarea",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/Textarea.astro",
-        "type": "registry:ui"
-      }
-    ]
-  }
-]
+{
+  "name": "bejamas/ui",
+  "homepage": "https://ui.bejamas.com",
+  "items": [
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/accordion"],
+      "files": [
+        {
+          "path": "ui/accordion/Accordion.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/accordion/AccordionContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/accordion/AccordionItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/accordion/AccordionTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/accordion/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/alert/Alert.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/alert/AlertTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/alert/AlertDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/alert/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/avatar/Avatar.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/avatar/AvatarImage.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/avatar/AvatarFallback.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/avatar/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/badge/Badge.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/badge/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "breadcrumb",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/breadcrumb/Breadcrumb.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/breadcrumb/BreadcrumbList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/breadcrumb/BreadcrumbItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/breadcrumb/BreadcrumbSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/breadcrumb/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/button/Button.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/button/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button-group",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/button-group/ButtonGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/button-group/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/card/Card.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/card/CardAction.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/card/CardContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/card/CardDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/card/CardFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/card/CardHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/card/CardMedia.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/card/CardOverlay.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/card/CardTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/card/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/carousel/Carousel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/carousel/CarouselSlide.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/carousel/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/checkbox/Checkbox.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/checkbox/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "date",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/date/Date.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/date/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/dialog"],
+      "files": [
+        {
+          "path": "ui/dialog/Dialog.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dialog/DialogClose.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dialog/DialogContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dialog/DialogDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dialog/DialogFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dialog/DialogHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dialog/DialogOverlay.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dialog/DialogTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dialog/DialogTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dialog/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/dropdown-menu"],
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "ui/dropdown-menu/DropdownMenu.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuLabel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuShortcut.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/input/Input.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/input/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input-group",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/input-group/InputGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/input-group/InputGroupAddon.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/input-group/InputGroupButton.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/input-group/InputGroupInput.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/input-group/InputGroupText.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/input-group/InputGroupTextarea.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/input-group/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "item",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/item/Item.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/ItemActions.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/ItemContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/ItemDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/ItemFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/ItemGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/ItemHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/ItemMedia.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/ItemSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/ItemTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/item/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/label/Label.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/label/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "link-group",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/link-group/LinkGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/link-group/LinkGroupTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/link-group/LinkGroupList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/link-group/LinkGroupItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/link-group/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "marquee",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/marquee/Marquee.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/marquee/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/radio-group/RadioGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/radio-group/RadioGroupItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/radio-group/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/select/Select.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/select/SelectControl.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/select/SelectGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/select/SelectIndicator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/select/SelectOption.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/select/SelectPlaceholder.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/select/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/separator/Separator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/separator/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sticky-surface",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/sticky-surface/StickySurface.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/sticky-surface/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/switch/Switch.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/switch/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/tabs"],
+      "files": [
+        {
+          "path": "ui/tabs/Tabs.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tabs/TabsContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tabs/TabsIndicator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tabs/TabsList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tabs/TabsTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tabs/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/textarea/Textarea.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/textarea/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}

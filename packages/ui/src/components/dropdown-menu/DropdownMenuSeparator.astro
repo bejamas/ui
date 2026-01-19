@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  role="separator"
+  data-slot="dropdown-menu-separator"
+  class={cn("-mx-1 my-1 h-px bg-border", className)}
+>
+</div>
