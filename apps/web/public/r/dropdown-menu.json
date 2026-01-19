@@ -45,7 +45,7 @@
     },
     {
       "path": "ui/dropdown-menu/DropdownMenuTrigger.astro",
-      "content": "---\nimport type { HTMLAttributes } from \"astro/types\";\nimport { cn } from \"@/lib/utils\";\n\ntype Props = {\n  class?: string;\n} & HTMLAttributes<\"button\">;\n\nconst { class: className = \"\", ...rest } = Astro.props as Props;\n---\n\n<button\n  {...rest}\n  type=\"button\"\n  data-slot=\"dropdown-menu-trigger\"\n  class={cn(\"inline-flex items-center\", className)}\n>\n  <slot />\n</button>\n",
+      "content": "---\nimport type { HTMLAttributes } from \"astro/types\";\nimport { cn } from \"@/lib/utils\";\nimport { Button } from \"../button\";\n\ntype Props = {\n  class?: string;\n} & HTMLAttributes<\"button\">;\n\nconst { class: className = \"\", ...rest } = Astro.props as Props;\n---\n\n<Button\n  data-slot=\"dropdown-menu-trigger\"\n  class={cn(\"inline-flex items-center\", className)}\n  {...rest as any}\n>\n  <slot />\n</Button>\n",
       "type": "registry:ui"
     },
     {

@@ -280,11 +280,11 @@ const options = [...filteredDefaultOptions, ...customOptions];
       const contentForClipboard = await res.text();
 
       await navigator.clipboard.writeText(contentForClipboard);
-      
+
       // Show success icon
       copyIcon?.classList.add("hidden");
       checkIcon?.classList.remove("hidden");
-      
+
       // Reset to copy icon after 2 seconds
       setTimeout(() => {
         copyIcon?.classList.remove("hidden");
@@ -303,5 +303,3 @@ const options = [...filteredDefaultOptions, ...customOptions];
     }
   });
 </script>
-
-

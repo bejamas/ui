@@ -1,6 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
+import { Button } from "../button";
 
 type Props = {
   class?: string;
@@ -9,11 +10,10 @@ type Props = {
 const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<button
-  {...rest}
-  type="button"
+<Button
   data-slot="dropdown-menu-trigger"
   class={cn("inline-flex items-center", className)}
+  {...rest as any}
 >
   <slot />
-</button>
+</Button>
