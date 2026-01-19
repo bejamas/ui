@@ -1,0 +1,403 @@
+---
+/**
+ * ColorInput - A color input component with OKLCH sliders and text input
+ */
+
+interface Props {
+  token: string;
+  label: string;
+  value?: string;
+  class?: string;
+}
+
+const { token, label, value = "", class: className = "" } = Astro.props;
+---
+
+<color-input 
+  class:list={["color-input-wrapper", className]}
+  data-token={token}
+  data-value={value}
+>
+  <div class="color-input-row">
+    <button 
+      type="button" 
+      class="color-swatch"
+      data-slot="swatch"
+      style={`background: ${value}`}
+      title="Click to open color picker"
+    >
+      <input 
+        type="color" 
+        class="native-picker"
+        data-slot="native-picker"
+      />
+    </button>
+    <div class="color-info">
+      <label class="color-label">{label}</label>
+      <input 
+        type="text"
+        class="color-text-input"
+        data-slot="text-input"
+        value={value}
+        placeholder="oklch(0.5 0.2 250)"
+      />
+    </div>
+  </div>
+  
+  <div class="oklch-sliders" data-slot="sliders">
+    <div class="slider-row">
+      <span class="slider-label">L</span>
+      <input 
+        type="range" 
+        class="slider" 
+        data-channel="l"
+        min="0" 
+        max="1" 
+        step="0.01"
+      />
+      <span class="slider-value" data-value="l">0.5</span>
+    </div>
+    <div class="slider-row">
+      <span class="slider-label">C</span>
+      <input 
+        type="range" 
+        class="slider" 
+        data-channel="c"
+        min="0" 
+        max="0.4" 
+        step="0.005"
+      />
+      <span class="slider-value" data-value="c">0.2</span>
+    </div>
+    <div class="slider-row">
+      <span class="slider-label">H</span>
+      <input 
+        type="range" 
+        class="slider" 
+        data-channel="h"
+        min="0" 
+        max="360" 
+        step="1"
+      />
+      <span class="slider-value" data-value="h">250</span>
+    </div>
+  </div>
+</color-input>
+
+<style>
+  .color-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .color-input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .color-swatch {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+
+  .native-picker {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .color-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .color-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    margin-bottom: 0.25rem;
+  }
+
+  .color-text-input {
+    width: 100%;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
+    font-family: ui-monospace, monospace;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  .color-text-input:focus {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px var(--ring) / 0.2;
+  }
+
+  .oklch-sliders {
+    display: none;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.5rem;
+    background: var(--muted);
+    border-radius: 0.5rem;
+  }
+
+  .color-input-wrapper.expanded .oklch-sliders {
+    display: flex;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .slider-label {
+    width: 1rem;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+  }
+
+  .slider {
+    flex: 1;
+    height: 0.375rem;
+    appearance: none;
+    background: var(--border);
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid var(--background);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid var(--background);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+
+  .slider-value {
+    width: 2.5rem;
+    font-size: 0.625rem;
+    font-family: ui-monospace, monospace;
+    color: var(--muted-foreground);
+    text-align: right;
+  }
+</style>
+
+<script>
+  import * as culori from "culori";
+
+  class ColorInput extends HTMLElement {
+    private token: string;
+    private currentValue: string;
+    private swatch: HTMLElement | null;
+    private nativePicker: HTMLInputElement | null;
+    private textInput: HTMLInputElement | null;
+    private sliders: HTMLElement | null;
+    private sliderL: HTMLInputElement | null;
+    private sliderC: HTMLInputElement | null;
+    private sliderH: HTMLInputElement | null;
+    private valueL: HTMLElement | null;
+    private valueC: HTMLElement | null;
+    private valueH: HTMLElement | null;
+
+    constructor() {
+      super();
+      this.token = this.dataset.token || "";
+      this.currentValue = this.dataset.value || "";
+      this.swatch = null;
+      this.nativePicker = null;
+      this.textInput = null;
+      this.sliders = null;
+      this.sliderL = null;
+      this.sliderC = null;
+      this.sliderH = null;
+      this.valueL = null;
+      this.valueC = null;
+      this.valueH = null;
+    }
+
+    connectedCallback() {
+      this.swatch = this.querySelector('[data-slot="swatch"]');
+      this.nativePicker = this.querySelector('[data-slot="native-picker"]');
+      this.textInput = this.querySelector('[data-slot="text-input"]');
+      this.sliders = this.querySelector('[data-slot="sliders"]');
+      this.sliderL = this.querySelector('[data-channel="l"]');
+      this.sliderC = this.querySelector('[data-channel="c"]');
+      this.sliderH = this.querySelector('[data-channel="h"]');
+      this.valueL = this.querySelector('[data-value="l"]');
+      this.valueC = this.querySelector('[data-value="c"]');
+      this.valueH = this.querySelector('[data-value="h"]');
+
+      // Initialize sliders from current value
+      this.updateSlidersFromValue(this.currentValue);
+
+      // Native color picker change
+      this.nativePicker?.addEventListener("input", (e) => {
+        const hex = (e.target as HTMLInputElement).value;
+        this.setValueFromHex(hex);
+      });
+
+      // Text input change
+      this.textInput?.addEventListener("input", (e) => {
+        const value = (e.target as HTMLInputElement).value;
+        this.setValueFromText(value);
+      });
+
+      this.textInput?.addEventListener("blur", () => {
+        // Validate and normalize on blur
+        this.updateSlidersFromValue(this.currentValue);
+      });
+
+      // Toggle sliders on swatch click
+      this.swatch?.addEventListener("click", (e) => {
+        // Don't toggle if clicking the native picker
+        if ((e.target as HTMLElement).classList.contains("native-picker")) return;
+        this.classList.toggle("expanded");
+      });
+
+      // Slider changes
+      [this.sliderL, this.sliderC, this.sliderH].forEach((slider) => {
+        slider?.addEventListener("input", () => this.updateFromSliders());
+      });
+    }
+
+    private updateSlidersFromValue(value: string) {
+      if (!value) return;
+
+      try {
+        const color = culori.parse(value);
+        if (!color) return;
+
+        const oklch = culori.converter("oklch")(color);
+        const l = oklch.l ?? 0;
+        const c = oklch.c ?? 0;
+        const h = oklch.h ?? 0;
+
+        if (this.sliderL) this.sliderL.value = String(l);
+        if (this.sliderC) this.sliderC.value = String(c);
+        if (this.sliderH) this.sliderH.value = String(h);
+
+        if (this.valueL) this.valueL.textContent = l.toFixed(2);
+        if (this.valueC) this.valueC.textContent = c.toFixed(3);
+        if (this.valueH) this.valueH.textContent = Math.round(h).toString();
+
+        // Update native picker
+        const hex = culori.formatHex(color);
+        if (this.nativePicker) this.nativePicker.value = hex;
+      } catch (e) {
+        // Invalid color, ignore
+      }
+    }
+
+    private updateFromSliders() {
+      const l = parseFloat(this.sliderL?.value || "0.5");
+      const c = parseFloat(this.sliderC?.value || "0.1");
+      const h = parseFloat(this.sliderH?.value || "0");
+
+      if (this.valueL) this.valueL.textContent = l.toFixed(2);
+      if (this.valueC) this.valueC.textContent = c.toFixed(3);
+      if (this.valueH) this.valueH.textContent = Math.round(h).toString();
+
+      const oklchValue = `oklch(${l.toFixed(3)} ${c.toFixed(4)} ${h.toFixed(1)})`;
+      this.setValue(oklchValue);
+    }
+
+    private setValueFromHex(hex: string) {
+      try {
+        const color = culori.parse(hex);
+        if (!color) return;
+
+        const oklch = culori.converter("oklch")(color);
+        const l = oklch.l ?? 0;
+        const c = oklch.c ?? 0;
+        const h = oklch.h ?? 0;
+
+        const oklchValue = `oklch(${l.toFixed(3)} ${c.toFixed(4)} ${h.toFixed(1)})`;
+        this.setValue(oklchValue);
+        this.updateSlidersFromValue(oklchValue);
+      } catch (e) {
+        // Invalid color
+      }
+    }
+
+    private setValueFromText(value: string) {
+      try {
+        const color = culori.parse(value);
+        if (color) {
+          this.setValue(value);
+          this.updateSlidersFromValue(value);
+        }
+      } catch (e) {
+        // Invalid color, don't update
+      }
+    }
+
+    private setValue(value: string) {
+      this.currentValue = value;
+
+      // Update text input
+      if (this.textInput && this.textInput.value !== value) {
+        this.textInput.value = value;
+      }
+
+      // Update swatch
+      if (this.swatch) {
+        this.swatch.style.background = value;
+      }
+
+      // Dispatch change event
+      this.dispatchEvent(
+        new CustomEvent("color-change", {
+          detail: { token: this.token, value },
+          bubbles: true,
+        })
+      );
+    }
+
+    // Public method to set value programmatically
+    public setColor(value: string) {
+      this.currentValue = value;
+      if (this.textInput) this.textInput.value = value;
+      if (this.swatch) this.swatch.style.background = value;
+      this.updateSlidersFromValue(value);
+    }
+
+    // Public method to get current value
+    public getColor(): string {
+      return this.currentValue;
+    }
+  }
+
+  customElements.define("color-input", ColorInput);
+</script>

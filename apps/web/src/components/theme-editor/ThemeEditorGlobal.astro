@@ -1,0 +1,34 @@
+---
+/**
+ * ThemeEditorGlobal - Wrapper component to include on all pages
+ * This injects the theme editor panel and handles initialization
+ */
+import ThemeEditorPanel from "./ThemeEditorPanel.astro";
+---
+
+<ThemeEditorPanel />
+
+<script>
+  // Ensure theme editor persists across Astro view transitions
+  document.addEventListener("astro:after-swap", () => {
+    // Re-initialize the theme editor if it was open
+    const panel = document.getElementById("theme-editor-panel");
+    if (panel && sessionStorage.getItem("theme-editor-open") === "true") {
+      (panel as any).open?.();
+    }
+  });
+
+  // Track open state for persistence
+  const panel = document.getElementById("theme-editor-panel");
+  if (panel) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === "class") {
+          const isOpen = panel.classList.contains("open");
+          sessionStorage.setItem("theme-editor-open", String(isOpen));
+        }
+      });
+    });
+    observer.observe(panel, { attributes: true });
+  }
+</script>

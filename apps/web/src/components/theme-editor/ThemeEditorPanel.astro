@@ -1,0 +1,1107 @@
+---
+/**
+ * ThemeEditorPanel - Floating draggable panel for editing theme colors
+ * Triggered by Cmd/Ctrl + .
+ */
+
+import { Button } from "@bejamas/ui/components/button";
+import {
+  X,
+  GripHorizontal,
+  Copy,
+  Download,
+  Plus,
+  RotateCcw,
+  Save,
+  Trash2,
+} from "@lucide/astro";
+import { defaultPresets } from "../../utils/themes/presets";
+import ColorInput from "./ColorInput.astro";
+
+// Color token sections (same as themes.astro)
+const colorSections = [
+  {
+    title: "Primary",
+    tokens: [
+      { token: "background", label: "Background" },
+      { token: "foreground", label: "Foreground" },
+      { token: "primary", label: "Primary" },
+      { token: "primary-foreground", label: "Primary FG" },
+    ],
+  },
+  {
+    title: "Secondary & Accent",
+    tokens: [
+      { token: "secondary", label: "Secondary" },
+      { token: "secondary-foreground", label: "Secondary FG" },
+      { token: "accent", label: "Accent" },
+      { token: "accent-foreground", label: "Accent FG" },
+    ],
+  },
+  {
+    title: "UI Components",
+    tokens: [
+      { token: "card", label: "Card" },
+      { token: "card-foreground", label: "Card FG" },
+      { token: "popover", label: "Popover" },
+      { token: "popover-foreground", label: "Popover FG" },
+      { token: "muted", label: "Muted" },
+      { token: "muted-foreground", label: "Muted FG" },
+    ],
+  },
+  {
+    title: "Utility & Form",
+    tokens: [
+      { token: "border", label: "Border" },
+      { token: "input", label: "Input" },
+      { token: "ring", label: "Ring" },
+    ],
+  },
+  {
+    title: "Status",
+    tokens: [
+      { token: "destructive", label: "Destructive" },
+      { token: "destructive-foreground", label: "Destructive FG" },
+    ],
+  },
+  {
+    title: "Charts",
+    tokens: [
+      { token: "chart-1", label: "Chart 1" },
+      { token: "chart-2", label: "Chart 2" },
+      { token: "chart-3", label: "Chart 3" },
+      { token: "chart-4", label: "Chart 4" },
+      { token: "chart-5", label: "Chart 5" },
+    ],
+  },
+];
+
+const presetKeys = Object.keys(defaultPresets);
+---
+
+<theme-editor-panel
+  id="theme-editor-panel"
+  class="theme-editor-panel"
+  data-presets={JSON.stringify(defaultPresets)}
+>
+  <!-- Header -->
+  <div class="panel-header" data-slot="header">
+    <div class="header-drag">
+      <GripHorizontal class="size-4 text-muted-foreground" />
+      <span class="header-title">Theme Editor</span>
+    </div>
+    <div class="header-actions">
+      <span class="shortcut-hint">⌘E</span>
+      <button type="button" class="close-btn" data-slot="close">
+        <X class="size-4" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Preset Selector -->
+  <div class="panel-section preset-section">
+    <div class="preset-row">
+      <select class="preset-select" data-slot="preset-select">
+        {
+          presetKeys.map((key) => (
+            <option value={key}>{defaultPresets[key].label || key}</option>
+          ))
+        }
+      </select>
+      <button
+        type="button"
+        class="icon-btn"
+        data-slot="new-preset"
+        title="Create new preset"
+      >
+        <Plus class="size-4" />
+      </button>
+      <button
+        type="button"
+        class="icon-btn"
+        data-slot="delete-preset"
+        title="Delete preset"
+        disabled
+      >
+        <Trash2 class="size-4" />
+      </button>
+    </div>
+    <input
+      type="text"
+      class="preset-name-input"
+      data-slot="preset-name"
+      placeholder="Preset name..."
+      style="display: none;"
+    />
+  </div>
+
+  <!-- Mode Tabs -->
+  <div class="mode-tabs" data-slot="mode-tabs">
+    <button type="button" class="mode-tab active" data-mode="light"
+      >Light</button
+    >
+    <button type="button" class="mode-tab" data-mode="dark">Dark</button>
+  </div>
+
+  <!-- Color Sections -->
+  <div class="panel-content" data-slot="content">
+    {
+      colorSections.map((section) => (
+        <div class="color-section">
+          <button
+            type="button"
+            class="section-header"
+            data-slot="section-toggle"
+          >
+            <span>{section.title}</span>
+            <svg
+              class="chevron"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+          <div class="section-content">
+            {section.tokens.map((item) => (
+              <ColorInput token={item.token} label={item.label} value="" />
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="panel-footer">
+    <div class="footer-left">
+      <button
+        type="button"
+        class="footer-btn"
+        data-slot="reset"
+        title="Reset to original"
+      >
+        <RotateCcw class="size-3.5" />
+        Reset
+      </button>
+    </div>
+    <div class="footer-right">
+      <button
+        type="button"
+        class="footer-btn"
+        data-slot="export-json"
+        title="Export JSON"
+      >
+        <Copy class="size-3.5" />
+        JSON
+      </button>
+      <button
+        type="button"
+        class="footer-btn"
+        data-slot="export-css"
+        title="Export CSS"
+      >
+        <Download class="size-3.5" />
+        CSS
+      </button>
+      <button type="button" class="footer-btn primary" data-slot="save">
+        <Save class="size-3.5" />
+        Save
+      </button>
+    </div>
+  </div>
+</theme-editor-panel>
+
+<!-- Theme Editor toggle button - positioned after panel for CSS sibling selector -->
+<!-- <button
+  type="button"
+  id="theme-editor-toggle-btn"
+  class="theme-editor-fab"
+  aria-label="Open theme editor (Cmd/Ctrl + E)"
+  title="Open theme editor (Cmd/Ctrl + E)"
+>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="13.5" cy="6.5" r="0.5" fill="currentColor"/>
+    <circle cx="17.5" cy="10.5" r="0.5" fill="currentColor"/>
+    <circle cx="8.5" cy="7.5" r="0.5" fill="currentColor"/>
+    <circle cx="6.5" cy="12.5" r="0.5" fill="currentColor"/>
+    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/>
+  </svg>
+</button> -->
+
+<style is:global>
+  /* Floating Action Button */
+  .theme-editor-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9998;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s,
+      opacity 0.15s;
+  }
+
+  .theme-editor-fab:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .theme-editor-fab:active {
+    transform: scale(0.95);
+  }
+
+  /* Hide FAB when panel is open */
+  .theme-editor-panel.open + .theme-editor-fab {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .theme-editor-panel {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 320px;
+    max-height: calc(100vh - 100px);
+    background: var(--popover, #fff);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    font-size: 0.875rem;
+  }
+
+  .theme-editor-panel.open {
+    display: flex;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    cursor: move;
+    user-select: none;
+    background: var(--muted);
+  }
+
+  .header-drag {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .header-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .shortcut-hint {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.375rem;
+    background: var(--secondary);
+    border-radius: 0.25rem;
+    color: var(--muted-foreground);
+    font-family: ui-monospace, monospace;
+  }
+
+  .close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.25rem;
+    border: none;
+    background: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+
+  .close-btn:hover {
+    background: var(--secondary);
+    color: var(--foreground);
+  }
+
+  .panel-section {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .preset-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .preset-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .preset-select {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    background: var(--background);
+    color: var(--foreground);
+    font-size: 0.8125rem;
+    cursor: pointer;
+  }
+
+  .preset-select:focus {
+    outline: none;
+    border-color: var(--ring);
+  }
+
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    background: var(--background);
+    color: var(--foreground);
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+  }
+
+  .icon-btn:hover:not(:disabled) {
+    background: var(--secondary);
+    border-color: var(--ring);
+  }
+
+  .icon-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .preset-name-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    background: var(--background);
+    color: var(--foreground);
+    font-size: 0.8125rem;
+  }
+
+  .preset-name-input:focus {
+    outline: none;
+    border-color: var(--ring);
+  }
+
+  .mode-tabs {
+    display: flex;
+    padding: 0.5rem 1rem;
+    gap: 0.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mode-tab {
+    flex: 1;
+    padding: 0.375rem 0.75rem;
+    border: none;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--muted-foreground);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+
+  .mode-tab:hover {
+    background: var(--secondary);
+  }
+
+  .mode-tab.active {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+  }
+
+  .color-section {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .color-section:last-child {
+    border-bottom: none;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--foreground);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .section-header:hover {
+    background: var(--muted);
+  }
+
+  .section-header .chevron {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s;
+  }
+
+  .color-section.collapsed .section-header .chevron {
+    transform: rotate(-90deg);
+  }
+
+  .section-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 0.75rem;
+  }
+
+  .color-section.collapsed .section-content {
+    display: none;
+  }
+
+  .panel-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--border);
+    background: var(--muted);
+  }
+
+  .footer-left,
+  .footer-right {
+    display: flex;
+    gap: 0.375rem;
+  }
+
+  .footer-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    background: var(--background);
+    color: var(--foreground);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+  }
+
+  .footer-btn:hover {
+    background: var(--secondary);
+    border-color: var(--ring);
+  }
+
+  .footer-btn.primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+  }
+
+  .footer-btn.primary:hover {
+    opacity: 0.9;
+  }
+
+  /* Toast notification */
+  .theme-editor-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.75rem 1.25rem;
+    background: var(--foreground);
+    color: var(--background);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    z-index: 10000;
+    animation: toast-in 0.3s ease;
+  }
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+</style>
+
+<script>
+  import {
+    applyThemeToElement,
+    applyThemeToCss,
+  } from "../../utils/themes/apply-theme";
+  import {
+    getStoredPreset,
+    setStoredPreset,
+    getCurrentMode,
+    PRESET_CHANGE_EVENT,
+  } from "../../utils/themes/preset-store";
+  import { defaultPresets } from "../../utils/themes/presets";
+  import {
+    getAllPresets,
+    saveCustomPreset,
+    deleteCustomPreset,
+    generatePresetId,
+    getCustomPresets,
+    CUSTOM_PRESETS_CHANGE_EVENT,
+    type CustomPreset,
+  } from "../../utils/themes/custom-presets-store";
+  import type { ThemePreset, ThemeStyleProps } from "../../utils/types/theme";
+
+  class ThemeEditorPanel extends HTMLElement {
+    private isDragging = false;
+    private dragOffset = { x: 0, y: 0 };
+    private currentPresetId: string = "";
+    private currentMode: "light" | "dark" = "light";
+    private workingStyles: {
+      light: Partial<ThemeStyleProps>;
+      dark: Partial<ThemeStyleProps>;
+    } = { light: {}, dark: {} };
+    private originalStyles: {
+      light: Partial<ThemeStyleProps>;
+      dark: Partial<ThemeStyleProps>;
+    } = { light: {}, dark: {} };
+    private isCustomPreset = false;
+    private isCreatingNew = false;
+
+    // Elements
+    private header: HTMLElement | null = null;
+    private closeBtn: HTMLElement | null = null;
+    private presetSelect: HTMLSelectElement | null = null;
+    private presetNameInput: HTMLInputElement | null = null;
+    private newPresetBtn: HTMLElement | null = null;
+    private deletePresetBtn: HTMLElement | null = null;
+    private modeTabs: HTMLElement | null = null;
+    private content: HTMLElement | null = null;
+    private resetBtn: HTMLElement | null = null;
+    private exportJsonBtn: HTMLElement | null = null;
+    private exportCssBtn: HTMLElement | null = null;
+    private saveBtn: HTMLElement | null = null;
+
+    connectedCallback() {
+      this.header = this.querySelector('[data-slot="header"]');
+      this.closeBtn = this.querySelector('[data-slot="close"]');
+      this.presetSelect = this.querySelector('[data-slot="preset-select"]');
+      this.presetNameInput = this.querySelector('[data-slot="preset-name"]');
+      this.newPresetBtn = this.querySelector('[data-slot="new-preset"]');
+      this.deletePresetBtn = this.querySelector('[data-slot="delete-preset"]');
+      this.modeTabs = this.querySelector('[data-slot="mode-tabs"]');
+      this.content = this.querySelector('[data-slot="content"]');
+      this.resetBtn = this.querySelector('[data-slot="reset"]');
+      this.exportJsonBtn = this.querySelector('[data-slot="export-json"]');
+      this.exportCssBtn = this.querySelector('[data-slot="export-css"]');
+      this.saveBtn = this.querySelector('[data-slot="save"]');
+
+      this.setupDragging();
+      this.setupEventListeners();
+      this.loadInitialState();
+
+      // Global keyboard shortcut
+      document.addEventListener("keydown", this.handleKeydown.bind(this));
+
+      // Listen for preset changes from other sources
+      window.addEventListener(
+        PRESET_CHANGE_EVENT,
+        this.handleExternalPresetChange.bind(this),
+      );
+      window.addEventListener(
+        CUSTOM_PRESETS_CHANGE_EVENT,
+        this.refreshPresetList.bind(this),
+      );
+    }
+
+    disconnectedCallback() {
+      document.removeEventListener("keydown", this.handleKeydown.bind(this));
+    }
+
+    private handleKeydown(e: KeyboardEvent) {
+      // Cmd/Ctrl + . to toggle panel
+      if ((e.metaKey || e.ctrlKey) && e.key === ".") {
+        e.preventDefault();
+        this.toggle();
+      }
+      // Escape to close
+      if (e.key === "Escape" && this.classList.contains("open")) {
+        this.close();
+      }
+    }
+
+    private setupDragging() {
+      if (!this.header) return;
+
+      this.header.addEventListener("mousedown", (e) => {
+        if ((e.target as HTMLElement).closest("button")) return;
+        this.isDragging = true;
+        const rect = this.getBoundingClientRect();
+        this.dragOffset = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        };
+        this.style.transition = "none";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!this.isDragging) return;
+        const x = e.clientX - this.dragOffset.x;
+        const y = e.clientY - this.dragOffset.y;
+
+        // Keep panel within viewport
+        const maxX = window.innerWidth - this.offsetWidth;
+        const maxY = window.innerHeight - this.offsetHeight;
+
+        this.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+        this.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+        this.style.right = "auto";
+      });
+
+      document.addEventListener("mouseup", () => {
+        this.isDragging = false;
+        this.style.transition = "";
+      });
+    }
+
+    private setupEventListeners() {
+      // Close button
+      this.closeBtn?.addEventListener("click", () => this.close());
+
+      // Preset select
+      this.presetSelect?.addEventListener("change", (e) => {
+        const id = (e.target as HTMLSelectElement).value;
+        this.loadPreset(id);
+      });
+
+      // New preset button
+      this.newPresetBtn?.addEventListener("click", () => this.startNewPreset());
+
+      // Delete preset button
+      this.deletePresetBtn?.addEventListener("click", () =>
+        this.deleteCurrentPreset(),
+      );
+
+      // Preset name input
+      this.presetNameInput?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          this.confirmNewPreset();
+        } else if (e.key === "Escape") {
+          this.cancelNewPreset();
+        }
+      });
+
+      // Mode tabs
+      this.modeTabs?.querySelectorAll(".mode-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const mode = (tab as HTMLElement).dataset.mode as "light" | "dark";
+          this.switchMode(mode);
+        });
+      });
+
+      // Section toggles
+      this.content
+        ?.querySelectorAll('[data-slot="section-toggle"]')
+        .forEach((toggle) => {
+          toggle.addEventListener("click", () => {
+            toggle.closest(".color-section")?.classList.toggle("collapsed");
+          });
+        });
+
+      // Color changes
+      this.addEventListener("color-change", ((e: CustomEvent) => {
+        const { token, value } = e.detail;
+        this.updateColor(token, value);
+      }) as EventListener);
+
+      // Footer buttons
+      this.resetBtn?.addEventListener("click", () => this.resetToOriginal());
+      this.exportJsonBtn?.addEventListener("click", () => this.exportJson());
+      this.exportCssBtn?.addEventListener("click", () => this.exportCss());
+      this.saveBtn?.addEventListener("click", () => this.savePreset());
+    }
+
+    private loadInitialState() {
+      this.currentMode = getCurrentMode();
+      this.updateModeTabsUI();
+      this.refreshPresetList();
+
+      const storedPreset = getStoredPreset();
+      if (storedPreset) {
+        this.loadPreset(storedPreset);
+      } else {
+        this.loadPreset(Object.keys(defaultPresets)[0]);
+      }
+    }
+
+    private refreshPresetList() {
+      if (!this.presetSelect) return;
+
+      const allPresets = getAllPresets();
+      const currentValue = this.presetSelect.value;
+
+      this.presetSelect.innerHTML = "";
+
+      // Built-in presets
+      const builtInGroup = document.createElement("optgroup");
+      builtInGroup.label = "Built-in";
+      Object.entries(allPresets).forEach(([id, preset]) => {
+        if (!preset.isCustom) {
+          const option = document.createElement("option");
+          option.value = id;
+          option.textContent = preset.name || id;
+          builtInGroup.appendChild(option);
+        }
+      });
+      this.presetSelect.appendChild(builtInGroup);
+
+      // Custom presets
+      const customPresets = Object.entries(allPresets).filter(
+        ([, p]) => p.isCustom,
+      );
+      if (customPresets.length > 0) {
+        const customGroup = document.createElement("optgroup");
+        customGroup.label = "Custom";
+        customPresets.forEach(([id, preset]) => {
+          const option = document.createElement("option");
+          option.value = id;
+          option.textContent = preset.name || id;
+          customGroup.appendChild(option);
+        });
+        this.presetSelect.appendChild(customGroup);
+      }
+
+      // Restore selection if possible
+      if (currentValue && allPresets[currentValue]) {
+        this.presetSelect.value = currentValue;
+      }
+    }
+
+    private loadPreset(id: string) {
+      const allPresets = getAllPresets();
+      const preset = allPresets[id];
+      if (!preset) return;
+
+      this.currentPresetId = id;
+      this.isCustomPreset = !!preset.isCustom;
+
+      // Deep clone styles
+      this.workingStyles = JSON.parse(JSON.stringify(preset.styles));
+      this.originalStyles = JSON.parse(JSON.stringify(preset.styles));
+
+      // Update select
+      if (this.presetSelect) {
+        this.presetSelect.value = id;
+      }
+
+      // Update delete button state
+      if (this.deletePresetBtn) {
+        (this.deletePresetBtn as HTMLButtonElement).disabled =
+          !this.isCustomPreset;
+      }
+
+      // Update color inputs
+      this.updateColorInputs();
+
+      // Apply theme live
+      this.applyLivePreview();
+
+      // Also update global preset
+      setStoredPreset(id);
+    }
+
+    private updateColorInputs() {
+      const styles = this.workingStyles[this.currentMode];
+
+      this.querySelectorAll<HTMLElement>("color-input").forEach((input) => {
+        const token = input.dataset.token;
+        if (token && styles[token as keyof typeof styles]) {
+          (input as any).setColor?.(
+            styles[token as keyof typeof styles] as string,
+          );
+        }
+      });
+    }
+
+    private updateColor(token: string, value: string) {
+      this.workingStyles[this.currentMode][token as keyof ThemeStyleProps] =
+        value;
+      this.applyLivePreview();
+    }
+
+    private applyLivePreview() {
+      applyThemeToElement(
+        { styles: this.workingStyles, currentMode: this.currentMode },
+        document.documentElement,
+      );
+    }
+
+    private switchMode(mode: "light" | "dark") {
+      this.currentMode = mode;
+      this.updateModeTabsUI();
+      this.updateColorInputs();
+
+      // Also switch the actual page theme
+      if ((window as any).astroThemeToggle?.setTheme) {
+        (window as any).astroThemeToggle.setTheme(mode);
+      } else {
+        document.documentElement.dataset.theme = mode;
+        document.documentElement.classList.toggle("dark", mode === "dark");
+      }
+
+      this.applyLivePreview();
+    }
+
+    private updateModeTabsUI() {
+      this.modeTabs?.querySelectorAll(".mode-tab").forEach((tab) => {
+        const isActive = (tab as HTMLElement).dataset.mode === this.currentMode;
+        tab.classList.toggle("active", isActive);
+      });
+    }
+
+    private startNewPreset() {
+      this.isCreatingNew = true;
+      if (this.presetNameInput) {
+        this.presetNameInput.style.display = "block";
+        this.presetNameInput.value = `${this.presetSelect?.selectedOptions[0]?.textContent || "Custom"} Copy`;
+        this.presetNameInput.focus();
+        this.presetNameInput.select();
+      }
+    }
+
+    private confirmNewPreset() {
+      if (!this.presetNameInput) return;
+
+      const name = this.presetNameInput.value.trim();
+      if (!name) {
+        this.cancelNewPreset();
+        return;
+      }
+
+      const newPreset: CustomPreset = {
+        id: generatePresetId(),
+        name,
+        label: name,
+        createdAt: new Date().toISOString(),
+        modifiedAt: new Date().toISOString(),
+        source: "SAVED",
+        styles: JSON.parse(JSON.stringify(this.workingStyles)),
+      };
+
+      saveCustomPreset(newPreset);
+      this.cancelNewPreset();
+      this.loadPreset(newPreset.id);
+      this.showToast(`Created preset "${name}"`);
+    }
+
+    private cancelNewPreset() {
+      this.isCreatingNew = false;
+      if (this.presetNameInput) {
+        this.presetNameInput.style.display = "none";
+        this.presetNameInput.value = "";
+      }
+    }
+
+    private deleteCurrentPreset() {
+      if (!this.isCustomPreset || !this.currentPresetId) return;
+
+      const allPresets = getAllPresets();
+      const preset = allPresets[this.currentPresetId];
+      if (!preset) return;
+
+      if (confirm(`Delete preset "${preset.name}"?`)) {
+        deleteCustomPreset(this.currentPresetId);
+        this.showToast(`Deleted preset "${preset.name}"`);
+
+        // Load first built-in preset
+        this.loadPreset(Object.keys(defaultPresets)[0]);
+      }
+    }
+
+    private resetToOriginal() {
+      this.workingStyles = JSON.parse(JSON.stringify(this.originalStyles));
+      this.updateColorInputs();
+      this.applyLivePreview();
+      this.showToast("Reset to original");
+    }
+
+    private savePreset() {
+      if (this.isCustomPreset) {
+        // Update existing custom preset
+        const customPresets = getCustomPresets();
+        const existing = customPresets[this.currentPresetId];
+        if (existing) {
+          const updated: CustomPreset = {
+            ...existing,
+            styles: JSON.parse(JSON.stringify(this.workingStyles)),
+            modifiedAt: new Date().toISOString(),
+          };
+          saveCustomPreset(updated);
+          this.originalStyles = JSON.parse(JSON.stringify(this.workingStyles));
+          this.showToast(`Saved "${existing.name}"`);
+        }
+      } else {
+        // Create new custom preset from built-in
+        this.startNewPreset();
+      }
+    }
+
+    private exportJson() {
+      const data = {
+        name: this.presetSelect?.selectedOptions[0]?.textContent || "Theme",
+        exportedAt: new Date().toISOString(),
+        styles: this.workingStyles,
+      };
+
+      const json = JSON.stringify(data, null, 2);
+      this.copyToClipboard(json);
+      this.showToast("JSON copied to clipboard");
+    }
+
+    private exportCss() {
+      const css = applyThemeToCss({
+        styles: this.workingStyles,
+        currentMode: this.currentMode,
+      });
+      this.copyToClipboard(css);
+      this.showToast("CSS copied to clipboard");
+    }
+
+    private copyToClipboard(text: string) {
+      navigator.clipboard.writeText(text).catch(() => {
+        // Fallback
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      });
+    }
+
+    private showToast(message: string) {
+      const existing = document.querySelector(".theme-editor-toast");
+      existing?.remove();
+
+      const toast = document.createElement("div");
+      toast.className = "theme-editor-toast";
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => toast.remove(), 2500);
+    }
+
+    private handleExternalPresetChange(e: Event) {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.key && detail.key !== this.currentPresetId) {
+        this.loadPreset(detail.key);
+      }
+    }
+
+    public toggle() {
+      if (this.classList.contains("open")) {
+        this.close();
+      } else {
+        this.open();
+      }
+    }
+
+    public open() {
+      this.classList.add("open");
+      this.loadInitialState();
+    }
+
+    public close() {
+      this.classList.remove("open");
+    }
+  }
+
+  // Safely register custom element
+  if (!customElements.get("theme-editor-panel")) {
+    customElements.define("theme-editor-panel", ThemeEditorPanel);
+  }
+
+  // Global keyboard handler (Cmd/Ctrl + e to toggle)
+  if (!(window as any).__themeEditorKeyHandler) {
+    (window as any).__themeEditorKeyHandler = true;
+    document.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "e") {
+        e.preventDefault();
+        const panel = document.getElementById(
+          "theme-editor-panel",
+        ) as ThemeEditorPanel | null;
+        if (panel && typeof panel.toggle === "function") {
+          panel.toggle();
+        }
+      }
+    });
+  }
+
+  // FAB toggle button handler
+  const toggleBtn = document.getElementById("theme-editor-toggle-btn");
+  if (toggleBtn && !(toggleBtn as any).__handlerAdded) {
+    (toggleBtn as any).__handlerAdded = true;
+    toggleBtn.addEventListener("click", () => {
+      const panel = document.getElementById(
+        "theme-editor-panel",
+      ) as ThemeEditorPanel | null;
+      if (panel && typeof panel.toggle === "function") {
+        panel.toggle();
+      }
+    });
+  }
+</script>

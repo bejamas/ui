@@ -7,6 +7,7 @@ import {
 } from "@bejamas/ui/components/tabs";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 import PresetSwitcher from "./PresetSwitcher.astro";
+import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
 ---
 
 <div class="flex items-center gap-2">
@@ -32,6 +33,9 @@ import PresetSwitcher from "./PresetSwitcher.astro";
     </Tabs>
   </starlight-theme-select>
 </div>
+
+<!-- Theme Editor Panel (Cmd/Ctrl + . to toggle) -->
+<ThemeEditorGlobal />
 
 <script is:inline>
   if (typeof StarlightThemeProvider !== "undefined") {
