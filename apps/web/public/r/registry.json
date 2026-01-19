@@ -281,23 +281,45 @@
       ]
     },
     {
-      "name": "dropdown",
+      "name": "dropdown-menu",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/dropdown-menu"],
+      "registryDependencies": ["button"],
       "files": [
         {
-          "path": "ui/dropdown/Dropdown.astro",
+          "path": "ui/dropdown-menu/DropdownMenu.astro",
           "type": "registry:ui"
         },
         {
-          "path": "ui/dropdown/DropdownContent.astro",
+          "path": "ui/dropdown-menu/DropdownMenuContent.astro",
           "type": "registry:ui"
         },
         {
-          "path": "ui/dropdown/DropdownTrigger.astro",
+          "path": "ui/dropdown-menu/DropdownMenuGroup.astro",
           "type": "registry:ui"
         },
         {
-          "path": "ui/dropdown/index.ts",
+          "path": "ui/dropdown-menu/DropdownMenuItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuLabel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuShortcut.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/DropdownMenuTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/dropdown-menu/index.ts",
           "type": "registry:ui"
         }
       ]
