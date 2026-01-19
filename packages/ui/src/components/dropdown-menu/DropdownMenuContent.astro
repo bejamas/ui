@@ -1,0 +1,43 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  align?: "start" | "center" | "end";
+  sideOffset?: number;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  align = "start",
+  sideOffset = 4,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const alignClasses = {
+  start: "left-0",
+  center: "left-1/2 -translate-x-1/2",
+  end: "right-0",
+};
+---
+
+<div
+  {...rest}
+  data-slot="dropdown-menu-content"
+  data-align={align}
+  style={`--side-offset: ${sideOffset}px`}
+  class={cn(
+    "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md",
+    "top-full mt-[var(--side-offset)]",
+    alignClasses[align],
+    "hidden",
+    "data-[state=open]:block",
+    // "opacity-0 scale-95 pointer-events-none",
+    "data-[state=open]:opacity-100 data-[state=open]:scale-100 data-[state=open]:pointer-events-auto",
+    "starting:opacity-0 starting:scale-97 starting:pointer-events-none transition-discrete transition-[opacity,scale,transform,visibility] duration-500 ease-out",
+    className,
+  )}
+>
+  <slot />
+</div>

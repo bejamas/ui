@@ -1,0 +1,128 @@
+---
+/**
+ * @component DropdownMenu
+ * @title Dropdown Menu
+ * @description A menu that appears on trigger click, displaying a list of actions or options.
+ *
+ * @preview
+ * <DropdownMenu>
+ *    <DropdownMenuTrigger variant="outline">Open</DropdownMenuTrigger>
+ *   <DropdownMenuContent align="start">
+ *     <DropdownMenuLabel>My Account</DropdownMenuLabel>
+ *     <DropdownMenuGroup>
+ *       <DropdownMenuItem>
+ *         Profile
+ *         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+ *       </DropdownMenuItem>
+ *       <DropdownMenuItem>Settings</DropdownMenuItem>
+ *     </DropdownMenuGroup>
+ *     <DropdownMenuSeparator />
+ *     <DropdownMenuItem disabled>API</DropdownMenuItem>
+ *     <DropdownMenuItem>Log out</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@bejamas/ui/components/dropdown-menu';
+ * import { Button } from '@bejamas/ui/components/button';
+ * ---
+ *
+ * <DropdownMenu>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger">Menu</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuItem>Item 1</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ * ```
+ *
+ * @examples
+ *
+ * ### With Labels and Groups
+ *
+ * <DropdownMenu>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger">Account</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+ *     <DropdownMenuGroup>
+ *       <DropdownMenuItem>Edit</DropdownMenuItem>
+ *       <DropdownMenuItem>Duplicate</DropdownMenuItem>
+ *     </DropdownMenuGroup>
+ *     <DropdownMenuSeparator />
+ *     <DropdownMenuItem>Delete</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * ### With Keyboard Shortcuts
+ *
+ * <DropdownMenu>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger">Edit</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuItem>
+ *       Undo
+ *       <DropdownMenuShortcut>⌘Z</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *     <DropdownMenuItem>
+ *       Redo
+ *       <DropdownMenuShortcut>⇧⌘Z</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *     <DropdownMenuSeparator />
+ *     <DropdownMenuItem>
+ *       Cut
+ *       <DropdownMenuShortcut>⌘X</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *     <DropdownMenuItem>
+ *       Copy
+ *       <DropdownMenuShortcut>⌘C</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *     <DropdownMenuItem>
+ *       Paste
+ *       <DropdownMenuShortcut>⌘V</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * ### With Disabled Items
+ *
+ * <DropdownMenu>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger">Options</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuItem>Available action</DropdownMenuItem>
+ *     <DropdownMenuItem disabled>Disabled action</DropdownMenuItem>
+ *     <DropdownMenuItem>Another action</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  align?: "start" | "center" | "end";
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  align = "start",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="dropdown-menu"
+  data-align={align}
+  class={cn("relative inline-block", className)}
+>
+  <slot />
+</div>
+
+<script>
+  import { createDropdownMenu } from "@data-slot/dropdown-menu";
+  document
+    .querySelectorAll('[data-slot="dropdown-menu"]')
+    .forEach((el) => createDropdownMenu(el, { align: el.dataset.align }));
+</script>

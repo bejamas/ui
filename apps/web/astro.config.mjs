@@ -4,6 +4,8 @@ import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
 import starlightThemeBejamas from "starlight-theme-bejamas";
+import starlightPageActions from "starlight-page-actions";
+
 import vercel from "@astrojs/vercel";
 import netlify from "@astrojs/netlify";
 import sitemap from "@astrojs/sitemap";
@@ -34,11 +36,14 @@ export default defineConfig({
             button: "@bejamas/ui/components/button",
             select: "@bejamas/ui/components/select",
             ThemeSelect: "./src/components/ThemeSwitcher.astro",
+            PageTitle: "./src/components/PageTitle.astro",
           },
         }),
+        starlightPageActions(),
       ],
       components: {
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
+        PageTitle: "./src/components/PageTitle.astro",
       },
       title: "bejamas/ui",
       titleDelimiter: "-",
