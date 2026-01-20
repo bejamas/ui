@@ -1,6 +1,7 @@
 ---
 /**
  * ColorInput - A color input component with OKLCH sliders and text input
+ * Text input is hidden by default, shown on double-click
  */
 
 interface Props {
@@ -13,70 +14,70 @@ interface Props {
 const { token, label, value = "", class: className = "" } = Astro.props;
 ---
 
-<color-input 
+<color-input
   class:list={["color-input-wrapper", className]}
   data-token={token}
   data-value={value}
 >
   <div class="color-input-row">
-    <button 
-      type="button" 
+    <button
+      type="button"
       class="color-swatch"
       data-slot="swatch"
       style={`background: ${value}`}
-      title="Click to open color picker"
+      title="Click for sliders"
     >
-      <input 
-        type="color" 
-        class="native-picker"
-        data-slot="native-picker"
-      />
+      <input type="color" class="native-picker" data-slot="native-picker" />
     </button>
-    <div class="color-info">
-      <label class="color-label">{label}</label>
-      <input 
-        type="text"
-        class="color-text-input"
-        data-slot="text-input"
-        value={value}
-        placeholder="oklch(0.5 0.2 250)"
-      />
-    </div>
+    <span class="color-label" data-slot="label" title="Click to toggle input"
+      >{label}</span
+    >
   </div>
-  
+
+  <!-- Text input (hidden by default, shown on double-click) -->
+  <div class="color-text-wrapper" data-slot="text-wrapper">
+    <input
+      type="text"
+      class="color-text-input"
+      data-slot="text-input"
+      value={value}
+      placeholder="oklch(0.5 0.2 250)"
+    />
+  </div>
+
   <div class="oklch-sliders" data-slot="sliders">
     <div class="slider-row">
       <span class="slider-label">L</span>
-      <input 
-        type="range" 
-        class="slider" 
+      <input
+        type="range"
+        class="slider"
         data-channel="l"
-        min="0" 
-        max="1" 
+        min="0"
+        max="1"
         step="0.01"
       />
       <span class="slider-value" data-value="l">0.5</span>
     </div>
     <div class="slider-row">
       <span class="slider-label">C</span>
-      <input 
-        type="range" 
-        class="slider" 
+      <input
+        type="range"
+        class="slider"
         data-channel="c"
-        min="0" 
-        max="0.4" 
+        min="0"
+        max="0.4"
         step="0.005"
       />
       <span class="slider-value" data-value="c">0.2</span>
     </div>
     <div class="slider-row">
       <span class="slider-label">H</span>
-      <input 
-        type="range" 
-        class="slider" 
+      <input
+        type="range"
+        class="slider"
         data-channel="h"
-        min="0" 
-        max="360" 
+        min="0"
+        max="360"
         step="1"
       />
       <span class="slider-value" data-value="h">250</span>
@@ -88,25 +89,33 @@ const { token, label, value = "", class: className = "" } = Astro.props;
   .color-input-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.375rem;
   }
 
   .color-input-row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
 
   .color-swatch {
     position: relative;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.5rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
     border: 1px solid var(--border);
     cursor: pointer;
     overflow: hidden;
     flex-shrink: 0;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .color-swatch:hover {
+    transform: scale(1.05);
+    box-shadow:
+      inset 0 0 0 1px rgba(0, 0, 0, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .native-picker {
@@ -118,43 +127,54 @@ const { token, label, value = "", class: className = "" } = Astro.props;
     cursor: pointer;
   }
 
-  .color-info {
-    flex: 1;
-    min-width: 0;
-  }
-
   .color-label {
-    display: block;
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 500;
     color: var(--muted-foreground);
-    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .color-label:hover {
+    color: var(--foreground);
+  }
+
+  /* Text input wrapper - hidden by default */
+  .color-text-wrapper {
+    display: none;
+  }
+
+  .color-input-wrapper.editing .color-text-wrapper {
+    display: block;
   }
 
   .color-text-input {
     width: 100%;
-    padding: 0.375rem 0.5rem;
-    font-size: 0.75rem;
+    padding: 0.25rem 0.375rem;
+    font-size: 0.625rem;
     font-family: ui-monospace, monospace;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
+    border: 1px solid var(--ring);
+    border-radius: 0.25rem;
     background: var(--background);
     color: var(--foreground);
   }
 
   .color-text-input:focus {
     outline: none;
-    border-color: var(--ring);
-    box-shadow: 0 0 0 2px var(--ring) / 0.2;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary) / 0.2;
   }
 
   .oklch-sliders {
     display: none;
     flex-direction: column;
-    gap: 0.375rem;
-    padding: 0.5rem;
+    gap: 0.25rem;
+    padding: 0.375rem;
     background: var(--muted);
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
   }
 
   .color-input-wrapper.expanded .oklch-sliders {
@@ -164,12 +184,12 @@ const { token, label, value = "", class: className = "" } = Astro.props;
   .slider-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.375rem;
   }
 
   .slider-label {
-    width: 1rem;
-    font-size: 0.625rem;
+    width: 0.75rem;
+    font-size: 0.5rem;
     font-weight: 600;
     color: var(--muted-foreground);
     text-transform: uppercase;
@@ -177,17 +197,17 @@ const { token, label, value = "", class: className = "" } = Astro.props;
 
   .slider {
     flex: 1;
-    height: 0.375rem;
+    height: 0.25rem;
     appearance: none;
     background: var(--border);
-    border-radius: 0.25rem;
+    border-radius: 0.125rem;
     cursor: pointer;
   }
 
   .slider::-webkit-slider-thumb {
     appearance: none;
-    width: 0.875rem;
-    height: 0.875rem;
+    width: 0.75rem;
+    height: 0.75rem;
     border-radius: 50%;
     background: var(--primary);
     border: 2px solid var(--background);
@@ -196,8 +216,8 @@ const { token, label, value = "", class: className = "" } = Astro.props;
   }
 
   .slider::-moz-range-thumb {
-    width: 0.875rem;
-    height: 0.875rem;
+    width: 0.75rem;
+    height: 0.75rem;
     border-radius: 50%;
     background: var(--primary);
     border: 2px solid var(--background);
@@ -206,8 +226,8 @@ const { token, label, value = "", class: className = "" } = Astro.props;
   }
 
   .slider-value {
-    width: 2.5rem;
-    font-size: 0.625rem;
+    width: 2rem;
+    font-size: 0.5rem;
     font-family: ui-monospace, monospace;
     color: var(--muted-foreground);
     text-align: right;
@@ -222,6 +242,7 @@ const { token, label, value = "", class: className = "" } = Astro.props;
     private currentValue: string;
     private swatch: HTMLElement | null;
     private nativePicker: HTMLInputElement | null;
+    private textWrapper: HTMLElement | null;
     private textInput: HTMLInputElement | null;
     private sliders: HTMLElement | null;
     private sliderL: HTMLInputElement | null;
@@ -237,6 +258,7 @@ const { token, label, value = "", class: className = "" } = Astro.props;
       this.currentValue = this.dataset.value || "";
       this.swatch = null;
       this.nativePicker = null;
+      this.textWrapper = null;
       this.textInput = null;
       this.sliders = null;
       this.sliderL = null;
@@ -250,6 +272,7 @@ const { token, label, value = "", class: className = "" } = Astro.props;
     connectedCallback() {
       this.swatch = this.querySelector('[data-slot="swatch"]');
       this.nativePicker = this.querySelector('[data-slot="native-picker"]');
+      this.textWrapper = this.querySelector('[data-slot="text-wrapper"]');
       this.textInput = this.querySelector('[data-slot="text-input"]');
       this.sliders = this.querySelector('[data-slot="sliders"]');
       this.sliderL = this.querySelector('[data-channel="l"]');
@@ -274,15 +297,35 @@ const { token, label, value = "", class: className = "" } = Astro.props;
         this.setValueFromText(value);
       });
 
+      // Validate on blur
       this.textInput?.addEventListener("blur", () => {
-        // Validate and normalize on blur
         this.updateSlidersFromValue(this.currentValue);
       });
 
-      // Toggle sliders on swatch click
+      // Hide text input on Escape only
+      this.textInput?.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          this.classList.remove("editing");
+          this.textInput?.blur();
+        }
+      });
+
+      // Click on label to toggle text input
+      const label = this.querySelector('[data-slot="label"]');
+      label?.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isEditing = this.classList.toggle("editing");
+        if (isEditing) {
+          this.textInput?.focus();
+          this.textInput?.select();
+        }
+      });
+
+      // Single click toggles sliders (but not if clicking native picker)
       this.swatch?.addEventListener("click", (e) => {
-        // Don't toggle if clicking the native picker
-        if ((e.target as HTMLElement).classList.contains("native-picker")) return;
+        if ((e.target as HTMLElement).classList.contains("native-picker"))
+          return;
         this.classList.toggle("expanded");
       });
 
@@ -381,7 +424,7 @@ const { token, label, value = "", class: className = "" } = Astro.props;
         new CustomEvent("color-change", {
           detail: { token: this.token, value },
           bubbles: true,
-        })
+        }),
       );
     }
 
