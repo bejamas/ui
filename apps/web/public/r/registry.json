@@ -220,6 +220,29 @@
       ]
     },
     {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/collapsible"],
+      "files": [
+        {
+          "path": "ui/collapsible/Collapsible.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/collapsible/CollapsibleTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/collapsible/CollapsibleContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/collapsible/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "date",
       "type": "registry:ui",
       "files": [
