@@ -14,6 +14,7 @@
     "normalize-component-paths-in-registry": "bun run scripts/normalize-paths.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.12",
     "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^4.3.4",
     "@astrojs/netlify": "^6.5.13",
@@ -25,6 +26,7 @@
     "@fontsource/inter": "^5.2.8",
     "@lucide/astro": "^0.545.0",
     "@tailwindcss/vite": "^4.1.17",
+    "ai": "^6.0.42",
     "astro": "^5.16.4",
     "astro-robots-txt": "^1.0.0",
     "culori": "^4.0.2",

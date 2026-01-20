@@ -1,7 +1,7 @@
 ---
 /**
  * ThemeEditorPanel - Floating draggable panel for editing theme colors
- * Triggered by Cmd/Ctrl + .
+ * Triggered by Cmd/Ctrl + e
  */
 
 import { Button } from "@bejamas/ui/components/button";
@@ -23,6 +23,9 @@ import {
   Save,
   Trash2,
   Upload,
+  Sparkles,
+  Loader2,
+  ImagePlus,
 } from "@lucide/astro";
 import { defaultPresets } from "../../utils/themes/presets";
 import ColorInput from "./ColorInput.astro";
@@ -204,6 +207,15 @@ const presetKeys = Object.keys(defaultPresets);
         <Upload class="size-3.5" />
         Import
       </button>
+      <button
+        type="button"
+        class="footer-btn ai-btn"
+        data-slot="ai-generate"
+        title="AI Generate Palette"
+      >
+        <Sparkles class="size-3.5" />
+        AI
+      </button>
     </div>
     <div class="footer-right">
       <button
@@ -237,8 +249,7 @@ const presetKeys = Object.keys(defaultPresets);
       type="button"
       data-slot="dialog-trigger"
       id="import-dialog-trigger"
-      style="display: none;"
-    ></button>
+      style="display: none;"></button>
     <DialogContent class="sm:max-w-lg import-dialog-content">
       <DialogHeader>
         <DialogTitle>Import Custom CSS</DialogTitle>
@@ -268,6 +279,83 @@ const presetKeys = Object.keys(defaultPresets);
       <DialogFooter>
         <Button variant="outline" data-slot="dialog-close">Cancel</Button>
         <Button id="import-confirm-btn">Import</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+
+  <!-- AI Generate Dialog -->
+  <Dialog id="ai-generate-dialog">
+    <button
+      type="button"
+      data-slot="dialog-trigger"
+      id="ai-generate-dialog-trigger"
+      style="display: none;"></button>
+    <DialogContent class="sm:max-w-lg ai-dialog-content">
+      <DialogHeader>
+        <DialogTitle>
+          <span class="flex items-center gap-2">
+            <Sparkles class="size-5 text-accent" />
+            AI Generate Palette
+          </span>
+        </DialogTitle>
+        <DialogDescription>
+          Describe the palette you want to create. You can mention brands,
+          moods, colors, or upload reference images.
+        </DialogDescription>
+      </DialogHeader>
+
+      <div class="ai-form">
+        <div class="ai-prompt-wrapper">
+          <textarea
+            id="ai-prompt-textarea"
+            class="ai-prompt-input"
+            placeholder="e.g., A warm coffee shop theme with earthy browns and cream accents, inspired by Costa Coffee branding..."
+            rows="3"></textarea>
+        </div>
+
+        <div class="ai-images-section">
+          <label class="ai-images-label">
+            <ImagePlus class="size-4" />
+            <span>Reference Images (optional)</span>
+          </label>
+          <div class="ai-images-dropzone" id="ai-images-dropzone">
+            <input
+              type="file"
+              id="ai-images-input"
+              accept="image/*"
+              multiple
+              class="ai-images-file-input"
+            />
+            <div class="dropzone-content">
+              <ImagePlus class="size-6 text-muted-foreground" />
+              <span>Drop images or click to upload</span>
+              <span class="dropzone-hint">Max 3 images, PNG/JPG</span>
+            </div>
+          </div>
+          <div class="ai-images-preview" id="ai-images-preview"></div>
+        </div>
+
+        <div class="ai-status" id="ai-status" style="display: none;">
+          <span id="ai-status-icon" class="ai-status-icon">
+            <Loader2 class="size-4 animate-spin" />
+          </span>
+          <span id="ai-status-text">Generating palette...</span>
+        </div>
+
+        <div class="ai-reasoning" id="ai-reasoning" style="display: none;">
+          <details>
+            <summary>AI Reasoning</summary>
+            <div class="ai-reasoning-content" id="ai-reasoning-content"></div>
+          </details>
+        </div>
+      </div>
+
+      <DialogFooter>
+        <Button variant="outline" data-slot="dialog-close">Cancel</Button>
+        <Button id="ai-generate-confirm-btn">
+          <Sparkles class="size-4" />
+          Generate
+        </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
@@ -627,7 +715,8 @@ const presetKeys = Object.keys(defaultPresets);
     width: 100%;
     min-height: 200px;
     padding: 0.75rem;
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    font-family:
+      ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
       "Liberation Mono", monospace;
     font-size: 0.8125rem;
     line-height: 1.5;
@@ -674,6 +763,221 @@ const presetKeys = Object.keys(defaultPresets);
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+  }
+
+  /* AI Generate Button */
+  .footer-btn.ai-btn {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+    color: var(--accent-foreground);
+    border-color: var(--accent);
+  }
+
+  .footer-btn.ai-btn:hover {
+    opacity: 0.9;
+    border-color: var(--ring);
+  }
+
+  /* AI Generate Dialog */
+  .ai-dialog-content {
+    z-index: 10001;
+  }
+
+  .ai-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .ai-prompt-wrapper {
+    width: 100%;
+  }
+
+  .ai-prompt-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--muted);
+    color: var(--foreground);
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  .ai-prompt-input:focus {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px var(--ring) / 0.2;
+  }
+
+  .ai-prompt-input::placeholder {
+    color: var(--muted-foreground);
+    opacity: 0.8;
+  }
+
+  .ai-images-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .ai-images-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--foreground);
+  }
+
+  .ai-images-dropzone {
+    position: relative;
+    border: 2px dashed var(--border);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+    cursor: pointer;
+  }
+
+  .ai-images-dropzone:hover,
+  .ai-images-dropzone.dragover {
+    border-color: var(--accent);
+    background: var(--accent) / 0.05;
+  }
+
+  .ai-images-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .dropzone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+
+  .dropzone-content span {
+    font-size: 0.8125rem;
+    color: var(--muted-foreground);
+  }
+
+  .dropzone-hint {
+    font-size: 0.6875rem !important;
+    opacity: 0.7;
+  }
+
+  .ai-images-preview {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .ai-image-preview {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .ai-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-image-preview button {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--destructive);
+    color: var(--destructive-foreground);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .ai-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--muted);
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--muted-foreground);
+  }
+
+  .ai-status-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-status-icon .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .ai-reasoning {
+    font-size: 0.8125rem;
+  }
+
+  .ai-reasoning summary {
+    cursor: pointer;
+    color: var(--muted-foreground);
+    padding: 0.5rem 0;
+  }
+
+  .ai-reasoning summary:hover {
+    color: var(--foreground);
+  }
+
+  .ai-reasoning-content {
+    padding: 0.75rem;
+    background: var(--muted);
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+    max-height: 150px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+  }
+
+  .ai-generate-btn {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+    border-color: var(--accent);
+  }
+
+  .ai-generate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 </style>
 
@@ -727,9 +1031,13 @@ const presetKeys = Object.keys(defaultPresets);
     private content: HTMLElement | null = null;
     private resetBtn: HTMLElement | null = null;
     private importBtn: HTMLElement | null = null;
+    private aiGenerateBtn: HTMLElement | null = null;
     private exportJsonBtn: HTMLElement | null = null;
     private exportCssBtn: HTMLElement | null = null;
     private saveBtn: HTMLElement | null = null;
+
+    // AI state
+    private aiImages: { data: string; mediaType: string }[] = [];
 
     connectedCallback() {
       this.header = this.querySelector('[data-slot="header"]');
@@ -742,6 +1050,7 @@ const presetKeys = Object.keys(defaultPresets);
       this.content = this.querySelector('[data-slot="content"]');
       this.resetBtn = this.querySelector('[data-slot="reset"]');
       this.importBtn = this.querySelector('[data-slot="import"]');
+      this.aiGenerateBtn = this.querySelector('[data-slot="ai-generate"]');
       this.exportJsonBtn = this.querySelector('[data-slot="export-json"]');
       this.exportCssBtn = this.querySelector('[data-slot="export-css"]');
       this.saveBtn = this.querySelector('[data-slot="save"]');
@@ -867,9 +1176,27 @@ const presetKeys = Object.keys(defaultPresets);
       // Footer buttons
       this.resetBtn?.addEventListener("click", () => this.resetToOriginal());
       this.importBtn?.addEventListener("click", () => this.openImportDialog());
+      this.aiGenerateBtn?.addEventListener("click", () => this.openAIDialog());
       this.exportJsonBtn?.addEventListener("click", () => this.exportJson());
       this.exportCssBtn?.addEventListener("click", () => this.exportCss());
       this.saveBtn?.addEventListener("click", () => this.savePreset());
+
+      // AI dialog confirm button - use event delegation
+      if (!(window as any).__aiGenerateHandler) {
+        (window as any).__aiGenerateHandler = (e: Event) => {
+          const target = e.target as HTMLElement;
+          if (target.closest("#ai-generate-confirm-btn")) {
+            const panel = document.getElementById(
+              "theme-editor-panel",
+            ) as ThemeEditorPanel | null;
+            panel?.handleAIGenerate();
+          }
+        };
+        document.addEventListener("click", (window as any).__aiGenerateHandler);
+      }
+
+      // Setup AI image upload handlers
+      this.setupAIImageHandlers();
 
       // Import dialog confirm button - use event delegation on document for dynamic content
       // Guard to prevent multiple listeners after View Transitions
@@ -877,11 +1204,16 @@ const presetKeys = Object.keys(defaultPresets);
         (window as any).__importConfirmHandler = (e: Event) => {
           const target = e.target as HTMLElement;
           if (target.closest("#import-confirm-btn")) {
-            const panel = document.getElementById("theme-editor-panel") as ThemeEditorPanel | null;
+            const panel = document.getElementById(
+              "theme-editor-panel",
+            ) as ThemeEditorPanel | null;
             panel?.handleImport();
           }
         };
-        document.addEventListener("click", (window as any).__importConfirmHandler);
+        document.addEventListener(
+          "click",
+          (window as any).__importConfirmHandler,
+        );
       }
     }
 
@@ -1122,6 +1454,18 @@ const presetKeys = Object.keys(defaultPresets);
       return all[all.length - 1] || null;
     }
 
+    private getAIPromptTextarea(): HTMLTextAreaElement | null {
+      // The dialog portal might be moved to document.body, so search there
+      // Get the last matching element in case of duplicates after View Transitions
+      const all = document.querySelectorAll("#ai-prompt-textarea");
+      return (all[all.length - 1] as HTMLTextAreaElement) || null;
+    }
+
+    private getAIDialog(): Element | null {
+      const all = document.querySelectorAll("#ai-generate-dialog");
+      return all[all.length - 1] || null;
+    }
+
     private openImportDialog() {
       // Clear the textarea
       const textarea = this.getImportTextarea();
@@ -1148,17 +1492,26 @@ const presetKeys = Object.keys(defaultPresets);
 
       try {
         const parsed = this.parseCssVariables(css);
-        if (Object.keys(parsed.light).length === 0 && Object.keys(parsed.dark).length === 0) {
+        if (
+          Object.keys(parsed.light).length === 0 &&
+          Object.keys(parsed.dark).length === 0
+        ) {
           this.showToast("No valid CSS variables found");
           return;
         }
 
         // Merge parsed values into working styles
         if (Object.keys(parsed.light).length > 0) {
-          this.workingStyles.light = { ...this.workingStyles.light, ...parsed.light };
+          this.workingStyles.light = {
+            ...this.workingStyles.light,
+            ...parsed.light,
+          };
         }
         if (Object.keys(parsed.dark).length > 0) {
-          this.workingStyles.dark = { ...this.workingStyles.dark, ...parsed.dark };
+          this.workingStyles.dark = {
+            ...this.workingStyles.dark,
+            ...parsed.dark,
+          };
         }
 
         // Update the UI
@@ -1167,35 +1520,47 @@ const presetKeys = Object.keys(defaultPresets);
 
         // Close the dialog
         const dialog = this.getImportDialog();
-        const closeBtn = dialog?.querySelector('[data-slot="dialog-close"]') as HTMLElement;
+        const closeBtn = dialog?.querySelector(
+          '[data-slot="dialog-close"]',
+        ) as HTMLElement;
         closeBtn?.click();
 
         const lightCount = Object.keys(parsed.light).length;
         const darkCount = Object.keys(parsed.dark).length;
-        this.showToast(`Imported ${lightCount} light + ${darkCount} dark variables`);
+        this.showToast(
+          `Imported ${lightCount} light + ${darkCount} dark variables`,
+        );
       } catch (e) {
         console.error("Import error:", e);
         this.showToast("Failed to parse CSS");
       }
     }
 
-    private parseCssVariables(css: string): { light: Record<string, string>; dark: Record<string, string> } {
-      const result: { light: Record<string, string>; dark: Record<string, string> } = {
+    private parseCssVariables(css: string): {
+      light: Record<string, string>;
+      dark: Record<string, string>;
+    } {
+      const result: {
+        light: Record<string, string>;
+        dark: Record<string, string>;
+      } = {
         light: {},
         dark: {},
       };
 
       // Match :root or html block for light mode
-      const rootMatch = css.match(/:root\s*\{([^}]+)\}/s) || css.match(/html\s*\{([^}]+)\}/s);
+      const rootMatch =
+        css.match(/:root\s*\{([^}]+)\}/s) || css.match(/html\s*\{([^}]+)\}/s);
       if (rootMatch) {
         this.extractVariables(rootMatch[1], result.light);
       }
 
       // Match .dark block for dark mode
-      const darkMatch = css.match(/\.dark\s*\{([^}]+)\}/s) || 
-                        css.match(/html\.dark\s*\{([^}]+)\}/s) ||
-                        css.match(/:root\.dark\s*\{([^}]+)\}/s) ||
-                        css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/s);
+      const darkMatch =
+        css.match(/\.dark\s*\{([^}]+)\}/s) ||
+        css.match(/html\.dark\s*\{([^}]+)\}/s) ||
+        css.match(/:root\.dark\s*\{([^}]+)\}/s) ||
+        css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/s);
       if (darkMatch) {
         this.extractVariables(darkMatch[1], result.dark);
       }
@@ -1210,13 +1575,38 @@ const presetKeys = Object.keys(defaultPresets);
 
       // Valid theme tokens
       const validTokens = [
-        "background", "foreground", "card", "card-foreground",
-        "popover", "popover-foreground", "primary", "primary-foreground",
-        "secondary", "secondary-foreground", "muted", "muted-foreground",
-        "accent", "accent-foreground", "destructive", "destructive-foreground",
-        "border", "input", "ring", "chart-1", "chart-2", "chart-3", "chart-4", "chart-5",
-        "sidebar", "sidebar-foreground", "sidebar-primary", "sidebar-primary-foreground",
-        "sidebar-accent", "sidebar-accent-foreground", "sidebar-border", "sidebar-ring",
+        "background",
+        "foreground",
+        "card",
+        "card-foreground",
+        "popover",
+        "popover-foreground",
+        "primary",
+        "primary-foreground",
+        "secondary",
+        "secondary-foreground",
+        "muted",
+        "muted-foreground",
+        "accent",
+        "accent-foreground",
+        "destructive",
+        "destructive-foreground",
+        "border",
+        "input",
+        "ring",
+        "chart-1",
+        "chart-2",
+        "chart-3",
+        "chart-4",
+        "chart-5",
+        "sidebar",
+        "sidebar-foreground",
+        "sidebar-primary",
+        "sidebar-primary-foreground",
+        "sidebar-accent",
+        "sidebar-accent-foreground",
+        "sidebar-border",
+        "sidebar-ring",
       ];
 
       while ((match = varRegex.exec(block)) !== null) {
@@ -1227,9 +1617,10 @@ const presetKeys = Object.keys(defaultPresets);
 
         // Convert space-separated HSL values (shadcn format) to hsl()
         // Pattern: "30 33% 98%" or "345 18% 12%" (h s% l%)
-        const hslSpacePattern = /^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%$/;
+        const hslSpacePattern =
+          /^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%$/;
         const hslMatch = value.match(hslSpacePattern);
-        
+
         if (hslMatch) {
           const [, h, s, l] = hslMatch;
           value = `hsl(${h} ${s}% ${l}%)`;
@@ -1306,6 +1697,409 @@ const presetKeys = Object.keys(defaultPresets);
 
     public close() {
       this.classList.remove("open");
+    }
+
+    // AI Dialog methods
+    private openAIDialog() {
+      // Open dialog first so elements are in DOM
+      const triggers = document.querySelectorAll("#ai-generate-dialog-trigger");
+      const trigger = triggers[triggers.length - 1] as HTMLElement | null;
+      trigger?.click();
+
+      // Clear previous state after a tick (dialog needs to render)
+      setTimeout(() => {
+        const promptTextarea = this.getAIPromptTextarea();
+        if (promptTextarea) promptTextarea.value = "";
+
+        this.aiImages = [];
+        this.updateAIImagePreview();
+
+        // Hide status and reasoning (query globally for portaled elements)
+        const allStatus = document.querySelectorAll("#ai-status");
+        const allReasoning = document.querySelectorAll("#ai-reasoning");
+        const allStatusIcon = document.querySelectorAll("#ai-status-icon");
+        const allGenerateBtn = document.querySelectorAll(
+          "#ai-generate-confirm-btn",
+        );
+
+        const status = allStatus[allStatus.length - 1] as HTMLElement | null;
+        const reasoning = allReasoning[
+          allReasoning.length - 1
+        ] as HTMLElement | null;
+        const statusIcon = allStatusIcon[
+          allStatusIcon.length - 1
+        ] as HTMLElement | null;
+        const generateBtn = allGenerateBtn[
+          allGenerateBtn.length - 1
+        ] as HTMLButtonElement | null;
+
+        if (status) status.style.display = "none";
+        if (reasoning) reasoning.style.display = "none";
+
+        // Reset icon to spinner
+        if (statusIcon) {
+          statusIcon.innerHTML =
+            '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+        }
+
+        // Enable generate button
+        if (generateBtn) {
+          generateBtn.disabled = false;
+          generateBtn.innerHTML =
+            '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+        }
+      }, 0);
+    }
+
+    private setupAIImageHandlers() {
+      // Use event delegation on document for the AI dialog elements since they're portaled
+      if (!(window as any).__aiImageHandlersSetup) {
+        (window as any).__aiImageHandlersSetup = true;
+
+        // Drag and drop
+        document.addEventListener("dragover", (e) => {
+          const dropzone = (e.target as HTMLElement).closest(
+            "#ai-images-dropzone",
+          );
+          if (dropzone) {
+            e.preventDefault();
+            dropzone.classList.add("dragover");
+          }
+        });
+
+        document.addEventListener("dragleave", (e) => {
+          const dropzone = (e.target as HTMLElement).closest(
+            "#ai-images-dropzone",
+          );
+          if (dropzone) {
+            dropzone.classList.remove("dragover");
+          }
+        });
+
+        document.addEventListener("drop", (e) => {
+          const dropzone = (e.target as HTMLElement).closest(
+            "#ai-images-dropzone",
+          );
+          if (dropzone) {
+            e.preventDefault();
+            dropzone.classList.remove("dragover");
+            const files = e.dataTransfer?.files;
+            const panel = document.getElementById(
+              "theme-editor-panel",
+            ) as ThemeEditorPanel | null;
+            if (files && panel) panel.handleAIImageFiles(files);
+          }
+        });
+
+        // File input change
+        document.addEventListener("change", (e) => {
+          const input = e.target as HTMLInputElement;
+          if (input.id === "ai-images-input" && input.files) {
+            const panel = document.getElementById(
+              "theme-editor-panel",
+            ) as ThemeEditorPanel | null;
+            if (panel) {
+              panel.handleAIImageFiles(input.files);
+              input.value = ""; // Reset for re-selection
+            }
+          }
+        });
+      }
+    }
+
+    public handleAIImageFiles(files: FileList) {
+      const maxImages = 3;
+      const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+
+      Array.from(files).forEach((file) => {
+        if (this.aiImages.length >= maxImages) {
+          this.showToast(`Maximum ${maxImages} images allowed`);
+          return;
+        }
+
+        if (!validTypes.includes(file.type)) {
+          this.showToast("Only PNG, JPG, and WebP images are supported");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = e.target?.result as string;
+          // Extract base64 data (remove data:image/...;base64, prefix)
+          const base64 = dataUrl.split(",")[1];
+          this.aiImages.push({
+            data: base64,
+            mediaType: file.type,
+          });
+          this.updateAIImagePreview();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    private updateAIImagePreview() {
+      // Find all preview containers and update the last one (in case of portaled dialogs)
+      const allPreviews = document.querySelectorAll("#ai-images-preview");
+      const preview = allPreviews[allPreviews.length - 1] as HTMLElement;
+      if (!preview) return;
+
+      preview.innerHTML = this.aiImages
+        .map(
+          (img, i) => `
+          <div class="ai-image-preview" data-index="${i}">
+            <img src="data:${img.mediaType};base64,${img.data}" alt="Reference ${i + 1}" />
+            <button type="button" onclick="document.getElementById('theme-editor-panel')?.removeAIImage(${i})">×</button>
+          </div>
+        `,
+        )
+        .join("");
+    }
+
+    public removeAIImage(index: number) {
+      this.aiImages.splice(index, 1);
+      this.updateAIImagePreview();
+    }
+
+    public async handleAIGenerate() {
+      const promptTextarea = this.getAIPromptTextarea();
+      const prompt = promptTextarea?.value.trim();
+
+      if (!prompt) {
+        this.showToast("Please enter a prompt describing your palette");
+        return;
+      }
+
+      // Dialog content is portaled, so query globally for elements
+      const getStatusElements = () => {
+        const allStatus = document.querySelectorAll("#ai-status");
+        const allStatusText = document.querySelectorAll("#ai-status-text");
+        const allStatusIcon = document.querySelectorAll("#ai-status-icon");
+        const allReasoning = document.querySelectorAll("#ai-reasoning");
+        const allReasoningContent = document.querySelectorAll(
+          "#ai-reasoning-content",
+        );
+        const allGenerateBtn = document.querySelectorAll(
+          "#ai-generate-confirm-btn",
+        );
+        return {
+          status: allStatus[allStatus.length - 1] as HTMLElement | null,
+          statusText: allStatusText[
+            allStatusText.length - 1
+          ] as HTMLElement | null,
+          statusIcon: allStatusIcon[
+            allStatusIcon.length - 1
+          ] as HTMLElement | null,
+          reasoning: allReasoning[
+            allReasoning.length - 1
+          ] as HTMLElement | null,
+          reasoningContent: allReasoningContent[
+            allReasoningContent.length - 1
+          ] as HTMLElement | null,
+          generateBtn: allGenerateBtn[
+            allGenerateBtn.length - 1
+          ] as HTMLButtonElement | null,
+        };
+      };
+
+      const elements = getStatusElements();
+      const { status, statusText, reasoning, reasoningContent, generateBtn } =
+        elements;
+
+      // Show loading state
+      if (status) {
+        status.style.display = "flex";
+      }
+      if (statusText) {
+        statusText.textContent = "Initializing...";
+      }
+      // Reset icon to spinner
+      if (elements.statusIcon) {
+        elements.statusIcon.innerHTML =
+          '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+      }
+      if (reasoning) reasoning.style.display = "none";
+      if (generateBtn) {
+        generateBtn.disabled = true;
+        generateBtn.innerHTML =
+          '<svg class="size-4 mr-1.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generating...';
+      }
+
+      try {
+        const response = await fetch("/api/ai/generate-palette", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt,
+            images: this.aiImages.length > 0 ? this.aiImages : undefined,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Failed to generate palette");
+        }
+
+        // Read SSE stream
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error("No response stream available");
+        }
+
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let receivedPalette: any = null;
+        let receivedReasoning: string | undefined;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+
+          // Process complete SSE messages
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || ""; // Keep incomplete line in buffer
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              try {
+                const event = JSON.parse(line.slice(6));
+
+                // Re-query elements for each update (dialog is portaled)
+                const currentElements = getStatusElements();
+
+                // Update UI based on event type
+                switch (event.type) {
+                  case "starting":
+                    if (currentElements.statusText) {
+                      currentElements.statusText.textContent =
+                        event.message || "Analyzing...";
+                    }
+                    break;
+                  case "searching":
+                    if (currentElements.statusText) {
+                      currentElements.statusText.textContent =
+                        event.message || "Searching for brand colors...";
+                    }
+                    break;
+                  case "found_sources":
+                    if (currentElements.statusText) {
+                      currentElements.statusText.textContent =
+                        event.message || "Found sources";
+                    }
+                    break;
+                  case "generating":
+                    if (currentElements.statusText) {
+                      currentElements.statusText.textContent =
+                        event.message || "Creating your palette...";
+                    }
+                    break;
+                  case "complete":
+                    receivedPalette = event.palette;
+                    receivedReasoning = event.reasoning;
+                    // Change icon to checkmark
+                    if (currentElements.statusIcon) {
+                      currentElements.statusIcon.innerHTML =
+                        '<svg class="size-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>';
+                    }
+                    break;
+                  case "error":
+                    throw new Error(event.message || "Generation failed");
+                }
+              } catch (parseError) {
+                // Skip malformed JSON lines
+                console.warn("Failed to parse SSE event:", line);
+              }
+            }
+          }
+        }
+
+        if (!receivedPalette) {
+          throw new Error("No palette received from server");
+        }
+
+        // Re-query elements for final updates
+        const finalElements = getStatusElements();
+
+        // Show reasoning if available
+        if (
+          receivedReasoning &&
+          finalElements.reasoning &&
+          finalElements.reasoningContent
+        ) {
+          finalElements.reasoning.style.display = "block";
+          finalElements.reasoningContent.textContent = receivedReasoning;
+        }
+
+        // Apply the generated palette
+        if (receivedPalette.light) {
+          this.workingStyles.light = {
+            ...this.workingStyles.light,
+            ...receivedPalette.light,
+          };
+        }
+        if (receivedPalette.dark) {
+          this.workingStyles.dark = {
+            ...this.workingStyles.dark,
+            ...receivedPalette.dark,
+          };
+        }
+
+        // Update UI
+        this.updateColorInputs();
+        this.applyLivePreview();
+
+        // Auto-save as custom preset
+        const paletteName = receivedPalette.name || "AI Generated";
+        const newPreset: CustomPreset = {
+          id: generatePresetId(),
+          name: paletteName,
+          label: paletteName,
+          createdAt: new Date().toISOString(),
+          modifiedAt: new Date().toISOString(),
+          source: "AI",
+          styles: {
+            light: { ...this.workingStyles.light },
+            dark: { ...this.workingStyles.dark },
+          },
+        };
+        saveCustomPreset(newPreset);
+        this.refreshPresetList();
+        this.loadPreset(newPreset.id);
+
+        // Update status
+        if (finalElements.statusText)
+          finalElements.statusText.textContent = `Generated "${paletteName}" palette!`;
+
+        // Close dialog after short delay
+        setTimeout(() => {
+          const aiDialog = this.getAIDialog();
+          const closeBtn = aiDialog?.querySelector(
+            '[data-slot="dialog-close"]',
+          ) as HTMLElement;
+          closeBtn?.click();
+
+          this.showToast(`Saved "${paletteName}" as custom preset`);
+        }, 1500);
+      } catch (error) {
+        console.error("AI generation error:", error);
+        const message =
+          error instanceof Error ? error.message : "Generation failed";
+        this.showToast(message);
+
+        // Re-query elements for error display
+        const errorElements = getStatusElements();
+        if (errorElements.statusText)
+          errorElements.statusText.textContent = `Error: ${message}`;
+      } finally {
+        // Re-query elements for button reset
+        const resetElements = getStatusElements();
+        if (resetElements.generateBtn) {
+          resetElements.generateBtn.disabled = false;
+          resetElements.generateBtn.innerHTML =
+            '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+        }
+      }
     }
   }
 

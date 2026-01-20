@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
@@ -15,10 +15,15 @@ import { posthog } from "./src/utils/posthog";
 const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
-  // output: 'server',
+  // output: "server",
   site: "https://ui.bejamas.com",
   redirects: {
     "/docs": "/docs/introduction",
+  },
+  env: {
+    schema: {
+      OPENAI_API_KEY: envField.string({ context: "server", access: "secret" }),
+    },
   },
   integrations: [
     starlight({
