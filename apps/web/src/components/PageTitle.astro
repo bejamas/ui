@@ -15,7 +15,11 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@bejamas/ui/components/accordion";
-
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@bejamas/ui/components/collapsible";
 import {
   ArrowRight,
   ArrowLeft,
@@ -235,6 +239,12 @@ const options = [...filteredDefaultOptions, ...customOptions];
       <AccordionContent />
     </AccordionItem>
   </Accordion>
+  <Collapsible>
+    <CollapsibleTrigger>
+      <Button variant="ghost">Toggle</Button>
+    </CollapsibleTrigger>
+    <CollapsibleContent> Hidden content here </CollapsibleContent>
+  </Collapsible>
 </div>
 
 <style>
