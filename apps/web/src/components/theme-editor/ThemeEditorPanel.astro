@@ -6,6 +6,14 @@
 
 import { Button } from "@bejamas/ui/components/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@bejamas/ui/components/dialog";
+import {
   X,
   GripHorizontal,
   Copy,
@@ -14,6 +22,7 @@ import {
   RotateCcw,
   Save,
   Trash2,
+  Upload,
 } from "@lucide/astro";
 import { defaultPresets } from "../../utils/themes/presets";
 import ColorInput from "./ColorInput.astro";
@@ -186,6 +195,15 @@ const presetKeys = Object.keys(defaultPresets);
         <RotateCcw class="size-3.5" />
         Reset
       </button>
+      <button
+        type="button"
+        class="footer-btn"
+        data-slot="import"
+        title="Import CSS"
+      >
+        <Upload class="size-3.5" />
+        Import
+      </button>
     </div>
     <div class="footer-right">
       <button
@@ -212,6 +230,47 @@ const presetKeys = Object.keys(defaultPresets);
       </button>
     </div>
   </div>
+
+  <!-- Import Dialog -->
+  <Dialog id="import-dialog">
+    <button
+      type="button"
+      data-slot="dialog-trigger"
+      id="import-dialog-trigger"
+      style="display: none;"
+    ></button>
+    <DialogContent class="sm:max-w-lg import-dialog-content">
+      <DialogHeader>
+        <DialogTitle>Import Custom CSS</DialogTitle>
+        <DialogDescription>
+          Paste your CSS file below to customize the theme colors. Make sure to
+          include variables like --primary, --background, etc.
+        </DialogDescription>
+      </DialogHeader>
+      <div class="import-textarea-wrapper">
+        <textarea
+          id="import-css-textarea"
+          class="import-textarea"
+          placeholder=":root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.2 0.044 250);
+  --primary: oklch(0.6 0.2 280);
+  /* And more */
+}
+
+.dark {
+  --background: oklch(0.2 0.02 250);
+  --foreground: oklch(0.97 0.02 250);
+  /* And more */
+}"
+        ></textarea>
+      </div>
+      <DialogFooter>
+        <Button variant="outline" data-slot="dialog-close">Cancel</Button>
+        <Button id="import-confirm-btn">Import</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </theme-editor-panel>
 
 <!-- Theme Editor toggle button - positioned after panel for CSS sibling selector -->
@@ -555,6 +614,41 @@ const presetKeys = Object.keys(defaultPresets);
     opacity: 0.9;
   }
 
+  /* Import Dialog */
+  .import-dialog-content {
+    z-index: 10001;
+  }
+
+  .import-textarea-wrapper {
+    margin-top: 1rem;
+  }
+
+  .import-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 0.75rem;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--muted);
+    color: var(--foreground);
+    resize: vertical;
+  }
+
+  .import-textarea:focus {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px var(--ring) / 0.2;
+  }
+
+  .import-textarea::placeholder {
+    color: var(--muted-foreground);
+    opacity: 0.7;
+  }
+
   /* Toast notification */
   .theme-editor-toast {
     position: fixed;
@@ -632,6 +726,7 @@ const presetKeys = Object.keys(defaultPresets);
     private modeTabs: HTMLElement | null = null;
     private content: HTMLElement | null = null;
     private resetBtn: HTMLElement | null = null;
+    private importBtn: HTMLElement | null = null;
     private exportJsonBtn: HTMLElement | null = null;
     private exportCssBtn: HTMLElement | null = null;
     private saveBtn: HTMLElement | null = null;
@@ -646,6 +741,7 @@ const presetKeys = Object.keys(defaultPresets);
       this.modeTabs = this.querySelector('[data-slot="mode-tabs"]');
       this.content = this.querySelector('[data-slot="content"]');
       this.resetBtn = this.querySelector('[data-slot="reset"]');
+      this.importBtn = this.querySelector('[data-slot="import"]');
       this.exportJsonBtn = this.querySelector('[data-slot="export-json"]');
       this.exportCssBtn = this.querySelector('[data-slot="export-css"]');
       this.saveBtn = this.querySelector('[data-slot="save"]');
@@ -770,9 +866,23 @@ const presetKeys = Object.keys(defaultPresets);
 
       // Footer buttons
       this.resetBtn?.addEventListener("click", () => this.resetToOriginal());
+      this.importBtn?.addEventListener("click", () => this.openImportDialog());
       this.exportJsonBtn?.addEventListener("click", () => this.exportJson());
       this.exportCssBtn?.addEventListener("click", () => this.exportCss());
       this.saveBtn?.addEventListener("click", () => this.savePreset());
+
+      // Import dialog confirm button - use event delegation on document for dynamic content
+      // Guard to prevent multiple listeners after View Transitions
+      if (!(window as any).__importConfirmHandler) {
+        (window as any).__importConfirmHandler = (e: Event) => {
+          const target = e.target as HTMLElement;
+          if (target.closest("#import-confirm-btn")) {
+            const panel = document.getElementById("theme-editor-panel") as ThemeEditorPanel | null;
+            panel?.handleImport();
+          }
+        };
+        document.addEventListener("click", (window as any).__importConfirmHandler);
+      }
     }
 
     private loadInitialState() {
@@ -997,6 +1107,135 @@ const presetKeys = Object.keys(defaultPresets);
       } else {
         // Create new custom preset from built-in
         this.startNewPreset();
+      }
+    }
+
+    private getImportTextarea(): HTMLTextAreaElement | null {
+      // The dialog portal might be moved to document.body, so search there
+      // Get the last matching element in case of duplicates after View Transitions
+      const all = document.querySelectorAll("#import-css-textarea");
+      return (all[all.length - 1] as HTMLTextAreaElement) || null;
+    }
+
+    private getImportDialog(): Element | null {
+      const all = document.querySelectorAll("#import-dialog");
+      return all[all.length - 1] || null;
+    }
+
+    private openImportDialog() {
+      // Clear the textarea
+      const textarea = this.getImportTextarea();
+      if (textarea) textarea.value = "";
+
+      // Click the hidden trigger to open the dialog (get last one in case of duplicates)
+      const triggers = document.querySelectorAll("#import-dialog-trigger");
+      const trigger = triggers[triggers.length - 1] as HTMLElement | null;
+      trigger?.click();
+    }
+
+    public handleImport() {
+      const textarea = this.getImportTextarea();
+      if (!textarea) {
+        console.error("Import textarea not found");
+        return;
+      }
+
+      const css = textarea.value.trim();
+      if (!css) {
+        this.showToast("Please paste some CSS to import");
+        return;
+      }
+
+      try {
+        const parsed = this.parseCssVariables(css);
+        if (Object.keys(parsed.light).length === 0 && Object.keys(parsed.dark).length === 0) {
+          this.showToast("No valid CSS variables found");
+          return;
+        }
+
+        // Merge parsed values into working styles
+        if (Object.keys(parsed.light).length > 0) {
+          this.workingStyles.light = { ...this.workingStyles.light, ...parsed.light };
+        }
+        if (Object.keys(parsed.dark).length > 0) {
+          this.workingStyles.dark = { ...this.workingStyles.dark, ...parsed.dark };
+        }
+
+        // Update the UI
+        this.updateColorInputs();
+        this.applyLivePreview();
+
+        // Close the dialog
+        const dialog = this.getImportDialog();
+        const closeBtn = dialog?.querySelector('[data-slot="dialog-close"]') as HTMLElement;
+        closeBtn?.click();
+
+        const lightCount = Object.keys(parsed.light).length;
+        const darkCount = Object.keys(parsed.dark).length;
+        this.showToast(`Imported ${lightCount} light + ${darkCount} dark variables`);
+      } catch (e) {
+        console.error("Import error:", e);
+        this.showToast("Failed to parse CSS");
+      }
+    }
+
+    private parseCssVariables(css: string): { light: Record<string, string>; dark: Record<string, string> } {
+      const result: { light: Record<string, string>; dark: Record<string, string> } = {
+        light: {},
+        dark: {},
+      };
+
+      // Match :root or html block for light mode
+      const rootMatch = css.match(/:root\s*\{([^}]+)\}/s) || css.match(/html\s*\{([^}]+)\}/s);
+      if (rootMatch) {
+        this.extractVariables(rootMatch[1], result.light);
+      }
+
+      // Match .dark block for dark mode
+      const darkMatch = css.match(/\.dark\s*\{([^}]+)\}/s) || 
+                        css.match(/html\.dark\s*\{([^}]+)\}/s) ||
+                        css.match(/:root\.dark\s*\{([^}]+)\}/s) ||
+                        css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/s);
+      if (darkMatch) {
+        this.extractVariables(darkMatch[1], result.dark);
+      }
+
+      return result;
+    }
+
+    private extractVariables(block: string, target: Record<string, string>) {
+      // Match CSS variable declarations: --name: value;
+      const varRegex = /--([a-zA-Z0-9-]+)\s*:\s*([^;]+);/g;
+      let match;
+
+      // Valid theme tokens
+      const validTokens = [
+        "background", "foreground", "card", "card-foreground",
+        "popover", "popover-foreground", "primary", "primary-foreground",
+        "secondary", "secondary-foreground", "muted", "muted-foreground",
+        "accent", "accent-foreground", "destructive", "destructive-foreground",
+        "border", "input", "ring", "chart-1", "chart-2", "chart-3", "chart-4", "chart-5",
+        "sidebar", "sidebar-foreground", "sidebar-primary", "sidebar-primary-foreground",
+        "sidebar-accent", "sidebar-accent-foreground", "sidebar-border", "sidebar-ring",
+      ];
+
+      while ((match = varRegex.exec(block)) !== null) {
+        const name = match[1].trim();
+        let value = match[2].trim();
+
+        if (!validTokens.includes(name)) continue;
+
+        // Convert space-separated HSL values (shadcn format) to hsl()
+        // Pattern: "30 33% 98%" or "345 18% 12%" (h s% l%)
+        const hslSpacePattern = /^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%$/;
+        const hslMatch = value.match(hslSpacePattern);
+        
+        if (hslMatch) {
+          const [, h, s, l] = hslMatch;
+          value = `hsl(${h} ${s}% ${l}%)`;
+        }
+
+        target[name] = value;
       }
     }
 
