@@ -7,6 +7,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@bejamas/ui/components/dropdown-menu";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@bejamas/ui/components/tooltip";
 // Import Dialog and Accordion to ensure their scripts are included for MDX pages
 import { Dialog, DialogContent } from "@bejamas/ui/components/dialog";
 import {
@@ -245,6 +250,14 @@ const options = [...filteredDefaultOptions, ...customOptions];
     </CollapsibleTrigger>
     <CollapsibleContent> Hidden content here </CollapsibleContent>
   </Collapsible>
+  <Tooltip>
+    <TooltipTrigger>
+      <Button variant="ghost">Toggle</Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>Hidden content here</p>
+    </TooltipContent>
+  </Tooltip>
 </div>
 
 <style>
