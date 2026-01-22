@@ -637,6 +637,29 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/tooltip"],
+      "files": [
+        {
+          "path": "ui/tooltip/Tooltip.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tooltip/TooltipTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tooltip/TooltipContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tooltip/index.ts",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

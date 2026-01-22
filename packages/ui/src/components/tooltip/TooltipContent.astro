@@ -1,0 +1,80 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+import { cva } from "class-variance-authority";
+
+type Props = {
+  class?: string;
+  sideOffset?: number;
+  side?: "top" | "bottom" | "left" | "right";
+  align?: "start" | "center" | "end";
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  sideOffset = 6,
+  side = "top",
+  align = "center",
+  ...rest
+} = Astro.props as Props;
+
+const contentVariants = cva(
+  [
+    // Base styling
+    "group absolute z-50 text-center rounded-md bg-foreground px-3 py-1.5 text-xs text-background whitespace-nowrap",
+    // Hidden by default, visible when open
+    "opacity-0 pointer-events-none pointer-events-none",
+    // Animations
+    "transition-[opacity,transform,scale] duration-150 ease-out",
+    "data-[state=open]:opacity-100 data-[state=open]:pointer-events-auto data-[state=closed]:opacity-0 data-[state=closed]:pointer-events-none",
+    "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+    "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+  ],
+  {
+    variants: {
+      side: {
+        left: "data-[side=left]:slide-in-from-right-2 data-[side=left]:right-[calc(100%+var(--side-offset))] data-[side=left]:data-[align=center]:top-1/2 data-[side=left]:data-[align=center]:-translate-y-1/2",
+        top: "data-[side=top]:slide-in-from-bottom-2 data-[side=top]:bottom-[calc(100%+var(--side-offset))] data-[side=top]:data-[align=center]:left-1/2 data-[side=top]:data-[align=center]:-translate-x-1/2 data-[side=top]:data-[align=start]:left-0 data-[side=top]:data-[align=end]:right-0",
+        right:
+          "data-[side=right]:slide-in-from-left-2 data-[side=right]:left-[calc(100%+var(--side-offset))] data-[side=right]:data-[align=center]:top-1/2 data-[side=right]:data-[align=center]:-translate-y-1/2 data-[side=right]:data-[align=start]:right-0 data-[side=right]:data-[align=end]:left-0",
+        bottom:
+          "data-[side=bottom]:slide-in-from-top-2 data-[side=bottom]:top-[calc(100%+var(--side-offset))] data-[side=bottom]:data-[align=center]:left-1/2 data-[side=bottom]:data-[align=center]:-translate-x-1/2 data-[side=bottom]:data-[align=start]:left-0 data-[side=bottom]:data-[align=end]:right-0",
+      },
+    },
+    defaultVariants: {
+      side: "top",
+    },
+  },
+);
+
+const indicatorVariants = cva("absolute border-4 ", {
+  variants: {
+    side: {
+      top: "border-foreground border-b-0 border-r-transparent border-l-transparent top-full data-[align=center]:-translate-x-1/2 data-[align=center]:left-1/2 data-[align=start]:left-2 data-[align=end]:right-2",
+      bottom:
+        "border-foreground border-t-0 border-r-transparent border-l-transparent bottom-full data-[align=center]:-translate-x-1/2 data-[align=center]:left-1/2 data-[align=start]:left-2 data-[align=end]:right-2",
+      left: "border-foreground border-r-0 border-t-transparent border-b-transparent left-full data-[align=center]:-translate-y-1/2 data-[align=center]:top-1/2 data-[align=start]:top-0 data-[align=end]:bottom-0",
+      right:
+        "border-foreground border-l-0 border-t-transparent border-b-transparent right-full data-[align=center]:-translate-y-1/2 data-[align=center]:top-1/2 data-[align=start]:top-0 data-[align=end]:bottom-0",
+    },
+  },
+});
+---
+
+<div
+  {...rest}
+  data-slot="tooltip-content"
+  data-side={side}
+  data-side-offset={sideOffset}
+  data-align={align}
+  style={`--side-offset: ${sideOffset}px`}
+  class={cn(contentVariants({ side }), className)}
+>
+  <slot />
+  <div
+    data-slot="tooltip-indicator"
+    data-align={align}
+    class={indicatorVariants({ side })}
+  >
+  </div>
+</div>

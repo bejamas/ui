@@ -1,0 +1,216 @@
+---
+/**
+ * @component Tooltip
+ * @title Tooltip
+ * @description A small popup that appears when hovering over or focusing on an element.
+ *
+ * @preview
+ *
+ * <Tooltip>
+ *   <TooltipTrigger asChild>
+ *     <Button variant="outline">Hover</Button>
+ *   </TooltipTrigger>
+ *   <TooltipContent>
+ *     <p>Add to library</p>
+ *   </TooltipContent>
+ * </Tooltip>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Tooltip, TooltipTrigger, TooltipContent } from '@bejamas/ui/components/tooltip';
+ * import { Button } from '@bejamas/ui/components/button';
+ * ---
+ *
+ * <Tooltip>
+ *   <TooltipTrigger asChild>
+ *     <Button variant="outline">Hover</Button>
+ *   </TooltipTrigger>
+ *   <TooltipContent>
+ *     <p>Add to library</p>
+ *   </TooltipContent>
+ * </Tooltip>
+ * ```
+ *
+ * @examples
+ *
+ * ### With delay
+ *
+ * <Tooltip delay={1000}>
+ *   <TooltipTrigger asChild>
+ *     <Button variant="outline">Hover with delay</Button>
+ *   </TooltipTrigger>
+ *   <TooltipContent>
+ *     <p>This tooltip appears after 1000ms</p>
+ *   </TooltipContent>
+ * </Tooltip>
+ *
+ * ### Skip delay on subsequent tooltips
+ *
+ * When a tooltip is shown, hovering over other tooltip triggers will show their tooltips immediately without delay. Try hovering over the first button, then quickly move to the others.
+ *
+ * <div class="flex gap-2">
+ *   <Tooltip delay={500}>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Bold</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent>
+ *       <p>Bold (Ctrl+B)</p>
+ *     </TooltipContent>
+ *   </Tooltip>
+ *   <Tooltip delay={500}>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Italic</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent>
+ *       <p>Italic (Ctrl+I)</p>
+ *     </TooltipContent>
+ *   </Tooltip>
+ *   <Tooltip delay={500}>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Underline</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent>
+ *       <p>Underline (Ctrl+U)</p>
+ *     </TooltipContent>
+ *   </Tooltip>
+ * </div>
+ *
+ * ### Different sides
+ *
+ * Use the `side` prop to control which side the tooltip appears on.
+ *
+ * <div class="flex gap-4 items-center justify-center py-8">
+ *   <Tooltip>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Top</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent side="top">
+ *       <p>Tooltip on top</p>
+ *     </TooltipContent>
+ *   </Tooltip>
+ *   <Tooltip>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Right</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent side="right">
+ *       <p>Tooltip on right</p>
+ *     </TooltipContent>
+ *   </Tooltip>
+ *   <Tooltip>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Bottom</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent side="bottom">
+ *       <p>Tooltip on bottom</p>
+ *     </TooltipContent>
+ *   </Tooltip>
+ *   <Tooltip>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Left</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent side="left">
+ *       <p>Tooltip on left</p>
+ *     </TooltipContent>
+ *   </Tooltip>
+ * </div>
+ *
+ * ### Alignment options
+ *
+ * Use the `align` prop to control how the tooltip aligns relative to the trigger.
+ *
+ * <div class="flex flex-col gap-4 items-center py-8">
+ *   <div class="flex gap-4">
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Top Start</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="top" align="start">
+ *         <p>Aligned to start</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Top Center</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="top" align="center">
+ *         <p>Aligned to center</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Top End</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="top" align="end">
+ *         <p>Aligned to end</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *   </div>
+ *   <div class="flex gap-4">
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Bottom Start</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="bottom" align="start">
+ *         <p>Aligned to start</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Bottom Center</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="bottom" align="center">
+ *         <p>Aligned to center</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Bottom End</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="bottom" align="end">
+ *         <p>Aligned to end</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *   </div>
+ * </div>
+ *
+ * ### Disabled
+ *
+ * <Tooltip>
+ *   <TooltipTrigger asChild>
+ *     <Button variant="outline" disabled>Disabled</Button>
+ *   </TooltipTrigger>
+ *   <TooltipContent>
+ *     <p>This feature is currently unavailable</p>
+ *   </TooltipContent>
+ * </Tooltip>
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+  delay?: number;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", delay = 0, ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="tooltip"
+  data-delay={delay}
+  class={cn("group relative inline-block", className)}
+>
+  <slot />
+</div>
+
+<script>
+  import { createTooltip } from "@data-slot/tooltip";
+
+  document
+    .querySelectorAll('[data-slot="tooltip"]')
+    .forEach((el) => createTooltip(el));
+</script>
