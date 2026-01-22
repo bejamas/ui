@@ -68,8 +68,11 @@ const leanPresets = Object.fromEntries(
     const preset = window.BEJAMAS_PRESETS?.[key];
     if (!preset || !window.bejamas?.applyThemeCss) return;
 
-    // Use shared preset store (saves to cookie + localStorage + dispatches event)
-    window.bejamas.setPreset(key);
+    // Only update stored preset if it's different (prevents infinite loop)
+    const currentPreset = window.bejamas.getPreset?.();
+    if (currentPreset !== key) {
+      window.bejamas.setPreset(key);
+    }
 
     const cssText = window.bejamas.applyThemeCss({
       ...preset,

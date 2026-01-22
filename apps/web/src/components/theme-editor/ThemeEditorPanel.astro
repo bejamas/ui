@@ -14,6 +14,28 @@ import {
   DialogFooter,
 } from "@bejamas/ui/components/dialog";
 import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@bejamas/ui/components/dropdown-menu";
+import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/ui/components/label";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsIndicator,
+} from "@bejamas/ui/components/tabs";
+import { Textarea } from "@bejamas/ui/components/textarea";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@bejamas/ui/components/tooltip";
+import {
   X,
   GripHorizontal,
   Copy,
@@ -26,6 +48,7 @@ import {
   Sparkles,
   Loader2,
   ImagePlus,
+  ChevronDown,
 } from "@lucide/astro";
 import { defaultPresets } from "../../utils/themes/presets";
 import ColorInput from "./ColorInput.astro";
@@ -104,79 +127,139 @@ const presetKeys = Object.keys(defaultPresets);
     </div>
     <div class="header-actions">
       <span class="shortcut-hint">⌘E</span>
-      <button type="button" class="close-btn" data-slot="close">
+      <Button variant="ghost" size="icon-sm" data-slot="close" class="size-6">
         <X class="size-4" />
-      </button>
+      </Button>
     </div>
   </div>
 
   <!-- Preset Selector -->
   <div class="panel-section preset-section">
     <div class="preset-row">
-      <select class="preset-select" data-slot="preset-select">
-        {
-          presetKeys.map((key) => (
-            <option value={key}>{defaultPresets[key].label || key}</option>
-          ))
-        }
-      </select>
-      <button
-        type="button"
-        class="icon-btn"
+      <DropdownMenu class="flex-1">
+        <DropdownMenuTrigger
+          variant="outline"
+          size="sm"
+          class="w-full justify-between"
+        >
+          <div class="flex items-center gap-2 min-w-0">
+            <div
+              class="preset-swatches flex -space-x-1 items-center shrink-0"
+              data-slot="preset-swatches"
+            >
+              <div
+                class="size-3.5 rounded-full border border-border"
+                data-slot="swatch-primary"
+              >
+              </div>
+              <div
+                class="size-3.5 rounded-full border border-border"
+                data-slot="swatch-accent"
+              >
+              </div>
+            </div>
+            <span data-slot="preset-label" class="truncate">Default</span>
+          </div>
+          <ChevronDown class="size-4 opacity-50 shrink-0" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent class="w-[--trigger-width]">
+          <DropdownMenuLabel>Built-in</DropdownMenuLabel>
+          {
+            presetKeys.map((key) => (
+              <DropdownMenuItem data-value={key} class="gap-2">
+                {/* Light mode swatches */}
+                <div class="flex -space-x-1 items-center dark:hidden">
+                  <div
+                    class="size-4 rounded-full"
+                    style={`background: ${defaultPresets[key].styles.light.primary}`}
+                  />
+                  <div
+                    class="size-4 rounded-full"
+                    style={`background: ${defaultPresets[key].styles.light.accent}`}
+                  />
+                </div>
+                {/* Dark mode swatches */}
+                <div class="hidden dark:flex -space-x-1 items-center">
+                  <div
+                    class="size-4 rounded-full border border-border"
+                    style={`background: ${defaultPresets[key].styles.dark.primary}`}
+                  />
+                  <div
+                    class="size-4 rounded-full border border-border"
+                    style={`background: ${defaultPresets[key].styles.dark.accent}`}
+                  />
+                </div>
+                <span class="truncate">{defaultPresets[key].label || key}</span>
+              </DropdownMenuItem>
+            ))
+          }
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Button
+        variant="outline"
+        size="icon-sm"
         data-slot="new-preset"
         title="Create new preset"
       >
         <Plus class="size-4" />
-      </button>
-      <button
-        type="button"
-        class="icon-btn"
+      </Button>
+      <Button
+        variant="outline"
+        size="icon-sm"
         data-slot="delete-preset"
         title="Delete preset"
         disabled
       >
         <Trash2 class="size-4" />
-      </button>
+      </Button>
     </div>
-    <input
+    <Input
       type="text"
-      class="preset-name-input"
       data-slot="preset-name"
       placeholder="Preset name..."
-      style="display: none;"
+      class="hidden"
     />
   </div>
 
   <!-- Mode Tabs -->
-  <div class="mode-tabs" data-slot="mode-tabs">
-    <button type="button" class="mode-tab active" data-mode="light"
-      >Light</button
-    >
-    <button type="button" class="mode-tab" data-mode="dark">Dark</button>
+  <div data-panel-mode-tabs>
+    <Tabs defaultValue="light" class="mode-tabs-container">
+      <TabsList
+        class="w-full h-auto px-4 py-1 rounded-none border-b border-border bg-muted"
+      >
+        <TabsIndicator class="rounded-md" />
+        <TabsTrigger
+          value="light"
+          data-mode="light"
+          class="mode-tab flex-1 text-xs py-1.5"
+        >
+          Light
+        </TabsTrigger>
+        <TabsTrigger
+          value="dark"
+          data-mode="dark"
+          class="mode-tab flex-1 text-xs py-1.5"
+        >
+          Dark
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   </div>
 
   <!-- Color Sections -->
   <div class="panel-content" data-slot="content">
     {
       colorSections.map((section) => (
-        <div class="color-section">
-          <button
-            type="button"
-            class="section-header"
+        <div class="color-section border-b border-border last:border-b-0">
+          <Button
+            variant="ghost"
+            class="section-header flex items-center justify-between w-full px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-none h-auto"
             data-slot="section-toggle"
           >
             <span>{section.title}</span>
-            <svg
-              class="chevron"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-          <div class="section-content">
+            <ChevronDown class="chevron size-4 transition-transform duration-200" />
+          </Button>
+          <div class="section-content grid grid-cols-2 gap-3 px-4 py-3">
             {section.tokens.map((item) => (
               <ColorInput token={item.token} label={item.label} value="" />
             ))}
@@ -189,180 +272,193 @@ const presetKeys = Object.keys(defaultPresets);
   <!-- Footer Actions -->
   <div class="panel-footer">
     <div class="footer-left">
-      <button
-        type="button"
-        class="footer-btn"
-        data-slot="reset"
-        title="Reset to original"
-      >
-        <RotateCcw class="size-3.5" />
-        Reset
-      </button>
-      <button
-        type="button"
-        class="footer-btn"
-        data-slot="import"
-        title="Import CSS"
-      >
-        <Upload class="size-3.5" />
-        Import
-      </button>
-      <button
-        type="button"
-        class="footer-btn ai-btn"
-        data-slot="ai-generate"
-        title="AI Generate Palette"
-      >
-        <Sparkles class="size-3.5" />
-        AI
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            data-slot="reset"
+            title="Reset to original"
+          >
+            <RotateCcw class="size-3.5" />
+          </Button>
+          <TooltipContent>
+            <p>Reset</p>
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
+      <DropdownMenu side="top">
+        <DropdownMenuTrigger variant="outline" size="sm">
+          <Upload class="size-3.5" />
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent data-panel-import-dropdown>
+          <DropdownMenuItem data-action="import-css"
+            >Import CSS</DropdownMenuItem
+          >
+        </DropdownMenuContent>
+        <DropdownMenu>
+          <DropdownMenuTrigger variant="outline" size="sm">
+            <Download class="size-3.5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent data-panel-export-dropdown>
+            <DropdownMenuItem data-action="export-json"
+              >Export JSON</DropdownMenuItem
+            >
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </DropdownMenu>
+      <div class="footer-right">
+        <Button size="sm" data-slot="ai-generate" title="AI Generate Palette">
+          <Sparkles class="size-3.5" />
+          AI
+        </Button>
+
+        <Button size="sm" data-slot="save">
+          <Save class="size-3.5" />
+          Save
+        </Button>
+      </div>
     </div>
-    <div class="footer-right">
+
+    <!-- Import Dialog -->
+    <Dialog id="import-dialog">
       <button
         type="button"
-        class="footer-btn"
-        data-slot="export-json"
-        title="Export JSON"
-      >
-        <Copy class="size-3.5" />
-        JSON
-      </button>
+        data-slot="dialog-trigger"
+        id="import-dialog-trigger"
+        style="display: none;"></button>
+      <DialogContent class="sm:max-w-lg import-dialog-content">
+        <DialogHeader>
+          <DialogTitle>Import Custom CSS</DialogTitle>
+          <DialogDescription>
+            Paste your CSS file below to customize the theme colors. Make sure
+            to include variables like --primary, --background, etc.
+          </DialogDescription>
+        </DialogHeader>
+        <div class="import-textarea-wrapper mt-4">
+          <Textarea
+            id="import-css-textarea"
+            class="font-mono text-xs min-h-[200px]"
+            placeholder={`:root {\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.2 0.044 250);\n  --primary: oklch(0.6 0.2 280);\n  /* And more */\n}\n\n.dark {\n  --background: oklch(0.2 0.02 250);\n  --foreground: oklch(0.97 0.02 250);\n  /* And more */\n}`}
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" data-slot="dialog-close">Cancel</Button>
+          <Button id="import-confirm-btn">Import</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <!-- Export JSON Dialog -->
+    <Dialog id="export-json-dialog">
       <button
         type="button"
-        class="footer-btn"
-        data-slot="export-css"
-        title="Export CSS"
-      >
-        <Download class="size-3.5" />
-        CSS
-      </button>
-      <button type="button" class="footer-btn primary" data-slot="save">
-        <Save class="size-3.5" />
-        Save
-      </button>
-    </div>
+        data-slot="dialog-trigger"
+        id="export-json-dialog-trigger"
+        style="display: none;"></button>
+      <DialogContent class="sm:max-w-lg export-dialog-content">
+        <DialogHeader>
+          <DialogTitle>Export JSON</DialogTitle>
+          <DialogDescription>
+            Copy the JSON below to save your theme configuration.
+          </DialogDescription>
+        </DialogHeader>
+        <div class="export-textarea-wrapper mt-4">
+          <Textarea
+            id="export-json-textarea"
+            class="font-mono text-xs min-h-[300px]"
+            readonly
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" data-slot="dialog-close">Close</Button>
+          <Button id="export-json-copy-btn">Copy to Clipboard</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <!-- AI Generate Dialog -->
+    <Dialog id="ai-generate-dialog">
+      <button
+        type="button"
+        data-slot="dialog-trigger"
+        id="ai-generate-dialog-trigger"
+        style="display: none;"></button>
+      <DialogContent class="sm:max-w-lg ai-dialog-content">
+        <DialogHeader>
+          <DialogTitle>
+            <span class="flex items-center gap-2">
+              <Sparkles class="size-5 text-accent" />
+              AI Generate Palette
+            </span>
+          </DialogTitle>
+          <DialogDescription>
+            Describe the palette you want to create. You can mention brands,
+            moods, colors, or upload reference images.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div class="ai-form">
+          <div class="ai-prompt-wrapper">
+            <Textarea
+              id="ai-prompt-textarea"
+              class="min-h-[80px]"
+              placeholder="e.g., A warm and inviting theme with earthy browns and cream accents for a cozy atmosphere..."
+              rows={3}
+            />
+          </div>
+
+          <div class="ai-images-section">
+            <Label class="ai-images-label">
+              <ImagePlus class="size-4" />
+              <span>Reference Images (optional)</span>
+            </Label>
+            <div class="ai-images-dropzone" id="ai-images-dropzone">
+              <input
+                type="file"
+                id="ai-images-input"
+                accept="image/*"
+                multiple
+                class="ai-images-file-input"
+              />
+              <div class="dropzone-content">
+                <ImagePlus class="size-6 text-muted-foreground" />
+                <span>Drop images or click to upload</span>
+                <span class="dropzone-hint">Max 3 images, PNG/JPG</span>
+              </div>
+            </div>
+            <div class="ai-images-preview" id="ai-images-preview"></div>
+          </div>
+
+          <div class="ai-status" id="ai-status" style="display: none;">
+            <span id="ai-status-icon" class="ai-status-icon">
+              <Loader2 class="size-4 animate-spin" />
+            </span>
+            <span id="ai-status-text">Generating palette...</span>
+          </div>
+
+          <div class="ai-reasoning" id="ai-reasoning" style="display: none;">
+            <details>
+              <summary>AI Reasoning</summary>
+              <div class="ai-reasoning-content" id="ai-reasoning-content"></div>
+            </details>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" data-slot="dialog-close">Cancel</Button>
+          <Button id="ai-generate-confirm-btn">
+            <Sparkles class="size-4" />
+            Generate
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 
-  <!-- Import Dialog -->
-  <Dialog id="import-dialog">
-    <button
-      type="button"
-      data-slot="dialog-trigger"
-      id="import-dialog-trigger"
-      style="display: none;"></button>
-    <DialogContent class="sm:max-w-lg import-dialog-content">
-      <DialogHeader>
-        <DialogTitle>Import Custom CSS</DialogTitle>
-        <DialogDescription>
-          Paste your CSS file below to customize the theme colors. Make sure to
-          include variables like --primary, --background, etc.
-        </DialogDescription>
-      </DialogHeader>
-      <div class="import-textarea-wrapper">
-        <textarea
-          id="import-css-textarea"
-          class="import-textarea"
-          placeholder=":root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.2 0.044 250);
-  --primary: oklch(0.6 0.2 280);
-  /* And more */
-}
-
-.dark {
-  --background: oklch(0.2 0.02 250);
-  --foreground: oklch(0.97 0.02 250);
-  /* And more */
-}"
-        ></textarea>
-      </div>
-      <DialogFooter>
-        <Button variant="outline" data-slot="dialog-close">Cancel</Button>
-        <Button id="import-confirm-btn">Import</Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
-
-  <!-- AI Generate Dialog -->
-  <Dialog id="ai-generate-dialog">
-    <button
-      type="button"
-      data-slot="dialog-trigger"
-      id="ai-generate-dialog-trigger"
-      style="display: none;"></button>
-    <DialogContent class="sm:max-w-lg ai-dialog-content">
-      <DialogHeader>
-        <DialogTitle>
-          <span class="flex items-center gap-2">
-            <Sparkles class="size-5 text-accent" />
-            AI Generate Palette
-          </span>
-        </DialogTitle>
-        <DialogDescription>
-          Describe the palette you want to create. You can mention brands,
-          moods, colors, or upload reference images.
-        </DialogDescription>
-      </DialogHeader>
-
-      <div class="ai-form">
-        <div class="ai-prompt-wrapper">
-          <textarea
-            id="ai-prompt-textarea"
-            class="ai-prompt-input"
-            placeholder="e.g., A warm coffee shop theme with earthy browns and cream accents, inspired by Costa Coffee branding..."
-            rows="3"></textarea>
-        </div>
-
-        <div class="ai-images-section">
-          <label class="ai-images-label">
-            <ImagePlus class="size-4" />
-            <span>Reference Images (optional)</span>
-          </label>
-          <div class="ai-images-dropzone" id="ai-images-dropzone">
-            <input
-              type="file"
-              id="ai-images-input"
-              accept="image/*"
-              multiple
-              class="ai-images-file-input"
-            />
-            <div class="dropzone-content">
-              <ImagePlus class="size-6 text-muted-foreground" />
-              <span>Drop images or click to upload</span>
-              <span class="dropzone-hint">Max 3 images, PNG/JPG</span>
-            </div>
-          </div>
-          <div class="ai-images-preview" id="ai-images-preview"></div>
-        </div>
-
-        <div class="ai-status" id="ai-status" style="display: none;">
-          <span id="ai-status-icon" class="ai-status-icon">
-            <Loader2 class="size-4 animate-spin" />
-          </span>
-          <span id="ai-status-text">Generating palette...</span>
-        </div>
-
-        <div class="ai-reasoning" id="ai-reasoning" style="display: none;">
-          <details>
-            <summary>AI Reasoning</summary>
-            <div class="ai-reasoning-content" id="ai-reasoning-content"></div>
-          </details>
-        </div>
-      </div>
-
-      <DialogFooter>
-        <Button variant="outline" data-slot="dialog-close">Cancel</Button>
-        <Button id="ai-generate-confirm-btn">
-          <Sparkles class="size-4" />
-          Generate
-        </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
-</theme-editor-panel>
-
-<!-- Theme Editor toggle button - positioned after panel for CSS sibling selector -->
-<!-- <button
+  <!-- Theme Editor toggle button - positioned after panel for CSS sibling selector -->
+  <!-- <button
   type="button"
   id="theme-editor-toggle-btn"
   class="theme-editor-fab"
@@ -378,1763 +474,1745 @@ const presetKeys = Object.keys(defaultPresets);
   </svg>
 </button> -->
 
-<style is:global>
-  /* Floating Action Button */
-  .theme-editor-fab {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 9998;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition:
-      transform 0.15s,
-      box-shadow 0.15s,
-      opacity 0.15s;
-  }
+  <style is:global>
+    /* Floating Action Button */
+    .theme-editor-fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9998;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition:
+        transform 0.15s,
+        box-shadow 0.15s,
+        opacity 0.15s;
+    }
 
-  .theme-editor-fab:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  }
+    .theme-editor-fab:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
 
-  .theme-editor-fab:active {
-    transform: scale(0.95);
-  }
+    .theme-editor-fab:active {
+      transform: scale(0.95);
+    }
 
-  /* Hide FAB when panel is open */
-  .theme-editor-panel.open + .theme-editor-fab {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .theme-editor-panel {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    width: 320px;
-    max-height: calc(100vh - 100px);
-    background: var(--popover, #fff);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    z-index: 9999;
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    font-size: 0.875rem;
-  }
-
-  .theme-editor-panel.open {
-    display: flex;
-  }
-
-  .panel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
-    cursor: move;
-    user-select: none;
-    background: var(--muted);
-  }
-
-  .header-drag {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .header-title {
-    font-weight: 600;
-    font-size: 0.875rem;
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .shortcut-hint {
-    font-size: 0.625rem;
-    padding: 0.125rem 0.375rem;
-    background: var(--secondary);
-    border-radius: 0.25rem;
-    color: var(--muted-foreground);
-    font-family: ui-monospace, monospace;
-  }
-
-  .close-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 0.25rem;
-    border: none;
-    background: transparent;
-    color: var(--muted-foreground);
-    cursor: pointer;
-    transition:
-      background 0.15s,
-      color 0.15s;
-  }
-
-  .close-btn:hover {
-    background: var(--secondary);
-    color: var(--foreground);
-  }
-
-  .panel-section {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .preset-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .preset-row {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .preset-select {
-    flex: 1;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--background);
-    color: var(--foreground);
-    font-size: 0.8125rem;
-    cursor: pointer;
-  }
-
-  .preset-select:focus {
-    outline: none;
-    border-color: var(--ring);
-  }
-
-  .icon-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--background);
-    color: var(--foreground);
-    cursor: pointer;
-    transition:
-      background 0.15s,
-      border-color 0.15s;
-  }
-
-  .icon-btn:hover:not(:disabled) {
-    background: var(--secondary);
-    border-color: var(--ring);
-  }
-
-  .icon-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .preset-name-input {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--background);
-    color: var(--foreground);
-    font-size: 0.8125rem;
-  }
-
-  .preset-name-input:focus {
-    outline: none;
-    border-color: var(--ring);
-  }
-
-  .mode-tabs {
-    display: flex;
-    padding: 0.5rem 1rem;
-    gap: 0.25rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .mode-tab {
-    flex: 1;
-    padding: 0.375rem 0.75rem;
-    border: none;
-    border-radius: 0.375rem;
-    background: transparent;
-    color: var(--muted-foreground);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition:
-      background 0.15s,
-      color 0.15s;
-  }
-
-  .mode-tab:hover {
-    background: var(--secondary);
-  }
-
-  .mode-tab.active {
-    background: var(--primary);
-    color: var(--primary-foreground);
-  }
-
-  .panel-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0.5rem 0;
-  }
-
-  .color-section {
-    border-bottom: 1px solid var(--border);
-  }
-
-  .color-section:last-child {
-    border-bottom: none;
-  }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0.625rem 1rem;
-    border: none;
-    background: transparent;
-    color: var(--foreground);
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .section-header:hover {
-    background: var(--muted);
-  }
-
-  .section-header .chevron {
-    width: 1rem;
-    height: 1rem;
-    transition: transform 0.2s;
-  }
-
-  .color-section.collapsed .section-header .chevron {
-    transform: rotate(-90deg);
-  }
-
-  .section-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem 0.75rem;
-  }
-
-  .color-section.collapsed .section-content {
-    display: none;
-  }
-
-  .panel-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--border);
-    background: var(--muted);
-  }
-
-  .footer-left,
-  .footer-right {
-    display: flex;
-    gap: 0.375rem;
-  }
-
-  .footer-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.375rem 0.625rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--background);
-    color: var(--foreground);
-    font-size: 0.75rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition:
-      background 0.15s,
-      border-color 0.15s;
-  }
-
-  .footer-btn:hover {
-    background: var(--secondary);
-    border-color: var(--ring);
-  }
-
-  .footer-btn.primary {
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border-color: var(--primary);
-  }
-
-  .footer-btn.primary:hover {
-    opacity: 0.9;
-  }
-
-  /* Import Dialog */
-  .import-dialog-content {
-    z-index: 10001;
-  }
-
-  .import-textarea-wrapper {
-    margin-top: 1rem;
-  }
-
-  .import-textarea {
-    width: 100%;
-    min-height: 200px;
-    padding: 0.75rem;
-    font-family:
-      ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-      "Liberation Mono", monospace;
-    font-size: 0.8125rem;
-    line-height: 1.5;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    background: var(--muted);
-    color: var(--foreground);
-    resize: vertical;
-  }
-
-  .import-textarea:focus {
-    outline: none;
-    border-color: var(--ring);
-    box-shadow: 0 0 0 2px var(--ring) / 0.2;
-  }
-
-  .import-textarea::placeholder {
-    color: var(--muted-foreground);
-    opacity: 0.7;
-  }
-
-  /* Toast notification */
-  .theme-editor-toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.75rem 1.25rem;
-    background: var(--foreground);
-    color: var(--background);
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    z-index: 10000;
-    animation: toast-in 0.3s ease;
-  }
-
-  @keyframes toast-in {
-    from {
+    /* Hide FAB when panel is open */
+    .theme-editor-panel.open + .theme-editor-fab {
       opacity: 0;
-      transform: translateX(-50%) translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-  }
-
-  /* AI Generate Button */
-  .footer-btn.ai-btn {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-    color: var(--accent-foreground);
-    border-color: var(--accent);
-  }
-
-  .footer-btn.ai-btn:hover {
-    opacity: 0.9;
-    border-color: var(--ring);
-  }
-
-  /* AI Generate Dialog */
-  .ai-dialog-content {
-    z-index: 10001;
-  }
-
-  .ai-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .ai-prompt-wrapper {
-    width: 100%;
-  }
-
-  .ai-prompt-input {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    background: var(--muted);
-    color: var(--foreground);
-    resize: vertical;
-    font-family: inherit;
-  }
-
-  .ai-prompt-input:focus {
-    outline: none;
-    border-color: var(--ring);
-    box-shadow: 0 0 0 2px var(--ring) / 0.2;
-  }
-
-  .ai-prompt-input::placeholder {
-    color: var(--muted-foreground);
-    opacity: 0.8;
-  }
-
-  .ai-images-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .ai-images-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--foreground);
-  }
-
-  .ai-images-dropzone {
-    position: relative;
-    border: 2px dashed var(--border);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    text-align: center;
-    transition:
-      border-color 0.15s,
-      background 0.15s;
-    cursor: pointer;
-  }
-
-  .ai-images-dropzone:hover,
-  .ai-images-dropzone.dragover {
-    border-color: var(--accent);
-    background: var(--accent) / 0.05;
-  }
-
-  .ai-images-file-input {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  .dropzone-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    pointer-events: none;
-  }
-
-  .dropzone-content span {
-    font-size: 0.8125rem;
-    color: var(--muted-foreground);
-  }
-
-  .dropzone-hint {
-    font-size: 0.6875rem !important;
-    opacity: 0.7;
-  }
-
-  .ai-images-preview {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .ai-image-preview {
-    position: relative;
-    width: 64px;
-    height: 64px;
-    border-radius: 0.375rem;
-    overflow: hidden;
-    border: 1px solid var(--border);
-  }
-
-  .ai-image-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .ai-image-preview button {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--destructive);
-    color: var(--destructive-foreground);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 12px;
-    line-height: 1;
-  }
-
-  .ai-status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: var(--muted);
-    border-radius: 0.5rem;
-    font-size: 0.8125rem;
-    color: var(--muted-foreground);
-  }
-
-  .ai-status-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .ai-status-icon .animate-spin {
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  .ai-reasoning {
-    font-size: 0.8125rem;
-  }
-
-  .ai-reasoning summary {
-    cursor: pointer;
-    color: var(--muted-foreground);
-    padding: 0.5rem 0;
-  }
-
-  .ai-reasoning summary:hover {
-    color: var(--foreground);
-  }
-
-  .ai-reasoning-content {
-    padding: 0.75rem;
-    background: var(--muted);
-    border-radius: 0.375rem;
-    font-size: 0.75rem;
-    line-height: 1.5;
-    color: var(--muted-foreground);
-    max-height: 150px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-  }
-
-  .ai-generate-btn {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-    border-color: var(--accent);
-  }
-
-  .ai-generate-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-</style>
-
-<script>
-  import {
-    applyThemeToElement,
-    applyThemeToCss,
-  } from "../../utils/themes/apply-theme";
-  import {
-    getStoredPreset,
-    setStoredPreset,
-    getCurrentMode,
-    PRESET_CHANGE_EVENT,
-  } from "../../utils/themes/preset-store";
-  import { defaultPresets } from "../../utils/themes/presets";
-  import {
-    getAllPresets,
-    saveCustomPreset,
-    deleteCustomPreset,
-    generatePresetId,
-    getCustomPresets,
-    CUSTOM_PRESETS_CHANGE_EVENT,
-    type CustomPreset,
-  } from "../../utils/themes/custom-presets-store";
-  import type { ThemePreset, ThemeStyleProps } from "../../utils/types/theme";
-
-  class ThemeEditorPanel extends HTMLElement {
-    private isDragging = false;
-    private dragOffset = { x: 0, y: 0 };
-    private currentPresetId: string = "";
-    private currentMode: "light" | "dark" = "light";
-    private workingStyles: {
-      light: Partial<ThemeStyleProps>;
-      dark: Partial<ThemeStyleProps>;
-    } = { light: {}, dark: {} };
-    private originalStyles: {
-      light: Partial<ThemeStyleProps>;
-      dark: Partial<ThemeStyleProps>;
-    } = { light: {}, dark: {} };
-    private isCustomPreset = false;
-    private isCreatingNew = false;
-
-    // Elements
-    private header: HTMLElement | null = null;
-    private closeBtn: HTMLElement | null = null;
-    private presetSelect: HTMLSelectElement | null = null;
-    private presetNameInput: HTMLInputElement | null = null;
-    private newPresetBtn: HTMLElement | null = null;
-    private deletePresetBtn: HTMLElement | null = null;
-    private modeTabs: HTMLElement | null = null;
-    private content: HTMLElement | null = null;
-    private resetBtn: HTMLElement | null = null;
-    private importBtn: HTMLElement | null = null;
-    private aiGenerateBtn: HTMLElement | null = null;
-    private exportJsonBtn: HTMLElement | null = null;
-    private exportCssBtn: HTMLElement | null = null;
-    private saveBtn: HTMLElement | null = null;
-
-    // AI state
-    private aiImages: { data: string; mediaType: string }[] = [];
-
-    connectedCallback() {
-      this.header = this.querySelector('[data-slot="header"]');
-      this.closeBtn = this.querySelector('[data-slot="close"]');
-      this.presetSelect = this.querySelector('[data-slot="preset-select"]');
-      this.presetNameInput = this.querySelector('[data-slot="preset-name"]');
-      this.newPresetBtn = this.querySelector('[data-slot="new-preset"]');
-      this.deletePresetBtn = this.querySelector('[data-slot="delete-preset"]');
-      this.modeTabs = this.querySelector('[data-slot="mode-tabs"]');
-      this.content = this.querySelector('[data-slot="content"]');
-      this.resetBtn = this.querySelector('[data-slot="reset"]');
-      this.importBtn = this.querySelector('[data-slot="import"]');
-      this.aiGenerateBtn = this.querySelector('[data-slot="ai-generate"]');
-      this.exportJsonBtn = this.querySelector('[data-slot="export-json"]');
-      this.exportCssBtn = this.querySelector('[data-slot="export-css"]');
-      this.saveBtn = this.querySelector('[data-slot="save"]');
-
-      this.setupDragging();
-      this.setupEventListeners();
-      this.loadInitialState();
-
-      // Global keyboard shortcut
-      document.addEventListener("keydown", this.handleKeydown.bind(this));
-
-      // Listen for preset changes from other sources
-      window.addEventListener(
-        PRESET_CHANGE_EVENT,
-        this.handleExternalPresetChange.bind(this),
-      );
-      window.addEventListener(
-        CUSTOM_PRESETS_CHANGE_EVENT,
-        this.refreshPresetList.bind(this),
-      );
+      pointer-events: none;
     }
 
-    disconnectedCallback() {
-      document.removeEventListener("keydown", this.handleKeydown.bind(this));
+    .theme-editor-panel {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      width: 320px;
+      max-height: calc(100vh - 100px);
+      background: var(--popover, #fff);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 0.875rem;
     }
 
-    private handleKeydown(e: KeyboardEvent) {
-      // Cmd/Ctrl + . to toggle panel
-      if ((e.metaKey || e.ctrlKey) && e.key === ".") {
-        e.preventDefault();
-        this.toggle();
+    .theme-editor-panel.open {
+      display: flex;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      cursor: move;
+      user-select: none;
+      background: var(--muted);
+    }
+
+    .header-drag {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .shortcut-hint {
+      font-size: 0.625rem;
+      padding: 0.125rem 0.375rem;
+      background: var(--secondary);
+      border-radius: 0.25rem;
+      color: var(--muted-foreground);
+      font-family: ui-monospace, monospace;
+    }
+
+    .panel-section {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .preset-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .preset-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .mode-tabs-container {
+      gap: 0;
+    }
+
+    .color-section.collapsed .section-content {
+      display: none;
+    }
+
+    .color-section.collapsed .chevron {
+      transform: rotate(-90deg);
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem 0;
+    }
+
+    .panel-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border);
+      background: var(--muted);
+    }
+
+    .footer-left,
+    .footer-right {
+      display: flex;
+      gap: 0.375rem;
+    }
+
+    /* Import Dialog */
+    .import-dialog-content {
+      z-index: 10001;
+    }
+
+    /* Toast notification */
+    .theme-editor-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.75rem 1.25rem;
+      background: var(--foreground);
+      color: var(--background);
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      z-index: 10000;
+      animation: toast-in 0.3s ease;
+    }
+
+    @keyframes toast-in {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
       }
-      // Escape to close
-      if (e.key === "Escape" && this.classList.contains("open")) {
-        this.close();
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
       }
     }
 
-    private setupDragging() {
-      if (!this.header) return;
-
-      this.header.addEventListener("mousedown", (e) => {
-        if ((e.target as HTMLElement).closest("button")) return;
-        this.isDragging = true;
-        const rect = this.getBoundingClientRect();
-        this.dragOffset = {
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        };
-        this.style.transition = "none";
-      });
-
-      document.addEventListener("mousemove", (e) => {
-        if (!this.isDragging) return;
-        const x = e.clientX - this.dragOffset.x;
-        const y = e.clientY - this.dragOffset.y;
-
-        // Keep panel within viewport
-        const maxX = window.innerWidth - this.offsetWidth;
-        const maxY = window.innerHeight - this.offsetHeight;
-
-        this.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
-        this.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
-        this.style.right = "auto";
-      });
-
-      document.addEventListener("mouseup", () => {
-        this.isDragging = false;
-        this.style.transition = "";
-      });
+    /* AI Generate Button */
+    .ai-btn {
+      background: linear-gradient(
+        135deg,
+        var(--accent) 0%,
+        var(--primary) 100%
+      ) !important;
+      color: var(--accent-foreground) !important;
+      border-color: var(--accent) !important;
     }
 
-    private setupEventListeners() {
-      // Close button
-      this.closeBtn?.addEventListener("click", () => this.close());
+    .ai-btn:hover {
+      opacity: 0.9;
+    }
 
-      // Preset select
-      this.presetSelect?.addEventListener("change", (e) => {
-        const id = (e.target as HTMLSelectElement).value;
-        this.loadPreset(id);
-      });
+    /* AI Generate Dialog */
+    .ai-dialog-content {
+      z-index: 10001;
+    }
 
-      // New preset button
-      this.newPresetBtn?.addEventListener("click", () => this.startNewPreset());
+    .ai-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
 
-      // Delete preset button
-      this.deletePresetBtn?.addEventListener("click", () =>
-        this.deleteCurrentPreset(),
-      );
+    .ai-prompt-wrapper {
+      width: 100%;
+    }
 
-      // Preset name input
-      this.presetNameInput?.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          this.confirmNewPreset();
-        } else if (e.key === "Escape") {
-          this.cancelNewPreset();
-        }
-      });
+    .ai-images-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-      // Mode tabs
-      this.modeTabs?.querySelectorAll(".mode-tab").forEach((tab) => {
-        tab.addEventListener("click", () => {
-          const mode = (tab as HTMLElement).dataset.mode as "light" | "dark";
-          this.switchMode(mode);
-        });
-      });
+    .ai-images-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--foreground);
+    }
 
-      // Section toggles
-      this.content
-        ?.querySelectorAll('[data-slot="section-toggle"]')
-        .forEach((toggle) => {
-          toggle.addEventListener("click", () => {
-            toggle.closest(".color-section")?.classList.toggle("collapsed");
-          });
-        });
+    .ai-images-dropzone {
+      position: relative;
+      border: 2px dashed var(--border);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      text-align: center;
+      transition:
+        border-color 0.15s,
+        background 0.15s;
+      cursor: pointer;
+    }
 
-      // Color changes
-      this.addEventListener("color-change", ((e: CustomEvent) => {
-        const { token, value } = e.detail;
-        this.updateColor(token, value);
-      }) as EventListener);
+    .ai-images-dropzone:hover,
+    .ai-images-dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent) / 0.05;
+    }
 
-      // Footer buttons
-      this.resetBtn?.addEventListener("click", () => this.resetToOriginal());
-      this.importBtn?.addEventListener("click", () => this.openImportDialog());
-      this.aiGenerateBtn?.addEventListener("click", () => this.openAIDialog());
-      this.exportJsonBtn?.addEventListener("click", () => this.exportJson());
-      this.exportCssBtn?.addEventListener("click", () => this.exportCss());
-      this.saveBtn?.addEventListener("click", () => this.savePreset());
+    .ai-images-file-input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
 
-      // AI dialog confirm button - use event delegation
-      if (!(window as any).__aiGenerateHandler) {
-        (window as any).__aiGenerateHandler = (e: Event) => {
-          const target = e.target as HTMLElement;
-          if (target.closest("#ai-generate-confirm-btn")) {
-            const panel = document.getElementById(
-              "theme-editor-panel",
-            ) as ThemeEditorPanel | null;
-            panel?.handleAIGenerate();
-          }
-        };
-        document.addEventListener("click", (window as any).__aiGenerateHandler);
+    .dropzone-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .dropzone-content span {
+      font-size: 0.8125rem;
+      color: var(--muted-foreground);
+    }
+
+    .dropzone-hint {
+      font-size: 0.6875rem !important;
+      opacity: 0.7;
+    }
+
+    .ai-images-preview {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .ai-image-preview {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      border-radius: 0.375rem;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .ai-image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ai-image-preview button {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--destructive);
+      color: var(--destructive-foreground);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .ai-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: var(--muted);
+      border-radius: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--muted-foreground);
+    }
+
+    .ai-status-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ai-status-icon .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
       }
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-      // Setup AI image upload handlers
-      this.setupAIImageHandlers();
+    .ai-reasoning {
+      font-size: 0.8125rem;
+    }
 
-      // Import dialog confirm button - use event delegation on document for dynamic content
-      // Guard to prevent multiple listeners after View Transitions
-      if (!(window as any).__importConfirmHandler) {
-        (window as any).__importConfirmHandler = (e: Event) => {
-          const target = e.target as HTMLElement;
-          if (target.closest("#import-confirm-btn")) {
-            const panel = document.getElementById(
-              "theme-editor-panel",
-            ) as ThemeEditorPanel | null;
-            panel?.handleImport();
-          }
-        };
-        document.addEventListener(
-          "click",
-          (window as any).__importConfirmHandler,
+    .ai-reasoning summary {
+      cursor: pointer;
+      color: var(--muted-foreground);
+      padding: 0.5rem 0;
+    }
+
+    .ai-reasoning summary:hover {
+      color: var(--foreground);
+    }
+
+    .ai-reasoning-content {
+      padding: 0.75rem;
+      background: var(--muted);
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: var(--muted-foreground);
+      max-height: 150px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .ai-generate-btn {
+      background: linear-gradient(
+        135deg,
+        var(--accent) 0%,
+        var(--primary) 100%
+      );
+      border-color: var(--accent);
+    }
+
+    .ai-generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+
+  <script>
+    import {
+      applyThemeToElement,
+      applyThemeToCss,
+    } from "../../utils/themes/apply-theme";
+    import {
+      getStoredPreset,
+      setStoredPreset,
+      getCurrentMode,
+      PRESET_CHANGE_EVENT,
+    } from "../../utils/themes/preset-store";
+    import { defaultPresets } from "../../utils/themes/presets";
+    import {
+      getAllPresets,
+      saveCustomPreset,
+      deleteCustomPreset,
+      generatePresetId,
+      getCustomPresets,
+      CUSTOM_PRESETS_CHANGE_EVENT,
+      type CustomPreset,
+    } from "../../utils/themes/custom-presets-store";
+    import type { ThemePreset, ThemeStyleProps } from "../../utils/types/theme";
+
+    class ThemeEditorPanel extends HTMLElement {
+      private isDragging = false;
+      private dragOffset = { x: 0, y: 0 };
+      private currentPresetId: string = "";
+      private currentMode: "light" | "dark" = "light";
+      private workingStyles: {
+        light: Partial<ThemeStyleProps>;
+        dark: Partial<ThemeStyleProps>;
+      } = { light: {}, dark: {} };
+      private originalStyles: {
+        light: Partial<ThemeStyleProps>;
+        dark: Partial<ThemeStyleProps>;
+      } = { light: {}, dark: {} };
+      private isCustomPreset = false;
+      private isCreatingNew = false;
+
+      // Elements
+      private header: HTMLElement | null = null;
+      private closeBtn: HTMLElement | null = null;
+      private presetSelect: HTMLElement | null = null;
+      private presetLabel: HTMLElement | null = null;
+      private presetSwatchPrimary: HTMLElement | null = null;
+      private presetSwatchAccent: HTMLElement | null = null;
+      private presetDropdownContent: HTMLElement | null = null;
+      private presetNameInput: HTMLInputElement | null = null;
+      private newPresetBtn: HTMLElement | null = null;
+      private deletePresetBtn: HTMLElement | null = null;
+      private modeTabs: HTMLElement | null = null;
+      private content: HTMLElement | null = null;
+      private resetBtn: HTMLElement | null = null;
+      private importDropdown: HTMLElement | null = null;
+      private exportDropdown: HTMLElement | null = null;
+      private aiGenerateBtn: HTMLElement | null = null;
+      private saveBtn: HTMLElement | null = null;
+
+      // AI state
+      private aiImages: { data: string; mediaType: string }[] = [];
+
+      connectedCallback() {
+        this.header = this.querySelector('[data-slot="header"]');
+        this.closeBtn = this.querySelector('[data-slot="close"]');
+        this.presetLabel = this.querySelector('[data-slot="preset-label"]');
+        this.presetSwatchPrimary = this.querySelector(
+          '[data-slot="swatch-primary"]',
         );
-      }
-    }
-
-    private loadInitialState() {
-      this.currentMode = getCurrentMode();
-      this.updateModeTabsUI();
-      this.refreshPresetList();
-
-      const storedPreset = getStoredPreset();
-      if (storedPreset) {
-        this.loadPreset(storedPreset);
-      } else {
-        this.loadPreset(Object.keys(defaultPresets)[0]);
-      }
-    }
-
-    private refreshPresetList() {
-      if (!this.presetSelect) return;
-
-      const allPresets = getAllPresets();
-      const currentValue = this.presetSelect.value;
-
-      this.presetSelect.innerHTML = "";
-
-      // Built-in presets
-      const builtInGroup = document.createElement("optgroup");
-      builtInGroup.label = "Built-in";
-      Object.entries(allPresets).forEach(([id, preset]) => {
-        if (!preset.isCustom) {
-          const option = document.createElement("option");
-          option.value = id;
-          option.textContent = preset.name || id;
-          builtInGroup.appendChild(option);
-        }
-      });
-      this.presetSelect.appendChild(builtInGroup);
-
-      // Custom presets
-      const customPresets = Object.entries(allPresets).filter(
-        ([, p]) => p.isCustom,
-      );
-      if (customPresets.length > 0) {
-        const customGroup = document.createElement("optgroup");
-        customGroup.label = "Custom";
-        customPresets.forEach(([id, preset]) => {
-          const option = document.createElement("option");
-          option.value = id;
-          option.textContent = preset.name || id;
-          customGroup.appendChild(option);
-        });
-        this.presetSelect.appendChild(customGroup);
-      }
-
-      // Restore selection if possible
-      if (currentValue && allPresets[currentValue]) {
-        this.presetSelect.value = currentValue;
-      }
-    }
-
-    private loadPreset(id: string) {
-      const allPresets = getAllPresets();
-      const preset = allPresets[id];
-      if (!preset) return;
-
-      this.currentPresetId = id;
-      this.isCustomPreset = !!preset.isCustom;
-
-      // Deep clone styles
-      this.workingStyles = JSON.parse(JSON.stringify(preset.styles));
-      this.originalStyles = JSON.parse(JSON.stringify(preset.styles));
-
-      // Update select
-      if (this.presetSelect) {
-        this.presetSelect.value = id;
-      }
-
-      // Update delete button state
-      if (this.deletePresetBtn) {
-        (this.deletePresetBtn as HTMLButtonElement).disabled =
-          !this.isCustomPreset;
-      }
-
-      // Update color inputs
-      this.updateColorInputs();
-
-      // Apply theme live
-      this.applyLivePreview();
-
-      // Also update global preset
-      setStoredPreset(id);
-    }
-
-    private updateColorInputs() {
-      const styles = this.workingStyles[this.currentMode];
-
-      this.querySelectorAll<HTMLElement>("color-input").forEach((input) => {
-        const token = input.dataset.token;
-        if (token && styles[token as keyof typeof styles]) {
-          (input as any).setColor?.(
-            styles[token as keyof typeof styles] as string,
-          );
-        }
-      });
-    }
-
-    private updateColor(token: string, value: string) {
-      this.workingStyles[this.currentMode][token as keyof ThemeStyleProps] =
-        value;
-      this.applyLivePreview();
-    }
-
-    private applyLivePreview() {
-      applyThemeToElement(
-        { styles: this.workingStyles, currentMode: this.currentMode },
-        document.documentElement,
-      );
-    }
-
-    private switchMode(mode: "light" | "dark") {
-      this.currentMode = mode;
-      this.updateModeTabsUI();
-      this.updateColorInputs();
-
-      // Also switch the actual page theme
-      if ((window as any).astroThemeToggle?.setTheme) {
-        (window as any).astroThemeToggle.setTheme(mode);
-      } else {
-        document.documentElement.dataset.theme = mode;
-        document.documentElement.classList.toggle("dark", mode === "dark");
-      }
-
-      this.applyLivePreview();
-    }
-
-    private updateModeTabsUI() {
-      this.modeTabs?.querySelectorAll(".mode-tab").forEach((tab) => {
-        const isActive = (tab as HTMLElement).dataset.mode === this.currentMode;
-        tab.classList.toggle("active", isActive);
-      });
-    }
-
-    private startNewPreset() {
-      this.isCreatingNew = true;
-      if (this.presetNameInput) {
-        this.presetNameInput.style.display = "block";
-        this.presetNameInput.value = `${this.presetSelect?.selectedOptions[0]?.textContent || "Custom"} Copy`;
-        this.presetNameInput.focus();
-        this.presetNameInput.select();
-      }
-    }
-
-    private confirmNewPreset() {
-      if (!this.presetNameInput) return;
-
-      const name = this.presetNameInput.value.trim();
-      if (!name) {
-        this.cancelNewPreset();
-        return;
-      }
-
-      const newPreset: CustomPreset = {
-        id: generatePresetId(),
-        name,
-        label: name,
-        createdAt: new Date().toISOString(),
-        modifiedAt: new Date().toISOString(),
-        source: "SAVED",
-        styles: JSON.parse(JSON.stringify(this.workingStyles)),
-      };
-
-      saveCustomPreset(newPreset);
-      this.cancelNewPreset();
-      this.loadPreset(newPreset.id);
-      this.showToast(`Created preset "${name}"`);
-    }
-
-    private cancelNewPreset() {
-      this.isCreatingNew = false;
-      if (this.presetNameInput) {
-        this.presetNameInput.style.display = "none";
-        this.presetNameInput.value = "";
-      }
-    }
-
-    private deleteCurrentPreset() {
-      if (!this.isCustomPreset || !this.currentPresetId) return;
-
-      const allPresets = getAllPresets();
-      const preset = allPresets[this.currentPresetId];
-      if (!preset) return;
-
-      if (confirm(`Delete preset "${preset.name}"?`)) {
-        deleteCustomPreset(this.currentPresetId);
-        this.showToast(`Deleted preset "${preset.name}"`);
-
-        // Load first built-in preset
-        this.loadPreset(Object.keys(defaultPresets)[0]);
-      }
-    }
-
-    private resetToOriginal() {
-      this.workingStyles = JSON.parse(JSON.stringify(this.originalStyles));
-      this.updateColorInputs();
-      this.applyLivePreview();
-      this.showToast("Reset to original");
-    }
-
-    private savePreset() {
-      if (this.isCustomPreset) {
-        // Update existing custom preset
-        const customPresets = getCustomPresets();
-        const existing = customPresets[this.currentPresetId];
-        if (existing) {
-          const updated: CustomPreset = {
-            ...existing,
-            styles: JSON.parse(JSON.stringify(this.workingStyles)),
-            modifiedAt: new Date().toISOString(),
-          };
-          saveCustomPreset(updated);
-          this.originalStyles = JSON.parse(JSON.stringify(this.workingStyles));
-          this.showToast(`Saved "${existing.name}"`);
-        }
-      } else {
-        // Create new custom preset from built-in
-        this.startNewPreset();
-      }
-    }
-
-    private getImportTextarea(): HTMLTextAreaElement | null {
-      // The dialog portal might be moved to document.body, so search there
-      // Get the last matching element in case of duplicates after View Transitions
-      const all = document.querySelectorAll("#import-css-textarea");
-      return (all[all.length - 1] as HTMLTextAreaElement) || null;
-    }
-
-    private getImportDialog(): Element | null {
-      const all = document.querySelectorAll("#import-dialog");
-      return all[all.length - 1] || null;
-    }
-
-    private getAIPromptTextarea(): HTMLTextAreaElement | null {
-      // The dialog portal might be moved to document.body, so search there
-      // Get the last matching element in case of duplicates after View Transitions
-      const all = document.querySelectorAll("#ai-prompt-textarea");
-      return (all[all.length - 1] as HTMLTextAreaElement) || null;
-    }
-
-    private getAIDialog(): Element | null {
-      const all = document.querySelectorAll("#ai-generate-dialog");
-      return all[all.length - 1] || null;
-    }
-
-    private openImportDialog() {
-      // Clear the textarea
-      const textarea = this.getImportTextarea();
-      if (textarea) textarea.value = "";
-
-      // Click the hidden trigger to open the dialog (get last one in case of duplicates)
-      const triggers = document.querySelectorAll("#import-dialog-trigger");
-      const trigger = triggers[triggers.length - 1] as HTMLElement | null;
-      trigger?.click();
-    }
-
-    public handleImport() {
-      const textarea = this.getImportTextarea();
-      if (!textarea) {
-        console.error("Import textarea not found");
-        return;
-      }
-
-      const css = textarea.value.trim();
-      if (!css) {
-        this.showToast("Please paste some CSS to import");
-        return;
-      }
-
-      try {
-        const parsed = this.parseCssVariables(css);
-        if (
-          Object.keys(parsed.light).length === 0 &&
-          Object.keys(parsed.dark).length === 0
-        ) {
-          this.showToast("No valid CSS variables found");
-          return;
-        }
-
-        // Merge parsed values into working styles
-        if (Object.keys(parsed.light).length > 0) {
-          this.workingStyles.light = {
-            ...this.workingStyles.light,
-            ...parsed.light,
-          };
-        }
-        if (Object.keys(parsed.dark).length > 0) {
-          this.workingStyles.dark = {
-            ...this.workingStyles.dark,
-            ...parsed.dark,
-          };
-        }
-
-        // Update the UI
-        this.updateColorInputs();
-        this.applyLivePreview();
-
-        // Close the dialog
-        const dialog = this.getImportDialog();
-        const closeBtn = dialog?.querySelector(
-          '[data-slot="dialog-close"]',
-        ) as HTMLElement;
-        closeBtn?.click();
-
-        const lightCount = Object.keys(parsed.light).length;
-        const darkCount = Object.keys(parsed.dark).length;
-        this.showToast(
-          `Imported ${lightCount} light + ${darkCount} dark variables`,
+        this.presetSwatchAccent = this.querySelector(
+          '[data-slot="swatch-accent"]',
         );
-      } catch (e) {
-        console.error("Import error:", e);
-        this.showToast("Failed to parse CSS");
-      }
-    }
+        this.presetDropdownContent = this.querySelector(
+          '[data-slot="dropdown-menu-content"]',
+        );
+        this.presetNameInput = this.querySelector('[data-slot="preset-name"]');
+        this.newPresetBtn = this.querySelector('[data-slot="new-preset"]');
+        this.deletePresetBtn = this.querySelector(
+          '[data-slot="delete-preset"]',
+        );
+        this.modeTabs = this.querySelector("[data-panel-mode-tabs]");
+        this.content = this.querySelector('[data-slot="content"]');
+        this.resetBtn = this.querySelector('[data-slot="reset"]');
+        this.importDropdown = this.querySelector(
+          "[data-panel-import-dropdown]",
+        );
+        this.exportDropdown = this.querySelector(
+          "[data-panel-export-dropdown]",
+        );
+        this.aiGenerateBtn = this.querySelector('[data-slot="ai-generate"]');
+        this.saveBtn = this.querySelector('[data-slot="save"]');
 
-    private parseCssVariables(css: string): {
-      light: Record<string, string>;
-      dark: Record<string, string>;
-    } {
-      const result: {
-        light: Record<string, string>;
-        dark: Record<string, string>;
-      } = {
-        light: {},
-        dark: {},
-      };
+        this.setupDragging();
+        this.setupEventListeners();
+        this.loadInitialState();
 
-      // Match :root or html block for light mode
-      const rootMatch =
-        css.match(/:root\s*\{([^}]+)\}/s) || css.match(/html\s*\{([^}]+)\}/s);
-      if (rootMatch) {
-        this.extractVariables(rootMatch[1], result.light);
-      }
+        // Global keyboard shortcut
+        document.addEventListener("keydown", this.handleKeydown.bind(this));
 
-      // Match .dark block for dark mode
-      const darkMatch =
-        css.match(/\.dark\s*\{([^}]+)\}/s) ||
-        css.match(/html\.dark\s*\{([^}]+)\}/s) ||
-        css.match(/:root\.dark\s*\{([^}]+)\}/s) ||
-        css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/s);
-      if (darkMatch) {
-        this.extractVariables(darkMatch[1], result.dark);
-      }
-
-      return result;
-    }
-
-    private extractVariables(block: string, target: Record<string, string>) {
-      // Match CSS variable declarations: --name: value;
-      const varRegex = /--([a-zA-Z0-9-]+)\s*:\s*([^;]+);/g;
-      let match;
-
-      // Valid theme tokens
-      const validTokens = [
-        "background",
-        "foreground",
-        "card",
-        "card-foreground",
-        "popover",
-        "popover-foreground",
-        "primary",
-        "primary-foreground",
-        "secondary",
-        "secondary-foreground",
-        "muted",
-        "muted-foreground",
-        "accent",
-        "accent-foreground",
-        "destructive",
-        "destructive-foreground",
-        "border",
-        "input",
-        "ring",
-        "chart-1",
-        "chart-2",
-        "chart-3",
-        "chart-4",
-        "chart-5",
-        "sidebar",
-        "sidebar-foreground",
-        "sidebar-primary",
-        "sidebar-primary-foreground",
-        "sidebar-accent",
-        "sidebar-accent-foreground",
-        "sidebar-border",
-        "sidebar-ring",
-      ];
-
-      while ((match = varRegex.exec(block)) !== null) {
-        const name = match[1].trim();
-        let value = match[2].trim();
-
-        if (!validTokens.includes(name)) continue;
-
-        // Convert space-separated HSL values (shadcn format) to hsl()
-        // Pattern: "30 33% 98%" or "345 18% 12%" (h s% l%)
-        const hslSpacePattern =
-          /^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%$/;
-        const hslMatch = value.match(hslSpacePattern);
-
-        if (hslMatch) {
-          const [, h, s, l] = hslMatch;
-          value = `hsl(${h} ${s}% ${l}%)`;
-        }
-
-        target[name] = value;
-      }
-    }
-
-    private exportJson() {
-      const data = {
-        name: this.presetSelect?.selectedOptions[0]?.textContent || "Theme",
-        exportedAt: new Date().toISOString(),
-        styles: this.workingStyles,
-      };
-
-      const json = JSON.stringify(data, null, 2);
-      this.copyToClipboard(json);
-      this.showToast("JSON copied to clipboard");
-    }
-
-    private exportCss() {
-      const css = applyThemeToCss({
-        styles: this.workingStyles,
-        currentMode: this.currentMode,
-      });
-      this.copyToClipboard(css);
-      this.showToast("CSS copied to clipboard");
-    }
-
-    private copyToClipboard(text: string) {
-      navigator.clipboard.writeText(text).catch(() => {
-        // Fallback
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textarea);
-      });
-    }
-
-    private showToast(message: string) {
-      const existing = document.querySelector(".theme-editor-toast");
-      existing?.remove();
-
-      const toast = document.createElement("div");
-      toast.className = "theme-editor-toast";
-      toast.textContent = message;
-      document.body.appendChild(toast);
-
-      setTimeout(() => toast.remove(), 2500);
-    }
-
-    private handleExternalPresetChange(e: Event) {
-      const detail = (e as CustomEvent).detail;
-      if (detail?.key && detail.key !== this.currentPresetId) {
-        this.loadPreset(detail.key);
-      }
-    }
-
-    public toggle() {
-      if (this.classList.contains("open")) {
-        this.close();
-      } else {
-        this.open();
-      }
-    }
-
-    public open() {
-      this.classList.add("open");
-      this.loadInitialState();
-    }
-
-    public close() {
-      this.classList.remove("open");
-    }
-
-    // AI Dialog methods
-    private openAIDialog() {
-      // Open dialog first so elements are in DOM
-      const triggers = document.querySelectorAll("#ai-generate-dialog-trigger");
-      const trigger = triggers[triggers.length - 1] as HTMLElement | null;
-      trigger?.click();
-
-      // Clear previous state after a tick (dialog needs to render)
-      setTimeout(() => {
-        const promptTextarea = this.getAIPromptTextarea();
-        if (promptTextarea) promptTextarea.value = "";
-
-        this.aiImages = [];
-        this.updateAIImagePreview();
-
-        // Hide status and reasoning (query globally for portaled elements)
-        const allStatus = document.querySelectorAll("#ai-status");
-        const allReasoning = document.querySelectorAll("#ai-reasoning");
-        const allStatusIcon = document.querySelectorAll("#ai-status-icon");
-        const allGenerateBtn = document.querySelectorAll(
-          "#ai-generate-confirm-btn",
+        // Listen for preset changes from other sources
+        window.addEventListener(
+          PRESET_CHANGE_EVENT,
+          this.handleExternalPresetChange.bind(this),
+        );
+        window.addEventListener(
+          CUSTOM_PRESETS_CHANGE_EVENT,
+          this.refreshPresetList.bind(this),
         );
 
-        const status = allStatus[allStatus.length - 1] as HTMLElement | null;
-        const reasoning = allReasoning[
-          allReasoning.length - 1
-        ] as HTMLElement | null;
-        const statusIcon = allStatusIcon[
-          allStatusIcon.length - 1
-        ] as HTMLElement | null;
-        const generateBtn = allGenerateBtn[
-          allGenerateBtn.length - 1
-        ] as HTMLButtonElement | null;
+        // Listen for theme changes from ThemeSwitcher
+        window.addEventListener(
+          "theme-toggle-changed",
+          this.handleExternalThemeChange.bind(this),
+        );
+      }
 
-        if (status) status.style.display = "none";
-        if (reasoning) reasoning.style.display = "none";
-
-        // Reset icon to spinner
-        if (statusIcon) {
-          statusIcon.innerHTML =
-            '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+      private handleExternalThemeChange(e: Event) {
+        const customEvent = e as CustomEvent<{ theme: string }>;
+        const theme = customEvent.detail?.theme;
+        if (theme === "light" || theme === "dark") {
+          // Only update if different to avoid loops
+          if (this.currentMode !== theme) {
+            this.switchMode(theme, true);
+          }
         }
+      }
 
-        // Enable generate button
-        if (generateBtn) {
-          generateBtn.disabled = false;
-          generateBtn.innerHTML =
-            '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+      disconnectedCallback() {
+        document.removeEventListener("keydown", this.handleKeydown.bind(this));
+      }
+
+      private handleKeydown(e: KeyboardEvent) {
+        // Cmd/Ctrl + . to toggle panel
+        if ((e.metaKey || e.ctrlKey) && e.key === ".") {
+          e.preventDefault();
+          this.toggle();
         }
-      }, 0);
-    }
+        // Escape to close
+        if (e.key === "Escape" && this.classList.contains("open")) {
+          this.close();
+        }
+      }
 
-    private setupAIImageHandlers() {
-      // Use event delegation on document for the AI dialog elements since they're portaled
-      if (!(window as any).__aiImageHandlersSetup) {
-        (window as any).__aiImageHandlersSetup = true;
+      private setupDragging() {
+        if (!this.header) return;
 
-        // Drag and drop
-        document.addEventListener("dragover", (e) => {
-          const dropzone = (e.target as HTMLElement).closest(
-            "#ai-images-dropzone",
-          );
-          if (dropzone) {
-            e.preventDefault();
-            dropzone.classList.add("dragover");
-          }
+        this.header.addEventListener("mousedown", (e) => {
+          if ((e.target as HTMLElement).closest("button")) return;
+          this.isDragging = true;
+          const rect = this.getBoundingClientRect();
+          this.dragOffset = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+          };
+          this.style.transition = "none";
         });
 
-        document.addEventListener("dragleave", (e) => {
-          const dropzone = (e.target as HTMLElement).closest(
-            "#ai-images-dropzone",
-          );
-          if (dropzone) {
-            dropzone.classList.remove("dragover");
-          }
+        document.addEventListener("mousemove", (e) => {
+          if (!this.isDragging) return;
+          const x = e.clientX - this.dragOffset.x;
+          const y = e.clientY - this.dragOffset.y;
+
+          // Keep panel within viewport
+          const maxX = window.innerWidth - this.offsetWidth;
+          const maxY = window.innerHeight - this.offsetHeight;
+
+          this.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+          this.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+          this.style.right = "auto";
         });
 
-        document.addEventListener("drop", (e) => {
-          const dropzone = (e.target as HTMLElement).closest(
-            "#ai-images-dropzone",
-          );
-          if (dropzone) {
-            e.preventDefault();
-            dropzone.classList.remove("dragover");
-            const files = e.dataTransfer?.files;
-            const panel = document.getElementById(
-              "theme-editor-panel",
-            ) as ThemeEditorPanel | null;
-            if (files && panel) panel.handleAIImageFiles(files);
-          }
+        document.addEventListener("mouseup", () => {
+          this.isDragging = false;
+          this.style.transition = "";
         });
+      }
 
-        // File input change
-        document.addEventListener("change", (e) => {
-          const input = e.target as HTMLInputElement;
-          if (input.id === "ai-images-input" && input.files) {
-            const panel = document.getElementById(
-              "theme-editor-panel",
-            ) as ThemeEditorPanel | null;
-            if (panel) {
-              panel.handleAIImageFiles(input.files);
-              input.value = ""; // Reset for re-selection
+      private setupEventListeners() {
+        // Close button
+        this.closeBtn?.addEventListener("click", () => this.close());
+
+        // Preset dropdown menu item clicks
+        this.presetDropdownContent?.addEventListener("click", (e) => {
+          const item = (e.target as HTMLElement).closest(
+            '[data-slot="dropdown-menu-item"]',
+          );
+          if (item) {
+            const id = (item as HTMLElement).dataset.value;
+            if (id) {
+              this.loadPreset(id);
             }
           }
         });
-      }
-    }
 
-    public handleAIImageFiles(files: FileList) {
-      const maxImages = 3;
-      const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+        // New preset button
+        this.newPresetBtn?.addEventListener("click", () =>
+          this.startNewPreset(),
+        );
 
-      Array.from(files).forEach((file) => {
-        if (this.aiImages.length >= maxImages) {
-          this.showToast(`Maximum ${maxImages} images allowed`);
-          return;
-        }
+        // Delete preset button
+        this.deletePresetBtn?.addEventListener("click", () =>
+          this.deleteCurrentPreset(),
+        );
 
-        if (!validTypes.includes(file.type)) {
-          this.showToast("Only PNG, JPG, and WebP images are supported");
-          return;
-        }
+        // Preset name input
+        this.presetNameInput?.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            this.confirmNewPreset();
+          } else if (e.key === "Escape") {
+            this.cancelNewPreset();
+          }
+        });
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const dataUrl = e.target?.result as string;
-          // Extract base64 data (remove data:image/...;base64, prefix)
-          const base64 = dataUrl.split(",")[1];
-          this.aiImages.push({
-            data: base64,
-            mediaType: file.type,
+        // Mode tabs - use event delegation to work with @data-slot/tabs
+        this.modeTabs?.addEventListener("click", (e) => {
+          const tab = (e.target as HTMLElement).closest(".mode-tab");
+          if (tab) {
+            const mode = (tab as HTMLElement).dataset.mode as "light" | "dark";
+            if (mode) {
+              this.switchMode(mode);
+            }
+          }
+        });
+
+        // Section toggles
+        this.content
+          ?.querySelectorAll('[data-slot="section-toggle"]')
+          .forEach((toggle) => {
+            toggle.addEventListener("click", () => {
+              toggle.closest(".color-section")?.classList.toggle("collapsed");
+            });
           });
-          this.updateAIImagePreview();
+
+        // Color changes
+        this.addEventListener("color-change", ((e: CustomEvent) => {
+          const { token, value } = e.detail;
+          this.updateColor(token, value);
+        }) as EventListener);
+
+        // Footer buttons
+        this.resetBtn?.addEventListener("click", () => this.resetToOriginal());
+        this.aiGenerateBtn?.addEventListener("click", () =>
+          this.openAIDialog(),
+        );
+        this.saveBtn?.addEventListener("click", () => this.savePreset());
+
+        // Import dropdown
+        this.importDropdown?.addEventListener("click", (e) => {
+          const item = (e.target as HTMLElement).closest("[data-action]");
+          if (item) {
+            const action = (item as HTMLElement).dataset.action;
+            if (action === "import-css") {
+              this.openImportDialog();
+            }
+          }
+        });
+
+        // Export dropdown
+        this.exportDropdown?.addEventListener("click", (e) => {
+          const item = (e.target as HTMLElement).closest("[data-action]");
+          if (item) {
+            const action = (item as HTMLElement).dataset.action;
+            if (action === "export-json") {
+              this.openExportJsonDialog();
+            }
+          }
+        });
+
+        // AI dialog confirm button - use event delegation
+        if (!(window as any).__aiGenerateHandler) {
+          (window as any).__aiGenerateHandler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target.closest("#ai-generate-confirm-btn")) {
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              panel?.handleAIGenerate();
+            }
+          };
+          document.addEventListener(
+            "click",
+            (window as any).__aiGenerateHandler,
+          );
+        }
+
+        // Setup AI image upload handlers
+        this.setupAIImageHandlers();
+
+        // Import dialog confirm button - use event delegation on document for dynamic content
+        // Guard to prevent multiple listeners after View Transitions
+        if (!(window as any).__importConfirmHandler) {
+          (window as any).__importConfirmHandler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target.closest("#import-confirm-btn")) {
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              panel?.handleImport();
+            }
+          };
+          document.addEventListener(
+            "click",
+            (window as any).__importConfirmHandler,
+          );
+        }
+
+        // Export JSON copy button - use event delegation
+        if (!(window as any).__exportJsonCopyHandler) {
+          (window as any).__exportJsonCopyHandler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target.closest("#export-json-copy-btn")) {
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              panel?.handleExportJsonCopy();
+            }
+          };
+          document.addEventListener(
+            "click",
+            (window as any).__exportJsonCopyHandler,
+          );
+        }
+      }
+
+      private loadInitialState() {
+        this.currentMode = getCurrentMode();
+        this.updateModeTabsUI();
+        this.refreshPresetList();
+
+        const storedPreset = getStoredPreset();
+        if (storedPreset) {
+          this.loadPreset(storedPreset);
+        } else {
+          this.loadPreset(Object.keys(defaultPresets)[0]);
+        }
+      }
+
+      private refreshPresetList() {
+        if (!this.presetDropdownContent) return;
+
+        const allPresets = getAllPresets();
+
+        // Clear existing items
+        this.presetDropdownContent.innerHTML = "";
+
+        // Built-in presets label
+        const builtInLabel = document.createElement("div");
+        builtInLabel.setAttribute("data-slot", "dropdown-menu-label");
+        builtInLabel.className = "px-2 py-1.5 text-sm font-medium";
+        builtInLabel.textContent = "Built-in";
+        this.presetDropdownContent.appendChild(builtInLabel);
+
+        // Built-in preset items
+        Object.entries(allPresets).forEach(([id, preset]) => {
+          if (!preset.isCustom) {
+            const item = document.createElement("div");
+            item.setAttribute("role", "menuitem");
+            item.setAttribute("tabindex", "0");
+            item.setAttribute("data-slot", "dropdown-menu-item");
+            item.setAttribute("data-value", id);
+            item.className =
+              "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
+            item.textContent = preset.name || id;
+            this.presetDropdownContent!.appendChild(item);
+          }
+        });
+
+        // Custom presets
+        const customPresets = Object.entries(allPresets).filter(
+          ([, p]) => p.isCustom,
+        );
+        if (customPresets.length > 0) {
+          // Separator
+          const separator = document.createElement("div");
+          separator.setAttribute("data-slot", "dropdown-menu-separator");
+          separator.className = "-mx-1 my-1 h-px bg-border";
+          this.presetDropdownContent.appendChild(separator);
+
+          // Custom label
+          const customLabel = document.createElement("div");
+          customLabel.setAttribute("data-slot", "dropdown-menu-label");
+          customLabel.className = "px-2 py-1.5 text-sm font-medium";
+          customLabel.textContent = "Custom";
+          this.presetDropdownContent.appendChild(customLabel);
+
+          // Custom preset items
+          customPresets.forEach(([id, preset]) => {
+            const item = document.createElement("div");
+            item.setAttribute("role", "menuitem");
+            item.setAttribute("tabindex", "0");
+            item.setAttribute("data-slot", "dropdown-menu-item");
+            item.setAttribute("data-value", id);
+            item.className =
+              "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
+
+            const lightStyles = preset.styles?.light || {};
+            const darkStyles = preset.styles?.dark || {};
+
+            // Light mode swatches
+            const lightSwatches = document.createElement("div");
+            lightSwatches.className =
+              "flex -space-x-1 items-center dark:hidden";
+            lightSwatches.innerHTML = `
+            <div class="size-4 rounded-full" style="background: ${lightStyles.primary || "#888"}"></div>
+            <div class="size-4 rounded-full" style="background: ${lightStyles.accent || "#888"}"></div>
+          `;
+            item.appendChild(lightSwatches);
+
+            // Dark mode swatches
+            const darkSwatches = document.createElement("div");
+            darkSwatches.className = "hidden dark:flex -space-x-1 items-center";
+            darkSwatches.innerHTML = `
+            <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.primary || "#888"}"></div>
+            <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.accent || "#888"}"></div>
+          `;
+            item.appendChild(darkSwatches);
+
+            // Label
+            const label = document.createElement("span");
+            label.className = "truncate";
+            label.textContent = preset.name || id;
+            item.appendChild(label);
+
+            this.presetDropdownContent!.appendChild(item);
+          });
+        }
+      }
+
+      private loadPreset(id: string) {
+        const allPresets = getAllPresets();
+        const preset = allPresets[id];
+        if (!preset) return;
+
+        this.currentPresetId = id;
+        this.isCustomPreset = !!preset.isCustom;
+
+        // Deep clone styles
+        this.workingStyles = JSON.parse(JSON.stringify(preset.styles));
+        this.originalStyles = JSON.parse(JSON.stringify(preset.styles));
+
+        // Update dropdown label
+        if (this.presetLabel) {
+          this.presetLabel.textContent = preset.name || id;
+        }
+
+        // Update trigger swatches
+        this.updatePresetSwatches();
+
+        // Update delete button state
+        if (this.deletePresetBtn) {
+          (this.deletePresetBtn as HTMLButtonElement).disabled =
+            !this.isCustomPreset;
+        }
+
+        // Update color inputs
+        this.updateColorInputs();
+
+        // Apply theme live
+        this.applyLivePreview();
+
+        // Also update global preset
+        setStoredPreset(id);
+      }
+
+      private updatePresetSwatches() {
+        const styles = this.workingStyles[this.currentMode];
+        if (this.presetSwatchPrimary) {
+          this.presetSwatchPrimary.style.background = styles.primary || "";
+        }
+        if (this.presetSwatchAccent) {
+          this.presetSwatchAccent.style.background = styles.accent || "";
+        }
+      }
+
+      private updateColorInputs() {
+        const styles = this.workingStyles[this.currentMode];
+
+        this.querySelectorAll<HTMLElement>("color-input").forEach((input) => {
+          const token = input.dataset.token;
+          if (token && styles[token as keyof typeof styles]) {
+            (input as any).setColor?.(
+              styles[token as keyof typeof styles] as string,
+            );
+          }
+        });
+      }
+
+      private updateColor(token: string, value: string) {
+        this.workingStyles[this.currentMode][token as keyof ThemeStyleProps] =
+          value;
+        this.applyLivePreview();
+
+        // Update swatches if primary or accent changed
+        if (token === "primary" || token === "accent") {
+          this.updatePresetSwatches();
+        }
+      }
+
+      private applyLivePreview() {
+        applyThemeToElement(
+          { styles: this.workingStyles, currentMode: this.currentMode },
+          document.documentElement,
+        );
+      }
+
+      private switchMode(mode: "light" | "dark", fromExternal = false) {
+        this.currentMode = mode;
+        this.updateModeTabsUI();
+        this.updateColorInputs();
+        this.updatePresetSwatches();
+
+        // Only update the global theme if this isn't from an external change
+        if (!fromExternal) {
+          // Update localStorage (same key as ThemeSwitcher)
+          localStorage.setItem("starlight-theme", mode);
+
+          // Update document state
+          document.documentElement.dataset.theme = mode;
+          document.documentElement.dataset.themeChoice = mode;
+          document.documentElement.classList.toggle("dark", mode === "dark");
+
+          // Dispatch event for other components to react
+          window.dispatchEvent(
+            new CustomEvent("theme-toggle-changed", {
+              detail: { theme: mode },
+            }),
+          );
+
+          // Update the global ThemeSwitcher tabs
+          document
+            .querySelector<HTMLDivElement>("#theme-tabs")
+            ?.dispatchEvent(
+              new CustomEvent("tabs:select", { detail: { value: mode } }),
+            );
+        }
+
+        this.applyLivePreview();
+      }
+
+      private updateModeTabsUI() {
+        this.modeTabs?.querySelectorAll(".mode-tab").forEach((tab) => {
+          const isActive =
+            (tab as HTMLElement).dataset.mode === this.currentMode;
+          tab.classList.toggle("active", isActive);
+        });
+
+        // Update the Tabs component's visual state
+        const tabsEl = this.modeTabs?.querySelector('[data-slot="tabs"]');
+        tabsEl?.dispatchEvent(
+          new CustomEvent("tabs:select", {
+            detail: { value: this.currentMode },
+          }),
+        );
+      }
+
+      private startNewPreset() {
+        this.isCreatingNew = true;
+        if (this.presetNameInput) {
+          this.presetNameInput.style.display = "block";
+          this.presetNameInput.value = `${this.presetLabel?.textContent || "Custom"} Copy`;
+          this.presetNameInput.focus();
+          this.presetNameInput.select();
+        }
+      }
+
+      private confirmNewPreset() {
+        if (!this.presetNameInput) return;
+
+        const name = this.presetNameInput.value.trim();
+        if (!name) {
+          this.cancelNewPreset();
+          return;
+        }
+
+        const newPreset: CustomPreset = {
+          id: generatePresetId(),
+          name,
+          label: name,
+          createdAt: new Date().toISOString(),
+          modifiedAt: new Date().toISOString(),
+          source: "SAVED",
+          styles: JSON.parse(JSON.stringify(this.workingStyles)),
         };
-        reader.readAsDataURL(file);
-      });
-    }
 
-    private updateAIImagePreview() {
-      // Find all preview containers and update the last one (in case of portaled dialogs)
-      const allPreviews = document.querySelectorAll("#ai-images-preview");
-      const preview = allPreviews[allPreviews.length - 1] as HTMLElement;
-      if (!preview) return;
+        saveCustomPreset(newPreset);
+        this.cancelNewPreset();
+        this.loadPreset(newPreset.id);
+        this.showToast(`Created preset "${name}"`);
+      }
 
-      preview.innerHTML = this.aiImages
-        .map(
-          (img, i) => `
+      private cancelNewPreset() {
+        this.isCreatingNew = false;
+        if (this.presetNameInput) {
+          this.presetNameInput.style.display = "none";
+          this.presetNameInput.value = "";
+        }
+      }
+
+      private deleteCurrentPreset() {
+        if (!this.isCustomPreset || !this.currentPresetId) return;
+
+        const allPresets = getAllPresets();
+        const preset = allPresets[this.currentPresetId];
+        if (!preset) return;
+
+        if (confirm(`Delete preset "${preset.name}"?`)) {
+          deleteCustomPreset(this.currentPresetId);
+          this.showToast(`Deleted preset "${preset.name}"`);
+
+          // Load first built-in preset
+          this.loadPreset(Object.keys(defaultPresets)[0]);
+        }
+      }
+
+      private resetToOriginal() {
+        this.workingStyles = JSON.parse(JSON.stringify(this.originalStyles));
+        this.updateColorInputs();
+        this.applyLivePreview();
+        this.showToast("Reset to original");
+      }
+
+      private savePreset() {
+        if (this.isCustomPreset) {
+          // Update existing custom preset
+          const customPresets = getCustomPresets();
+          const existing = customPresets[this.currentPresetId];
+          if (existing) {
+            const updated: CustomPreset = {
+              ...existing,
+              styles: JSON.parse(JSON.stringify(this.workingStyles)),
+              modifiedAt: new Date().toISOString(),
+            };
+            saveCustomPreset(updated);
+            this.originalStyles = JSON.parse(
+              JSON.stringify(this.workingStyles),
+            );
+            this.showToast(`Saved "${existing.name}"`);
+          }
+        } else {
+          // Create new custom preset from built-in
+          this.startNewPreset();
+        }
+      }
+
+      private getImportTextarea(): HTMLTextAreaElement | null {
+        // The dialog portal might be moved to document.body, so search there
+        // Get the last matching element in case of duplicates after View Transitions
+        const all = document.querySelectorAll("#import-css-textarea");
+        return (all[all.length - 1] as HTMLTextAreaElement) || null;
+      }
+
+      private getImportDialog(): Element | null {
+        const all = document.querySelectorAll("#import-dialog");
+        return all[all.length - 1] || null;
+      }
+
+      private getAIPromptTextarea(): HTMLTextAreaElement | null {
+        // The dialog portal might be moved to document.body, so search there
+        // Get the last matching element in case of duplicates after View Transitions
+        const all = document.querySelectorAll("#ai-prompt-textarea");
+        return (all[all.length - 1] as HTMLTextAreaElement) || null;
+      }
+
+      private getAIDialog(): Element | null {
+        const all = document.querySelectorAll("#ai-generate-dialog");
+        return all[all.length - 1] || null;
+      }
+
+      private getExportJsonTextarea(): HTMLTextAreaElement | null {
+        const all = document.querySelectorAll("#export-json-textarea");
+        return (all[all.length - 1] as HTMLTextAreaElement) || null;
+      }
+
+      private getExportJsonDialog(): Element | null {
+        const all = document.querySelectorAll("#export-json-dialog");
+        return all[all.length - 1] || null;
+      }
+
+      private openExportJsonDialog() {
+        // Generate JSON
+        const data = {
+          name: this.presetLabel?.textContent || "Theme",
+          exportedAt: new Date().toISOString(),
+          styles: this.workingStyles,
+        };
+        const json = JSON.stringify(data, null, 2);
+
+        // Populate textarea
+        const textarea = this.getExportJsonTextarea();
+        if (textarea) textarea.value = json;
+
+        // Click the hidden trigger to open the dialog
+        const triggers = document.querySelectorAll(
+          "#export-json-dialog-trigger",
+        );
+        const trigger = triggers[triggers.length - 1] as HTMLElement | null;
+        trigger?.click();
+      }
+
+      public handleExportJsonCopy() {
+        const textarea = this.getExportJsonTextarea();
+        if (!textarea) return;
+
+        this.copyToClipboard(textarea.value);
+        this.showToast("JSON copied to clipboard");
+      }
+
+      private openImportDialog() {
+        // Clear the textarea
+        const textarea = this.getImportTextarea();
+        if (textarea) textarea.value = "";
+
+        // Click the hidden trigger to open the dialog (get last one in case of duplicates)
+        const triggers = document.querySelectorAll("#import-dialog-trigger");
+        const trigger = triggers[triggers.length - 1] as HTMLElement | null;
+        trigger?.click();
+      }
+
+      public handleImport() {
+        const textarea = this.getImportTextarea();
+        if (!textarea) {
+          console.error("Import textarea not found");
+          return;
+        }
+
+        const css = textarea.value.trim();
+        if (!css) {
+          this.showToast("Please paste some CSS to import");
+          return;
+        }
+
+        try {
+          const parsed = this.parseCssVariables(css);
+          if (
+            Object.keys(parsed.light).length === 0 &&
+            Object.keys(parsed.dark).length === 0
+          ) {
+            this.showToast("No valid CSS variables found");
+            return;
+          }
+
+          // Merge parsed values into working styles
+          if (Object.keys(parsed.light).length > 0) {
+            this.workingStyles.light = {
+              ...this.workingStyles.light,
+              ...parsed.light,
+            };
+          }
+          if (Object.keys(parsed.dark).length > 0) {
+            this.workingStyles.dark = {
+              ...this.workingStyles.dark,
+              ...parsed.dark,
+            };
+          }
+
+          // Update the UI
+          this.updateColorInputs();
+          this.applyLivePreview();
+
+          // Close the dialog
+          const dialog = this.getImportDialog();
+          const closeBtn = dialog?.querySelector(
+            '[data-slot="dialog-close"]',
+          ) as HTMLElement;
+          closeBtn?.click();
+
+          const lightCount = Object.keys(parsed.light).length;
+          const darkCount = Object.keys(parsed.dark).length;
+          this.showToast(
+            `Imported ${lightCount} light + ${darkCount} dark variables`,
+          );
+        } catch (e) {
+          console.error("Import error:", e);
+          this.showToast("Failed to parse CSS");
+        }
+      }
+
+      private parseCssVariables(css: string): {
+        light: Record<string, string>;
+        dark: Record<string, string>;
+      } {
+        const result: {
+          light: Record<string, string>;
+          dark: Record<string, string>;
+        } = {
+          light: {},
+          dark: {},
+        };
+
+        // Match :root or html block for light mode
+        const rootMatch =
+          css.match(/:root\s*\{([^}]+)\}/s) || css.match(/html\s*\{([^}]+)\}/s);
+        if (rootMatch) {
+          this.extractVariables(rootMatch[1], result.light);
+        }
+
+        // Match .dark block for dark mode
+        const darkMatch =
+          css.match(/\.dark\s*\{([^}]+)\}/s) ||
+          css.match(/html\.dark\s*\{([^}]+)\}/s) ||
+          css.match(/:root\.dark\s*\{([^}]+)\}/s) ||
+          css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/s);
+        if (darkMatch) {
+          this.extractVariables(darkMatch[1], result.dark);
+        }
+
+        return result;
+      }
+
+      private extractVariables(block: string, target: Record<string, string>) {
+        // Match CSS variable declarations: --name: value;
+        const varRegex = /--([a-zA-Z0-9-]+)\s*:\s*([^;]+);/g;
+        let match;
+
+        // Valid theme tokens
+        const validTokens = [
+          "background",
+          "foreground",
+          "card",
+          "card-foreground",
+          "popover",
+          "popover-foreground",
+          "primary",
+          "primary-foreground",
+          "secondary",
+          "secondary-foreground",
+          "muted",
+          "muted-foreground",
+          "accent",
+          "accent-foreground",
+          "destructive",
+          "destructive-foreground",
+          "border",
+          "input",
+          "ring",
+          "chart-1",
+          "chart-2",
+          "chart-3",
+          "chart-4",
+          "chart-5",
+          "sidebar",
+          "sidebar-foreground",
+          "sidebar-primary",
+          "sidebar-primary-foreground",
+          "sidebar-accent",
+          "sidebar-accent-foreground",
+          "sidebar-border",
+          "sidebar-ring",
+        ];
+
+        while ((match = varRegex.exec(block)) !== null) {
+          const name = match[1].trim();
+          let value = match[2].trim();
+
+          if (!validTokens.includes(name)) continue;
+
+          // Convert space-separated HSL values (shadcn format) to hsl()
+          // Pattern: "30 33% 98%" or "345 18% 12%" (h s% l%)
+          const hslSpacePattern =
+            /^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%$/;
+          const hslMatch = value.match(hslSpacePattern);
+
+          if (hslMatch) {
+            const [, h, s, l] = hslMatch;
+            value = `hsl(${h} ${s}% ${l}%)`;
+          }
+
+          target[name] = value;
+        }
+      }
+
+      private copyToClipboard(text: string) {
+        navigator.clipboard.writeText(text).catch(() => {
+          // Fallback
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+        });
+      }
+
+      private showToast(message: string) {
+        const existing = document.querySelector(".theme-editor-toast");
+        existing?.remove();
+
+        const toast = document.createElement("div");
+        toast.className = "theme-editor-toast";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => toast.remove(), 2500);
+      }
+
+      private handleExternalPresetChange(e: Event) {
+        const detail = (e as CustomEvent).detail;
+        if (detail?.key && detail.key !== this.currentPresetId) {
+          this.loadPreset(detail.key);
+        }
+      }
+
+      public toggle() {
+        if (this.classList.contains("open")) {
+          this.close();
+        } else {
+          this.open();
+        }
+      }
+
+      public open() {
+        this.classList.add("open");
+        this.loadInitialState();
+      }
+
+      public close() {
+        this.classList.remove("open");
+      }
+
+      // AI Dialog methods
+      private openAIDialog() {
+        // Open dialog first so elements are in DOM
+        const triggers = document.querySelectorAll(
+          "#ai-generate-dialog-trigger",
+        );
+        const trigger = triggers[triggers.length - 1] as HTMLElement | null;
+        trigger?.click();
+
+        // Clear previous state after a tick (dialog needs to render)
+        setTimeout(() => {
+          const promptTextarea = this.getAIPromptTextarea();
+          if (promptTextarea) promptTextarea.value = "";
+
+          this.aiImages = [];
+          this.updateAIImagePreview();
+
+          // Hide status and reasoning (query globally for portaled elements)
+          const allStatus = document.querySelectorAll("#ai-status");
+          const allReasoning = document.querySelectorAll("#ai-reasoning");
+          const allStatusIcon = document.querySelectorAll("#ai-status-icon");
+          const allGenerateBtn = document.querySelectorAll(
+            "#ai-generate-confirm-btn",
+          );
+
+          const status = allStatus[allStatus.length - 1] as HTMLElement | null;
+          const reasoning = allReasoning[
+            allReasoning.length - 1
+          ] as HTMLElement | null;
+          const statusIcon = allStatusIcon[
+            allStatusIcon.length - 1
+          ] as HTMLElement | null;
+          const generateBtn = allGenerateBtn[
+            allGenerateBtn.length - 1
+          ] as HTMLButtonElement | null;
+
+          if (status) status.style.display = "none";
+          if (reasoning) reasoning.style.display = "none";
+
+          // Reset icon to spinner
+          if (statusIcon) {
+            statusIcon.innerHTML =
+              '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+          }
+
+          // Enable generate button
+          if (generateBtn) {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML =
+              '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+          }
+        }, 0);
+      }
+
+      private setupAIImageHandlers() {
+        // Use event delegation on document for the AI dialog elements since they're portaled
+        if (!(window as any).__aiImageHandlersSetup) {
+          (window as any).__aiImageHandlersSetup = true;
+
+          // Drag and drop
+          document.addEventListener("dragover", (e) => {
+            const dropzone = (e.target as HTMLElement).closest(
+              "#ai-images-dropzone",
+            );
+            if (dropzone) {
+              e.preventDefault();
+              dropzone.classList.add("dragover");
+            }
+          });
+
+          document.addEventListener("dragleave", (e) => {
+            const dropzone = (e.target as HTMLElement).closest(
+              "#ai-images-dropzone",
+            );
+            if (dropzone) {
+              dropzone.classList.remove("dragover");
+            }
+          });
+
+          document.addEventListener("drop", (e) => {
+            const dropzone = (e.target as HTMLElement).closest(
+              "#ai-images-dropzone",
+            );
+            if (dropzone) {
+              e.preventDefault();
+              dropzone.classList.remove("dragover");
+              const files = e.dataTransfer?.files;
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              if (files && panel) panel.handleAIImageFiles(files);
+            }
+          });
+
+          // File input change
+          document.addEventListener("change", (e) => {
+            const input = e.target as HTMLInputElement;
+            if (input.id === "ai-images-input" && input.files) {
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              if (panel) {
+                panel.handleAIImageFiles(input.files);
+                input.value = ""; // Reset for re-selection
+              }
+            }
+          });
+        }
+      }
+
+      public handleAIImageFiles(files: FileList) {
+        const maxImages = 3;
+        const validTypes = [
+          "image/png",
+          "image/jpeg",
+          "image/jpg",
+          "image/webp",
+        ];
+
+        Array.from(files).forEach((file) => {
+          if (this.aiImages.length >= maxImages) {
+            this.showToast(`Maximum ${maxImages} images allowed`);
+            return;
+          }
+
+          if (!validTypes.includes(file.type)) {
+            this.showToast("Only PNG, JPG, and WebP images are supported");
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const dataUrl = e.target?.result as string;
+            // Extract base64 data (remove data:image/...;base64, prefix)
+            const base64 = dataUrl.split(",")[1];
+            this.aiImages.push({
+              data: base64,
+              mediaType: file.type,
+            });
+            this.updateAIImagePreview();
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      private updateAIImagePreview() {
+        // Find all preview containers and update the last one (in case of portaled dialogs)
+        const allPreviews = document.querySelectorAll("#ai-images-preview");
+        const preview = allPreviews[allPreviews.length - 1] as HTMLElement;
+        if (!preview) return;
+
+        preview.innerHTML = this.aiImages
+          .map(
+            (img, i) => `
           <div class="ai-image-preview" data-index="${i}">
             <img src="data:${img.mediaType};base64,${img.data}" alt="Reference ${i + 1}" />
             <button type="button" onclick="document.getElementById('theme-editor-panel')?.removeAIImage(${i})">×</button>
           </div>
         `,
-        )
-        .join("");
-    }
-
-    public removeAIImage(index: number) {
-      this.aiImages.splice(index, 1);
-      this.updateAIImagePreview();
-    }
-
-    public async handleAIGenerate() {
-      const promptTextarea = this.getAIPromptTextarea();
-      const prompt = promptTextarea?.value.trim();
-
-      if (!prompt) {
-        this.showToast("Please enter a prompt describing your palette");
-        return;
+          )
+          .join("");
       }
 
-      // Dialog content is portaled, so query globally for elements
-      const getStatusElements = () => {
-        const allStatus = document.querySelectorAll("#ai-status");
-        const allStatusText = document.querySelectorAll("#ai-status-text");
-        const allStatusIcon = document.querySelectorAll("#ai-status-icon");
-        const allReasoning = document.querySelectorAll("#ai-reasoning");
-        const allReasoningContent = document.querySelectorAll(
-          "#ai-reasoning-content",
-        );
-        const allGenerateBtn = document.querySelectorAll(
-          "#ai-generate-confirm-btn",
-        );
-        return {
-          status: allStatus[allStatus.length - 1] as HTMLElement | null,
-          statusText: allStatusText[
-            allStatusText.length - 1
-          ] as HTMLElement | null,
-          statusIcon: allStatusIcon[
-            allStatusIcon.length - 1
-          ] as HTMLElement | null,
-          reasoning: allReasoning[
-            allReasoning.length - 1
-          ] as HTMLElement | null,
-          reasoningContent: allReasoningContent[
-            allReasoningContent.length - 1
-          ] as HTMLElement | null,
-          generateBtn: allGenerateBtn[
-            allGenerateBtn.length - 1
-          ] as HTMLButtonElement | null,
+      public removeAIImage(index: number) {
+        this.aiImages.splice(index, 1);
+        this.updateAIImagePreview();
+      }
+
+      public async handleAIGenerate() {
+        const promptTextarea = this.getAIPromptTextarea();
+        const prompt = promptTextarea?.value.trim();
+
+        if (!prompt) {
+          this.showToast("Please enter a prompt describing your palette");
+          return;
+        }
+
+        // Dialog content is portaled, so query globally for elements
+        const getStatusElements = () => {
+          const allStatus = document.querySelectorAll("#ai-status");
+          const allStatusText = document.querySelectorAll("#ai-status-text");
+          const allStatusIcon = document.querySelectorAll("#ai-status-icon");
+          const allReasoning = document.querySelectorAll("#ai-reasoning");
+          const allReasoningContent = document.querySelectorAll(
+            "#ai-reasoning-content",
+          );
+          const allGenerateBtn = document.querySelectorAll(
+            "#ai-generate-confirm-btn",
+          );
+          return {
+            status: allStatus[allStatus.length - 1] as HTMLElement | null,
+            statusText: allStatusText[
+              allStatusText.length - 1
+            ] as HTMLElement | null,
+            statusIcon: allStatusIcon[
+              allStatusIcon.length - 1
+            ] as HTMLElement | null,
+            reasoning: allReasoning[
+              allReasoning.length - 1
+            ] as HTMLElement | null,
+            reasoningContent: allReasoningContent[
+              allReasoningContent.length - 1
+            ] as HTMLElement | null,
+            generateBtn: allGenerateBtn[
+              allGenerateBtn.length - 1
+            ] as HTMLButtonElement | null,
+          };
         };
-      };
 
-      const elements = getStatusElements();
-      const { status, statusText, reasoning, reasoningContent, generateBtn } =
-        elements;
+        const elements = getStatusElements();
+        const { status, statusText, reasoning, reasoningContent, generateBtn } =
+          elements;
 
-      // Show loading state
-      if (status) {
-        status.style.display = "flex";
-      }
-      if (statusText) {
-        statusText.textContent = "Initializing...";
-      }
-      // Reset icon to spinner
-      if (elements.statusIcon) {
-        elements.statusIcon.innerHTML =
-          '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
-      }
-      if (reasoning) reasoning.style.display = "none";
-      if (generateBtn) {
-        generateBtn.disabled = true;
-        generateBtn.innerHTML =
-          '<svg class="size-4 mr-1.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generating...';
-      }
-
-      try {
-        const response = await fetch("/api/ai/generate-palette", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt,
-            images: this.aiImages.length > 0 ? this.aiImages : undefined,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || "Failed to generate palette");
+        // Show loading state
+        if (status) {
+          status.style.display = "flex";
+        }
+        if (statusText) {
+          statusText.textContent = "Initializing...";
+        }
+        // Reset icon to spinner
+        if (elements.statusIcon) {
+          elements.statusIcon.innerHTML =
+            '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+        }
+        if (reasoning) reasoning.style.display = "none";
+        if (generateBtn) {
+          generateBtn.disabled = true;
+          generateBtn.innerHTML =
+            '<svg class="size-4 mr-1.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generating...';
         }
 
-        // Read SSE stream
-        const reader = response.body?.getReader();
-        if (!reader) {
-          throw new Error("No response stream available");
-        }
+        try {
+          const response = await fetch("/api/ai/generate-palette", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              prompt,
+              images: this.aiImages.length > 0 ? this.aiImages : undefined,
+            }),
+          });
 
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let receivedPalette: any = null;
-        let receivedReasoning: string | undefined;
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || "Failed to generate palette");
+          }
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+          // Read SSE stream
+          const reader = response.body?.getReader();
+          if (!reader) {
+            throw new Error("No response stream available");
+          }
 
-          buffer += decoder.decode(value, { stream: true });
+          const decoder = new TextDecoder();
+          let buffer = "";
+          let receivedPalette: any = null;
+          let receivedReasoning: string | undefined;
 
-          // Process complete SSE messages
-          const lines = buffer.split("\n");
-          buffer = lines.pop() || ""; // Keep incomplete line in buffer
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              try {
-                const event = JSON.parse(line.slice(6));
+            buffer += decoder.decode(value, { stream: true });
 
-                // Re-query elements for each update (dialog is portaled)
-                const currentElements = getStatusElements();
+            // Process complete SSE messages
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || ""; // Keep incomplete line in buffer
 
-                // Update UI based on event type
-                switch (event.type) {
-                  case "starting":
-                    if (currentElements.statusText) {
-                      currentElements.statusText.textContent =
-                        event.message || "Analyzing...";
-                    }
-                    break;
-                  case "searching":
-                    if (currentElements.statusText) {
-                      currentElements.statusText.textContent =
-                        event.message || "Searching for brand colors...";
-                    }
-                    break;
-                  case "found_sources":
-                    if (currentElements.statusText) {
-                      currentElements.statusText.textContent =
-                        event.message || "Found sources";
-                    }
-                    break;
-                  case "generating":
-                    if (currentElements.statusText) {
-                      currentElements.statusText.textContent =
-                        event.message || "Creating your palette...";
-                    }
-                    break;
-                  case "complete":
-                    receivedPalette = event.palette;
-                    receivedReasoning = event.reasoning;
-                    // Change icon to checkmark
-                    if (currentElements.statusIcon) {
-                      currentElements.statusIcon.innerHTML =
-                        '<svg class="size-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>';
-                    }
-                    break;
-                  case "error":
-                    throw new Error(event.message || "Generation failed");
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                try {
+                  const event = JSON.parse(line.slice(6));
+
+                  // Re-query elements for each update (dialog is portaled)
+                  const currentElements = getStatusElements();
+
+                  // Update UI based on event type
+                  switch (event.type) {
+                    case "starting":
+                      if (currentElements.statusText) {
+                        currentElements.statusText.textContent =
+                          event.message || "Analyzing...";
+                      }
+                      break;
+                    case "searching":
+                      if (currentElements.statusText) {
+                        currentElements.statusText.textContent =
+                          event.message || "Searching for brand colors...";
+                      }
+                      break;
+                    case "found_sources":
+                      if (currentElements.statusText) {
+                        currentElements.statusText.textContent =
+                          event.message || "Found sources";
+                      }
+                      break;
+                    case "generating":
+                      if (currentElements.statusText) {
+                        currentElements.statusText.textContent =
+                          event.message || "Creating your palette...";
+                      }
+                      break;
+                    case "complete":
+                      receivedPalette = event.palette;
+                      receivedReasoning = event.reasoning;
+                      // Change icon to checkmark
+                      if (currentElements.statusIcon) {
+                        currentElements.statusIcon.innerHTML =
+                          '<svg class="size-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>';
+                      }
+                      break;
+                    case "error":
+                      throw new Error(event.message || "Generation failed");
+                  }
+                } catch (parseError) {
+                  // Skip malformed JSON lines
+                  console.warn("Failed to parse SSE event:", line);
                 }
-              } catch (parseError) {
-                // Skip malformed JSON lines
-                console.warn("Failed to parse SSE event:", line);
               }
             }
           }
-        }
 
-        if (!receivedPalette) {
-          throw new Error("No palette received from server");
-        }
+          if (!receivedPalette) {
+            throw new Error("No palette received from server");
+          }
 
-        // Re-query elements for final updates
-        const finalElements = getStatusElements();
+          // Re-query elements for final updates
+          const finalElements = getStatusElements();
 
-        // Show reasoning if available
-        if (
-          receivedReasoning &&
-          finalElements.reasoning &&
-          finalElements.reasoningContent
-        ) {
-          finalElements.reasoning.style.display = "block";
-          finalElements.reasoningContent.textContent = receivedReasoning;
-        }
+          // Show reasoning if available
+          if (
+            receivedReasoning &&
+            finalElements.reasoning &&
+            finalElements.reasoningContent
+          ) {
+            finalElements.reasoning.style.display = "block";
+            finalElements.reasoningContent.textContent = receivedReasoning;
+          }
 
-        // Apply the generated palette
-        if (receivedPalette.light) {
-          this.workingStyles.light = {
-            ...this.workingStyles.light,
-            ...receivedPalette.light,
+          // Apply the generated palette
+          if (receivedPalette.light) {
+            this.workingStyles.light = {
+              ...this.workingStyles.light,
+              ...receivedPalette.light,
+            };
+          }
+          if (receivedPalette.dark) {
+            this.workingStyles.dark = {
+              ...this.workingStyles.dark,
+              ...receivedPalette.dark,
+            };
+          }
+
+          // Update UI
+          this.updateColorInputs();
+          this.applyLivePreview();
+
+          // Auto-save as custom preset
+          const paletteName = receivedPalette.name || "AI Generated";
+          const newPreset: CustomPreset = {
+            id: generatePresetId(),
+            name: paletteName,
+            label: paletteName,
+            createdAt: new Date().toISOString(),
+            modifiedAt: new Date().toISOString(),
+            source: "AI",
+            styles: {
+              light: { ...this.workingStyles.light },
+              dark: { ...this.workingStyles.dark },
+            },
           };
-        }
-        if (receivedPalette.dark) {
-          this.workingStyles.dark = {
-            ...this.workingStyles.dark,
-            ...receivedPalette.dark,
-          };
-        }
+          saveCustomPreset(newPreset);
+          this.refreshPresetList();
+          this.loadPreset(newPreset.id);
 
-        // Update UI
-        this.updateColorInputs();
-        this.applyLivePreview();
+          // Update status
+          if (finalElements.statusText)
+            finalElements.statusText.textContent = `Generated "${paletteName}" palette!`;
 
-        // Auto-save as custom preset
-        const paletteName = receivedPalette.name || "AI Generated";
-        const newPreset: CustomPreset = {
-          id: generatePresetId(),
-          name: paletteName,
-          label: paletteName,
-          createdAt: new Date().toISOString(),
-          modifiedAt: new Date().toISOString(),
-          source: "AI",
-          styles: {
-            light: { ...this.workingStyles.light },
-            dark: { ...this.workingStyles.dark },
-          },
-        };
-        saveCustomPreset(newPreset);
-        this.refreshPresetList();
-        this.loadPreset(newPreset.id);
+          // Close dialog after short delay
+          setTimeout(() => {
+            const aiDialog = this.getAIDialog();
+            const closeBtn = aiDialog?.querySelector(
+              '[data-slot="dialog-close"]',
+            ) as HTMLElement;
+            closeBtn?.click();
 
-        // Update status
-        if (finalElements.statusText)
-          finalElements.statusText.textContent = `Generated "${paletteName}" palette!`;
+            this.showToast(`Saved "${paletteName}" as custom preset`);
+          }, 1500);
+        } catch (error) {
+          console.error("AI generation error:", error);
+          const message =
+            error instanceof Error ? error.message : "Generation failed";
+          this.showToast(message);
 
-        // Close dialog after short delay
-        setTimeout(() => {
-          const aiDialog = this.getAIDialog();
-          const closeBtn = aiDialog?.querySelector(
-            '[data-slot="dialog-close"]',
-          ) as HTMLElement;
-          closeBtn?.click();
-
-          this.showToast(`Saved "${paletteName}" as custom preset`);
-        }, 1500);
-      } catch (error) {
-        console.error("AI generation error:", error);
-        const message =
-          error instanceof Error ? error.message : "Generation failed";
-        this.showToast(message);
-
-        // Re-query elements for error display
-        const errorElements = getStatusElements();
-        if (errorElements.statusText)
-          errorElements.statusText.textContent = `Error: ${message}`;
-      } finally {
-        // Re-query elements for button reset
-        const resetElements = getStatusElements();
-        if (resetElements.generateBtn) {
-          resetElements.generateBtn.disabled = false;
-          resetElements.generateBtn.innerHTML =
-            '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+          // Re-query elements for error display
+          const errorElements = getStatusElements();
+          if (errorElements.statusText)
+            errorElements.statusText.textContent = `Error: ${message}`;
+        } finally {
+          // Re-query elements for button reset
+          const resetElements = getStatusElements();
+          if (resetElements.generateBtn) {
+            resetElements.generateBtn.disabled = false;
+            resetElements.generateBtn.innerHTML =
+              '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+          }
         }
       }
     }
-  }
 
-  // Safely register custom element
-  if (!customElements.get("theme-editor-panel")) {
-    customElements.define("theme-editor-panel", ThemeEditorPanel);
-  }
+    // Safely register custom element
+    if (!customElements.get("theme-editor-panel")) {
+      customElements.define("theme-editor-panel", ThemeEditorPanel);
+    }
 
-  // Global keyboard handler (Cmd/Ctrl + e to toggle)
-  if (!(window as any).__themeEditorKeyHandler) {
-    (window as any).__themeEditorKeyHandler = true;
-    document.addEventListener("keydown", (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "e") {
-        e.preventDefault();
+    // Global keyboard handler (Cmd/Ctrl + e to toggle)
+    if (!(window as any).__themeEditorKeyHandler) {
+      (window as any).__themeEditorKeyHandler = true;
+      document.addEventListener("keydown", (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === "e") {
+          e.preventDefault();
+          const panel = document.getElementById(
+            "theme-editor-panel",
+          ) as ThemeEditorPanel | null;
+          if (panel && typeof panel.toggle === "function") {
+            panel.toggle();
+          }
+        }
+      });
+    }
+
+    // FAB toggle button handler
+    const toggleBtn = document.getElementById("theme-editor-toggle-btn");
+    if (toggleBtn && !(toggleBtn as any).__handlerAdded) {
+      (toggleBtn as any).__handlerAdded = true;
+      toggleBtn.addEventListener("click", () => {
         const panel = document.getElementById(
           "theme-editor-panel",
         ) as ThemeEditorPanel | null;
         if (panel && typeof panel.toggle === "function") {
           panel.toggle();
         }
-      }
-    });
-  }
-
-  // FAB toggle button handler
-  const toggleBtn = document.getElementById("theme-editor-toggle-btn");
-  if (toggleBtn && !(toggleBtn as any).__handlerAdded) {
-    (toggleBtn as any).__handlerAdded = true;
-    toggleBtn.addEventListener("click", () => {
-      const panel = document.getElementById(
-        "theme-editor-panel",
-      ) as ThemeEditorPanel | null;
-      if (panel && typeof panel.toggle === "function") {
-        panel.toggle();
-      }
-    });
-  }
-</script>
+      });
+    }
+  </script>
+</theme-editor-panel>
