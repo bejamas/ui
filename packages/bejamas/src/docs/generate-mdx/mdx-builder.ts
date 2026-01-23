@@ -295,19 +295,16 @@ export function buildMdx(params: {
   };
 
   /**
-   * Normalize whitespace within text content between tags.
-   * This collapses newlines and multiple spaces into single spaces to prevent
-   * MDX from creating separate paragraph elements for each line of text.
+   * Normalize whitespace in preview content.
+   * This collapses ALL newlines and multiple spaces into single spaces to prevent
+   * MDX parsing issues. In particular, a '>' at the start of a line is interpreted
+   * as a block quote marker by MDX, which causes "Unexpected lazy line" errors.
    */
   const normalizeInlineWhitespace = (snippet: string): string => {
     if (!snippet) return snippet;
-    // Collapse newlines and multiple whitespace between > and < into single spaces
-    // This keeps inline text content together and prevents MDX paragraph splitting
-    return snippet.replace(/>([^<]+)</g, (match, inner) => {
-      // Normalize whitespace: collapse newlines and multiple spaces to single space
-      const normalized = inner.replace(/\s+/g, " ");
-      return `>${normalized}<`;
-    });
+    // Collapse ALL newlines and multiple whitespace into single spaces
+    // This prevents MDX from interpreting '>' at start of line as block quote
+    return snippet.replace(/\s+/g, " ").trim();
   };
 
   /**
@@ -412,7 +409,7 @@ ${descriptionMD}`.trim(),
       exampleSections.push(
         `### ${blk.title}
 
-${descriptionMD ? `${descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-t-md min-h-72 items-center [&_input]:max-w-xs">
+${descriptionMD ? `${descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-t-lg min-h-72 items-center [&_input]:max-w-xs">
 ${previewBody}
 </div>
 
@@ -472,32 +469,24 @@ ${ex.source}
 
 <DocsTabs syncKey="pkg">
   <DocsTabItem label="bun">
-
-\`\`\`bash
-bunx bejamas add ${commandName}
-\`\`\`
-
+  \`\`\`bash
+  bunx bejamas add ${commandName}
+  \`\`\`
   </DocsTabItem>
   <DocsTabItem label="npm">
-
-\`\`\`bash
-npx bejamas add ${commandName}
-\`\`\`
-
+  \`\`\`bash
+  npx bejamas add ${commandName}
+  \`\`\`
   </DocsTabItem>
   <DocsTabItem label="pnpm">
-
-\`\`\`bash
-pnpm dlx bejamas add ${commandName}
-\`\`\`
-
+  \`\`\`bash
+  pnpm dlx bejamas add ${commandName}
+  \`\`\`
   </DocsTabItem>
   <DocsTabItem label="yarn">
-
-\`\`\`bash
-yarn dlx bejamas add ${commandName}
-\`\`\`
-
+  \`\`\`bash
+  yarn dlx bejamas add ${commandName}
+  \`\`\`
   </DocsTabItem>
 </DocsTabs>`;
 
