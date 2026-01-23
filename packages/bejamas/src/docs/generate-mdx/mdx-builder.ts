@@ -285,16 +285,69 @@ export function buildMdx(params: {
     return snippet.replace(/>([^<]+)</g, (match, inner) => {
       const trimmed = inner.trim();
       if (!trimmed.length) return match;
+      // Skip if the entire trimmed content is a JSX expression
       if (/^\{[\s\S]*\}$/.test(trimmed)) return match;
+      // Skip if the content already contains JSX expressions (e.g., "Use{\" \"}" or mixed content)
+      // This prevents double-wrapping and breaking inline JSX whitespace expressions
+      if (/\{[^}]*\}/.test(inner)) return match;
       return `>{${JSON.stringify(inner)}}<`;
     });
+  };
+
+  /**
+   * Normalize whitespace within text content between tags.
+   * This collapses newlines and multiple spaces into single spaces to prevent
+   * MDX from creating separate paragraph elements for each line of text.
+   */
+  const normalizeInlineWhitespace = (snippet: string): string => {
+    if (!snippet) return snippet;
+    // Collapse newlines and multiple whitespace between > and < into single spaces
+    // This keeps inline text content together and prevents MDX paragraph splitting
+    return snippet.replace(/>([^<]+)</g, (match, inner) => {
+      // Normalize whitespace: collapse newlines and multiple spaces to single space
+      const normalized = inner.replace(/\s+/g, " ");
+      return `>${normalized}<`;
+    });
+  };
+
+  /**
+   * Convert <p> tags that contain component tags to <span> tags.
+   * This is necessary because components may render as block elements (like <div>),
+   * and HTML doesn't allow block elements inside <p>. The browser would automatically
+   * close the <p> before any block element, breaking the layout.
+   */
+  const convertParagraphsWithComponents = (snippet: string): string => {
+    if (!snippet) return snippet;
+    // Detect if a <p> tag contains component tags (PascalCase like <KbdGroup>)
+    // If so, convert <p> to <span> to allow block-level children
+    return snippet.replace(
+      /<p(\s[^>]*)?>([^]*?)<\/p>/gi,
+      (match, attrs, content) => {
+        // Check if content contains component tags (PascalCase)
+        if (/<[A-Z][A-Za-z0-9]*/.test(content)) {
+          // Convert to span with inline-block display to preserve paragraph-like behavior
+          const spanAttrs = attrs || "";
+          return `<span${spanAttrs} style="display:block">${content}</span>`;
+        }
+        return match;
+      },
+    );
   };
 
   const toMdxPreview = (snippet: string): string => {
     if (!snippet) return snippet;
     // Convert HTML comments to MDX comment blocks for preview sections
     const withoutComments = snippet.replace(/<!--([\s\S]*?)-->/g, "{/*$1*/}");
-    return wrapTextNodes(withoutComments);
+    // Convert <p> tags containing components to <span> to avoid HTML validity issues
+    const withConvertedParagraphs =
+      convertParagraphsWithComponents(withoutComments);
+    // If the snippet contains user-defined <p> elements, preserve structure as-is
+    if (/<p[\s>]/i.test(withConvertedParagraphs)) {
+      return normalizeInlineWhitespace(withConvertedParagraphs);
+    }
+    // Normalize whitespace to prevent MDX from splitting inline text into paragraphs
+    const normalized = normalizeInlineWhitespace(withConvertedParagraphs);
+    return wrapTextNodes(normalized);
   };
 
   // Split an example body into leading markdown description (paragraphs)
@@ -328,22 +381,16 @@ export function buildMdx(params: {
 
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length
-      ? `<DocsTabs>
-  <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-md min-h-[450px] items-center [&_input]:max-w-xs">
+      ? `<div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-t-lg min-h-72 items-center [&_input]:max-w-xs">
 ${toMdxPreview(primaryExampleMDX)}
-    </div>
-  </DocsTabItem>
-  <DocsTabItem label="Source">
+</div>
 
 \`\`\`astro
 ${(() => {
   const lines = buildSnippetImportLines(primaryExampleMDX);
   return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
 })()}${primaryExampleMDX}
-\`\`\`
-  </DocsTabItem>
-</DocsTabs>`
+\`\`\``
       : null;
 
   const exampleSections: string[] = [];
@@ -365,22 +412,16 @@ ${descriptionMD}`.trim(),
       exampleSections.push(
         `### ${blk.title}
 
-${descriptionMD ? `${descriptionMD}\n\n` : ""}<DocsTabs>
-  <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-md min-h-[450px] items-center [&_input]:max-w-xs">
+${descriptionMD ? `${descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-t-md min-h-72 items-center [&_input]:max-w-xs">
 ${previewBody}
-    </div>
-  </DocsTabItem>
-  <DocsTabItem label="Source">
+</div>
 
 \`\`\`astro
 ${(() => {
   const lines = buildSnippetImportLines(snippet);
   return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
 })()}${snippet}
-\`\`\`
-  </DocsTabItem>
-</DocsTabs>`,
+\`\`\``,
       );
     }
   }
@@ -389,19 +430,13 @@ ${(() => {
       exampleSections.push(
         `### ${ex.title}
 
-<DocsTabs>
-  <DocsTabItem label="Preview">
-    <div class="not-content">
-      <${ex.importName} />
-    </div>
-  </DocsTabItem>
-  <DocsTabItem label="Source">
+<div class="not-content">
+  <${ex.importName} />
+</div>
 
 \`\`\`astro
 ${ex.source}
-\`\`\`
-  </DocsTabItem>
-</DocsTabs>`,
+\`\`\``,
       );
     }
   }
@@ -434,45 +469,35 @@ ${ex.source}
   };
 
   const installationSection = `## Installation
-<DocsTabs syncKey="installation">
-   <DocsTabItem label="CLI">
 
 <DocsTabs syncKey="pkg">
   <DocsTabItem label="bun">
 
 \`\`\`bash
- bunx bejamas add ${commandName}
+bunx bejamas add ${commandName}
 \`\`\`
 
   </DocsTabItem>
   <DocsTabItem label="npm">
 
 \`\`\`bash
- npx bejamas add ${commandName}
+npx bejamas add ${commandName}
 \`\`\`
 
   </DocsTabItem>
   <DocsTabItem label="pnpm">
 
 \`\`\`bash
- pnpm dlx bejamas add ${commandName}
+pnpm dlx bejamas add ${commandName}
 \`\`\`
 
   </DocsTabItem>
   <DocsTabItem label="yarn">
 
 \`\`\`bash
- yarn dlx bejamas add ${commandName}
+yarn dlx bejamas add ${commandName}
 \`\`\`
 
-  </DocsTabItem>
-</DocsTabs>
-</DocsTabItem>
-<DocsTabItem label="Manual">
-
-\`\`\`astro
-${componentSource}
-\`\`\`
   </DocsTabItem>
 </DocsTabs>`;
 
