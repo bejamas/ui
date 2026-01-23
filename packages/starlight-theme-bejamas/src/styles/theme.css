@@ -413,14 +413,100 @@
   }
 
   .sl-bejamas-component-preview {
-    min-height: 450px;
+    min-height: calc(var(--spacing) * 72);
     padding: 1rem;
     border: 1px solid var(--border);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: var(--background);
+  }
+
+  .sl-bejamas-component-preview + .expressive-code {
+    margin-top: 0;
+  }
+
+  .sl-bejamas-component-preview + .expressive-code pre {
+    border-radius: 0;
+    border: 0;
+  }
+
+  .sl-bejamas-component-preview + .expressive-code {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border: 1px solid var(--border);
+    border-top: 0;
+  }
+
+  .expressive-code {
+    border-radius: var(--radius-lg);
+  }
+
+  .ec-collapse__toggle {
+    font-family: var(--font-sans);
+    background-color: var(--background);
+    color: var(--muted-foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.15s ease-out;
+    bottom: 50%;
+    transform: translateY(50%) translateX(-50%);
+    height: calc(var(--spacing) * 8.5);
+  }
+
+  .expressive-code .ec-collapse.ec-collapse--collapsed .ec-collapse__content {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .ec-collapse__gradient {
+    height: 100%;
+  }
+
+  .ec-collapse.ec-collapse--collapsed::after {
+    content: "";
+    --blur: 4px;
+    --stop: 50%;
+    --height: 100%;
+    position: absolute;
+    pointer-events: none;
+    width: 100%;
+    height: var(--height);
+    user-select: none;
+    -webkit-user-select: none;
+    left: 0;
+    -webkit-backdrop-filter: blur(var(--blur));
+    backdrop-filter: blur(var(--blur));
+    background: linear-gradient(to bottom, transparent, var(--background));
+    mask-image: linear-gradient(
+      to top,
+      var(--background) var(--stop),
+      transparent
+    );
+    bottom: 0;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .ec-collapse.ec-collapse--expanded .ec-collapse__toggle {
+    display: none;
+  }
+
+  .ec-collapse.ec-collapse--expanded {
+    max-height: calc(var(--spacing) * 72);
+    overflow: auto;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .ec-collapse__toggle:hover {
+    background-color: var(--muted);
+    color: var(--foreground);
+  }
+
+  .ec-collapse__icon {
+    display: none;
   }
 
   .sl-markdown-content ul:not(:where(.not-content *)) {
