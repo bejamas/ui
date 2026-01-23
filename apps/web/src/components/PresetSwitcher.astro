@@ -8,7 +8,9 @@ import {
   DropdownMenuLabel,
 } from "@bejamas/ui/components/dropdown-menu";
 import { Button } from "@bejamas/ui/components/button";
+import { ButtonGroup } from "@bejamas/ui/components/button-group";
 import { defaultPresets } from "../utils/themes/presets";
+import { SparklesIcon } from "@lucide/astro";
 
 const leanPresets = Object.fromEntries(
   Object.entries(defaultPresets).map(([key, p]) => [
@@ -23,39 +25,47 @@ const leanPresets = Object.fromEntries(
 
 <preset-switcher-wrapper data-presets={JSON.stringify(leanPresets)}>
   <DropdownMenu>
-    <Button
-      variant="outline"
-      data-slot="dropdown-menu-trigger"
-      class="preset-switcher-trigger w-[180px] justify-start gap-2"
-    >
-      {/* Current selection swatches */}
-      <div class="preset-current-swatches flex -space-x-1 items-center">
-        <div class="preset-swatch-primary size-4 rounded-full border-2 border-background" />
-        <div class="preset-swatch-accent size-4 rounded-full border-2 border-background" />
-      </div>
-      <span class="preset-current-label truncate">Select theme</span>
-      <svg
-        class="ml-auto size-4 opacity-50"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+    <ButtonGroup>
+      <Button
+        variant="outline"
+        data-slot="dropdown-menu-trigger"
+        class="preset-switcher-trigger w-[180px] justify-start gap-2"
       >
-        <path d="m6 9 6 6 6-6" />
-      </svg>
-    </Button>
+        {/* Current selection swatches */}
+        <div class="preset-current-swatches flex -space-x-1 items-center">
+          <div
+            class="preset-swatch-primary size-4 rounded-full border-2 border-background"
+          >
+          </div>
+          <div
+            class="preset-swatch-accent size-4 rounded-full border-2 border-background"
+          >
+          </div>
+        </div>
+        <span class="preset-current-label truncate">Select theme</span>
+        <svg
+          class="ml-auto size-4 opacity-50"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m6 9 6 6 6-6"></path>
+        </svg>
+      </Button>
+      <Button data-slot="new-preset" title="Create new preset">
+        <SparklesIcon class="size-4" /> AI Theme
+      </Button>
+    </ButtonGroup>
 
     <DropdownMenuContent align="start" class="w-[180px]">
       <DropdownMenuLabel>Presets</DropdownMenuLabel>
       {
         Object.entries(leanPresets).map(([key, preset]) => (
-          <DropdownMenuItem
-            data-preset-key={key}
-            class="cursor-pointer gap-2"
-          >
+          <DropdownMenuItem data-preset-key={key} class="cursor-pointer gap-2">
             {/* Light mode swatches */}
             <div class="flex -space-x-1 items-center dark:hidden">
               <div
@@ -87,7 +97,7 @@ const leanPresets = Object.fromEntries(
       <div class="custom-themes-section hidden">
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Custom Themes</DropdownMenuLabel>
-        <div class="custom-themes-list" />
+        <div class="custom-themes-list"></div>
       </div>
     </DropdownMenuContent>
   </DropdownMenu>
@@ -154,30 +164,32 @@ const leanPresets = Object.fromEntries(
     const styles = mode === "dark" ? preset.styles.dark : preset.styles.light;
 
     // Update all swatch indicators and labels
-    document
-      .querySelectorAll("preset-switcher-wrapper")
-      .forEach((wrapper) => {
-        const container = wrapper.querySelector(".preset-current-swatches");
-        const label = wrapper.querySelector(".preset-current-label");
+    document.querySelectorAll("preset-switcher-wrapper").forEach((wrapper) => {
+      const container = wrapper.querySelector(".preset-current-swatches");
+      const label = wrapper.querySelector(".preset-current-label");
 
-        if (container) {
-          const primary = container.querySelector(".preset-swatch-primary") as HTMLElement;
-          const accent = container.querySelector(".preset-swatch-accent") as HTMLElement;
+      if (container) {
+        const primary = container.querySelector(
+          ".preset-swatch-primary",
+        ) as HTMLElement;
+        const accent = container.querySelector(
+          ".preset-swatch-accent",
+        ) as HTMLElement;
 
-          if (primary) primary.style.background = styles.primary || "";
-          if (accent) accent.style.background = styles.accent || "";
-        }
+        if (primary) primary.style.background = styles.primary || "";
+        if (accent) accent.style.background = styles.accent || "";
+      }
 
-        if (label) {
-          label.textContent = preset.label;
-        }
+      if (label) {
+        label.textContent = preset.label;
+      }
 
-        // Update selected state on items
-        wrapper.querySelectorAll("[data-preset-key]").forEach((item) => {
-          const itemKey = (item as HTMLElement).dataset.presetKey;
-          item.toggleAttribute("data-selected", itemKey === key);
-        });
+      // Update selected state on items
+      wrapper.querySelectorAll("[data-preset-key]").forEach((item) => {
+        const itemKey = (item as HTMLElement).dataset.presetKey;
+        item.toggleAttribute("data-selected", itemKey === key);
       });
+    });
   }
 
   function syncAllDropdowns(key: string) {
@@ -266,9 +278,11 @@ const leanPresets = Object.fromEntries(
 
     // Listen for custom presets changes
     window.addEventListener(CUSTOM_PRESETS_CHANGE_EVENT, () => {
-      document.querySelectorAll("preset-switcher-wrapper").forEach((wrapper) => {
-        renderCustomThemes(wrapper as HTMLElement);
-      });
+      document
+        .querySelectorAll("preset-switcher-wrapper")
+        .forEach((wrapper) => {
+          renderCustomThemes(wrapper as HTMLElement);
+        });
     });
 
     // Sync when localStorage changes (cross-tab)
@@ -295,9 +309,11 @@ const leanPresets = Object.fromEntries(
         syncAllDropdowns(current);
       }
       // Re-render custom themes after page swap
-      document.querySelectorAll("preset-switcher-wrapper").forEach((wrapper) => {
-        renderCustomThemes(wrapper as HTMLElement);
-      });
+      document
+        .querySelectorAll("preset-switcher-wrapper")
+        .forEach((wrapper) => {
+          renderCustomThemes(wrapper as HTMLElement);
+        });
     });
   }
 

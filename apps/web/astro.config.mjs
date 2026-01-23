@@ -5,6 +5,8 @@ import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
 import starlightThemeBejamas from "starlight-theme-bejamas";
 import starlightPageActions from "starlight-page-actions";
+import { pluginCollapsible } from "expressive-code-collapsible";
+import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 
 import vercel from "@astrojs/vercel";
 import netlify from "@astrojs/netlify";
@@ -171,7 +173,17 @@ export default defineConfig({
           content: posthog,
         },
       ],
-      expressiveCode: true,
+      expressiveCode: {
+        plugins: [
+          pluginCollapsible({
+            previewLines: 4,
+            lineThreshold: 8,
+            expandButtonText: "View Code",
+            collapseButtonText: "Hide Code",
+          }),
+          pluginLineNumbers(),
+        ],
+      },
     }),
     mdx(),
     sitemap(),
