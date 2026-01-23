@@ -25,41 +25,41 @@ const leanPresets = Object.fromEntries(
 
 <preset-switcher-wrapper data-presets={JSON.stringify(leanPresets)}>
   <DropdownMenu>
-    <ButtonGroup>
-      <Button
-        variant="outline"
-        data-slot="dropdown-menu-trigger"
-        class="preset-switcher-trigger w-[180px] justify-start gap-2"
-      >
-        {/* Current selection swatches */}
-        <div class="preset-current-swatches flex -space-x-1 items-center">
-          <div
-            class="preset-swatch-primary size-4 rounded-full border-2 border-background"
-          >
-          </div>
-          <div
-            class="preset-swatch-accent size-4 rounded-full border-2 border-background"
-          >
-          </div>
-        </div>
-        <span class="preset-current-label truncate">Select theme</span>
-        <svg
-          class="ml-auto size-4 opacity-50"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+    <!-- <ButtonGroup> -->
+    <Button
+      variant="outline"
+      data-slot="dropdown-menu-trigger"
+      class="preset-switcher-trigger w-[180px] justify-start gap-2"
+    >
+      {/* Current selection swatches */}
+      <div class="preset-current-swatches flex -space-x-1 items-center">
+        <div
+          class="preset-swatch-primary size-4 rounded-full border-2 border-background"
         >
-          <path d="m6 9 6 6 6-6"></path>
-        </svg>
-      </Button>
-      <Button data-slot="new-preset" title="Create new preset">
+        </div>
+        <div
+          class="preset-swatch-accent size-4 rounded-full border-2 border-background"
+        >
+        </div>
+      </div>
+      <span class="preset-current-label truncate">Select theme</span>
+      <svg
+        class="ml-auto size-4 opacity-50"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m6 9 6 6 6-6"></path>
+      </svg>
+    </Button>
+    <!-- <Button data-slot="new-preset" title="Create new preset">
         <SparklesIcon class="size-4" /> AI Theme
       </Button>
-    </ButtonGroup>
+    </ButtonGroup> -->
 
     <DropdownMenuContent align="start" class="w-[180px]">
       <DropdownMenuLabel>Presets</DropdownMenuLabel>
