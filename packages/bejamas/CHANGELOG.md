@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.2.3
+
+### Patch Changes
+
+- [#25](https://github.com/bejamas/ui/pull/25) [`001ddca`](https://github.com/bejamas/ui/commit/001ddcae75e510cd5f2afca4e24af6412bf84ed9) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve source preview
+
 ## 0.2.2
 
 ### Patch Changes
