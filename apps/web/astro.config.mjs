@@ -171,7 +171,6 @@ export default defineConfig({
           content: posthog,
         },
       ],
-      expressiveCode: true,
     }),
     mdx(),
     sitemap(),

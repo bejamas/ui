@@ -1,0 +1,55 @@
+---
+/**
+ * @component KbdGroup
+ * @title Keyboard Key Group
+ * @description A container for grouping multiple keyboard keys together, typically used for displaying keyboard shortcuts.
+ * @status stable
+ *
+ * @preview
+ *
+ * <div class="flex flex-col items-center gap-4">
+ *   <KbdGroup>
+ *     <Kbd>⌘</Kbd>
+ *     <Kbd>⇧</Kbd>
+ *     <Kbd>⌥</Kbd>
+ *     <Kbd>⌃</Kbd>
+ *   </KbdGroup>
+ *   <KbdGroup>
+ *     <Kbd>Ctrl</Kbd>
+ *     <span>+</span>
+ *     <Kbd>B</Kbd>
+ *   </KbdGroup>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro
+ * ---
+ * import { Kbd, KbdGroup } from '@bejamas/ui/components/kbd';
+ * ---
+ *
+ * <KbdGroup>
+ *   <Kbd>⌘</Kbd>
+ *   <Kbd>K</Kbd>
+ * </KbdGroup>
+ * ```
+ *
+ * @props
+ * - class?: string — Additional classes for styling.
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+
+const {
+  class: className = "",
+  ...props
+} = Astro.props;
+---
+
+<div
+  data-slot="kbd-group"
+  class={cn("gap-1 inline-flex items-center", className)}
+  {...props}
+>
+  <slot />
+</div>

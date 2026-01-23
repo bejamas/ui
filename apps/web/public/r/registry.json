@@ -446,6 +446,24 @@
       ]
     },
     {
+      "name": "kbd",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/kbd/Kbd.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/kbd/KbdGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/kbd/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "label",
       "type": "registry:ui",
       "files": [
