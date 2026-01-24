@@ -162,6 +162,17 @@ export default defineConfig({
             content: "https://ui.bejamas.com/og-default.png",
           },
         },
+        {
+          tag: "script",
+          attrs: {
+            src: "https://plausible.io/js/pa-FnTta3NUzdovwg1ldYIQ3.js"
+            async: true,
+          },
+        },
+        {
+          tag: "script",
+          content: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`
+        }
         // {
         //   tag: "script",
         //   attrs: {
