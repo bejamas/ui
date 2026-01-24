@@ -52,13 +52,13 @@ export default defineConfig({
       },
       title: "bejamas/ui",
       titleDelimiter: "-",
-      social: [
-        {
-          icon: "github",
-          label: "GitHub",
-          href: "https://github.com/bejamas/ui",
-        },
-      ],
+      // social: [
+      //   {
+      //     icon: "github",
+      //     label: "GitHub",
+      //     href: "https://github.com/bejamas/ui",
+      //   },
+      // ],
       sidebar: [
         {
           label: "Getting Started",

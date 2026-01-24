@@ -584,6 +584,20 @@
       ]
     },
     {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/skeleton/Skeleton.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/skeleton/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "sticky-surface",
       "type": "registry:ui",
       "files": [
