@@ -23,6 +23,16 @@ export default defineConfig({
   env: {
     schema: {
       OPENAI_API_KEY: envField.string({ context: "server", access: "secret" }),
+      UPSTASH_REDIS_REST_URL: envField.string({
+        context: "server",
+        access: "secret",
+        optional: true,
+      }),
+      UPSTASH_REDIS_REST_TOKEN: envField.string({
+        context: "server",
+        access: "secret",
+        optional: true,
+      }),
     },
   },
   integrations: [
@@ -165,14 +175,14 @@ export default defineConfig({
         {
           tag: "script",
           attrs: {
-            src: "https://plausible.io/js/pa-FnTta3NUzdovwg1ldYIQ3.js"
+            src: "https://plausible.io/js/pa-FnTta3NUzdovwg1ldYIQ3.js",
             async: true,
           },
         },
         {
           tag: "script",
-          content: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`
-        }
+          content: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`,
+        },
         // {
         //   tag: "script",
         //   attrs: {
