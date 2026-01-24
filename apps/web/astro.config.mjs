@@ -162,14 +162,14 @@ export default defineConfig({
             content: "https://ui.bejamas.com/og-default.png",
           },
         },
-        {
-          tag: "script",
-          attrs: {
-            type: "text/javascript",
-            id: "posthog-js",
-          },
-          content: posthog,
-        },
+        // {
+        //   tag: "script",
+        //   attrs: {
+        //     type: "text/javascript",
+        //     id: "posthog-js",
+        //   },
+        //   content: posthog,
+        // },
       ],
     }),
     mdx(),
