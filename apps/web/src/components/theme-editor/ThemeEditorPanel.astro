@@ -5,6 +5,7 @@
  */
 
 import { Button } from "@bejamas/ui/components/button";
+import { Kbd } from "@bejamas/ui/components/kbd";
 import {
   Dialog,
   DialogContent,
@@ -24,10 +25,17 @@ import {
 import { Input } from "@bejamas/ui/components/input";
 import { Label } from "@bejamas/ui/components/label";
 import {
+  Select,
+  SelectControl,
+  SelectIndicator,
+  SelectOption,
+} from "@bejamas/ui/components/select";
+import {
   Tabs,
   TabsList,
   TabsTrigger,
   TabsIndicator,
+  TabsContent,
 } from "@bejamas/ui/components/tabs";
 import { Textarea } from "@bejamas/ui/components/textarea";
 import {
@@ -126,7 +134,7 @@ const presetKeys = Object.keys(defaultPresets);
       <span class="header-title">Theme Editor</span>
     </div>
     <div class="header-actions">
-      <span class="shortcut-hint">⌘E</span>
+      <Kbd>⌘E</Kbd>
       <Button variant="ghost" size="icon-sm" data-slot="close" class="size-6">
         <X class="size-4" />
       </Button>
@@ -272,7 +280,7 @@ const presetKeys = Object.keys(defaultPresets);
   <!-- Footer Actions -->
   <div class="panel-footer">
     <div class="footer-left">
-      <Tooltip>
+      <Tooltip delay={400}>
         <TooltipTrigger asChild>
           <Button
             variant="outline"
@@ -287,38 +295,39 @@ const presetKeys = Object.keys(defaultPresets);
           </TooltipContent>
         </TooltipTrigger>
       </Tooltip>
-      <DropdownMenu side="top">
-        <DropdownMenuTrigger variant="outline" size="sm">
-          <Upload class="size-3.5" />
-        </DropdownMenuTrigger>
 
-        <DropdownMenuContent data-panel-import-dropdown>
-          <DropdownMenuItem data-action="import-css"
-            >Import CSS</DropdownMenuItem
-          >
-        </DropdownMenuContent>
-        <DropdownMenu>
-          <DropdownMenuTrigger variant="outline" size="sm">
-            <Download class="size-3.5" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent data-panel-export-dropdown>
-            <DropdownMenuItem data-action="export-json"
-              >Export JSON</DropdownMenuItem
-            >
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </DropdownMenu>
-      <div class="footer-right">
-        <Button size="sm" data-slot="ai-generate" title="AI Generate Palette">
-          <Sparkles class="size-3.5" />
-          AI
-        </Button>
+      <Tooltip delay={400}>
+        <TooltipTrigger asChild>
+          <Button variant="outline" size="sm" data-action="import-css">
+            <Upload class="size-3.5" />
+          </Button>
+          <TooltipContent>
+            <p>Import CSS</p>
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
 
-        <Button size="sm" data-slot="save">
-          <Save class="size-3.5" />
-          Save
-        </Button>
-      </div>
+      <Tooltip delay={400}>
+        <TooltipTrigger asChild>
+          <Button variant="outline" size="sm" data-action="export-json">
+            Export
+          </Button>
+          <TooltipContent>
+            <p>Export Theme</p>
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
+
+      <Button size="sm" data-slot="save" variant="outline">
+        <!-- <Save class="size-3.5" /> -->
+        Save
+      </Button>
+    </div>
+    <div class="footer-right ml-auto">
+      <Button size="sm" data-slot="ai-generate" title="AI Generate Palette">
+        <Sparkles class="size-3.5" />
+        AI
+      </Button>
     </div>
 
     <!-- Import Dialog -->
@@ -350,27 +359,56 @@ const presetKeys = Object.keys(defaultPresets);
       </DialogContent>
     </Dialog>
 
-    <!-- Export JSON Dialog -->
+    <!-- Export Dialog -->
     <Dialog id="export-json-dialog">
       <button
         type="button"
         data-slot="dialog-trigger"
         id="export-json-dialog-trigger"
         style="display: none;"></button>
-      <DialogContent class="sm:max-w-lg export-dialog-content">
+      <DialogContent class="sm:max-w-2xl w-full export-dialog-content">
         <DialogHeader>
-          <DialogTitle>Export JSON</DialogTitle>
+          <DialogTitle>Export</DialogTitle>
           <DialogDescription>
-            Copy the JSON below to save your theme configuration.
+            Copy the theme configuration in your preferred format.
           </DialogDescription>
         </DialogHeader>
-        <div class="export-textarea-wrapper mt-4">
-          <Textarea
-            id="export-json-textarea"
-            class="font-mono text-xs min-h-[300px]"
-            readonly
-          />
-        </div>
+        <Tabs
+          defaultValue="json"
+          class="export-type-tabs mt-4"
+          id="export-type-tabs"
+        >
+          <div class="export-options-row flex items-center gap-3">
+            <TabsList class="h-9">
+              <TabsTrigger value="json" class="text-sm px-2">JSON</TabsTrigger>
+              <TabsTrigger value="css" class="text-sm px-2">CSS</TabsTrigger>
+              <TabsIndicator />
+            </TabsList>
+            <div class="flex items-center gap-2 ml-auto">
+              <Label
+                for="export-format-select"
+                class="text-sm whitespace-nowrap">Colors:</Label
+              >
+              <Select>
+                <SelectIndicator />
+                <SelectControl id="export-format-select" size="sm">
+                  <SelectOption value="hsl">HSL</SelectOption>
+                  <SelectOption value="rgb">RGB</SelectOption>
+                  <SelectOption value="hex">HEX</SelectOption>
+                  <SelectOption value="oklch" selected>OKLCH</SelectOption>
+                </SelectControl>
+              </Select>
+            </div>
+          </div>
+          <TabsContent value="json" class="mt-0">
+            <pre
+              class="export-code-block max-w-[622px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4"><code id="export-code-json" class="language-json" /></pre>
+          </TabsContent>
+          <TabsContent value="css" class="mt-0">
+            <pre
+              class="export-code-block max-w-[622px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4"><code id="export-code-css" class="language-css" /></pre>
+          </TabsContent>
+        </Tabs>
         <DialogFooter>
           <Button variant="outline" data-slot="dialog-close">Close</Button>
           <Button id="export-json-copy-btn">Copy to Clipboard</Button>
@@ -625,6 +663,179 @@ const presetKeys = Object.keys(defaultPresets);
       z-index: 10001;
     }
 
+    /* Export Dialog */
+    .export-dialog-content {
+      z-index: 10001;
+    }
+
+    .export-code-block {
+      white-space: pre;
+      word-wrap: normal;
+      overflow-x: auto;
+      tab-size: 2;
+      line-height: 1.6;
+      background: var(--muted) !important;
+      margin: 0;
+    }
+
+    .export-code-block code {
+      display: block;
+      font-family:
+        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+      background: transparent !important;
+    }
+
+    /* Prism light theme (default) */
+    .export-code-block code[class*="language-"],
+    .export-code-block pre[class*="language-"] {
+      color: black;
+      background: none;
+      text-shadow: 0 1px white;
+    }
+
+    .export-code-block .token.comment,
+    .export-code-block .token.prolog,
+    .export-code-block .token.doctype,
+    .export-code-block .token.cdata {
+      color: slategray;
+    }
+
+    .export-code-block .token.punctuation {
+      color: #999;
+    }
+
+    .export-code-block .token.namespace {
+      opacity: 0.7;
+    }
+
+    .export-code-block .token.property,
+    .export-code-block .token.tag,
+    .export-code-block .token.boolean,
+    .export-code-block .token.number,
+    .export-code-block .token.constant,
+    .export-code-block .token.symbol,
+    .export-code-block .token.deleted {
+      color: #905;
+    }
+
+    .export-code-block .token.selector,
+    .export-code-block .token.attr-name,
+    .export-code-block .token.string,
+    .export-code-block .token.char,
+    .export-code-block .token.builtin,
+    .export-code-block .token.inserted {
+      color: #690;
+    }
+
+    .export-code-block .token.operator,
+    .export-code-block .token.entity,
+    .export-code-block .token.url,
+    .export-code-block .language-css .token.string,
+    .export-code-block .style .token.string {
+      color: #9a6e3a;
+    }
+
+    .export-code-block .token.atrule,
+    .export-code-block .token.attr-value,
+    .export-code-block .token.keyword {
+      color: #07a;
+    }
+
+    .export-code-block .token.function,
+    .export-code-block .token.class-name {
+      color: #dd4a68;
+    }
+
+    .export-code-block .token.regex,
+    .export-code-block .token.important,
+    .export-code-block .token.variable {
+      color: #e90;
+    }
+
+    .export-code-block .token.important,
+    .export-code-block .token.bold {
+      font-weight: bold;
+    }
+
+    .export-code-block .token.italic {
+      font-style: italic;
+    }
+
+    /* Prism dark theme */
+    .dark .export-code-block code[class*="language-"],
+    .dark .export-code-block pre[class*="language-"] {
+      color: white;
+      background: none;
+      text-shadow: 0 -0.1em 0.2em black;
+    }
+
+    .dark .export-code-block .token.comment,
+    .dark .export-code-block .token.prolog,
+    .dark .export-code-block .token.doctype,
+    .dark .export-code-block .token.cdata {
+      color: hsl(30, 20%, 50%);
+    }
+
+    .dark .export-code-block .token.punctuation {
+      opacity: 0.7;
+    }
+
+    .dark .export-code-block .token.namespace {
+      opacity: 0.7;
+    }
+
+    .dark .export-code-block .token.property,
+    .dark .export-code-block .token.tag,
+    .dark .export-code-block .token.boolean,
+    .dark .export-code-block .token.number,
+    .dark .export-code-block .token.constant,
+    .dark .export-code-block .token.symbol {
+      color: hsl(350, 40%, 70%);
+    }
+
+    .dark .export-code-block .token.selector,
+    .dark .export-code-block .token.attr-name,
+    .dark .export-code-block .token.string,
+    .dark .export-code-block .token.char,
+    .dark .export-code-block .token.builtin,
+    .dark .export-code-block .token.inserted {
+      color: hsl(75, 70%, 60%);
+    }
+
+    .dark .export-code-block .token.operator,
+    .dark .export-code-block .token.entity,
+    .dark .export-code-block .token.url,
+    .dark .export-code-block .language-css .token.string,
+    .dark .export-code-block .style .token.string,
+    .dark .export-code-block .token.variable {
+      color: hsl(40, 90%, 60%);
+    }
+
+    .dark .export-code-block .token.atrule,
+    .dark .export-code-block .token.attr-value,
+    .dark .export-code-block .token.keyword {
+      color: hsl(350, 40%, 70%);
+    }
+
+    .dark .export-code-block .token.regex,
+    .dark .export-code-block .token.important {
+      color: #e90;
+    }
+
+    .dark .export-code-block .token.important,
+    .dark .export-code-block .token.bold {
+      font-weight: bold;
+    }
+
+    .dark .export-code-block .token.italic {
+      font-style: italic;
+    }
+
+    .dark .export-code-block .token.deleted {
+      color: red;
+    }
+
     /* Toast notification */
     .theme-editor-toast {
       position: fixed;
@@ -873,6 +1084,10 @@ const presetKeys = Object.keys(defaultPresets);
       type CustomPreset,
     } from "../../utils/themes/custom-presets-store";
     import type { ThemePreset, ThemeStyleProps } from "../../utils/types/theme";
+    // Prism.js for syntax highlighting
+    import Prism from "prismjs";
+    import "prismjs/components/prism-json";
+    import "prismjs/components/prism-css";
 
     class ThemeEditorPanel extends HTMLElement {
       private isDragging = false;
@@ -936,6 +1151,8 @@ const presetKeys = Object.keys(defaultPresets);
         this.importDropdown = this.querySelector(
           "[data-panel-import-dropdown]",
         );
+        this.importCssBtn = this.querySelector('[data-action="import-css"]');
+        this.exportJsonBtn = this.querySelector('[data-action="export-json"]');
         this.exportDropdown = this.querySelector(
           "[data-panel-export-dropdown]",
         );
@@ -987,9 +1204,15 @@ const presetKeys = Object.keys(defaultPresets);
           e.preventDefault();
           this.toggle();
         }
-        // Escape to close
+        // Escape to close (but not if a dialog is open)
         if (e.key === "Escape" && this.classList.contains("open")) {
-          this.close();
+          // Check if any dialog is currently open
+          const openDialog = document.querySelector(
+            '[data-slot="dialog-overlay"][data-state="open"]',
+          );
+          if (!openDialog) {
+            this.close();
+          }
         }
       }
 
@@ -1097,26 +1320,35 @@ const presetKeys = Object.keys(defaultPresets);
         this.saveBtn?.addEventListener("click", () => this.savePreset());
 
         // Import dropdown
-        this.importDropdown?.addEventListener("click", (e) => {
-          const item = (e.target as HTMLElement).closest("[data-action]");
-          if (item) {
-            const action = (item as HTMLElement).dataset.action;
-            if (action === "import-css") {
-              this.openImportDialog();
-            }
-          }
-        });
+        // this.importDropdown?.addEventListener("click", (e) => {
+        //   const item = (e.target as HTMLElement).closest("[data-action]");
+        //   if (item) {
+        //     const action = (item as HTMLElement).dataset.action;
+        //     if (action === "import-css") {
+        //       this.openImportDialog();
+        //     }
+        //   }
+        // });
+
+        this.importCssBtn?.addEventListener("click", () =>
+          this.openImportDialog(),
+        );
+
+        // Export JSON button
+        this.exportJsonBtn?.addEventListener("click", () =>
+          this.openExportJsonDialog(),
+        );
 
         // Export dropdown
-        this.exportDropdown?.addEventListener("click", (e) => {
-          const item = (e.target as HTMLElement).closest("[data-action]");
-          if (item) {
-            const action = (item as HTMLElement).dataset.action;
-            if (action === "export-json") {
-              this.openExportJsonDialog();
-            }
-          }
-        });
+        // this.exportDropdown?.addEventListener("click", (e) => {
+        //   const item = (e.target as HTMLElement).closest("[data-action]");
+        //   if (item) {
+        //     const action = (item as HTMLElement).dataset.action;
+        //     if (action === "export-json") {
+        //       this.openExportJsonDialog();
+        //     }
+        //   }
+        // });
 
         // AI dialog confirm button - use event delegation
         if (!(window as any).__aiGenerateHandler) {
@@ -1170,6 +1402,44 @@ const presetKeys = Object.keys(defaultPresets);
           document.addEventListener(
             "click",
             (window as any).__exportJsonCopyHandler,
+          );
+        }
+
+        // Export format select change - use event delegation
+        if (!(window as any).__exportFormatChangeHandler) {
+          (window as any).__exportFormatChangeHandler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target.closest("#export-format-select")) {
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              panel?.updateExportContent();
+            }
+          };
+          document.addEventListener(
+            "change",
+            (window as any).__exportFormatChangeHandler,
+          );
+        }
+
+        // Export type tabs change - use event delegation
+        if (!(window as any).__exportTypeTabsHandler) {
+          (window as any).__exportTypeTabsHandler = (e: Event) => {
+            const customEvent = e as CustomEvent;
+            const target = e.target as HTMLElement;
+            if (
+              target.closest("#export-type-tabs") &&
+              customEvent.detail?.value
+            ) {
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              panel?.setExportType(customEvent.detail.value as "json" | "css");
+            }
+          };
+          document.addEventListener(
+            "tabs:change",
+            (window as any).__exportTypeTabsHandler,
           );
         }
       }
@@ -1518,9 +1788,14 @@ const presetKeys = Object.keys(defaultPresets);
         return all[all.length - 1] || null;
       }
 
-      private getExportJsonTextarea(): HTMLTextAreaElement | null {
-        const all = document.querySelectorAll("#export-json-textarea");
-        return (all[all.length - 1] as HTMLTextAreaElement) || null;
+      private getExportCodeJson(): HTMLElement | null {
+        const all = document.querySelectorAll("#export-code-json");
+        return (all[all.length - 1] as HTMLElement) || null;
+      }
+
+      private getExportCodeCss(): HTMLElement | null {
+        const all = document.querySelectorAll("#export-code-css");
+        return (all[all.length - 1] as HTMLElement) || null;
       }
 
       private getExportJsonDialog(): Element | null {
@@ -1528,18 +1803,250 @@ const presetKeys = Object.keys(defaultPresets);
         return all[all.length - 1] || null;
       }
 
-      private openExportJsonDialog() {
-        // Generate JSON
-        const data = {
-          name: this.presetLabel?.textContent || "Theme",
-          exportedAt: new Date().toISOString(),
-          styles: this.workingStyles,
-        };
-        const json = JSON.stringify(data, null, 2);
+      private getExportFormatSelect(): HTMLSelectElement | null {
+        const all = document.querySelectorAll("#export-format-select");
+        return (all[all.length - 1] as HTMLSelectElement) || null;
+      }
 
-        // Populate textarea
-        const textarea = this.getExportJsonTextarea();
-        if (textarea) textarea.value = json;
+      private getExportTypeTabs(): HTMLElement | null {
+        const all = document.querySelectorAll("#export-type-tabs");
+        return (all[all.length - 1] as HTMLElement) || null;
+      }
+
+      private currentExportType: "json" | "css" = "json";
+
+      private convertColor(
+        color: string,
+        format: "oklch" | "hsl" | "rgb" | "hex",
+      ): string {
+        if (!color) return color;
+
+        // Parse OKLCH color: oklch(L C H) or oklch(L C H / A)
+        const oklchMatch = color.match(
+          /oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/i,
+        );
+
+        if (!oklchMatch) {
+          // If not OKLCH, return as-is
+          return color;
+        }
+
+        const L = parseFloat(oklchMatch[1]);
+        const C = parseFloat(oklchMatch[2]);
+        const H = parseFloat(oklchMatch[3]);
+        const alpha = oklchMatch[4] ? parseFloat(oklchMatch[4]) : 1;
+
+        if (format === "oklch") {
+          return color; // Already OKLCH
+        }
+
+        // Convert OKLCH to sRGB
+        // Using simplified conversion (approximate)
+        const hRad = (H * Math.PI) / 180;
+        const a = C * Math.cos(hRad);
+        const b = C * Math.sin(hRad);
+
+        // OKLCH to OKLab
+        const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+        const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+        const s_ = L - 0.0894841775 * a - 1.291485548 * b;
+
+        const l = l_ * l_ * l_;
+        const m = m_ * m_ * m_;
+        const s = s_ * s_ * s_;
+
+        // OKLab to linear sRGB
+        let rLin = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+        let gLin = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+        let bLin = -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s;
+
+        // Linear to sRGB
+        const toSrgb = (c: number) => {
+          c = Math.max(0, Math.min(1, c));
+          return c <= 0.0031308
+            ? 12.92 * c
+            : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+        };
+
+        let r = Math.round(toSrgb(rLin) * 255);
+        let g = Math.round(toSrgb(gLin) * 255);
+        let bl = Math.round(toSrgb(bLin) * 255);
+
+        // Clamp values
+        r = Math.max(0, Math.min(255, r));
+        g = Math.max(0, Math.min(255, g));
+        bl = Math.max(0, Math.min(255, bl));
+
+        if (format === "hex") {
+          const toHex = (n: number) => n.toString(16).padStart(2, "0");
+          if (alpha < 1) {
+            return `#${toHex(r)}${toHex(g)}${toHex(bl)}${toHex(Math.round(alpha * 255))}`;
+          }
+          return `#${toHex(r)}${toHex(g)}${toHex(bl)}`;
+        }
+
+        if (format === "rgb") {
+          if (alpha < 1) {
+            return `rgb(${r} ${g} ${bl} / ${alpha})`;
+          }
+          return `rgb(${r} ${g} ${bl})`;
+        }
+
+        if (format === "hsl") {
+          // RGB to HSL
+          const rNorm = r / 255;
+          const gNorm = g / 255;
+          const bNorm = bl / 255;
+
+          const max = Math.max(rNorm, gNorm, bNorm);
+          const min = Math.min(rNorm, gNorm, bNorm);
+          const lum = (max + min) / 2;
+
+          let hue = 0;
+          let sat = 0;
+
+          if (max !== min) {
+            const d = max - min;
+            sat = lum > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+            switch (max) {
+              case rNorm:
+                hue = ((gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0)) / 6;
+                break;
+              case gNorm:
+                hue = ((bNorm - rNorm) / d + 2) / 6;
+                break;
+              case bNorm:
+                hue = ((rNorm - gNorm) / d + 4) / 6;
+                break;
+            }
+          }
+
+          const hDeg = Math.round(hue * 360);
+          const sPct = Math.round(sat * 100);
+          const lPct = Math.round(lum * 100);
+
+          if (alpha < 1) {
+            return `hsl(${hDeg} ${sPct}% ${lPct}% / ${alpha})`;
+          }
+          return `hsl(${hDeg} ${sPct}% ${lPct}%)`;
+        }
+
+        return color;
+      }
+
+      private convertStyleColors(
+        styles: { light: Record<string, string>; dark: Record<string, string> },
+        format: "oklch" | "hsl" | "rgb" | "hex",
+      ): { light: Record<string, string>; dark: Record<string, string> } {
+        const convertObj = (obj: Record<string, string>) => {
+          const result: Record<string, string> = {};
+          for (const [key, value] of Object.entries(obj)) {
+            result[key] = this.convertColor(value, format);
+          }
+          return result;
+        };
+
+        return {
+          light: convertObj(styles.light),
+          dark: convertObj(styles.dark),
+        };
+      }
+
+      public updateExportContent() {
+        const select = this.getExportFormatSelect();
+        const format = (select?.value || "oklch") as
+          | "oklch"
+          | "hsl"
+          | "rgb"
+          | "hex";
+
+        const convertedStyles = this.convertStyleColors(
+          this.workingStyles,
+          format,
+        );
+
+        const jsonEl = this.getExportCodeJson();
+        const cssEl = this.getExportCodeCss();
+
+        // Generate JSON content
+        if (jsonEl) {
+          const data = {
+            name: this.presetLabel?.textContent || "Theme",
+            exportedAt: new Date().toISOString(),
+            styles: convertedStyles,
+          };
+          const jsonStr = JSON.stringify(data, null, 2);
+          jsonEl.textContent = jsonStr;
+          // Apply Prism highlighting
+          if (typeof Prism !== "undefined") {
+            jsonEl.innerHTML = Prism.highlight(
+              jsonStr,
+              Prism.languages.json,
+              "json",
+            );
+          }
+        }
+
+        // Generate CSS content
+        if (cssEl) {
+          const cssStr = this.generateCssExport(convertedStyles);
+          cssEl.textContent = cssStr;
+          // Apply Prism highlighting
+          if (typeof Prism !== "undefined") {
+            cssEl.innerHTML = Prism.highlight(
+              cssStr,
+              Prism.languages.css,
+              "css",
+            );
+          }
+        }
+      }
+
+      private generateCssExport(styles: {
+        light: Record<string, string>;
+        dark: Record<string, string>;
+      }): string {
+        const lines: string[] = [];
+        lines.push(
+          "/* Theme: " + (this.presetLabel?.textContent || "Theme") + " */",
+        );
+        lines.push("");
+
+        // Light mode (root)
+        lines.push(":root {");
+        for (const [key, value] of Object.entries(styles.light)) {
+          lines.push(`  --${key}: ${value};`);
+        }
+        lines.push("}");
+        lines.push("");
+
+        // Dark mode
+        lines.push(".dark {");
+        for (const [key, value] of Object.entries(styles.dark)) {
+          lines.push(`  --${key}: ${value};`);
+        }
+        lines.push("}");
+
+        return lines.join("\n");
+      }
+
+      private openExportJsonDialog() {
+        // Reset format to OKLCH and type to JSON
+        const select = this.getExportFormatSelect();
+        if (select) select.value = "oklch";
+        this.currentExportType = "json";
+
+        // Reset tabs UI to JSON
+        const tabs = this.getExportTypeTabs();
+        if (tabs) {
+          tabs.dispatchEvent(
+            new CustomEvent("tabs:select", { detail: { value: "json" } }),
+          );
+        }
+
+        // Generate initial content
+        this.updateExportContent();
 
         // Click the hidden trigger to open the dialog
         const triggers = document.querySelectorAll(
@@ -1550,11 +2057,23 @@ const presetKeys = Object.keys(defaultPresets);
       }
 
       public handleExportJsonCopy() {
-        const textarea = this.getExportJsonTextarea();
-        if (!textarea) return;
+        const codeEl =
+          this.currentExportType === "json"
+            ? this.getExportCodeJson()
+            : this.getExportCodeCss();
+        if (!codeEl) return;
 
-        this.copyToClipboard(textarea.value);
-        this.showToast("JSON copied to clipboard");
+        this.copyToClipboard(codeEl.textContent || "");
+        this.showToast(
+          this.currentExportType === "json"
+            ? "JSON copied to clipboard"
+            : "CSS copied to clipboard",
+        );
+      }
+
+      public setExportType(type: "json" | "css") {
+        this.currentExportType = type;
+        // No need to re-render, tabs handle visibility
       }
 
       private openImportDialog() {
