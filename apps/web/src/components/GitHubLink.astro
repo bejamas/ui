@@ -21,14 +21,6 @@ try {
 const githubUrl = "https://github.com/bejamas/ui";
 ---
 
-<Button
-  as="a"
-  variant="outline"
-  href={githubUrl}
-  target="_blank"
-  rel="noopener noreferrer"
-  class="gap-1.5 w-16"
->
-  <Github class="size-4" />
+<span class="w-8.5 items-center flex justify-center text-center">
   {starCount !== null ? starCount.toLocaleString() : "GitHub"}
-</Button>
+</span>

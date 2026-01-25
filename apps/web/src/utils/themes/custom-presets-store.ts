@@ -37,7 +37,28 @@ export function getCustomPresets(): Record<string, CustomPreset> {
 }
 
 /**
- * Save a custom preset to localStorage
+ * Sync a custom preset to Redis for server-side CSS generation
+ * This is fire-and-forget - we don't block on the result
+ */
+async function syncToRedis(action: "save" | "delete", preset?: CustomPreset, id?: string): Promise<void> {
+  try {
+    const body = action === "save" 
+      ? { action, theme: preset }
+      : { action, id };
+    
+    await fetch("/api/themes/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    // Silently fail - Redis sync is optional enhancement
+    console.debug("Redis sync failed (non-critical):", e);
+  }
+}
+
+/**
+ * Save a custom preset to localStorage and sync to Redis
  */
 export function saveCustomPreset(preset: CustomPreset): void {
   if (typeof localStorage === "undefined") return;
@@ -61,6 +82,11 @@ export function saveCustomPreset(preset: CustomPreset): void {
 
     localStorage.setItem(CUSTOM_PRESETS_KEY, JSON.stringify(store));
 
+    // Sync to Redis for server-side CSS generation (fire-and-forget)
+    if (preset.id.startsWith("custom-")) {
+      syncToRedis("save", updated);
+    }
+
     // Dispatch event to notify listeners
     window.dispatchEvent(
       new CustomEvent(CUSTOM_PRESETS_CHANGE_EVENT, {
@@ -73,7 +99,7 @@ export function saveCustomPreset(preset: CustomPreset): void {
 }
 
 /**
- * Delete a custom preset from localStorage
+ * Delete a custom preset from localStorage and Redis
  */
 export function deleteCustomPreset(id: string): void {
   if (typeof localStorage === "undefined") return;
@@ -88,6 +114,11 @@ export function deleteCustomPreset(id: string): void {
     };
 
     localStorage.setItem(CUSTOM_PRESETS_KEY, JSON.stringify(store));
+
+    // Sync deletion to Redis (fire-and-forget)
+    if (id.startsWith("custom-")) {
+      syncToRedis("delete", undefined, id);
+    }
 
     // Dispatch event to notify listeners
     window.dispatchEvent(

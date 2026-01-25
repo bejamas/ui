@@ -348,6 +348,18 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
     const initial = getStoredPreset() || PRESET_KEYS[0];
     if (initial) updateUIForPreset(initial);
 
+    // Helper to get swatches from a preset
+    const getSwatches = (key) => {
+      const preset = PRESETS[key];
+      if (!preset) return undefined;
+      return {
+        primaryLight: preset.styles.light?.primary || "#000",
+        accentLight: preset.styles.light?.accent || "#666",
+        primaryDark: preset.styles.dark?.primary || "#fff",
+        accentDark: preset.styles.dark?.accent || "#888",
+      };
+    };
+
     // Prev/Next buttons
     const previousPreset = document.getElementById("previous-preset");
     const nextPreset = document.getElementById("next-preset");
@@ -359,7 +371,9 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
         const currentIndex = index === -1 ? 0 : index;
         const previousIndex =
           (currentIndex - 1 + PRESET_KEYS.length) % PRESET_KEYS.length;
-        setStoredPreset(PRESET_KEYS[previousIndex]);
+        const key = PRESET_KEYS[previousIndex];
+        const preset = PRESETS[key];
+        setStoredPreset(key, getSwatches(key), preset?.label || key);
       });
     }
 
@@ -369,7 +383,9 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
         const index = PRESET_KEYS.indexOf(current);
         const currentIndex = index === -1 ? 0 : index;
         const nextIndex = (currentIndex + 1) % PRESET_KEYS.length;
-        setStoredPreset(PRESET_KEYS[nextIndex]);
+        const key = PRESET_KEYS[nextIndex];
+        const preset = PRESETS[key];
+        setStoredPreset(key, getSwatches(key), preset?.label || key);
       });
     }
   });

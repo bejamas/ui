@@ -57,6 +57,9 @@ import {
   Loader2,
   ImagePlus,
   ChevronDown,
+  Share2,
+  Check,
+  Link2,
 } from "@lucide/astro";
 import { defaultPresets } from "../../utils/themes/presets";
 import ColorInput from "./ColorInput.astro";
@@ -318,6 +321,17 @@ const presetKeys = Object.keys(defaultPresets);
         </TooltipTrigger>
       </Tooltip>
 
+      <Tooltip delay={400}>
+        <TooltipTrigger asChild>
+          <Button variant="outline" size="sm" data-action="share-theme">
+            <Share2 class="size-3.5" />
+          </Button>
+          <TooltipContent>
+            <p>Share Theme</p>
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
+
       <Button size="sm" data-slot="save" variant="outline">
         <!-- <Save class="size-3.5" /> -->
         Save
@@ -490,6 +504,71 @@ const presetKeys = Object.keys(defaultPresets);
             <Sparkles class="size-4" />
             Generate
           </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <!-- Share Dialog -->
+    <Dialog id="share-dialog">
+      <button
+        type="button"
+        data-slot="dialog-trigger"
+        id="share-dialog-trigger"
+        style="display: none;"></button>
+      <DialogContent class="sm:max-w-md share-dialog-content">
+        <DialogHeader>
+          <DialogTitle>
+            <span class="flex items-center gap-2">
+              <Share2 class="size-5 text-accent" />
+              Share Theme
+            </span>
+          </DialogTitle>
+          <DialogDescription>
+            Share this theme with others via a link. Anyone with the link can preview and install your theme.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div class="share-form">
+          <div class="share-status" id="share-status">
+            <span id="share-status-icon" class="share-status-icon">
+              <Loader2 class="size-4 animate-spin" />
+            </span>
+            <span id="share-status-text">Generating share link...</span>
+          </div>
+
+          <div class="share-result" id="share-result" style="display: none;">
+            <Label for="share-url-input" class="text-sm font-medium mb-2 block">
+              Share URL
+            </Label>
+            <div class="flex gap-2">
+              <Input
+                type="text"
+                id="share-url-input"
+                class="font-mono text-sm flex-1"
+                readonly
+              />
+              <Button id="share-copy-btn" variant="outline" size="icon" title="Copy to clipboard">
+                <Copy class="size-4" id="share-copy-icon" />
+                <Check class="size-4 hidden" id="share-copied-icon" />
+              </Button>
+            </div>
+            <p class="text-xs text-muted-foreground mt-2">
+              This link will expire after 30 days of inactivity.
+            </p>
+          </div>
+
+          <div class="share-error" id="share-error" style="display: none;">
+            <p class="text-sm text-destructive" id="share-error-text">
+              Failed to create share link. Please try again.
+            </p>
+            <Button id="share-retry-btn" variant="outline" size="sm" class="mt-2">
+              Try Again
+            </Button>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" data-slot="dialog-close">Close</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -1060,6 +1139,52 @@ const presetKeys = Object.keys(defaultPresets);
       opacity: 0.6;
       cursor: not-allowed;
     }
+
+    /* Share Dialog */
+    .share-dialog-content {
+      z-index: 10001;
+    }
+
+    .share-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .share-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: var(--muted);
+      border-radius: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--muted-foreground);
+    }
+
+    .share-status-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .share-status-icon .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+
+    .share-result {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .share-error {
+      padding: 0.75rem;
+      background: hsl(var(--destructive) / 0.1);
+      border: 1px solid var(--destructive);
+      border-radius: 0.5rem;
+    }
   </style>
 
   <script>
@@ -1123,8 +1248,12 @@ const presetKeys = Object.keys(defaultPresets);
       private exportDropdown: HTMLElement | null = null;
       private aiGenerateBtn: HTMLElement | null = null;
       private saveBtn: HTMLElement | null = null;
+      private shareBtn: HTMLElement | null = null;
 
       // AI state
+      private isSharing = false;
+
+      // Share state
       private aiImages: { data: string; mediaType: string }[] = [];
 
       connectedCallback() {
@@ -1158,6 +1287,7 @@ const presetKeys = Object.keys(defaultPresets);
         );
         this.aiGenerateBtn = this.querySelector('[data-slot="ai-generate"]');
         this.saveBtn = this.querySelector('[data-slot="save"]');
+        this.shareBtn = this.querySelector('[data-action="share-theme"]');
 
         this.setupDragging();
         this.setupEventListeners();
@@ -1339,6 +1469,9 @@ const presetKeys = Object.keys(defaultPresets);
           this.openExportJsonDialog(),
         );
 
+        // Share button
+        this.shareBtn?.addEventListener("click", () => this.openShareDialog());
+
         // Export dropdown
         // this.exportDropdown?.addEventListener("click", (e) => {
         //   const item = (e.target as HTMLElement).closest("[data-action]");
@@ -1440,6 +1573,40 @@ const presetKeys = Object.keys(defaultPresets);
           document.addEventListener(
             "tabs:change",
             (window as any).__exportTypeTabsHandler,
+          );
+        }
+
+        // Share retry button - use event delegation
+        if (!(window as any).__shareRetryHandler) {
+          (window as any).__shareRetryHandler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target.closest("#share-retry-btn")) {
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              panel?.generateShareLink();
+            }
+          };
+          document.addEventListener(
+            "click",
+            (window as any).__shareRetryHandler,
+          );
+        }
+
+        // Share copy button - use event delegation
+        if (!(window as any).__shareCopyHandler) {
+          (window as any).__shareCopyHandler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target.closest("#share-copy-btn")) {
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              panel?.handleShareCopy();
+            }
+          };
+          document.addEventListener(
+            "click",
+            (window as any).__shareCopyHandler,
           );
         }
       }
@@ -1580,8 +1747,14 @@ const presetKeys = Object.keys(defaultPresets);
         // Apply theme live
         this.applyLivePreview();
 
-        // Also update global preset
-        setStoredPreset(id);
+        // Also update global preset with swatches and name
+        const swatches = {
+          primaryLight: preset.styles.light?.primary || "#000",
+          accentLight: preset.styles.light?.accent || "#666",
+          primaryDark: preset.styles.dark?.primary || "#fff",
+          accentDark: preset.styles.dark?.accent || "#888",
+        };
+        setStoredPreset(id, swatches, preset.name || id);
       }
 
       private updatePresetSwatches() {
@@ -2074,6 +2247,116 @@ const presetKeys = Object.keys(defaultPresets);
       public setExportType(type: "json" | "css") {
         this.currentExportType = type;
         // No need to re-render, tabs handle visibility
+      }
+
+      // =============== SHARE DIALOG ===============
+
+      private getShareDialog() {
+        const all = document.querySelectorAll("#share-dialog");
+        return all[all.length - 1] || null;
+      }
+
+      private openShareDialog() {
+        // Reset the dialog state to loading
+        const statusEl = document.getElementById("share-status");
+        const resultEl = document.getElementById("share-result");
+        const errorEl = document.getElementById("share-error");
+
+        if (statusEl) statusEl.style.display = "flex";
+        if (resultEl) resultEl.style.display = "none";
+        if (errorEl) errorEl.style.display = "none";
+
+        // Click the hidden trigger to open the dialog
+        const triggers = document.querySelectorAll("#share-dialog-trigger");
+        const trigger = triggers[triggers.length - 1] as HTMLElement | null;
+        trigger?.click();
+
+        // Auto-generate the share link
+        this.generateShareLink();
+      }
+
+      public async generateShareLink() {
+        if (this.isSharing) return;
+        this.isSharing = true;
+
+        const statusEl = document.getElementById("share-status");
+        const statusText = document.getElementById("share-status-text");
+        const resultEl = document.getElementById("share-result");
+        const errorEl = document.getElementById("share-error");
+        const errorText = document.getElementById("share-error-text");
+        const urlInput = document.getElementById("share-url-input") as HTMLInputElement | null;
+
+        // Show loading state
+        if (statusEl) statusEl.style.display = "flex";
+        if (statusText) statusText.textContent = "Generating share link...";
+        if (resultEl) resultEl.style.display = "none";
+        if (errorEl) errorEl.style.display = "none";
+
+        try {
+          // Get current preset name and styles
+          const presetLabel = this.presetLabel?.textContent || "Shared Theme";
+          
+          const response = await fetch("/api/themes/share", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: presetLabel,
+              styles: this.workingStyles,
+              id: this.currentPresetId,
+              createdAt: new Date().toISOString(),
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to create share link");
+          }
+
+          // Show success
+          if (statusEl) statusEl.style.display = "none";
+          if (resultEl) resultEl.style.display = "block";
+          if (urlInput) urlInput.value = data.fullUrl || `https://ui.bejamas.com${data.shareUrl}`;
+
+        } catch (error) {
+          console.error("Share error:", error);
+          if (statusEl) statusEl.style.display = "none";
+          if (errorEl) errorEl.style.display = "block";
+          if (errorText) {
+            errorText.textContent = error instanceof Error 
+              ? error.message 
+              : "Failed to create share link. Please try again.";
+          }
+        } finally {
+          this.isSharing = false;
+        }
+      }
+
+      public handleShareCopy() {
+        const urlInput = document.getElementById("share-url-input") as HTMLInputElement | null;
+        if (!urlInput) return;
+
+        const copyIcon = document.getElementById("share-copy-icon");
+        const copiedIcon = document.getElementById("share-copied-icon");
+
+        navigator.clipboard.writeText(urlInput.value).then(() => {
+          // Show success feedback
+          if (copyIcon) copyIcon.classList.add("hidden");
+          if (copiedIcon) copiedIcon.classList.remove("hidden");
+
+          this.showToast("Link copied to clipboard");
+
+          // Reset icon after 2 seconds
+          setTimeout(() => {
+            if (copyIcon) copyIcon.classList.remove("hidden");
+            if (copiedIcon) copiedIcon.classList.add("hidden");
+          }, 2000);
+        }).catch((err) => {
+          console.error("Failed to copy:", err);
+          this.showToast("Failed to copy link");
+        });
       }
 
       private openImportDialog() {
