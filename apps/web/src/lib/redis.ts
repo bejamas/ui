@@ -1,4 +1,5 @@
 import { Redis } from "@upstash/redis";
+import { getSecret } from "astro:env/server";
 
 // Lazy initialization to avoid errors when env vars are not set
 let redisClient: Redis | null = null;
@@ -6,11 +7,13 @@ let redisClient: Redis | null = null;
 export function getRedis(): Redis | null {
   if (redisClient) return redisClient;
 
-  const url = import.meta.env.UPSTASH_REDIS_REST_URL;
-  const token = import.meta.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = getSecret("UPSTASH_REDIS_REST_URL");
+  const token = getSecret("UPSTASH_REDIS_REST_TOKEN");
 
   if (!url || !token) {
-    console.warn("Redis not configured: UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN is missing");
+    console.warn(
+      "Redis not configured: UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN is missing",
+    );
     return null;
   }
 
@@ -44,21 +47,23 @@ export interface SharedTheme {
 /**
  * Get a shared theme from Redis
  */
-export async function getSharedTheme(shortId: string): Promise<SharedTheme | null> {
+export async function getSharedTheme(
+  shortId: string,
+): Promise<SharedTheme | null> {
   const redis = getRedis();
   if (!redis) return null;
 
   try {
     const theme = await redis.get<SharedTheme>(`${THEME_KEY_PREFIX}${shortId}`);
-    
+
     if (theme) {
       // Extend TTL on access (sliding expiration)
       await redis.expire(`${THEME_KEY_PREFIX}${shortId}`, DEFAULT_THEME_TTL);
-      
+
       // Increment view count
       await redis.hincrby(`${THEME_KEY_PREFIX}${shortId}:stats`, "views", 1);
     }
-    
+
     return theme;
   } catch (error) {
     console.error("Failed to get shared theme:", error);
@@ -71,7 +76,7 @@ export async function getSharedTheme(shortId: string): Promise<SharedTheme | nul
  */
 export async function saveSharedTheme(
   theme: Omit<SharedTheme, "sharedAt" | "views">,
-  shortId: string
+  shortId: string,
 ): Promise<string | null> {
   const redis = getRedis();
   if (!redis) return null;
@@ -125,18 +130,22 @@ export interface CustomTheme {
 /**
  * Get a custom theme from Redis by its full ID (e.g., "custom-1234567890-abc123")
  */
-export async function getCustomTheme(customId: string): Promise<CustomTheme | null> {
+export async function getCustomTheme(
+  customId: string,
+): Promise<CustomTheme | null> {
   const redis = getRedis();
   if (!redis) return null;
 
   try {
-    const theme = await redis.get<CustomTheme>(`${THEME_KEY_PREFIX}${customId}`);
-    
+    const theme = await redis.get<CustomTheme>(
+      `${THEME_KEY_PREFIX}${customId}`,
+    );
+
     if (theme) {
       // Extend TTL on access (sliding expiration)
       await redis.expire(`${THEME_KEY_PREFIX}${customId}`, DEFAULT_THEME_TTL);
     }
-    
+
     return theme;
   } catch (error) {
     console.error("Failed to get custom theme:", error);
@@ -147,7 +156,9 @@ export async function getCustomTheme(customId: string): Promise<CustomTheme | nu
 /**
  * Save a custom theme to Redis with its full ID
  */
-export async function saveCustomThemeToRedis(theme: CustomTheme): Promise<boolean> {
+export async function saveCustomThemeToRedis(
+  theme: CustomTheme,
+): Promise<boolean> {
   const redis = getRedis();
   if (!redis) return false;
 
@@ -165,7 +176,9 @@ export async function saveCustomThemeToRedis(theme: CustomTheme): Promise<boolea
 /**
  * Delete a custom theme from Redis
  */
-export async function deleteCustomThemeFromRedis(customId: string): Promise<boolean> {
+export async function deleteCustomThemeFromRedis(
+  customId: string,
+): Promise<boolean> {
   const redis = getRedis();
   if (!redis) return false;
 
