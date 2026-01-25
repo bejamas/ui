@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.12",
+    "@upstash/redis": "^1.34.3",
     "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^4.3.4",
     "@astrojs/netlify": "^6.5.13",
@@ -30,6 +31,7 @@
     "astro": "^5.16.4",
     "astro-robots-txt": "^1.0.0",
     "culori": "^4.0.2",
+    "nanoid": "^5.0.9",
     "expressive-code-collapsible": "^0.1.0",
     "prismjs": "^1.30.0",
     "shadcn": "^3.4.0",

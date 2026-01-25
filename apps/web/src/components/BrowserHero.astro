@@ -71,7 +71,14 @@ const leanPresets = Object.fromEntries(
     // Only update stored preset if it's different (prevents infinite loop)
     const currentPreset = window.bejamas.getPreset?.();
     if (currentPreset !== key) {
-      window.bejamas.setPreset(key);
+      // Include swatches and name in the cookie
+      const swatches = {
+        primaryLight: preset.styles?.light?.primary || "#000",
+        accentLight: preset.styles?.light?.accent || "#666",
+        primaryDark: preset.styles?.dark?.primary || "#fff",
+        accentDark: preset.styles?.dark?.accent || "#888",
+      };
+      window.bejamas.setPreset(key, swatches, preset.label || key);
     }
 
     const cssText = window.bejamas.applyThemeCss({
