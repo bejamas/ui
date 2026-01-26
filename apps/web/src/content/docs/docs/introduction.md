@@ -5,36 +5,30 @@ sidebar:
   order: 1
 ---
 
-`bejamas/ui` is an Astro-native UI component library built on Tailwind CSS v4.  
+`bejamas/ui` is an Astro-native UI component library built on Tailwind CSS v4.
+
 Instead of a black-box dependency, it gives you copyable components that live in your codebase, follow your conventions, and evolve with your design system.
 
 ## Philosophy
 
-`bejamas/ui` is inspired by the “copy the code, own the code” approach popularized by [shadcn/ui](https://ui.shadcn.com/docs), adapted for Astro and zero-JS, content-focused sites.
+`bejamas/ui` is inspired by the "copy the code, own the code" approach popularized by [shadcn/ui](https://ui.shadcn.com/docs), adapted for Astro and content-focused sites.
 
 The library encourages minimal abstractions: components are mostly HTML, Astro, and Tailwind utilities. Styling and structure are always visible and editable, so you can start from sensible defaults and grow into a full design system without fighting an opaque API.
 
-Even if you’ve never used shadcn/ui, the mental model stays simple: you copy a component into your project, make it yours, and keep it under version control alongside the rest of your code.
+Even if you've never used shadcn/ui, the mental model stays simple: you copy a component into your project, make it yours, and keep it under version control alongside the rest of your code.
 
-## Single-File, AI-Ready Components
+## Key Features
 
-Each `bejamas/ui` component is designed as a single, self-contained `.astro` file that brings together markup, styles, variants, metadata, and examples.
+- **Astro-native** — Built for Astro from the ground up, not adapted from React.
+- **Zero-JS by default** — Most components ship no client-side JavaScript.
+- **Tailwind CSS v4** — Modern utility-first styling with CSS variables and theming support.
+- **@data-slot for interactivity** — Interactive components use headless behavior primitives, so accessibility fixes ship as version bumps rather than requiring you to re-copy code. See [Design Principles](/docs/design-principles) for details.
+- **30+ components** — Buttons, cards, dialogs, menus, forms, and more.
 
-This structure makes components easy to reason about for both humans and AI tools. When everything lives in one place, it’s straightforward to:
+## Why bejamas/ui?
 
-- understand how a component works at a glance,
-- refactor markup or Tailwind classes safely,
-- align components with your design tokens and layout patterns,
-- generate or update documentation from the source.
+`bejamas/ui` is built for Astro projects that prioritize performance, content, and long-term maintainability. It's a strong fit for marketing sites, documentation, and content-heavy projects.
 
-There are no hidden helpers or fragmented configuration files to track down — what you see in the component file is what you ship.
+For agencies and teams, this approach supports a shared design language without enforcing a rigid framework. Copy components between projects, keep them in sync as needed, and adapt freely to each client's needs.
 
-## Why `bejamas/ui`?
-
-`bejamas/ui` is tailored for Astro projects that care about performance, content, and long-term maintainability.
-
-It is Astro-native and zero-JS by default, making it a strong fit for marketing sites, documentation, and content-heavy projects. Tailwind CSS v4 provides the utility layer, while `bejamas/ui` supplies opinionated but flexible building blocks you can reuse across brands and repositories.
-
-For agencies and teams, this approach supports a shared design language without enforcing a rigid framework: you can copy components between projects, keep them in sync as needed, and still adapt them freely to each client’s needs.
-
-As your system grows, `bejamas/ui` components can serve as the foundation of a fully documented design system, with source-of-truth code that remains readable, portable, and easy to extend.
+As your system grows, `bejamas/ui` components can serve as the foundation of a fully documented design system — readable, portable, and easy to extend.
