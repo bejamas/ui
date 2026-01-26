@@ -135,6 +135,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
   } from "../utils/themes/preset-store.ts";
   import {
     getCustomPresets,
+    getEditingPresetDraft,
     CUSTOM_PRESETS_CHANGE_EVENT,
     type CustomPreset,
   } from "../utils/themes/custom-presets-store.ts";
@@ -179,11 +180,13 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
       return;
     }
 
+    const draft = getEditingPresetDraft(key);
     const mode = getCurrentMode();
+    const styles = draft?.workingStyles || preset.styles;
 
     // Apply theme CSS variables to document
     applyThemeToElement(
-      { styles: preset.styles, currentMode: mode },
+      { styles, currentMode: mode },
       document.documentElement,
     );
 

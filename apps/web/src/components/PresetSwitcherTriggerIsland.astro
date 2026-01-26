@@ -78,17 +78,12 @@ const accentDarkColor =
 
 <>
   {/* Current selection swatches */}
-  <div class="preset-current-swatches flex -space-x-1 items-center">
+  <div class="flex -space-x-1 items-center">
     <div
-      class="preset-swatch-primary size-4 rounded-full border-2 border-background"
-      style={`background: ${primaryLightColor}`}
+      class="preset-swatch-primary bg-primary size-4 rounded-full border-2 border-background"
     >
     </div>
-    <div
-      class="preset-swatch-accent size-4 rounded-full border-2 border-background"
-      style={`background: ${accentLightColor}`}
-    >
-    </div>
+    <div class="bg-accent size-4 rounded-full border-2 border-background"></div>
   </div>
   <span class="preset-current-label truncate">{currentLabel}</span>
   <svg

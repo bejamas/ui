@@ -1,0 +1,90 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@bejamas/ui/components/dialog";
+import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/ui/components/label";
+import { Check, Copy, Loader2, Share2 } from "@lucide/astro";
+---
+
+<Dialog id="share-dialog">
+  <button
+    type="button"
+    data-slot="dialog-trigger"
+    id="share-dialog-trigger"
+    class="hidden"></button>
+  <DialogContent class="sm:max-w-md z-10001">
+    <DialogHeader>
+      <DialogTitle>
+        <span class="flex items-center gap-2">
+          <Share2 class="size-5 text-accent" />
+          Share Theme
+        </span>
+      </DialogTitle>
+      <DialogDescription>
+        Share this theme with others via a link. Anyone with the link can
+        preview and install your theme.
+      </DialogDescription>
+    </DialogHeader>
+
+    <div class="mt-4 flex flex-col gap-4">
+      <div
+        class="flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-[0.8125rem] text-muted-foreground"
+        id="share-status"
+      >
+        <span id="share-status-icon" class="flex items-center justify-center">
+          <Loader2 class="size-4 animate-spin" />
+        </span>
+        <span id="share-status-text">Generating share link...</span>
+      </div>
+
+      <div class="hidden flex-col space-y-3" id="share-result">
+        <Label for="share-url-input" class="text-sm font-medium">
+          Share URL
+        </Label>
+        <div class="flex gap-2">
+          <Input
+            type="text"
+            id="share-url-input"
+            class="font-mono text-sm flex-1"
+            readonly
+          />
+          <Button
+            id="share-copy-btn"
+            variant="outline"
+            size="icon"
+            title="Copy to clipboard"
+          >
+            <Copy class="size-4" id="share-copy-icon" />
+            <Check class="size-4 hidden" id="share-copied-icon" />
+          </Button>
+        </div>
+        <p class="text-xs text-muted-foreground">
+          This link will expire after 30 days of inactivity.
+        </p>
+      </div>
+
+      <div
+        class="hidden rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2"
+        id="share-error"
+      >
+        <p class="text-sm text-destructive" id="share-error-text">
+          Failed to create share link. Please try again.
+        </p>
+        <Button id="share-retry-btn" variant="outline" size="sm" class="mt-2">
+          Try Again
+        </Button>
+      </div>
+    </div>
+
+    <DialogFooter>
+      <Button variant="outline" data-slot="dialog-close">Close</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>

@@ -1,0 +1,41 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@bejamas/ui/components/dialog";
+import { Textarea } from "@bejamas/ui/components/textarea";
+---
+
+<Dialog id="import-dialog">
+  <button
+    type="button"
+    data-slot="dialog-trigger"
+    id="import-dialog-trigger"
+    class="hidden"
+  ></button>
+  <DialogContent class="sm:max-w-lg z-10001">
+    <DialogHeader>
+      <DialogTitle>Import Custom CSS</DialogTitle>
+      <DialogDescription>
+        Paste your CSS file below to customize the theme colors. Make sure to
+        include variables like --primary, --background, etc.
+      </DialogDescription>
+    </DialogHeader>
+    <div class="mt-4">
+      <Textarea
+        id="import-css-textarea"
+        class="min-h-[200px] font-mono text-xs"
+        placeholder={`:root {\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.2 0.044 250);\n  --primary: oklch(0.6 0.2 280);\n  /* And more */\n}\n\n.dark {\n  --background: oklch(0.2 0.02 250);\n  --foreground: oklch(0.97 0.02 250);\n  /* And more */\n}`}
+      />
+    </div>
+    <DialogFooter>
+      <Button variant="outline" data-slot="dialog-close">Cancel</Button>
+      <Button id="import-confirm-btn">Import</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
