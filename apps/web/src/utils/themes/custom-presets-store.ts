@@ -4,6 +4,7 @@ import { PRESET_CHANGE_EVENT } from "./preset-store";
 
 export const CUSTOM_PRESETS_KEY = "bejamas-custom-presets";
 export const EDITING_PRESET_KEY = "bejamas-editing-preset";
+export const EDITING_PRESET_DRAFTS_KEY = "bejamas-editing-preset-drafts";
 export const CUSTOM_PRESETS_CHANGE_EVENT = "bejamas:custom-presets-change";
 
 export interface CustomPreset extends ThemePreset {
@@ -17,6 +18,15 @@ export interface CustomPreset extends ThemePreset {
 export interface CustomPresetsStore {
   presets: Record<string, CustomPreset>;
   version: number;
+}
+
+export interface EditingPresetDraft {
+  presetId: string;
+  workingStyles: ThemePreset["styles"];
+  originalStyles: ThemePreset["styles"];
+  currentMode?: "light" | "dark";
+  presetName?: string;
+  updatedAt: string;
 }
 
 /**
@@ -221,6 +231,57 @@ export function getEditingPreset(): ThemePreset | null {
     return stored ? JSON.parse(stored) : null;
   } catch {
     return null;
+  }
+}
+
+function getEditingPresetDrafts(): Record<string, EditingPresetDraft> {
+  if (typeof localStorage === "undefined") return {};
+  try {
+    const stored = localStorage.getItem(EDITING_PRESET_DRAFTS_KEY);
+    return stored ? (JSON.parse(stored) as Record<string, EditingPresetDraft>) : {};
+  } catch (e) {
+    console.error("Failed to parse preset drafts:", e);
+    return {};
+  }
+}
+
+export function getEditingPresetDraft(presetId: string): EditingPresetDraft | null {
+  if (!presetId) return null;
+  const drafts = getEditingPresetDrafts();
+  return drafts[presetId] || null;
+}
+
+export function setEditingPresetDraft(
+  presetId: string,
+  draft: Omit<EditingPresetDraft, "presetId" | "updatedAt">
+): void {
+  if (typeof localStorage === "undefined") return;
+  if (!presetId) return;
+
+  try {
+    const drafts = getEditingPresetDrafts();
+    drafts[presetId] = {
+      ...draft,
+      presetId,
+      updatedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(EDITING_PRESET_DRAFTS_KEY, JSON.stringify(drafts));
+  } catch (e) {
+    console.error("Failed to save preset draft:", e);
+  }
+}
+
+export function clearEditingPresetDraft(presetId: string): void {
+  if (typeof localStorage === "undefined") return;
+  if (!presetId) return;
+
+  try {
+    const drafts = getEditingPresetDrafts();
+    if (!drafts[presetId]) return;
+    delete drafts[presetId];
+    localStorage.setItem(EDITING_PRESET_DRAFTS_KEY, JSON.stringify(drafts));
+  } catch (e) {
+    console.error("Failed to clear preset draft:", e);
   }
 }
 

@@ -11,10 +11,11 @@ interface Props {
   class?: string;
 }
 
-const { token, label, value = "", class: className = "" } = Astro.props;
+const { token, label, value = "", class: className = "", ...rest } = Astro.props;
 ---
 
 <color-input
+  {...rest}
   class:list={["color-input-wrapper", className]}
   data-token={token}
   data-value={value}

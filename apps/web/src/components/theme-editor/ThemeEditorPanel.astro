@@ -7,14 +7,6 @@
 import { Button } from "@bejamas/ui/components/button";
 import { Kbd } from "@bejamas/ui/components/kbd";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@bejamas/ui/components/dialog";
-import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -38,7 +30,6 @@ import {
   TabsIndicator,
   TabsContent,
 } from "@bejamas/ui/components/tabs";
-import { Textarea } from "@bejamas/ui/components/textarea";
 import {
   Tooltip,
   TooltipTrigger,
@@ -47,23 +38,20 @@ import {
 import {
   X,
   GripHorizontal,
-  Copy,
-  Download,
   Plus,
   RotateCcw,
-  Save,
   Trash2,
   Upload,
   Sparkles,
-  Loader2,
-  ImagePlus,
   ChevronDown,
   Share2,
-  Check,
-  Link2,
 } from "@lucide/astro";
 import { defaultPresets } from "../../utils/themes/presets";
 import ColorInput from "./ColorInput.astro";
+import ImportDialog from "./ImportDialog.astro";
+import ExportDialog from "./ExportDialog.astro";
+import AIGenerateDialog from "./AIGenerateDialog.astro";
+import ShareDialog from "./ShareDialog.astro";
 
 // Color token sections (same as themes.astro)
 const colorSections = [
@@ -134,30 +122,50 @@ const radiusOptions = [
   { value: "1rem", label: "Large" },
   { value: "1.5rem", label: "Extra Large" },
 ];
+
+const sectionTitles = [
+  "Settings",
+  ...colorSections.map((section) => section.title),
+];
 ---
 
-<theme-editor-panel
+<div
   id="theme-editor-panel"
-  class="theme-editor-panel"
-  data-presets={JSON.stringify(defaultPresets)}
+  x-data={`themeEditorPanel(${JSON.stringify(sectionTitles)})`}
+  x-cloak
+  x-show="isOpen"
+  x-transition.opacity.duration.150ms
+  class="fixed right-5 top-20 z-9999 flex w-80 max-h-[calc(100vh-100px)] flex-col overflow-hidden rounded-xl border border-border bg-popover text-sm shadow-2xl"
+  style="display: none;"
 >
   <!-- Header -->
-  <div class="panel-header" data-slot="header">
-    <div class="header-drag">
+  <div
+    class="flex items-center justify-between border-b border-border bg-muted px-4 py-3 cursor-move select-none"
+    data-slot="header"
+    x-ref="header"
+  >
+    <div class="flex items-center gap-2">
       <GripHorizontal class="size-4 text-muted-foreground" />
-      <span class="header-title">Theme Editor</span>
+      <span class="text-sm font-semibold">Theme Editor</span>
     </div>
-    <div class="header-actions">
+    <div class="flex items-center gap-2">
       <Kbd>⌘E</Kbd>
-      <Button variant="ghost" size="icon-sm" data-slot="close" class="size-6">
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        data-slot="close"
+        class="size-6"
+        x-ref="close"
+        @click="close()"
+      >
         <X class="size-4" />
       </Button>
     </div>
   </div>
 
   <!-- Preset Selector -->
-  <div class="panel-section preset-section">
-    <div class="preset-row">
+  <div class="border-b border-border px-4 py-3 flex flex-col gap-2">
+    <div class="flex gap-2">
       <DropdownMenu class="flex-1">
         <DropdownMenuTrigger
           variant="outline"
@@ -166,29 +174,35 @@ const radiusOptions = [
         >
           <div class="flex items-center gap-2 min-w-0">
             <div
-              class="preset-swatches flex -space-x-1 items-center shrink-0"
+              class="flex -space-x-1 items-center shrink-0"
               data-slot="preset-swatches"
             >
               <div
-                class="size-3.5 rounded-full border border-border"
-                data-slot="swatch-primary"
+                class="size-3.5 rounded-full bg-primary border border-border"
               >
               </div>
-              <div
-                class="size-3.5 rounded-full border border-border"
-                data-slot="swatch-accent"
-              >
+              <div class="size-3.5 rounded-full bg-accent border border-border">
               </div>
             </div>
-            <span data-slot="preset-label" class="truncate">Default</span>
+            <span data-slot="preset-label" class="truncate" x-ref="presetLabel">
+              Default
+            </span>
           </div>
           <ChevronDown class="size-4 opacity-50 shrink-0" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent class="w-[--trigger-width]">
+        <DropdownMenuContent
+          class="w-[--trigger-width]"
+          data-slot="dropdown-menu-content"
+          x-ref="presetDropdown"
+        >
           <DropdownMenuLabel>Built-in</DropdownMenuLabel>
           {
             presetKeys.map((key) => (
-              <DropdownMenuItem data-value={key} class="gap-2">
+              <DropdownMenuItem
+                data-value={key}
+                data-slot="dropdown-menu-item"
+                class="gap-2"
+              >
                 {/* Light mode swatches */}
                 <div class="flex -space-x-1 items-center dark:hidden">
                   <div
@@ -222,6 +236,8 @@ const radiusOptions = [
         size="icon-sm"
         data-slot="new-preset"
         title="Create new preset"
+        x-ref="newPreset"
+        @click="startNewPreset()"
       >
         <Plus class="size-4" />
       </Button>
@@ -231,6 +247,8 @@ const radiusOptions = [
         data-slot="delete-preset"
         title="Delete preset"
         disabled
+        x-ref="deletePreset"
+        @click="deleteCurrentPreset()"
       >
         <Trash2 class="size-4" />
       </Button>
@@ -239,13 +257,18 @@ const radiusOptions = [
       type="text"
       data-slot="preset-name"
       placeholder="Preset name..."
-      class="hidden"
+      x-show="isCreatingNew"
+      x-cloak
+      x-ref="presetName"
+      style="display: none;"
+      @keydown.enter.prevent="confirmNewPreset()"
+      @keydown.escape.prevent="cancelNewPreset()"
     />
   </div>
 
   <!-- Mode Tabs -->
-  <div data-panel-mode-tabs>
-    <Tabs defaultValue="light" class="mode-tabs-container">
+  <div data-panel-mode-tabs x-ref="modeTabs">
+    <Tabs defaultValue="light">
       <TabsList
         class="w-full h-auto px-4 py-1 rounded-none border-b border-border bg-muted"
       >
@@ -254,6 +277,7 @@ const radiusOptions = [
           value="light"
           data-mode="light"
           class="mode-tab flex-1 text-xs py-1.5"
+          @click="switchMode('light')"
         >
           Light
         </TabsTrigger>
@@ -261,6 +285,7 @@ const radiusOptions = [
           value="dark"
           data-mode="dark"
           class="mode-tab flex-1 text-xs py-1.5"
+          @click="switchMode('dark')"
         >
           Dark
         </TabsTrigger>
@@ -269,18 +294,27 @@ const radiusOptions = [
   </div>
 
   <!-- Color Sections -->
-  <div class="panel-content" data-slot="content">
+  <div class="flex-1 overflow-y-auto py-2" data-slot="content" x-ref="content">
     <!-- Settings Section -->
-    <div class="color-section border-b border-border last:border-b-0">
+    <div class="border-b border-border last:border-b-0">
       <Button
         variant="ghost"
-        class="section-header flex items-center justify-between w-full px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-none h-auto"
+        class="flex items-center justify-between w-full px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-none h-auto"
         data-slot="section-toggle"
+        @click="toggleSection('Settings')"
       >
         <span>Settings</span>
-        <ChevronDown class="chevron size-4 transition-transform duration-200" />
+        <ChevronDown
+          class="size-4 transition-transform duration-200"
+          :class="sectionsOpen['Settings'] ? 'rotate-0' : '-rotate-90'"
+        />
       </Button>
-      <div class="section-content px-4 py-3">
+      <div
+        class="px-4 py-3"
+        x-show="sectionsOpen['Settings']"
+        x-cloak
+        x-transition
+      >
         <div class="flex flex-col gap-1.5">
           <Label for="radius-select" class="text-xs text-muted-foreground">
             Border Radius
@@ -291,6 +325,7 @@ const radiusOptions = [
               id="radius-select"
               size="sm"
               data-slot="radius-select"
+              x-ref="radiusSelect"
             >
               {
                 radiusOptions.map((option) => (
@@ -307,18 +342,32 @@ const radiusOptions = [
 
     {
       colorSections.map((section) => (
-        <div class="color-section border-b border-border last:border-b-0">
+        <div class="border-b border-border last:border-b-0">
           <Button
             variant="ghost"
-            class="section-header flex items-center justify-between w-full px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-none h-auto"
+            class="flex items-center justify-between w-full px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-none h-auto"
             data-slot="section-toggle"
+            @click={`toggleSection('${section.title}')`}
           >
             <span>{section.title}</span>
-            <ChevronDown class="chevron size-4 transition-transform duration-200" />
+            <ChevronDown
+              class="size-4 transition-transform duration-200"
+              x-bind:class={`sectionsOpen['${section.title}'] ? 'rotate-0' : '-rotate-90'`}
+            />
           </Button>
-          <div class="section-content grid grid-cols-2 gap-3 px-4 py-3">
+          <div
+            class="grid grid-cols-2 gap-3 px-4 py-3"
+            x-show={`sectionsOpen['${section.title}']`}
+            x-cloak
+            x-transition
+          >
             {section.tokens.map((item) => (
-              <ColorInput token={item.token} label={item.label} value="" />
+              <ColorInput
+                token={item.token}
+                label={item.label}
+                value=""
+                x-effect={`$el.setColor?.(workingStyles[currentMode]?.['${item.token}'] || '')`}
+              />
             ))}
           </div>
         </div>
@@ -327,8 +376,10 @@ const radiusOptions = [
   </div>
 
   <!-- Footer Actions -->
-  <div class="panel-footer">
-    <div class="footer-left">
+  <div
+    class="flex items-center justify-between border-t border-border bg-muted px-4 py-3"
+  >
+    <div class="flex gap-1.5">
       <Tooltip delay={400}>
         <TooltipTrigger asChild>
           <Button
@@ -336,6 +387,8 @@ const radiusOptions = [
             size="sm"
             data-slot="reset"
             title="Reset to original"
+            x-ref="reset"
+            @click="resetToOriginal()"
           >
             <RotateCcw class="size-3.5" />
           </Button>
@@ -347,7 +400,12 @@ const radiusOptions = [
 
       <Tooltip delay={400}>
         <TooltipTrigger asChild>
-          <Button variant="outline" size="sm" data-action="import-css">
+          <Button
+            variant="outline"
+            size="sm"
+            data-action="import-css"
+            @click="openImportDialog()"
+          >
             <Upload class="size-3.5" />
           </Button>
           <TooltipContent>
@@ -358,7 +416,12 @@ const radiusOptions = [
 
       <Tooltip delay={400}>
         <TooltipTrigger asChild>
-          <Button variant="outline" size="sm" data-action="export-json">
+          <Button
+            variant="outline"
+            size="sm"
+            data-action="export-json"
+            @click="openExportJsonDialog()"
+          >
             Export
           </Button>
           <TooltipContent>
@@ -369,7 +432,12 @@ const radiusOptions = [
 
       <Tooltip delay={400}>
         <TooltipTrigger asChild>
-          <Button variant="outline" size="sm" data-action="share-theme">
+          <Button
+            variant="outline"
+            size="sm"
+            data-action="share-theme"
+            @click="openShareDialog()"
+          >
             <Share2 class="size-3.5" />
           </Button>
           <TooltipContent>
@@ -378,296 +446,32 @@ const radiusOptions = [
         </TooltipTrigger>
       </Tooltip>
 
-      <Button size="sm" data-slot="save" variant="outline">
+      <Button
+        size="sm"
+        data-slot="save"
+        variant="outline"
+        @click="savePreset()"
+      >
         <!-- <Save class="size-3.5" /> -->
         Save
       </Button>
     </div>
-    <div class="footer-right ml-auto">
-      <Button size="sm" data-slot="ai-generate" title="AI Generate Palette">
+    <div class="ml-auto flex gap-1.5">
+      <Button
+        size="sm"
+        data-slot="ai-generate"
+        title="AI Generate Palette"
+        @click="openAIDialog()"
+      >
         <Sparkles class="size-3.5" />
         AI
       </Button>
     </div>
 
-    <!-- Import Dialog -->
-    <Dialog id="import-dialog">
-      <button
-        type="button"
-        data-slot="dialog-trigger"
-        id="import-dialog-trigger"
-        style="display: none;"></button>
-      <DialogContent class="sm:max-w-lg import-dialog-content">
-        <DialogHeader>
-          <DialogTitle>Import Custom CSS</DialogTitle>
-          <DialogDescription>
-            Paste your CSS file below to customize the theme colors. Make sure
-            to include variables like --primary, --background, etc.
-          </DialogDescription>
-        </DialogHeader>
-        <div class="import-textarea-wrapper mt-4">
-          <Textarea
-            id="import-css-textarea"
-            class="font-mono text-xs min-h-[200px]"
-            placeholder={`:root {\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.2 0.044 250);\n  --primary: oklch(0.6 0.2 280);\n  /* And more */\n}\n\n.dark {\n  --background: oklch(0.2 0.02 250);\n  --foreground: oklch(0.97 0.02 250);\n  /* And more */\n}`}
-          />
-        </div>
-        <DialogFooter>
-          <Button variant="outline" data-slot="dialog-close">Cancel</Button>
-          <Button id="import-confirm-btn">Import</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-
-    <!-- Export Dialog -->
-    <Dialog id="export-json-dialog">
-      <button
-        type="button"
-        data-slot="dialog-trigger"
-        id="export-json-dialog-trigger"
-        style="display: none;"></button>
-      <DialogContent class="sm:max-w-3xl w-full export-dialog-content">
-        <DialogHeader>
-          <DialogTitle>Export</DialogTitle>
-          <DialogDescription>
-            Copy the theme configuration in your preferred format.
-          </DialogDescription>
-        </DialogHeader>
-
-        <!-- CLI Installation Section -->
-        <div class="cli-install-section" id="cli-install-section">
-          <Tabs defaultValue="bun" class="cli-pm-tabs" id="cli-pm-tabs">
-            <div class="flex items-center justify-between">
-              <TabsList class="h-8">
-                <TabsTrigger value="pnpm" class="text-xs px-2">pnpm</TabsTrigger
-                >
-                <TabsTrigger value="npm" class="text-xs px-2">npm</TabsTrigger>
-                <TabsTrigger value="yarn" class="text-xs px-2">yarn</TabsTrigger
-                >
-                <TabsTrigger value="bun" class="text-xs px-2">bun</TabsTrigger>
-                <TabsIndicator />
-              </TabsList>
-              <Button
-                id="cli-copy-btn"
-                variant="ghost"
-                size="sm"
-                class="h-8 gap-1.5 text-xs"
-              >
-                <Copy class="size-3.5" id="cli-copy-icon" />
-                <Check class="size-3.5 hidden" id="cli-copied-icon" />
-                <span>Copy</span>
-              </Button>
-            </div>
-            <div
-              class="cli-command-box mt-2 rounded-md border bg-muted/50 p-3 font-mono text-sm max-w-[684px]"
-            >
-              <code id="cli-command-text"
-                >bunx shadcn@latest add
-                https://ui.bejamas.com/r/themes/theme.json</code
-              >
-            </div>
-          </Tabs>
-          <p class="text-xs text-muted-foreground mt-2" id="cli-note">
-            Requires the theme to be shared first.
-          </p>
-        </div>
-
-        <Tabs
-          defaultValue="json"
-          class="export-type-tabs mt-4"
-          id="export-type-tabs"
-        >
-          <div class="export-options-row flex items-center gap-3">
-            <TabsList class="h-9">
-              <TabsTrigger value="json" class="text-sm px-2">JSON</TabsTrigger>
-              <TabsTrigger value="css" class="text-sm px-2">CSS</TabsTrigger>
-              <TabsIndicator />
-            </TabsList>
-            <div class="flex items-center gap-2 ml-auto">
-              <Label
-                for="export-format-select"
-                class="text-sm whitespace-nowrap">Colors:</Label
-              >
-              <Select>
-                <SelectIndicator />
-                <SelectControl id="export-format-select" size="sm">
-                  <SelectOption value="hsl">HSL</SelectOption>
-                  <SelectOption value="rgb">RGB</SelectOption>
-                  <SelectOption value="hex">HEX</SelectOption>
-                  <SelectOption value="oklch" selected>OKLCH</SelectOption>
-                </SelectControl>
-              </Select>
-            </div>
-          </div>
-          <TabsContent value="json" class="mt-0">
-            <pre
-              class="export-code-block max-w-[718px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4"><code id="export-code-json" class="language-json" /></pre>
-          </TabsContent>
-          <TabsContent value="css" class="mt-0">
-            <pre
-              class="export-code-block max-w-[718px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4"><code id="export-code-css" class="language-css" /></pre>
-          </TabsContent>
-        </Tabs>
-        <DialogFooter>
-          <Button variant="outline" data-slot="dialog-close">Close</Button>
-          <Button id="export-json-copy-btn">Copy to Clipboard</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-
-    <!-- AI Generate Dialog -->
-    <Dialog id="ai-generate-dialog">
-      <button
-        type="button"
-        data-slot="dialog-trigger"
-        id="ai-generate-dialog-trigger"
-        style="display: none;"></button>
-      <DialogContent class="sm:max-w-lg ai-dialog-content">
-        <DialogHeader>
-          <DialogTitle>
-            <span class="flex items-center gap-2">
-              <Sparkles class="size-5 text-accent" />
-              AI Generate Palette
-            </span>
-          </DialogTitle>
-          <DialogDescription>
-            Describe the palette you want to create. You can mention brands,
-            moods, colors, or upload reference images.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div class="ai-form">
-          <div class="ai-prompt-wrapper">
-            <Textarea
-              id="ai-prompt-textarea"
-              class="min-h-[80px]"
-              placeholder="e.g., A warm and inviting theme with earthy browns and cream accents for a cozy atmosphere..."
-              rows={3}
-            />
-          </div>
-
-          <div class="ai-images-section">
-            <Label class="ai-images-label">
-              <ImagePlus class="size-4" />
-              <span>Reference Images (optional)</span>
-            </Label>
-            <div class="ai-images-dropzone" id="ai-images-dropzone">
-              <input
-                type="file"
-                id="ai-images-input"
-                accept="image/*"
-                multiple
-                class="ai-images-file-input"
-              />
-              <div class="dropzone-content">
-                <ImagePlus class="size-6 text-muted-foreground" />
-                <span>Drop images or click to upload</span>
-                <span class="dropzone-hint">Max 3 images, PNG/JPG</span>
-              </div>
-            </div>
-            <div class="ai-images-preview" id="ai-images-preview"></div>
-          </div>
-
-          <div class="ai-status" id="ai-status" style="display: none;">
-            <span id="ai-status-icon" class="ai-status-icon">
-              <Loader2 class="size-4 animate-spin" />
-            </span>
-            <span id="ai-status-text">Generating palette...</span>
-          </div>
-
-          <div class="ai-reasoning" id="ai-reasoning" style="display: none;">
-            <details>
-              <summary>AI Reasoning</summary>
-              <div class="ai-reasoning-content" id="ai-reasoning-content"></div>
-            </details>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" data-slot="dialog-close">Cancel</Button>
-          <Button id="ai-generate-confirm-btn">
-            <Sparkles class="size-4" />
-            Generate
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-
-    <!-- Share Dialog -->
-    <Dialog id="share-dialog">
-      <button
-        type="button"
-        data-slot="dialog-trigger"
-        id="share-dialog-trigger"
-        style="display: none;"></button>
-      <DialogContent class="sm:max-w-md share-dialog-content">
-        <DialogHeader>
-          <DialogTitle>
-            <span class="flex items-center gap-2">
-              <Share2 class="size-5 text-accent" />
-              Share Theme
-            </span>
-          </DialogTitle>
-          <DialogDescription>
-            Share this theme with others via a link. Anyone with the link can
-            preview and install your theme.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div class="share-form">
-          <div class="share-status" id="share-status">
-            <span id="share-status-icon" class="share-status-icon">
-              <Loader2 class="size-4 animate-spin" />
-            </span>
-            <span id="share-status-text">Generating share link...</span>
-          </div>
-
-          <div class="share-result" id="share-result" style="display: none;">
-            <Label for="share-url-input" class="text-sm font-medium mb-2 block">
-              Share URL
-            </Label>
-            <div class="flex gap-2">
-              <Input
-                type="text"
-                id="share-url-input"
-                class="font-mono text-sm flex-1"
-                readonly
-              />
-              <Button
-                id="share-copy-btn"
-                variant="outline"
-                size="icon"
-                title="Copy to clipboard"
-              >
-                <Copy class="size-4" id="share-copy-icon" />
-                <Check class="size-4 hidden" id="share-copied-icon" />
-              </Button>
-            </div>
-            <p class="text-xs text-muted-foreground mt-2">
-              This link will expire after 30 days of inactivity.
-            </p>
-          </div>
-
-          <div class="share-error" id="share-error" style="display: none;">
-            <p class="text-sm text-destructive" id="share-error-text">
-              Failed to create share link. Please try again.
-            </p>
-            <Button
-              id="share-retry-btn"
-              variant="outline"
-              size="sm"
-              class="mt-2"
-            >
-              Try Again
-            </Button>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" data-slot="dialog-close">Close</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ImportDialog />
+    <ExportDialog />
+    <AIGenerateDialog />
+    <ShareDialog />
   </div>
 
   <!-- Theme Editor toggle button - positioned after panel for CSS sibling selector -->
@@ -687,625 +491,9 @@ const radiusOptions = [
   </svg>
 </button> -->
 
-  <style is:global>
-    /* Floating Action Button */
-    .theme-editor-fab {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9998;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--primary);
-      color: var(--primary-foreground);
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition:
-        transform 0.15s,
-        box-shadow 0.15s,
-        opacity 0.15s;
-    }
-
-    .theme-editor-fab:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .theme-editor-fab:active {
-      transform: scale(0.95);
-    }
-
-    /* Hide FAB when panel is open */
-    .theme-editor-panel.open + .theme-editor-fab {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .theme-editor-panel {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      width: 320px;
-      max-height: calc(100vh - 100px);
-      background: var(--popover, #fff);
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      z-index: 9999;
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-      font-size: 0.875rem;
-    }
-
-    .theme-editor-panel.open {
-      display: flex;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border);
-      cursor: move;
-      user-select: none;
-      background: var(--muted);
-    }
-
-    .header-drag {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .header-title {
-      font-weight: 600;
-      font-size: 0.875rem;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .shortcut-hint {
-      font-size: 0.625rem;
-      padding: 0.125rem 0.375rem;
-      background: var(--secondary);
-      border-radius: 0.25rem;
-      color: var(--muted-foreground);
-      font-family: ui-monospace, monospace;
-    }
-
-    .panel-section {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .preset-section {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .preset-row {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .mode-tabs-container {
-      gap: 0;
-    }
-
-    .color-section.collapsed .section-content {
-      display: none;
-    }
-
-    .color-section.collapsed .chevron {
-      transform: rotate(-90deg);
-    }
-
-    .panel-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0.5rem 0;
-    }
-
-    .panel-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 1rem;
-      border-top: 1px solid var(--border);
-      background: var(--muted);
-    }
-
-    .footer-left,
-    .footer-right {
-      display: flex;
-      gap: 0.375rem;
-    }
-
-    /* Import Dialog */
-    .import-dialog-content {
-      z-index: 10001;
-    }
-
-    /* Export Dialog */
-    .export-dialog-content {
-      z-index: 10001;
-    }
-
-    /* CLI Installation Section */
-    .cli-install-section {
-      padding: 1rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 0.5rem;
-    }
-
-    .cli-command-box {
-      overflow-x: auto;
-    }
-
-    .cli-command-box code {
-      white-space: nowrap;
-      color: var(--foreground);
-    }
-
-    .export-code-block {
-      white-space: pre;
-      word-wrap: normal;
-      overflow-x: auto;
-      tab-size: 2;
-      line-height: 1.6;
-      background: var(--muted) !important;
-      margin: 0;
-    }
-
-    .export-code-block code {
-      display: block;
-      font-family:
-        ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-        "Liberation Mono", monospace;
-      background: transparent !important;
-    }
-
-    /* Prism light theme (default) */
-    .export-code-block code[class*="language-"],
-    .export-code-block pre[class*="language-"] {
-      color: black;
-      background: none;
-      text-shadow: 0 1px white;
-    }
-
-    .export-code-block .token.comment,
-    .export-code-block .token.prolog,
-    .export-code-block .token.doctype,
-    .export-code-block .token.cdata {
-      color: slategray;
-    }
-
-    .export-code-block .token.punctuation {
-      color: #999;
-    }
-
-    .export-code-block .token.namespace {
-      opacity: 0.7;
-    }
-
-    .export-code-block .token.property,
-    .export-code-block .token.tag,
-    .export-code-block .token.boolean,
-    .export-code-block .token.number,
-    .export-code-block .token.constant,
-    .export-code-block .token.symbol,
-    .export-code-block .token.deleted {
-      color: #905;
-    }
-
-    .export-code-block .token.selector,
-    .export-code-block .token.attr-name,
-    .export-code-block .token.string,
-    .export-code-block .token.char,
-    .export-code-block .token.builtin,
-    .export-code-block .token.inserted {
-      color: #690;
-    }
-
-    .export-code-block .token.operator,
-    .export-code-block .token.entity,
-    .export-code-block .token.url,
-    .export-code-block .language-css .token.string,
-    .export-code-block .style .token.string {
-      color: #9a6e3a;
-    }
-
-    .export-code-block .token.atrule,
-    .export-code-block .token.attr-value,
-    .export-code-block .token.keyword {
-      color: #07a;
-    }
-
-    .export-code-block .token.function,
-    .export-code-block .token.class-name {
-      color: #dd4a68;
-    }
-
-    .export-code-block .token.regex,
-    .export-code-block .token.important,
-    .export-code-block .token.variable {
-      color: #e90;
-    }
-
-    .export-code-block .token.important,
-    .export-code-block .token.bold {
-      font-weight: bold;
-    }
-
-    .export-code-block .token.italic {
-      font-style: italic;
-    }
-
-    /* Prism dark theme */
-    .dark .export-code-block code[class*="language-"],
-    .dark .export-code-block pre[class*="language-"] {
-      color: white;
-      background: none;
-      text-shadow: 0 -0.1em 0.2em black;
-    }
-
-    .dark .export-code-block .token.comment,
-    .dark .export-code-block .token.prolog,
-    .dark .export-code-block .token.doctype,
-    .dark .export-code-block .token.cdata {
-      color: hsl(30, 20%, 50%);
-    }
-
-    .dark .export-code-block .token.punctuation {
-      opacity: 0.7;
-    }
-
-    .dark .export-code-block .token.namespace {
-      opacity: 0.7;
-    }
-
-    .dark .export-code-block .token.property,
-    .dark .export-code-block .token.tag,
-    .dark .export-code-block .token.boolean,
-    .dark .export-code-block .token.number,
-    .dark .export-code-block .token.constant,
-    .dark .export-code-block .token.symbol {
-      color: hsl(350, 40%, 70%);
-    }
-
-    .dark .export-code-block .token.selector,
-    .dark .export-code-block .token.attr-name,
-    .dark .export-code-block .token.string,
-    .dark .export-code-block .token.char,
-    .dark .export-code-block .token.builtin,
-    .dark .export-code-block .token.inserted {
-      color: hsl(75, 70%, 60%);
-    }
-
-    .dark .export-code-block .token.operator,
-    .dark .export-code-block .token.entity,
-    .dark .export-code-block .token.url,
-    .dark .export-code-block .language-css .token.string,
-    .dark .export-code-block .style .token.string,
-    .dark .export-code-block .token.variable {
-      color: hsl(40, 90%, 60%);
-    }
-
-    .dark .export-code-block .token.atrule,
-    .dark .export-code-block .token.attr-value,
-    .dark .export-code-block .token.keyword {
-      color: hsl(350, 40%, 70%);
-    }
-
-    .dark .export-code-block .token.regex,
-    .dark .export-code-block .token.important {
-      color: #e90;
-    }
-
-    .dark .export-code-block .token.important,
-    .dark .export-code-block .token.bold {
-      font-weight: bold;
-    }
-
-    .dark .export-code-block .token.italic {
-      font-style: italic;
-    }
-
-    .dark .export-code-block .token.deleted {
-      color: red;
-    }
-
-    /* Toast notification */
-    .theme-editor-toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 0.75rem 1.25rem;
-      background: var(--foreground);
-      color: var(--background);
-      border-radius: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      z-index: 10000;
-      animation: toast-in 0.3s ease;
-    }
-
-    @keyframes toast-in {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-      }
-    }
-
-    /* AI Generate Button */
-    .ai-btn {
-      background: linear-gradient(
-        135deg,
-        var(--accent) 0%,
-        var(--primary) 100%
-      ) !important;
-      color: var(--accent-foreground) !important;
-      border-color: var(--accent) !important;
-    }
-
-    .ai-btn:hover {
-      opacity: 0.9;
-    }
-
-    /* AI Generate Dialog */
-    .ai-dialog-content {
-      z-index: 10001;
-    }
-
-    .ai-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .ai-prompt-wrapper {
-      width: 100%;
-    }
-
-    .ai-images-section {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .ai-images-label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8125rem;
-      font-weight: 500;
-      color: var(--foreground);
-    }
-
-    .ai-images-dropzone {
-      position: relative;
-      border: 2px dashed var(--border);
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      text-align: center;
-      transition:
-        border-color 0.15s,
-        background 0.15s;
-      cursor: pointer;
-    }
-
-    .ai-images-dropzone:hover,
-    .ai-images-dropzone.dragover {
-      border-color: var(--accent);
-      background: var(--accent) / 0.05;
-    }
-
-    .ai-images-file-input {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-    }
-
-    .dropzone-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      pointer-events: none;
-    }
-
-    .dropzone-content span {
-      font-size: 0.8125rem;
-      color: var(--muted-foreground);
-    }
-
-    .dropzone-hint {
-      font-size: 0.6875rem !important;
-      opacity: 0.7;
-    }
-
-    .ai-images-preview {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .ai-image-preview {
-      position: relative;
-      width: 64px;
-      height: 64px;
-      border-radius: 0.375rem;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    .ai-image-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .ai-image-preview button {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--destructive);
-      color: var(--destructive-foreground);
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 12px;
-      line-height: 1;
-    }
-
-    .ai-status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem;
-      background: var(--muted);
-      border-radius: 0.5rem;
-      font-size: 0.8125rem;
-      color: var(--muted-foreground);
-    }
-
-    .ai-status-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .ai-status-icon .animate-spin {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .ai-reasoning {
-      font-size: 0.8125rem;
-    }
-
-    .ai-reasoning summary {
-      cursor: pointer;
-      color: var(--muted-foreground);
-      padding: 0.5rem 0;
-    }
-
-    .ai-reasoning summary:hover {
-      color: var(--foreground);
-    }
-
-    .ai-reasoning-content {
-      padding: 0.75rem;
-      background: var(--muted);
-      border-radius: 0.375rem;
-      font-size: 0.75rem;
-      line-height: 1.5;
-      color: var(--muted-foreground);
-      max-height: 150px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-    }
-
-    .ai-generate-btn {
-      background: linear-gradient(
-        135deg,
-        var(--accent) 0%,
-        var(--primary) 100%
-      );
-      border-color: var(--accent);
-    }
-
-    .ai-generate-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    /* Share Dialog */
-    .share-dialog-content {
-      z-index: 10001;
-    }
-
-    .share-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .share-status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem;
-      background: var(--muted);
-      border-radius: 0.5rem;
-      font-size: 0.8125rem;
-      color: var(--muted-foreground);
-    }
-
-    .share-status-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .share-status-icon .animate-spin {
-      animation: spin 1s linear infinite;
-    }
-
-    .share-result {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .share-error {
-      padding: 0.75rem;
-      background: hsl(var(--destructive) / 0.1);
-      border: 1px solid var(--destructive);
-      border-radius: 0.5rem;
-    }
-  </style>
-
   <script>
-    import {
-      applyThemeToElement,
-      applyThemeToCss,
-    } from "../../utils/themes/apply-theme";
+    import Alpine from "alpinejs";
+    import { applyThemeToElement } from "../../utils/themes/apply-theme";
     import {
       getStoredPreset,
       setStoredPreset,
@@ -1319,2009 +507,1613 @@ const radiusOptions = [
       deleteCustomPreset,
       generatePresetId,
       getCustomPresets,
+      getEditingPresetDraft,
+      setEditingPresetDraft,
+      clearEditingPresetDraft,
       CUSTOM_PRESETS_CHANGE_EVENT,
       type CustomPreset,
     } from "../../utils/themes/custom-presets-store";
-    import type { ThemePreset, ThemeStyleProps } from "../../utils/types/theme";
-    // Prism.js for syntax highlighting
+    import type { ThemeStyleProps } from "../../utils/types/theme";
     import Prism from "prismjs";
     import "prismjs/components/prism-json";
     import "prismjs/components/prism-css";
+    import {
+      buildCliCommand,
+      convertStyleColors,
+      generateCssExport,
+      parseCssVariables,
+      toThemeStyleValues,
+    } from "./utils/themeEditorUtils";
 
-    class ThemeEditorPanel extends HTMLElement {
-      private isDragging = false;
-      private dragOffset = { x: 0, y: 0 };
-      private currentPresetId: string = "";
-      private currentMode: "light" | "dark" = "light";
-      private workingStyles: {
-        light: Partial<ThemeStyleProps>;
-        dark: Partial<ThemeStyleProps>;
-      } = { light: {}, dark: {} };
-      private originalStyles: {
-        light: Partial<ThemeStyleProps>;
-        dark: Partial<ThemeStyleProps>;
-      } = { light: {}, dark: {} };
-      private isCustomPreset = false;
-      private isCreatingNew = false;
+    const applyStoredDraftToRoot = () => {
+      if (typeof window === "undefined") return;
+      const storedId = getStoredPreset();
+      if (!storedId) return;
+      const draft = getEditingPresetDraft(storedId);
+      if (!draft) return;
 
-      // Elements
-      private header: HTMLElement | null = null;
-      private closeBtn: HTMLElement | null = null;
-      private presetSelect: HTMLElement | null = null;
-      private presetLabel: HTMLElement | null = null;
-      private presetSwatchPrimary: HTMLElement | null = null;
-      private presetSwatchAccent: HTMLElement | null = null;
-      private presetDropdownContent: HTMLElement | null = null;
-      private presetNameInput: HTMLInputElement | null = null;
-      private newPresetBtn: HTMLElement | null = null;
-      private deletePresetBtn: HTMLElement | null = null;
-      private modeTabs: HTMLElement | null = null;
-      private content: HTMLElement | null = null;
-      private resetBtn: HTMLElement | null = null;
-      private importDropdown: HTMLElement | null = null;
-      private exportDropdown: HTMLElement | null = null;
-      private aiGenerateBtn: HTMLElement | null = null;
-      private saveBtn: HTMLElement | null = null;
-      private shareBtn: HTMLElement | null = null;
-      private radiusSelect: HTMLSelectElement | null = null;
+      const mode = draft.currentMode || getCurrentMode();
+      applyThemeToElement(
+        { styles: draft.workingStyles, currentMode: mode },
+        document.documentElement,
+      );
+      document.documentElement.dataset.theme = mode;
+      document.documentElement.dataset.themeChoice = mode;
+    };
 
-      // Share state
-      private isSharing = false;
-      private shareShortId: string | null = null;
-      private currentCliPm: "pnpm" | "npm" | "yarn" | "bun" = "bun";
+    const getPanelInstance = () => {
+      const el = document.getElementById("theme-editor-panel");
+      return el ? Alpine.$data(el) : null;
+    };
 
-      // AI state
-      private aiImages: { data: string; mediaType: string }[] = [];
+    const setupGlobalHandlers = () => {
+      if ((window as any).__themeEditorGlobalHandlers) return;
+      (window as any).__themeEditorGlobalHandlers = true;
 
-      connectedCallback() {
-        this.header = this.querySelector('[data-slot="header"]');
-        this.closeBtn = this.querySelector('[data-slot="close"]');
-        this.presetLabel = this.querySelector('[data-slot="preset-label"]');
-        this.presetSwatchPrimary = this.querySelector(
-          '[data-slot="swatch-primary"]',
-        );
-        this.presetSwatchAccent = this.querySelector(
-          '[data-slot="swatch-accent"]',
-        );
-        this.presetDropdownContent = this.querySelector(
-          '[data-slot="dropdown-menu-content"]',
-        );
-        this.presetNameInput = this.querySelector('[data-slot="preset-name"]');
-        this.newPresetBtn = this.querySelector('[data-slot="new-preset"]');
-        this.deletePresetBtn = this.querySelector(
-          '[data-slot="delete-preset"]',
-        );
-        this.modeTabs = this.querySelector("[data-panel-mode-tabs]");
-        this.content = this.querySelector('[data-slot="content"]');
-        this.resetBtn = this.querySelector('[data-slot="reset"]');
-        this.importDropdown = this.querySelector(
-          "[data-panel-import-dropdown]",
-        );
-        this.importCssBtn = this.querySelector('[data-action="import-css"]');
-        this.exportJsonBtn = this.querySelector('[data-action="export-json"]');
-        this.exportDropdown = this.querySelector(
-          "[data-panel-export-dropdown]",
-        );
-        this.aiGenerateBtn = this.querySelector('[data-slot="ai-generate"]');
-        this.saveBtn = this.querySelector('[data-slot="save"]');
-        this.shareBtn = this.querySelector('[data-action="share-theme"]');
-        this.radiusSelect = this.querySelector('[data-slot="radius-select"]');
+      document.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        const panel = getPanelInstance();
+        if (!panel) return;
 
-        this.setupDragging();
-        this.setupEventListeners();
-        this.loadInitialState();
+        if (target.closest("#ai-generate-confirm-btn")) {
+          panel.handleAIGenerate();
+        }
+        if (target.closest("#import-confirm-btn")) {
+          panel.handleImport();
+        }
+        if (target.closest("#export-json-copy-btn")) {
+          panel.handleExportJsonCopy();
+        }
+        if (target.closest("#share-retry-btn")) {
+          panel.generateShareLink();
+        }
+        if (target.closest("#share-copy-btn")) {
+          panel.handleShareCopy();
+        }
+        if (target.closest("#cli-copy-btn")) {
+          panel.handleCliCopy();
+        }
 
-        // Global keyboard shortcut
-        document.addEventListener("keydown", this.handleKeydown.bind(this));
-
-        // Listen for preset changes from other sources
-        window.addEventListener(
-          PRESET_CHANGE_EVENT,
-          this.handleExternalPresetChange.bind(this),
-        );
-        window.addEventListener(
-          CUSTOM_PRESETS_CHANGE_EVENT,
-          this.refreshPresetList.bind(this),
-        );
-
-        // Listen for theme changes from ThemeSwitcher
-        window.addEventListener(
-          "theme-toggle-changed",
-          this.handleExternalThemeChange.bind(this),
-        );
-      }
-
-      private handleExternalThemeChange(e: Event) {
-        const customEvent = e as CustomEvent<{ theme: string }>;
-        const theme = customEvent.detail?.theme;
-        if (theme === "light" || theme === "dark") {
-          // Only update if different to avoid loops
-          if (this.currentMode !== theme) {
-            this.switchMode(theme, true);
+        const removeBtn = target.closest("[data-ai-remove]");
+        if (removeBtn) {
+          const index = Number(
+            (removeBtn as HTMLElement).dataset.aiRemove || -1,
+          );
+          if (!Number.isNaN(index)) {
+            panel.removeAIImage(index);
           }
         }
-      }
+      });
 
-      disconnectedCallback() {
-        document.removeEventListener("keydown", this.handleKeydown.bind(this));
-      }
+      document.addEventListener("change", (e) => {
+        const target = e.target as HTMLElement;
+        const panel = getPanelInstance();
+        if (!panel) return;
 
-      private handleKeydown(e: KeyboardEvent) {
-        // Cmd/Ctrl + . to toggle panel
-        if ((e.metaKey || e.ctrlKey) && e.key === ".") {
+        if (target.closest("#export-format-select")) {
+          panel.updateExportContent();
+        }
+      });
+
+      document.addEventListener("tabs:change", (e) => {
+        const customEvent = e as CustomEvent;
+        const target = e.target as HTMLElement;
+        const panel = getPanelInstance();
+        if (!panel || !customEvent.detail?.value) return;
+
+        if (target.closest("#export-type-tabs")) {
+          panel.setExportType(customEvent.detail.value as "json" | "css");
+        }
+
+        if (target.closest("#cli-pm-tabs")) {
+          panel.setCliPackageManager(
+            customEvent.detail.value as "pnpm" | "npm" | "yarn" | "bun",
+          );
+        }
+      });
+
+      document.addEventListener("dragover", (e) => {
+        const dropzone = (e.target as HTMLElement).closest(
+          "#ai-images-dropzone",
+        );
+        if (dropzone) {
           e.preventDefault();
-          this.toggle();
+          dropzone.classList.add("border-accent", "bg-accent/5");
         }
-        // Escape to close (but not if a dialog is open)
-        if (e.key === "Escape" && this.classList.contains("open")) {
-          // Check if any dialog is currently open
-          const openDialog = document.querySelector(
-            '[data-slot="dialog-overlay"][data-state="open"]',
-          );
-          if (!openDialog) {
-            this.close();
-          }
-        }
-      }
+      });
 
-      private setupDragging() {
-        if (!this.header) return;
-
-        this.header.addEventListener("mousedown", (e) => {
-          if ((e.target as HTMLElement).closest("button")) return;
-          this.isDragging = true;
-          const rect = this.getBoundingClientRect();
-          this.dragOffset = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-          };
-          this.style.transition = "none";
-        });
-
-        document.addEventListener("mousemove", (e) => {
-          if (!this.isDragging) return;
-          const x = e.clientX - this.dragOffset.x;
-          const y = e.clientY - this.dragOffset.y;
-
-          // Keep panel within viewport
-          const maxX = window.innerWidth - this.offsetWidth;
-          const maxY = window.innerHeight - this.offsetHeight;
-
-          this.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
-          this.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
-          this.style.right = "auto";
-        });
-
-        document.addEventListener("mouseup", () => {
-          this.isDragging = false;
-          this.style.transition = "";
-        });
-      }
-
-      private setupEventListeners() {
-        // Close button
-        this.closeBtn?.addEventListener("click", () => this.close());
-
-        // Preset dropdown menu item clicks
-        this.presetDropdownContent?.addEventListener("click", (e) => {
-          const item = (e.target as HTMLElement).closest(
-            '[data-slot="dropdown-menu-item"]',
-          );
-          if (item) {
-            const id = (item as HTMLElement).dataset.value;
-            if (id) {
-              this.loadPreset(id);
-            }
-          }
-        });
-
-        // New preset button
-        this.newPresetBtn?.addEventListener("click", () =>
-          this.startNewPreset(),
+      document.addEventListener("dragleave", (e) => {
+        const dropzone = (e.target as HTMLElement).closest(
+          "#ai-images-dropzone",
         );
+        if (dropzone) {
+          dropzone.classList.remove("border-accent", "bg-accent/5");
+        }
+      });
 
-        // Delete preset button
-        this.deletePresetBtn?.addEventListener("click", () =>
-          this.deleteCurrentPreset(),
+      document.addEventListener("drop", (e) => {
+        const dropzone = (e.target as HTMLElement).closest(
+          "#ai-images-dropzone",
         );
-
-        // Preset name input
-        this.presetNameInput?.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") {
-            this.confirmNewPreset();
-          } else if (e.key === "Escape") {
-            this.cancelNewPreset();
-          }
-        });
-
-        // Mode tabs - use event delegation to work with @data-slot/tabs
-        this.modeTabs?.addEventListener("click", (e) => {
-          const tab = (e.target as HTMLElement).closest(".mode-tab");
-          if (tab) {
-            const mode = (tab as HTMLElement).dataset.mode as "light" | "dark";
-            if (mode) {
-              this.switchMode(mode);
-            }
-          }
-        });
-
-        // Section toggles
-        this.content
-          ?.querySelectorAll('[data-slot="section-toggle"]')
-          .forEach((toggle) => {
-            toggle.addEventListener("click", () => {
-              toggle.closest(".color-section")?.classList.toggle("collapsed");
-            });
-          });
-
-        // Color changes
-        this.addEventListener("color-change", ((e: CustomEvent) => {
-          const { token, value } = e.detail;
-          this.updateColor(token, value);
-        }) as EventListener);
-
-        // Radius select change
-        this.radiusSelect?.addEventListener("change", (e) => {
-          const value = (e.target as HTMLSelectElement).value;
-          this.updateRadius(value);
-        });
-
-        // Footer buttons
-        this.resetBtn?.addEventListener("click", () => this.resetToOriginal());
-        this.aiGenerateBtn?.addEventListener("click", () =>
-          this.openAIDialog(),
-        );
-        this.saveBtn?.addEventListener("click", () => this.savePreset());
-
-        // Import dropdown
-        // this.importDropdown?.addEventListener("click", (e) => {
-        //   const item = (e.target as HTMLElement).closest("[data-action]");
-        //   if (item) {
-        //     const action = (item as HTMLElement).dataset.action;
-        //     if (action === "import-css") {
-        //       this.openImportDialog();
-        //     }
-        //   }
-        // });
-
-        this.importCssBtn?.addEventListener("click", () =>
-          this.openImportDialog(),
-        );
-
-        // Export JSON button
-        this.exportJsonBtn?.addEventListener("click", () =>
-          this.openExportJsonDialog(),
-        );
-
-        // Share button
-        this.shareBtn?.addEventListener("click", () => this.openShareDialog());
-
-        // Export dropdown
-        // this.exportDropdown?.addEventListener("click", (e) => {
-        //   const item = (e.target as HTMLElement).closest("[data-action]");
-        //   if (item) {
-        //     const action = (item as HTMLElement).dataset.action;
-        //     if (action === "export-json") {
-        //       this.openExportJsonDialog();
-        //     }
-        //   }
-        // });
-
-        // AI dialog confirm button - use event delegation
-        if (!(window as any).__aiGenerateHandler) {
-          (window as any).__aiGenerateHandler = (e: Event) => {
-            const target = e.target as HTMLElement;
-            if (target.closest("#ai-generate-confirm-btn")) {
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              panel?.handleAIGenerate();
-            }
-          };
-          document.addEventListener(
-            "click",
-            (window as any).__aiGenerateHandler,
-          );
+        if (dropzone) {
+          e.preventDefault();
+          dropzone.classList.remove("border-accent", "bg-accent/5");
+          const files = e.dataTransfer?.files;
+          const panel = getPanelInstance();
+          if (files && panel) panel.handleAIImageFiles(files);
         }
-
-        // Setup AI image upload handlers
-        this.setupAIImageHandlers();
-
-        // Import dialog confirm button - use event delegation on document for dynamic content
-        // Guard to prevent multiple listeners after View Transitions
-        if (!(window as any).__importConfirmHandler) {
-          (window as any).__importConfirmHandler = (e: Event) => {
-            const target = e.target as HTMLElement;
-            if (target.closest("#import-confirm-btn")) {
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              panel?.handleImport();
-            }
-          };
-          document.addEventListener(
-            "click",
-            (window as any).__importConfirmHandler,
-          );
-        }
-
-        // Export JSON copy button - use event delegation
-        if (!(window as any).__exportJsonCopyHandler) {
-          (window as any).__exportJsonCopyHandler = (e: Event) => {
-            const target = e.target as HTMLElement;
-            if (target.closest("#export-json-copy-btn")) {
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              panel?.handleExportJsonCopy();
-            }
-          };
-          document.addEventListener(
-            "click",
-            (window as any).__exportJsonCopyHandler,
-          );
-        }
-
-        // Export format select change - use event delegation
-        if (!(window as any).__exportFormatChangeHandler) {
-          (window as any).__exportFormatChangeHandler = (e: Event) => {
-            const target = e.target as HTMLElement;
-            if (target.closest("#export-format-select")) {
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              panel?.updateExportContent();
-            }
-          };
-          document.addEventListener(
-            "change",
-            (window as any).__exportFormatChangeHandler,
-          );
-        }
-
-        // Export type tabs change - use event delegation
-        if (!(window as any).__exportTypeTabsHandler) {
-          (window as any).__exportTypeTabsHandler = (e: Event) => {
-            const customEvent = e as CustomEvent;
-            const target = e.target as HTMLElement;
-            if (
-              target.closest("#export-type-tabs") &&
-              customEvent.detail?.value
-            ) {
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              panel?.setExportType(customEvent.detail.value as "json" | "css");
-            }
-          };
-          document.addEventListener(
-            "tabs:change",
-            (window as any).__exportTypeTabsHandler,
-          );
-        }
-
-        // Share retry button - use event delegation
-        if (!(window as any).__shareRetryHandler) {
-          (window as any).__shareRetryHandler = (e: Event) => {
-            const target = e.target as HTMLElement;
-            if (target.closest("#share-retry-btn")) {
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              panel?.generateShareLink();
-            }
-          };
-          document.addEventListener(
-            "click",
-            (window as any).__shareRetryHandler,
-          );
-        }
-
-        // Share copy button - use event delegation
-        if (!(window as any).__shareCopyHandler) {
-          (window as any).__shareCopyHandler = (e: Event) => {
-            const target = e.target as HTMLElement;
-            if (target.closest("#share-copy-btn")) {
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              panel?.handleShareCopy();
-            }
-          };
-          document.addEventListener(
-            "click",
-            (window as any).__shareCopyHandler,
-          );
-        }
-
-        // CLI copy button - use event delegation
-        if (!(window as any).__cliCopyHandler) {
-          (window as any).__cliCopyHandler = (e: Event) => {
-            const target = e.target as HTMLElement;
-            if (target.closest("#cli-copy-btn")) {
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              panel?.handleCliCopy();
-            }
-          };
-          document.addEventListener("click", (window as any).__cliCopyHandler);
-        }
-
-        // CLI package manager tabs - use event delegation
-        if (!(window as any).__cliPmTabsHandler) {
-          (window as any).__cliPmTabsHandler = (e: CustomEvent) => {
-            const panel = document.getElementById(
-              "theme-editor-panel",
-            ) as ThemeEditorPanel | null;
-            if (panel && e.detail?.value) {
-              panel.setCliPackageManager(e.detail.value);
-            }
-          };
-          // Listen for tabs:change event from the CLI tabs
-          document.addEventListener(
-            "tabs:change",
-            (window as any).__cliPmTabsHandler as EventListener,
-          );
-        }
-      }
-
-      private loadInitialState() {
-        this.currentMode = getCurrentMode();
-        this.updateModeTabsUI();
-        this.refreshPresetList();
-
-        const storedPreset = getStoredPreset();
-        if (storedPreset) {
-          this.loadPreset(storedPreset);
-        } else {
-          this.loadPreset(Object.keys(defaultPresets)[0]);
-        }
-      }
-
-      private refreshPresetList() {
-        if (!this.presetDropdownContent) return;
-
-        const allPresets = getAllPresets();
-
-        // Clear existing items
-        this.presetDropdownContent.innerHTML = "";
-
-        // Built-in presets label
-        const builtInLabel = document.createElement("div");
-        builtInLabel.setAttribute("data-slot", "dropdown-menu-label");
-        builtInLabel.className = "px-2 py-1.5 text-sm font-medium";
-        builtInLabel.textContent = "Built-in";
-        this.presetDropdownContent.appendChild(builtInLabel);
-
-        // Built-in preset items
-        Object.entries(allPresets).forEach(([id, preset]) => {
-          if (!preset.isCustom) {
-            const item = document.createElement("div");
-            item.setAttribute("role", "menuitem");
-            item.setAttribute("tabindex", "0");
-            item.setAttribute("data-slot", "dropdown-menu-item");
-            item.setAttribute("data-value", id);
-            item.className =
-              "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
-            item.textContent = preset.name || id;
-            this.presetDropdownContent!.appendChild(item);
-          }
-        });
-
-        // Custom presets
-        const customPresets = Object.entries(allPresets).filter(
-          ([, p]) => p.isCustom,
-        );
-        if (customPresets.length > 0) {
-          // Separator
-          const separator = document.createElement("div");
-          separator.setAttribute("data-slot", "dropdown-menu-separator");
-          separator.className = "-mx-1 my-1 h-px bg-border";
-          this.presetDropdownContent.appendChild(separator);
-
-          // Custom label
-          const customLabel = document.createElement("div");
-          customLabel.setAttribute("data-slot", "dropdown-menu-label");
-          customLabel.className = "px-2 py-1.5 text-sm font-medium";
-          customLabel.textContent = "Custom";
-          this.presetDropdownContent.appendChild(customLabel);
-
-          // Custom preset items
-          customPresets.forEach(([id, preset]) => {
-            const item = document.createElement("div");
-            item.setAttribute("role", "menuitem");
-            item.setAttribute("tabindex", "0");
-            item.setAttribute("data-slot", "dropdown-menu-item");
-            item.setAttribute("data-value", id);
-            item.className =
-              "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
-
-            const lightStyles = preset.styles?.light || {};
-            const darkStyles = preset.styles?.dark || {};
-
-            // Light mode swatches
-            const lightSwatches = document.createElement("div");
-            lightSwatches.className =
-              "flex -space-x-1 items-center dark:hidden";
-            lightSwatches.innerHTML = `
-            <div class="size-4 rounded-full" style="background: ${lightStyles.primary || "#888"}"></div>
-            <div class="size-4 rounded-full" style="background: ${lightStyles.accent || "#888"}"></div>
-          `;
-            item.appendChild(lightSwatches);
-
-            // Dark mode swatches
-            const darkSwatches = document.createElement("div");
-            darkSwatches.className = "hidden dark:flex -space-x-1 items-center";
-            darkSwatches.innerHTML = `
-            <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.primary || "#888"}"></div>
-            <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.accent || "#888"}"></div>
-          `;
-            item.appendChild(darkSwatches);
-
-            // Label
-            const label = document.createElement("span");
-            label.className = "truncate";
-            label.textContent = preset.name || id;
-            item.appendChild(label);
-
-            this.presetDropdownContent!.appendChild(item);
-          });
-        }
-      }
-
-      private loadPreset(id: string) {
-        const allPresets = getAllPresets();
-        const preset = allPresets[id];
-        if (!preset) return;
-
-        this.currentPresetId = id;
-        this.isCustomPreset = !!preset.isCustom;
-
-        // Restore shareId if the preset has one (for custom presets)
-        this.shareShortId = (preset as any).shareId || null;
-
-        // Deep clone styles
-        this.workingStyles = JSON.parse(JSON.stringify(preset.styles));
-        this.originalStyles = JSON.parse(JSON.stringify(preset.styles));
-
-        // Update dropdown label
-        if (this.presetLabel) {
-          this.presetLabel.textContent = preset.name || id;
-        }
-
-        // Update trigger swatches
-        this.updatePresetSwatches();
-
-        // Update delete button state
-        if (this.deletePresetBtn) {
-          (this.deletePresetBtn as HTMLButtonElement).disabled =
-            !this.isCustomPreset;
-        }
-
-        // Update color inputs and radius select
-        this.updateColorInputs();
-        this.updateRadiusSelect();
-
-        // Apply theme live
-        this.applyLivePreview();
-
-        // Also update global preset with swatches and name
-        const swatches = {
-          primaryLight: preset.styles.light?.primary || "#000",
-          accentLight: preset.styles.light?.accent || "#666",
-          primaryDark: preset.styles.dark?.primary || "#fff",
-          accentDark: preset.styles.dark?.accent || "#888",
-        };
-        setStoredPreset(id, swatches, preset.name || id);
-      }
-
-      private updatePresetSwatches() {
-        const styles = this.workingStyles[this.currentMode];
-        if (this.presetSwatchPrimary) {
-          this.presetSwatchPrimary.style.background = styles.primary || "";
-        }
-        if (this.presetSwatchAccent) {
-          this.presetSwatchAccent.style.background = styles.accent || "";
-        }
-      }
-
-      private updateColorInputs() {
-        const styles = this.workingStyles[this.currentMode];
-
-        this.querySelectorAll<HTMLElement>("color-input").forEach((input) => {
-          const token = input.dataset.token;
-          if (token && styles[token as keyof typeof styles]) {
-            (input as any).setColor?.(
-              styles[token as keyof typeof styles] as string,
-            );
-          }
-        });
-      }
-
-      private updateColor(token: string, value: string) {
-        this.workingStyles[this.currentMode][token as keyof ThemeStyleProps] =
-          value;
-        this.applyLivePreview();
-
-        // Update swatches if primary or accent changed
-        if (token === "primary" || token === "accent") {
-          this.updatePresetSwatches();
-        }
-      }
-
-      private updateRadius(value: string) {
-        // Radius is stored in light mode as a common/global style
-        this.workingStyles.light.radius = value;
-        this.applyLivePreview();
-      }
-
-      private updateRadiusSelect() {
-        if (!this.radiusSelect) return;
-        const radius = this.workingStyles.light?.radius || "0.625rem";
-        this.radiusSelect.value = radius;
-      }
-
-      private applyLivePreview() {
-        applyThemeToElement(
-          { styles: this.workingStyles, currentMode: this.currentMode },
-          document.documentElement,
-        );
-      }
-
-      private switchMode(mode: "light" | "dark", fromExternal = false) {
-        this.currentMode = mode;
-        this.updateModeTabsUI();
-        this.updateColorInputs();
-        this.updatePresetSwatches();
-
-        // Only update the global theme if this isn't from an external change
-        if (!fromExternal) {
-          // Update localStorage (same key as ThemeSwitcher)
-          localStorage.setItem("starlight-theme", mode);
-
-          // Update document state
-          document.documentElement.dataset.theme = mode;
-          document.documentElement.dataset.themeChoice = mode;
-          document.documentElement.classList.toggle("dark", mode === "dark");
-
-          // Dispatch event for other components to react
-          window.dispatchEvent(
-            new CustomEvent("theme-toggle-changed", {
-              detail: { theme: mode },
-            }),
-          );
-
-          // Update the global ThemeSwitcher tabs
-          document
-            .querySelector<HTMLDivElement>("#theme-tabs")
-            ?.dispatchEvent(
-              new CustomEvent("tabs:select", { detail: { value: mode } }),
-            );
-        }
-
-        this.applyLivePreview();
-      }
-
-      private updateModeTabsUI() {
-        this.modeTabs?.querySelectorAll(".mode-tab").forEach((tab) => {
-          const isActive =
-            (tab as HTMLElement).dataset.mode === this.currentMode;
-          tab.classList.toggle("active", isActive);
-        });
-
-        // Update the Tabs component's visual state
-        const tabsEl = this.modeTabs?.querySelector('[data-slot="tabs"]');
-        tabsEl?.dispatchEvent(
-          new CustomEvent("tabs:select", {
-            detail: { value: this.currentMode },
-          }),
-        );
-      }
-
-      private startNewPreset() {
-        this.isCreatingNew = true;
-        if (this.presetNameInput) {
-          this.presetNameInput.style.display = "block";
-          this.presetNameInput.value = `${this.presetLabel?.textContent || "Custom"} Copy`;
-          this.presetNameInput.focus();
-          this.presetNameInput.select();
-        }
-      }
-
-      private confirmNewPreset() {
-        if (!this.presetNameInput) return;
-
-        const name = this.presetNameInput.value.trim();
-        if (!name) {
-          this.cancelNewPreset();
-          return;
-        }
-
-        const newPreset: CustomPreset = {
-          id: generatePresetId(),
-          name,
-          label: name,
-          createdAt: new Date().toISOString(),
-          modifiedAt: new Date().toISOString(),
-          source: "SAVED",
-          styles: JSON.parse(JSON.stringify(this.workingStyles)),
-        };
-
-        saveCustomPreset(newPreset);
-        this.cancelNewPreset();
-        this.loadPreset(newPreset.id);
-        this.showToast(`Created preset "${name}"`);
-      }
-
-      private cancelNewPreset() {
-        this.isCreatingNew = false;
-        if (this.presetNameInput) {
-          this.presetNameInput.style.display = "none";
-          this.presetNameInput.value = "";
-        }
-      }
-
-      private deleteCurrentPreset() {
-        if (!this.isCustomPreset || !this.currentPresetId) return;
-
-        const allPresets = getAllPresets();
-        const preset = allPresets[this.currentPresetId];
-        if (!preset) return;
-
-        if (confirm(`Delete preset "${preset.name}"?`)) {
-          deleteCustomPreset(this.currentPresetId);
-          this.showToast(`Deleted preset "${preset.name}"`);
-
-          // Load first built-in preset
-          this.loadPreset(Object.keys(defaultPresets)[0]);
-        }
-      }
-
-      private resetToOriginal() {
-        this.workingStyles = JSON.parse(JSON.stringify(this.originalStyles));
-        this.updateColorInputs();
-        this.updateRadiusSelect();
-        this.applyLivePreview();
-        this.showToast("Reset to original");
-      }
-
-      private savePreset() {
-        if (this.isCustomPreset) {
-          // Update existing custom preset
-          const customPresets = getCustomPresets();
-          const existing = customPresets[this.currentPresetId];
-          if (existing) {
-            const updated: CustomPreset = {
-              ...existing,
-              styles: JSON.parse(JSON.stringify(this.workingStyles)),
-              modifiedAt: new Date().toISOString(),
-            };
-            saveCustomPreset(updated);
-            this.originalStyles = JSON.parse(
-              JSON.stringify(this.workingStyles),
-            );
-            this.showToast(`Saved "${existing.name}"`);
-          }
-        } else {
-          // Create new custom preset from built-in
-          this.startNewPreset();
-        }
-      }
-
-      private getImportTextarea(): HTMLTextAreaElement | null {
-        // The dialog portal might be moved to document.body, so search there
-        // Get the last matching element in case of duplicates after View Transitions
-        const all = document.querySelectorAll("#import-css-textarea");
-        return (all[all.length - 1] as HTMLTextAreaElement) || null;
-      }
-
-      private getImportDialog(): Element | null {
-        const all = document.querySelectorAll("#import-dialog");
-        return all[all.length - 1] || null;
-      }
-
-      private getAIPromptTextarea(): HTMLTextAreaElement | null {
-        // The dialog portal might be moved to document.body, so search there
-        // Get the last matching element in case of duplicates after View Transitions
-        const all = document.querySelectorAll("#ai-prompt-textarea");
-        return (all[all.length - 1] as HTMLTextAreaElement) || null;
-      }
-
-      private getAIDialog(): Element | null {
-        const all = document.querySelectorAll("#ai-generate-dialog");
-        return all[all.length - 1] || null;
-      }
-
-      private getExportCodeJson(): HTMLElement | null {
-        const all = document.querySelectorAll("#export-code-json");
-        return (all[all.length - 1] as HTMLElement) || null;
-      }
-
-      private getExportCodeCss(): HTMLElement | null {
-        const all = document.querySelectorAll("#export-code-css");
-        return (all[all.length - 1] as HTMLElement) || null;
-      }
-
-      private getExportJsonDialog(): Element | null {
-        const all = document.querySelectorAll("#export-json-dialog");
-        return all[all.length - 1] || null;
-      }
-
-      private getExportFormatSelect(): HTMLSelectElement | null {
-        const all = document.querySelectorAll("#export-format-select");
-        return (all[all.length - 1] as HTMLSelectElement) || null;
-      }
-
-      private getExportTypeTabs(): HTMLElement | null {
-        const all = document.querySelectorAll("#export-type-tabs");
-        return (all[all.length - 1] as HTMLElement) || null;
-      }
-
-      private currentExportType: "json" | "css" = "json";
-
-      private convertColor(
-        color: string,
-        format: "oklch" | "hsl" | "rgb" | "hex",
-      ): string {
-        if (!color) return color;
-
-        // Parse OKLCH color: oklch(L C H) or oklch(L C H / A)
-        const oklchMatch = color.match(
-          /oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/i,
-        );
-
-        if (!oklchMatch) {
-          // If not OKLCH, return as-is
-          return color;
-        }
-
-        const L = parseFloat(oklchMatch[1]);
-        const C = parseFloat(oklchMatch[2]);
-        const H = parseFloat(oklchMatch[3]);
-        const alpha = oklchMatch[4] ? parseFloat(oklchMatch[4]) : 1;
-
-        if (format === "oklch") {
-          return color; // Already OKLCH
-        }
-
-        // Convert OKLCH to sRGB
-        // Using simplified conversion (approximate)
-        const hRad = (H * Math.PI) / 180;
-        const a = C * Math.cos(hRad);
-        const b = C * Math.sin(hRad);
-
-        // OKLCH to OKLab
-        const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
-        const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
-        const s_ = L - 0.0894841775 * a - 1.291485548 * b;
-
-        const l = l_ * l_ * l_;
-        const m = m_ * m_ * m_;
-        const s = s_ * s_ * s_;
-
-        // OKLab to linear sRGB
-        let rLin = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
-        let gLin = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
-        let bLin = -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s;
-
-        // Linear to sRGB
-        const toSrgb = (c: number) => {
-          c = Math.max(0, Math.min(1, c));
-          return c <= 0.0031308
-            ? 12.92 * c
-            : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
-        };
-
-        let r = Math.round(toSrgb(rLin) * 255);
-        let g = Math.round(toSrgb(gLin) * 255);
-        let bl = Math.round(toSrgb(bLin) * 255);
-
-        // Clamp values
-        r = Math.max(0, Math.min(255, r));
-        g = Math.max(0, Math.min(255, g));
-        bl = Math.max(0, Math.min(255, bl));
-
-        if (format === "hex") {
-          const toHex = (n: number) => n.toString(16).padStart(2, "0");
-          if (alpha < 1) {
-            return `#${toHex(r)}${toHex(g)}${toHex(bl)}${toHex(Math.round(alpha * 255))}`;
-          }
-          return `#${toHex(r)}${toHex(g)}${toHex(bl)}`;
-        }
-
-        if (format === "rgb") {
-          if (alpha < 1) {
-            return `rgb(${r} ${g} ${bl} / ${alpha})`;
-          }
-          return `rgb(${r} ${g} ${bl})`;
-        }
-
-        if (format === "hsl") {
-          // RGB to HSL
-          const rNorm = r / 255;
-          const gNorm = g / 255;
-          const bNorm = bl / 255;
-
-          const max = Math.max(rNorm, gNorm, bNorm);
-          const min = Math.min(rNorm, gNorm, bNorm);
-          const lum = (max + min) / 2;
-
-          let hue = 0;
-          let sat = 0;
-
-          if (max !== min) {
-            const d = max - min;
-            sat = lum > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-            switch (max) {
-              case rNorm:
-                hue = ((gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0)) / 6;
-                break;
-              case gNorm:
-                hue = ((bNorm - rNorm) / d + 2) / 6;
-                break;
-              case bNorm:
-                hue = ((rNorm - gNorm) / d + 4) / 6;
-                break;
-            }
-          }
-
-          const hDeg = Math.round(hue * 360);
-          const sPct = Math.round(sat * 100);
-          const lPct = Math.round(lum * 100);
-
-          if (alpha < 1) {
-            return `hsl(${hDeg} ${sPct}% ${lPct}% / ${alpha})`;
-          }
-          return `hsl(${hDeg} ${sPct}% ${lPct}%)`;
-        }
-
-        return color;
-      }
-
-      private convertStyleColors(
-        styles: { light: Record<string, string>; dark: Record<string, string> },
-        format: "oklch" | "hsl" | "rgb" | "hex",
-      ): { light: Record<string, string>; dark: Record<string, string> } {
-        const convertObj = (obj: Record<string, string>) => {
-          const result: Record<string, string> = {};
-          for (const [key, value] of Object.entries(obj)) {
-            result[key] = this.convertColor(value, format);
-          }
-          return result;
-        };
-
-        return {
-          light: convertObj(styles.light),
-          dark: convertObj(styles.dark),
-        };
-      }
-
-      public updateExportContent() {
-        const select = this.getExportFormatSelect();
-        const format = (select?.value || "oklch") as
-          | "oklch"
-          | "hsl"
-          | "rgb"
-          | "hex";
-
-        const convertedStyles = this.convertStyleColors(
-          this.workingStyles,
-          format,
-        );
-
-        const jsonEl = this.getExportCodeJson();
-        const cssEl = this.getExportCodeCss();
-
-        // Generate JSON content
-        if (jsonEl) {
-          const data = {
-            name: this.presetLabel?.textContent || "Theme",
-            exportedAt: new Date().toISOString(),
-            styles: convertedStyles,
-          };
-          const jsonStr = JSON.stringify(data, null, 2);
-          jsonEl.textContent = jsonStr;
-          // Apply Prism highlighting
-          if (typeof Prism !== "undefined") {
-            jsonEl.innerHTML = Prism.highlight(
-              jsonStr,
-              Prism.languages.json,
-              "json",
-            );
+      });
+
+      document.addEventListener("change", (e) => {
+        const input = e.target as HTMLInputElement;
+        if (input.id === "ai-images-input" && input.files) {
+          const panel = getPanelInstance();
+          if (panel) {
+            panel.handleAIImageFiles(input.files);
+            input.value = "";
           }
         }
+      });
+    };
 
-        // Generate CSS content
-        if (cssEl) {
-          const cssStr = this.generateCssExport(convertedStyles);
-          cssEl.textContent = cssStr;
-          // Apply Prism highlighting
-          if (typeof Prism !== "undefined") {
-            cssEl.innerHTML = Prism.highlight(
-              cssStr,
-              Prism.languages.css,
-              "css",
-            );
-          }
-        }
-      }
+    document.addEventListener("alpine:init", () => {
+      if ((window as any).__themeEditorPanelData) return;
+      (window as any).__themeEditorPanelData = true;
 
-      private generateCssExport(styles: {
-        light: Record<string, string>;
-        dark: Record<string, string>;
-      }): string {
-        const lines: string[] = [];
-        lines.push(
-          "/* Theme: " + (this.presetLabel?.textContent || "Theme") + " */",
-        );
-        lines.push("");
+      applyStoredDraftToRoot();
 
-        // Light mode (root)
-        lines.push(":root {");
-        for (const [key, value] of Object.entries(styles.light)) {
-          lines.push(`  --${key}: ${value};`);
-        }
-        lines.push("}");
-        lines.push("");
-
-        // Dark mode
-        lines.push(".dark {");
-        for (const [key, value] of Object.entries(styles.dark)) {
-          lines.push(`  --${key}: ${value};`);
-        }
-        lines.push("}");
-
-        return lines.join("\n");
-      }
-
-      private openExportJsonDialog() {
-        // Reset format to OKLCH and type to JSON
-        const select = this.getExportFormatSelect();
-        if (select) select.value = "oklch";
-        this.currentExportType = "json";
-
-        // Reset tabs UI to JSON
-        const tabs = this.getExportTypeTabs();
-        if (tabs) {
-          tabs.dispatchEvent(
-            new CustomEvent("tabs:select", { detail: { value: "json" } }),
-          );
-        }
-
-        // Generate initial content
-        this.updateExportContent();
-
-        // Update CLI command
-        this.updateCliCommand();
-
-        // Click the hidden trigger to open the dialog
-        const triggers = document.querySelectorAll(
-          "#export-json-dialog-trigger",
-        );
-        const trigger = triggers[triggers.length - 1] as HTMLElement | null;
-        trigger?.click();
-      }
-
-      public handleExportJsonCopy() {
-        const codeEl =
-          this.currentExportType === "json"
-            ? this.getExportCodeJson()
-            : this.getExportCodeCss();
-        if (!codeEl) return;
-
-        this.copyToClipboard(codeEl.textContent || "");
-        this.showToast(
-          this.currentExportType === "json"
-            ? "JSON copied to clipboard"
-            : "CSS copied to clipboard",
-        );
-      }
-
-      public setExportType(type: "json" | "css") {
-        this.currentExportType = type;
-        // No need to re-render, tabs handle visibility
-      }
-
-      // =============== SHARE DIALOG ===============
-
-      private getShareDialog() {
-        const all = document.querySelectorAll("#share-dialog");
-        return all[all.length - 1] || null;
-      }
-
-      private openShareDialog() {
-        // Reset the dialog state to loading
-        const statusEl = document.getElementById("share-status");
-        const resultEl = document.getElementById("share-result");
-        const errorEl = document.getElementById("share-error");
-
-        if (statusEl) statusEl.style.display = "flex";
-        if (resultEl) resultEl.style.display = "none";
-        if (errorEl) errorEl.style.display = "none";
-
-        // Click the hidden trigger to open the dialog
-        const triggers = document.querySelectorAll("#share-dialog-trigger");
-        const trigger = triggers[triggers.length - 1] as HTMLElement | null;
-        trigger?.click();
-
-        // Auto-generate the share link
-        this.generateShareLink();
-      }
-
-      // Helper to get fresh share dialog element references
-      private getShareElements() {
-        return {
-          status: document.getElementById("share-status"),
-          statusText: document.getElementById("share-status-text"),
-          result: document.getElementById("share-result"),
-          error: document.getElementById("share-error"),
-          errorText: document.getElementById("share-error-text"),
-          urlInput: document.getElementById("share-url-input") as HTMLInputElement | null,
-        };
-      }
-
-      public async generateShareLink() {
-        if (this.isSharing) return;
-        this.isSharing = true;
-
-        // Get fresh element references for loading state
-        const loadingEls = this.getShareElements();
-
-        // Show loading state
-        if (loadingEls.status) loadingEls.status.style.display = "flex";
-        if (loadingEls.statusText) loadingEls.statusText.textContent = "Generating share link...";
-        if (loadingEls.result) loadingEls.result.style.display = "none";
-        if (loadingEls.error) loadingEls.error.style.display = "none";
-
-        try {
-          // Get current preset name and styles
-          const presetLabel = this.presetLabel?.textContent || "Shared Theme";
-
-          const response = await fetch("/api/themes/share", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
+      Alpine.data(
+        "themeEditorPanel",
+        (sectionTitles: string[]) =>
+          ({
+            isOpen: false,
+            isDragging: false,
+            dragOffset: { x: 0, y: 0 },
+            currentPresetId: "",
+            currentMode: "light",
+            workingStyles: { light: {}, dark: {} } as {
+              light: Partial<ThemeStyleProps>;
+              dark: Partial<ThemeStyleProps>;
             },
-            body: JSON.stringify({
-              name: presetLabel,
-              styles: this.workingStyles,
-              id: this.currentPresetId,
-              createdAt: new Date().toISOString(),
-              // Reuse existing share ID if available
-              shareId: this.shareShortId || undefined,
-            }),
-          });
-
-          const data = await response.json();
-
-          if (!response.ok) {
-            throw new Error(data.error || "Failed to create share link");
-          }
-
-          // Store the short ID for CLI command generation
-          this.shareShortId = data.shortId;
-
-          // Persist shareId to the custom preset so it survives refresh
-          if (this.isCustomPreset && this.currentPresetId) {
-            const customPresets = getCustomPresets();
-            const preset = customPresets[this.currentPresetId];
-            if (preset) {
-              preset.shareId = data.shortId;
-              saveCustomPreset(preset);
-            }
-          }
-
-          // Get fresh element references after async operation
-          const successEls = this.getShareElements();
-
-          // Show success
-          if (successEls.status) successEls.status.style.display = "none";
-          if (successEls.result) successEls.result.style.display = "block";
-          if (successEls.urlInput)
-            successEls.urlInput.value =
-              data.fullUrl || `https://ui.bejamas.com${data.shareUrl}`;
-
-          // Update CLI command in export dialog
-          this.updateCliCommand();
-        } catch (error) {
-          console.error("Share error:", error);
-
-          // Get fresh element references after async operation
-          const errorEls = this.getShareElements();
-
-          if (errorEls.status) errorEls.status.style.display = "none";
-          if (errorEls.error) errorEls.error.style.display = "block";
-          if (errorEls.errorText) {
-            errorEls.errorText.textContent =
-              error instanceof Error
-                ? error.message
-                : "Failed to create share link. Please try again.";
-          }
-        } finally {
-          this.isSharing = false;
-        }
-      }
-
-      public handleShareCopy() {
-        const urlInput = document.getElementById(
-          "share-url-input",
-        ) as HTMLInputElement | null;
-        if (!urlInput) return;
-
-        const copyIcon = document.getElementById("share-copy-icon");
-        const copiedIcon = document.getElementById("share-copied-icon");
-
-        navigator.clipboard
-          .writeText(urlInput.value)
-          .then(() => {
-            // Show success feedback
-            if (copyIcon) copyIcon.classList.add("hidden");
-            if (copiedIcon) copiedIcon.classList.remove("hidden");
-
-            this.showToast("Link copied to clipboard");
-
-            // Reset icon after 2 seconds
-            setTimeout(() => {
-              if (copyIcon) copyIcon.classList.remove("hidden");
-              if (copiedIcon) copiedIcon.classList.add("hidden");
-            }, 2000);
-          })
-          .catch((err) => {
-            console.error("Failed to copy:", err);
-            this.showToast("Failed to copy link");
-          });
-      }
-
-      // =============== CLI INSTALLATION ===============
-
-      private slugify(name: string): string {
-        return name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "");
-      }
-
-      private getCliCommand(): string {
-        const presetName = this.presetLabel?.textContent || "theme";
-        const slug = this.slugify(presetName);
-        const shortId = this.shareShortId;
-
-        if (!shortId) {
-          return "Share your theme first to get the CLI command";
-        }
-
-        const registryUrl = `https://ui.bejamas.com/r/themes/${slug}-${shortId}.json`;
-
-        const commands: Record<string, string> = {
-          pnpm: `pnpm dlx shadcn@latest add ${registryUrl}`,
-          npm: `npx shadcn@latest add ${registryUrl}`,
-          yarn: `yarn dlx shadcn@latest add ${registryUrl}`,
-          bun: `bunx shadcn@latest add ${registryUrl}`,
-        };
-
-        return commands[this.currentCliPm] || commands.bun;
-      }
-
-      private updateCliCommand() {
-        const commandEl = document.getElementById("cli-command-text");
-        const noteEl = document.getElementById("cli-note");
-
-        if (commandEl) {
-          commandEl.textContent = this.getCliCommand();
-        }
-
-        // Update note based on share status
-        if (noteEl) {
-          if (this.shareShortId) {
-            noteEl.textContent =
-              "Install this theme directly into your project.";
-          } else {
-            noteEl.textContent =
-              "Share your theme first to get the CLI installation command.";
-          }
-        }
-      }
-
-      public setCliPackageManager(pm: "pnpm" | "npm" | "yarn" | "bun") {
-        this.currentCliPm = pm;
-        this.updateCliCommand();
-      }
-
-      public handleCliCopy() {
-        const command = this.getCliCommand();
-
-        if (!this.shareShortId) {
-          this.showToast("Share your theme first");
-          return;
-        }
-
-        const copyIcon = document.getElementById("cli-copy-icon");
-        const copiedIcon = document.getElementById("cli-copied-icon");
-
-        navigator.clipboard
-          .writeText(command)
-          .then(() => {
-            if (copyIcon) copyIcon.classList.add("hidden");
-            if (copiedIcon) copiedIcon.classList.remove("hidden");
-
-            this.showToast("Command copied to clipboard");
-
-            setTimeout(() => {
-              if (copyIcon) copyIcon.classList.remove("hidden");
-              if (copiedIcon) copiedIcon.classList.add("hidden");
-            }, 2000);
-          })
-          .catch((err) => {
-            console.error("Failed to copy CLI command:", err);
-            this.showToast("Failed to copy command");
-          });
-      }
-
-      private openImportDialog() {
-        // Clear the textarea
-        const textarea = this.getImportTextarea();
-        if (textarea) textarea.value = "";
-
-        // Click the hidden trigger to open the dialog (get last one in case of duplicates)
-        const triggers = document.querySelectorAll("#import-dialog-trigger");
-        const trigger = triggers[triggers.length - 1] as HTMLElement | null;
-        trigger?.click();
-      }
-
-      public handleImport() {
-        const textarea = this.getImportTextarea();
-        if (!textarea) {
-          console.error("Import textarea not found");
-          return;
-        }
-
-        const css = textarea.value.trim();
-        if (!css) {
-          this.showToast("Please paste some CSS to import");
-          return;
-        }
-
-        try {
-          const parsed = this.parseCssVariables(css);
-          if (
-            Object.keys(parsed.light).length === 0 &&
-            Object.keys(parsed.dark).length === 0
-          ) {
-            this.showToast("No valid CSS variables found");
-            return;
-          }
-
-          // Merge parsed values into working styles
-          if (Object.keys(parsed.light).length > 0) {
-            this.workingStyles.light = {
-              ...this.workingStyles.light,
-              ...parsed.light,
-            };
-          }
-          if (Object.keys(parsed.dark).length > 0) {
-            this.workingStyles.dark = {
-              ...this.workingStyles.dark,
-              ...parsed.dark,
-            };
-          }
-
-          // Update the UI
-          this.updateColorInputs();
-          this.updateRadiusSelect();
-          this.applyLivePreview();
-
-          // Close the dialog
-          const dialog = this.getImportDialog();
-          const closeBtn = dialog?.querySelector(
-            '[data-slot="dialog-close"]',
-          ) as HTMLElement;
-          closeBtn?.click();
-
-          const lightCount = Object.keys(parsed.light).length;
-          const darkCount = Object.keys(parsed.dark).length;
-          this.showToast(
-            `Imported ${lightCount} light + ${darkCount} dark variables`,
-          );
-        } catch (e) {
-          console.error("Import error:", e);
-          this.showToast("Failed to parse CSS");
-        }
-      }
-
-      private parseCssVariables(css: string): {
-        light: Record<string, string>;
-        dark: Record<string, string>;
-      } {
-        const result: {
-          light: Record<string, string>;
-          dark: Record<string, string>;
-        } = {
-          light: {},
-          dark: {},
-        };
-
-        // Match :root or html block for light mode
-        const rootMatch =
-          css.match(/:root\s*\{([^}]+)\}/s) || css.match(/html\s*\{([^}]+)\}/s);
-        if (rootMatch) {
-          this.extractVariables(rootMatch[1], result.light);
-        }
-
-        // Match .dark block for dark mode
-        const darkMatch =
-          css.match(/\.dark\s*\{([^}]+)\}/s) ||
-          css.match(/html\.dark\s*\{([^}]+)\}/s) ||
-          css.match(/:root\.dark\s*\{([^}]+)\}/s) ||
-          css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/s);
-        if (darkMatch) {
-          this.extractVariables(darkMatch[1], result.dark);
-        }
-
-        return result;
-      }
-
-      private extractVariables(block: string, target: Record<string, string>) {
-        // Match CSS variable declarations: --name: value;
-        const varRegex = /--([a-zA-Z0-9-]+)\s*:\s*([^;]+);/g;
-        let match;
-
-        // Valid theme tokens
-        const validTokens = [
-          "background",
-          "foreground",
-          "card",
-          "card-foreground",
-          "popover",
-          "popover-foreground",
-          "primary",
-          "primary-foreground",
-          "secondary",
-          "secondary-foreground",
-          "muted",
-          "muted-foreground",
-          "accent",
-          "accent-foreground",
-          "destructive",
-          "destructive-foreground",
-          "border",
-          "input",
-          "ring",
-          "chart-1",
-          "chart-2",
-          "chart-3",
-          "chart-4",
-          "chart-5",
-          "sidebar",
-          "sidebar-foreground",
-          "sidebar-primary",
-          "sidebar-primary-foreground",
-          "sidebar-accent",
-          "sidebar-accent-foreground",
-          "sidebar-border",
-          "sidebar-ring",
-        ];
-
-        while ((match = varRegex.exec(block)) !== null) {
-          const name = match[1].trim();
-          let value = match[2].trim();
-
-          if (!validTokens.includes(name)) continue;
-
-          // Convert space-separated HSL values (shadcn format) to hsl()
-          // Pattern: "30 33% 98%" or "345 18% 12%" (h s% l%)
-          const hslSpacePattern =
-            /^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%$/;
-          const hslMatch = value.match(hslSpacePattern);
-
-          if (hslMatch) {
-            const [, h, s, l] = hslMatch;
-            value = `hsl(${h} ${s}% ${l}%)`;
-          }
-
-          target[name] = value;
-        }
-      }
-
-      private copyToClipboard(text: string) {
-        navigator.clipboard.writeText(text).catch(() => {
-          // Fallback
-          const textarea = document.createElement("textarea");
-          textarea.value = text;
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand("copy");
-          document.body.removeChild(textarea);
-        });
-      }
-
-      private showToast(message: string) {
-        const existing = document.querySelector(".theme-editor-toast");
-        existing?.remove();
-
-        const toast = document.createElement("div");
-        toast.className = "theme-editor-toast";
-        toast.textContent = message;
-        document.body.appendChild(toast);
-
-        setTimeout(() => toast.remove(), 2500);
-      }
-
-      private handleExternalPresetChange(e: Event) {
-        const detail = (e as CustomEvent).detail;
-        if (detail?.key && detail.key !== this.currentPresetId) {
-          this.loadPreset(detail.key);
-        }
-      }
-
-      public toggle() {
-        if (this.classList.contains("open")) {
-          this.close();
-        } else {
-          this.open();
-        }
-      }
-
-      public open() {
-        this.classList.add("open");
-        this.loadInitialState();
-      }
-
-      public close() {
-        this.classList.remove("open");
-      }
-
-      // AI Dialog methods
-      private openAIDialog() {
-        // Open dialog first so elements are in DOM
-        const triggers = document.querySelectorAll(
-          "#ai-generate-dialog-trigger",
-        );
-        const trigger = triggers[triggers.length - 1] as HTMLElement | null;
-        trigger?.click();
-
-        // Clear previous state after a tick (dialog needs to render)
-        setTimeout(() => {
-          const promptTextarea = this.getAIPromptTextarea();
-          if (promptTextarea) promptTextarea.value = "";
-
-          this.aiImages = [];
-          this.updateAIImagePreview();
-
-          // Hide status and reasoning (query globally for portaled elements)
-          const allStatus = document.querySelectorAll("#ai-status");
-          const allReasoning = document.querySelectorAll("#ai-reasoning");
-          const allStatusIcon = document.querySelectorAll("#ai-status-icon");
-          const allGenerateBtn = document.querySelectorAll(
-            "#ai-generate-confirm-btn",
-          );
-
-          const status = allStatus[allStatus.length - 1] as HTMLElement | null;
-          const reasoning = allReasoning[
-            allReasoning.length - 1
-          ] as HTMLElement | null;
-          const statusIcon = allStatusIcon[
-            allStatusIcon.length - 1
-          ] as HTMLElement | null;
-          const generateBtn = allGenerateBtn[
-            allGenerateBtn.length - 1
-          ] as HTMLButtonElement | null;
-
-          if (status) status.style.display = "none";
-          if (reasoning) reasoning.style.display = "none";
-
-          // Reset icon to spinner
-          if (statusIcon) {
-            statusIcon.innerHTML =
-              '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
-          }
-
-          // Enable generate button
-          if (generateBtn) {
-            generateBtn.disabled = false;
-            generateBtn.innerHTML =
-              '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
-          }
-        }, 0);
-      }
-
-      private setupAIImageHandlers() {
-        // Use event delegation on document for the AI dialog elements since they're portaled
-        if (!(window as any).__aiImageHandlersSetup) {
-          (window as any).__aiImageHandlersSetup = true;
-
-          // Drag and drop
-          document.addEventListener("dragover", (e) => {
-            const dropzone = (e.target as HTMLElement).closest(
-              "#ai-images-dropzone",
-            );
-            if (dropzone) {
-              e.preventDefault();
-              dropzone.classList.add("dragover");
-            }
-          });
-
-          document.addEventListener("dragleave", (e) => {
-            const dropzone = (e.target as HTMLElement).closest(
-              "#ai-images-dropzone",
-            );
-            if (dropzone) {
-              dropzone.classList.remove("dragover");
-            }
-          });
-
-          document.addEventListener("drop", (e) => {
-            const dropzone = (e.target as HTMLElement).closest(
-              "#ai-images-dropzone",
-            );
-            if (dropzone) {
-              e.preventDefault();
-              dropzone.classList.remove("dragover");
-              const files = e.dataTransfer?.files;
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              if (files && panel) panel.handleAIImageFiles(files);
-            }
-          });
-
-          // File input change
-          document.addEventListener("change", (e) => {
-            const input = e.target as HTMLInputElement;
-            if (input.id === "ai-images-input" && input.files) {
-              const panel = document.getElementById(
-                "theme-editor-panel",
-              ) as ThemeEditorPanel | null;
-              if (panel) {
-                panel.handleAIImageFiles(input.files);
-                input.value = ""; // Reset for re-selection
-              }
-            }
-          });
-        }
-      }
-
-      public handleAIImageFiles(files: FileList) {
-        const maxImages = 3;
-        const validTypes = [
-          "image/png",
-          "image/jpeg",
-          "image/jpg",
-          "image/webp",
-        ];
-
-        Array.from(files).forEach((file) => {
-          if (this.aiImages.length >= maxImages) {
-            this.showToast(`Maximum ${maxImages} images allowed`);
-            return;
-          }
-
-          if (!validTypes.includes(file.type)) {
-            this.showToast("Only PNG, JPG, and WebP images are supported");
-            return;
-          }
-
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const dataUrl = e.target?.result as string;
-            // Extract base64 data (remove data:image/...;base64, prefix)
-            const base64 = dataUrl.split(",")[1];
-            this.aiImages.push({
-              data: base64,
-              mediaType: file.type,
-            });
-            this.updateAIImagePreview();
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-
-      private updateAIImagePreview() {
-        // Find all preview containers and update the last one (in case of portaled dialogs)
-        const allPreviews = document.querySelectorAll("#ai-images-preview");
-        const preview = allPreviews[allPreviews.length - 1] as HTMLElement;
-        if (!preview) return;
-
-        preview.innerHTML = this.aiImages
-          .map(
-            (img, i) => `
-          <div class="ai-image-preview" data-index="${i}">
-            <img src="data:${img.mediaType};base64,${img.data}" alt="Reference ${i + 1}" />
-            <button type="button" onclick="document.getElementById('theme-editor-panel')?.removeAIImage(${i})">×</button>
-          </div>
-        `,
-          )
-          .join("");
-      }
-
-      public removeAIImage(index: number) {
-        this.aiImages.splice(index, 1);
-        this.updateAIImagePreview();
-      }
-
-      public async handleAIGenerate() {
-        const promptTextarea = this.getAIPromptTextarea();
-        const prompt = promptTextarea?.value.trim();
-
-        if (!prompt) {
-          this.showToast("Please enter a prompt describing your palette");
-          return;
-        }
-
-        // Dialog content is portaled, so query globally for elements
-        const getStatusElements = () => {
-          const allStatus = document.querySelectorAll("#ai-status");
-          const allStatusText = document.querySelectorAll("#ai-status-text");
-          const allStatusIcon = document.querySelectorAll("#ai-status-icon");
-          const allReasoning = document.querySelectorAll("#ai-reasoning");
-          const allReasoningContent = document.querySelectorAll(
-            "#ai-reasoning-content",
-          );
-          const allGenerateBtn = document.querySelectorAll(
-            "#ai-generate-confirm-btn",
-          );
-          return {
-            status: allStatus[allStatus.length - 1] as HTMLElement | null,
-            statusText: allStatusText[
-              allStatusText.length - 1
-            ] as HTMLElement | null,
-            statusIcon: allStatusIcon[
-              allStatusIcon.length - 1
-            ] as HTMLElement | null,
-            reasoning: allReasoning[
-              allReasoning.length - 1
-            ] as HTMLElement | null,
-            reasoningContent: allReasoningContent[
-              allReasoningContent.length - 1
-            ] as HTMLElement | null,
-            generateBtn: allGenerateBtn[
-              allGenerateBtn.length - 1
-            ] as HTMLButtonElement | null,
-          };
-        };
-
-        const elements = getStatusElements();
-        const { status, statusText, reasoning, reasoningContent, generateBtn } =
-          elements;
-
-        // Show loading state
-        if (status) {
-          status.style.display = "flex";
-        }
-        if (statusText) {
-          statusText.textContent = "Initializing...";
-        }
-        // Reset icon to spinner
-        if (elements.statusIcon) {
-          elements.statusIcon.innerHTML =
-            '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
-        }
-        if (reasoning) reasoning.style.display = "none";
-        if (generateBtn) {
-          generateBtn.disabled = true;
-          generateBtn.innerHTML =
-            '<svg class="size-4 mr-1.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generating...';
-        }
-
-        try {
-          const response = await fetch("/api/ai/generate-palette", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              prompt,
-              images: this.aiImages.length > 0 ? this.aiImages : undefined,
-            }),
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || "Failed to generate palette");
-          }
-
-          // Read SSE stream
-          const reader = response.body?.getReader();
-          if (!reader) {
-            throw new Error("No response stream available");
-          }
-
-          const decoder = new TextDecoder();
-          let buffer = "";
-          let receivedPalette: any = null;
-          let receivedReasoning: string | undefined;
-
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            buffer += decoder.decode(value, { stream: true });
-
-            // Process complete SSE messages
-            const lines = buffer.split("\n");
-            buffer = lines.pop() || ""; // Keep incomplete line in buffer
-
-            for (const line of lines) {
-              if (line.startsWith("data: ")) {
-                try {
-                  const event = JSON.parse(line.slice(6));
-
-                  // Re-query elements for each update (dialog is portaled)
-                  const currentElements = getStatusElements();
-
-                  // Update UI based on event type
-                  switch (event.type) {
-                    case "starting":
-                      if (currentElements.statusText) {
-                        currentElements.statusText.textContent =
-                          event.message || "Analyzing...";
-                      }
-                      break;
-                    case "searching":
-                      if (currentElements.statusText) {
-                        currentElements.statusText.textContent =
-                          event.message || "Searching for brand colors...";
-                      }
-                      break;
-                    case "found_sources":
-                      if (currentElements.statusText) {
-                        currentElements.statusText.textContent =
-                          event.message || "Found sources";
-                      }
-                      break;
-                    case "generating":
-                      if (currentElements.statusText) {
-                        currentElements.statusText.textContent =
-                          event.message || "Creating your palette...";
-                      }
-                      break;
-                    case "complete":
-                      receivedPalette = event.palette;
-                      receivedReasoning = event.reasoning;
-                      // Change icon to checkmark
-                      if (currentElements.statusIcon) {
-                        currentElements.statusIcon.innerHTML =
-                          '<svg class="size-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>';
-                      }
-                      break;
-                    case "error":
-                      throw new Error(event.message || "Generation failed");
-                  }
-                } catch (parseError) {
-                  // Skip malformed JSON lines
-                  console.warn("Failed to parse SSE event:", line);
+            originalStyles: { light: {}, dark: {} } as {
+              light: Partial<ThemeStyleProps>;
+              dark: Partial<ThemeStyleProps>;
+            },
+            isCustomPreset: false,
+            isCreatingNew: false,
+            isSharing: false,
+            shareShortId: null as string | null,
+            currentCliPm: "bun" as "pnpm" | "npm" | "yarn" | "bun",
+            aiImages: [] as { data: string; mediaType: string }[],
+            currentExportType: "json" as "json" | "css",
+            sectionsOpen: sectionTitles.reduce(
+              (acc, title) => ({ ...acc, [title]: true }),
+              {} as Record<string, boolean>,
+            ),
+            boundKeydown: null as ((e: KeyboardEvent) => void) | null,
+            boundPresetChange: null as ((e: Event) => void) | null,
+            boundCustomPresetChange: null as ((e: Event) => void) | null,
+            boundThemeChange: null as ((e: Event) => void) | null,
+            boundMouseMove: null as ((e: MouseEvent) => void) | null,
+            boundMouseUp: null as (() => void) | null,
+
+            init() {
+              setupGlobalHandlers();
+              this.setupDragging();
+              this.setupEventListeners();
+              this.loadInitialState();
+
+              this.boundKeydown = (e) => this.handleKeydown(e);
+              document.addEventListener("keydown", this.boundKeydown);
+
+              this.boundPresetChange = (e) =>
+                this.handleExternalPresetChange(e);
+              window.addEventListener(
+                PRESET_CHANGE_EVENT,
+                this.boundPresetChange,
+              );
+
+              this.boundCustomPresetChange = () => this.refreshPresetList();
+              window.addEventListener(
+                CUSTOM_PRESETS_CHANGE_EVENT,
+                this.boundCustomPresetChange,
+              );
+
+              this.boundThemeChange = (e) => this.handleExternalThemeChange(e);
+              window.addEventListener(
+                "theme-toggle-changed",
+                this.boundThemeChange,
+              );
+            },
+
+            destroy() {
+              if (this.boundKeydown)
+                document.removeEventListener("keydown", this.boundKeydown);
+              if (this.boundPresetChange)
+                window.removeEventListener(
+                  PRESET_CHANGE_EVENT,
+                  this.boundPresetChange,
+                );
+              if (this.boundCustomPresetChange)
+                window.removeEventListener(
+                  CUSTOM_PRESETS_CHANGE_EVENT,
+                  this.boundCustomPresetChange,
+                );
+              if (this.boundThemeChange)
+                window.removeEventListener(
+                  "theme-toggle-changed",
+                  this.boundThemeChange,
+                );
+              if (this.boundMouseMove)
+                document.removeEventListener("mousemove", this.boundMouseMove);
+              if (this.boundMouseUp)
+                document.removeEventListener("mouseup", this.boundMouseUp);
+            },
+
+            handleExternalThemeChange(e: Event) {
+              const customEvent = e as CustomEvent<{ theme: string }>;
+              const theme = customEvent.detail?.theme;
+              if (theme === "light" || theme === "dark") {
+                if (this.currentMode !== theme) {
+                  this.switchMode(theme, true);
                 }
               }
-            }
-          }
-
-          if (!receivedPalette) {
-            throw new Error("No palette received from server");
-          }
-
-          // Re-query elements for final updates
-          const finalElements = getStatusElements();
-
-          // Show reasoning if available
-          if (
-            receivedReasoning &&
-            finalElements.reasoning &&
-            finalElements.reasoningContent
-          ) {
-            finalElements.reasoning.style.display = "block";
-            finalElements.reasoningContent.textContent = receivedReasoning;
-          }
-
-          // Apply the generated palette
-          if (receivedPalette.light) {
-            this.workingStyles.light = {
-              ...this.workingStyles.light,
-              ...receivedPalette.light,
-            };
-          }
-          if (receivedPalette.dark) {
-            this.workingStyles.dark = {
-              ...this.workingStyles.dark,
-              ...receivedPalette.dark,
-            };
-          }
-
-          // Apply generated radius if provided
-          if (receivedPalette.radius) {
-            this.workingStyles.light.radius = receivedPalette.radius;
-          }
-
-          // Update UI
-          this.updateColorInputs();
-          this.updateRadiusSelect();
-          this.applyLivePreview();
-
-          // Auto-save as custom preset
-          const paletteName = receivedPalette.name || "AI Generated";
-          const newPreset: CustomPreset = {
-            id: generatePresetId(),
-            name: paletteName,
-            label: paletteName,
-            createdAt: new Date().toISOString(),
-            modifiedAt: new Date().toISOString(),
-            source: "AI",
-            styles: {
-              light: { ...this.workingStyles.light },
-              dark: { ...this.workingStyles.dark },
             },
-          };
-          saveCustomPreset(newPreset);
-          this.refreshPresetList();
-          this.loadPreset(newPreset.id);
 
-          // Update status
-          if (finalElements.statusText)
-            finalElements.statusText.textContent = `Generated "${paletteName}" palette!`;
+            handleKeydown(e: KeyboardEvent) {
+              if (
+                (e.metaKey || e.ctrlKey) &&
+                (e.key === "e" || e.key === ".")
+              ) {
+                e.preventDefault();
+                this.toggle();
+              }
+              if (e.key === "Escape" && this.isOpen) {
+                const openDialog = document.querySelector(
+                  '[data-slot="dialog-overlay"][data-state="open"]',
+                );
+                if (!openDialog) {
+                  this.close();
+                }
+              }
+            },
 
-          // Close dialog after short delay
-          setTimeout(() => {
-            const aiDialog = this.getAIDialog();
-            const closeBtn = aiDialog?.querySelector(
-              '[data-slot="dialog-close"]',
-            ) as HTMLElement;
-            closeBtn?.click();
+            setupDragging() {
+              const header = this.$refs.header as HTMLElement | undefined;
+              if (!header) return;
 
-            this.showToast(`Saved "${paletteName}" as custom preset`);
-          }, 1500);
-        } catch (error) {
-          console.error("AI generation error:", error);
-          const message =
-            error instanceof Error ? error.message : "Generation failed";
-          this.showToast(message);
+              header.addEventListener("mousedown", (e) => {
+                if ((e.target as HTMLElement).closest("button")) return;
+                this.isDragging = true;
+                const rect = this.$el.getBoundingClientRect();
+                this.dragOffset = {
+                  x: e.clientX - rect.left,
+                  y: e.clientY - rect.top,
+                };
+                this.$el.style.transition = "none";
+              });
 
-          // Re-query elements for error display
-          const errorElements = getStatusElements();
-          if (errorElements.statusText)
-            errorElements.statusText.textContent = `Error: ${message}`;
-        } finally {
-          // Re-query elements for button reset
-          const resetElements = getStatusElements();
-          if (resetElements.generateBtn) {
-            resetElements.generateBtn.disabled = false;
-            resetElements.generateBtn.innerHTML =
-              '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
-          }
-        }
-      }
-    }
+              this.boundMouseMove = (e) => {
+                if (!this.isDragging) return;
+                const x = e.clientX - this.dragOffset.x;
+                const y = e.clientY - this.dragOffset.y;
 
-    // Safely register custom element
-    if (!customElements.get("theme-editor-panel")) {
-      customElements.define("theme-editor-panel", ThemeEditorPanel);
-    }
+                const maxX = window.innerWidth - this.$el.offsetWidth;
+                const maxY = window.innerHeight - this.$el.offsetHeight;
 
-    // Global keyboard handler (Cmd/Ctrl + e to toggle)
-    if (!(window as any).__themeEditorKeyHandler) {
-      (window as any).__themeEditorKeyHandler = true;
-      document.addEventListener("keydown", (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === "e") {
-          e.preventDefault();
-          const panel = document.getElementById(
-            "theme-editor-panel",
-          ) as ThemeEditorPanel | null;
-          if (panel && typeof panel.toggle === "function") {
-            panel.toggle();
-          }
-        }
-      });
-    }
+                this.$el.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+                this.$el.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+                this.$el.style.right = "auto";
+              };
 
-    // FAB toggle button handler
-    const toggleBtn = document.getElementById("theme-editor-toggle-btn");
-    if (toggleBtn && !(toggleBtn as any).__handlerAdded) {
-      (toggleBtn as any).__handlerAdded = true;
-      toggleBtn.addEventListener("click", () => {
-        const panel = document.getElementById(
-          "theme-editor-panel",
-        ) as ThemeEditorPanel | null;
-        if (panel && typeof panel.toggle === "function") {
-          panel.toggle();
-        }
-      });
-    }
+              this.boundMouseUp = () => {
+                this.isDragging = false;
+                this.$el.style.transition = "";
+              };
+
+              document.addEventListener("mousemove", this.boundMouseMove);
+              document.addEventListener("mouseup", this.boundMouseUp);
+            },
+
+            setupEventListeners() {
+              const dropdown = this.$refs.presetDropdown as
+                | HTMLElement
+                | undefined;
+              dropdown?.addEventListener("click", (e) => {
+                const item = (e.target as HTMLElement).closest(
+                  '[data-slot="dropdown-menu-item"]',
+                );
+                if (item) {
+                  const id = (item as HTMLElement).dataset.value;
+                  if (id) {
+                    this.loadPreset(id);
+                  }
+                }
+              });
+
+              this.$el.addEventListener("color-change", ((e: CustomEvent) => {
+                const { token, value } = e.detail;
+                this.updateColor(token, value);
+              }) as EventListener);
+
+              const radiusSelect = this.$refs.radiusSelect as HTMLSelectElement;
+              radiusSelect?.addEventListener("change", (e) => {
+                const value = (e.target as HTMLSelectElement).value;
+                this.updateRadius(value);
+              });
+            },
+
+            toggleSection(title: string) {
+              this.sectionsOpen[title] = !this.sectionsOpen[title];
+            },
+
+            loadInitialState() {
+              this.currentMode = getCurrentMode();
+              this.updateModeTabsUI();
+              this.refreshPresetList();
+
+              const storedPreset = getStoredPreset();
+              if (storedPreset) {
+                this.loadPreset(storedPreset);
+              } else {
+                this.loadPreset(Object.keys(defaultPresets)[0]);
+              }
+            },
+
+            refreshPresetList() {
+              const dropdown = this.$refs.presetDropdown as
+                | HTMLElement
+                | undefined;
+              if (!dropdown) return;
+
+              const allPresets = getAllPresets();
+              dropdown.innerHTML = "";
+
+              const builtInLabel = document.createElement("div");
+              builtInLabel.setAttribute("data-slot", "dropdown-menu-label");
+              builtInLabel.className = "px-2 py-1.5 text-sm font-medium";
+              builtInLabel.textContent = "Built-in";
+              dropdown.appendChild(builtInLabel);
+
+              Object.entries(allPresets).forEach(([id, preset]) => {
+                if (!preset.isCustom) {
+                  const item = document.createElement("div");
+                  item.setAttribute("role", "menuitem");
+                  item.setAttribute("tabindex", "0");
+                  item.setAttribute("data-slot", "dropdown-menu-item");
+                  item.setAttribute("data-value", id);
+                  item.className =
+                    "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
+                  item.textContent = preset.name || id;
+                  dropdown.appendChild(item);
+                }
+              });
+
+              const customPresets = Object.entries(allPresets).filter(
+                ([, p]) => p.isCustom,
+              );
+              if (customPresets.length > 0) {
+                const separator = document.createElement("div");
+                separator.setAttribute("data-slot", "dropdown-menu-separator");
+                separator.className = "-mx-1 my-1 h-px bg-border";
+                dropdown.appendChild(separator);
+
+                const customLabel = document.createElement("div");
+                customLabel.setAttribute("data-slot", "dropdown-menu-label");
+                customLabel.className = "px-2 py-1.5 text-sm font-medium";
+                customLabel.textContent = "Custom";
+                dropdown.appendChild(customLabel);
+
+                customPresets.forEach(([id, preset]) => {
+                  const item = document.createElement("div");
+                  item.setAttribute("role", "menuitem");
+                  item.setAttribute("tabindex", "0");
+                  item.setAttribute("data-slot", "dropdown-menu-item");
+                  item.setAttribute("data-value", id);
+                  item.className =
+                    "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
+
+                  const lightStyles = preset.styles?.light || {};
+                  const darkStyles = preset.styles?.dark || {};
+
+                  const lightSwatches = document.createElement("div");
+                  lightSwatches.className =
+                    "flex -space-x-1 items-center dark:hidden";
+                  lightSwatches.innerHTML = `
+                  <div class="size-4 rounded-full" style="background: ${lightStyles.primary || "#888"}"></div>
+                  <div class="size-4 rounded-full" style="background: ${lightStyles.accent || "#888"}"></div>
+                `;
+                  item.appendChild(lightSwatches);
+
+                  const darkSwatches = document.createElement("div");
+                  darkSwatches.className =
+                    "hidden dark:flex -space-x-1 items-center";
+                  darkSwatches.innerHTML = `
+                  <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.primary || "#888"}"></div>
+                  <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.accent || "#888"}"></div>
+                `;
+                  item.appendChild(darkSwatches);
+
+                  const label = document.createElement("span");
+                  label.className = "truncate";
+                  label.textContent = preset.name || id;
+                  item.appendChild(label);
+
+                  dropdown.appendChild(item);
+                });
+              }
+            },
+
+            loadPreset(id: string) {
+              const allPresets = getAllPresets();
+              const preset = allPresets[id];
+              if (!preset) return;
+
+              const draft = getEditingPresetDraft(id);
+              this.currentPresetId = id;
+              this.isCustomPreset = !!preset.isCustom;
+              this.shareShortId = (preset as any).shareId || null;
+
+              const draftWorkingStyles = draft?.workingStyles || preset.styles;
+              const draftOriginalStyles = draft?.originalStyles || preset.styles;
+              this.workingStyles = JSON.parse(JSON.stringify(draftWorkingStyles));
+              this.originalStyles = JSON.parse(JSON.stringify(draftOriginalStyles));
+
+              if (draft?.currentMode === "light" || draft?.currentMode === "dark") {
+                this.currentMode = draft.currentMode;
+                this.updateModeTabsUI();
+              }
+
+              const label = this.$refs.presetLabel as HTMLElement | undefined;
+              if (label) {
+                label.textContent = preset.name || id;
+              }
+
+              this.updatePresetSwatches();
+
+              const deleteBtn = this.$refs.deletePreset as HTMLButtonElement;
+              if (deleteBtn) {
+                deleteBtn.disabled = !this.isCustomPreset;
+              }
+
+              this.updateColorInputs();
+              this.updateRadiusSelect();
+              this.applyLivePreview();
+
+              const swatches = {
+                primaryLight: preset.styles.light?.primary || "#000",
+                accentLight: preset.styles.light?.accent || "#666",
+                primaryDark: preset.styles.dark?.primary || "#fff",
+                accentDark: preset.styles.dark?.accent || "#888",
+              };
+              setStoredPreset(id, swatches, preset.name || id);
+            },
+
+            updatePresetSwatches() {
+              const styles = this.workingStyles[this.currentMode];
+              const swatchPrimary = this.$refs.swatchPrimary as HTMLElement;
+              const swatchAccent = this.$refs.swatchAccent as HTMLElement;
+              if (swatchPrimary) {
+                swatchPrimary.style.background = styles.primary || "";
+              }
+              if (swatchAccent) {
+                swatchAccent.style.background = styles.accent || "";
+              }
+            },
+
+            updateColorInputs() {
+              const styles = this.workingStyles[this.currentMode];
+              this.$el
+                .querySelectorAll<HTMLElement>("color-input")
+                .forEach((input) => {
+                  const token = input.dataset.token;
+                  if (!token) return;
+                  const value = styles[token as keyof typeof styles];
+                  const resolved = typeof value === "string" ? value : "";
+                  (input as any).setColor?.(resolved);
+
+                  if (!(input as any).setColor) {
+                    const swatch = input.querySelector<HTMLElement>(
+                      '[data-slot="swatch"]',
+                    );
+                    const textInput = input.querySelector<HTMLInputElement>(
+                      '[data-slot="text-input"]',
+                    );
+                    if (swatch) swatch.style.background = resolved;
+                    if (textInput) textInput.value = resolved;
+                  }
+                });
+            },
+
+            persistDraft() {
+              if (!this.currentPresetId) return;
+              const presetName =
+                (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                this.currentPresetId;
+              setEditingPresetDraft(this.currentPresetId, {
+                workingStyles: JSON.parse(JSON.stringify(this.workingStyles)),
+                originalStyles: JSON.parse(JSON.stringify(this.originalStyles)),
+                currentMode: this.currentMode,
+                presetName,
+              });
+            },
+
+            updateColor(token: string, value: string) {
+              this.workingStyles[this.currentMode][
+                token as keyof ThemeStyleProps
+              ] = value;
+              this.applyLivePreview();
+
+              if (token === "primary" || token === "accent") {
+                this.updatePresetSwatches();
+              }
+              this.persistDraft();
+            },
+
+            updateRadius(value: string) {
+              this.workingStyles.light.radius = value;
+              this.applyLivePreview();
+              this.persistDraft();
+            },
+
+            updateRadiusSelect() {
+              const radiusSelect = this.$refs.radiusSelect as HTMLSelectElement;
+              if (!radiusSelect) return;
+              const radius = this.workingStyles.light?.radius || "0.625rem";
+              radiusSelect.value = radius;
+            },
+
+            applyLivePreview() {
+              applyThemeToElement(
+                { styles: this.workingStyles, currentMode: this.currentMode },
+                document.documentElement,
+              );
+            },
+
+            switchMode(mode: "light" | "dark", fromExternal = false) {
+              this.currentMode = mode;
+              this.updateModeTabsUI();
+              this.$nextTick(() => {
+                this.updateColorInputs();
+                this.updatePresetSwatches();
+              });
+
+              if (!fromExternal) {
+                localStorage.setItem("starlight-theme", mode);
+                document.documentElement.dataset.theme = mode;
+                document.documentElement.dataset.themeChoice = mode;
+                document.documentElement.classList.toggle(
+                  "dark",
+                  mode === "dark",
+                );
+
+                window.dispatchEvent(
+                  new CustomEvent("theme-toggle-changed", {
+                    detail: { theme: mode },
+                  }),
+                );
+
+                document
+                  .querySelector<HTMLDivElement>("#theme-tabs")
+                  ?.dispatchEvent(
+                    new CustomEvent("tabs:select", { detail: { value: mode } }),
+                  );
+              }
+
+              this.applyLivePreview();
+              this.persistDraft();
+            },
+
+            updateModeTabsUI() {
+              const tabsEl = (
+                this.$refs.modeTabs as HTMLElement | undefined
+              )?.querySelector('[data-slot="tabs"]');
+              tabsEl?.dispatchEvent(
+                new CustomEvent("tabs:select", {
+                  detail: { value: this.currentMode },
+                }),
+              );
+            },
+
+            startNewPreset() {
+              this.isCreatingNew = true;
+              this.$nextTick(() => {
+                const input = this.$refs.presetName as HTMLInputElement;
+                if (input) {
+                  input.value = `${(this.$refs.presetLabel as HTMLElement)?.textContent || "Custom"} Copy`;
+                  input.focus();
+                  input.select();
+                }
+              });
+            },
+
+            confirmNewPreset() {
+              const input = this.$refs.presetName as HTMLInputElement;
+              if (!input) return;
+
+              const name = input.value.trim();
+              if (!name) {
+                this.cancelNewPreset();
+                return;
+              }
+
+              const newPreset: CustomPreset = {
+                id: generatePresetId(),
+                name,
+                label: name,
+                createdAt: new Date().toISOString(),
+                modifiedAt: new Date().toISOString(),
+                source: "SAVED",
+                styles: JSON.parse(JSON.stringify(this.workingStyles)),
+              };
+
+              saveCustomPreset(newPreset);
+              this.cancelNewPreset();
+              this.loadPreset(newPreset.id);
+              this.showToast(`Created preset "${name}"`);
+              this.syncSharedTheme({ showToast: false });
+            },
+
+            cancelNewPreset() {
+              this.isCreatingNew = false;
+              const input = this.$refs.presetName as HTMLInputElement;
+              if (input) input.value = "";
+            },
+
+            deleteCurrentPreset() {
+              if (!this.isCustomPreset || !this.currentPresetId) return;
+
+              const allPresets = getAllPresets();
+              const preset = allPresets[this.currentPresetId];
+              if (!preset) return;
+
+              if (confirm(`Delete preset "${preset.name}"?`)) {
+                deleteCustomPreset(this.currentPresetId);
+                this.showToast(`Deleted preset "${preset.name}"`);
+                this.loadPreset(Object.keys(defaultPresets)[0]);
+              }
+            },
+
+            resetToOriginal() {
+              this.workingStyles = JSON.parse(
+                JSON.stringify(this.originalStyles),
+              );
+              this.updateColorInputs();
+              this.updateRadiusSelect();
+              this.applyLivePreview();
+              clearEditingPresetDraft(this.currentPresetId);
+              this.showToast("Reset to original");
+            },
+
+            savePreset() {
+              if (this.isCustomPreset) {
+                const customPresets = getCustomPresets();
+                const existing = customPresets[this.currentPresetId];
+                if (existing) {
+                  const updated: CustomPreset = {
+                    ...existing,
+                    styles: JSON.parse(JSON.stringify(this.workingStyles)),
+                    modifiedAt: new Date().toISOString(),
+                  };
+                  saveCustomPreset(updated);
+                  this.originalStyles = JSON.parse(
+                    JSON.stringify(this.workingStyles),
+                  );
+                  this.persistDraft();
+                  this.showToast(`Saved "${existing.name}"`);
+                  this.syncSharedTheme({ showToast: false });
+                }
+              } else {
+                this.startNewPreset();
+              }
+            },
+
+            getImportTextarea() {
+              const all = document.querySelectorAll("#import-css-textarea");
+              return (all[all.length - 1] as HTMLTextAreaElement) || null;
+            },
+
+            getImportDialog() {
+              const all = document.querySelectorAll("#import-dialog");
+              return all[all.length - 1] || null;
+            },
+
+            getAIPromptTextarea() {
+              const all = document.querySelectorAll("#ai-prompt-textarea");
+              return (all[all.length - 1] as HTMLTextAreaElement) || null;
+            },
+
+            getAIDialog() {
+              const all = document.querySelectorAll("#ai-generate-dialog");
+              return all[all.length - 1] || null;
+            },
+
+            getExportCodeJson() {
+              const all = document.querySelectorAll("#export-code-json");
+              return (all[all.length - 1] as HTMLElement) || null;
+            },
+
+            getExportCodeCss() {
+              const all = document.querySelectorAll("#export-code-css");
+              return (all[all.length - 1] as HTMLElement) || null;
+            },
+
+            getExportFormatSelect() {
+              const all = document.querySelectorAll("#export-format-select");
+              return (all[all.length - 1] as HTMLSelectElement) || null;
+            },
+
+            getExportTypeTabs() {
+              const all = document.querySelectorAll("#export-type-tabs");
+              return (all[all.length - 1] as HTMLElement) || null;
+            },
+
+            getExportElements() {
+              const getLast = <T extends Element>(selector: string) => {
+                const all = document.querySelectorAll(selector);
+                return (all[all.length - 1] as T) || null;
+              };
+              return {
+                commandEl: getLast<HTMLElement>("#cli-command-text"),
+                noteEl: getLast<HTMLElement>("#cli-note"),
+                copyIcon: getLast<HTMLElement>("#cli-copy-icon"),
+                copiedIcon: getLast<HTMLElement>("#cli-copied-icon"),
+              };
+            },
+
+            updateExportContent() {
+              const select = this.getExportFormatSelect();
+              const format = (select?.value || "oklch") as
+                | "oklch"
+                | "hsl"
+                | "rgb"
+                | "hex";
+
+              const convertedStyles = convertStyleColors(
+                toThemeStyleValues(this.workingStyles as ThemeStyleProps),
+                format,
+              );
+
+              const jsonEl = this.getExportCodeJson();
+              const cssEl = this.getExportCodeCss();
+
+              if (jsonEl) {
+                const data = {
+                  name:
+                    (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                    "Theme",
+                  exportedAt: new Date().toISOString(),
+                  styles: convertedStyles,
+                };
+                const jsonStr = JSON.stringify(data, null, 2);
+                jsonEl.textContent = jsonStr;
+                if (typeof Prism !== "undefined") {
+                  jsonEl.innerHTML = Prism.highlight(
+                    jsonStr,
+                    Prism.languages.json,
+                    "json",
+                  );
+                }
+              }
+
+              if (cssEl) {
+                const cssStr = generateCssExport(
+                  convertedStyles,
+                  (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                    "Theme",
+                );
+                cssEl.textContent = cssStr;
+                if (typeof Prism !== "undefined") {
+                  cssEl.innerHTML = Prism.highlight(
+                    cssStr,
+                    Prism.languages.css,
+                    "css",
+                  );
+                }
+              }
+            },
+
+            openExportJsonDialog() {
+              const select = this.getExportFormatSelect();
+              if (select) select.value = "oklch";
+              this.currentExportType = "json";
+
+              const tabs = this.getExportTypeTabs();
+              if (tabs) {
+                tabs.dispatchEvent(
+                  new CustomEvent("tabs:select", { detail: { value: "json" } }),
+                );
+              }
+
+              this.updateExportContent();
+              this.updateCliCommand();
+
+              const triggers = document.querySelectorAll(
+                "#export-json-dialog-trigger",
+              );
+              const trigger = triggers[
+                triggers.length - 1
+              ] as HTMLElement | null;
+              trigger?.click();
+            },
+
+            handleExportJsonCopy() {
+              const codeEl =
+                this.currentExportType === "json"
+                  ? this.getExportCodeJson()
+                  : this.getExportCodeCss();
+              if (!codeEl) return;
+
+              this.copyToClipboard(codeEl.textContent || "");
+              this.showToast(
+                this.currentExportType === "json"
+                  ? "JSON copied to clipboard"
+                  : "CSS copied to clipboard",
+              );
+            },
+
+            setExportType(type: "json" | "css") {
+              this.currentExportType = type;
+            },
+
+            openShareDialog() {
+              const { status, result, error } = this.getShareElements();
+
+              if (status) status.classList.remove("hidden");
+              if (result) result.classList.add("hidden");
+              if (error) error.classList.add("hidden");
+
+              const triggers = document.querySelectorAll(
+                "#share-dialog-trigger",
+              );
+              const trigger = triggers[
+                triggers.length - 1
+              ] as HTMLElement | null;
+              trigger?.click();
+
+              if (this.shareShortId) {
+                const successEls = this.getShareElements();
+                if (successEls.status)
+                  successEls.status.classList.add("hidden");
+                if (successEls.result)
+                  successEls.result.classList.remove("hidden");
+                if (successEls.urlInput) {
+                  successEls.urlInput.value = `https://ui.bejamas.com/t/${this.shareShortId}`;
+                }
+                this.updateCliCommand();
+              } else {
+                this.generateShareLink();
+              }
+            },
+
+            getShareElements() {
+              const getLast = <T extends Element>(selector: string) => {
+                const all = document.querySelectorAll(selector);
+                return (all[all.length - 1] as T) || null;
+              };
+              return {
+                status: getLast<HTMLElement>("#share-status"),
+                statusText: getLast<HTMLElement>("#share-status-text"),
+                result: getLast<HTMLElement>("#share-result"),
+                error: getLast<HTMLElement>("#share-error"),
+                errorText: getLast<HTMLElement>("#share-error-text"),
+                urlInput: getLast<HTMLInputElement>("#share-url-input"),
+                copyIcon: getLast<HTMLElement>("#share-copy-icon"),
+                copiedIcon: getLast<HTMLElement>("#share-copied-icon"),
+              };
+            },
+
+            async syncSharedTheme({ showToast = false } = {}) {
+              if (!this.isCustomPreset || !this.currentPresetId) return;
+              if (this.isSharing) return;
+              this.isSharing = true;
+
+              const controller = new AbortController();
+              const timeoutId = window.setTimeout(() => {
+                controller.abort();
+              }, 8000);
+
+              try {
+                const presetLabel =
+                  (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                  "Shared Theme";
+
+                const response = await fetch("/api/themes/share", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  signal: controller.signal,
+                  body: JSON.stringify({
+                    name: presetLabel,
+                    styles: this.workingStyles,
+                    id: this.currentPresetId,
+                    createdAt: new Date().toISOString(),
+                    shareId: this.shareShortId || undefined,
+                  }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                  throw new Error(data.error || "Failed to create share link");
+                }
+
+                this.shareShortId = data.shortId;
+
+                const customPresets = getCustomPresets();
+                const preset = customPresets[this.currentPresetId];
+                if (preset) {
+                  preset.shareId = data.shortId;
+                  saveCustomPreset(preset);
+                }
+
+                this.updateCliCommand();
+                if (showToast) {
+                  this.showToast("Share link updated");
+                }
+              } catch (error) {
+                console.error("Share sync error:", error);
+                if (showToast) {
+                  const message =
+                    error instanceof DOMException && error.name === "AbortError"
+                      ? "Share sync timed out"
+                      : error instanceof Error
+                        ? error.message
+                        : "Share sync failed";
+                  this.showToast(message);
+                }
+              } finally {
+                window.clearTimeout(timeoutId);
+                this.isSharing = false;
+              }
+            },
+
+            async generateShareLink() {
+              if (this.isSharing) return;
+              this.isSharing = true;
+
+              const loadingEls = this.getShareElements();
+              if (loadingEls.status)
+                loadingEls.status.classList.remove("hidden");
+              if (loadingEls.statusText)
+                loadingEls.statusText.textContent = "Generating share link...";
+              if (loadingEls.result) loadingEls.result.classList.add("hidden");
+              if (loadingEls.error) loadingEls.error.classList.add("hidden");
+
+              const controller = new AbortController();
+              const timeoutId = window.setTimeout(() => {
+                controller.abort();
+              }, 8000);
+
+              try {
+                const presetLabel =
+                  (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                  "Shared Theme";
+
+                const response = await fetch("/api/themes/share", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  signal: controller.signal,
+                  body: JSON.stringify({
+                    name: presetLabel,
+                    styles: this.workingStyles,
+                    id: this.currentPresetId,
+                    createdAt: new Date().toISOString(),
+                    shareId: this.shareShortId || undefined,
+                  }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                  throw new Error(data.error || "Failed to create share link");
+                }
+
+                this.shareShortId = data.shortId;
+
+                if (this.isCustomPreset && this.currentPresetId) {
+                  const customPresets = getCustomPresets();
+                  const preset = customPresets[this.currentPresetId];
+                  if (preset) {
+                    preset.shareId = data.shortId;
+                    saveCustomPreset(preset);
+                  }
+                }
+
+                const successEls = this.getShareElements();
+                if (successEls.status)
+                  successEls.status.classList.add("hidden");
+                if (successEls.result)
+                  successEls.result.classList.remove("hidden");
+                if (successEls.urlInput)
+                  successEls.urlInput.value =
+                    data.fullUrl || `https://ui.bejamas.com${data.shareUrl}`;
+
+                this.updateCliCommand();
+              } catch (error) {
+                console.error("Share error:", error);
+
+                const message =
+                  error instanceof DOMException && error.name === "AbortError"
+                    ? "Share request timed out. Please try again."
+                    : error instanceof Error
+                      ? error.message
+                      : "Failed to create share link. Please try again.";
+
+                const errorEls = this.getShareElements();
+                if (errorEls.status) errorEls.status.classList.add("hidden");
+                if (errorEls.error) errorEls.error.classList.remove("hidden");
+                if (errorEls.errorText) {
+                  errorEls.errorText.textContent = message;
+                }
+              } finally {
+                window.clearTimeout(timeoutId);
+                this.isSharing = false;
+              }
+            },
+
+            handleShareCopy() {
+              const { urlInput, copyIcon, copiedIcon } =
+                this.getShareElements();
+              if (!urlInput) return;
+
+              navigator.clipboard
+                .writeText(urlInput.value)
+                .then(() => {
+                  if (copyIcon) copyIcon.classList.add("hidden");
+                  if (copiedIcon) copiedIcon.classList.remove("hidden");
+
+                  this.showToast("Link copied to clipboard");
+
+                  setTimeout(() => {
+                    if (copyIcon) copyIcon.classList.remove("hidden");
+                    if (copiedIcon) copiedIcon.classList.add("hidden");
+                  }, 2000);
+                })
+                .catch((err) => {
+                  console.error("Failed to copy:", err);
+                  this.showToast("Failed to copy link");
+                });
+            },
+
+            updateCliCommand() {
+              const { commandEl, noteEl } = this.getExportElements();
+              const presetName =
+                (this.$refs.presetLabel as HTMLElement)?.textContent || "theme";
+
+              if (commandEl) {
+                commandEl.textContent = buildCliCommand({
+                  presetName,
+                  shortId: this.shareShortId,
+                  pm: this.currentCliPm,
+                });
+              }
+
+              if (noteEl) {
+                noteEl.textContent = this.shareShortId
+                  ? "Install this theme directly into your project."
+                  : "Share your theme first to get the CLI installation command.";
+              }
+            },
+
+            setCliPackageManager(pm: "pnpm" | "npm" | "yarn" | "bun") {
+              this.currentCliPm = pm;
+              this.updateCliCommand();
+            },
+
+            handleCliCopy() {
+              const presetName =
+                (this.$refs.presetLabel as HTMLElement)?.textContent || "theme";
+              const command = buildCliCommand({
+                presetName,
+                shortId: this.shareShortId,
+                pm: this.currentCliPm,
+              });
+
+              if (!this.shareShortId) {
+                this.showToast("Share your theme first");
+                return;
+              }
+
+              const { copyIcon, copiedIcon } = this.getExportElements();
+
+              navigator.clipboard
+                .writeText(command)
+                .then(() => {
+                  if (copyIcon) copyIcon.classList.add("hidden");
+                  if (copiedIcon) copiedIcon.classList.remove("hidden");
+
+                  this.showToast("Command copied to clipboard");
+
+                  setTimeout(() => {
+                    if (copyIcon) copyIcon.classList.remove("hidden");
+                    if (copiedIcon) copiedIcon.classList.add("hidden");
+                  }, 2000);
+                })
+                .catch((err) => {
+                  console.error("Failed to copy CLI command:", err);
+                  this.showToast("Failed to copy command");
+                });
+            },
+
+            openImportDialog() {
+              const textarea = this.getImportTextarea();
+              if (textarea) textarea.value = "";
+
+              const triggers = document.querySelectorAll(
+                "#import-dialog-trigger",
+              );
+              const trigger = triggers[
+                triggers.length - 1
+              ] as HTMLElement | null;
+              trigger?.click();
+            },
+
+            handleImport() {
+              const textarea = this.getImportTextarea();
+              if (!textarea) {
+                console.error("Import textarea not found");
+                return;
+              }
+
+              const css = textarea.value.trim();
+              if (!css) {
+                this.showToast("Please paste some CSS to import");
+                return;
+              }
+
+              try {
+                const parsed = parseCssVariables(css);
+                if (
+                  Object.keys(parsed.light).length === 0 &&
+                  Object.keys(parsed.dark).length === 0
+                ) {
+                  this.showToast("No valid CSS variables found");
+                  return;
+                }
+
+                if (Object.keys(parsed.light).length > 0) {
+                  this.workingStyles.light = {
+                    ...this.workingStyles.light,
+                    ...parsed.light,
+                  };
+                }
+                if (Object.keys(parsed.dark).length > 0) {
+                  this.workingStyles.dark = {
+                    ...this.workingStyles.dark,
+                    ...parsed.dark,
+                  };
+                }
+
+                this.updateColorInputs();
+                this.updateRadiusSelect();
+                this.applyLivePreview();
+                this.persistDraft();
+
+                const dialog = this.getImportDialog();
+                const closeBtn = dialog?.querySelector(
+                  '[data-slot="dialog-close"]',
+                ) as HTMLElement;
+                closeBtn?.click();
+
+                const lightCount = Object.keys(parsed.light).length;
+                const darkCount = Object.keys(parsed.dark).length;
+                this.showToast(
+                  `Imported ${lightCount} light + ${darkCount} dark variables`,
+                );
+              } catch (e) {
+                console.error("Import error:", e);
+                this.showToast("Failed to parse CSS");
+              }
+            },
+
+            copyToClipboard(text: string) {
+              navigator.clipboard.writeText(text).catch(() => {
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+              });
+            },
+
+            showToast(message: string) {
+              const existing = document.querySelector(".theme-editor-toast");
+              existing?.remove();
+
+              const toast = document.createElement("div");
+              toast.className =
+                "theme-editor-toast fixed bottom-5 left-1/2 -translate-x-1/2 rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background shadow-lg";
+              toast.textContent = message;
+              document.body.appendChild(toast);
+
+              setTimeout(() => toast.remove(), 2500);
+            },
+
+            handleExternalPresetChange(e: Event) {
+              const detail = (e as CustomEvent).detail;
+              if (detail?.key && detail.key !== this.currentPresetId) {
+                this.loadPreset(detail.key);
+              }
+            },
+
+            toggle() {
+              if (this.isOpen) {
+                this.close();
+              } else {
+                this.open();
+              }
+            },
+
+            open() {
+              this.isOpen = true;
+              this.loadInitialState();
+              sessionStorage.setItem("theme-editor-open", "true");
+            },
+
+            close() {
+              this.isOpen = false;
+              sessionStorage.setItem("theme-editor-open", "false");
+            },
+
+            openAIDialog() {
+              const triggers = document.querySelectorAll(
+                "#ai-generate-dialog-trigger",
+              );
+              const trigger = triggers[
+                triggers.length - 1
+              ] as HTMLElement | null;
+              trigger?.click();
+
+              setTimeout(() => {
+                const promptTextarea = this.getAIPromptTextarea();
+                if (promptTextarea) promptTextarea.value = "";
+
+                this.aiImages = [];
+                this.updateAIImagePreview();
+
+                const allStatus = document.querySelectorAll("#ai-status");
+                const allReasoning = document.querySelectorAll("#ai-reasoning");
+                const allStatusIcon =
+                  document.querySelectorAll("#ai-status-icon");
+                const allGenerateBtn = document.querySelectorAll(
+                  "#ai-generate-confirm-btn",
+                );
+
+                const status = allStatus[
+                  allStatus.length - 1
+                ] as HTMLElement | null;
+                const reasoning = allReasoning[
+                  allReasoning.length - 1
+                ] as HTMLElement | null;
+                const statusIcon = allStatusIcon[
+                  allStatusIcon.length - 1
+                ] as HTMLElement | null;
+                const generateBtn = allGenerateBtn[
+                  allGenerateBtn.length - 1
+                ] as HTMLButtonElement | null;
+
+                if (status) status.classList.add("hidden");
+                if (reasoning) reasoning.classList.add("hidden");
+
+                if (statusIcon) {
+                  statusIcon.innerHTML =
+                    '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+                }
+
+                if (generateBtn) {
+                  generateBtn.disabled = false;
+                  generateBtn.innerHTML =
+                    '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+                }
+              }, 0);
+            },
+
+            handleAIImageFiles(files: FileList) {
+              const maxImages = 3;
+              const validTypes = [
+                "image/png",
+                "image/jpeg",
+                "image/jpg",
+                "image/webp",
+              ];
+
+              Array.from(files).forEach((file) => {
+                if (this.aiImages.length >= maxImages) {
+                  this.showToast(`Maximum ${maxImages} images allowed`);
+                  return;
+                }
+
+                if (!validTypes.includes(file.type)) {
+                  this.showToast(
+                    "Only PNG, JPG, and WebP images are supported",
+                  );
+                  return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                  const dataUrl = e.target?.result as string;
+                  const base64 = dataUrl.split(",")[1];
+                  this.aiImages.push({
+                    data: base64,
+                    mediaType: file.type,
+                  });
+                  this.updateAIImagePreview();
+                };
+                reader.readAsDataURL(file);
+              });
+            },
+
+            updateAIImagePreview() {
+              const allPreviews =
+                document.querySelectorAll("#ai-images-preview");
+              const preview = allPreviews[
+                allPreviews.length - 1
+              ] as HTMLElement;
+              if (!preview) return;
+
+              preview.innerHTML = this.aiImages
+                .map(
+                  (img, i) => `
+                <div class="relative size-16 overflow-hidden rounded-md border border-border">
+                  <img class="h-full w-full object-cover" src="data:${img.mediaType};base64,${img.data}" alt="Reference ${i + 1}" />
+                  <button type="button" class="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground" data-ai-remove="${i}">×</button>
+                </div>
+              `,
+                )
+                .join("");
+            },
+
+            removeAIImage(index: number) {
+              this.aiImages.splice(index, 1);
+              this.updateAIImagePreview();
+            },
+
+            async handleAIGenerate() {
+              const promptTextarea = this.getAIPromptTextarea();
+              const prompt = promptTextarea?.value.trim();
+
+              if (!prompt) {
+                this.showToast("Please enter a prompt describing your palette");
+                return;
+              }
+
+              const getStatusElements = () => {
+                const allStatus = document.querySelectorAll("#ai-status");
+                const allStatusText =
+                  document.querySelectorAll("#ai-status-text");
+                const allStatusIcon =
+                  document.querySelectorAll("#ai-status-icon");
+                const allReasoning = document.querySelectorAll("#ai-reasoning");
+                const allReasoningContent = document.querySelectorAll(
+                  "#ai-reasoning-content",
+                );
+                const allGenerateBtn = document.querySelectorAll(
+                  "#ai-generate-confirm-btn",
+                );
+                return {
+                  status: allStatus[allStatus.length - 1] as HTMLElement | null,
+                  statusText: allStatusText[
+                    allStatusText.length - 1
+                  ] as HTMLElement | null,
+                  statusIcon: allStatusIcon[
+                    allStatusIcon.length - 1
+                  ] as HTMLElement | null,
+                  reasoning: allReasoning[
+                    allReasoning.length - 1
+                  ] as HTMLElement | null,
+                  reasoningContent: allReasoningContent[
+                    allReasoningContent.length - 1
+                  ] as HTMLElement | null,
+                  generateBtn: allGenerateBtn[
+                    allGenerateBtn.length - 1
+                  ] as HTMLButtonElement | null,
+                };
+              };
+
+              const elements = getStatusElements();
+              const {
+                status,
+                statusText,
+                reasoning,
+                reasoningContent,
+                generateBtn,
+              } = elements;
+
+              if (status) status.classList.remove("hidden");
+              if (statusText) statusText.textContent = "Initializing...";
+              if (elements.statusIcon) {
+                elements.statusIcon.innerHTML =
+                  '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+              }
+              if (reasoning) reasoning.classList.add("hidden");
+              if (generateBtn) {
+                generateBtn.disabled = true;
+                generateBtn.innerHTML =
+                  '<svg class="size-4 mr-1.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generating...';
+              }
+
+              try {
+                const response = await fetch("/api/ai/generate-palette", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    prompt,
+                    images:
+                      this.aiImages.length > 0 ? this.aiImages : undefined,
+                  }),
+                });
+
+                if (!response.ok) {
+                  const errorData = await response.json().catch(() => ({}));
+                  throw new Error(
+                    errorData.error || "Failed to generate palette",
+                  );
+                }
+
+                const reader = response.body?.getReader();
+                if (!reader) {
+                  throw new Error("No response stream available");
+                }
+
+                const decoder = new TextDecoder();
+                let buffer = "";
+                let receivedPalette: any = null;
+                let receivedReasoning: string | undefined;
+
+                while (true) {
+                  const { done, value } = await reader.read();
+                  if (done) break;
+
+                  buffer += decoder.decode(value, { stream: true });
+                  const lines = buffer.split("\n");
+                  buffer = lines.pop() || "";
+
+                  for (const line of lines) {
+                    if (line.startsWith("data: ")) {
+                      try {
+                        const event = JSON.parse(line.slice(6));
+                        const currentElements = getStatusElements();
+
+                        switch (event.type) {
+                          case "starting":
+                            if (currentElements.statusText) {
+                              currentElements.statusText.textContent =
+                                event.message || "Analyzing...";
+                            }
+                            break;
+                          case "searching":
+                            if (currentElements.statusText) {
+                              currentElements.statusText.textContent =
+                                event.message ||
+                                "Searching for brand colors...";
+                            }
+                            break;
+                          case "found_sources":
+                            if (currentElements.statusText) {
+                              currentElements.statusText.textContent =
+                                event.message || "Found sources";
+                            }
+                            break;
+                          case "generating":
+                            if (currentElements.statusText) {
+                              currentElements.statusText.textContent =
+                                event.message || "Creating your palette...";
+                            }
+                            break;
+                          case "complete":
+                            receivedPalette = event.palette;
+                            receivedReasoning = event.reasoning;
+                            if (currentElements.statusIcon) {
+                              currentElements.statusIcon.innerHTML =
+                                '<svg class="size-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>';
+                            }
+                            break;
+                          case "error":
+                            throw new Error(
+                              event.message || "Generation failed",
+                            );
+                        }
+                      } catch (parseError) {
+                        console.warn("Failed to parse SSE event:", line);
+                      }
+                    }
+                  }
+                }
+
+                if (!receivedPalette) {
+                  throw new Error("No palette received from server");
+                }
+
+                const finalElements = getStatusElements();
+
+                if (
+                  receivedReasoning &&
+                  finalElements.reasoning &&
+                  finalElements.reasoningContent
+                ) {
+                  finalElements.reasoning.classList.remove("hidden");
+                  finalElements.reasoningContent.textContent =
+                    receivedReasoning;
+                }
+
+                if (receivedPalette.light) {
+                  this.workingStyles.light = {
+                    ...this.workingStyles.light,
+                    ...receivedPalette.light,
+                  };
+                }
+                if (receivedPalette.dark) {
+                  this.workingStyles.dark = {
+                    ...this.workingStyles.dark,
+                    ...receivedPalette.dark,
+                  };
+                }
+
+                if (receivedPalette.radius) {
+                  this.workingStyles.light.radius = receivedPalette.radius;
+                }
+
+                this.updateColorInputs();
+                this.updateRadiusSelect();
+                this.applyLivePreview();
+                this.persistDraft();
+
+                const paletteName = receivedPalette.name || "AI Generated";
+                const newPreset: CustomPreset = {
+                  id: generatePresetId(),
+                  name: paletteName,
+                  label: paletteName,
+                  createdAt: new Date().toISOString(),
+                  modifiedAt: new Date().toISOString(),
+                  source: "AI",
+                  styles: {
+                    light: { ...this.workingStyles.light },
+                    dark: { ...this.workingStyles.dark },
+                  },
+                };
+                saveCustomPreset(newPreset);
+                this.refreshPresetList();
+                this.loadPreset(newPreset.id);
+                this.syncSharedTheme({ showToast: false });
+
+                if (finalElements.statusText)
+                  finalElements.statusText.textContent = `Generated "${paletteName}" palette!`;
+
+                setTimeout(() => {
+                  const aiDialog = this.getAIDialog();
+                  const closeBtn = aiDialog?.querySelector(
+                    '[data-slot="dialog-close"]',
+                  ) as HTMLElement;
+                  closeBtn?.click();
+
+                  this.showToast(`Saved "${paletteName}" as custom preset`);
+                }, 1500);
+              } catch (error) {
+                console.error("AI generation error:", error);
+                const message =
+                  error instanceof Error ? error.message : "Generation failed";
+                this.showToast(message);
+
+                const errorElements = getStatusElements();
+                if (errorElements.statusText)
+                  errorElements.statusText.textContent = `Error: ${message}`;
+              } finally {
+                const resetElements = getStatusElements();
+                if (resetElements.generateBtn) {
+                  resetElements.generateBtn.disabled = false;
+                  resetElements.generateBtn.innerHTML =
+                    '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+                }
+              }
+            },
+          }) as unknown as object,
+      );
+    });
   </script>
-</theme-editor-panel>
+</div>
