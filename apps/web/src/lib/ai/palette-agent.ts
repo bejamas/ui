@@ -42,6 +42,11 @@ export const paletteOutputSchema = z.object({
   name: z.string().describe("A creative name for this palette"),
   light: paletteColorSchema.describe("Light mode colors"),
   dark: paletteColorSchema.describe("Dark mode colors"),
+  radius: z
+    .string()
+    .describe(
+      "Border radius value (e.g., '0rem' for sharp, '0.5rem' for subtle, '1rem' for rounded)"
+    ),
   reasoning: z
     .string()
     .nullable()
@@ -118,11 +123,21 @@ Each background color needs a foreground that has sufficient contrast:
 ## Web Search
 If the user mentions a specific brand, company, or reference, use web search to find their official brand colors and incorporate them into the palette.
 
+## Border Radius
+Choose a border radius that matches the palette's personality:
+- "0rem" - Sharp/brutalist/technical
+- "0.25rem" - Subtle/professional
+- "0.5rem" - Balanced/default
+- "0.625rem" - Slightly rounded
+- "1rem" - Friendly/modern
+- "1.5rem" - Very rounded/playful
+
 ## Important
 - Generate BOTH light and dark mode variants
 - All colors must be valid OKLCH values
 - Ensure foreground colors have sufficient contrast against their backgrounds
-- Use consistent hue families across related tokens`;
+- Use consistent hue families across related tokens
+- Select an appropriate border radius based on the overall design style`;
 
 export interface GeneratePaletteOptions {
   prompt: string;

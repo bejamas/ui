@@ -29,6 +29,7 @@ import {
   SelectControl,
   SelectIndicator,
   SelectOption,
+  SelectPlaceholder,
 } from "@bejamas/ui/components/select";
 import {
   Tabs,
@@ -123,6 +124,16 @@ const colorSections = [
 ];
 
 const presetKeys = Object.keys(defaultPresets);
+
+// Radius options for settings
+const radiusOptions = [
+  { value: "0rem", label: "None" },
+  { value: "0.25rem", label: "Small" },
+  { value: "0.5rem", label: "Medium" },
+  { value: "0.625rem", label: "Default" },
+  { value: "1rem", label: "Large" },
+  { value: "1.5rem", label: "Extra Large" },
+];
 ---
 
 <theme-editor-panel
@@ -259,6 +270,41 @@ const presetKeys = Object.keys(defaultPresets);
 
   <!-- Color Sections -->
   <div class="panel-content" data-slot="content">
+    <!-- Settings Section -->
+    <div class="color-section border-b border-border last:border-b-0">
+      <Button
+        variant="ghost"
+        class="section-header flex items-center justify-between w-full px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-none h-auto"
+        data-slot="section-toggle"
+      >
+        <span>Settings</span>
+        <ChevronDown class="chevron size-4 transition-transform duration-200" />
+      </Button>
+      <div class="section-content px-4 py-3">
+        <div class="flex flex-col gap-1.5">
+          <Label for="radius-select" class="text-xs text-muted-foreground">
+            Border Radius
+          </Label>
+          <Select class="w-full">
+            <SelectIndicator />
+            <SelectControl
+              id="radius-select"
+              size="sm"
+              data-slot="radius-select"
+            >
+              {
+                radiusOptions.map((option) => (
+                  <SelectOption value={option.value}>
+                    {option.label}
+                  </SelectOption>
+                ))
+              }
+            </SelectControl>
+          </Select>
+        </div>
+      </div>
+    </div>
+
     {
       colorSections.map((section) => (
         <div class="color-section border-b border-border last:border-b-0">
@@ -1317,6 +1363,7 @@ const presetKeys = Object.keys(defaultPresets);
       private aiGenerateBtn: HTMLElement | null = null;
       private saveBtn: HTMLElement | null = null;
       private shareBtn: HTMLElement | null = null;
+      private radiusSelect: HTMLSelectElement | null = null;
 
       // Share state
       private isSharing = false;
@@ -1358,6 +1405,7 @@ const presetKeys = Object.keys(defaultPresets);
         this.aiGenerateBtn = this.querySelector('[data-slot="ai-generate"]');
         this.saveBtn = this.querySelector('[data-slot="save"]');
         this.shareBtn = this.querySelector('[data-action="share-theme"]');
+        this.radiusSelect = this.querySelector('[data-slot="radius-select"]');
 
         this.setupDragging();
         this.setupEventListeners();
@@ -1511,6 +1559,12 @@ const presetKeys = Object.keys(defaultPresets);
           const { token, value } = e.detail;
           this.updateColor(token, value);
         }) as EventListener);
+
+        // Radius select change
+        this.radiusSelect?.addEventListener("change", (e) => {
+          const value = (e.target as HTMLSelectElement).value;
+          this.updateRadius(value);
+        });
 
         // Footer buttons
         this.resetBtn?.addEventListener("click", () => this.resetToOriginal());
@@ -1845,8 +1899,9 @@ const presetKeys = Object.keys(defaultPresets);
             !this.isCustomPreset;
         }
 
-        // Update color inputs
+        // Update color inputs and radius select
         this.updateColorInputs();
+        this.updateRadiusSelect();
 
         // Apply theme live
         this.applyLivePreview();
@@ -1893,6 +1948,18 @@ const presetKeys = Object.keys(defaultPresets);
         if (token === "primary" || token === "accent") {
           this.updatePresetSwatches();
         }
+      }
+
+      private updateRadius(value: string) {
+        // Radius is stored in light mode as a common/global style
+        this.workingStyles.light.radius = value;
+        this.applyLivePreview();
+      }
+
+      private updateRadiusSelect() {
+        if (!this.radiusSelect) return;
+        const radius = this.workingStyles.light?.radius || "0.625rem";
+        this.radiusSelect.value = radius;
       }
 
       private applyLivePreview() {
@@ -2014,6 +2081,7 @@ const presetKeys = Object.keys(defaultPresets);
       private resetToOriginal() {
         this.workingStyles = JSON.parse(JSON.stringify(this.originalStyles));
         this.updateColorInputs();
+        this.updateRadiusSelect();
         this.applyLivePreview();
         this.showToast("Reset to original");
       }
@@ -2628,6 +2696,7 @@ const presetKeys = Object.keys(defaultPresets);
 
           // Update the UI
           this.updateColorInputs();
+          this.updateRadiusSelect();
           this.applyLivePreview();
 
           // Close the dialog
@@ -3143,8 +3212,14 @@ const presetKeys = Object.keys(defaultPresets);
             };
           }
 
+          // Apply generated radius if provided
+          if (receivedPalette.radius) {
+            this.workingStyles.light.radius = receivedPalette.radius;
+          }
+
           // Update UI
           this.updateColorInputs();
+          this.updateRadiusSelect();
           this.applyLivePreview();
 
           // Auto-save as custom preset
