@@ -2450,24 +2450,30 @@ const radiusOptions = [
         this.generateShareLink();
       }
 
+      // Helper to get fresh share dialog element references
+      private getShareElements() {
+        return {
+          status: document.getElementById("share-status"),
+          statusText: document.getElementById("share-status-text"),
+          result: document.getElementById("share-result"),
+          error: document.getElementById("share-error"),
+          errorText: document.getElementById("share-error-text"),
+          urlInput: document.getElementById("share-url-input") as HTMLInputElement | null,
+        };
+      }
+
       public async generateShareLink() {
         if (this.isSharing) return;
         this.isSharing = true;
 
-        const statusEl = document.getElementById("share-status");
-        const statusText = document.getElementById("share-status-text");
-        const resultEl = document.getElementById("share-result");
-        const errorEl = document.getElementById("share-error");
-        const errorText = document.getElementById("share-error-text");
-        const urlInput = document.getElementById(
-          "share-url-input",
-        ) as HTMLInputElement | null;
+        // Get fresh element references for loading state
+        const loadingEls = this.getShareElements();
 
         // Show loading state
-        if (statusEl) statusEl.style.display = "flex";
-        if (statusText) statusText.textContent = "Generating share link...";
-        if (resultEl) resultEl.style.display = "none";
-        if (errorEl) errorEl.style.display = "none";
+        if (loadingEls.status) loadingEls.status.style.display = "flex";
+        if (loadingEls.statusText) loadingEls.statusText.textContent = "Generating share link...";
+        if (loadingEls.result) loadingEls.result.style.display = "none";
+        if (loadingEls.error) loadingEls.error.style.display = "none";
 
         try {
           // Get current preset name and styles
@@ -2507,21 +2513,28 @@ const radiusOptions = [
             }
           }
 
+          // Get fresh element references after async operation
+          const successEls = this.getShareElements();
+
           // Show success
-          if (statusEl) statusEl.style.display = "none";
-          if (resultEl) resultEl.style.display = "block";
-          if (urlInput)
-            urlInput.value =
+          if (successEls.status) successEls.status.style.display = "none";
+          if (successEls.result) successEls.result.style.display = "block";
+          if (successEls.urlInput)
+            successEls.urlInput.value =
               data.fullUrl || `https://ui.bejamas.com${data.shareUrl}`;
 
           // Update CLI command in export dialog
           this.updateCliCommand();
         } catch (error) {
           console.error("Share error:", error);
-          if (statusEl) statusEl.style.display = "none";
-          if (errorEl) errorEl.style.display = "block";
-          if (errorText) {
-            errorText.textContent =
+
+          // Get fresh element references after async operation
+          const errorEls = this.getShareElements();
+
+          if (errorEls.status) errorEls.status.style.display = "none";
+          if (errorEls.error) errorEls.error.style.display = "block";
+          if (errorEls.errorText) {
+            errorEls.errorText.textContent =
               error instanceof Error
                 ? error.message
                 : "Failed to create share link. Please try again.";
