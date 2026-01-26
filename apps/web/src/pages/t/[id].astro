@@ -9,14 +9,23 @@ import {
   CardFooter,
 } from "@bejamas/ui/components/card";
 import { Alert, AlertTitle } from "@bejamas/ui/components/alert";
+import {
+  Tabs,
+  TabsContent,
+  TabsIndicator,
+  TabsList,
+  TabsTrigger,
+} from "@bejamas/ui/components/tabs";
 import { getSharedTheme, type SharedTheme } from "../../lib/redis";
 import {
   CheckIcon,
   CircleCheckIcon,
   CircleAlertIcon,
+  CopyIcon,
   DownloadIcon,
   EyeIcon,
   ShareIcon,
+  TerminalIcon,
   XIcon,
   ArrowLeftIcon,
 } from "@lucide/astro";
@@ -53,6 +62,25 @@ const darkColors = {
 
 // Format the share URL
 const shareUrl = `https://ui.bejamas.com/t/${id}`;
+
+// Generate slugified name for registry URL
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+const themeSlug = slugify(theme.name);
+const registryUrl = `https://ui.bejamas.com/r/themes/${themeSlug}-${id}.json`;
+
+// CLI commands for different package managers
+const cliCommands = {
+  pnpm: `pnpm dlx shadcn@latest add ${registryUrl}`,
+  npm: `npx shadcn@latest add ${registryUrl}`,
+  yarn: `yarn dlx shadcn@latest add ${registryUrl}`,
+  bun: `bunx shadcn@latest add ${registryUrl}`,
+};
 ---
 
 <StarlightPage
@@ -189,6 +217,58 @@ const shareUrl = `https://ui.bejamas.com/t/${id}`;
               </li>
             </ul>
           </div>
+
+          <!-- CLI Installation section -->
+          <div class="cli-section">
+            <div class="flex items-center gap-2 mb-3">
+              <TerminalIcon class="size-4 text-muted-foreground" />
+              <p class="text-sm font-medium">Install via CLI</p>
+            </div>
+            <Tabs defaultValue="bun" class="cli-pm-tabs" id="cli-pm-tabs">
+              <div class="flex items-center justify-between gap-2">
+                <TabsList class="h-8">
+                  <TabsTrigger value="pnpm" class="text-xs px-2">pnpm</TabsTrigger>
+                  <TabsTrigger value="npm" class="text-xs px-2">npm</TabsTrigger>
+                  <TabsTrigger value="yarn" class="text-xs px-2">yarn</TabsTrigger>
+                  <TabsTrigger value="bun" class="text-xs px-2">bun</TabsTrigger>
+                  <TabsIndicator />
+                </TabsList>
+                <Button
+                  id="cli-copy-btn"
+                  variant="ghost"
+                  size="sm"
+                  class="h-8 gap-1.5 text-xs"
+                >
+                  <CopyIcon class="size-3.5" id="cli-copy-icon" />
+                  <CheckIcon class="size-3.5 hidden" id="cli-copied-icon" />
+                  <span>Copy</span>
+                </Button>
+              </div>
+              <TabsContent value="pnpm" class="mt-2">
+                <div class="cli-command-box">
+                  <code>{cliCommands.pnpm}</code>
+                </div>
+              </TabsContent>
+              <TabsContent value="npm" class="mt-2">
+                <div class="cli-command-box">
+                  <code>{cliCommands.npm}</code>
+                </div>
+              </TabsContent>
+              <TabsContent value="yarn" class="mt-2">
+                <div class="cli-command-box">
+                  <code>{cliCommands.yarn}</code>
+                </div>
+              </TabsContent>
+              <TabsContent value="bun" class="mt-2">
+                <div class="cli-command-box">
+                  <code>{cliCommands.bun}</code>
+                </div>
+              </TabsContent>
+            </Tabs>
+            <p class="text-xs text-muted-foreground mt-2">
+              Adds the theme directly to your shadcn/ui project.
+            </p>
+          </div>
         </CardContent>
 
         <CardFooter class="flex gap-2">
@@ -315,13 +395,38 @@ const shareUrl = `https://ui.bejamas.com/t/${id}`;
     padding: 0;
     margin: 0;
   }
+
+  .cli-section {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .cli-command-box {
+    overflow-x: auto;
+    padding: 0.75rem 1rem;
+    background: var(--muted);
+    border-radius: calc(var(--radius) - 2px);
+    border: 1px solid var(--border);
+  }
+
+  .cli-command-box code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    color: var(--foreground);
+  }
 </style>
 
 <!-- Store theme data for client-side access -->
-<script is:inline define:vars={{ theme, id, shareUrl }}>
+<script is:inline define:vars={{ theme, id, shareUrl, cliCommands }}>
   window.__SHARED_THEME__ = theme;
   window.__THEME_ID__ = id;
   window.__SHARE_URL__ = shareUrl;
+  window.__CLI_COMMANDS__ = cliCommands;
 </script>
 
 <script>
@@ -463,6 +568,40 @@ const shareUrl = `https://ui.bejamas.com/t/${id}`;
       }, 2000);
     } catch (error) {
       console.error("Failed to copy:", error);
+    }
+  });
+
+  // CLI copy functionality
+  const cliCopyBtn = document.getElementById("cli-copy-btn");
+  const cliCopyIcon = document.getElementById("cli-copy-icon");
+  const cliCopiedIcon = document.getElementById("cli-copied-icon");
+  const cliPmTabs = document.getElementById("cli-pm-tabs");
+  const cliCommands = (window as any).__CLI_COMMANDS__ as Record<string, string>;
+
+  let currentPm = "bun";
+
+  // Listen for tab changes to track current package manager
+  cliPmTabs?.addEventListener("tabs:change", ((e: CustomEvent) => {
+    if (e.detail?.value) {
+      currentPm = e.detail.value;
+    }
+  }) as EventListener);
+
+  cliCopyBtn?.addEventListener("click", async () => {
+    try {
+      const command = cliCommands[currentPm] || cliCommands.bun;
+      await navigator.clipboard.writeText(command);
+
+      // Show success feedback
+      cliCopyIcon?.classList.add("hidden");
+      cliCopiedIcon?.classList.remove("hidden");
+
+      setTimeout(() => {
+        cliCopyIcon?.classList.remove("hidden");
+        cliCopiedIcon?.classList.add("hidden");
+      }, 2000);
+    } catch (error) {
+      console.error("Failed to copy CLI command:", error);
     }
   });
 </script>

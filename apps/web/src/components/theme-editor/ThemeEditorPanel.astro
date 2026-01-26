@@ -380,13 +380,52 @@ const presetKeys = Object.keys(defaultPresets);
         data-slot="dialog-trigger"
         id="export-json-dialog-trigger"
         style="display: none;"></button>
-      <DialogContent class="sm:max-w-2xl w-full export-dialog-content">
+      <DialogContent class="sm:max-w-3xl w-full export-dialog-content">
         <DialogHeader>
           <DialogTitle>Export</DialogTitle>
           <DialogDescription>
             Copy the theme configuration in your preferred format.
           </DialogDescription>
         </DialogHeader>
+
+        <!-- CLI Installation Section -->
+        <div class="cli-install-section" id="cli-install-section">
+          <Tabs defaultValue="bun" class="cli-pm-tabs" id="cli-pm-tabs">
+            <div class="flex items-center justify-between">
+              <TabsList class="h-8">
+                <TabsTrigger value="pnpm" class="text-xs px-2">pnpm</TabsTrigger
+                >
+                <TabsTrigger value="npm" class="text-xs px-2">npm</TabsTrigger>
+                <TabsTrigger value="yarn" class="text-xs px-2">yarn</TabsTrigger
+                >
+                <TabsTrigger value="bun" class="text-xs px-2">bun</TabsTrigger>
+                <TabsIndicator />
+              </TabsList>
+              <Button
+                id="cli-copy-btn"
+                variant="ghost"
+                size="sm"
+                class="h-8 gap-1.5 text-xs"
+              >
+                <Copy class="size-3.5" id="cli-copy-icon" />
+                <Check class="size-3.5 hidden" id="cli-copied-icon" />
+                <span>Copy</span>
+              </Button>
+            </div>
+            <div
+              class="cli-command-box mt-2 rounded-md border bg-muted/50 p-3 font-mono text-sm max-w-[684px]"
+            >
+              <code id="cli-command-text"
+                >bunx shadcn@latest add
+                https://ui.bejamas.com/r/themes/theme.json</code
+              >
+            </div>
+          </Tabs>
+          <p class="text-xs text-muted-foreground mt-2" id="cli-note">
+            Requires the theme to be shared first.
+          </p>
+        </div>
+
         <Tabs
           defaultValue="json"
           class="export-type-tabs mt-4"
@@ -416,11 +455,11 @@ const presetKeys = Object.keys(defaultPresets);
           </div>
           <TabsContent value="json" class="mt-0">
             <pre
-              class="export-code-block max-w-[622px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4"><code id="export-code-json" class="language-json" /></pre>
+              class="export-code-block max-w-[718px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4"><code id="export-code-json" class="language-json" /></pre>
           </TabsContent>
           <TabsContent value="css" class="mt-0">
             <pre
-              class="export-code-block max-w-[622px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4"><code id="export-code-css" class="language-css" /></pre>
+              class="export-code-block max-w-[718px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4"><code id="export-code-css" class="language-css" /></pre>
           </TabsContent>
         </Tabs>
         <DialogFooter>
@@ -524,7 +563,8 @@ const presetKeys = Object.keys(defaultPresets);
             </span>
           </DialogTitle>
           <DialogDescription>
-            Share this theme with others via a link. Anyone with the link can preview and install your theme.
+            Share this theme with others via a link. Anyone with the link can
+            preview and install your theme.
           </DialogDescription>
         </DialogHeader>
 
@@ -547,7 +587,12 @@ const presetKeys = Object.keys(defaultPresets);
                 class="font-mono text-sm flex-1"
                 readonly
               />
-              <Button id="share-copy-btn" variant="outline" size="icon" title="Copy to clipboard">
+              <Button
+                id="share-copy-btn"
+                variant="outline"
+                size="icon"
+                title="Copy to clipboard"
+              >
                 <Copy class="size-4" id="share-copy-icon" />
                 <Check class="size-4 hidden" id="share-copied-icon" />
               </Button>
@@ -561,7 +606,12 @@ const presetKeys = Object.keys(defaultPresets);
             <p class="text-sm text-destructive" id="share-error-text">
               Failed to create share link. Please try again.
             </p>
-            <Button id="share-retry-btn" variant="outline" size="sm" class="mt-2">
+            <Button
+              id="share-retry-btn"
+              variant="outline"
+              size="sm"
+              class="mt-2"
+            >
               Try Again
             </Button>
           </div>
@@ -745,6 +795,24 @@ const presetKeys = Object.keys(defaultPresets);
     /* Export Dialog */
     .export-dialog-content {
       z-index: 10001;
+    }
+
+    /* CLI Installation Section */
+    .cli-install-section {
+      padding: 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 0.5rem;
+    }
+
+    .cli-command-box {
+      overflow-x: auto;
+    }
+
+    .cli-command-box code {
+      white-space: nowrap;
+      color: var(--foreground);
     }
 
     .export-code-block {
@@ -1250,10 +1318,12 @@ const presetKeys = Object.keys(defaultPresets);
       private saveBtn: HTMLElement | null = null;
       private shareBtn: HTMLElement | null = null;
 
-      // AI state
-      private isSharing = false;
-
       // Share state
+      private isSharing = false;
+      private shareShortId: string | null = null;
+      private currentCliPm: "pnpm" | "npm" | "yarn" | "bun" = "bun";
+
+      // AI state
       private aiImages: { data: string; mediaType: string }[] = [];
 
       connectedCallback() {
@@ -1609,6 +1679,37 @@ const presetKeys = Object.keys(defaultPresets);
             (window as any).__shareCopyHandler,
           );
         }
+
+        // CLI copy button - use event delegation
+        if (!(window as any).__cliCopyHandler) {
+          (window as any).__cliCopyHandler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (target.closest("#cli-copy-btn")) {
+              const panel = document.getElementById(
+                "theme-editor-panel",
+              ) as ThemeEditorPanel | null;
+              panel?.handleCliCopy();
+            }
+          };
+          document.addEventListener("click", (window as any).__cliCopyHandler);
+        }
+
+        // CLI package manager tabs - use event delegation
+        if (!(window as any).__cliPmTabsHandler) {
+          (window as any).__cliPmTabsHandler = (e: CustomEvent) => {
+            const panel = document.getElementById(
+              "theme-editor-panel",
+            ) as ThemeEditorPanel | null;
+            if (panel && e.detail?.value) {
+              panel.setCliPackageManager(e.detail.value);
+            }
+          };
+          // Listen for tabs:change event from the CLI tabs
+          document.addEventListener(
+            "tabs:change",
+            (window as any).__cliPmTabsHandler as EventListener,
+          );
+        }
       }
 
       private loadInitialState() {
@@ -1722,6 +1823,9 @@ const presetKeys = Object.keys(defaultPresets);
 
         this.currentPresetId = id;
         this.isCustomPreset = !!preset.isCustom;
+
+        // Restore shareId if the preset has one (for custom presets)
+        this.shareShortId = (preset as any).shareId || null;
 
         // Deep clone styles
         this.workingStyles = JSON.parse(JSON.stringify(preset.styles));
@@ -2221,6 +2325,9 @@ const presetKeys = Object.keys(defaultPresets);
         // Generate initial content
         this.updateExportContent();
 
+        // Update CLI command
+        this.updateCliCommand();
+
         // Click the hidden trigger to open the dialog
         const triggers = document.querySelectorAll(
           "#export-json-dialog-trigger",
@@ -2284,7 +2391,9 @@ const presetKeys = Object.keys(defaultPresets);
         const resultEl = document.getElementById("share-result");
         const errorEl = document.getElementById("share-error");
         const errorText = document.getElementById("share-error-text");
-        const urlInput = document.getElementById("share-url-input") as HTMLInputElement | null;
+        const urlInput = document.getElementById(
+          "share-url-input",
+        ) as HTMLInputElement | null;
 
         // Show loading state
         if (statusEl) statusEl.style.display = "flex";
@@ -2295,7 +2404,7 @@ const presetKeys = Object.keys(defaultPresets);
         try {
           // Get current preset name and styles
           const presetLabel = this.presetLabel?.textContent || "Shared Theme";
-          
+
           const response = await fetch("/api/themes/share", {
             method: "POST",
             headers: {
@@ -2306,6 +2415,8 @@ const presetKeys = Object.keys(defaultPresets);
               styles: this.workingStyles,
               id: this.currentPresetId,
               createdAt: new Date().toISOString(),
+              // Reuse existing share ID if available
+              shareId: this.shareShortId || undefined,
             }),
           });
 
@@ -2315,19 +2426,37 @@ const presetKeys = Object.keys(defaultPresets);
             throw new Error(data.error || "Failed to create share link");
           }
 
+          // Store the short ID for CLI command generation
+          this.shareShortId = data.shortId;
+
+          // Persist shareId to the custom preset so it survives refresh
+          if (this.isCustomPreset && this.currentPresetId) {
+            const customPresets = getCustomPresets();
+            const preset = customPresets[this.currentPresetId];
+            if (preset) {
+              preset.shareId = data.shortId;
+              saveCustomPreset(preset);
+            }
+          }
+
           // Show success
           if (statusEl) statusEl.style.display = "none";
           if (resultEl) resultEl.style.display = "block";
-          if (urlInput) urlInput.value = data.fullUrl || `https://ui.bejamas.com${data.shareUrl}`;
+          if (urlInput)
+            urlInput.value =
+              data.fullUrl || `https://ui.bejamas.com${data.shareUrl}`;
 
+          // Update CLI command in export dialog
+          this.updateCliCommand();
         } catch (error) {
           console.error("Share error:", error);
           if (statusEl) statusEl.style.display = "none";
           if (errorEl) errorEl.style.display = "block";
           if (errorText) {
-            errorText.textContent = error instanceof Error 
-              ? error.message 
-              : "Failed to create share link. Please try again.";
+            errorText.textContent =
+              error instanceof Error
+                ? error.message
+                : "Failed to create share link. Please try again.";
           }
         } finally {
           this.isSharing = false;
@@ -2335,28 +2464,118 @@ const presetKeys = Object.keys(defaultPresets);
       }
 
       public handleShareCopy() {
-        const urlInput = document.getElementById("share-url-input") as HTMLInputElement | null;
+        const urlInput = document.getElementById(
+          "share-url-input",
+        ) as HTMLInputElement | null;
         if (!urlInput) return;
 
         const copyIcon = document.getElementById("share-copy-icon");
         const copiedIcon = document.getElementById("share-copied-icon");
 
-        navigator.clipboard.writeText(urlInput.value).then(() => {
-          // Show success feedback
-          if (copyIcon) copyIcon.classList.add("hidden");
-          if (copiedIcon) copiedIcon.classList.remove("hidden");
+        navigator.clipboard
+          .writeText(urlInput.value)
+          .then(() => {
+            // Show success feedback
+            if (copyIcon) copyIcon.classList.add("hidden");
+            if (copiedIcon) copiedIcon.classList.remove("hidden");
 
-          this.showToast("Link copied to clipboard");
+            this.showToast("Link copied to clipboard");
 
-          // Reset icon after 2 seconds
-          setTimeout(() => {
-            if (copyIcon) copyIcon.classList.remove("hidden");
-            if (copiedIcon) copiedIcon.classList.add("hidden");
-          }, 2000);
-        }).catch((err) => {
-          console.error("Failed to copy:", err);
-          this.showToast("Failed to copy link");
-        });
+            // Reset icon after 2 seconds
+            setTimeout(() => {
+              if (copyIcon) copyIcon.classList.remove("hidden");
+              if (copiedIcon) copiedIcon.classList.add("hidden");
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Failed to copy:", err);
+            this.showToast("Failed to copy link");
+          });
+      }
+
+      // =============== CLI INSTALLATION ===============
+
+      private slugify(name: string): string {
+        return name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+      }
+
+      private getCliCommand(): string {
+        const presetName = this.presetLabel?.textContent || "theme";
+        const slug = this.slugify(presetName);
+        const shortId = this.shareShortId;
+
+        if (!shortId) {
+          return "Share your theme first to get the CLI command";
+        }
+
+        const registryUrl = `https://ui.bejamas.com/r/themes/${slug}-${shortId}.json`;
+
+        const commands: Record<string, string> = {
+          pnpm: `pnpm dlx shadcn@latest add ${registryUrl}`,
+          npm: `npx shadcn@latest add ${registryUrl}`,
+          yarn: `yarn dlx shadcn@latest add ${registryUrl}`,
+          bun: `bunx shadcn@latest add ${registryUrl}`,
+        };
+
+        return commands[this.currentCliPm] || commands.bun;
+      }
+
+      private updateCliCommand() {
+        const commandEl = document.getElementById("cli-command-text");
+        const noteEl = document.getElementById("cli-note");
+
+        if (commandEl) {
+          commandEl.textContent = this.getCliCommand();
+        }
+
+        // Update note based on share status
+        if (noteEl) {
+          if (this.shareShortId) {
+            noteEl.textContent =
+              "Install this theme directly into your project.";
+          } else {
+            noteEl.textContent =
+              "Share your theme first to get the CLI installation command.";
+          }
+        }
+      }
+
+      public setCliPackageManager(pm: "pnpm" | "npm" | "yarn" | "bun") {
+        this.currentCliPm = pm;
+        this.updateCliCommand();
+      }
+
+      public handleCliCopy() {
+        const command = this.getCliCommand();
+
+        if (!this.shareShortId) {
+          this.showToast("Share your theme first");
+          return;
+        }
+
+        const copyIcon = document.getElementById("cli-copy-icon");
+        const copiedIcon = document.getElementById("cli-copied-icon");
+
+        navigator.clipboard
+          .writeText(command)
+          .then(() => {
+            if (copyIcon) copyIcon.classList.add("hidden");
+            if (copiedIcon) copiedIcon.classList.remove("hidden");
+
+            this.showToast("Command copied to clipboard");
+
+            setTimeout(() => {
+              if (copyIcon) copyIcon.classList.remove("hidden");
+              if (copiedIcon) copiedIcon.classList.add("hidden");
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Failed to copy CLI command:", err);
+            this.showToast("Failed to copy command");
+          });
       }
 
       private openImportDialog() {

@@ -23,7 +23,7 @@ async function generateUniqueId(): Promise<string> {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { name, styles, id, createdAt } = body as {
+    const { name, styles, id, createdAt, shareId: existingShareId } = body as {
       name?: string;
       styles?: {
         light: Record<string, string>;
@@ -31,6 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
       };
       id?: string;
       createdAt?: string;
+      shareId?: string; // Existing share ID to reuse
     };
 
     // Validate required fields
@@ -51,8 +52,8 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Generate unique short ID
-    const shortId = await generateUniqueId();
+    // Reuse existing share ID if provided, otherwise generate a new one
+    const shortId = existingShareId || await generateUniqueId();
 
     // Prepare theme data
     const themeData: Omit<SharedTheme, "sharedAt" | "views"> = {
@@ -62,7 +63,7 @@ export const POST: APIRoute = async ({ request }) => {
       createdAt: createdAt || new Date().toISOString(),
     };
 
-    // Save to Redis
+    // Save to Redis (updates if exists, creates if new)
     const savedId = await saveSharedTheme(themeData, shortId);
 
     if (!savedId) {

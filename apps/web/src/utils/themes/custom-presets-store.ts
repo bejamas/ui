@@ -11,6 +11,7 @@ export interface CustomPreset extends ThemePreset {
   name: string;
   createdAt: string;
   modifiedAt: string;
+  shareId?: string; // Short ID used for sharing (e.g., "abc123")
 }
 
 export interface CustomPresetsStore {
