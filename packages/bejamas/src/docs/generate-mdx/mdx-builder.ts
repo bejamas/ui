@@ -378,7 +378,7 @@ export function buildMdx(params: {
 
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length
-      ? `<div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-t-lg min-h-72 items-center [&_input]:max-w-xs">
+      ? `<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center [&_input]:max-w-xs">
 ${toMdxPreview(primaryExampleMDX)}
 </div>
 
@@ -409,7 +409,7 @@ ${descriptionMD}`.trim(),
       exampleSections.push(
         `### ${blk.title}
 
-${descriptionMD ? `${descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-t-lg min-h-72 items-center [&_input]:max-w-xs">
+${descriptionMD ? `${descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center [&_input]:max-w-xs">
 ${previewBody}
 </div>
 
