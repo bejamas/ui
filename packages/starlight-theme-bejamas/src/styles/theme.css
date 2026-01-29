@@ -370,7 +370,7 @@
   button[data-open-modal] {
     border-color: var(--border);
     color: var(--foreground);
-    box-shadow: var(--shadow-xs);
+    box-shadow: none;
     background-color: var(--background);
     height: calc(var(--spacing) * 9);
   }
@@ -421,6 +421,8 @@
     justify-content: center;
     align-items: center;
     background-color: var(--background);
+    position: relative;
+    z-index: 10;
   }
 
   .sl-bejamas-component-preview + .expressive-code {
@@ -456,14 +458,16 @@
     bottom: 50%;
     transform: translateY(50%) translateX(-50%);
     height: calc(var(--spacing) * 8.5);
+    z-index: 1;
   }
 
   .expressive-code .ec-collapse.ec-collapse--collapsed .ec-collapse__content {
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
 
-  .ec-collapse__gradient {
+  .expressive-code .ec-collapse__gradient {
     height: 100%;
+    z-index: 0;
   }
 
   .ec-collapse.ec-collapse--collapsed::after {
