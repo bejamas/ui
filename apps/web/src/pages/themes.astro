@@ -156,6 +156,65 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
 }));
 ---
 
+<script is:inline>
+  (() => {
+    try {
+      const cookieMatch = document.cookie.match(/(?:^|;)\s*theme=([^;]+)/);
+      const cookieValue = cookieMatch ? decodeURIComponent(cookieMatch[1]) : "";
+      const presetFromCookie = cookieValue ? cookieValue.split("|")[0] : "";
+      const presetFromStorage =
+        presetFromCookie || localStorage.getItem("theme-preset") || "";
+
+      if (!presetFromStorage || presetFromStorage === "default") return;
+
+      const updateUrl = (rawUrl) => {
+        try {
+          const url = new URL(rawUrl, window.location.href);
+          if (url.hostname !== "gradient.bejamas.com") return rawUrl;
+          if (url.searchParams.get("theme") === presetFromStorage) return rawUrl;
+          url.searchParams.set("theme", presetFromStorage);
+          return url.toString();
+        } catch {
+          return rawUrl;
+        }
+      };
+
+      const updateSrcset = (srcset) => {
+        if (!srcset) return srcset;
+        return srcset
+          .split(",")
+          .map((entry) => {
+            const parts = entry.trim().split(/\s+/);
+            if (parts.length === 0) return entry;
+            const updatedUrl = updateUrl(parts[0]);
+            return parts.length > 1
+              ? `${updatedUrl} ${parts.slice(1).join(" ")}`
+              : updatedUrl;
+          })
+          .join(", ");
+      };
+
+      document.querySelectorAll("img").forEach((img) => {
+        const currentSrc = img.getAttribute("src");
+        if (currentSrc) {
+          const nextSrc = updateUrl(currentSrc);
+          if (nextSrc !== currentSrc) {
+            img.setAttribute("src", nextSrc);
+          }
+        }
+
+        const currentSrcset = img.getAttribute("srcset");
+        if (currentSrcset) {
+          const nextSrcset = updateSrcset(currentSrcset);
+          if (nextSrcset !== currentSrcset) {
+            img.setAttribute("srcset", nextSrcset);
+          }
+        }
+      });
+    } catch {}
+  })();
+</script>
+
 <script>
   import "../utils/themes/apply-theme.ts";
 </script>
