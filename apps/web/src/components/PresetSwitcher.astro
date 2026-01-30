@@ -163,13 +163,17 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
 
   function updateGradientImageCacheKey(themeKey: string) {
     if (!themeKey || typeof document === "undefined") return;
+    const mode = getCurrentMode();
 
     const updateUrl = (rawUrl: string): string => {
       try {
         const url = new URL(rawUrl, window.location.href);
         if (url.hostname !== "gradient.bejamas.com") return rawUrl;
-        if (url.searchParams.get("theme") === themeKey) return rawUrl;
+        const hasTheme = url.searchParams.get("theme") === themeKey;
+        const hasMode = url.searchParams.get("mode") === mode;
+        if (hasTheme && hasMode) return rawUrl;
         url.searchParams.set("theme", themeKey);
+        url.searchParams.set("mode", mode);
         return url.toString();
       } catch {
         return rawUrl;

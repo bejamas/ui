@@ -163,16 +163,27 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
       const cookieValue = cookieMatch ? decodeURIComponent(cookieMatch[1]) : "";
       const presetFromCookie = cookieValue ? cookieValue.split("|")[0] : "";
       const presetFromStorage =
-        presetFromCookie || localStorage.getItem("theme-preset") || "";
+        presetFromCookie || localStorage.getItem("theme-preset") || "default";
 
-      if (!presetFromStorage || presetFromStorage === "default") return;
+      const storedTheme =
+        typeof localStorage !== "undefined" &&
+        localStorage.getItem("starlight-theme");
+      const resolvedTheme =
+        storedTheme === "light" || storedTheme === "dark"
+          ? storedTheme
+          : window.matchMedia("(prefers-color-scheme: light)").matches
+            ? "light"
+            : "dark";
 
       const updateUrl = (rawUrl) => {
         try {
           const url = new URL(rawUrl, window.location.href);
           if (url.hostname !== "gradient.bejamas.com") return rawUrl;
-          if (url.searchParams.get("theme") === presetFromStorage) return rawUrl;
+          const hasTheme = url.searchParams.get("theme") === presetFromStorage;
+          const hasMode = url.searchParams.get("mode") === resolvedTheme;
+          if (hasTheme && hasMode) return rawUrl;
           url.searchParams.set("theme", presetFromStorage);
+          url.searchParams.set("mode", resolvedTheme);
           return url.toString();
         } catch {
           return rawUrl;
