@@ -532,13 +532,12 @@ const sectionTitles = [
       const draft = getEditingPresetDraft(storedId);
       if (!draft) return;
 
-      const mode = draft.currentMode || getCurrentMode();
+      const mode = getCurrentMode();
       applyThemeToElement(
         { styles: draft.workingStyles, currentMode: mode },
         document.documentElement,
+        { skipModeClass: true },
       );
-      document.documentElement.dataset.theme = mode;
-      document.documentElement.dataset.themeChoice = mode;
     };
 
     const getPanelInstance = () => {
