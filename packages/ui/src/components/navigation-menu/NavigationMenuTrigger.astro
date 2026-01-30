@@ -1,0 +1,33 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cva } from "class-variance-authority";
+import { ChevronDown } from "@lucide/astro";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"button">;
+
+export const navigationMenuTriggerStyle = cva(
+  "px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 hover:text-accent data-[state=open]:text-accent",
+);
+
+const {
+  class: className = "",
+  type = "button",
+  ...rest
+} = Astro.props as Props;
+---
+
+<button
+  {...rest}
+  data-slot="navigation-menu-trigger"
+  type={type}
+  class={cn(navigationMenuTriggerStyle(), "group", className)}
+>
+  <slot />
+  <ChevronDown
+    class="text-muted-foreground size-3 transition-transform duration-200 group-data-[state=open]:rotate-180"
+    aria-hidden="true"
+  />
+</button>
