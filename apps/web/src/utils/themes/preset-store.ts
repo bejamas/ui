@@ -1,6 +1,7 @@
 export const PRESET_COOKIE_NAME = "theme";
 export const PRESET_STORAGE_KEY = "theme-preset";
 export const PRESET_CHANGE_EVENT = "bejamas:preset-change";
+const PRESET_COOKIE_DOMAIN = ".bejamas.com";
 
 // Cookie format: theme={id}|{primaryLight}|{accentLight}|{primaryDark}|{accentDark}|{name}
 // Example: theme=custom-abc|oklch(0.2 0.04 250)|oklch(0.6 0.23 250)|oklch(0.97 0 0)|oklch(0.6 0.23 250)|My Theme
@@ -54,6 +55,24 @@ export function encodeThemeCookie(
   return name ? `${base}|${name}` : base;
 }
 
+function getCookieAttributes(): string {
+  if (typeof document === "undefined" || typeof location === "undefined") {
+    return "path=/; SameSite=Lax";
+  }
+
+  const attributes = ["path=/", "SameSite=Lax"];
+
+  if (location.protocol === "https:") {
+    attributes.push("Secure");
+  }
+
+  if (location.hostname.endsWith("bejamas.com")) {
+    attributes.push(`Domain=${PRESET_COOKIE_DOMAIN}`);
+  }
+
+  return attributes.join("; ");
+}
+
 /**
  * Get the stored preset key from cookie (priority) or localStorage (fallback)
  */
@@ -105,7 +124,7 @@ export function setStoredPreset(key: string, swatches?: ThemeSwatches, name?: st
   if (typeof document === "undefined") return;
 
   const cookieValue = encodeThemeCookie(key, swatches, name);
-  document.cookie = `${PRESET_COOKIE_NAME}=${encodeURIComponent(cookieValue)}; path=/;`;
+  document.cookie = `${PRESET_COOKIE_NAME}=${encodeURIComponent(cookieValue)}; ${getCookieAttributes()};`;
   try {
     localStorage.setItem(PRESET_STORAGE_KEY, key);
   } catch {}
