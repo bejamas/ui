@@ -233,10 +233,11 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
     const mode = getCurrentMode();
     const styles = draft?.workingStyles || preset.styles;
 
-    // Apply theme CSS variables to document
+    // Apply theme CSS variables to document (do not touch light/dark class; ThemeProvider owns it)
     applyThemeToElement(
       { styles, currentMode: mode },
       document.documentElement,
+      { skipModeClass: true },
     );
 
     // Update current swatches and label display
