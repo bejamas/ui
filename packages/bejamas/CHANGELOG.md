@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.2.6
+
+### Patch Changes
+
+- [#35](https://github.com/bejamas/ui/pull/35) [`140fe4e`](https://github.com/bejamas/ui/commit/140fe4e510a44561831b757042e755e2a811272d) Thanks [@thomkrupa](https://github.com/thomkrupa)! - generate API Reference section
+
 ## 0.2.5
 
 ### Patch Changes
