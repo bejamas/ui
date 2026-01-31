@@ -1,6 +1,7 @@
 import path from "node:path";
 import { Command } from "commander";
 import { execa } from "execa";
+import prompts from "prompts";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
 import { highlighter } from "@/src/utils/highlighter";
@@ -212,6 +213,68 @@ function rewritePaths(
   });
 }
 
+/** Fetch available components from the registry */
+async function fetchAvailableComponents(
+  registryUrl: string,
+): Promise<{ name: string; type?: string }[]> {
+  const indexUrl = `${registryUrl}/index.json`;
+  const response = await fetch(indexUrl);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch registry index: ${response.statusText}`);
+  }
+  const data = await response.json();
+  // Registry index is an array of objects with at least a name property
+  return Array.isArray(data) ? data : [];
+}
+
+/** Prompt user to select components interactively */
+async function promptForComponents(
+  registryUrl: string,
+): Promise<string[] | null> {
+  const checkingSpinner = spinner("Checking registry.").start();
+
+  let components: { name: string; type?: string }[];
+  try {
+    components = await fetchAvailableComponents(registryUrl);
+    checkingSpinner.succeed();
+  } catch (error) {
+    checkingSpinner.fail();
+    logger.error("Failed to fetch available components from registry.");
+    return null;
+  }
+
+  if (components.length === 0) {
+    logger.warn("No components available in registry.");
+    return null;
+  }
+
+  // Filter to only ui:* type components if type info is available
+  const uiComponents = components.filter(
+    (c) => !c.type || c.type === "registry:ui",
+  );
+
+  const choices = uiComponents.map((c) => ({
+    title: c.name,
+    value: c.name,
+  }));
+
+  const { selected } = await prompts({
+    type: "autocompleteMultiselect",
+    name: "selected",
+    message: "Which components would you like to add?",
+    choices,
+    hint: "- Space to select. Return to submit.",
+    instructions: false,
+  });
+
+  // User cancelled (Ctrl+C)
+  if (!selected) {
+    return null;
+  }
+
+  return selected;
+}
+
 /** Parse shadcn output to extract file lists (stdout has paths, stderr has headers) */
 function parseShadcnOutput(stdout: string, stderr: string): ParsedOutput {
   const result: ParsedOutput = { created: [], updated: [], skipped: [] };
@@ -398,10 +461,43 @@ export const add = new Command()
         : (cmd.opts?.() ?? {});
     const cwd = opts.cwd || process.cwd();
 
+    let componentsToAdd = packages || [];
+    const wantsAll = Boolean(opts.all);
+    const isSilent = opts.silent || false;
+    const registryUrl = process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL;
+
+    // Handle --all flag: fetch all available components
+    if (wantsAll && componentsToAdd.length === 0) {
+      const fetchingSpinner = spinner("Fetching available components.", {
+        silent: isSilent,
+      }).start();
+      try {
+        const allComponents = await fetchAvailableComponents(registryUrl);
+        const uiComponents = allComponents.filter(
+          (c) => !c.type || c.type === "registry:ui",
+        );
+        componentsToAdd = uiComponents.map((c) => c.name);
+        fetchingSpinner.succeed();
+      } catch (error) {
+        fetchingSpinner.fail();
+        logger.error("Failed to fetch available components from registry.");
+        process.exit(1);
+      }
+    }
+
+    // Interactive mode: prompt user to select components
+    if (componentsToAdd.length === 0) {
+      const selected = await promptForComponents(registryUrl);
+      if (!selected || selected.length === 0) {
+        // User cancelled or no selection
+        return;
+      }
+      componentsToAdd = selected;
+    }
+
     // Get config for resolved paths (needed for reorganization)
     // In monorepos, we need to follow the alias chain to find the actual UI package config
     const config = await getConfig(cwd);
-    const registryUrl = process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL;
 
     // Try to get workspace config (follows aliases to find package-specific configs)
     let uiDir = config?.resolvedPaths?.ui || "";
@@ -426,8 +522,6 @@ export const add = new Command()
 
     // Process components ONE AT A TIME to avoid index.ts conflicts
     // When shadcn runs with multiple components, files with same name overwrite each other
-    const isSilent = opts.silent || false;
-    const componentsToAdd = packages || [];
     const totalComponents = componentsToAdd.length;
 
     for (let i = 0; i < componentsToAdd.length; i++) {
