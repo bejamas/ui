@@ -26,6 +26,12 @@ import {
   CollapsibleContent,
 } from "@bejamas/ui/components/collapsible";
 import {
+  Slider,
+  SliderTrack,
+  SliderRange,
+  SliderThumb,
+} from "@bejamas/ui/components/slider";
+import {
   ArrowRight,
   ArrowLeft,
   ArrowUpRight,
@@ -258,6 +264,12 @@ const options = [...filteredDefaultOptions, ...customOptions];
       <p>Hidden content here</p>
     </TooltipContent>
   </Tooltip>
+  <Slider>
+    <SliderTrack>
+      <SliderRange />
+    </SliderTrack>
+    <SliderThumb />
+  </Slider>
 </div>
 
 <style>
