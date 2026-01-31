@@ -49,10 +49,12 @@ export function parseJsDocMetadata(
   let inUsage = false;
   let inExamples = false;
   let inPrimaryExample = false;
+  let inApi = false;
   let captureDescriptionBody = false;
   const usageLines: string[] = [];
   const examplesLines: string[] = [];
   const primaryExampleLines: string[] = [];
+  const apiLines: string[] = [];
   const descriptionBodyLines: string[] = [];
   for (const rawLine of lines) {
     const line = rawLine;
@@ -77,6 +79,14 @@ export function parseJsDocMetadata(
         inExamples = false;
       } else {
         examplesLines.push(line);
+        continue;
+      }
+    }
+    if (inApi) {
+      if (line.trim().startsWith("@")) {
+        inApi = false;
+      } else {
+        apiLines.push(line);
         continue;
       }
     }
@@ -114,6 +124,9 @@ export function parseJsDocMetadata(
       // backward compatibility with older docs
       inPrimaryExample = true;
       continue;
+    } else if (line.trim().startsWith("@api")) {
+      inApi = true;
+      continue;
     }
   }
   if (usageLines.length) meta.usageMDX = usageLines.join("\n").trim();
@@ -122,6 +135,7 @@ export function parseJsDocMetadata(
     meta.primaryExampleMDX = primaryExampleLines.join("\n").trim();
   if (descriptionBodyLines.length)
     meta.descriptionBodyMDX = descriptionBodyLines.join("\n").trim();
+  if (apiLines.length) meta.apiMDX = apiLines.join("\n").trim();
   return meta;
 }
 

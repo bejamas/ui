@@ -243,6 +243,7 @@ async function main() {
       meta.primaryExampleMDX || "",
     ).trim();
     const examplesMDX = normalizeBlockMDX(meta.examplesMDX || "").trim();
+    const apiMDX = normalizeBlockMDX(meta.apiMDX || "").trim();
     const hasImportExamples = detectHasImportTopLevel(examplesMDX, pascal);
     const hasImportPrimary = detectHasImportTopLevel(primaryExampleMDX, pascal);
     const hasImport = hasImportUsage || hasImportExamples || hasImportPrimary;
@@ -329,6 +330,7 @@ async function main() {
       componentsAlias,
       // Pass subcomponents as named exports for folder-based components
       namedExports: isFolder ? usedNamedExports : undefined,
+      apiMDX,
     });
     const outFile = join(outDir, `${slug}.mdx`);
     mkdirSync(dirname(outFile), { recursive: true });

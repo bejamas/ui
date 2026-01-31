@@ -130,6 +130,10 @@ export function buildMdx(params: {
    * If provided, these will be included in the main import statement.
    */
   namedExports?: string[];
+  /**
+   * Optional: API reference documentation (events, programmatic control, data attributes).
+   */
+  apiMDX?: string;
 }): string {
   const {
     importName,
@@ -151,6 +155,7 @@ export function buildMdx(params: {
     figmaUrl,
     componentsAlias,
     namedExports,
+    apiMDX,
   } = params;
 
   // Detect if we should use the new barrel import pattern
@@ -529,6 +534,8 @@ ${ex.source}
     exampleSections.length
       ? `## Examples\n\n` + exampleSections.join("\n\n")
       : null,
+    exampleSections.length ? "" : null,
+    apiMDX && apiMDX.length ? `## API Reference\n\n${apiMDX}` : null,
   ].filter((v) => v !== null && v !== undefined);
 
   return lines.join("\n").trim() + "\n";
