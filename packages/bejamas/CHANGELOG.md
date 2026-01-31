@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.2.5
+
+### Patch Changes
+
+- [#32](https://github.com/bejamas/ui/pull/32) [`be47c33`](https://github.com/bejamas/ui/commit/be47c33d0e6bf8392427dbe36d9b3db12e12191f) Thanks [@thomkrupa](https://github.com/thomkrupa)! - fix add command select mode
+
 ## 0.2.4
 
 ### Patch Changes
