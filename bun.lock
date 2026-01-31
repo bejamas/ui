@@ -77,7 +77,7 @@
     },
     "packages/bejamas": {
       "name": "bejamas",
-      "version": "0.2.3",
+      "version": "0.2.4",
       "bin": {
         "bejamas": "./dist/index.js",
       },
@@ -103,7 +103,7 @@
     },
     "packages/starlight-theme-bejamas": {
       "name": "starlight-theme-bejamas",
-      "version": "0.1.6",
+      "version": "0.1.7",
       "dependencies": {
         "@expressive-code/plugin-line-numbers": "^0.41.3",
         "@fontsource-variable/inter": "^5.2.8",
@@ -124,6 +124,7 @@
         "@data-slot/dialog": "^0.2.6",
         "@data-slot/dropdown-menu": "^0.2.4",
         "@data-slot/navigation-menu": "^0.2.7",
+        "@data-slot/slider": "^0.2.10",
         "@data-slot/tabs": "^0.2.9",
         "@data-slot/tooltip": "^0.2.6",
         "@lucide/astro": "^0.540.0",
@@ -302,6 +303,8 @@
     "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@0.2.4", "", {}, "sha512-3+oDkShNiISYLVVxOAQZ2vJPo3rfzV85V7+umYiaXtAHoP278rMZJm+g5VKnMg4wp73LoUP3fPUu8sT/QqEIiQ=="],
 
     "@data-slot/navigation-menu": ["@data-slot/navigation-menu@0.2.7", "", {}, "sha512-g1INBGXr/jYphVJfZg+D6L+/LnsDAbEOPB4Vfq4/Grynj2c4olj1E6NTTQ7PoGIT8cF0f2zJig074GWAJXekJw=="],
+
+    "@data-slot/slider": ["@data-slot/slider@0.2.10", "", {}, "sha512-LC+n4cZSoEIolIxbi0vD/73+sminn6nSDjl/VMs/ryLrFFjKUzvfupL+xAbi7Cky/qPoSZM70/lwjBWrJlJD6g=="],
 
     "@data-slot/tabs": ["@data-slot/tabs@0.2.9", "", {}, "sha512-oGW9oC+RUYC2Z59vfYgqGKCSaj7XbU96+wpQ/7f8+n0PsH/QXXX7O4M5xEkp77KG57OgH7uZwR2uCn4BXEjMpg=="],
 
