@@ -89,9 +89,11 @@
  * | `slider:change` | `{ value: number \| [number, number] }` | Fired on every value change (during drag) |
  * | `slider:commit` | `{ value: number \| [number, number] }` | Fired when value is committed (pointer up or keyboard blur) |
  *
- * ```astro
+ * ```astro nocollapse
  * <Slider id="my-slider" defaultValue={[50]} max={100}>
- *   <SliderTrack><SliderRange /></SliderTrack>
+ *   <SliderTrack>
+ *     <SliderRange />
+ *   </SliderTrack>
  *   <SliderThumb />
  * </Slider>
  *
@@ -194,11 +196,9 @@ const {
 
   document.querySelectorAll('[data-slot="slider"]').forEach((el) => {
     const element = el as HTMLElement;
-    const defaultValueAttr = element.dataset.defaultValue;
+    // Don't pass defaultValue in options - let library read from data-default-value
+    // attribute directly. The library handles single vs range values correctly.
     createSlider(element, {
-      defaultValue: defaultValueAttr
-        ? defaultValueAttr.split(",").map(Number)
-        : undefined,
       min: Number(element.dataset.min) || 0,
       max: Number(element.dataset.max) || 100,
       step: Number(element.dataset.step) || 1,
