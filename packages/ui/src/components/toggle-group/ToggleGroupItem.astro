@@ -1,0 +1,74 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+
+const toggleVariants = cva(
+  "hover:text-foreground aria-pressed:bg-muted focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[state=on]:bg-muted gap-1 rounded-lg text-sm font-medium transition-all [&_svg:not([class*='size-'])]:size-4 group/toggle hover:bg-muted inline-flex items-center justify-center whitespace-nowrap outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "bg-transparent",
+        outline: "border-input hover:bg-muted border bg-transparent",
+      },
+      size: {
+        default: "h-8 min-w-8 px-2",
+        sm: "h-7 min-w-7 rounded-[min(var(--radius-md),12px)] px-1.5 text-[0.8rem]",
+        lg: "h-9 min-w-9 px-2.5",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+
+type ToggleVariantProps = VariantProps<typeof toggleVariants>;
+
+type Props = {
+  value: string;
+  disabled?: boolean;
+  class?: string;
+} & ToggleVariantProps &
+  Omit<HTMLAttributes<"button">, "class">;
+
+const {
+  value,
+  variant,
+  size,
+  disabled,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<button
+  type="button"
+  data-slot="toggle-group-item"
+  data-value={value}
+  disabled={disabled}
+  class={cn(
+    toggleVariants({ variant, size }),
+    // Inherit variant from parent when not set
+    !variant && "group-data-[variant=outline]/toggle-group:border group-data-[variant=outline]/toggle-group:border-input group-data-[variant=outline]/toggle-group:bg-transparent",
+    // Inherit size from parent when not set
+    !size && "group-data-[size=sm]/toggle-group:h-7 group-data-[size=sm]/toggle-group:min-w-7 group-data-[size=sm]/toggle-group:px-1.5 group-data-[size=sm]/toggle-group:text-[0.8rem]",
+    !size && "group-data-[size=lg]/toggle-group:h-9 group-data-[size=lg]/toggle-group:min-w-9 group-data-[size=lg]/toggle-group:px-2.5",
+    // Connected items styling (rounded-none, first/last get border-radius)
+    "rounded-none shadow-none first:rounded-l-lg last:rounded-r-lg",
+    // Vertical orientation border-radius
+    "group-data-[orientation=vertical]/toggle-group:first:rounded-t-lg group-data-[orientation=vertical]/toggle-group:first:rounded-l-none",
+    "group-data-[orientation=vertical]/toggle-group:last:rounded-b-lg group-data-[orientation=vertical]/toggle-group:last:rounded-r-none",
+    // Outline variant border handling (horizontal)
+    "group-data-[variant=outline]/toggle-group:border-l-0 group-data-[variant=outline]/toggle-group:first:border-l",
+    // Outline variant border handling (vertical)
+    "group-data-[orientation=vertical]/toggle-group:group-data-[variant=outline]/toggle-group:border-t-0",
+    "group-data-[orientation=vertical]/toggle-group:group-data-[variant=outline]/toggle-group:first:border-t",
+    "group-data-[orientation=vertical]/toggle-group:group-data-[variant=outline]/toggle-group:border-l",
+    className
+  )}
+  {...rest}
+>
+  <slot />
+</button>

@@ -32,6 +32,7 @@ import {
   SliderThumb,
 } from "@bejamas/ui/components/slider";
 import { Toggle } from "@bejamas/ui/components/toggle";
+import { ToggleGroup, ToggleGroupItem } from "@bejamas/ui/components/toggle-group";
 
 import {
   ArrowRight,
@@ -273,6 +274,11 @@ const options = [...filteredDefaultOptions, ...customOptions];
     <SliderThumb />
   </Slider>
   <Toggle />
+  <ToggleGroup>
+    <ToggleGroupItem value="left" aria-label="Align left">
+      left
+    </ToggleGroupItem>
+  </ToggleGroup>
 </div>
 
 <style>

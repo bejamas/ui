@@ -698,6 +698,40 @@
       ]
     },
     {
+      "name": "toggle",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/toggle"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/toggle/Toggle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/toggle/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/toggle-group"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/toggle-group/ToggleGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/toggle-group/ToggleGroupItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/toggle-group/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "tooltip",
       "type": "registry:ui",
       "dependencies": ["@data-slot/tooltip"],
