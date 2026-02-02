@@ -1,0 +1,157 @@
+---
+/**
+ * @component Toggle
+ * @title Toggle
+ * @description A two-state button that can be either on or off.
+ *
+ * @preview
+ *
+ * <Toggle aria-label="Toggle bookmark" size="sm" variant="outline">
+ *   <BookmarkIcon />
+ *   Bookmark
+ * </Toggle>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Toggle } from '@bejamas/ui/components/toggle';
+ * import { BoldIcon } from '@lucide/astro';
+ * ---
+ *
+ * <Toggle aria-label="Toggle bold">
+ *   <BoldIcon />
+ * </Toggle>
+ * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `toggle:change` | `{ pressed: boolean }` | Fired when the toggle state changes |
+ *
+ * ### Programmatic Control
+ *
+ * ```js nocollapse
+ * // Set toggle state programmatically
+ * element.dispatchEvent(new CustomEvent('toggle:set', { detail: { value: true } }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | toggle | Current state: `on` or `off` |
+ * | `data-disabled` | toggle | Present when toggle is disabled |
+ *
+ * @examples
+ *
+ * ### Outline
+ *
+ * <div class="flex items-center gap-2">
+ *   <Toggle variant="outline" aria-label="Toggle bold">
+ *     <BoldIcon />
+ *     Bold
+ *   </Toggle>
+ *   <Toggle variant="outline" aria-label="Toggle italic">
+ *     <ItalicIcon />
+ *     Italic
+ *   </Toggle>
+ * </div>
+ *
+ * ### With Text
+ *
+ * <Toggle variant="outline" aria-label="Toggle italic">
+ *   <ItalicIcon />
+ *   Italic
+ * </Toggle>
+ *
+ * ### Sizes
+ *
+ * <div class="flex items-center gap-2">
+ *   <Toggle size="sm" variant="outline" aria-label="Toggle small">
+ *     Small
+ *   </Toggle>
+ *   <Toggle size="default" variant="outline" aria-label="Toggle default">
+ *     Default
+ *   </Toggle>
+ *   <Toggle size="lg" variant="outline" aria-label="Toggle large">
+ *     Large
+ *   </Toggle>
+ * </div>
+ *
+ * ### Disabled
+ *
+ * <div class="flex items-center gap-2">
+ *   <Toggle disabled aria-label="Toggle bold">
+ *     Disabled
+ *   </Toggle>
+ *   <Toggle disabled variant="outline" aria-label="Toggle italic">
+ *     Disabled
+ *   </Toggle>
+ * </div>
+ *
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@bejamas/ui/lib/utils";
+
+const toggleVariants = cva(
+  "hover:text-foreground aria-pressed:bg-muted focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[state=on]:bg-muted gap-1 rounded-lg text-sm font-medium transition-all [&_svg:not([class*='size-'])]:size-4 group/toggle hover:bg-muted inline-flex items-center justify-center whitespace-nowrap outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "bg-transparent",
+        outline: "border-input hover:bg-muted border bg-transparent",
+      },
+      size: {
+        default: "h-8 min-w-8 px-2",
+        sm: "h-7 min-w-7 rounded-[min(var(--radius-md),12px)] px-1.5 text-[0.8rem]",
+        lg: "h-9 min-w-9 px-2.5",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+
+type ToggleVariantProps = VariantProps<typeof toggleVariants>;
+
+type Props = ToggleVariantProps & {
+  defaultPressed?: boolean;
+  disabled?: boolean;
+  class?: string;
+} & Omit<HTMLAttributes<"button">, "class">;
+
+const {
+  variant,
+  size,
+  defaultPressed,
+  disabled,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<button
+  type="button"
+  data-slot="toggle"
+  data-default-pressed={defaultPressed ? "" : undefined}
+  data-disabled={disabled ? "true" : undefined}
+  disabled={disabled}
+  class={cn(toggleVariants({ variant, size }), className)}
+  {...rest}
+>
+  <slot />
+</button>
+
+<script>
+  import { createToggle } from "@data-slot/toggle";
+  document.querySelectorAll('[data-slot="toggle"]').forEach((el) => createToggle(el));
+</script>
