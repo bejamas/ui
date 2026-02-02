@@ -77,7 +77,7 @@
     },
     "packages/bejamas": {
       "name": "bejamas",
-      "version": "0.2.4",
+      "version": "0.2.5",
       "bin": {
         "bejamas": "./dist/index.js",
       },
@@ -119,14 +119,14 @@
       "name": "@bejamas/ui",
       "version": "0.1.0",
       "dependencies": {
-        "@data-slot/accordion": "^0.2.6",
-        "@data-slot/collapsible": "^0.2.6",
-        "@data-slot/dialog": "^0.2.6",
-        "@data-slot/dropdown-menu": "^0.2.4",
-        "@data-slot/navigation-menu": "^0.2.7",
-        "@data-slot/slider": "^0.2.10",
-        "@data-slot/tabs": "^0.2.9",
-        "@data-slot/tooltip": "^0.2.6",
+        "@data-slot/accordion": "^0.2.13",
+        "@data-slot/collapsible": "^0.2.13",
+        "@data-slot/dialog": "^0.2.13",
+        "@data-slot/dropdown-menu": "^0.2.12",
+        "@data-slot/navigation-menu": "^0.2.13",
+        "@data-slot/slider": "^0.2.12",
+        "@data-slot/tabs": "^0.2.13",
+        "@data-slot/tooltip": "^0.2.12",
         "@lucide/astro": "^0.540.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -294,21 +294,21 @@
 
     "@dabh/diagnostics": ["@dabh/diagnostics@2.0.8", "", { "dependencies": { "@so-ric/colorspace": "^1.1.6", "enabled": "2.0.x", "kuler": "^2.0.0" } }, "sha512-R4MSXTVnuMzGD7bzHdW2ZhhdPC/igELENcq5IjEverBvq5hn1SXCWcsi6eSsdWP0/Ur+SItRRjAktmdoX/8R/Q=="],
 
-    "@data-slot/accordion": ["@data-slot/accordion@0.2.6", "", {}, "sha512-whvI6/Cd7RzbU8HcEv9reT4ywgE3NoeW2hKUz0e4qP+y11twcl8B/VgfYhlNcsRg14vPEVrxFwLPnu99qoJNQw=="],
+    "@data-slot/accordion": ["@data-slot/accordion@0.2.13", "", {}, "sha512-vfZjYNTnzbQ3OczndwCR9mIFBVi2bZzxU1BVNpfd8Emd6TiQ+ImyJYLqdGS+hxSkyQSpTDdTNLm+i5Q0Ccvwhg=="],
 
-    "@data-slot/collapsible": ["@data-slot/collapsible@0.2.6", "", {}, "sha512-omWBbnnm+HauCig9qfuW7mJc8S1/s65Wwy59mfAPUEh/+/TSpCXn3IYz05Y6U7SrDqjLUonSGInPjF3Y3RiL4w=="],
+    "@data-slot/collapsible": ["@data-slot/collapsible@0.2.13", "", {}, "sha512-jr89i1z9gH467mzBPLbxiY3sWchqwnBgmqZHeJM92tsucgNOuCv4vD8JgTJtUjpD5TAHZ8s3wQZpQu9//rmFRQ=="],
 
-    "@data-slot/dialog": ["@data-slot/dialog@0.2.6", "", {}, "sha512-83hJtXaVziRV0VB8t4vgJWazApVLlb/vTD0r5PN9hxMn7FU72skXqDCdosUP49brpsJpc05L9VJdXFkjMX6wrg=="],
+    "@data-slot/dialog": ["@data-slot/dialog@0.2.13", "", {}, "sha512-gvXddRUYOJ+x2GAP9LDEp9NogN6tVBgSJo2JoRIvggiWYAnBFMumfqBYHhvLz5gfbGOpJ9k/dS0Oahc4xq7Xow=="],
 
-    "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@0.2.4", "", {}, "sha512-3+oDkShNiISYLVVxOAQZ2vJPo3rfzV85V7+umYiaXtAHoP278rMZJm+g5VKnMg4wp73LoUP3fPUu8sT/QqEIiQ=="],
+    "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@0.2.12", "", {}, "sha512-VKslN5G9k9tOmPppPdoKoXpetBxY8SrOA9OmQpa+uHMZEcBdyIxEVjztL3+WIfv0drpV+N5TPGayJSSQwJtznw=="],
 
-    "@data-slot/navigation-menu": ["@data-slot/navigation-menu@0.2.7", "", {}, "sha512-g1INBGXr/jYphVJfZg+D6L+/LnsDAbEOPB4Vfq4/Grynj2c4olj1E6NTTQ7PoGIT8cF0f2zJig074GWAJXekJw=="],
+    "@data-slot/navigation-menu": ["@data-slot/navigation-menu@0.2.13", "", {}, "sha512-3jLWG69UTD+UaEzz+ilBIUEFC5JiZ8A5xmycuJLxm6v8ScnMkr7vCouag2XIqtdL3HmGlB5CeyDBq2Pkflxo3w=="],
 
-    "@data-slot/slider": ["@data-slot/slider@0.2.10", "", {}, "sha512-LC+n4cZSoEIolIxbi0vD/73+sminn6nSDjl/VMs/ryLrFFjKUzvfupL+xAbi7Cky/qPoSZM70/lwjBWrJlJD6g=="],
+    "@data-slot/slider": ["@data-slot/slider@0.2.12", "", {}, "sha512-s9x3vS3kAckGdUmrbb+2+bGJp6LP7257+IF8UvZNVaqkBv4ibnRiNDBZF+eFzy0vMdYPGEkwh6byizeUkqPn1A=="],
 
-    "@data-slot/tabs": ["@data-slot/tabs@0.2.9", "", {}, "sha512-oGW9oC+RUYC2Z59vfYgqGKCSaj7XbU96+wpQ/7f8+n0PsH/QXXX7O4M5xEkp77KG57OgH7uZwR2uCn4BXEjMpg=="],
+    "@data-slot/tabs": ["@data-slot/tabs@0.2.13", "", {}, "sha512-rerhTVyFkdyFbOLFPGdgOTtD8GtAKlQ3wFZ0CyrwsXa7dT9RxubDUa8QicdyVCuraSs2OaEC3BVsiuvXZrYjpg=="],
 
-    "@data-slot/tooltip": ["@data-slot/tooltip@0.2.6", "", {}, "sha512-zHg0J2Espy8jPBtHgw//O260hYBDqHbpQP1bxjOwPYkobOrC1G33ah6SrDEn+yed2QJYmbATPD32fPH2absbqA=="],
+    "@data-slot/tooltip": ["@data-slot/tooltip@0.2.12", "", {}, "sha512-ngwd759d22eqhIsvDoKy1sRPQe7pDvkx716NLMyKXIRFxd/zjFizzCDDtqT4RBpDUrf4nmhwT4dWhmXf44gmPw=="],
 
     "@dependents/detective-less": ["@dependents/detective-less@5.0.1", "", { "dependencies": { "gonzales-pe": "^4.3.0", "node-source-walk": "^7.0.1" } }, "sha512-Y6+WUMsTFWE5jb20IFP4YGa5IrGY/+a/FbOSjDF/wz9gepU2hwCYSXRHP/vPwBvwcY3SVMASt4yXxbXNXigmZQ=="],
 

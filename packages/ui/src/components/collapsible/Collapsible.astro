@@ -41,6 +41,57 @@
  * </Collapsible>
  * ```
  *
+ * @api
+ *
+ * ### Events
+ *
+ * The collapsible emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `collapsible:change` | `{ open: boolean }` | Fired when the open state changes |
+ *
+ * ```astro nocollapse
+ * <Collapsible id="my-collapsible">
+ *   <CollapsibleTrigger>Toggle</CollapsibleTrigger>
+ *   <CollapsibleContent>Hidden content</CollapsibleContent>
+ * </Collapsible>
+ *
+ * <script>
+ *   const collapsible = document.getElementById('my-collapsible');
+ *
+ *   collapsible.addEventListener('collapsible:change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the collapsible programmatically by dispatching a `collapsible:set` event:
+ *
+ * ```js nocollapse
+ * const collapsible = document.getElementById('my-collapsible');
+ *
+ * // Open the collapsible
+ * collapsible.dispatchEvent(new CustomEvent('collapsible:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Close the collapsible
+ * collapsible.dispatchEvent(new CustomEvent('collapsible:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The collapsible sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | collapsible, collapsible-content | Current state (`open` or `closed`) |
+ *
  * @examples
  *
  * ### Default open

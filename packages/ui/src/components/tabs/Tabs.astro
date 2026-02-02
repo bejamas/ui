@@ -115,6 +115,67 @@
  *   <TabsContent value="overview">Content...</TabsContent>
  * </Tabs>
  * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The tabs component emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `tabs:change` | `{ value: string }` | Fired when the selected tab changes |
+ *
+ * ```astro nocollapse
+ * <Tabs id="my-tabs" defaultValue="tab1">
+ *   <TabsList>
+ *     <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+ *     <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="tab1">Content 1</TabsContent>
+ *   <TabsContent value="tab2">Content 2</TabsContent>
+ * </Tabs>
+ *
+ * <script>
+ *   const tabs = document.getElementById('my-tabs');
+ *
+ *   tabs.addEventListener('tabs:change', (e) => {
+ *     console.log('Selected tab:', e.detail.value);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the tabs programmatically by dispatching a `tabs:set` event:
+ *
+ * ```js nocollapse
+ * const tabs = document.getElementById('my-tabs');
+ *
+ * // Select a tab
+ * tabs.dispatchEvent(new CustomEvent('tabs:set', {
+ *   detail: { value: 'tab2' }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The tabs component sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | tabs-trigger | Current state (`active` or `inactive`) |
+ *
+ * ### CSS Variables
+ *
+ * The tabs indicator exposes CSS variables for animation:
+ *
+ * | Variable | Element | Description |
+ * |----------|---------|-------------|
+ * | `--active-tab-left` | tabs-indicator | Left position of active tab |
+ * | `--active-tab-width` | tabs-indicator | Width of active tab |
+ * | `--active-tab-top` | tabs-indicator | Top position of active tab |
+ * | `--active-tab-height` | tabs-indicator | Height of active tab |
  */
 
 import type { HTMLAttributes } from "astro/types";

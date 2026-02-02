@@ -45,6 +45,59 @@
  * </Accordion>
  * ```
  *
+ * @api
+ *
+ * ### Events
+ *
+ * The accordion emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `accordion:change` | `{ value: string[] }` | Fired when expanded items change |
+ *
+ * ```astro nocollapse
+ * <Accordion id="my-accordion" collapsible>
+ *   <AccordionItem value="item-1">
+ *     <AccordionTrigger>Item 1</AccordionTrigger>
+ *     <AccordionContent>Content 1</AccordionContent>
+ *   </AccordionItem>
+ * </Accordion>
+ *
+ * <script>
+ *   const accordion = document.getElementById('my-accordion');
+ *
+ *   accordion.addEventListener('accordion:change', (e) => {
+ *     console.log('Expanded items:', e.detail.value);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the accordion programmatically by dispatching an `accordion:set` event:
+ *
+ * ```js nocollapse
+ * const accordion = document.getElementById('my-accordion');
+ *
+ * // Expand a single item
+ * accordion.dispatchEvent(new CustomEvent('accordion:set', {
+ *   detail: { value: 'item-1' }
+ * }));
+ *
+ * // Expand multiple items (when multiple prop is true)
+ * accordion.dispatchEvent(new CustomEvent('accordion:set', {
+ *   detail: { value: ['item-1', 'item-2'] }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The accordion sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | accordion-item | Current state (`open` or `closed`) |
+ *
  * @examples
  *
  * ### Multiple choice accordion

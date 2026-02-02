@@ -185,6 +185,64 @@
  *     <p>This feature is currently unavailable</p>
  *   </TooltipContent>
  * </Tooltip>
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The tooltip emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `tooltip:change` | `{ open: boolean, trigger: HTMLElement, content: HTMLElement, reason: string }` | Fired when visibility changes |
+ *
+ * ```astro nocollapse
+ * <Tooltip id="my-tooltip">
+ *   <TooltipTrigger asChild>
+ *     <Button variant="outline">Hover me</Button>
+ *   </TooltipTrigger>
+ *   <TooltipContent>
+ *     <p>Tooltip content</p>
+ *   </TooltipContent>
+ * </Tooltip>
+ *
+ * <script>
+ *   const tooltip = document.getElementById('my-tooltip');
+ *
+ *   tooltip.addEventListener('tooltip:change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *     console.log('Reason:', e.detail.reason);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the tooltip programmatically by dispatching a `tooltip:set` event:
+ *
+ * ```js nocollapse
+ * const tooltip = document.getElementById('my-tooltip');
+ *
+ * // Show the tooltip
+ * tooltip.dispatchEvent(new CustomEvent('tooltip:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Hide the tooltip
+ * tooltip.dispatchEvent(new CustomEvent('tooltip:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The tooltip sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | tooltip, tooltip-content | Current state (`open` or `closed`) |
+ * | `data-side` | tooltip-content | Position relative to trigger (`top`, `right`, `bottom`, or `left`) |
+ * | `data-align` | tooltip-content | Alignment (`start`, `center`, or `end`) |
  */
 
 import { cn } from "@bejamas/ui/lib/utils";

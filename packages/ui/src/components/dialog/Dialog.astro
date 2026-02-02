@@ -67,6 +67,60 @@
  * </Dialog>
  * ```
  *
+ * @api
+ *
+ * ### Events
+ *
+ * The dialog emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `dialog:change` | `{ open: boolean }` | Fired when the open state changes |
+ *
+ * ```astro nocollapse
+ * <Dialog id="my-dialog">
+ *   <DialogTrigger>Open Dialog</DialogTrigger>
+ *   <DialogContent>
+ *     <DialogTitle>Title</DialogTitle>
+ *     <DialogDescription>Description</DialogDescription>
+ *   </DialogContent>
+ * </Dialog>
+ *
+ * <script>
+ *   const dialog = document.getElementById('my-dialog');
+ *
+ *   dialog.addEventListener('dialog:change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the dialog programmatically by dispatching a `dialog:set` event:
+ *
+ * ```js nocollapse
+ * const dialog = document.getElementById('my-dialog');
+ *
+ * // Open the dialog
+ * dialog.dispatchEvent(new CustomEvent('dialog:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Close the dialog
+ * dialog.dispatchEvent(new CustomEvent('dialog:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The dialog sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | dialog | Current state (`open` or `closed`) |
+ *
  * @examples
  *
  * ### Nested Dialogs

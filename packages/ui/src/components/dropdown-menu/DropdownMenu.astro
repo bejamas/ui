@@ -38,6 +38,69 @@
  * </DropdownMenu>
  * ```
  *
+ * @api
+ *
+ * ### Events
+ *
+ * The dropdown menu emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `dropdown-menu:change` | `{ open: boolean }` | Fired when the menu opens or closes |
+ * | `dropdown-menu:select` | `{ value: string }` | Fired when an item is selected |
+ *
+ * ```astro nocollapse
+ * <DropdownMenu id="my-dropdown">
+ *   <DropdownMenuTrigger>Menu</DropdownMenuTrigger>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuItem value="edit">Edit</DropdownMenuItem>
+ *     <DropdownMenuItem value="delete">Delete</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * <script>
+ *   const dropdown = document.getElementById('my-dropdown');
+ *
+ *   dropdown.addEventListener('dropdown-menu:change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *   });
+ *
+ *   dropdown.addEventListener('dropdown-menu:select', (e) => {
+ *     console.log('Selected:', e.detail.value);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the dropdown menu programmatically by dispatching a `dropdown-menu:set` event:
+ *
+ * ```js nocollapse
+ * const dropdown = document.getElementById('my-dropdown');
+ *
+ * // Open the dropdown menu
+ * dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Close the dropdown menu
+ * dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The dropdown menu sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | dropdown-menu, dropdown-menu-content | Current state (`open` or `closed`) |
+ * | `data-side` | dropdown-menu-content | Computed position (`top`, `right`, `bottom`, or `left`) |
+ * | `data-align` | dropdown-menu-content | Alignment (`start`, `center`, or `end`) |
+ * | `data-highlighted` | dropdown-menu-item | Present when item is focused |
+ * | `data-disabled` | dropdown-menu-item | Present when item is disabled |
+ *
  * @examples
  *
  * ### With Labels and Groups
