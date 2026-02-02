@@ -4,21 +4,26 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
 const docs = await getCollection("docs");
 
-const components = docs.filter((doc) => doc.id.startsWith("components/"));
+const components = docs
+  .filter((doc) => doc.id.startsWith("components/"))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
 ---
 
-<StarlightPage frontmatter={{ title: "Components", tableOfContents: false }}>
-  <p class="text-muted-foreground">
-    Here you can find all the components available in the library.
-  </p>
-  <div class="not-content mt-10">
+<StarlightPage
+  frontmatter={{
+    title: "Components",
+    description: "All the components available in the library.",
+    tableOfContents: false,
+  }}
+>
+  <div class="not-content mt-0">
     <ul class="list-none grid lg:grid-cols-3 gap-4">
       {
         components.map((component) => (
           <li>
             <a
               href={`/components/${component.id.replace("components/", "")}`}
-              class="inline-flex items-center gap-2 lg:text-xl font-medium underline-offset-4 hover:underline md:text-base"
+              class="inline-flex items-center gap-2 lg:text-md font-medium underline-offset-4 hover:underline md:text-base"
             >
               {component.data.title}
             </a>

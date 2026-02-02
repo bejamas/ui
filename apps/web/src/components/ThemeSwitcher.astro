@@ -33,17 +33,25 @@ const githubUrl = "https://github.com/bejamas/ui";
   <PresetSwitcher />
   <starlight-theme-select>
     <Tabs class="theme-tabs" id="theme-tabs">
-      <TabsList class="h-9 p-1 rounded-md">
+      <TabsList class="h-9 p-1 py-0.5 rounded-md">
         <TabsIndicator class="rounded-sm duration-150 transition-transform" />
-        <TabsTrigger value="light" class="theme-tab px-1.5" title="Light theme">
+        <TabsTrigger
+          value="light"
+          class="theme-tab px-1.5 h-7"
+          title="Light theme"
+        >
           <SunIcon class="size-4" />
         </TabsTrigger>
-        <TabsTrigger value="dark" class="theme-tab px-1.5" title="Dark theme">
+        <TabsTrigger
+          value="dark"
+          class="theme-tab px-1.5 h-7"
+          title="Dark theme"
+        >
           <MoonIcon class="size-4" />
         </TabsTrigger>
         <TabsTrigger
           value="auto"
-          class="theme-tab px-1.5"
+          class="theme-tab px-1.5 h-7"
           title="Auto (system)"
         >
           <LaptopIcon class="size-4" />
