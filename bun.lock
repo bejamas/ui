@@ -77,7 +77,7 @@
     },
     "packages/bejamas": {
       "name": "bejamas",
-      "version": "0.2.5",
+      "version": "0.2.6",
       "bin": {
         "bejamas": "./dist/index.js",
       },
@@ -126,6 +126,8 @@
         "@data-slot/navigation-menu": "^0.2.13",
         "@data-slot/slider": "^0.2.12",
         "@data-slot/tabs": "^0.2.13",
+        "@data-slot/toggle": "^0.2.13",
+        "@data-slot/toggle-group": "^0.2.13",
         "@data-slot/tooltip": "^0.2.12",
         "@lucide/astro": "^0.540.0",
         "class-variance-authority": "^0.7.1",
@@ -307,6 +309,10 @@
     "@data-slot/slider": ["@data-slot/slider@0.2.12", "", {}, "sha512-s9x3vS3kAckGdUmrbb+2+bGJp6LP7257+IF8UvZNVaqkBv4ibnRiNDBZF+eFzy0vMdYPGEkwh6byizeUkqPn1A=="],
 
     "@data-slot/tabs": ["@data-slot/tabs@0.2.13", "", {}, "sha512-rerhTVyFkdyFbOLFPGdgOTtD8GtAKlQ3wFZ0CyrwsXa7dT9RxubDUa8QicdyVCuraSs2OaEC3BVsiuvXZrYjpg=="],
+
+    "@data-slot/toggle": ["@data-slot/toggle@0.2.13", "", {}, "sha512-kHzSWhO/OH3kU3Rsklay6QTfhDX5Y41OX/9nmazsCWtn3hS5zOpvrBc8iBRL0vEE06lKGB2DZzzu4TW/LiAo7g=="],
+
+    "@data-slot/toggle-group": ["@data-slot/toggle-group@0.2.13", "", {}, "sha512-n5zd8J4+HthvxtlQfdxUFjL+5g0v5pnaFVV46iAJMMZy40LHu+hqHFURkPCSEvtTr1Ib2F41AlpNa+kiTMVK3g=="],
 
     "@data-slot/tooltip": ["@data-slot/tooltip@0.2.12", "", {}, "sha512-ngwd759d22eqhIsvDoKy1sRPQe7pDvkx716NLMyKXIRFxd/zjFizzCDDtqT4RBpDUrf4nmhwT4dWhmXf44gmPw=="],
 
