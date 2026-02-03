@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.2.7
+
+### Patch Changes
+
+- [#39](https://github.com/bejamas/ui/pull/39) [`8838d07`](https://github.com/bejamas/ui/commit/8838d07743e6fa6b117bfbcd11071e5ed6c8a58d) Thanks [@thomkrupa](https://github.com/thomkrupa)! - remove max-w for input inside preview
+
 ## 0.2.6
 
 ### Patch Changes
