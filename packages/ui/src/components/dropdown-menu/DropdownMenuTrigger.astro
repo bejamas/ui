@@ -5,15 +5,25 @@ import { Button } from "../button";
 
 type Props = {
   class?: string;
+  /** Radix-like: render wrapper so the child can be the interactive element */
+  asChild?: boolean;
 } & HTMLAttributes<"button">;
 
-const { class: className = "", ...rest } = Astro.props as Props;
+const { class: className = "", asChild = false, ...rest } = Astro.props as Props;
 ---
 
-<Button
-  data-slot="dropdown-menu-trigger"
-  class={cn("inline-flex items-center", className)}
-  {...rest as any}
->
-  <slot />
-</Button>
+{
+  asChild ? (
+    <div data-slot="dropdown-menu-trigger" data-as-child class={cn("inline-flex items-center", className)}>
+      <slot />
+    </div>
+  ) : (
+    <Button
+      data-slot="dropdown-menu-trigger"
+      class={cn("inline-flex items-center", className)}
+      {...rest as any}
+    >
+      <slot />
+    </Button>
+  )
+}

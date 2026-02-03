@@ -24,16 +24,19 @@ function slugify(name: string): string {
  */
 function extractShortId(slug: string): string | null {
   const segments = slug.split("-");
-  
   // First, look for candidates with uppercase letters (strong indicator of short ID)
   // Try up to 2 segments from the end
   for (let count = 2; count >= 1 && count <= segments.length; count--) {
     const candidate = segments.slice(-count).join("-");
-    if (/[A-Z]/.test(candidate) && candidate.length >= 4 && candidate.length <= 15) {
+    if (
+      /[A-Z]/.test(candidate) &&
+      candidate.length >= 4 &&
+      candidate.length <= 15
+    ) {
       return candidate;
     }
   }
-  
+
   // Fallback: if no uppercase found, try the last segment(s) that are reasonably short
   // Try up to 2 segments from the end
   for (let count = 2; count >= 1 && count <= segments.length; count--) {
@@ -42,7 +45,6 @@ function extractShortId(slug: string): string | null {
       return candidate;
     }
   }
-  
   return null;
 }
 

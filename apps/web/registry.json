@@ -641,6 +641,47 @@
       ]
     },
     {
+      "name": "slider",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/slider"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/slider/Slider.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/slider/SliderTrack.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/slider/SliderRange.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/slider/SliderThumb.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/slider/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/spinner/Spinner.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/spinner/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "sticky-surface",
       "type": "registry:ui",
       "files": [
@@ -709,6 +750,40 @@
         },
         {
           "path": "../../packages/ui/src/components/textarea/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/toggle"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/toggle/Toggle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/toggle/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/toggle-group"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/toggle-group/ToggleGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/toggle-group/ToggleGroupItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/toggle-group/index.ts",
           "type": "registry:ui"
         }
       ]

@@ -543,6 +543,7 @@ const cliCommands = {
       applyThemeToElement(
         { styles: theme.styles, currentMode: mode },
         document.documentElement,
+        { skipModeClass: true },
       );
 
       // Change button text

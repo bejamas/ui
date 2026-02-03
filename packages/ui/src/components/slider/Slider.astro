@@ -1,0 +1,211 @@
+---
+/**
+ * @component Slider
+ * @title Slider
+ * @description An input component that allows users to select a value from a range by dragging a thumb along a track.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2523-6067&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100}>
+ *   <SliderTrack>
+ *     <SliderRange />
+ *   </SliderTrack>
+ *   <SliderThumb />
+ * </Slider>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Slider, SliderTrack, SliderRange, SliderThumb } from '@bejamas/ui/components/slider';
+ * ---
+ *
+ * <Slider defaultValue={[50]} max={100}>
+ *   <SliderTrack>
+ *     <SliderRange />
+ *   </SliderTrack>
+ *   <SliderThumb />
+ * </Slider>
+ * ```
+ *
+ * @examples
+ *
+ * ### Range
+ *
+ * Use two thumbs to create a range slider for selecting a min and max value.
+ *
+ * <Slider class="w-full max-w-sm" defaultValue={[25, 75]} max={100}>
+ *   <SliderTrack>
+ *     <SliderRange />
+ *   </SliderTrack>
+ *   <SliderThumb />
+ *   <SliderThumb />
+ * </Slider>
+ *
+ * ### Vertical
+ *
+ * Set orientation to vertical for a vertical slider.
+ *
+ * <div class="h-48">
+ *   <Slider class="h-full" orientation="vertical" defaultValue={[50]} max={100}>
+ *     <SliderTrack>
+ *       <SliderRange />
+ *     </SliderTrack>
+ *     <SliderThumb />
+ *   </Slider>
+ * </div>
+ *
+ * ### Disabled
+ *
+ * Disable the slider to prevent interaction.
+ *
+ * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} disabled>
+ *   <SliderTrack>
+ *     <SliderRange />
+ *   </SliderTrack>
+ *   <SliderThumb />
+ * </Slider>
+ *
+ * ### Step
+ *
+ * Set a custom step increment.
+ *
+ * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} step={10}>
+ *   <SliderTrack>
+ *     <SliderRange />
+ *   </SliderTrack>
+ *   <SliderThumb />
+ * </Slider>
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The slider emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `slider:change` | `{ value: number \| [number, number] }` | Fired on every value change (during drag) |
+ * | `slider:commit` | `{ value: number \| [number, number] }` | Fired when value is committed (pointer up or keyboard blur) |
+ *
+ * ```astro nocollapse
+ * <Slider id="my-slider" defaultValue={[50]} max={100}>
+ *   <SliderTrack>
+ *     <SliderRange />
+ *   </SliderTrack>
+ *   <SliderThumb />
+ * </Slider>
+ *
+ * <script>
+ *   const slider = document.getElementById('my-slider');
+ *
+ *   slider.addEventListener('slider:change', (e) => {
+ *     console.log('Value changing:', e.detail.value);
+ *   });
+ *
+ *   slider.addEventListener('slider:commit', (e) => {
+ *     console.log('Value committed:', e.detail.value);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can set the slider value programmatically by dispatching a `slider:set` event:
+ *
+ * ```js nocollapse
+ * // Set single value
+ * slider.dispatchEvent(new CustomEvent('slider:set', {
+ *   detail: { value: 75 }
+ * }));
+ *
+ * // Set range values
+ * slider.dispatchEvent(new CustomEvent('slider:set', {
+ *   detail: { value: [25, 75] }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The slider sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-orientation` | slider | Current orientation (`horizontal` or `vertical`) |
+ * | `data-disabled` | slider | Present when slider is disabled |
+ * | `data-dragging` | slider, thumb | Present during drag interaction |
+ * | `data-value` | slider | Current value(s) as string (e.g., `"50"` or `"25,75"`) |
+ *
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+  defaultValue?: number[];
+  min?: number;
+  max?: number;
+  step?: number;
+  orientation?: "horizontal" | "vertical";
+  disabled?: boolean;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  defaultValue = [0],
+  min = 0,
+  max = 100,
+  step = 1,
+  orientation = "horizontal",
+  disabled = false,
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="slider"
+  data-default-value={defaultValue.join(",")}
+  data-min={min}
+  data-max={max}
+  data-step={step}
+  data-orientation={orientation}
+  data-disabled={disabled ? "true" : undefined}
+  class={cn(
+    "group/slider relative touch-none select-none",
+    orientation === "horizontal" && "w-full",
+    orientation === "vertical" && "h-full",
+    className,
+  )}
+>
+  <div
+    class={cn(
+      "relative flex items-center",
+      orientation === "horizontal" && "h-5 w-full",
+      orientation === "vertical" && "h-full w-5 flex-col",
+    )}
+  >
+    <slot />
+  </div>
+</div>
+
+<script>
+  import { createSlider } from "@data-slot/slider";
+
+  document.querySelectorAll('[data-slot="slider"]').forEach((el) => {
+    const element = el as HTMLElement;
+    // Don't pass defaultValue in options - let library read from data-default-value
+    // attribute directly. The library handles single vs range values correctly.
+    createSlider(element, {
+      min: Number(element.dataset.min) || 0,
+      max: Number(element.dataset.max) || 100,
+      step: Number(element.dataset.step) || 1,
+      orientation:
+        (element.dataset.orientation as "horizontal" | "vertical") ||
+        "horizontal",
+      disabled: element.dataset.disabled === "true",
+    });
+  });
+</script>

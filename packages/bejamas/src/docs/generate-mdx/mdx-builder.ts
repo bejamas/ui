@@ -130,6 +130,10 @@ export function buildMdx(params: {
    * If provided, these will be included in the main import statement.
    */
   namedExports?: string[];
+  /**
+   * Optional: API reference documentation (events, programmatic control, data attributes).
+   */
+  apiMDX?: string;
 }): string {
   const {
     importName,
@@ -151,6 +155,7 @@ export function buildMdx(params: {
     figmaUrl,
     componentsAlias,
     namedExports,
+    apiMDX,
   } = params;
 
   // Detect if we should use the new barrel import pattern
@@ -378,7 +383,7 @@ export function buildMdx(params: {
 
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length
-      ? `<div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-t-lg min-h-72 items-center [&_input]:max-w-xs">
+      ? `<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
 ${toMdxPreview(primaryExampleMDX)}
 </div>
 
@@ -409,7 +414,7 @@ ${descriptionMD}`.trim(),
       exampleSections.push(
         `### ${blk.title}
 
-${descriptionMD ? `${descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-t-lg min-h-72 items-center [&_input]:max-w-xs">
+${descriptionMD ? `${descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
 ${previewBody}
 </div>
 
@@ -529,6 +534,8 @@ ${ex.source}
     exampleSections.length
       ? `## Examples\n\n` + exampleSections.join("\n\n")
       : null,
+    exampleSections.length ? "" : null,
+    apiMDX && apiMDX.length ? `## API Reference\n\n${apiMDX}` : null,
   ].filter((v) => v !== null && v !== undefined);
 
   return lines.join("\n").trim() + "\n";

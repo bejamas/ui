@@ -26,6 +26,18 @@ import {
   CollapsibleContent,
 } from "@bejamas/ui/components/collapsible";
 import {
+  Slider,
+  SliderTrack,
+  SliderRange,
+  SliderThumb,
+} from "@bejamas/ui/components/slider";
+import { Toggle } from "@bejamas/ui/components/toggle";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@bejamas/ui/components/toggle-group";
+
+import {
   ArrowRight,
   ArrowLeft,
   ArrowUpRight,
@@ -272,6 +284,18 @@ const options = [...filteredDefaultOptions, ...customOptions];
       </NavigationMenuItem>
     </NavigationMenuList>
   </NavigationMenu>
+  <Slider>
+    <SliderTrack>
+      <SliderRange />
+    </SliderTrack>
+    <SliderThumb />
+  </Slider>
+  <Toggle />
+  <ToggleGroup>
+    <ToggleGroupItem value="left" aria-label="Align left">
+      left
+    </ToggleGroupItem>
+  </ToggleGroup>
 </div>
 
 <style>

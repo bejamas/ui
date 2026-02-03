@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.7
+
+### Patch Changes
+
+- [#30](https://github.com/bejamas/ui/pull/30) [`4f2f6d4`](https://github.com/bejamas/ui/commit/4f2f6d41ba455d0dc87ee8db45974f78c7ca4a7d) Thanks [@thomkrupa](https://github.com/thomkrupa)! - decrease inline padding for mobile component preview
+
 ## 0.1.6
 
 ### Patch Changes

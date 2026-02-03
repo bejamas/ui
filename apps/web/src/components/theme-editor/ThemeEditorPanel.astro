@@ -532,13 +532,12 @@ const sectionTitles = [
       const draft = getEditingPresetDraft(storedId);
       if (!draft) return;
 
-      const mode = draft.currentMode || getCurrentMode();
+      const mode = getCurrentMode();
       applyThemeToElement(
         { styles: draft.workingStyles, currentMode: mode },
         document.documentElement,
+        { skipModeClass: true },
       );
-      document.documentElement.dataset.theme = mode;
-      document.documentElement.dataset.themeChoice = mode;
     };
 
     const getPanelInstance = () => {
@@ -954,15 +953,14 @@ const sectionTitles = [
               this.isCustomPreset = !!preset.isCustom;
               this.shareShortId = (preset as any).shareId || null;
 
+              // Keep editor mode in sync with global light/dark mode.
+              this.currentMode = getCurrentMode();
+              this.updateModeTabsUI();
+
               const draftWorkingStyles = draft?.workingStyles || preset.styles;
               const draftOriginalStyles = draft?.originalStyles || preset.styles;
               this.workingStyles = JSON.parse(JSON.stringify(draftWorkingStyles));
               this.originalStyles = JSON.parse(JSON.stringify(draftOriginalStyles));
-
-              if (draft?.currentMode === "light" || draft?.currentMode === "dark") {
-                this.currentMode = draft.currentMode;
-                this.updateModeTabsUI();
-              }
 
               const label = this.$refs.presetLabel as HTMLElement | undefined;
               if (label) {

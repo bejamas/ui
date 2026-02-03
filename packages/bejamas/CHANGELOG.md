@@ -1,5 +1,23 @@
 # bejamas
 
+## 0.2.6
+
+### Patch Changes
+
+- [#35](https://github.com/bejamas/ui/pull/35) [`140fe4e`](https://github.com/bejamas/ui/commit/140fe4e510a44561831b757042e755e2a811272d) Thanks [@thomkrupa](https://github.com/thomkrupa)! - generate API Reference section
+
+## 0.2.5
+
+### Patch Changes
+
+- [#32](https://github.com/bejamas/ui/pull/32) [`be47c33`](https://github.com/bejamas/ui/commit/be47c33d0e6bf8392427dbe36d9b3db12e12191f) Thanks [@thomkrupa](https://github.com/thomkrupa)! - fix add command select mode
+
+## 0.2.4
+
+### Patch Changes
+
+- [#30](https://github.com/bejamas/ui/pull/30) [`4f2f6d4`](https://github.com/bejamas/ui/commit/4f2f6d41ba455d0dc87ee8db45974f78c7ca4a7d) Thanks [@thomkrupa](https://github.com/thomkrupa)! - decrease inline padding for mobile component preview
+
 ## 0.2.3
 
 ### Patch Changes

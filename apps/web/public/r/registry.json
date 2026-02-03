@@ -641,6 +641,33 @@
       ]
     },
     {
+      "name": "slider",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/slider"],
+      "files": [
+        {
+          "path": "ui/slider/Slider.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/slider/SliderTrack.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/slider/SliderRange.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/slider/SliderThumb.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/slider/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "sticky-surface",
       "type": "registry:ui",
       "files": [
@@ -709,6 +736,40 @@
         },
         {
           "path": "ui/textarea/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/toggle"],
+      "files": [
+        {
+          "path": "ui/toggle/Toggle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/toggle/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/toggle-group"],
+      "files": [
+        {
+          "path": "ui/toggle-group/ToggleGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/toggle-group/ToggleGroupItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/toggle-group/index.ts",
           "type": "registry:ui"
         }
       ]

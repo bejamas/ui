@@ -370,7 +370,7 @@
   button[data-open-modal] {
     border-color: var(--border);
     color: var(--foreground);
-    box-shadow: var(--shadow-xs);
+    box-shadow: none;
     background-color: var(--background);
     height: calc(var(--spacing) * 9);
   }
@@ -465,7 +465,7 @@
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
 
-  .ec-collapse__gradient {
+  .expressive-code .ec-collapse__gradient {
     height: 100%;
     z-index: 1;
   }

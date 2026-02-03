@@ -161,6 +161,59 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
     };
   }
 
+  function updateGradientImageCacheKey(themeKey: string) {
+    if (!themeKey || typeof document === "undefined") return;
+    const mode = getCurrentMode();
+
+    const updateUrl = (rawUrl: string): string => {
+      try {
+        const url = new URL(rawUrl, window.location.href);
+        if (url.hostname !== "gradient.bejamas.com") return rawUrl;
+        const hasTheme = url.searchParams.get("theme") === themeKey;
+        const hasMode = url.searchParams.get("mode") === mode;
+        if (hasTheme && hasMode) return rawUrl;
+        url.searchParams.set("theme", themeKey);
+        url.searchParams.set("mode", mode);
+        return url.toString();
+      } catch {
+        return rawUrl;
+      }
+    };
+
+    const updateSrcset = (srcset: string): string => {
+      if (!srcset) return srcset;
+      return srcset
+        .split(",")
+        .map((entry) => {
+          const parts = entry.trim().split(/\s+/);
+          if (parts.length === 0) return entry;
+          const updatedUrl = updateUrl(parts[0]);
+          return parts.length > 1
+            ? `${updatedUrl} ${parts.slice(1).join(" ")}`
+            : updatedUrl;
+        })
+        .join(", ");
+    };
+
+    document.querySelectorAll("img").forEach((img) => {
+      const currentSrc = img.getAttribute("src");
+      if (currentSrc) {
+        const nextSrc = updateUrl(currentSrc);
+        if (nextSrc !== currentSrc) {
+          img.setAttribute("src", nextSrc);
+        }
+      }
+
+      const currentSrcset = img.getAttribute("srcset");
+      if (currentSrcset) {
+        const nextSrcset = updateSrcset(currentSrcset);
+        if (nextSrcset !== currentSrcset) {
+          img.setAttribute("srcset", nextSrcset);
+        }
+      }
+    });
+  }
+
   function applyPresetTheme(key: string) {
     // Check built-in presets first, then custom presets
     let preset: PresetType | undefined = PRESETS[key];
@@ -184,10 +237,11 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
     const mode = getCurrentMode();
     const styles = draft?.workingStyles || preset.styles;
 
-    // Apply theme CSS variables to document
+    // Apply theme CSS variables to document (do not touch light/dark class; ThemeProvider owns it)
     applyThemeToElement(
       { styles, currentMode: mode },
       document.documentElement,
+      { skipModeClass: true },
     );
 
     // Update current swatches and label display
@@ -308,6 +362,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
       if (key) {
         syncAllDropdowns(key);
         applyPresetTheme(key);
+        updateGradientImageCacheKey(key);
       }
     }) as EventListener);
 
@@ -325,6 +380,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
       if (e.key === "theme-preset" && e.newValue) {
         applyPresetTheme(e.newValue);
         syncAllDropdowns(e.newValue);
+        updateGradientImageCacheKey(e.newValue);
       }
     });
 
@@ -333,6 +389,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
       const current = getStoredPreset() || Object.keys(PRESETS)[0];
       if (current) {
         applyPresetTheme(current);
+        updateGradientImageCacheKey(current);
       }
     });
 
@@ -342,6 +399,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
       if (current) {
         applyPresetTheme(current);
         syncAllDropdowns(current);
+        updateGradientImageCacheKey(current);
       }
       // Re-render custom themes after page swap
       document
@@ -380,6 +438,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
       if (initial) {
         applyPresetTheme(initial);
         syncAllDropdowns(initial);
+        updateGradientImageCacheKey(initial);
       }
 
       // Handle dropdown item clicks (using event delegation)

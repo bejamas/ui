@@ -1,7 +1,4 @@
-{
-  "name": "bejamas/ui",
-  "homepage": "https://ui.bejamas.com",
-  "items": [
+[
     {
       "name": "accordion",
       "type": "registry:ui",
@@ -543,6 +540,20 @@
       ]
     },
     {
+      "name": "spinner",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/spinner/Spinner.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/spinner/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "sticky-surface",
       "type": "registry:ui",
       "files": [
@@ -614,6 +625,39 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/toggle"],
+      "files": [
+        {
+          "path": "ui/toggle/Toggle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/toggle/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/toggle-group"],
+      "files": [
+        {
+          "path": "ui/toggle-group/ToggleGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/toggle-group/ToggleGroupItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/toggle-group/index.ts",
+          "type": "registry:ui"
+        }
+      ]
     }
-  ]
-}
+]
