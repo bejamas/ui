@@ -11,7 +11,7 @@
  *     <NavigationMenuItem value="products">
  *       <NavigationMenuTrigger>Products</NavigationMenuTrigger>
  *       <NavigationMenuContent>
- *         <div class="grid grid-cols-2 gap-3 w-[380px]">
+ *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
  *           <NavigationMenuLink href="/products/analytics">
  *             <div class="font-medium">Analytics</div>
  *             <div class="text-sm text-muted-foreground">Real-time insights</div>
@@ -34,7 +34,7 @@
  *     <NavigationMenuItem value="solutions" align="center">
  *       <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
  *       <NavigationMenuContent>
- *         <div class="grid grid-cols-2 gap-3 w-[380px]">
+ *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
  *           <NavigationMenuLink href="/solutions/startups">
  *             <div class="font-medium">Startups</div>
  *             <div class="text-sm text-muted-foreground">Move fast</div>
@@ -57,7 +57,7 @@
  *     <NavigationMenuItem value="resources" align="center">
  *       <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
  *       <NavigationMenuContent>
- *         <div class="grid grid-cols-3 gap-3 w-[520px]">
+ *         <div class="grid grid-cols-3 gap-2 w-[520px] p-2">
  *           <NavigationMenuLink href="/docs">
  *             <div class="font-medium">Docs</div>
  *             <div class="text-sm text-muted-foreground">Get started</div>
@@ -88,7 +88,7 @@
  *     <NavigationMenuItem value="company">
  *       <NavigationMenuTrigger>Company</NavigationMenuTrigger>
  *       <NavigationMenuContent>
- *         <div class="w-[180px]">
+ *         <div class="w-[180px] p-2">
  *           <NavigationMenuLink href="/about">
  *             <div class="font-medium">About</div>
  *             <div class="text-sm text-muted-foreground">Our story</div>
@@ -123,7 +123,7 @@
  *     <NavigationMenuItem value="products">
  *       <NavigationMenuTrigger>Products</NavigationMenuTrigger>
  *       <NavigationMenuContent>
- *         <div class="grid grid-cols-2 gap-3 w-[380px]">
+ *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
  *           <NavigationMenuLink href="/products/analytics">
  *             <div class="font-medium">Analytics</div>
  *             <div class="text-sm text-muted-foreground">Real-time insights</div>
@@ -138,7 +138,7 @@
  *     <NavigationMenuItem value="resources" align="center">
  *       <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
  *       <NavigationMenuContent>
- *         <div class="grid grid-cols-2 gap-3 w-[380px]">
+ *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
  *           <NavigationMenuLink href="/docs">
  *             <div class="font-medium">Docs</div>
  *             <div class="text-sm text-muted-foreground">Get started</div>
@@ -154,6 +154,167 @@
  *   </NavigationMenuList>
  * </NavigationMenu>
  * ```
+ *
+ * @api
+ *
+ * ### NavigationMenu Props
+ *
+ * | Prop | Type | Default | Description |
+ * |------|------|---------|-------------|
+ * | `viewport` | `boolean` | `true` | Enable animated viewport container for content |
+ * | `delayOpen` | `number` | `0` | Delay in ms before opening menu |
+ * | `delayClose` | `number` | `0` | Delay in ms before closing menu |
+ * | `openOnFocus` | `boolean` | `false` | Open menu on keyboard focus |
+ * | `as` | `HTMLTag` | `"nav"` | HTML element to render |
+ *
+ * ### NavigationMenuItem Props
+ *
+ * | Prop | Type | Default | Description |
+ * |------|------|---------|-------------|
+ * | `value` | `string` | — | Unique identifier for the item |
+ * | `align` | `"start" \| "center" \| "end"` | `"start"` | Content alignment relative to trigger |
+ *
+ * ### Events
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `navigation-menu:change` | `{ value: string \| null }` | Fired when active item changes |
+ *
+ * ### Programmatic Control
+ *
+ * ```js nocollapse
+ * // Open a specific item
+ * element.dispatchEvent(
+ *   new CustomEvent("navigation-menu:set", { detail: { value: "products" } })
+ * );
+ *
+ * // Close the menu
+ * element.dispatchEvent(
+ *   new CustomEvent("navigation-menu:set", { detail: { value: null } })
+ * );
+ * ```
+ *
+ * @examples
+ *
+ * ### With Icons
+ *
+ * Links with Lucide icons for visual enhancement.
+ *
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="features">
+ *       <NavigationMenuTrigger>Features</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="grid gap-2 w-[320px] p-2">
+ *           <NavigationMenuLink href="/analytics" class="flex-row items-start gap-4">
+ *             <ChartBarIcon class="size-5 mt-1 text-muted-foreground" />
+ *             <div>
+ *               <div class="font-medium">Analytics</div>
+ *               <div class="text-sm text-muted-foreground">Track your metrics</div>
+ *             </div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="/automation" class="flex-row items-start gap-4">
+ *             <ZapIcon class="size-5 mt-1 text-muted-foreground" />
+ *             <div>
+ *               <div class="font-medium">Automation</div>
+ *               <div class="text-sm text-muted-foreground">Streamline workflows</div>
+ *             </div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="/security" class="flex-row items-start gap-4">
+ *             <ShieldIcon class="size-5 mt-1 text-muted-foreground" />
+ *             <div>
+ *               <div class="font-medium">Security</div>
+ *               <div class="text-sm text-muted-foreground">Enterprise-grade protection</div>
+ *             </div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuIndicator />
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ *
+ * ### Featured Card
+ *
+ * Hero-style layout with a featured item alongside regular links.
+ *
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="getting-started">
+ *       <NavigationMenuTrigger>Getting Started</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="grid grid-cols-[1fr_200px] gap-2 w-[480px] p-2">
+ *           <div class="row-span-3">
+ *             <NavigationMenuLink href="/introduction" class="flex h-full flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline">
+ *               <div class="mb-2 text-lg font-medium">Introduction</div>
+ *               <p class="text-sm text-muted-foreground">Learn the basics and get up to speed quickly with our comprehensive guides.</p>
+ *             </NavigationMenuLink>
+ *           </div>
+ *           <NavigationMenuLink href="/installation">
+ *             <div class="font-medium">Installation</div>
+ *             <div class="text-sm text-muted-foreground">Step-by-step setup</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="/configuration">
+ *             <div class="font-medium">Configuration</div>
+ *             <div class="text-sm text-muted-foreground">Customize settings</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="/examples">
+ *             <div class="font-medium">Examples</div>
+ *             <div class="text-sm text-muted-foreground">Code samples</div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuIndicator />
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ *
+ * ### With Simple Links
+ *
+ * Use `navigationMenuTriggerStyle()` to style regular links to match triggers.
+ *
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="products">
+ *       <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="w-[200px] p-2">
+ *           <NavigationMenuLink href="/products/one">Product One</NavigationMenuLink>
+ *           <NavigationMenuLink href="/products/two">Product Two</NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuItem>
+ *       <NavigationMenuLink href="/pricing" class="px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 hover:text-accent">
+ *         Pricing
+ *       </NavigationMenuLink>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuItem>
+ *       <NavigationMenuLink href="/docs" class="px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 hover:text-accent">
+ *         Docs
+ *       </NavigationMenuLink>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuIndicator />
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ *
+ * ### Without Viewport
+ *
+ * Set `viewport={false}` to render content directly without the animated viewport container.
+ *
+ * <NavigationMenu viewport={false}>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="menu">
+ *       <NavigationMenuTrigger>Menu</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="w-[200px] p-2 rounded-md border bg-popover shadow-md">
+ *           <NavigationMenuLink href="/one">Option One</NavigationMenuLink>
+ *           <NavigationMenuLink href="/two">Option Two</NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *   </NavigationMenuList>
+ * </NavigationMenu>
  */
 import type { HTMLAttributes, HTMLTag } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
