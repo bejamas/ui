@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.8
+
+### Patch Changes
+
+- [#40](https://github.com/bejamas/ui/pull/40) [`58fbd77`](https://github.com/bejamas/ui/commit/58fbd775b67b2e132662ecfd9e69f674b004e675) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve z-indexes for code blocks
+
 ## 0.1.7
 
 ### Patch Changes
