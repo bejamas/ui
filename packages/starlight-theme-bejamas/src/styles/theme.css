@@ -421,6 +421,8 @@
     justify-content: center;
     align-items: center;
     background-color: var(--background);
+    position: relative;
+    z-index: 10;
   }
 
   .sl-bejamas-component-preview + .expressive-code {
@@ -456,6 +458,7 @@
     bottom: 50%;
     transform: translateY(50%) translateX(-50%);
     height: calc(var(--spacing) * 8.5);
+    z-index: 3;
   }
 
   .expressive-code .ec-collapse.ec-collapse--collapsed .ec-collapse__content {
@@ -464,6 +467,7 @@
 
   .ec-collapse__gradient {
     height: 100%;
+    z-index: 1;
   }
 
   .ec-collapse.ec-collapse--collapsed::after {
@@ -488,6 +492,7 @@
     );
     bottom: 0;
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    z-index: 2;
   }
 
   .ec-collapse.ec-collapse--expanded .ec-collapse__toggle {
