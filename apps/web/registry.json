@@ -518,6 +518,49 @@
       ]
     },
     {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/navigation-menu"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/navigation-menu/NavigationMenu.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/navigation-menu/NavigationMenuList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/navigation-menu/NavigationMenuItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/navigation-menu/NavigationMenuTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/navigation-menu/NavigationMenuContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/navigation-menu/NavigationMenuViewport.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/navigation-menu/NavigationMenuLink.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/navigation-menu/NavigationMenuIndicator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/navigation-menu/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "radio-group",
       "type": "registry:ui",
       "files": [
