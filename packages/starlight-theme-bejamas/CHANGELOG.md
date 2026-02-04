@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.9
+
+### Patch Changes
+
+- [#42](https://github.com/bejamas/ui/pull/42) [`dd91b4e`](https://github.com/bejamas/ui/commit/dd91b4edbfd43a08a0b6766057b9c991bb18a5f0) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve table styling
+
 ## 0.1.8
 
 ### Patch Changes
