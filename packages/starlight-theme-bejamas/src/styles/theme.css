@@ -534,21 +534,38 @@
     display: inline-block;
   }
 
-  .sl-markdown-content :is(th, td):not(:where(.not-content *)) {
-    min-width: 10rem;
-    padding-inline: 1rem;
-    border-color: var(--border);
+  /* Table styles */
+  .sl-markdown-content table:not(:where(.not-content *)) {
+    display: table !important;
+    font-size: var(--text-sm);
+    border-collapse: collapse;
+    width: 100% !important;
+    table-layout: fixed;
   }
 
-  .sl-markdown-content
-    :is(tr):last-child
-    :is(th, td):not(:where(.not-content *)) {
+  .sl-markdown-content th:not(:where(.not-content *)) {
+    text-align: left;
+    font-weight: 600;
+    color: var(--foreground);
+    padding: calc(var(--spacing) * 3) 1rem calc(var(--spacing) * 3) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sl-markdown-content td:not(:where(.not-content *)) {
+    color: var(--muted-foreground);
+    padding: calc(var(--spacing) * 3) 1rem calc(var(--spacing) * 3) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sl-markdown-content tr:last-child td:not(:where(.not-content *)) {
     border-bottom: 0;
   }
 
-  .sl-markdown-content table:not(:where(.not-content *)) {
-    border: 1px solid var(--border);
-    border-radius: calc(var(--radius) - 2px);
+  /* Remove code styling inside tables */
+  .sl-markdown-content td:not(:where(.not-content *)) code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
   }
 
   .main-frame {
