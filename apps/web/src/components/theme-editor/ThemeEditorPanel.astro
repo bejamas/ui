@@ -958,9 +958,14 @@ const sectionTitles = [
               this.updateModeTabsUI();
 
               const draftWorkingStyles = draft?.workingStyles || preset.styles;
-              const draftOriginalStyles = draft?.originalStyles || preset.styles;
-              this.workingStyles = JSON.parse(JSON.stringify(draftWorkingStyles));
-              this.originalStyles = JSON.parse(JSON.stringify(draftOriginalStyles));
+              const draftOriginalStyles =
+                draft?.originalStyles || preset.styles;
+              this.workingStyles = JSON.parse(
+                JSON.stringify(draftWorkingStyles),
+              );
+              this.originalStyles = JSON.parse(
+                JSON.stringify(draftOriginalStyles),
+              );
 
               const label = this.$refs.presetLabel as HTMLElement | undefined;
               if (label) {
@@ -1094,7 +1099,7 @@ const sectionTitles = [
                 document
                   .querySelector<HTMLDivElement>("#theme-tabs")
                   ?.dispatchEvent(
-                    new CustomEvent("tabs:select", { detail: { value: mode } }),
+                    new CustomEvent("tabs:set", { detail: { value: mode } }),
                   );
               }
 
@@ -1107,7 +1112,7 @@ const sectionTitles = [
                 this.$refs.modeTabs as HTMLElement | undefined
               )?.querySelector('[data-slot="tabs"]');
               tabsEl?.dispatchEvent(
-                new CustomEvent("tabs:select", {
+                new CustomEvent("tabs:set", {
                   detail: { value: this.currentMode },
                 }),
               );
@@ -1319,7 +1324,7 @@ const sectionTitles = [
               const tabs = this.getExportTypeTabs();
               if (tabs) {
                 tabs.dispatchEvent(
-                  new CustomEvent("tabs:select", { detail: { value: "json" } }),
+                  new CustomEvent("tabs:set", { detail: { value: "json" } }),
                 );
               }
 

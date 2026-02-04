@@ -111,7 +111,7 @@ const githubUrl = "https://github.com/bejamas/ui";
     document
       .querySelector<HTMLDivElement>("#theme-tabs")
       ?.dispatchEvent(
-        new CustomEvent("tabs:select", { detail: { value: theme } }),
+        new CustomEvent("tabs:set", { detail: { value: theme } }),
       ) as HTMLDivElement;
   }
 
