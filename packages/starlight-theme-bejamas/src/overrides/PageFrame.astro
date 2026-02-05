@@ -59,10 +59,14 @@ const { template } = Astro.locals.starlightRoute.entry.data;
       -webkit-backdrop-filter: blur(var(--blur));
       backdrop-filter: blur(var(--blur));
 
-      background: linear-gradient(to top, transparent, var(--background));
+      background: linear-gradient(
+        to top,
+        transparent,
+        var(--sl-page-background)
+      );
       mask-image: linear-gradient(
         to bottom,
-        var(--background) var(--stop),
+        var(--sl-page-background) var(--stop),
         transparent
       );
       top: 0;
