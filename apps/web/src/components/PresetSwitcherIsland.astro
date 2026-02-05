@@ -198,6 +198,7 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
   function applyPresetTheme(key: string, updateCookie = false) {
     // Check built-in presets first, then custom presets
     let preset: PresetType | undefined = PRESETS[key];
+    let isBuiltIn = !!preset;
     if (!preset) {
       const customPresets = getCustomPresets();
       const customPreset = customPresets[key];
@@ -214,7 +215,9 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
       return;
     }
 
-    const draft = getEditingPresetDraft(key);
+    // Only use drafts for custom presets; built-in presets always use
+    // their canonical values so radius and other settings stay in sync.
+    const draft = isBuiltIn ? null : getEditingPresetDraft(key);
     const mode = getCurrentMode();
     const styles = draft?.workingStyles || preset.styles;
 

@@ -526,6 +526,9 @@ const sectionTitles = [
       if (typeof window === "undefined") return;
       const storedId = getStoredPreset();
       if (!storedId) return;
+      // Only apply drafts for custom presets; built-in presets should
+      // always use their canonical styles so settings like radius stay in sync.
+      if (storedId in defaultPresets) return;
       const draft = getEditingPresetDraft(storedId);
       if (!draft) return;
 
@@ -692,6 +695,7 @@ const sectionTitles = [
             boundThemeChange: null as ((e: Event) => void) | null,
             boundMouseMove: null as ((e: MouseEvent) => void) | null,
             boundMouseUp: null as (() => void) | null,
+            _isLoadingPreset: false,
 
             init() {
               setupGlobalHandlers();
@@ -834,6 +838,7 @@ const sectionTitles = [
 
               const radiusSelect = document.getElementById("radius-select");
               radiusSelect?.addEventListener("select:change", (e) => {
+                if (this._isLoadingPreset) return;
                 const { value } = (e as CustomEvent).detail;
                 this.updateRadius(value);
               });
@@ -945,6 +950,12 @@ const sectionTitles = [
               const preset = allPresets[id];
               if (!preset) return;
 
+              // For built-in presets, clear stale drafts so the preset's
+              // intended values (including radius) are always used fresh.
+              if (!preset.isCustom) {
+                clearEditingPresetDraft(id);
+              }
+
               const draft = getEditingPresetDraft(id);
               this.currentPresetId = id;
               this.isCustomPreset = !!preset.isCustom;
@@ -976,8 +987,13 @@ const sectionTitles = [
                 deleteBtn.disabled = !this.isCustomPreset;
               }
 
+              // Guard: prevent select:change from triggering updateRadius
+              // and persisting a draft while we're just syncing UI to the preset.
+              this._isLoadingPreset = true;
               this.updateColorInputs();
               this.updateRadiusSelect();
+              this._isLoadingPreset = false;
+
               this.applyLivePreview();
 
               const swatches = {
@@ -1180,8 +1196,10 @@ const sectionTitles = [
               this.workingStyles = JSON.parse(
                 JSON.stringify(this.originalStyles),
               );
+              this._isLoadingPreset = true;
               this.updateColorInputs();
               this.updateRadiusSelect();
+              this._isLoadingPreset = false;
               this.applyLivePreview();
               clearEditingPresetDraft(this.currentPresetId);
               this.showToast("Reset to original");

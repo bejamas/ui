@@ -217,6 +217,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
   function applyPresetTheme(key: string) {
     // Check built-in presets first, then custom presets
     let preset: PresetType | undefined = PRESETS[key];
+    let isBuiltIn = !!preset;
     if (!preset) {
       const customPresets = getCustomPresets();
       const customPreset = customPresets[key];
@@ -233,7 +234,9 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
       return;
     }
 
-    const draft = getEditingPresetDraft(key);
+    // Only use drafts for custom presets; built-in presets always use
+    // their canonical values so radius and other settings stay in sync.
+    const draft = isBuiltIn ? null : getEditingPresetDraft(key);
     const mode = getCurrentMode();
     const styles = draft?.workingStyles || preset.styles;
 

@@ -115,7 +115,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "chart-3": "oklch(0.78 0.16 79)",
         "chart-4": "oklch(0.64 0.13 79)",
         "chart-5": "oklch(0.53 0.11 79)",
-        radius: "1.25rem",
+        radius: "1.5rem",
         "shadow-color": "oklch(0 0 0)",
         "shadow-opacity": "0.1",
         "shadow-blur": "3px",
@@ -221,7 +221,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "font-sans": "Plus Jakarta Sans, sans-serif",
         "font-serif": "Lora, serif",
         "font-mono": "IBM Plex Mono, monospace",
-        radius: "1.4rem",
+
         "shadow-color": "hsl(0 0% 0%)",
         "shadow-opacity": "0.16",
         "shadow-blur": "3px",
