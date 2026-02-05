@@ -70,6 +70,7 @@ interface OptionsProps {
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "");
 const currentUrl = Astro.url.href;
+const currentComponent = Astro.url.pathname.split("/").pop();
 const { actions, prompt: userPrompt } = config;
 const { pageActions } = (Astro.locals as any).starlightRoute.entry.data;
 
@@ -133,54 +134,89 @@ const options = [...filteredDefaultOptions, ...customOptions];
     entry.data.template === "splash" && "mt-10",
   ]}
 >
-  <h1 id="_top" class="tracking-tight">
-    {Astro.locals.starlightRoute.entry.data.title}
-  </h1>
+  <div class="flex items-center">
+    <h1 id="_top" class="tracking-tight">
+      {Astro.locals.starlightRoute.entry.data.title}
+    </h1>
+
+    <Tooltip class="ml-4" delay={300}>
+      <TooltipTrigger asChild class="flex">
+        <a
+          href={`https://github.com/bejamas/ui/tree/main/packages/ui/src/components/${currentComponent}`}
+          class="text-muted-foreground flex items-center justify-center h-6 w-6"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            viewBox="0 0 256 256"
+            ><path
+              d="M216,104v8a56.06,56.06,0,0,1-48.44,55.47A39.8,39.8,0,0,1,176,192v40a8,8,0,0,1-8,8H104a8,8,0,0,1-8-8V216H72a40,40,0,0,1-40-40A24,24,0,0,0,8,152a8,8,0,0,1,0-16,40,40,0,0,1,40,40,24,24,0,0,0,24,24H96v-8a39.8,39.8,0,0,1,8.44-24.53A56.06,56.06,0,0,1,56,112v-8a58.14,58.14,0,0,1,7.69-28.32A59.78,59.78,0,0,1,69.07,28,8,8,0,0,1,76,24a59.75,59.75,0,0,1,48,24h24a59.75,59.75,0,0,1,48-24,8,8,0,0,1,6.93,4,59.74,59.74,0,0,1,5.37,47.68A58,58,0,0,1,216,104Z"
+            ></path></svg
+          >
+        </a>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Open in GitHub</p>
+      </TooltipContent>
+    </Tooltip>
+    {
+      entry.data.figmaUrl && (
+        <Tooltip class="ml-2" delay={300}>
+          <TooltipTrigger asChild class="flex">
+            <a
+              href={entry.data.figmaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center h-6 w-6"
+            >
+              <svg
+                fill="none"
+                height="20"
+                viewBox="0 0 38 57"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+                class="text-lg grayscale"
+              >
+                <>
+                  <path
+                    d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z"
+                    fill="#1ABCFE"
+                  />
+                  <path
+                    d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z"
+                    fill="#0ACF83"
+                  />
+                  <path
+                    d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z"
+                    fill="#FF7262"
+                  />
+                  <path
+                    d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z"
+                    fill="#F24E1E"
+                  />
+                  <path
+                    d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z"
+                    fill="#A259FF"
+                  />
+                </>
+              </svg>
+            </a>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Open in Figma</p>
+          </TooltipContent>
+        </Tooltip>
+      )
+    }
+  </div>
 
   {
     entry.data.template !== "splash" && (
       <div class="sl-bejamas-docs-title-buttons">
-        {entry.data.figmaUrl && (
-          <Button
-            variant="outline"
-            size="sm"
-            as="a"
-            href={entry.data.figmaUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <svg
-              fill="none"
-              height="24"
-              viewBox="0 0 38 57"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-              class="text-lg"
-            >
-              <>
-                <path
-                  d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z"
-                  fill="#1ABCFE"
-                />
-                <path
-                  d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z"
-                  fill="#0ACF83"
-                />
-                <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z" fill="#FF7262" />
-                <path
-                  d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z"
-                  fill="#F24E1E"
-                />
-                <path
-                  d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z"
-                  fill="#A259FF"
-                />
-              </>
-            </svg>
-            Figma
-            <ArrowUpRight />
-          </Button>
-        )}
         <ButtonGroup>
           <Button
             variant="outline"

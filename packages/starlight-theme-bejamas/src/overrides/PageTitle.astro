@@ -14,53 +14,54 @@ const isRtl = dir === "rtl";
     entry.data.template === "splash" && "mt-10",
   ]}
 >
-  <h1 id="_top" class="tracking-tight">
-    {Astro.locals.starlightRoute.entry.data.title}
-  </h1>
+  <div class="flex items-center">
+    <h1 id="_top" class="tracking-tight">
+      {Astro.locals.starlightRoute.entry.data.title}
+    </h1>
+    {
+      entry.data.figmaUrl && (
+        <a
+          href={entry.data.figmaUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center h-6 w-6"
+        >
+          <svg
+            fill="none"
+            height="20"
+            viewBox="0 0 38 57"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+            class="text-lg grayscale"
+          >
+            <>
+              <path
+                d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z"
+                fill="#1ABCFE"
+              />
+              <path
+                d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z"
+                fill="#0ACF83"
+              />
+              <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z" fill="#FF7262" />
+              <path
+                d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z"
+                fill="#F24E1E"
+              />
+              <path
+                d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z"
+                fill="#A259FF"
+              />
+            </>
+          </svg>
+        </a>
+      )
+    }
+  </div>
 
   {
     entry.data.template !== "splash" && (
       <div class="sl-bejamas-docs-title-buttons">
-        {entry.data.figmaUrl && (
-          <Button
-            variant="outline"
-            size="sm"
-            as="a"
-            href={entry.data.figmaUrl}
-            target="_blank"
-          >
-            <svg
-              fill="none"
-              height="24"
-              viewBox="0 0 38 57"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-              class="text-lg"
-            >
-              <>
-                <path
-                  d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z"
-                  fill="#1ABCFE"
-                />
-                <path
-                  d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z"
-                  fill="#0ACF83"
-                />
-                <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z" fill="#FF7262" />
-                <path
-                  d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z"
-                  fill="#F24E1E"
-                />
-                <path
-                  d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z"
-                  fill="#A259FF"
-                />
-              </>
-            </svg>
-            Figma
-            <ArrowUpRight />
-          </Button>
-        )}
         {prev && (
           <Button
             as="a"

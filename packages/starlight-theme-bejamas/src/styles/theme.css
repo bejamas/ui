@@ -10,7 +10,7 @@
       inset: 0;
       right: calc(var(--spacing) * 6);
       background: linear-gradient(
-        var(--background) 49.99%,
+        var(--sl-page-background) 49.99%,
         var(--sl-main-frame-inner-background) 50%
       );
       z-index: -1;
@@ -18,7 +18,7 @@
   }
 
   .page {
-    background-color: var(--background);
+    background-color: var(--sl-page-background);
   }
 
   :root {
@@ -34,8 +34,6 @@
     --sl-color-bg-inline-code: var(--input);
 
     --sl-color-hairline-shade: var(--border);
-
-    --sl-color-bg-sidebar: var(--background);
 
     --sl-color-gray-5: var(--input);
     --sl-color-black: transparent;
@@ -68,13 +66,15 @@
     --sl-nav-pad-y: calc(var(--spacing) * 4.5);
     --sl-content-pad-x: calc(var(--spacing) * 5);
     --sl-nav-pad-x: calc(var(--spacing) * 1 + var(--sl-content-pad-x));
-    --sl-main-frame-inner-background: color-mix(
-      in oklab,
-      var(--muted) 100%,
-      transparent
-    );
+    --sl-main-frame-inner-background: var(--background);
     --sl-main-frame-inner-border: var(--border);
     --sl-content-inline-start: 0rem;
+    --sl-page-background: color-mix(
+      in oklab,
+      var(--muted) 50%,
+      var(--background)
+    );
+    --sl-color-bg-sidebar: transparent;
 
     --sl-icon-color: var(--foreground);
     --ec-frm-inlBtnBgHoverOrFocusOpa: 1;
@@ -103,6 +103,7 @@
 
   html[data-theme="dark"],
   html.dark {
+    --sl-page-background: var(--background);
     --sl-main-frame-inner-background: color-mix(
       in oklab,
       var(--muted) 30%,
@@ -154,7 +155,7 @@
   }
 
   .sidebar-content a {
-    background-color: var(--background);
+    background-color: transparent;
     padding: 0;
   }
 
@@ -600,7 +601,7 @@
     -webkit-backdrop-filter: blur(var(--blur));
     backdrop-filter: blur(var(--blur));
 
-    background: linear-gradient(to top, transparent, var(--background));
+    background: linear-gradient(to top, transparent, var(--sl-page-background));
     mask-image: linear-gradient(
       to bottom,
       var(--background) var(--stop),
@@ -624,10 +625,14 @@
     -webkit-backdrop-filter: blur(var(--blur));
     backdrop-filter: blur(var(--blur));
 
-    background: linear-gradient(to bottom, transparent, var(--background));
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--sl-page-background)
+    );
     mask-image: linear-gradient(
       to top,
-      var(--background) var(--stop),
+      var(--sl-page-background) var(--stop),
       transparent
     );
     bottom: 0;
