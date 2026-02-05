@@ -18,10 +18,10 @@ import { Input } from "@bejamas/ui/components/input";
 import { Label } from "@bejamas/ui/components/label";
 import {
   Select,
-  SelectControl,
-  SelectIndicator,
-  SelectOption,
-  SelectPlaceholder,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@bejamas/ui/components/select";
 import {
   Tabs,
@@ -319,22 +319,19 @@ const sectionTitles = [
           <Label for="radius-select" class="text-xs text-muted-foreground">
             Border Radius
           </Label>
-          <Select class="w-full">
-            <SelectIndicator />
-            <SelectControl
-              id="radius-select"
-              size="sm"
-              data-slot="radius-select"
-              x-ref="radiusSelect"
-            >
+          <Select id="radius-select" class="w-full">
+            <SelectTrigger size="sm" x-ref="radiusSelect">
+              <SelectValue placeholder="Select radius" />
+            </SelectTrigger>
+            <SelectContent>
               {
                 radiusOptions.map((option) => (
-                  <SelectOption value={option.value}>
+                  <SelectItem value={option.value}>
                     {option.label}
-                  </SelectOption>
+                  </SelectItem>
                 ))
               }
-            </SelectControl>
+            </SelectContent>
           </Select>
         </div>
       </div>
@@ -584,7 +581,7 @@ const sectionTitles = [
         }
       });
 
-      document.addEventListener("change", (e) => {
+      document.addEventListener("select:change", (e) => {
         const target = e.target as HTMLElement;
         const panel = getPanelInstance();
         if (!panel) return;
@@ -835,9 +832,9 @@ const sectionTitles = [
                 this.updateColor(token, value);
               }) as EventListener);
 
-              const radiusSelect = this.$refs.radiusSelect as HTMLSelectElement;
-              radiusSelect?.addEventListener("change", (e) => {
-                const value = (e.target as HTMLSelectElement).value;
+              const radiusSelect = document.getElementById("radius-select");
+              radiusSelect?.addEventListener("select:change", (e) => {
+                const { value } = (e as CustomEvent).detail;
                 this.updateRadius(value);
               });
             },
@@ -1060,10 +1057,12 @@ const sectionTitles = [
             },
 
             updateRadiusSelect() {
-              const radiusSelect = this.$refs.radiusSelect as HTMLSelectElement;
+              const radiusSelect = document.getElementById("radius-select");
               if (!radiusSelect) return;
               const radius = this.workingStyles.light?.radius || "0.625rem";
-              radiusSelect.value = radius;
+              radiusSelect.dispatchEvent(
+                new CustomEvent("select:set", { detail: { value: radius } })
+              );
             },
 
             applyLivePreview() {
@@ -1243,7 +1242,7 @@ const sectionTitles = [
 
             getExportFormatSelect() {
               const all = document.querySelectorAll("#export-format-select");
-              return (all[all.length - 1] as HTMLSelectElement) || null;
+              return (all[all.length - 1] as HTMLElement) || null;
             },
 
             getExportTypeTabs() {
@@ -1266,7 +1265,7 @@ const sectionTitles = [
 
             updateExportContent() {
               const select = this.getExportFormatSelect();
-              const format = (select?.value || "oklch") as
+              const format = ((select?.dataset.value || "oklch")) as
                 | "oklch"
                 | "hsl"
                 | "rgb"
@@ -1318,7 +1317,11 @@ const sectionTitles = [
 
             openExportJsonDialog() {
               const select = this.getExportFormatSelect();
-              if (select) select.value = "oklch";
+              if (select) {
+                select.dispatchEvent(
+                  new CustomEvent("select:set", { detail: { value: "oklch" } })
+                );
+              }
               this.currentExportType = "json";
 
               const tabs = this.getExportTypeTabs();

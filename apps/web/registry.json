@@ -581,13 +581,26 @@
     {
       "name": "select",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/select"],
       "files": [
         {
           "path": "../../packages/ui/src/components/select/Select.astro",
           "type": "registry:ui"
         },
         {
-          "path": "../../packages/ui/src/components/select/SelectControl.astro",
+          "path": "../../packages/ui/src/components/select/SelectTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/select/SelectValue.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/select/SelectContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/select/SelectItem.astro",
           "type": "registry:ui"
         },
         {
@@ -595,15 +608,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "../../packages/ui/src/components/select/SelectIndicator.astro",
+          "path": "../../packages/ui/src/components/select/SelectLabel.astro",
           "type": "registry:ui"
         },
         {
-          "path": "../../packages/ui/src/components/select/SelectOption.astro",
-          "type": "registry:ui"
-        },
-        {
-          "path": "../../packages/ui/src/components/select/SelectPlaceholder.astro",
+          "path": "../../packages/ui/src/components/select/SelectSeparator.astro",
           "type": "registry:ui"
         },
         {

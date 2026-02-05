@@ -11,9 +11,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 
 <div
   {...rest}
-  role="group"
-  data-slot="select-group"
-  class={cn("scroll-my-1 p-1", className)}
->
-  <slot />
-</div>
+  role="separator"
+  data-slot="select-separator"
+  class={cn("bg-border -mx-1 my-1 h-px pointer-events-none", className)}
+/>
