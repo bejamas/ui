@@ -84,7 +84,6 @@ export default defineConfig({
           label: "Concepts",
           items: [
             "docs/theming",
-            "docs/dark-mode",
             "docs/design-principles",
             "docs/monorepo",
             "docs/auto-generated-docs",
