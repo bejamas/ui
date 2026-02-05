@@ -1,0 +1,111 @@
+---
+import "@/styles/blocks.css";
+import "@bejamas/ui/styles/globals.css";
+
+const { theme = "current-theme" } = Astro.props;
+
+const pages = [
+  { href: "/battlefield/select", label: "Select" },
+  { href: "/battlefield/slider", label: "Slider" },
+  { href: "/battlefield/toggle", label: "Toggle" },
+  { href: "/battlefield/toggle-group", label: "Toggle Group" },
+];
+
+const currentPath = Astro.url.pathname.replace(/\/$/, "");
+---
+
+<html class="bg-background">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <script is:inline>
+      const storageKey = "starlight-theme";
+      const parseTheme = (t) =>
+        t === "auto" || t === "dark" || t === "light" ? t : "auto";
+      const getPreferredColorScheme = () =>
+        matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      const loadTheme = () => {
+        try {
+          return parseTheme(
+            typeof localStorage !== "undefined" &&
+              localStorage.getItem(storageKey),
+          );
+        } catch {
+          return "auto";
+        }
+      };
+      function applyTheme(theme) {
+        const effective = theme === "auto" ? getPreferredColorScheme() : theme;
+        document.documentElement.dataset.theme = effective;
+        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.add(effective);
+      }
+      // Initialize on load
+      applyTheme(loadTheme());
+      // Sync via storage events (parent <-> iframe)
+      window.addEventListener("storage", (event) => {
+        if (event.key === storageKey) applyTheme(loadTheme());
+      });
+      // React to system scheme while in 'auto'
+      matchMedia("(prefers-color-scheme: light)").addEventListener(
+        "change",
+        () => {
+          if (loadTheme() === "auto") applyTheme("auto");
+        },
+      );
+    </script>
+  </head>
+  <body class="antialiased bg-background">
+    <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
+
+    <div class="flex min-h-screen">
+      <aside class="w-56 shrink-0 border-r border-border bg-background sticky top-0 h-screen overflow-y-auto">
+        <div class="p-4">
+          <a href="/battlefield" class="text-sm font-semibold text-foreground tracking-wide uppercase">
+            Battlefield
+          </a>
+        </div>
+        <nav class="flex flex-col gap-0.5 px-2 pb-4">
+          {pages.map(({ href, label }) => (
+            <a
+              href={href}
+              class:list={[
+                "px-3 py-2 rounded-md text-sm transition-colors",
+                currentPath === href
+                  ? "bg-muted text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+              ]}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      </aside>
+
+      <main class="flex-1 min-w-0">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>
+
+<style>
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+</style>
