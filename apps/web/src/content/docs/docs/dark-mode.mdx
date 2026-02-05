@@ -51,33 +51,24 @@ import "../styles/globals.css";
 
 ```astro title="src/components/ThemeSwitcher.astro"
 ---
-import { Select, SelectControl, SelectIndicator, SelectOption } from "@bejamas/ui/components/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@bejamas/ui/components/select";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 ---
 
 <div class="relative text-sm">
-  <div class="absolute z-10 left-3 top-2.5">
+  <div class="absolute z-10 left-3 top-2.5 pointer-events-none">
     <SunIcon class="size-4 dark:hidden" />
     <MoonIcon class="size-4 hidden dark:block" />
   </div>
-  <Select showCheckmark={false}>
-    <SelectIndicator />
-    <SelectControl
-      onchange="window.toggleTheme(this.value)"
-      id="theme-select"
-      showCheckmark={false}
-      class="pl-9 w-28"
-    >
-      <SelectOption value="light"
-        ><SunIcon class="size-4" /> Light</SelectOption
-      >
-      <SelectOption value="dark"
-        ><MoonIcon class="size-4" /> Dark</SelectOption
-      >
-      <SelectOption value="auto"
-        ><LaptopIcon class="size-4" /> Auto</SelectOption
-      >
-    </SelectControl>
+  <Select id="theme-select" class="w-28">
+    <SelectTrigger class="pl-9">
+      <SelectValue placeholder="Theme" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="light">Light</SelectItem>
+      <SelectItem value="dark">Dark</SelectItem>
+      <SelectItem value="auto">Auto</SelectItem>
+    </SelectContent>
   </Select>
 </div>
 
@@ -166,11 +157,10 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 
   // UI: select changes
   const select = document.getElementById("theme-select");
-  if (select instanceof HTMLSelectElement) {
-    select.addEventListener("change", (e) => {
-      if (e.currentTarget instanceof HTMLSelectElement) {
-        applyTheme(parseTheme(e.currentTarget.value));
-      }
+  if (select) {
+    select.addEventListener("select:change", (e) => {
+      const { value } = e.detail;
+      applyTheme(parseTheme(value));
     });
   }
 

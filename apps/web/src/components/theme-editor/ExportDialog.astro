@@ -11,9 +11,10 @@ import {
 import { Label } from "@bejamas/ui/components/label";
 import {
   Select,
-  SelectControl,
-  SelectIndicator,
-  SelectOption,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@bejamas/ui/components/select";
 import {
   Tabs,
@@ -84,14 +85,16 @@ import { Check, Copy } from "@lucide/astro";
           <Label for="export-format-select" class="text-sm whitespace-nowrap">
             Colors:
           </Label>
-          <Select>
-            <SelectIndicator />
-            <SelectControl id="export-format-select" size="sm">
-              <SelectOption value="hsl">HSL</SelectOption>
-              <SelectOption value="rgb">RGB</SelectOption>
-              <SelectOption value="hex">HEX</SelectOption>
-              <SelectOption value="oklch" selected>OKLCH</SelectOption>
-            </SelectControl>
+          <Select id="export-format-select" defaultValue="oklch">
+            <SelectTrigger size="sm">
+              <SelectValue placeholder="Color format" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="hsl">HSL</SelectItem>
+              <SelectItem value="rgb">RGB</SelectItem>
+              <SelectItem value="hex">HEX</SelectItem>
+              <SelectItem value="oklch">OKLCH</SelectItem>
+            </SelectContent>
           </Select>
         </div>
       </div>
