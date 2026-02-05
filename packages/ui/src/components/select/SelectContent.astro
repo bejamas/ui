@@ -26,10 +26,9 @@ const {
   data-side={side}
   data-align={align}
   class={cn(
-    "group/select-content",
+    "group/select-content focus-visible:outline-none",
     position === "popper" ? "fixed" : "relative",
     "hidden data-[state=open]:block",
-    // "p-1",
     className,
   )}
 >
