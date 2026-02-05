@@ -70,7 +70,8 @@ interface OptionsProps {
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "");
 const currentUrl = Astro.url.href;
-const currentComponent = Astro.url.pathname.split("/").pop();
+const pathnameParts = Astro.url.pathname.replace(/\/$/, "").split("/");
+const currentComponent = pathnameParts[pathnameParts.length - 1] || null;
 const { actions, prompt: userPrompt } = config;
 const { pageActions } = (Astro.locals as any).starlightRoute.entry.data;
 
