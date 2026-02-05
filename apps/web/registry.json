@@ -561,6 +561,28 @@
       ]
     },
     {
+      "name": "native-select",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/native-select/NativeSelect.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/native-select/NativeSelectOption.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/native-select/NativeSelectOptGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/native-select/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "radio-group",
       "type": "registry:ui",
       "files": [
