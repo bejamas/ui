@@ -44,10 +44,9 @@ import {
       </p>
       <div class="flex gap-8">
         <div class="space-y-2">
+          <Label for="item-aligned-select">Item-aligned (default)</Label>
           <Select id="item-aligned-select" class="w-[180px]">
-            <Label data-slot="select-field-label">Item-aligned (default)</Label>
-
-            <SelectTrigger>
+            <SelectTrigger id="item-aligned-select">
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
             <SelectContent>
@@ -57,10 +56,11 @@ import {
             </SelectContent>
           </Select>
         </div>
+
         <div class="space-y-2">
           <Label for="popper-select">Popper mode</Label>
           <Select id="popper-select" position="popper" class="w-[180px]">
-            <SelectTrigger>
+            <SelectTrigger id="popper-select">
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
             <SelectContent position="popper">

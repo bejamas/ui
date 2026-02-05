@@ -26,7 +26,7 @@ const {
   data-side={side}
   data-align={align}
   class={cn(
-    "group/select-content focus-visible:outline-none",
+    "group/select-content focus-visible:outline-none z-50",
     position === "popper" ? "fixed" : "relative",
     "hidden data-[state=open]:block",
     className,
@@ -39,7 +39,6 @@ const {
       "bg-popover text-popover-foreground min-w-36 rounded-lg shadow-md ring-1 ring-foreground/10",
       "p-1",
       "max-h-[var(--select-content-available-height,300px)] overflow-x-hidden overflow-y-auto",
-
       position === "popper" && "min-w-[var(--select-trigger-width)]",
       // Animations only for popper mode
       position === "popper" && [
