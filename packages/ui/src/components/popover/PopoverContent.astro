@@ -21,11 +21,6 @@ const alignClasses = {
   end: "right-0",
 };
 
-const originClasses = {
-  start: "origin-top-left",
-  center: "origin-top",
-  end: "origin-top-right",
-};
 ---
 
 <!-- Outer: visibility + group + positioning -->
@@ -39,6 +34,8 @@ const originClasses = {
     "absolute top-full mt-[var(--side-offset)] z-50",
     alignClasses[align],
     "hidden data-[state=open]:block [transition:display_150ms_allow-discrete]",
+    "[--origin-y:top] data-[side=top]:[--origin-y:bottom]",
+    "data-[align=start]:[--origin-x:left] data-[align=center]:[--origin-x:center] data-[align=end]:[--origin-x:right]",
     className,
   )}
 >
@@ -51,7 +48,7 @@ const originClasses = {
       "group-data-[state=open]/popover-content:animate-in group-data-[state=closed]/popover-content:animate-out",
       "group-data-[state=closed]/popover-content:fade-out-0 group-data-[state=open]/popover-content:fade-in-0",
       "group-data-[state=closed]/popover-content:zoom-out-95 group-data-[state=open]/popover-content:zoom-in-95",
-      originClasses[align],
+      "[transform-origin:var(--origin-x)_var(--origin-y)]",
       "[--tw-animation-fill-mode:both]",
     )}
   >
