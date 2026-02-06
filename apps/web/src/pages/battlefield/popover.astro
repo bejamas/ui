@@ -1,0 +1,246 @@
+---
+import BattlefieldLayout from "@/components/BattlefieldLayout.astro";
+import { Label } from "@bejamas/ui/components/label";
+import { Input } from "@bejamas/ui/components/input";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@bejamas/ui/components/select";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverClose,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverDescription,
+} from "@bejamas/ui/components/popover";
+---
+
+<BattlefieldLayout>
+  <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Popover Component Test</h1>
+
+    <!-- 1. Basic -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">1. Basic</h2>
+      <p class="text-sm text-muted-foreground">
+        Simple popover with header, title, and description
+      </p>
+      <Popover>
+        <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+        <PopoverContent>
+          <PopoverHeader>
+            <PopoverTitle>Popover Title</PopoverTitle>
+            <PopoverDescription
+              >This is a simple popover with some descriptive text.</PopoverDescription
+            >
+          </PopoverHeader>
+        </PopoverContent>
+      </Popover>
+    </div>
+
+    <!-- 2. Alignments -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">2. Alignments</h2>
+      <p class="text-sm text-muted-foreground">
+        Start, center, and end alignment
+      </p>
+      <div class="flex gap-8">
+        <Popover>
+          <PopoverTrigger variant="outline">Start</PopoverTrigger>
+          <PopoverContent align="start">
+            <PopoverHeader>
+              <PopoverTitle>Start Aligned</PopoverTitle>
+              <PopoverDescription
+                >This popover is aligned to the start.</PopoverDescription
+              >
+            </PopoverHeader>
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger variant="outline">Center</PopoverTrigger>
+          <PopoverContent align="center">
+            <PopoverHeader>
+              <PopoverTitle>Center Aligned</PopoverTitle>
+              <PopoverDescription
+                >This popover is centered (default).</PopoverDescription
+              >
+            </PopoverHeader>
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger variant="outline">End</PopoverTrigger>
+          <PopoverContent align="end">
+            <PopoverHeader>
+              <PopoverTitle>End Aligned</PopoverTitle>
+              <PopoverDescription
+                >This popover is aligned to the end.</PopoverDescription
+              >
+            </PopoverHeader>
+          </PopoverContent>
+        </Popover>
+      </div>
+    </div>
+
+    <!-- 3. With Form -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">3. With Form</h2>
+      <p class="text-sm text-muted-foreground">
+        Popover containing form fields (Dimensions example)
+      </p>
+      <Popover>
+        <PopoverTrigger variant="outline">Open dimensions</PopoverTrigger>
+        <PopoverContent align="start" class="w-80">
+          <PopoverHeader>
+            <PopoverTitle>Dimensions</PopoverTitle>
+            <PopoverDescription
+              >Set the dimensions for the layer.</PopoverDescription
+            >
+          </PopoverHeader>
+          <div class="grid gap-3">
+            <div class="grid grid-cols-3 items-center gap-2">
+              <Label class="text-xs">Width</Label>
+              <Input class="col-span-2 h-8" value="100%" />
+            </div>
+            <div class="grid grid-cols-3 items-center gap-2">
+              <Label class="text-xs">Max. width</Label>
+              <Input class="col-span-2 h-8" value="300px" />
+            </div>
+            <div class="grid grid-cols-3 items-center gap-2">
+              <Label class="text-xs">Height</Label>
+              <Input class="col-span-2 h-8" value="25px" />
+            </div>
+            <div class="grid grid-cols-3 items-center gap-2">
+              <Label class="text-xs">Overflow</Label>
+              <Select class="col-span-2">
+                <SelectTrigger size="sm">
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="visible">Visible</SelectItem>
+                  <SelectItem value="hidden">Hidden</SelectItem>
+                  <SelectItem value="scroll">Scroll</SelectItem>
+                  <SelectItem value="auto">Auto</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+
+    <!-- 4. With Close Button -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">4. With Close Button</h2>
+      <p class="text-sm text-muted-foreground">
+        Using PopoverClose inside content
+      </p>
+      <Popover>
+        <PopoverTrigger variant="outline">Open with close</PopoverTrigger>
+        <PopoverContent align="start">
+          <PopoverHeader>
+            <PopoverTitle>Closeable</PopoverTitle>
+            <PopoverDescription
+              >Click the button below to close.</PopoverDescription
+            >
+          </PopoverHeader>
+          <PopoverClose
+            class="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
+          >
+            Close popover
+          </PopoverClose>
+        </PopoverContent>
+      </Popover>
+    </div>
+
+    <!-- 5. Event Testing -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">5. Event Testing</h2>
+      <p class="text-sm text-muted-foreground">
+        Console logging popover:change
+      </p>
+      <Popover id="event-popover">
+        <PopoverTrigger variant="outline">Check console</PopoverTrigger>
+        <PopoverContent>
+          <PopoverHeader>
+            <PopoverTitle>Event Test</PopoverTitle>
+            <PopoverDescription
+              >Open the console to see events.</PopoverDescription
+            >
+          </PopoverHeader>
+        </PopoverContent>
+      </Popover>
+      <script>
+        const eventPopover = document.getElementById("event-popover");
+
+        eventPopover?.addEventListener("popover:change", (e: Event) => {
+          const detail = (e as CustomEvent).detail;
+          console.log("popover:change event:", detail);
+        });
+      </script>
+    </div>
+
+    <!-- 6. Programmatic Control -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">6. Programmatic Control</h2>
+      <p class="text-sm text-muted-foreground">
+        Buttons to open and close programmatically
+      </p>
+      <div class="flex flex-col gap-4">
+        <Popover id="programmatic-popover" class="w-fit">
+          <PopoverTrigger variant="outline">Controlled popover</PopoverTrigger>
+          <PopoverContent>
+            <PopoverHeader>
+              <PopoverTitle>Programmatic</PopoverTitle>
+              <PopoverDescription
+                >Controlled via external buttons.</PopoverDescription
+              >
+            </PopoverHeader>
+          </PopoverContent>
+        </Popover>
+        <div class="flex gap-2">
+          <button
+            id="popover-open-btn"
+            class="px-3 py-1.5 text-sm border rounded-lg hover:bg-muted"
+          >
+            Open
+          </button>
+          <button
+            id="popover-close-btn"
+            class="px-3 py-1.5 text-sm border rounded-lg hover:bg-muted"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      <script>
+        const programmaticPopover = document.getElementById(
+          "programmatic-popover",
+        );
+
+        document
+          .getElementById("popover-open-btn")
+          ?.addEventListener("click", () => {
+            programmaticPopover?.dispatchEvent(
+              new CustomEvent("popover:set", { detail: { open: true } }),
+            );
+          });
+
+        document
+          .getElementById("popover-close-btn")
+          ?.addEventListener("click", () => {
+            programmaticPopover?.dispatchEvent(
+              new CustomEvent("popover:set", { detail: { open: false } }),
+            );
+          });
+      </script>
+    </div>
+  </section>
+</BattlefieldLayout>

@@ -34,7 +34,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
 ---
 
 <preset-switcher-wrapper data-presets={JSON.stringify(leanPresets)}>
-  <DropdownMenu>
+  <DropdownMenu align="center">
     <!-- <ButtonGroup> -->
     <Button
       variant="outline"
@@ -42,7 +42,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
       class="preset-switcher-trigger w-[180px] justify-start gap-2"
     >
       <PresetSwitcherTriggerIsland server:defer>
-        <Skeleton class="w-[1672px] h-5 rounded-sm" slot="fallback" />
+        <Skeleton class="w-[172px] h-5 rounded-sm" slot="fallback" />
       </PresetSwitcherTriggerIsland>
     </Button>
     <!-- <Button
@@ -82,7 +82,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
       </Button>
     </ButtonGroup> -->
 
-    <DropdownMenuContent align="start" class="w-[180px]">
+    <DropdownMenuContent class="w-[180px]">
       <DropdownMenuLabel>Presets</DropdownMenuLabel>
       {
         Object.entries(leanPresets).map(([key, preset]) => (

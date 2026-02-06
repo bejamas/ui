@@ -53,6 +53,12 @@ import {
   NavigationMenuTrigger,
 } from "@bejamas/ui/components/navigation-menu";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@bejamas/ui/components/popover";
+
 import Icon from "./icons/Icon.astro";
 import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
 
@@ -241,7 +247,7 @@ const options = [...filteredDefaultOptions, ...customOptions];
             >
               <ChevronDown class="size-4" />
             </Button>
-            <DropdownMenuContent class="p-1">
+            <DropdownMenuContent>
               {options.map((option) => (
                 <DropdownMenuItem class="p-0">
                   <Button
@@ -336,6 +342,15 @@ const options = [...filteredDefaultOptions, ...customOptions];
       left
     </ToggleGroupItem>
   </ToggleGroup>
+
+  <Popover>
+    <PopoverTrigger>
+      <Button variant="ghost">Toggle</Button>
+    </PopoverTrigger>
+    <PopoverContent>
+      <p>Hidden content here</p>
+    </PopoverContent>
+  </Popover>
 </div>
 
 <style>

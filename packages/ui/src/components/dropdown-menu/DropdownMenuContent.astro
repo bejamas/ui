@@ -22,22 +22,33 @@ const alignClasses = {
 };
 ---
 
+<!-- Outer: data-slot target for the library (positioning + visibility only) -->
 <div
   {...rest}
   data-slot="dropdown-menu-content"
   data-align={align}
   style={`--side-offset: ${sideOffset}px`}
   class={cn(
-    "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md",
-    "top-full mt-[var(--side-offset)]",
+    "group/dropdown-menu-content",
+    "absolute top-full mt-[var(--side-offset)]",
     alignClasses[align],
-    "hidden",
-    "data-[state=open]:block",
-    // "opacity-0 scale-95 pointer-events-none",
-    "data-[state=open]:opacity-100 data-[state=open]:scale-100 data-[state=open]:pointer-events-auto",
-    "starting:opacity-0 starting:scale-97 starting:pointer-events-none transition-discrete transition-[opacity,scale,transform,visibility] duration-500 ease-out",
-    className,
+    "hidden data-[state=open]:block [transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
+    "[--origin-y:top] data-[side=top]:[--origin-y:bottom]",
+    "data-[align=start]:[--origin-x:left] data-[align=center]:[--origin-x:center] data-[align=end]:[--origin-x:right]",
   )}
 >
-  <slot />
+  <!-- Inner: visual styling + animations + className override -->
+  <div
+    class={cn(
+      "min-w-32 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md",
+      "group-data-[state=open]/dropdown-menu-content:animate-in group-data-[state=closed]/dropdown-menu-content:animate-out",
+      "group-data-[state=closed]/dropdown-menu-content:fade-out-0 group-data-[state=open]/dropdown-menu-content:fade-in-0",
+      "group-data-[state=closed]/dropdown-menu-content:zoom-out-95 group-data-[state=open]/dropdown-menu-content:zoom-in-95",
+      "[transform-origin:var(--origin-x)_var(--origin-y)]",
+      "[--tw-animation-fill-mode:both]",
+      className,
+    )}
+  >
+    <slot />
+  </div>
 </div>

@@ -4,6 +4,7 @@ import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
   class?: string;
+  size?: "sm" | "default" | "lg";
   position?: "item-aligned" | "popper";
   side?: "top" | "bottom";
   align?: "start" | "center" | "end";
@@ -11,6 +12,7 @@ type Props = {
 
 const {
   class: className = "",
+  size = "default",
   position = "item-aligned",
   side,
   align = "start",
@@ -21,6 +23,7 @@ const {
 <div
   {...rest}
   data-slot="select-content"
+  data-size={size}
   data-position={position}
   data-align-trigger={position === "item-aligned"}
   data-side={side}
@@ -29,6 +32,7 @@ const {
     "group/select-content focus-visible:outline-none z-50",
     position === "popper" ? "fixed" : "relative",
     "hidden data-[state=open]:block",
+    position === "popper" && "[transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
     className,
   )}
 >
@@ -47,6 +51,7 @@ const {
         "group-data-[state=closed]/select-content:zoom-out-95 group-data-[state=open]/select-content:zoom-in-95",
         "group-data-[side=bottom]/select-content:slide-in-from-top-2 group-data-[side=top]/select-content:slide-in-from-bottom-2",
       ],
+      position === "popper" && "[--tw-animation-fill-mode:both]",
     )}
   >
     <slot />
