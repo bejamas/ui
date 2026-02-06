@@ -4,6 +4,7 @@ import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
   class?: string;
+  size?: "sm" | "default" | "lg";
   position?: "item-aligned" | "popper";
   side?: "top" | "bottom";
   align?: "start" | "center" | "end";
@@ -11,6 +12,7 @@ type Props = {
 
 const {
   class: className = "",
+  size = "default",
   position = "item-aligned",
   side,
   align = "start",
@@ -21,6 +23,7 @@ const {
 <div
   {...rest}
   data-slot="select-content"
+  data-size={size}
   data-position={position}
   data-align-trigger={position === "item-aligned"}
   data-side={side}
