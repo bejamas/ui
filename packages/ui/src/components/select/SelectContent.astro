@@ -32,6 +32,7 @@ const {
     "group/select-content focus-visible:outline-none z-50",
     position === "popper" ? "fixed" : "relative",
     "hidden data-[state=open]:block",
+    position === "popper" && "[transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
     className,
   )}
 >
@@ -50,6 +51,7 @@ const {
         "group-data-[state=closed]/select-content:zoom-out-95 group-data-[state=open]/select-content:zoom-in-95",
         "group-data-[side=bottom]/select-content:slide-in-from-top-2 group-data-[side=top]/select-content:slide-in-from-bottom-2",
       ],
+      position === "popper" && "[--tw-animation-fill-mode:both]",
     )}
   >
     <slot />
