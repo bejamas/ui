@@ -113,24 +113,53 @@
  *   </PopoverContent>
  * </Popover>
  *
- * ### Aligned
+ * ### Side Variants
+ *
+ * <div class="grid grid-cols-2 gap-4">
+ *   <Popover side="left">
+ *     <PopoverTrigger variant="outline">Left</PopoverTrigger>
+ *     <PopoverContent>
+ *       <p>Popover on the left</p>
+ *     </PopoverContent>
+ *   </Popover>
+ *   <Popover side="top">
+ *     <PopoverTrigger variant="outline">Top</PopoverTrigger>
+ *     <PopoverContent>
+ *       <p>Popover on top</p>
+ *     </PopoverContent>
+ *   </Popover>
+ *   <Popover side="bottom">
+ *     <PopoverTrigger variant="outline">Bottom</PopoverTrigger>
+ *     <PopoverContent>
+ *       <p>Popover on bottom</p>
+ *     </PopoverContent>
+ *   </Popover>
+ *   <Popover side="right">
+ *     <PopoverTrigger variant="outline">Right</PopoverTrigger>
+ *     <PopoverContent>
+ *       <p>Popover on the right</p>
+ *     </PopoverContent>
+ *   </Popover>
+ * </div>
+ *
+ * ### Alignment Variants
  *
  * <div class="flex gap-8">
- *   <Popover>
+ *   <Popover side="bottom" align="start">
  *     <PopoverTrigger variant="outline">Start</PopoverTrigger>
- *     <PopoverContent align="start">
+ *     <PopoverContent>
  *       <p>Start-aligned content</p>
  *     </PopoverContent>
  *   </Popover>
- *   <Popover>
+ *   <Popover side="bottom" align="center">
  *     <PopoverTrigger variant="outline">Center</PopoverTrigger>
- *     <PopoverContent align="center">
+ *     <PopoverContent>
  *       <p>Center-aligned content</p>
  *     </PopoverContent>
  *   </Popover>
- *   <Popover>
+ *   <Popover side="bottom" align="end">
  *     <PopoverTrigger variant="outline">End</PopoverTrigger>
- *     <PopoverContent align="end">
+ *     <PopoverContent>
  *       <p>End-aligned content</p>
  *     </PopoverContent>
  *   </Popover>
