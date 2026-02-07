@@ -1,0 +1,64 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import { InputGroup, InputGroupInput, InputGroupAddon, InputGroupButton } from "../input-group";
+import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
+import XIcon from "@lucide/astro/icons/x";
+
+type Props = {
+  class?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  showTrigger?: boolean;
+  showClear?: boolean;
+} & HTMLAttributes<"input">;
+
+const {
+  class: className = "",
+  placeholder,
+  disabled = false,
+  showTrigger = true,
+  showClear = false,
+  ...rest
+} = Astro.props as Props;
+---
+
+<InputGroup class={className}>
+  <InputGroupInput
+    data-slot="combobox-input"
+    placeholder={placeholder}
+    disabled={disabled}
+    autocomplete="off"
+    {...rest}
+  />
+  {(showTrigger || showClear) && (
+    <InputGroupAddon align="inline-end" class="pr-3">
+      {showClear && (
+        <InputGroupButton
+          data-slot="combobox-clear"
+          type="button"
+          size="icon-xs"
+          class="hidden [[data-value]_&]:inline-flex"
+          aria-label="Clear selection"
+        >
+          <XIcon class="size-3.5" />
+        </InputGroupButton>
+      )}
+      {showTrigger && (
+        <button
+          data-slot="combobox-trigger"
+          type="button"
+          tabindex={-1}
+          disabled={disabled}
+          class={cn(
+            "text-muted-foreground/80 hover:text-foreground flex items-center justify-center transition-colors",
+            showClear && "[[data-value]_&]:hidden",
+          )}
+          aria-label="Toggle menu"
+        >
+          <ChevronDownIcon class="size-4" />
+        </button>
+      )}
+    </InputGroupAddon>
+  )}
+</InputGroup>

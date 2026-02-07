@@ -243,6 +243,54 @@
       ]
     },
     {
+      "name": "combobox",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/combobox"],
+      "registryDependencies": ["input-group"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/combobox/Combobox.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/combobox/ComboboxInput.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/combobox/ComboboxContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/combobox/ComboboxList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/combobox/ComboboxItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/combobox/ComboboxGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/combobox/ComboboxLabel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/combobox/ComboboxSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/combobox/ComboboxEmpty.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/combobox/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "date",
       "type": "registry:ui",
       "files": [
