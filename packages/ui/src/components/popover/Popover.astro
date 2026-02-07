@@ -96,8 +96,8 @@
  * | Attribute | Element | Description |
  * |-----------|---------|-------------|
  * | `data-state` | popover, popover-content | Current state (`open` or `closed`) |
- * | `data-position` | popover | Position relative to trigger (`top`, `bottom`, `left`, `right`) |
- * | `data-align` | popover-content | Alignment (`start`, `center`, or `end`) |
+ * | `data-side` | popover, popover-content | Position relative to trigger (`top`, `bottom`, `left`, `right`) |
+ * | `data-align` | popover, popover-content | Alignment (`start`, `center`, or `end`) |
  *
  * @examples
  *
@@ -163,12 +163,14 @@ import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
-  position?: "top" | "bottom" | "left" | "right";
+  side?: "top" | "bottom" | "left" | "right";
+  align?: "start" | "center" | "end";
   class?: string;
 } & HTMLAttributes<"div">;
 
 const {
-  position = "bottom",
+  side = "bottom",
+  align = "center",
   class: className = "",
   ...rest
 } = Astro.props as Props;
@@ -177,8 +179,9 @@ const {
 <div
   {...rest}
   data-slot="popover"
-  data-position={position}
-  class={cn("relative inline-block", className)}
+  data-side={side}
+  data-align={align}
+  class={cn("inline-block", className)}
 >
   <slot />
 </div>
@@ -187,9 +190,5 @@ const {
   import { createPopover } from "@data-slot/popover";
   document
     .querySelectorAll('[data-slot="popover"]')
-    .forEach((el) =>
-      createPopover(el, {
-        position: (el as HTMLElement).dataset.position as any,
-      }),
-    );
+    .forEach((el) => createPopover(el));
 </script>

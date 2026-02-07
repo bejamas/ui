@@ -2,7 +2,6 @@
 import BattlefieldLayout from "@/components/BattlefieldLayout.astro";
 import { Label } from "@bejamas/ui/components/label";
 import { Input } from "@bejamas/ui/components/input";
-import { Button } from "@bejamas/ui/components/button";
 import {
   Select,
   SelectTrigger,
@@ -44,44 +43,56 @@ import {
       </Popover>
     </div>
 
-    <!-- 2. Alignments -->
+    <!-- 2. Side Variants -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">2. Alignments</h2>
+      <h2 class="text-lg font-semibold">2. Side Variants</h2>
       <p class="text-sm text-muted-foreground">
-        Start, center, and end alignment
+        Use the <code>side</code> prop on <code>Popover</code> to control where content
+        opens.
       </p>
-      <div class="flex gap-8">
-        <Popover>
-          <PopoverTrigger variant="outline">Start</PopoverTrigger>
-          <PopoverContent align="start">
+      <div class="flex flex-wrap items-center gap-8 py-2">
+        <Popover side="top">
+          <PopoverTrigger variant="outline">Top</PopoverTrigger>
+          <PopoverContent>
             <PopoverHeader>
-              <PopoverTitle>Start Aligned</PopoverTitle>
-              <PopoverDescription
-                >This popover is aligned to the start.</PopoverDescription
+              <PopoverTitle>Top Side</PopoverTitle>
+              <PopoverDescription>Appears above the trigger.</PopoverDescription
               >
             </PopoverHeader>
           </PopoverContent>
         </Popover>
 
-        <Popover>
-          <PopoverTrigger variant="outline">Center</PopoverTrigger>
-          <PopoverContent align="center">
+        <Popover side="right">
+          <PopoverTrigger variant="outline">Right</PopoverTrigger>
+          <PopoverContent>
             <PopoverHeader>
-              <PopoverTitle>Center Aligned</PopoverTitle>
+              <PopoverTitle>Right Side</PopoverTitle>
               <PopoverDescription
-                >This popover is centered (default).</PopoverDescription
+                >Appears to the right of the trigger.</PopoverDescription
               >
             </PopoverHeader>
           </PopoverContent>
         </Popover>
 
-        <Popover>
-          <PopoverTrigger variant="outline">End</PopoverTrigger>
-          <PopoverContent align="end">
+        <Popover side="bottom">
+          <PopoverTrigger variant="outline">Bottom</PopoverTrigger>
+          <PopoverContent>
             <PopoverHeader>
-              <PopoverTitle>End Aligned</PopoverTitle>
+              <PopoverTitle>Bottom Side</PopoverTitle>
               <PopoverDescription
-                >This popover is aligned to the end.</PopoverDescription
+                >Appears below the trigger (default).</PopoverDescription
+              >
+            </PopoverHeader>
+          </PopoverContent>
+        </Popover>
+
+        <Popover side="left">
+          <PopoverTrigger variant="outline">Left</PopoverTrigger>
+          <PopoverContent>
+            <PopoverHeader>
+              <PopoverTitle>Left Side</PopoverTitle>
+              <PopoverDescription
+                >Appears to the left of the trigger.</PopoverDescription
               >
             </PopoverHeader>
           </PopoverContent>
@@ -89,9 +100,64 @@ import {
       </div>
     </div>
 
-    <!-- 3. With Form -->
+    <!-- 3. Alignment Variants -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">3. With Form</h2>
+      <h2 class="text-lg font-semibold">3. Alignment Variants</h2>
+      <p class="text-sm text-muted-foreground">
+        Set <code>align</code> on <code>Popover</code> for defaults, then override
+        with <code>PopoverContent</code> when needed.
+      </p>
+      <div class="flex flex-wrap gap-8">
+        <Popover side="bottom" align="start">
+          <PopoverTrigger variant="outline">Start</PopoverTrigger>
+          <PopoverContent>
+            <PopoverHeader>
+              <PopoverTitle>Start Aligned</PopoverTitle>
+              <PopoverDescription>Root alignment is start.</PopoverDescription>
+            </PopoverHeader>
+          </PopoverContent>
+        </Popover>
+
+        <Popover side="bottom" align="center">
+          <PopoverTrigger variant="outline">Center</PopoverTrigger>
+          <PopoverContent>
+            <PopoverHeader>
+              <PopoverTitle>Center Aligned</PopoverTitle>
+              <PopoverDescription>Root alignment is center.</PopoverDescription>
+            </PopoverHeader>
+          </PopoverContent>
+        </Popover>
+
+        <Popover side="bottom" align="end">
+          <PopoverTrigger variant="outline">End</PopoverTrigger>
+          <PopoverContent>
+            <PopoverHeader>
+              <PopoverTitle>End Aligned</PopoverTitle>
+              <PopoverDescription>Root alignment is end.</PopoverDescription>
+            </PopoverHeader>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <Popover side="bottom" align="start">
+        <PopoverTrigger variant="outline">
+          Root bottom/start, content top/end
+        </PopoverTrigger>
+        <PopoverContent side="top" align="end" class="w-80">
+          <PopoverHeader>
+            <PopoverTitle>Content Overrides Root</PopoverTitle>
+            <PopoverDescription>
+              Root sets side=bottom align=start, but content overrides to
+              side=top align=end.
+            </PopoverDescription>
+          </PopoverHeader>
+        </PopoverContent>
+      </Popover>
+    </div>
+
+    <!-- 4. With Form -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">4. With Form</h2>
       <p class="text-sm text-muted-foreground">
         Popover containing form fields (Dimensions example)
       </p>
@@ -136,9 +202,9 @@ import {
       </Popover>
     </div>
 
-    <!-- 4. With Close Button -->
+    <!-- 5. With Close Button -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">4. With Close Button</h2>
+      <h2 class="text-lg font-semibold">5. With Close Button</h2>
       <p class="text-sm text-muted-foreground">
         Using PopoverClose inside content
       </p>
@@ -160,9 +226,9 @@ import {
       </Popover>
     </div>
 
-    <!-- 5. Event Testing -->
+    <!-- 6. Event Testing -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">5. Event Testing</h2>
+      <h2 class="text-lg font-semibold">6. Event Testing</h2>
       <p class="text-sm text-muted-foreground">
         Console logging popover:change
       </p>
@@ -187,9 +253,9 @@ import {
       </script>
     </div>
 
-    <!-- 6. Programmatic Control -->
+    <!-- 7. Programmatic Control -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">6. Programmatic Control</h2>
+      <h2 class="text-lg font-semibold">7. Programmatic Control</h2>
       <p class="text-sm text-muted-foreground">
         Buttons to open and close programmatically
       </p>
