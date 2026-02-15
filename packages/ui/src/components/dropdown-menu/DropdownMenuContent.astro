@@ -4,22 +4,20 @@ import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
   align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "bottom" | "left" | "right";
   sideOffset?: number;
   class?: string;
 } & HTMLAttributes<"div">;
 
 const {
   align = "start",
+  alignOffset = 0,
+  side = "bottom",
   sideOffset = 4,
   class: className = "",
   ...rest
 } = Astro.props as Props;
-
-const alignClasses = {
-  start: "left-0",
-  center: "left-1/2 -translate-x-1/2",
-  end: "right-0",
-};
 ---
 
 <!-- Outer: data-slot target for the library (positioning + visibility only) -->
@@ -27,11 +25,11 @@ const alignClasses = {
   {...rest}
   data-slot="dropdown-menu-content"
   data-align={align}
-  style={`--side-offset: ${sideOffset}px`}
+  data-align-offset={alignOffset}
+  data-side={side}
+  data-side-offset={sideOffset}
   class={cn(
     "group/dropdown-menu-content",
-    "absolute top-full mt-[var(--side-offset)]",
-    alignClasses[align],
     "hidden data-[state=open]:block [transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
     "[--origin-y:top] data-[side=top]:[--origin-y:bottom]",
     "data-[align=start]:[--origin-x:left] data-[align=center]:[--origin-x:center] data-[align=end]:[--origin-x:right]",
