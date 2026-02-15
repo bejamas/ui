@@ -6,16 +6,20 @@ type Props = {
   class?: string;
   size?: "sm" | "default" | "lg";
   position?: "item-aligned" | "popper";
-  side?: "top" | "bottom";
   align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "bottom";
+  sideOffset?: number;
 } & HTMLAttributes<"div">;
 
 const {
   class: className = "",
   size = "default",
   position = "item-aligned",
-  side,
   align = "start",
+  alignOffset = 0,
+  side = "bottom",
+  sideOffset = 4,
   ...rest
 } = Astro.props as Props;
 ---
@@ -26,13 +30,16 @@ const {
   data-size={size}
   data-position={position}
   data-align-trigger={position === "item-aligned"}
-  data-side={side}
   data-align={align}
+  data-align-offset={alignOffset}
+  data-side={side}
+  data-side-offset={sideOffset}
   class={cn(
     "group/select-content focus-visible:outline-none z-50",
     position === "popper" ? "fixed" : "relative",
     "hidden data-[state=open]:block",
-    position === "popper" && "[transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
+    position === "popper" &&
+      "[transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
     className,
   )}
 >
