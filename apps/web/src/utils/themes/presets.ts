@@ -51,7 +51,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
         foreground: "oklch(0.97 0.020 250)",
         card: "oklch(0.225 0.020 250)",
         "card-foreground": "oklch(0.97 0 0)",
-        popover: "oklch(0.256 0.020 250)",
+        popover: "oklch(0.22 0.020 250)",
         "popover-foreground": "oklch(0.97 0 0)",
         primary: "oklch(0.97 0 0)",
         "primary-foreground": "oklch(0.2 0.044 250)",
