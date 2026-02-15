@@ -217,6 +217,76 @@
       ]
     },
     {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/collapsible"],
+      "files": [
+        {
+          "path": "ui/collapsible/Collapsible.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/collapsible/CollapsibleTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/collapsible/CollapsibleContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/collapsible/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/combobox"],
+      "files": [
+        {
+          "path": "ui/combobox/Combobox.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxInput.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxEmpty.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxLabel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "date",
       "type": "registry:ui",
       "files": [
@@ -420,6 +490,24 @@
       ]
     },
     {
+      "name": "kbd",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/kbd/Kbd.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/kbd/KbdGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/kbd/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "label",
       "type": "registry:ui",
       "files": [
@@ -469,6 +557,110 @@
         },
         {
           "path": "ui/marquee/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "native-select",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/native-select/NativeSelect.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/native-select/NativeSelectOption.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/native-select/NativeSelectOptGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/native-select/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/navigation-menu"],
+      "files": [
+        {
+          "path": "ui/navigation-menu/NavigationMenu.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/navigation-menu/NavigationMenuList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/navigation-menu/NavigationMenuItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/navigation-menu/NavigationMenuTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/navigation-menu/NavigationMenuContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/navigation-menu/NavigationMenuViewport.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/navigation-menu/NavigationMenuIndicator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/navigation-menu/NavigationMenuLink.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/navigation-menu/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/popover"],
+      "files": [
+        {
+          "path": "ui/popover/Popover.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverClose.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -535,6 +727,47 @@
         },
         {
           "path": "ui/separator/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/skeleton/Skeleton.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/skeleton/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/slider"],
+      "files": [
+        {
+          "path": "ui/slider/Slider.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/slider/SliderTrack.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/slider/SliderRange.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/slider/SliderThumb.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/slider/index.ts",
           "type": "registry:ui"
         }
       ]
@@ -656,6 +889,29 @@
         },
         {
           "path": "ui/toggle-group/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/tooltip"],
+      "files": [
+        {
+          "path": "ui/tooltip/Tooltip.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tooltip/TooltipTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tooltip/TooltipContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/tooltip/index.ts",
           "type": "registry:ui"
         }
       ]
