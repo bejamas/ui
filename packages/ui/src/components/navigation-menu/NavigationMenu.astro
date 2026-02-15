@@ -327,10 +327,6 @@ type Props = {
   delayOpen?: number;
   delayClose?: number;
   openOnFocus?: boolean;
-  side?: "top" | "bottom";
-  sideOffset?: number;
-  align?: "start" | "center" | "end";
-  alignOffset?: number;
 } & HTMLAttributes<"nav">;
 
 const {
@@ -340,10 +336,6 @@ const {
   delayOpen = 0,
   delayClose = 50,
   openOnFocus,
-  side = "bottom",
-  sideOffset = 4,
-  align = "start",
-  alignOffset = 0,
   ...rest
 } = Astro.props as Props;
 ---
