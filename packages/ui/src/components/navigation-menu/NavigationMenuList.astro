@@ -12,10 +12,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <ul
   {...rest}
   data-slot="navigation-menu-list"
-  class={cn(
-    "flex list-none relative z-10 [&_[data-slot='navigation-menu-content'][data-state='active']]:animate-in [&_[data-slot='navigation-menu-content'][data-state='inactive']]:animate-out [&_[data-slot='navigation-menu-content'][data-motion='from-right']]:slide-in-from-right-4 [&_[data-slot='navigation-menu-content'][data-motion='from-left']]:slide-in-from-left-4 [&_[data-slot='navigation-menu-content'][data-motion='to-right']]:slide-to-right-4 [&_[data-slot='navigation-menu-content'][data-motion='to-left']]:slide-to-left-4",
-    className,
-  )}
+  class={cn("flex list-none", className)}
 >
   <slot />
 </ul>

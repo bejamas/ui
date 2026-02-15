@@ -9,7 +9,7 @@ type Props = {
 } & HTMLAttributes<"button">;
 
 export const navigationMenuTriggerStyle = cva(
-  "px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 hover:text-accent data-[state=open]:text-accent",
+  "px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 hover:text-foreground data-[state=open]:text-foreground",
 );
 
 const {
@@ -27,7 +27,7 @@ const {
 >
   <slot />
   <ChevronDown
-    class="text-muted-foreground size-3 transition-transform duration-200 group-data-[state=open]:rotate-180"
+    class="text-muted-foreground size-3 transition-transform duration-200 ease group-data-[state=open]:rotate-180"
     aria-hidden="true"
   />
 </button>

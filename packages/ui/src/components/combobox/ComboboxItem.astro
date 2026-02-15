@@ -24,8 +24,9 @@ const {
   data-disabled={disabled ? "" : undefined}
   class={cn(
     "group/item relative flex w-full cursor-default select-none items-center gap-1.5 rounded-md py-1.5 pr-8 pl-2 text-sm outline-hidden",
-    "data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
+    "data-[highlighted]:bg-accent",
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+    "not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground",
     "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
     className,
   )}

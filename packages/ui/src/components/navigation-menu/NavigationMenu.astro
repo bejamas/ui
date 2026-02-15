@@ -31,9 +31,9 @@
  *         </div>
  *       </NavigationMenuContent>
  *     </NavigationMenuItem>
- *     <NavigationMenuItem value="solutions" align="center">
+ *     <NavigationMenuItem value="solutions">
  *       <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
- *       <NavigationMenuContent>
+ *       <NavigationMenuContent align="center">
  *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
  *           <NavigationMenuLink href="/solutions/startups">
  *             <div class="font-medium">Startups</div>
@@ -54,9 +54,9 @@
  *         </div>
  *       </NavigationMenuContent>
  *     </NavigationMenuItem>
- *     <NavigationMenuItem value="resources" align="center">
+ *     <NavigationMenuItem value="resources">
  *       <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
- *       <NavigationMenuContent>
+ *       <NavigationMenuContent align="center">
  *         <div class="grid grid-cols-3 gap-2 w-[520px] p-2">
  *           <NavigationMenuLink href="/docs">
  *             <div class="font-medium">Docs</div>
@@ -87,7 +87,7 @@
  *     </NavigationMenuItem>
  *     <NavigationMenuItem value="company">
  *       <NavigationMenuTrigger>Company</NavigationMenuTrigger>
- *       <NavigationMenuContent>
+ *       <NavigationMenuContent align="end">
  *         <div class="w-[180px] p-2">
  *           <NavigationMenuLink href="/about">
  *             <div class="font-medium">About</div>
@@ -135,9 +135,9 @@
  *         </div>
  *       </NavigationMenuContent>
  *     </NavigationMenuItem>
- *     <NavigationMenuItem value="resources" align="center">
+ *     <NavigationMenuItem value="resources">
  *       <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
- *       <NavigationMenuContent>
+ *       <NavigationMenuContent align="center">
  *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
  *           <NavigationMenuLink href="/docs">
  *             <div class="font-medium">Docs</div>
@@ -327,15 +327,23 @@ type Props = {
   delayOpen?: number;
   delayClose?: number;
   openOnFocus?: boolean;
+  side?: "top" | "bottom";
+  sideOffset?: number;
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
 } & HTMLAttributes<"nav">;
 
 const {
   as: Tag = "nav",
   class: className = "",
   viewport = true,
-  delayOpen,
-  delayClose,
+  delayOpen = 0,
+  delayClose = 50,
   openOnFocus,
+  side = "bottom",
+  sideOffset = 4,
+  align = "start",
+  alignOffset = 0,
   ...rest
 } = Astro.props as Props;
 ---

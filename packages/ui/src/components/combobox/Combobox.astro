@@ -110,6 +110,16 @@
  * combobox.dispatchEvent(new CustomEvent('combobox:set', {
  *   detail: { inputValue: 'search term' }
  * }));
+ *
+ * // Custom display text for selected value
+ * // itemToStringValue — (item: HTMLElement | null, value: string | null) => string
+ * // Controls what text appears in the input after selection.
+ * // Useful when items contain rich content (icons, descriptions).
+ * combobox.dispatchEvent(new CustomEvent('combobox:set', {
+ *   detail: {
+ *     itemToStringValue: (item, value) => value ? `TZ: ${value}` : ''
+ *   }
+ * }));
  * ```
  *
  * ### Data Attributes
