@@ -243,6 +243,54 @@
       ]
     },
     {
+      "name": "combobox",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/combobox"],
+      "registryDependencies": ["input-group"],
+      "files": [
+        {
+          "path": "ui/combobox/Combobox.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxInput.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxList.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxLabel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/ComboboxEmpty.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/combobox/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "date",
       "type": "registry:ui",
       "files": [
@@ -561,6 +609,68 @@
       ]
     },
     {
+      "name": "native-select",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/native-select/NativeSelect.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/native-select/NativeSelectOption.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/native-select/NativeSelectOptGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/native-select/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/popover"],
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "ui/popover/Popover.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverClose.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/PopoverDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/popover/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "radio-group",
       "type": "registry:ui",
       "files": [
@@ -581,13 +691,26 @@
     {
       "name": "select",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/select"],
       "files": [
         {
           "path": "ui/select/Select.astro",
           "type": "registry:ui"
         },
         {
-          "path": "ui/select/SelectControl.astro",
+          "path": "ui/select/SelectTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/select/SelectValue.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/select/SelectContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/select/SelectItem.astro",
           "type": "registry:ui"
         },
         {
@@ -595,15 +718,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "ui/select/SelectIndicator.astro",
+          "path": "ui/select/SelectLabel.astro",
           "type": "registry:ui"
         },
         {
-          "path": "ui/select/SelectOption.astro",
-          "type": "registry:ui"
-        },
-        {
-          "path": "ui/select/SelectPlaceholder.astro",
+          "path": "ui/select/SelectSeparator.astro",
           "type": "registry:ui"
         },
         {
@@ -663,6 +782,20 @@
         },
         {
           "path": "ui/slider/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/spinner/Spinner.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/spinner/index.ts",
           "type": "registry:ui"
         }
       ]
