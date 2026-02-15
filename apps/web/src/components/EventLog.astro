@@ -1,0 +1,34 @@
+---
+interface Props {
+  id: string;
+  placeholder?: string;
+  class?: string;
+}
+
+const { id, placeholder = "Waiting for events...", class: className } = Astro.props;
+---
+
+<pre
+  id={id}
+  data-slot="event-log"
+  class:list={[
+    "mt-2 p-3 rounded-md bg-muted text-xs font-mono text-muted-foreground min-h-[80px] max-h-[200px] overflow-y-auto",
+    className,
+  ]}
+>{placeholder}</pre>
+
+<script>
+  document.querySelectorAll<HTMLPreElement>('[data-slot="event-log"]').forEach((el) => {
+    const placeholder = el.textContent;
+    (el as any)._log = (msg: string) => {
+      const time = new Date().toLocaleTimeString();
+      const line = `[${time}] ${msg}`;
+      if (el.textContent === placeholder) {
+        el.textContent = line;
+      } else {
+        el.textContent += "\n" + line;
+      }
+      el.scrollTop = el.scrollHeight;
+    };
+  });
+</script>

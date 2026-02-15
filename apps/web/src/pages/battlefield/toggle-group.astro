@@ -1,5 +1,6 @@
 ---
 import BattlefieldLayout from "@/components/BattlefieldLayout.astro";
+import EventLog from "@/components/EventLog.astro";
 import { ToggleGroup, ToggleGroupItem } from "@bejamas/ui/components/toggle-group";
 import {
   BoldIcon,
@@ -186,7 +187,7 @@ import {
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">Event Testing</h2>
       <p class="text-sm text-muted-foreground">
-        Click the toggles and check the console for toggle-group:change events
+        Click the toggles and check the output for toggle-group:change events
       </p>
       <ToggleGroup id="event-toggle-group" variant="outline" defaultValue="center">
         <ToggleGroupItem value="left" aria-label="Align left">
@@ -199,19 +200,20 @@ import {
           <AlignRightIcon />
         </ToggleGroupItem>
       </ToggleGroup>
-      <div id="event-output" class="text-sm p-3 bg-muted rounded-lg font-mono">
-        Selected: ["center"]
-      </div>
+      <EventLog id="toggle-group-event-output" />
       <script>
-        const eventGroup = document.getElementById("event-toggle-group");
-        const eventOutput = document.getElementById("event-output");
-        eventGroup?.addEventListener("toggle-group:change", (e: Event) => {
-          const detail = (e as CustomEvent).detail;
-          console.log("toggle-group:change event:", detail);
-          if (eventOutput) {
-            eventOutput.textContent = `Selected: ${JSON.stringify(detail.value)}`;
+        {
+          const eventGroup = document.getElementById("event-toggle-group");
+
+          function log(msg: string) {
+            (document.getElementById("toggle-group-event-output") as any)?._log(msg);
           }
-        });
+
+          eventGroup?.addEventListener("toggle-group:change", (e: Event) => {
+            const { value } = (e as CustomEvent).detail;
+            log(`toggle-group:change → value: ${JSON.stringify(value)}`);
+          });
+        }
       </script>
     </div>
 

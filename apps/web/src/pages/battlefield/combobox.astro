@@ -1,5 +1,6 @@
 ---
 import BattlefieldLayout from "@/components/BattlefieldLayout.astro";
+import EventLog from "@/components/EventLog.astro";
 import { Label } from "@bejamas/ui/components/label";
 import { Button } from "@bejamas/ui/components/button";
 import {
@@ -24,7 +25,17 @@ import {
   InputGroupInput,
   InputGroupAddon,
 } from "@bejamas/ui/components/input-group";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@bejamas/ui/components/dialog";
 import GlobeIcon from "@lucide/astro/icons/globe";
+import SearchIcon from "@lucide/astro/icons/search";
 import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 ---
 
@@ -57,7 +68,8 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">2. With Clear Button</h2>
       <p class="text-sm text-muted-foreground">
-        showClear on ComboboxInput — clear button appears after selection, hides chevron
+        showClear on ComboboxInput — clear button appears after selection, hides
+        chevron
       </p>
       <Combobox class="w-[250px]">
         <ComboboxInput placeholder="Select framework..." showClear />
@@ -77,9 +89,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
     <!-- 3. With Default Value -->
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">3. With Default Value</h2>
-      <p class="text-sm text-muted-foreground">
-        Pre-selected value: "astro"
-      </p>
+      <p class="text-sm text-muted-foreground">Pre-selected value: "astro"</p>
       <Combobox defaultValue="astro" class="w-[250px]">
         <ComboboxInput placeholder="Select framework..." />
         <ComboboxContent>
@@ -120,9 +130,10 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">5. Custom Items</h2>
       <p class="text-sm text-muted-foreground">
-        Rich content with Item, ItemContent, ItemTitle, ItemDescription inside ComboboxItem
+        Rich content with Item, ItemContent, ItemTitle, ItemDescription inside
+        ComboboxItem
       </p>
-      <Combobox class="w-[300px]">
+      <Combobox id="custom-items-combobox" class="w-[300px]">
         <ComboboxInput placeholder="Select country..." />
         <ComboboxContent>
           <ComboboxList>
@@ -290,11 +301,26 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
+      <script>
+        const customItemsCb = document.getElementById("custom-items-combobox");
+        customItemsCb?.dispatchEvent(
+          new CustomEvent("combobox:set", {
+            detail: {
+              itemToStringValue: (
+                _item: HTMLElement | null,
+                value: string | null,
+              ) => (value ? `Country: ${value}` : ""),
+            },
+          }),
+        );
+      </script>
     </div>
 
     <!-- 6. Groups with Labels and Separators -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">6. Groups with Labels and Separators</h2>
+      <h2 class="text-lg font-semibold">
+        6. Groups with Labels and Separators
+      </h2>
       <p class="text-sm text-muted-foreground">
         Grouped items with ComboboxGroup, ComboboxLabel, ComboboxSeparator
       </p>
@@ -381,7 +407,8 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">9. Disabled Items</h2>
       <p class="text-sm text-muted-foreground">
-        Mix of enabled/disabled items — disabled items can't be selected, skipped in keyboard nav
+        Mix of enabled/disabled items — disabled items can't be selected,
+        skipped in keyboard nav
       </p>
       <Combobox class="w-[250px]">
         <ComboboxInput placeholder="Select framework..." />
@@ -389,9 +416,13 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           <ComboboxList>
             <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
             <ComboboxItem value="astro">Astro</ComboboxItem>
-            <ComboboxItem value="nextjs" disabled>Next.js (unavailable)</ComboboxItem>
+            <ComboboxItem value="nextjs" disabled
+              >Next.js (unavailable)</ComboboxItem
+            >
             <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
-            <ComboboxItem value="remix" disabled>Remix (unavailable)</ComboboxItem>
+            <ComboboxItem value="remix" disabled
+              >Remix (unavailable)</ComboboxItem
+            >
             <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
           </ComboboxList>
         </ComboboxContent>
@@ -442,7 +473,8 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">12. Input Group</h2>
       <p class="text-sm text-muted-foreground">
-        Add an addon to the combobox by using InputGroupAddon inside a manual InputGroup with data-slot="combobox-input"
+        Add an addon to the combobox by using InputGroupAddon inside a manual
+        InputGroup with data-slot="combobox-input"
       </p>
       <Combobox class="w-[280px]">
         <InputGroup>
@@ -471,12 +503,20 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
             <ComboboxEmpty>No timezones found.</ComboboxEmpty>
             <ComboboxGroup>
               <ComboboxLabel>Americas</ComboboxLabel>
-              <ComboboxItem value="gmt-5-new-york">(GMT-5) New York</ComboboxItem>
-              <ComboboxItem value="gmt-8-los-angeles">(GMT-8) Los Angeles</ComboboxItem>
+              <ComboboxItem value="gmt-5-new-york"
+                >(GMT-5) New York</ComboboxItem
+              >
+              <ComboboxItem value="gmt-8-los-angeles"
+                >(GMT-8) Los Angeles</ComboboxItem
+              >
               <ComboboxItem value="gmt-6-chicago">(GMT-6) Chicago</ComboboxItem>
               <ComboboxItem value="gmt-5-toronto">(GMT-5) Toronto</ComboboxItem>
-              <ComboboxItem value="gmt-8-vancouver">(GMT-8) Vancouver</ComboboxItem>
-              <ComboboxItem value="gmt-3-sao-paulo">(GMT-3) São Paulo</ComboboxItem>
+              <ComboboxItem value="gmt-8-vancouver"
+                >(GMT-8) Vancouver</ComboboxItem
+              >
+              <ComboboxItem value="gmt-3-sao-paulo"
+                >(GMT-3) São Paulo</ComboboxItem
+              >
             </ComboboxGroup>
             <ComboboxSeparator />
             <ComboboxGroup>
@@ -486,14 +526,20 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="gmt-1-berlin">(GMT+1) Berlin</ComboboxItem>
               <ComboboxItem value="gmt-1-rome">(GMT+1) Rome</ComboboxItem>
               <ComboboxItem value="gmt-1-madrid">(GMT+1) Madrid</ComboboxItem>
-              <ComboboxItem value="gmt-1-amsterdam">(GMT+1) Amsterdam</ComboboxItem>
+              <ComboboxItem value="gmt-1-amsterdam"
+                >(GMT+1) Amsterdam</ComboboxItem
+              >
             </ComboboxGroup>
             <ComboboxSeparator />
             <ComboboxGroup>
               <ComboboxLabel>Asia/Pacific</ComboboxLabel>
               <ComboboxItem value="gmt-9-tokyo">(GMT+9) Tokyo</ComboboxItem>
-              <ComboboxItem value="gmt-8-shanghai">(GMT+8) Shanghai</ComboboxItem>
-              <ComboboxItem value="gmt-8-singapore">(GMT+8) Singapore</ComboboxItem>
+              <ComboboxItem value="gmt-8-shanghai"
+                >(GMT+8) Shanghai</ComboboxItem
+              >
+              <ComboboxItem value="gmt-8-singapore"
+                >(GMT+8) Singapore</ComboboxItem
+              >
               <ComboboxItem value="gmt-4-dubai">(GMT+4) Dubai</ComboboxItem>
               <ComboboxItem value="gmt-11-sydney">(GMT+11) Sydney</ComboboxItem>
               <ComboboxItem value="gmt-9-seoul">(GMT+9) Seoul</ComboboxItem>
@@ -569,7 +615,8 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">14. Event Testing</h2>
       <p class="text-sm text-muted-foreground">
-        Console logging for combobox:change, combobox:open-change, combobox:input-change
+        Console logging for combobox:change, combobox:open-change,
+        combobox:input-change
       </p>
       <Combobox id="event-combobox" class="w-[250px]">
         <ComboboxInput placeholder="Check console..." />
@@ -582,23 +629,38 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
+      <EventLog id="combobox-event-output" />
       <script>
-        const eventCombobox = document.getElementById("event-combobox");
+        {
+          const eventCombobox = document.getElementById("event-combobox");
 
-        eventCombobox?.addEventListener("combobox:change", (e: Event) => {
-          const detail = (e as CustomEvent).detail;
-          console.log("combobox:change event:", detail);
-        });
+          function log(msg: string) {
+            (document.getElementById("combobox-event-output") as any)?._log(
+              msg,
+            );
+          }
 
-        eventCombobox?.addEventListener("combobox:open-change", (e: Event) => {
-          const detail = (e as CustomEvent).detail;
-          console.log("combobox:open-change event:", detail);
-        });
+          eventCombobox?.addEventListener("combobox:change", (e: Event) => {
+            const { value } = (e as CustomEvent).detail;
+            log(`combobox:change → value: "${value}"`);
+          });
 
-        eventCombobox?.addEventListener("combobox:input-change", (e: Event) => {
-          const detail = (e as CustomEvent).detail;
-          console.log("combobox:input-change event:", detail);
-        });
+          eventCombobox?.addEventListener(
+            "combobox:open-change",
+            (e: Event) => {
+              const { open } = (e as CustomEvent).detail;
+              log(`combobox:open-change → open: ${open}`);
+            },
+          );
+
+          eventCombobox?.addEventListener(
+            "combobox:input-change",
+            (e: Event) => {
+              const { value } = (e as CustomEvent).detail;
+              log(`combobox:input-change → value: "${value}"`);
+            },
+          );
+        }
       </script>
     </div>
 
@@ -656,17 +718,21 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
       <script>
         const progCombobox = document.getElementById("programmatic-combobox");
 
-        document.getElementById("cb-set-astro")?.addEventListener("click", () => {
-          progCombobox?.dispatchEvent(
-            new CustomEvent("combobox:set", { detail: { value: "astro" } }),
-          );
-        });
+        document
+          .getElementById("cb-set-astro")
+          ?.addEventListener("click", () => {
+            progCombobox?.dispatchEvent(
+              new CustomEvent("combobox:set", { detail: { value: "astro" } }),
+            );
+          });
 
-        document.getElementById("cb-set-nextjs")?.addEventListener("click", () => {
-          progCombobox?.dispatchEvent(
-            new CustomEvent("combobox:set", { detail: { value: "nextjs" } }),
-          );
-        });
+        document
+          .getElementById("cb-set-nextjs")
+          ?.addEventListener("click", () => {
+            progCombobox?.dispatchEvent(
+              new CustomEvent("combobox:set", { detail: { value: "nextjs" } }),
+            );
+          });
 
         document.getElementById("cb-clear")?.addEventListener("click", () => {
           progCombobox?.dispatchEvent(
@@ -688,11 +754,147 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
       </script>
     </div>
 
-    <!-- 16. Form Integration -->
+    <!-- 16. In a Dialog -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">16. Form Integration</h2>
+      <h2 class="text-lg font-semibold">16. In a Dialog</h2>
       <p class="text-sm text-muted-foreground">
-        Combobox with name inside a form — hidden input syncs, form submission works
+        Combobox inside a dialog — tests z-index stacking and focus management
+      </p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog with Combobox</Button>
+        </DialogTrigger>
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Select Framework</DialogTitle>
+            <DialogDescription>
+              Choose your preferred framework from the combobox below.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="space-y-4 py-4">
+            <div class="space-y-2">
+              <Label>Framework</Label>
+              <Combobox class="w-full">
+                <ComboboxInput placeholder="Search frameworks..." />
+                <ComboboxContent>
+                  <ComboboxList>
+                    <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
+                    <ComboboxItem value="astro">Astro</ComboboxItem>
+                    <ComboboxItem value="nextjs">Next.js</ComboboxItem>
+                    <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+                    <ComboboxItem value="remix">Remix</ComboboxItem>
+                    <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </div>
+            <div class="space-y-2">
+              <Label>Version</Label>
+              <Combobox class="w-full">
+                <ComboboxInput placeholder="Search versions..." />
+                <ComboboxContent>
+                  <ComboboxList>
+                    <ComboboxEmpty>No versions found.</ComboboxEmpty>
+                    <ComboboxItem value="latest">Latest</ComboboxItem>
+                    <ComboboxItem value="beta">Beta</ComboboxItem>
+                    <ComboboxItem value="canary">Canary</ComboboxItem>
+                    <ComboboxItem value="rc">Release Candidate</ComboboxItem>
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button data-slot="dialog-close" variant="outline">Cancel</Button>
+            <Button data-slot="dialog-close">Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+
+    <!-- 17. Popup -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">17. Popup</h2>
+      <p class="text-sm text-muted-foreground">
+        Button trigger with ComboboxInput inside ComboboxContent — like a
+        searchable select
+      </p>
+      <Combobox id="popup-combobox" class="w-[250px]">
+        <button
+          data-slot="combobox-trigger"
+          type="button"
+          class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+        >
+          <span id="popup-combobox-value" class="text-muted-foreground truncate"
+            >Select country...</span
+          >
+          <ChevronDownIcon class="size-4 shrink-0 opacity-50" />
+        </button>
+        <ComboboxContent>
+          <div class="flex items-center border-b px-3">
+            <SearchIcon class="size-4 shrink-0 opacity-50" />
+            <input
+              data-slot="combobox-input"
+              placeholder="Search countries..."
+              autocomplete="off"
+              class="flex h-9 w-full bg-transparent py-3 pl-2 text-sm outline-none placeholder:text-muted-foreground"
+            />
+          </div>
+          <ComboboxList>
+            <ComboboxEmpty>No countries found.</ComboboxEmpty>
+            <ComboboxItem value="argentina">Argentina</ComboboxItem>
+            <ComboboxItem value="australia">Australia</ComboboxItem>
+            <ComboboxItem value="brazil">Brazil</ComboboxItem>
+            <ComboboxItem value="canada">Canada</ComboboxItem>
+            <ComboboxItem value="china">China</ComboboxItem>
+            <ComboboxItem value="colombia">Colombia</ComboboxItem>
+            <ComboboxItem value="egypt">Egypt</ComboboxItem>
+            <ComboboxItem value="france">France</ComboboxItem>
+            <ComboboxItem value="germany">Germany</ComboboxItem>
+            <ComboboxItem value="italy">Italy</ComboboxItem>
+            <ComboboxItem value="japan">Japan</ComboboxItem>
+            <ComboboxItem value="kenya">Kenya</ComboboxItem>
+            <ComboboxItem value="mexico">Mexico</ComboboxItem>
+            <ComboboxItem value="new-zealand">New Zealand</ComboboxItem>
+            <ComboboxItem value="nigeria">Nigeria</ComboboxItem>
+            <ComboboxItem value="south-africa">South Africa</ComboboxItem>
+            <ComboboxItem value="south-korea">South Korea</ComboboxItem>
+            <ComboboxItem value="united-kingdom">United Kingdom</ComboboxItem>
+            <ComboboxItem value="united-states">United States</ComboboxItem>
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+      <script>
+        {
+          const root = document.getElementById("popup-combobox");
+          const valueEl = document.getElementById("popup-combobox-value");
+
+          root?.addEventListener("combobox:change", (e: Event) => {
+            const { value } = (e as CustomEvent).detail;
+            if (value && valueEl) {
+              const item = root.querySelector(
+                `[data-slot="combobox-item"][data-value="${CSS.escape(value)}"]`,
+              );
+              const text = item
+                ?.querySelector('[data-slot="combobox-item-text"]')
+                ?.textContent?.trim();
+              valueEl.textContent = text || value;
+              valueEl.classList.remove("text-muted-foreground");
+            } else if (valueEl) {
+              valueEl.textContent = "Select country...";
+              valueEl.classList.add("text-muted-foreground");
+            }
+          });
+        }
+      </script>
+    </div>
+
+    <!-- 18. Form Integration -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">18. Form Integration</h2>
+      <p class="text-sm text-muted-foreground">
+        Combobox with name inside a form — hidden input syncs, form submission
+        works
       </p>
       <form
         id="combobox-form"
@@ -726,7 +928,8 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </div>
         <Button type="submit">Submit</Button>
       </form>
-      <div id="combobox-form-output" class="text-sm text-muted-foreground"></div>
+      <div id="combobox-form-output" class="text-sm text-muted-foreground">
+      </div>
       <script>
         document
           .getElementById("combobox-form")

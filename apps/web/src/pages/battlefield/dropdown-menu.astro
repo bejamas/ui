@@ -1,0 +1,507 @@
+---
+import BattlefieldLayout from "@/components/BattlefieldLayout.astro";
+import EventLog from "@/components/EventLog.astro";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@bejamas/ui/components/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+} from "@bejamas/ui/components/dropdown-menu";
+import UserIcon from "@lucide/astro/icons/user";
+import SettingsIcon from "@lucide/astro/icons/settings";
+import LogOutIcon from "@lucide/astro/icons/log-out";
+import CreditCardIcon from "@lucide/astro/icons/credit-card";
+import KeyboardIcon from "@lucide/astro/icons/keyboard";
+import UsersIcon from "@lucide/astro/icons/users";
+import PlusIcon from "@lucide/astro/icons/plus";
+import LifeBuoyIcon from "@lucide/astro/icons/life-buoy";
+import CloudIcon from "@lucide/astro/icons/cloud";
+import CircleUserIcon from "@lucide/astro/icons/circle-user";
+import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
+---
+
+<BattlefieldLayout>
+  <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Dropdown Menu Component Test</h1>
+
+    <!-- 1. Basic -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">1. Basic</h2>
+      <p class="text-sm text-muted-foreground">
+        Simple trigger with a few plain items.
+      </p>
+      <DropdownMenu>
+        <DropdownMenuTrigger variant="outline">Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>New Tab</DropdownMenuItem>
+          <DropdownMenuItem>New Window</DropdownMenuItem>
+          <DropdownMenuItem>New Incognito Window</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+
+    <!-- 2. With Icons -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">2. With Icons</h2>
+      <p class="text-sm text-muted-foreground">
+        Items with leading Lucide icons.
+      </p>
+      <DropdownMenu>
+        <DropdownMenuTrigger variant="outline">Account</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            <UserIcon class="size-4" />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <SettingsIcon class="size-4" />
+            Settings
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <LogOutIcon class="size-4" />
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+
+    <!-- 3. With Keyboard Shortcuts -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">3. With Keyboard Shortcuts</h2>
+      <p class="text-sm text-muted-foreground">
+        Items with <code class="text-xs bg-muted px-1 py-0.5 rounded"
+          >DropdownMenuShortcut</code
+        > displaying hotkeys.
+      </p>
+      <DropdownMenu>
+        <DropdownMenuTrigger variant="outline">Edit</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            Undo
+            <DropdownMenuShortcut>⌘Z</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            Redo
+            <DropdownMenuShortcut>⇧⌘Z</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            Cut
+            <DropdownMenuShortcut>⌘X</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            Copy
+            <DropdownMenuShortcut>⌘C</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            Paste
+            <DropdownMenuShortcut>⌘V</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+
+    <!-- 4. Disabled Items -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">4. Disabled Items</h2>
+      <p class="text-sm text-muted-foreground">
+        Mix of enabled and disabled items — disabled items show reduced opacity
+        and can't be interacted with.
+      </p>
+      <DropdownMenu>
+        <DropdownMenuTrigger variant="outline">Options</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Available action</DropdownMenuItem>
+          <DropdownMenuItem disabled>Disabled action</DropdownMenuItem>
+          <DropdownMenuItem>Another action</DropdownMenuItem>
+          <DropdownMenuItem disabled>Also disabled</DropdownMenuItem>
+          <DropdownMenuItem>Final action</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+
+    <!-- 5. Groups, Labels & Separators -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">5. Groups, Labels & Separators</h2>
+      <p class="text-sm text-muted-foreground">
+        Organized sections using Group, Label, and Separator sub-components.
+      </p>
+      <DropdownMenu>
+        <DropdownMenuTrigger variant="outline">My Account</DropdownMenuTrigger>
+        <DropdownMenuContent class="w-56">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <UserIcon class="size-4" />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <CreditCardIcon class="size-4" />
+              Billing
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <SettingsIcon class="size-4" />
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <KeyboardIcon class="size-4" />
+              Keyboard shortcuts
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <UsersIcon class="size-4" />
+              Team
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <PlusIcon class="size-4" />
+              New Team
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <LifeBuoyIcon class="size-4" />
+            Support
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <CloudIcon class="size-4" />
+            API
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+
+    <!-- 6. Inset Items -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">6. Inset Items</h2>
+      <p class="text-sm text-muted-foreground">
+        Demonstrates <code class="text-xs bg-muted px-1 py-0.5 rounded"
+          >inset</code
+        > prop on MenuItem and MenuLabel for left-padding alignment.
+      </p>
+      <DropdownMenu>
+        <DropdownMenuTrigger variant="outline">View</DropdownMenuTrigger>
+        <DropdownMenuContent class="w-48">
+          <DropdownMenuLabel inset>Appearance</DropdownMenuLabel>
+          <DropdownMenuItem inset>Compact</DropdownMenuItem>
+          <DropdownMenuItem inset>Comfortable</DropdownMenuItem>
+          <DropdownMenuItem inset>Spacious</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel inset>Sorting</DropdownMenuLabel>
+          <DropdownMenuItem inset>Name</DropdownMenuItem>
+          <DropdownMenuItem inset>Date modified</DropdownMenuItem>
+          <DropdownMenuItem inset>Size</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+
+    <!-- 7. Alignment Variations -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">7. Alignment Variations</h2>
+      <p class="text-sm text-muted-foreground">
+        Three dropdowns side-by-side with different <code
+          class="text-xs bg-muted px-1 py-0.5 rounded">align</code
+        > values.
+      </p>
+      <div class="flex flex-wrap gap-8">
+        <div class="space-y-2">
+          <span class="text-xs text-muted-foreground">align="start"</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger variant="outline">Start</DropdownMenuTrigger>
+            <DropdownMenuContent side="bottom" align="start">
+              <DropdownMenuItem>Option 1</DropdownMenuItem>
+              <DropdownMenuItem>Option 2</DropdownMenuItem>
+              <DropdownMenuItem>Option 3</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div class="space-y-2">
+          <span class="text-xs text-muted-foreground">align="center"</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger variant="outline">Center</DropdownMenuTrigger>
+            <DropdownMenuContent side="bottom" align="center">
+              <DropdownMenuItem>Option 1</DropdownMenuItem>
+              <DropdownMenuItem>Option 2</DropdownMenuItem>
+              <DropdownMenuItem>Option 3</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div class="space-y-2">
+          <span class="text-xs text-muted-foreground">align="end"</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger variant="outline">End</DropdownMenuTrigger>
+            <DropdownMenuContent side="top" align="end">
+              <DropdownMenuItem>Option 1</DropdownMenuItem>
+              <DropdownMenuItem>Option 2</DropdownMenuItem>
+              <DropdownMenuItem>Option 3</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Custom Trigger (asChild) -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">8. Custom Trigger (asChild)</h2>
+      <p class="text-sm text-muted-foreground">
+        Uses <code class="text-xs bg-muted px-1 py-0.5 rounded">asChild</code> on
+        the trigger with a custom-styled button inside.
+      </p>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            class="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors"
+          >
+            <CircleUserIcon class="size-4" />
+            Custom Trigger
+            <ChevronDownIcon class="size-3" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            <UserIcon class="size-4" />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <SettingsIcon class="size-4" />
+            Settings
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <LogOutIcon class="size-4" />
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+
+    <!-- 9. Event Handling -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">9. Event Handling</h2>
+      <p class="text-sm text-muted-foreground">
+        Listens for <code class="text-xs bg-muted px-1 py-0.5 rounded"
+          >dropdown-menu:change</code
+        > and
+        <code class="text-xs bg-muted px-1 py-0.5 rounded"
+          >dropdown-menu:select</code
+        > events, logging to the output below.
+      </p>
+      <DropdownMenu id="event-dropdown">
+        <DropdownMenuTrigger variant="outline">Actions</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem value="edit">Edit</DropdownMenuItem>
+          <DropdownMenuItem value="duplicate">Duplicate</DropdownMenuItem>
+          <DropdownMenuItem value="archive">Archive</DropdownMenuItem>
+          <DropdownMenuItem value="delete">Delete</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <EventLog id="event-output" />
+      <script>
+        {
+          const dropdown = document.getElementById("event-dropdown");
+
+          function log(msg: string) {
+            (document.getElementById("event-output") as any)?._log(msg);
+          }
+
+          dropdown?.addEventListener("dropdown-menu:change", (e: Event) => {
+            const { open } = (e as CustomEvent).detail;
+            log(`dropdown-menu:change → open: ${open}`);
+          });
+
+          dropdown?.addEventListener("dropdown-menu:select", (e: Event) => {
+            const { value } = (e as CustomEvent).detail;
+            log(`dropdown-menu:select → value: "${value}"`);
+          });
+        }
+      </script>
+    </div>
+
+    <!-- 10. Programmatic Control -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">10. Programmatic Control</h2>
+      <p class="text-sm text-muted-foreground">
+        Buttons that dispatch <code class="text-xs bg-muted px-1 py-0.5 rounded"
+          >dropdown-menu:set</code
+        > to open/close the menu externally.
+      </p>
+      <DropdownMenu id="programmatic-dropdown">
+        <DropdownMenuTrigger variant="outline"
+          >Controlled Menu</DropdownMenuTrigger
+        >
+        <DropdownMenuContent>
+          <DropdownMenuItem>Item One</DropdownMenuItem>
+          <DropdownMenuItem>Item Two</DropdownMenuItem>
+          <DropdownMenuItem>Item Three</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <div class="flex gap-2 mt-2">
+        <button
+          id="dm-open"
+          class="px-3 py-1.5 text-sm border rounded-lg hover:bg-muted"
+        >
+          Open
+        </button>
+        <button
+          id="dm-close"
+          class="px-3 py-1.5 text-sm border rounded-lg hover:bg-muted"
+        >
+          Close
+        </button>
+      </div>
+      <script>
+        {
+          const dropdown = document.getElementById("programmatic-dropdown");
+
+          document.getElementById("dm-open")?.addEventListener("click", () => {
+            dropdown?.dispatchEvent(
+              new CustomEvent("dropdown-menu:set", { detail: { open: true } }),
+            );
+          });
+
+          document.getElementById("dm-close")?.addEventListener("click", () => {
+            dropdown?.dispatchEvent(
+              new CustomEvent("dropdown-menu:set", { detail: { open: false } }),
+            );
+          });
+        }
+      </script>
+    </div>
+
+    <!-- 11. Complex Real-World Example -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">11. Complex Real-World Example</h2>
+      <p class="text-sm text-muted-foreground">
+        A "user account" dropdown combining avatar trigger, groups, labels,
+        icons, shortcuts, separator, and a destructive log-out item.
+      </p>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            class="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium shadow-xs hover:bg-muted transition-colors"
+          >
+            <CircleUserIcon class="size-5" />
+            <span>johndoe@example.com</span>
+            <ChevronDownIcon class="size-4 text-muted-foreground" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent class="w-56">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <UserIcon class="size-4" />
+              Profile
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <CreditCardIcon class="size-4" />
+              Billing
+              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <SettingsIcon class="size-4" />
+              Settings
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <KeyboardIcon class="size-4" />
+              Keyboard shortcuts
+              <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <UsersIcon class="size-4" />
+              Team
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <PlusIcon class="size-4" />
+              Invite users
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <LifeBuoyIcon class="size-4" />
+            Support
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled>
+            <CloudIcon class="size-4" />
+            API
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem class="text-destructive focus:text-destructive">
+            <LogOutIcon class="size-4" />
+            Log out
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+    <!-- 12. In a Dialog -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">12. In a Dialog</h2>
+      <p class="text-sm text-muted-foreground">
+        Dropdown menu inside a dialog — tests z-index stacking and focus
+        management.
+      </p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog with Dropdown</Button>
+        </DialogTrigger>
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Choose an Action</DialogTitle>
+            <DialogDescription>
+              Use the dropdown menu below to pick an action.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="py-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger variant="outline"
+                >Actions</DropdownMenuTrigger
+              >
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <UserIcon class="size-4" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <SettingsIcon class="size-4" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  class="text-destructive focus:text-destructive"
+                >
+                  <LogOutIcon class="size-4" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <DialogFooter>
+            <Button data-slot="dialog-close" variant="outline">Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  </section>
+</BattlefieldLayout>

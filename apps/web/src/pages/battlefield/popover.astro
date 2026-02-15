@@ -1,5 +1,6 @@
 ---
 import BattlefieldLayout from "@/components/BattlefieldLayout.astro";
+import EventLog from "@/components/EventLog.astro";
 import { Label } from "@bejamas/ui/components/label";
 import { Input } from "@bejamas/ui/components/input";
 import {
@@ -18,6 +19,15 @@ import {
   PopoverTitle,
   PopoverDescription,
 } from "@bejamas/ui/components/popover";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@bejamas/ui/components/dialog";
 ---
 
 <BattlefieldLayout>
@@ -51,9 +61,21 @@ import {
         opens.
       </p>
       <div class="flex flex-wrap items-center gap-8 py-2">
-        <Popover side="top">
+        <Popover>
+          <PopoverTrigger variant="outline">Left</PopoverTrigger>
+          <PopoverContent side="left">
+            <PopoverHeader>
+              <PopoverTitle>Left Side</PopoverTitle>
+              <PopoverDescription
+                >Appears to the left of the trigger.</PopoverDescription
+              >
+            </PopoverHeader>
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
           <PopoverTrigger variant="outline">Top</PopoverTrigger>
-          <PopoverContent>
+          <PopoverContent side="top">
             <PopoverHeader>
               <PopoverTitle>Top Side</PopoverTitle>
               <PopoverDescription>Appears above the trigger.</PopoverDescription
@@ -62,21 +84,9 @@ import {
           </PopoverContent>
         </Popover>
 
-        <Popover side="right">
-          <PopoverTrigger variant="outline">Right</PopoverTrigger>
-          <PopoverContent>
-            <PopoverHeader>
-              <PopoverTitle>Right Side</PopoverTitle>
-              <PopoverDescription
-                >Appears to the right of the trigger.</PopoverDescription
-              >
-            </PopoverHeader>
-          </PopoverContent>
-        </Popover>
-
-        <Popover side="bottom">
+        <Popover>
           <PopoverTrigger variant="outline">Bottom</PopoverTrigger>
-          <PopoverContent>
+          <PopoverContent side="bottom">
             <PopoverHeader>
               <PopoverTitle>Bottom Side</PopoverTitle>
               <PopoverDescription
@@ -86,13 +96,13 @@ import {
           </PopoverContent>
         </Popover>
 
-        <Popover side="left">
-          <PopoverTrigger variant="outline">Left</PopoverTrigger>
-          <PopoverContent>
+        <Popover>
+          <PopoverTrigger variant="outline">Right</PopoverTrigger>
+          <PopoverContent side="right">
             <PopoverHeader>
-              <PopoverTitle>Left Side</PopoverTitle>
+              <PopoverTitle>Right Side</PopoverTitle>
               <PopoverDescription
-                >Appears to the left of the trigger.</PopoverDescription
+                >Appears to the right of the trigger.</PopoverDescription
               >
             </PopoverHeader>
           </PopoverContent>
@@ -108,9 +118,9 @@ import {
         with <code>PopoverContent</code> when needed.
       </p>
       <div class="flex flex-wrap gap-8">
-        <Popover side="bottom" align="start">
+        <Popover>
           <PopoverTrigger variant="outline">Start</PopoverTrigger>
-          <PopoverContent>
+          <PopoverContent side="bottom" align="start">
             <PopoverHeader>
               <PopoverTitle>Start Aligned</PopoverTitle>
               <PopoverDescription>Root alignment is start.</PopoverDescription>
@@ -118,9 +128,9 @@ import {
           </PopoverContent>
         </Popover>
 
-        <Popover side="bottom" align="center">
+        <Popover>
           <PopoverTrigger variant="outline">Center</PopoverTrigger>
-          <PopoverContent>
+          <PopoverContent side="bottom" align="center">
             <PopoverHeader>
               <PopoverTitle>Center Aligned</PopoverTitle>
               <PopoverDescription>Root alignment is center.</PopoverDescription>
@@ -128,9 +138,9 @@ import {
           </PopoverContent>
         </Popover>
 
-        <Popover side="bottom" align="end">
+        <Popover>
           <PopoverTrigger variant="outline">End</PopoverTrigger>
-          <PopoverContent>
+          <PopoverContent side="bottom" align="end">
             <PopoverHeader>
               <PopoverTitle>End Aligned</PopoverTitle>
               <PopoverDescription>Root alignment is end.</PopoverDescription>
@@ -139,11 +149,11 @@ import {
         </Popover>
       </div>
 
-      <Popover side="bottom" align="start">
+      <Popover>
         <PopoverTrigger variant="outline">
           Root bottom/start, content top/end
         </PopoverTrigger>
-        <PopoverContent side="top" align="end" class="w-80">
+        <PopoverContent side="bottom" align="start" class="w-80">
           <PopoverHeader>
             <PopoverTitle>Content Overrides Root</PopoverTitle>
             <PopoverDescription>
@@ -243,19 +253,60 @@ import {
           </PopoverHeader>
         </PopoverContent>
       </Popover>
+      <EventLog id="popover-event-output" />
       <script>
-        const eventPopover = document.getElementById("event-popover");
+        {
+          const eventPopover = document.getElementById("event-popover");
 
-        eventPopover?.addEventListener("popover:change", (e: Event) => {
-          const detail = (e as CustomEvent).detail;
-          console.log("popover:change event:", detail);
-        });
+          function log(msg: string) {
+            (document.getElementById("popover-event-output") as any)?._log(msg);
+          }
+
+          eventPopover?.addEventListener("popover:change", (e: Event) => {
+            const { open } = (e as CustomEvent).detail;
+            log(`popover:change → open: ${open}`);
+          });
+        }
       </script>
     </div>
 
-    <!-- 7. Programmatic Control -->
+    <!-- 7. In a Dialog -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">7. Programmatic Control</h2>
+      <h2 class="text-lg font-semibold">7. In a Dialog</h2>
+      <p class="text-sm text-muted-foreground">
+        Popover inside a dialog — tests z-index stacking and focus management
+      </p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog with Popover</Button>
+        </DialogTrigger>
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Dialog with Popover</DialogTitle>
+            <DialogDescription>
+              Click the button below to open a popover inside this dialog.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="py-4">
+            <Popover>
+              <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+              <PopoverContent>
+                <PopoverHeader>
+                  <PopoverTitle>Nested Popover</PopoverTitle>
+                  <PopoverDescription>
+                    This popover is rendered inside a dialog.
+                  </PopoverDescription>
+                </PopoverHeader>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+
+    <!-- 8. Programmatic Control -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">8. Programmatic Control</h2>
       <p class="text-sm text-muted-foreground">
         Buttons to open and close programmatically
       </p>
