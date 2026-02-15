@@ -6,8 +6,8 @@
  *
  * @preview
  *
- * <Toggle aria-label="Toggle bookmark" size="sm" variant="outline">
- *   <BookmarkIcon />
+ * <Toggle aria-label="Toggle bookmark" variant="outline">
+ *   <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />
  *   Bookmark
  * </Toggle>
  *
@@ -118,7 +118,7 @@ const toggleVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 type ToggleVariantProps = VariantProps<typeof toggleVariants>;
@@ -153,5 +153,7 @@ const {
 
 <script>
   import { createToggle } from "@data-slot/toggle";
-  document.querySelectorAll('[data-slot="toggle"]').forEach((el) => createToggle(el));
+  document
+    .querySelectorAll('[data-slot="toggle"]')
+    .forEach((el) => createToggle(el));
 </script>

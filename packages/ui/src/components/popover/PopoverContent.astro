@@ -5,6 +5,7 @@ import { cn } from "@bejamas/ui/lib/utils";
 type Props = {
   side?: "top" | "bottom" | "left" | "right";
   align?: "start" | "center" | "end";
+  alignOffset?: number;
   sideOffset?: number;
   class?: string;
 } & HTMLAttributes<"div">;
@@ -13,6 +14,7 @@ const {
   side,
   align,
   sideOffset = 4,
+  alignOffset = 0,
   class: className = "",
   ...rest
 } = Astro.props as Props;
@@ -22,14 +24,15 @@ const {
 <div
   {...rest}
   data-slot="popover-content"
-  data-side={side}
   data-align={align}
+  data-align-offset={alignOffset}
+  data-side={side}
   data-side-offset={sideOffset}
   style={`--side-offset: ${sideOffset}px`}
   class={cn(
     "group/popover-content",
     "z-50",
-    "hidden data-[state=open]:block [transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
+    "hidden data-[state=open]:block duration-150 ease transition-discrete starting:data-[state=closed]:block",
     "[--origin-x:center] [--origin-y:top] data-[side=top]:[--origin-y:bottom]",
     "data-[align=start]:[--origin-x:left] data-[align=end]:[--origin-x:right]",
     className,
@@ -46,8 +49,7 @@ const {
       "group-data-[state=closed]/popover-content:zoom-out-95 group-data-[state=open]/popover-content:zoom-in-95",
       "group-data-[side=bottom]/popover-content:slide-in-from-top-2 group-data-[side=top]/popover-content:slide-in-from-bottom-2",
       "group-data-[side=left]/popover-content:slide-in-from-right-2 group-data-[side=right]/popover-content:slide-in-from-left-2",
-      "[transform-origin:var(--origin-x)_var(--origin-y)]",
-      "[--tw-animation-fill-mode:both]",
+      "origin-[var(--origin-x)_var(--origin-y)]",
     )}
   >
     <slot />

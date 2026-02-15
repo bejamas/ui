@@ -1,5 +1,6 @@
 ---
 import BattlefieldLayout from "@/components/BattlefieldLayout.astro";
+import EventLog from "@/components/EventLog.astro";
 import { Toggle } from "@bejamas/ui/components/toggle";
 import {
   BoldIcon,
@@ -131,19 +132,20 @@ import {
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">Icon Fill on Pressed State</h2>
       <p class="text-sm text-muted-foreground">
-        Using <code>group-data-[state=on]/toggle:fill-foreground</code> to fill
-        icons when pressed
+        Using <code>group-aria-pressed/toggle:fill-foreground</code> or <code
+          >group-data-[state=on]/toggle:fill-foreground</code
+        > to fill icons when pressed
       </p>
       <div class="flex items-center gap-2">
         <Toggle variant="outline" aria-label="Toggle bookmark">
-          <BookmarkIcon class="group-data-[state=on]/toggle:fill-foreground" />
+          <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />
         </Toggle>
         <Toggle
           variant="outline"
           defaultPressed
           aria-label="Toggle bookmark filled"
         >
-          <BookmarkIcon class="group-data-[state=on]/toggle:fill-foreground" />
+          <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />
         </Toggle>
       </div>
     </div>
@@ -152,19 +154,26 @@ import {
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">Event Testing</h2>
       <p class="text-sm text-muted-foreground">
-        Click the toggle and check the console for toggle:change events
+        Click the toggle and check the output for toggle:change events
       </p>
       <Toggle id="event-toggle" variant="outline" aria-label="Toggle test">
         <BoldIcon />
         Click me
       </Toggle>
+      <EventLog id="toggle-event-output" />
       <script>
-        document
-          .getElementById("event-toggle")
-          ?.addEventListener("toggle:change", (e: Event) => {
-            const detail = (e as CustomEvent).detail;
-            console.log("toggle:change event:", detail);
-          });
+        {
+          function log(msg: string) {
+            (document.getElementById("toggle-event-output") as any)?._log(msg);
+          }
+
+          document
+            .getElementById("event-toggle")
+            ?.addEventListener("toggle:change", (e: Event) => {
+              const { pressed } = (e as CustomEvent).detail;
+              log(`toggle:change → pressed: ${pressed}`);
+            });
+        }
       </script>
     </div>
 
@@ -196,14 +205,14 @@ import {
         const toggle = document.getElementById("programmatic-toggle");
         document.getElementById("set-on-btn")?.addEventListener("click", () => {
           toggle?.dispatchEvent(
-            new CustomEvent("toggle:set", { detail: { value: true } })
+            new CustomEvent("toggle:set", { detail: { value: true } }),
           );
         });
         document
           .getElementById("set-off-btn")
           ?.addEventListener("click", () => {
             toggle?.dispatchEvent(
-              new CustomEvent("toggle:set", { detail: { value: false } })
+              new CustomEvent("toggle:set", { detail: { value: false } }),
             );
           });
       </script>

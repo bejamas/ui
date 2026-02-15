@@ -5,22 +5,15 @@ import { cn } from "@bejamas/ui/lib/utils";
 type Props = {
   class?: string;
   value?: string;
-  align?: "start" | "center" | "end";
 } & HTMLAttributes<"li">;
 
-const {
-  class: className = "",
-  value,
-  align,
-  ...rest
-} = Astro.props as Props;
+const { class: className = "", value, ...rest } = Astro.props as Props;
 ---
 
 <li
   {...rest}
   data-slot="navigation-menu-item"
   data-value={value}
-  data-align={align}
   class={cn("static", className)}
 >
   <slot />

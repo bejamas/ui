@@ -13,8 +13,8 @@ const { class: className = "", ...rest } = Astro.props as Props;
   hidden
   data-slot="dialog-overlay"
   class={cn(
-    "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-background/50 backdrop-blur-sm",
-    "[transition:display_200ms_allow-discrete] [--tw-animation-fill-mode:both]",
+    "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 bg-background/50 backdrop-blur-sm",
+    "duration-300 transition-discrete [--tw-animation-fill-mode:both]",
     className,
   )}
   {...rest}

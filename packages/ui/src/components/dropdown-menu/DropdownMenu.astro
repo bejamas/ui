@@ -162,21 +162,15 @@ import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
-  align?: "start" | "center" | "end";
   class?: string;
 } & HTMLAttributes<"div">;
 
-const {
-  align = "start",
-  class: className = "",
-  ...rest
-} = Astro.props as Props;
+const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
 <div
   {...rest}
   data-slot="dropdown-menu"
-  data-align={align}
   class={cn("relative inline-block", className)}
 >
   <slot />
@@ -186,5 +180,5 @@ const {
   import { createDropdownMenu } from "@data-slot/dropdown-menu";
   document
     .querySelectorAll('[data-slot="dropdown-menu"]')
-    .forEach((el) => createDropdownMenu(el, { align: el.dataset.align }));
+    .forEach((el) => createDropdownMenu(el));
 </script>

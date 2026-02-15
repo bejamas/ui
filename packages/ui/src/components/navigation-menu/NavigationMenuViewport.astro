@@ -10,13 +10,25 @@ const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
 <div
-  {...rest}
-  data-slot="navigation-menu-viewport"
+  data-slot="navigation-menu-viewport-positioner"
   class={cn(
-    "absolute bg-popover border data-instant:transition-opacity duration-150 top-full rounded-lg shadow-lg overflow-hidden mt-2 opacity-0 pointer-events-none data-[state=open]:opacity-100 data-[state=open]:pointer-events-auto",
-    "translate-x-[var(--viewport-left, 0)]",
-    className,
+    "isolate z-50 transition-[left,top] duration-250 ease data-ending-style:opacity-0",
   )}
-  style="width: var(--viewport-width, 0); height: var(--viewport-height, 0);"
 >
+  <div
+    {...rest}
+    data-slot="navigation-menu-viewport"
+    class={cn(
+      "bg-popover shadow-lg rounded-lg outline outline-border overflow-clip",
+      "w-(--viewport-width,0) h-(--viewport-height,0)",
+      "origin-(--transform-origin)",
+      "duration-250 ease data-instant:transition-[scale,opacity] transition-[width,height,transform,scale,opacity]",
+      "data-[state=open]:opacity-100 data-[state=open]:pointer-events-auto",
+      "data-instant:data-[state=open]:animate-in data-instant:data-[state=open]:fade-in data-instant:data-[state=open]:zoom-in-95",
+      "data-ending-style:opacity-0 data-ending-style:scale-90",
+      "will-change-[width,height,transform]",
+      className,
+    )}
+  >
+  </div>
 </div>

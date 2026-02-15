@@ -115,7 +115,7 @@
  *
  * ### Side Variants
  *
- * <div class="grid grid-cols-2 gap-4">
+ * <div class="flex gap-4 items-center justify-center py-8">
  *   <Popover side="left">
  *     <PopoverTrigger variant="outline">Left</PopoverTrigger>
  *     <PopoverContent>
@@ -192,26 +192,13 @@ import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
-  side?: "top" | "bottom" | "left" | "right";
-  align?: "start" | "center" | "end";
   class?: string;
 } & HTMLAttributes<"div">;
 
-const {
-  side = "bottom",
-  align = "center",
-  class: className = "",
-  ...rest
-} = Astro.props as Props;
+const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<div
-  {...rest}
-  data-slot="popover"
-  data-side={side}
-  data-align={align}
-  class={cn("inline-block", className)}
->
+<div {...rest} data-slot="popover" class={cn("inline-block", className)}>
   <slot />
 </div>
 

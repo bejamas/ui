@@ -4,15 +4,15 @@ import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
   class?: string;
-} & HTMLAttributes<"ul">;
+} & HTMLAttributes<"div">;
 
 const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<ul
+<div
   {...rest}
-  data-slot="navigation-menu-list"
-  class={cn("flex list-none", className)}
+  data-slot="combobox-label"
+  class={cn("text-muted-foreground px-2 py-1.5 text-xs", className)}
 >
   <slot />
-</ul>
+</div>

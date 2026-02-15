@@ -1,5 +1,6 @@
 ---
 import BattlefieldLayout from "@/components/BattlefieldLayout.astro";
+import EventLog from "@/components/EventLog.astro";
 import { Label } from "@bejamas/ui/components/label";
 import { Button } from "@bejamas/ui/components/button";
 import {
@@ -12,6 +13,15 @@ import {
   SelectLabel,
   SelectSeparator,
 } from "@bejamas/ui/components/select";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@bejamas/ui/components/dialog";
 ---
 
 <BattlefieldLayout>
@@ -363,18 +373,25 @@ import {
           <SelectItem value="option3">Option 3</SelectItem>
         </SelectContent>
       </Select>
+      <EventLog id="select-event-output" />
       <script>
-        const eventSelect = document.getElementById("event-select");
+        {
+          const eventSelect = document.getElementById("event-select");
 
-        eventSelect?.addEventListener("select:change", (e: Event) => {
-          const detail = (e as CustomEvent).detail;
-          console.log("select:change event:", detail);
-        });
+          function log(msg: string) {
+            (document.getElementById("select-event-output") as any)?._log(msg);
+          }
 
-        eventSelect?.addEventListener("select:open-change", (e: Event) => {
-          const detail = (e as CustomEvent).detail;
-          console.log("select:open-change event:", detail);
-        });
+          eventSelect?.addEventListener("select:change", (e: Event) => {
+            const { value } = (e as CustomEvent).detail;
+            log(`select:change → value: "${value}"`);
+          });
+
+          eventSelect?.addEventListener("select:open-change", (e: Event) => {
+            const { open } = (e as CustomEvent).detail;
+            log(`select:open-change → open: ${open}`);
+          });
+        }
       </script>
     </div>
 
@@ -471,9 +488,63 @@ import {
       </script>
     </div>
 
-    <!-- 12. Form Integration -->
+    <!-- 12. In a Dialog -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">12. Form Integration</h2>
+      <h2 class="text-lg font-semibold">12. In a Dialog</h2>
+      <p class="text-sm text-muted-foreground">
+        Select inside a dialog — tests z-index stacking and focus management
+      </p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog with Select</Button>
+        </DialogTrigger>
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Preferences</DialogTitle>
+            <DialogDescription>
+              Configure your preferences using the selects below.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="space-y-4 py-4">
+            <div class="space-y-2">
+              <Label>Favorite Fruit</Label>
+              <Select class="w-full">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a fruit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="apple">Apple</SelectItem>
+                  <SelectItem value="banana">Banana</SelectItem>
+                  <SelectItem value="cherry">Cherry</SelectItem>
+                  <SelectItem value="grape">Grape</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div class="space-y-2">
+              <Label>Priority</Label>
+              <Select class="w-full">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button data-slot="dialog-close" variant="outline">Cancel</Button>
+            <Button data-slot="dialog-close">Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+
+    <!-- 13. Form Integration -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">13. Form Integration</h2>
       <p class="text-sm text-muted-foreground">Within a form with submit</p>
       <form
         id="test-form"

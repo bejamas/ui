@@ -238,7 +238,7 @@ const options = [...filteredDefaultOptions, ...customOptions];
             <Check id="check-icon" class="size-3.5 hidden" />
             Copy page
           </Button>
-          <DropdownMenu align="end">
+          <DropdownMenu>
             <Button
               variant="outline"
               class="rounded-l-none border-l-0 px-1"
@@ -247,7 +247,7 @@ const options = [...filteredDefaultOptions, ...customOptions];
             >
               <ChevronDown class="size-4" />
             </Button>
-            <DropdownMenuContent>
+            <DropdownMenuContent align="end">
               {options.map((option) => (
                 <DropdownMenuItem class="p-0">
                   <Button
