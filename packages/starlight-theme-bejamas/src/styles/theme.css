@@ -471,6 +471,10 @@
     z-index: 1;
   }
 
+  .ec-collapse--collapsed .ec-collapse__content {
+    max-height: 98px;
+  }
+
   .ec-collapse.ec-collapse--collapsed::after {
     content: "";
     --blur: 4px;
