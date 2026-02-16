@@ -10,9 +10,9 @@
   <a href="https://github.com/nicholascostadev/bejamas-ui/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/bejamas.svg?style=flat&colorA=18181b&colorB=28CF8D" alt="License"></a>
 </p>
 
-# bejamas/ui
+# Astro UI library
 
-Astro UI components you copy into your project. Zero-JS by default, built on Tailwind CSS v4, following the shadcn/ui approach.
+`bejamas/ui`- Astro UI components you copy into your project. Zero-JS by default, built on Tailwind CSS v4, following the shadcn/ui approach.
 
 ## Features
 
