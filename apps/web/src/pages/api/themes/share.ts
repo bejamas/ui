@@ -1,6 +1,8 @@
 import type { APIRoute } from "astro";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
 import { saveSharedTheme, themeExists, type SharedTheme } from "../../../lib/redis";
+
+const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
 
 export const prerender = false;
 
