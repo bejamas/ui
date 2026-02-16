@@ -13,6 +13,8 @@ import {
   ComboboxGroup,
   ComboboxLabel,
   ComboboxSeparator,
+  ComboboxTrigger,
+  ComboboxValue,
 } from "@bejamas/ui/components/combobox";
 import {
   Item,
@@ -819,74 +821,36 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         Button trigger with ComboboxInput inside ComboboxContent — like a
         searchable select
       </p>
-      <Combobox id="popup-combobox" class="w-[250px]">
-        <button
-          data-slot="combobox-trigger"
-          type="button"
-          class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-        >
-          <span id="popup-combobox-value" class="text-muted-foreground truncate"
-            >Select country...</span
-          >
-          <ChevronDownIcon class="size-4 shrink-0 opacity-50" />
-        </button>
+      <Combobox class="w-[250px]">
+        <ComboboxTrigger>
+          <ComboboxValue placeholder="Select country..." />
+        </ComboboxTrigger>
         <ComboboxContent>
-          <div class="flex items-center border-b px-3">
-            <SearchIcon class="size-4 shrink-0 opacity-50" />
-            <input
-              data-slot="combobox-input"
-              placeholder="Search countries..."
-              autocomplete="off"
-              class="flex h-9 w-full bg-transparent py-3 pl-2 text-sm outline-none placeholder:text-muted-foreground"
-            />
-          </div>
+          <ComboboxInput showTrigger={false} placeholder="Search countries..." class="m-2 mb-0" />
           <ComboboxList>
             <ComboboxEmpty>No countries found.</ComboboxEmpty>
-            <ComboboxItem value="argentina">Argentina</ComboboxItem>
-            <ComboboxItem value="australia">Australia</ComboboxItem>
-            <ComboboxItem value="brazil">Brazil</ComboboxItem>
-            <ComboboxItem value="canada">Canada</ComboboxItem>
-            <ComboboxItem value="china">China</ComboboxItem>
-            <ComboboxItem value="colombia">Colombia</ComboboxItem>
-            <ComboboxItem value="egypt">Egypt</ComboboxItem>
-            <ComboboxItem value="france">France</ComboboxItem>
-            <ComboboxItem value="germany">Germany</ComboboxItem>
-            <ComboboxItem value="italy">Italy</ComboboxItem>
-            <ComboboxItem value="japan">Japan</ComboboxItem>
-            <ComboboxItem value="kenya">Kenya</ComboboxItem>
-            <ComboboxItem value="mexico">Mexico</ComboboxItem>
-            <ComboboxItem value="new-zealand">New Zealand</ComboboxItem>
-            <ComboboxItem value="nigeria">Nigeria</ComboboxItem>
-            <ComboboxItem value="south-africa">South Africa</ComboboxItem>
-            <ComboboxItem value="south-korea">South Korea</ComboboxItem>
-            <ComboboxItem value="united-kingdom">United Kingdom</ComboboxItem>
-            <ComboboxItem value="united-states">United States</ComboboxItem>
+            <ComboboxItem value="argentina" label="Argentina">Argentina</ComboboxItem>
+            <ComboboxItem value="australia" label="Australia">Australia</ComboboxItem>
+            <ComboboxItem value="brazil" label="Brazil">Brazil</ComboboxItem>
+            <ComboboxItem value="canada" label="Canada">Canada</ComboboxItem>
+            <ComboboxItem value="china" label="China">China</ComboboxItem>
+            <ComboboxItem value="colombia" label="Colombia">Colombia</ComboboxItem>
+            <ComboboxItem value="egypt" label="Egypt">Egypt</ComboboxItem>
+            <ComboboxItem value="france" label="France">France</ComboboxItem>
+            <ComboboxItem value="germany" label="Germany">Germany</ComboboxItem>
+            <ComboboxItem value="italy" label="Italy">Italy</ComboboxItem>
+            <ComboboxItem value="japan" label="Japan">Japan</ComboboxItem>
+            <ComboboxItem value="kenya" label="Kenya">Kenya</ComboboxItem>
+            <ComboboxItem value="mexico" label="Mexico">Mexico</ComboboxItem>
+            <ComboboxItem value="new-zealand" label="New Zealand">New Zealand</ComboboxItem>
+            <ComboboxItem value="nigeria" label="Nigeria">Nigeria</ComboboxItem>
+            <ComboboxItem value="south-africa" label="South Africa">South Africa</ComboboxItem>
+            <ComboboxItem value="south-korea" label="South Korea">South Korea</ComboboxItem>
+            <ComboboxItem value="united-kingdom" label="United Kingdom">United Kingdom</ComboboxItem>
+            <ComboboxItem value="united-states" label="United States">United States</ComboboxItem>
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-      <script>
-        {
-          const root = document.getElementById("popup-combobox");
-          const valueEl = document.getElementById("popup-combobox-value");
-
-          root?.addEventListener("combobox:change", (e: Event) => {
-            const { value } = (e as CustomEvent).detail;
-            if (value && valueEl) {
-              const item = root.querySelector(
-                `[data-slot="combobox-item"][data-value="${CSS.escape(value)}"]`,
-              );
-              const text = item
-                ?.querySelector('[data-slot="combobox-item-text"]')
-                ?.textContent?.trim();
-              valueEl.textContent = text || value;
-              valueEl.classList.remove("text-muted-foreground");
-            } else if (valueEl) {
-              valueEl.textContent = "Select country...";
-              valueEl.classList.add("text-muted-foreground");
-            }
-          });
-        }
-      </script>
     </div>
 
     <!-- 18. Form Integration -->

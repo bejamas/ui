@@ -5,12 +5,14 @@ import CheckIcon from "@lucide/astro/icons/check";
 
 type Props = {
   value: string;
+  label?: string;
   disabled?: boolean;
   class?: string;
 } & HTMLAttributes<"div">;
 
 const {
   value,
+  label,
   disabled = false,
   class: className = "",
   ...rest
@@ -21,6 +23,7 @@ const {
   {...rest}
   data-slot="combobox-item"
   data-value={value}
+  data-label={label}
   data-disabled={disabled ? "" : undefined}
   class={cn(
     "group/item relative flex w-full cursor-default select-none items-center gap-1.5 rounded-md py-1.5 pr-8 pl-2 text-sm outline-hidden",

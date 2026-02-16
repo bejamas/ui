@@ -7,3 +7,5 @@ export { default as ComboboxGroup } from "./ComboboxGroup.astro";
 export { default as ComboboxLabel } from "./ComboboxLabel.astro";
 export { default as ComboboxSeparator } from "./ComboboxSeparator.astro";
 export { default as ComboboxEmpty } from "./ComboboxEmpty.astro";
+export { default as ComboboxTrigger } from "./ComboboxTrigger.astro";
+export { default as ComboboxValue } from "./ComboboxValue.astro";

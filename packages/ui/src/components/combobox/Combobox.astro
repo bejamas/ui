@@ -139,6 +139,8 @@
  *
  * ### Clear Button
  *
+ * Use the `showClear` prop to show a clear button in the input.
+ *
  * <Combobox class="w-[200px]">
  *   <ComboboxInput placeholder="Select framework..." showClear />
  *   <ComboboxContent>
@@ -153,6 +155,8 @@
  * </Combobox>
  *
  * ### Groups
+ *
+ * Use the `ComboboxGroup` and `ComboboxLabel` to group items and add a label to the group.
  *
  * <Combobox class="w-[200px]">
  *   <ComboboxInput placeholder="Select framework..." />
@@ -177,6 +181,8 @@
  *
  * ### Invalid
  *
+ * Use the `aria-invalid="true"` attribute on the `ComboboxInput` to mark the combobox as invalid.
+ *
  * <Combobox class="w-[200px]">
  *   <ComboboxInput placeholder="Select framework..." aria-invalid="true" />
  *   <ComboboxContent>
@@ -189,12 +195,52 @@
  *
  * ### Disabled
  *
+ * Use the `disabled` prop to disable the combobox.
+ *
  * <Combobox disabled class="w-[200px]">
  *   <ComboboxInput placeholder="Select framework..." disabled />
  *   <ComboboxContent>
  *     <ComboboxList>
  *       <ComboboxItem value="astro">Astro</ComboboxItem>
  *       <ComboboxItem value="next">Next.js</ComboboxItem>
+ *     </ComboboxList>
+ *   </ComboboxContent>
+ * </Combobox>
+ *
+ * ### Auto Highlight
+ *
+ * Use the `autoHighlight` prop to automatically highlight the first item on filter.
+ *
+ * <Combobox autoHighlight class="w-[200px]">
+ *   <ComboboxInput placeholder="Start typing..." />
+ *   <ComboboxContent>
+ *     <ComboboxList>
+ *       <ComboboxEmpty>No results found.</ComboboxEmpty>
+ *       <ComboboxItem value="astro">Astro</ComboboxItem>
+ *       <ComboboxItem value="next">Next.js</ComboboxItem>
+ *       <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+ *       <ComboboxItem value="remix">Remix</ComboboxItem>
+ *     </ComboboxList>
+ *   </ComboboxContent>
+ * </Combobox>
+ *
+ * ### Search in Popup
+ *
+ * You can trigger the combobox from a button or any other component by using the render prop. Move the `ComboboxInput` inside the `ComboboxContent`.
+ *
+ * <Combobox class="w-[200px]">
+ *   <ComboboxTrigger>
+ *     <ComboboxValue placeholder="Select country..." />
+ *   </ComboboxTrigger>
+ *   <ComboboxContent>
+ *     <ComboboxInput showTrigger={false} placeholder="Search countries..." />
+ *     <ComboboxList>
+ *       <ComboboxEmpty>No countries found.</ComboboxEmpty>
+ *       <ComboboxItem value="brazil" label="Brazil">Brazil</ComboboxItem>
+ *       <ComboboxItem value="canada" label="Canada">Canada</ComboboxItem>
+ *       <ComboboxItem value="france" label="France">France</ComboboxItem>
+ *       <ComboboxItem value="germany" label="Germany">Germany</ComboboxItem>
+ *       <ComboboxItem value="japan" label="Japan">Japan</ComboboxItem>
  *     </ComboboxList>
  *   </ComboboxContent>
  * </Combobox>
@@ -247,8 +293,12 @@ const {
   data-placeholder={placeholder}
   data-disabled={disabled ? "" : undefined}
   data-required={required ? "" : undefined}
-  data-open-on-focus={openOnFocus !== undefined ? String(openOnFocus) : undefined}
-  data-auto-highlight={autoHighlight !== undefined ? String(autoHighlight) : undefined}
+  data-open-on-focus={openOnFocus !== undefined
+    ? String(openOnFocus)
+    : undefined}
+  data-auto-highlight={autoHighlight !== undefined
+    ? String(autoHighlight)
+    : undefined}
   data-side={side}
   data-align={align}
   data-side-offset={sideOffset}
