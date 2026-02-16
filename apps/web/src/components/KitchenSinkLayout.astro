@@ -13,14 +13,25 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 const { theme = "current-theme" } = Astro.props;
 
 const pages = [
+  { href: "/kitchen-sink/accordion", label: "Accordion" },
+  { href: "/kitchen-sink/alert", label: "Alert" },
+  { href: "/kitchen-sink/badge", label: "Badge" },
+  { href: "/kitchen-sink/button", label: "Button" },
+  { href: "/kitchen-sink/card", label: "Card" },
+  { href: "/kitchen-sink/checkbox", label: "Checkbox" },
   { href: "/kitchen-sink/combobox", label: "Combobox" },
+  { href: "/kitchen-sink/dialog", label: "Dialog" },
   { href: "/kitchen-sink/dropdown-menu", label: "Dropdown Menu" },
+  { href: "/kitchen-sink/input", label: "Input" },
   { href: "/kitchen-sink/navigation-menu", label: "Navigation Menu" },
   { href: "/kitchen-sink/popover", label: "Popover" },
   { href: "/kitchen-sink/select", label: "Select" },
   { href: "/kitchen-sink/slider", label: "Slider" },
+  { href: "/kitchen-sink/switch", label: "Switch" },
+  { href: "/kitchen-sink/tabs", label: "Tabs" },
   { href: "/kitchen-sink/toggle", label: "Toggle" },
   { href: "/kitchen-sink/toggle-group", label: "Toggle Group" },
+  { href: "/kitchen-sink/tooltip", label: "Tooltip" },
 ];
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "");

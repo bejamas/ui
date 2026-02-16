@@ -1,5 +1,6 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import {
   Slider,
   SliderTrack,
@@ -11,10 +12,9 @@ import { Label } from "@bejamas/ui/components/label";
 
 <KitchenSinkLayout>
   <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
-    <h1 class="text-3xl font-bold mb-10">Slider Component Test</h1>
+    <h1 class="text-3xl font-bold mb-10">Slider</h1>
 
-    <!-- Basic Slider -->
-    <div class="space-y-4">
+    <KitchenSinkSection title="Basic Slider">
       <Label>Basic Slider (default value: 50)</Label>
       <Slider class="w-full" defaultValue={[50]} max={100}>
         <SliderTrack>
@@ -22,10 +22,9 @@ import { Label } from "@bejamas/ui/components/label";
         </SliderTrack>
         <SliderThumb />
       </Slider>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- Range Slider (Two Thumbs) -->
-    <div class="space-y-4">
+    <KitchenSinkSection title="Range Slider">
       <Label>Range Slider (values: 25, 75)</Label>
       <Slider class="w-full" defaultValue={[25, 75]} max={100}>
         <SliderTrack>
@@ -34,10 +33,9 @@ import { Label } from "@bejamas/ui/components/label";
         <SliderThumb />
         <SliderThumb />
       </Slider>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- Multiple Thumbs -->
-    <div class="space-y-4">
+    <KitchenSinkSection title="Multiple Thumbs">
       <Label>Multiple Thumbs (values: 20, 40, 60, 80)</Label>
       <Slider class="w-full" defaultValue={[20, 40, 60, 80]} max={100}>
         <SliderTrack>
@@ -48,10 +46,9 @@ import { Label } from "@bejamas/ui/components/label";
         <SliderThumb />
         <SliderThumb />
       </Slider>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- Vertical Slider -->
-    <div class="space-y-4">
+    <KitchenSinkSection title="Vertical Slider">
       <Label>Vertical Slider</Label>
       <div class="h-48">
         <Slider
@@ -66,10 +63,9 @@ import { Label } from "@bejamas/ui/components/label";
           <SliderThumb />
         </Slider>
       </div>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- Disabled Slider -->
-    <div class="space-y-4">
+    <KitchenSinkSection title="Disabled Slider">
       <Label>Disabled Slider</Label>
       <Slider class="w-full" defaultValue={[50]} max={100} disabled>
         <SliderTrack>
@@ -77,10 +73,9 @@ import { Label } from "@bejamas/ui/components/label";
         </SliderTrack>
         <SliderThumb />
       </Slider>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- Step Slider -->
-    <div class="space-y-4">
+    <KitchenSinkSection title="Step Slider">
       <Label>Step Slider (step: 10)</Label>
       <Slider class="w-full" defaultValue={[50]} max={100} step={10}>
         <SliderTrack>
@@ -88,10 +83,9 @@ import { Label } from "@bejamas/ui/components/label";
         </SliderTrack>
         <SliderThumb />
       </Slider>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- Custom Min/Max -->
-    <div class="space-y-4">
+    <KitchenSinkSection title="Custom Min/Max">
       <Label>Custom Min/Max (min: -50, max: 50, value: 0)</Label>
       <Slider class="w-full" defaultValue={[0]} min={-50} max={50}>
         <SliderTrack>
@@ -99,6 +93,6 @@ import { Label } from "@bejamas/ui/components/label";
         </SliderTrack>
         <SliderThumb />
       </Slider>
-    </div>
+    </KitchenSinkSection>
   </section>
 </KitchenSinkLayout>

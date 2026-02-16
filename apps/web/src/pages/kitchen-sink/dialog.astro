@@ -1,0 +1,257 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@bejamas/ui/components/dialog";
+import { Button } from "@bejamas/ui/components/button";
+import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/ui/components/label";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Dialog</h1>
+
+    <KitchenSinkSection title="Basic">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Basic Dialog</DialogTitle>
+            <DialogDescription>
+              This is a basic dialog with a title and description.
+            </DialogDescription>
+          </DialogHeader>
+          <p class="text-sm text-muted-foreground">
+            Dialog content goes here. You can put any content inside a dialog.
+          </p>
+          <DialogFooter>
+            <Button data-slot="dialog-close">Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Form">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Edit Profile</Button>
+        </DialogTrigger>
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Profile</DialogTitle>
+            <DialogDescription>
+              Make changes to your profile here. Click save when you're done.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="space-y-4 py-4">
+            <div class="space-y-2">
+              <Label for="dialog-name">Name</Label>
+              <Input id="dialog-name" value="Jane Doe" />
+            </div>
+            <div class="space-y-2">
+              <Label for="dialog-email">Email</Label>
+              <Input id="dialog-email" type="email" value="jane@example.com" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button data-slot="dialog-close" variant="outline">Cancel</Button>
+            <Button data-slot="dialog-close">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Confirmation (Destructive)">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="destructive">Delete Account</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your account
+              and remove your data from our servers.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button data-slot="dialog-close" variant="outline">Cancel</Button>
+            <Button data-slot="dialog-close" variant="destructive">Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="No Close Button">
+      <p class="text-sm text-muted-foreground">
+        Dialog without the default X close button — user must click a footer button.
+      </p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open (no X)</Button>
+        </DialogTrigger>
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Terms of Service</DialogTitle>
+            <DialogDescription>
+              Please review and accept our terms to continue.
+            </DialogDescription>
+          </DialogHeader>
+          <p class="text-sm text-muted-foreground">
+            By clicking "I Agree" you accept the terms of service and privacy policy.
+          </p>
+          <DialogFooter>
+            <Button data-slot="dialog-close" variant="outline">Decline</Button>
+            <Button data-slot="dialog-close">I Agree</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Scrollable Content">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Long Dialog</Button>
+        </DialogTrigger>
+        <DialogContent class="max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>Privacy Policy</DialogTitle>
+            <DialogDescription>
+              Please read our privacy policy carefully.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="overflow-y-auto max-h-[50vh] space-y-4 pr-2">
+            <p class="text-sm text-muted-foreground">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+              nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+            <p class="text-sm text-muted-foreground">
+              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+              fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+              culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+            <p class="text-sm text-muted-foreground">
+              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+              doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+              veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+            </p>
+            <p class="text-sm text-muted-foreground">
+              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
+              sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+            </p>
+            <p class="text-sm text-muted-foreground">
+              Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
+              adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et
+              dolore magnam aliquam quaerat voluptatem.
+            </p>
+            <p class="text-sm text-muted-foreground">
+              At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
+              praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias
+              excepturi sint occaecati cupiditate non provident.
+            </p>
+            <p class="text-sm text-muted-foreground">
+              Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et
+              dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button data-slot="dialog-close">I understand</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Event Testing">
+      <p class="text-sm text-muted-foreground">
+        Open and close the dialog and check the output for events.
+      </p>
+      <Dialog id="event-dialog">
+        <DialogTrigger asChild>
+          <Button variant="outline">Event Dialog</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Event Test</DialogTitle>
+            <DialogDescription>This dialog logs open/close events.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button data-slot="dialog-close">Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <EventLog id="dialog-event-output" />
+      <script>
+        {
+          function log(msg: string) {
+            (document.getElementById("dialog-event-output") as any)?._log(msg);
+          }
+
+          document
+            .getElementById("event-dialog")
+            ?.addEventListener("dialog:open-change", (e: Event) => {
+              const { open } = (e as CustomEvent).detail;
+              log(`dialog:open-change → open: ${open}`);
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <Dialog id="programmatic-dialog">
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Programmatic Dialog</DialogTitle>
+            <DialogDescription>
+              This dialog was opened programmatically.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button data-slot="dialog-close">Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <div class="flex flex-wrap gap-2">
+        <button
+          id="open-dialog-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Open Dialog
+        </button>
+        <button
+          id="close-dialog-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Close Dialog
+        </button>
+      </div>
+      <script>
+        {
+          const dialog = document.getElementById("programmatic-dialog");
+          document.getElementById("open-dialog-btn")?.addEventListener("click", () => {
+            dialog?.dispatchEvent(
+              new CustomEvent("dialog:set", { detail: { open: true } }),
+            );
+          });
+          document.getElementById("close-dialog-btn")?.addEventListener("click", () => {
+            dialog?.dispatchEvent(
+              new CustomEvent("dialog:set", { detail: { open: false } }),
+            );
+          });
+        }
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

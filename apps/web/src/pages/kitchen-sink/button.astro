@@ -1,0 +1,117 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Button } from "@bejamas/ui/components/button";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import {
+  MailIcon,
+  PlusIcon,
+  ChevronRightIcon,
+  DownloadIcon,
+  TrashIcon,
+  SettingsIcon,
+  SearchIcon,
+  HeartIcon,
+} from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Button</h1>
+
+    <KitchenSinkSection title="Variants">
+      <div class="flex items-center gap-2 flex-wrap">
+        <Button>Default</Button>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="outline">Outline</Button>
+        <Button variant="ghost">Ghost</Button>
+        <Button variant="destructive">Destructive</Button>
+        <Button variant="link">Link</Button>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <div class="flex items-center gap-2 flex-wrap">
+        <Button size="sm">Small</Button>
+        <Button size="default">Default</Button>
+        <Button size="lg">Large</Button>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Icons">
+      <div class="flex items-center gap-2 flex-wrap">
+        <Button>
+          <MailIcon />
+          Login with Email
+        </Button>
+        <Button variant="secondary">
+          <PlusIcon />
+          Create New
+        </Button>
+        <Button variant="outline">
+          Next
+          <ChevronRightIcon />
+        </Button>
+        <Button variant="ghost">
+          <DownloadIcon />
+          Download
+        </Button>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Icon Only">
+      <div class="flex items-center gap-2 flex-wrap">
+        <Button size="icon-sm" variant="outline" aria-label="Search">
+          <SearchIcon />
+        </Button>
+        <Button size="icon" variant="outline" aria-label="Settings">
+          <SettingsIcon />
+        </Button>
+        <Button size="icon-lg" variant="outline" aria-label="Favorite">
+          <HeartIcon />
+        </Button>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="As Link">
+      <div class="flex items-center gap-2 flex-wrap">
+        <Button as="a" href="#button-link">Default Link</Button>
+        <Button as="a" href="#button-link" variant="outline">Outline Link</Button>
+        <Button as="a" href="#button-link" variant="ghost">Ghost Link</Button>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <div class="flex items-center gap-2 flex-wrap">
+        <Button disabled>Default</Button>
+        <Button disabled variant="secondary">Secondary</Button>
+        <Button disabled variant="outline">Outline</Button>
+        <Button disabled variant="destructive">Destructive</Button>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Loading">
+      <div class="flex items-center gap-2 flex-wrap">
+        <Button disabled>
+          <Spinner />
+          Please wait
+        </Button>
+        <Button disabled variant="secondary">
+          <Spinner />
+          Loading...
+        </Button>
+        <Button disabled variant="outline">
+          <Spinner />
+          Saving
+        </Button>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Full Width">
+      <div class="flex flex-col gap-2 max-w-sm">
+        <Button class="w-full">Full Width Button</Button>
+        <Button class="w-full" variant="outline">Full Width Outline</Button>
+      </div>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

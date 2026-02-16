@@ -1,0 +1,231 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@bejamas/ui/components/accordion";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@bejamas/ui/components/card";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Accordion</h1>
+
+    <KitchenSinkSection title="Basic (Collapsible)">
+      <Accordion collapsible>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Is it accessible?</AccordionTrigger>
+          <AccordionContent>
+            Yes. It adheres to the WAI-ARIA design pattern.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Is it styled?</AccordionTrigger>
+          <AccordionContent>
+            Yes. It comes with default styles that match your theme.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-3">
+          <AccordionTrigger>Is it animated?</AccordionTrigger>
+          <AccordionContent>
+            Yes. It uses CSS animations for smooth open/close transitions.
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Multiple">
+      <p class="text-sm text-muted-foreground">Multiple items can be open at the same time.</p>
+      <Accordion multiple>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>First section</AccordionTrigger>
+          <AccordionContent>
+            This is the first section content. You can open multiple sections at once.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Second section</AccordionTrigger>
+          <AccordionContent>
+            This is the second section content. Try opening this while the first is open.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-3">
+          <AccordionTrigger>Third section</AccordionTrigger>
+          <AccordionContent>
+            This is the third section content. All three can be open simultaneously.
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Default Open">
+      <Accordion collapsible defaultValue="item-2">
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Item 1</AccordionTrigger>
+          <AccordionContent>
+            This item is not open by default.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Item 2 (default open)</AccordionTrigger>
+          <AccordionContent>
+            This item is open by default via the defaultValue prop.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-3">
+          <AccordionTrigger>Item 3</AccordionTrigger>
+          <AccordionContent>
+            This item is not open by default.
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Non-collapsible">
+      <p class="text-sm text-muted-foreground">One item must always remain open.</p>
+      <Accordion defaultValue="item-1">
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Always one open</AccordionTrigger>
+          <AccordionContent>
+            Without the collapsible prop, one item must always remain open.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Switch to this</AccordionTrigger>
+          <AccordionContent>
+            Click this to switch — you can't close the last open item.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-3">
+          <AccordionTrigger>Or this one</AccordionTrigger>
+          <AccordionContent>
+            Try clicking the active trigger again — it stays open.
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="In a Card">
+      <Card class="max-w-md">
+        <CardHeader>
+          <CardTitle>FAQ</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Accordion collapsible>
+            <AccordionItem value="faq-1">
+              <AccordionTrigger>How do I get started?</AccordionTrigger>
+              <AccordionContent>
+                Install the package and import the components you need.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-2">
+              <AccordionTrigger>Can I customize the styles?</AccordionTrigger>
+              <AccordionContent>
+                Yes, all components support className and style props for customization.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-3">
+              <AccordionTrigger>Is there TypeScript support?</AccordionTrigger>
+              <AccordionContent>
+                Yes, all components are fully typed with TypeScript.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </CardContent>
+      </Card>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Event Testing">
+      <p class="text-sm text-muted-foreground">
+        Open/close items and check the output for accordion:change events.
+      </p>
+      <Accordion id="event-accordion" type="single" collapsible>
+        <AccordionItem value="event-1">
+          <AccordionTrigger>Event Item 1</AccordionTrigger>
+          <AccordionContent>Content for event testing item 1.</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="event-2">
+          <AccordionTrigger>Event Item 2</AccordionTrigger>
+          <AccordionContent>Content for event testing item 2.</AccordionContent>
+        </AccordionItem>
+      </Accordion>
+      <EventLog id="accordion-event-output" />
+      <script>
+        {
+          function log(msg: string) {
+            (document.getElementById("accordion-event-output") as any)?._log(msg);
+          }
+
+          document
+            .getElementById("event-accordion")
+            ?.addEventListener("accordion:change", (e: Event) => {
+              const { value } = (e as CustomEvent).detail;
+              log(`accordion:change → value: "${value}"`);
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <Accordion id="programmatic-accordion" type="single" collapsible>
+        <AccordionItem value="prog-1">
+          <AccordionTrigger>Programmatic Item 1</AccordionTrigger>
+          <AccordionContent>Content for programmatic item 1.</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="prog-2">
+          <AccordionTrigger>Programmatic Item 2</AccordionTrigger>
+          <AccordionContent>Content for programmatic item 2.</AccordionContent>
+        </AccordionItem>
+      </Accordion>
+      <div class="flex flex-wrap gap-2">
+        <button
+          id="open-prog-1"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Open Item 1
+        </button>
+        <button
+          id="open-prog-2"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Open Item 2
+        </button>
+        <button
+          id="close-all-accordion"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Close All
+        </button>
+      </div>
+      <script>
+        {
+          const accordion = document.getElementById("programmatic-accordion");
+          document.getElementById("open-prog-1")?.addEventListener("click", () => {
+            accordion?.dispatchEvent(
+              new CustomEvent("accordion:set", { detail: { value: "prog-1" } }),
+            );
+          });
+          document.getElementById("open-prog-2")?.addEventListener("click", () => {
+            accordion?.dispatchEvent(
+              new CustomEvent("accordion:set", { detail: { value: "prog-2" } }),
+            );
+          });
+          document.getElementById("close-all-accordion")?.addEventListener("click", () => {
+            accordion?.dispatchEvent(
+              new CustomEvent("accordion:set", { detail: { value: "" } }),
+            );
+          });
+        }
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

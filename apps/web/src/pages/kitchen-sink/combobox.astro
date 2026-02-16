@@ -1,5 +1,6 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import { Label } from "@bejamas/ui/components/label";
 import { Button } from "@bejamas/ui/components/button";
@@ -43,11 +44,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 
 <KitchenSinkLayout>
   <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
-    <h1 class="text-3xl font-bold mb-10">Combobox Component Test</h1>
+    <h1 class="text-3xl font-bold mb-10">Combobox</h1>
 
-    <!-- 1. Default -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">1. Default</h2>
+    <KitchenSinkSection title="Default">
       <p class="text-sm text-muted-foreground">
         Basic combobox with framework list, filtering, and keyboard nav
       </p>
@@ -64,11 +63,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 2. With Clear Button -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">2. With Clear Button</h2>
+    <KitchenSinkSection title="With Clear Button">
       <p class="text-sm text-muted-foreground">
         showClear on ComboboxInput — clear button appears after selection, hides
         chevron
@@ -86,11 +83,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 3. With Default Value -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">3. With Default Value</h2>
+    <KitchenSinkSection title="With Default Value">
       <p class="text-sm text-muted-foreground">Pre-selected value: "astro"</p>
       <Combobox defaultValue="astro" class="w-[250px]">
         <ComboboxInput placeholder="Select framework..." />
@@ -105,11 +100,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 4. Auto Highlight -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">4. Auto Highlight</h2>
+    <KitchenSinkSection title="Auto Highlight">
       <p class="text-sm text-muted-foreground">
         First visible item is auto-highlighted as user types
       </p>
@@ -126,11 +119,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 5. Custom Items -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">5. Custom Items</h2>
+    <KitchenSinkSection title="Custom Items">
       <p class="text-sm text-muted-foreground">
         Rich content with Item, ItemContent, ItemTitle, ItemDescription inside
         ComboboxItem
@@ -316,13 +307,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           }),
         );
       </script>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 6. Groups with Labels and Separators -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">
-        6. Groups with Labels and Separators
-      </h2>
+    <KitchenSinkSection title="Groups with Labels and Separators">
       <p class="text-sm text-muted-foreground">
         Grouped items with ComboboxGroup, ComboboxLabel, ComboboxSeparator
       </p>
@@ -350,11 +337,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 7. Scrollable (Many Items) -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">7. Scrollable (Many Items)</h2>
+    <KitchenSinkSection title="Scrollable (Many Items)">
       <p class="text-sm text-muted-foreground">
         Long list of countries — tests scroll behavior and max-h-72 overflow
       </p>
@@ -386,11 +371,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 8. Disabled Combobox -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">8. Disabled Combobox</h2>
+    <KitchenSinkSection title="Disabled Combobox">
       <p class="text-sm text-muted-foreground">
         Entire combobox is disabled — input is not interactable
       </p>
@@ -403,11 +386,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 9. Disabled Items -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">9. Disabled Items</h2>
+    <KitchenSinkSection title="Disabled Items">
       <p class="text-sm text-muted-foreground">
         Mix of enabled/disabled items — disabled items can't be selected,
         skipped in keyboard nav
@@ -429,11 +410,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 10. Invalid/Error State -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">10. Invalid/Error State</h2>
+    <KitchenSinkSection title="Invalid/Error State">
       <p class="text-sm text-muted-foreground">
         aria-invalid="true" on ComboboxInput — red ring styling
       </p>
@@ -448,11 +427,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 11. No Trigger Arrow -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">11. No Trigger Arrow</h2>
+    <KitchenSinkSection title="No Trigger Arrow">
       <p class="text-sm text-muted-foreground">
         showTrigger={false} — clean input without chevron, still functions as combobox
       </p>
@@ -469,11 +446,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 12. Input Group (addon icon) -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">12. Input Group</h2>
+    <KitchenSinkSection title="Input Group">
       <p class="text-sm text-muted-foreground">
         Add an addon to the combobox by using InputGroupAddon inside a manual
         InputGroup with data-slot="combobox-input"
@@ -549,11 +524,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 13. Positioning (side/align) -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">13. Positioning (side/align)</h2>
+    <KitchenSinkSection title="Positioning (side/align)">
       <p class="text-sm text-muted-foreground">
         Different side and align configurations
       </p>
@@ -611,11 +584,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </Combobox>
         </div>
       </div>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 14. Event Testing -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">14. Event Testing</h2>
+    <KitchenSinkSection title="Event Testing">
       <p class="text-sm text-muted-foreground">
         Console logging for combobox:change, combobox:open-change,
         combobox:input-change
@@ -664,11 +635,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           );
         }
       </script>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 15. Programmatic Control -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">15. Programmatic Control</h2>
+    <KitchenSinkSection title="Programmatic Control">
       <p class="text-sm text-muted-foreground">
         Buttons to set value, clear, open, and close
       </p>
@@ -754,11 +723,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           );
         });
       </script>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 16. In a Dialog -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">16. In a Dialog</h2>
+    <KitchenSinkSection title="In a Dialog">
       <p class="text-sm text-muted-foreground">
         Combobox inside a dialog — tests z-index stacking and focus management
       </p>
@@ -812,11 +779,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 17. Popup -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">17. Popup</h2>
+    <KitchenSinkSection title="Popup">
       <p class="text-sm text-muted-foreground">
         Button trigger with ComboboxInput inside ComboboxContent — like a
         searchable select
@@ -851,11 +816,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 18. Form Integration -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">18. Form Integration</h2>
+    <KitchenSinkSection title="Form Integration">
       <p class="text-sm text-muted-foreground">
         Combobox with name inside a form — hidden input syncs, form submission
         works
@@ -908,6 +871,6 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
             console.log("Form submitted:", data);
           });
       </script>
-    </div>
+    </KitchenSinkSection>
   </section>
 </KitchenSinkLayout>

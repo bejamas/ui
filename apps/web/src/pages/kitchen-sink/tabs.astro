@@ -1,0 +1,255 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  TabsIndicator,
+} from "@bejamas/ui/components/tabs";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@bejamas/ui/components/card";
+import { Button } from "@bejamas/ui/components/button";
+import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/ui/components/label";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Tabs</h1>
+
+    <KitchenSinkSection title="Basic">
+      <Tabs defaultValue="account">
+        <TabsList>
+          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="password">Password</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
+        <TabsContent value="account">
+          <p class="text-sm text-muted-foreground p-4">
+            Make changes to your account here. Click save when you're done.
+          </p>
+        </TabsContent>
+        <TabsContent value="password">
+          <p class="text-sm text-muted-foreground p-4">
+            Change your password here. After saving, you'll be logged out.
+          </p>
+        </TabsContent>
+        <TabsContent value="settings">
+          <p class="text-sm text-muted-foreground p-4">
+            Configure your application settings and preferences.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Indicator">
+      <Tabs defaultValue="overview">
+        <TabsList>
+          <TabsIndicator />
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
+        </TabsList>
+        <TabsContent value="overview">
+          <p class="text-sm text-muted-foreground p-4">
+            Overview of your dashboard with key metrics.
+          </p>
+        </TabsContent>
+        <TabsContent value="analytics">
+          <p class="text-sm text-muted-foreground p-4">
+            Detailed analytics and usage statistics.
+          </p>
+        </TabsContent>
+        <TabsContent value="reports">
+          <p class="text-sm text-muted-foreground p-4">
+            Generated reports and downloadable data.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Cards">
+      <Tabs defaultValue="account-card">
+        <TabsList class="w-full">
+          <TabsTrigger value="account-card" class="flex-1">Account</TabsTrigger>
+          <TabsTrigger value="password-card" class="flex-1">Password</TabsTrigger>
+        </TabsList>
+        <TabsContent value="account-card">
+          <Card>
+            <CardHeader>
+              <CardTitle>Account</CardTitle>
+              <CardDescription>Make changes to your account here.</CardDescription>
+            </CardHeader>
+            <CardContent class="space-y-4">
+              <div class="space-y-2">
+                <Label for="tabs-name">Name</Label>
+                <Input id="tabs-name" value="Jane Doe" />
+              </div>
+              <div class="space-y-2">
+                <Label for="tabs-username">Username</Label>
+                <Input id="tabs-username" value="@janedoe" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button>Save changes</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+        <TabsContent value="password-card">
+          <Card>
+            <CardHeader>
+              <CardTitle>Password</CardTitle>
+              <CardDescription>Change your password here.</CardDescription>
+            </CardHeader>
+            <CardContent class="space-y-4">
+              <div class="space-y-2">
+                <Label for="tabs-current-pw">Current password</Label>
+                <Input id="tabs-current-pw" type="password" />
+              </div>
+              <div class="space-y-2">
+                <Label for="tabs-new-pw">New password</Label>
+                <Input id="tabs-new-pw" type="password" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button>Save password</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled Tab">
+      <Tabs defaultValue="active-1">
+        <TabsList>
+          <TabsTrigger value="active-1">Active</TabsTrigger>
+          <TabsTrigger value="disabled-tab" disabled>Disabled</TabsTrigger>
+          <TabsTrigger value="active-2">Also Active</TabsTrigger>
+        </TabsList>
+        <TabsContent value="active-1">
+          <p class="text-sm text-muted-foreground p-4">First active tab content.</p>
+        </TabsContent>
+        <TabsContent value="disabled-tab">
+          <p class="text-sm text-muted-foreground p-4">You shouldn't see this.</p>
+        </TabsContent>
+        <TabsContent value="active-2">
+          <p class="text-sm text-muted-foreground p-4">Second active tab content.</p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Many Tabs (Overflow)">
+      <Tabs defaultValue="tab-1">
+        <TabsList>
+          <TabsTrigger value="tab-1">Monday</TabsTrigger>
+          <TabsTrigger value="tab-2">Tuesday</TabsTrigger>
+          <TabsTrigger value="tab-3">Wednesday</TabsTrigger>
+          <TabsTrigger value="tab-4">Thursday</TabsTrigger>
+          <TabsTrigger value="tab-5">Friday</TabsTrigger>
+          <TabsTrigger value="tab-6">Saturday</TabsTrigger>
+          <TabsTrigger value="tab-7">Sunday</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab-1"><p class="text-sm text-muted-foreground p-4">Monday content</p></TabsContent>
+        <TabsContent value="tab-2"><p class="text-sm text-muted-foreground p-4">Tuesday content</p></TabsContent>
+        <TabsContent value="tab-3"><p class="text-sm text-muted-foreground p-4">Wednesday content</p></TabsContent>
+        <TabsContent value="tab-4"><p class="text-sm text-muted-foreground p-4">Thursday content</p></TabsContent>
+        <TabsContent value="tab-5"><p class="text-sm text-muted-foreground p-4">Friday content</p></TabsContent>
+        <TabsContent value="tab-6"><p class="text-sm text-muted-foreground p-4">Saturday content</p></TabsContent>
+        <TabsContent value="tab-7"><p class="text-sm text-muted-foreground p-4">Sunday content</p></TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Event Testing">
+      <p class="text-sm text-muted-foreground">
+        Switch tabs and check the output for tabs:change events.
+      </p>
+      <Tabs id="event-tabs" defaultValue="event-tab-1">
+        <TabsList>
+          <TabsTrigger value="event-tab-1">Tab 1</TabsTrigger>
+          <TabsTrigger value="event-tab-2">Tab 2</TabsTrigger>
+          <TabsTrigger value="event-tab-3">Tab 3</TabsTrigger>
+        </TabsList>
+        <TabsContent value="event-tab-1"><p class="text-sm text-muted-foreground p-4">Tab 1 content</p></TabsContent>
+        <TabsContent value="event-tab-2"><p class="text-sm text-muted-foreground p-4">Tab 2 content</p></TabsContent>
+        <TabsContent value="event-tab-3"><p class="text-sm text-muted-foreground p-4">Tab 3 content</p></TabsContent>
+      </Tabs>
+      <EventLog id="tabs-event-output" />
+      <script>
+        {
+          function log(msg: string) {
+            (document.getElementById("tabs-event-output") as any)?._log(msg);
+          }
+
+          document
+            .getElementById("event-tabs")
+            ?.addEventListener("tabs:change", (e: Event) => {
+              const { value } = (e as CustomEvent).detail;
+              log(`tabs:change → value: "${value}"`);
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <Tabs id="programmatic-tabs" defaultValue="prog-tab-1">
+        <TabsList>
+          <TabsTrigger value="prog-tab-1">Tab 1</TabsTrigger>
+          <TabsTrigger value="prog-tab-2">Tab 2</TabsTrigger>
+          <TabsTrigger value="prog-tab-3">Tab 3</TabsTrigger>
+        </TabsList>
+        <TabsContent value="prog-tab-1"><p class="text-sm text-muted-foreground p-4">Programmatic tab 1</p></TabsContent>
+        <TabsContent value="prog-tab-2"><p class="text-sm text-muted-foreground p-4">Programmatic tab 2</p></TabsContent>
+        <TabsContent value="prog-tab-3"><p class="text-sm text-muted-foreground p-4">Programmatic tab 3</p></TabsContent>
+      </Tabs>
+      <div class="flex flex-wrap gap-2">
+        <button
+          id="set-tab-1"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Tab 1
+        </button>
+        <button
+          id="set-tab-2"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Tab 2
+        </button>
+        <button
+          id="set-tab-3"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Tab 3
+        </button>
+      </div>
+      <script>
+        {
+          const tabs = document.getElementById("programmatic-tabs");
+          document.getElementById("set-tab-1")?.addEventListener("click", () => {
+            tabs?.dispatchEvent(
+              new CustomEvent("tabs:set", { detail: { value: "prog-tab-1" } }),
+            );
+          });
+          document.getElementById("set-tab-2")?.addEventListener("click", () => {
+            tabs?.dispatchEvent(
+              new CustomEvent("tabs:set", { detail: { value: "prog-tab-2" } }),
+            );
+          });
+          document.getElementById("set-tab-3")?.addEventListener("click", () => {
+            tabs?.dispatchEvent(
+              new CustomEvent("tabs:set", { detail: { value: "prog-tab-3" } }),
+            );
+          });
+        }
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>
