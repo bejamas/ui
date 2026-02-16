@@ -5,14 +5,14 @@ import "@bejamas/ui/styles/globals.css";
 const { theme = "current-theme" } = Astro.props;
 
 const pages = [
-  { href: "/battlefield/combobox", label: "Combobox" },
-  { href: "/battlefield/dropdown-menu", label: "Dropdown Menu" },
-  { href: "/battlefield/navigation-menu", label: "Navigation Menu" },
-  { href: "/battlefield/popover", label: "Popover" },
-  { href: "/battlefield/select", label: "Select" },
-  { href: "/battlefield/slider", label: "Slider" },
-  { href: "/battlefield/toggle", label: "Toggle" },
-  { href: "/battlefield/toggle-group", label: "Toggle Group" },
+  { href: "/kitchen-sink/combobox", label: "Combobox" },
+  { href: "/kitchen-sink/dropdown-menu", label: "Dropdown Menu" },
+  { href: "/kitchen-sink/navigation-menu", label: "Navigation Menu" },
+  { href: "/kitchen-sink/popover", label: "Popover" },
+  { href: "/kitchen-sink/select", label: "Select" },
+  { href: "/kitchen-sink/slider", label: "Slider" },
+  { href: "/kitchen-sink/toggle", label: "Toggle" },
+  { href: "/kitchen-sink/toggle-group", label: "Toggle Group" },
 ];
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "");
@@ -68,10 +68,10 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
       >
         <div class="p-4">
           <a
-            href="/battlefield"
+            href="/kitchen-sink"
             class="text-sm font-semibold text-foreground tracking-wide uppercase"
           >
-            Battlefield
+            Kitchen Sink
           </a>
         </div>
         <nav class="flex flex-col gap-0.5 px-2 pb-4">
