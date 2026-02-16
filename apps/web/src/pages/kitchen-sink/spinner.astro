@@ -1,0 +1,70 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import { Button } from "@bejamas/ui/components/button";
+import { Badge } from "@bejamas/ui/components/badge";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Spinner</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <Spinner />
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <div class="flex items-center gap-4">
+        <Spinner class="size-3" />
+        <Spinner />
+        <Spinner class="size-6" />
+        <Spinner class="size-8" />
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="In Button">
+      <div class="flex items-center gap-3 flex-wrap">
+        <Button disabled>
+          <Spinner class="size-4" />
+          Loading...
+        </Button>
+        <Button disabled variant="outline">
+          <Spinner class="size-4" />
+          Please wait
+        </Button>
+        <Button disabled variant="secondary">
+          <Spinner class="size-4" />
+          Processing
+        </Button>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="In Badge">
+      <div class="flex items-center gap-3 flex-wrap">
+        <Badge>
+          <Spinner class="size-3" />
+          Syncing
+        </Badge>
+        <Badge variant="secondary">
+          <Spinner class="size-3" />
+          Updating
+        </Badge>
+        <Badge variant="outline">
+          <Spinner class="size-3" />
+          Processing
+        </Badge>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Custom Color">
+      <div class="flex items-center gap-4">
+        <Spinner class="text-blue-500" />
+        <Spinner class="text-green-500" />
+        <Spinner class="text-destructive" />
+      </div>
+    </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>

@@ -1,0 +1,116 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@bejamas/ui/components/input-group";
+import { Separator } from "@bejamas/ui/components/separator";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
+import { Kbd } from "@bejamas/ui/components/kbd";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import { SearchIcon, PlusIcon, ArrowUpIcon } from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Input Group</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="With Icon">
+      <InputGroup>
+        <InputGroupAddon class="pl-3"><SearchIcon class="size-4" /></InputGroupAddon>
+        <InputGroupInput placeholder="Search..." />
+        <InputGroupAddon align="inline-end" class="pr-3">
+          <span class="text-xs text-muted-foreground">12 results</span>
+        </InputGroupAddon>
+      </InputGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Text">
+      <InputGroup>
+        <InputGroupText>https://</InputGroupText>
+        <InputGroupInput placeholder="example" />
+        <InputGroupText>.com</InputGroupText>
+      </InputGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Button">
+      <InputGroup>
+        <InputGroupInput placeholder="Enter value..." />
+        <InputGroupButton>Check</InputGroupButton>
+      </InputGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Kbd">
+      <InputGroup>
+        <InputGroupAddon class="pl-3"><SearchIcon class="size-4" /></InputGroupAddon>
+        <InputGroupInput placeholder="Search..." />
+        <InputGroupAddon align="inline-end" class="pr-3"><Kbd>⌘K</Kbd></InputGroupAddon>
+      </InputGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Spinner">
+      <InputGroup>
+        <InputGroupInput placeholder="Saving..." />
+        <InputGroupAddon align="inline-end" class="pr-3 gap-2">
+          <Spinner class="size-4" />
+          <span class="text-xs text-muted-foreground">Saving...</span>
+        </InputGroupAddon>
+      </InputGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <InputGroup>
+        <InputGroupAddon class="pl-3"><SearchIcon class="size-4" /></InputGroupAddon>
+        <InputGroupInput placeholder="Disabled input" disabled />
+      </InputGroup>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="With Textarea">
+      <InputGroup class="max-w-lg">
+        <InputGroupTextarea placeholder="Ask, Search or Chat..." class="min-h-[80px]" />
+        <InputGroupAddon align="block-end" class="p-2 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <Button variant="ghost" size="icon" class="size-7"><PlusIcon class="size-4" /></Button>
+            <span class="text-xs text-muted-foreground">Auto</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-muted-foreground">0/1000</span>
+            <Button size="icon" class="size-7"><ArrowUpIcon class="size-4" /></Button>
+          </div>
+        </InputGroupAddon>
+      </InputGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Form Integration">
+      <form id="input-group-form" class="flex flex-col gap-4 p-4 border rounded-lg max-w-sm">
+        <div class="space-y-2">
+          <Label for="ig-email">Email</Label>
+          <InputGroup>
+            <InputGroupInput id="ig-email" name="email" type="email" placeholder="you@example.com" />
+          </InputGroup>
+        </div>
+        <Button type="submit">Subscribe</Button>
+      </form>
+      <div id="input-group-form-output" class="text-sm text-muted-foreground"></div>
+      <script>
+        document.getElementById("input-group-form")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target as HTMLFormElement);
+          const data = Object.fromEntries(formData.entries());
+          const output = document.getElementById("input-group-form-output");
+          if (output) {
+            output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
+          }
+        });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

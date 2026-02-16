@@ -1,0 +1,155 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@bejamas/ui/components/collapsible";
+import { Button } from "@bejamas/ui/components/button";
+import { ChevronsUpDownIcon } from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Collapsible</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <Collapsible class="w-[340px] space-y-2">
+        <div class="flex items-center justify-between space-x-4 px-4">
+          <h4 class="text-sm font-semibold">@thomkrupa starred 3 repositories</h4>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm">
+              <ChevronsUpDownIcon class="size-4" />
+              <span class="sr-only">Toggle</span>
+            </Button>
+          </CollapsibleTrigger>
+        </div>
+        <div class="rounded-md border px-4 py-2 font-mono text-sm">@bejamas/ui</div>
+        <CollapsibleContent class="space-y-2">
+          <div class="rounded-md border px-4 py-2 font-mono text-sm">@bejamas/theme</div>
+          <div class="rounded-md border px-4 py-2 font-mono text-sm">@bejamas/icons</div>
+        </CollapsibleContent>
+      </Collapsible>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Default Open">
+      <Collapsible open class="w-[340px] space-y-2">
+        <div class="flex items-center justify-between space-x-4 px-4">
+          <h4 class="text-sm font-semibold">@thomkrupa starred 3 repositories</h4>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm">
+              <ChevronsUpDownIcon class="size-4" />
+              <span class="sr-only">Toggle</span>
+            </Button>
+          </CollapsibleTrigger>
+        </div>
+        <div class="rounded-md border px-4 py-2 font-mono text-sm">@bejamas/ui</div>
+        <CollapsibleContent class="space-y-2">
+          <div class="rounded-md border px-4 py-2 font-mono text-sm">@bejamas/theme</div>
+          <div class="rounded-md border px-4 py-2 font-mono text-sm">@bejamas/icons</div>
+        </CollapsibleContent>
+      </Collapsible>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="File Tree">
+      <div class="w-[280px] border rounded-lg p-2">
+        <Collapsible open>
+          <CollapsibleTrigger class="flex items-center gap-1 w-full px-2 py-1 text-sm hover:bg-muted rounded">
+            <ChevronsUpDownIcon class="size-3.5" />
+            <span class="font-medium">src</span>
+          </CollapsibleTrigger>
+          <CollapsibleContent class="ml-4">
+            <Collapsible open>
+              <CollapsibleTrigger class="flex items-center gap-1 w-full px-2 py-1 text-sm hover:bg-muted rounded">
+                <ChevronsUpDownIcon class="size-3.5" />
+                <span>components</span>
+              </CollapsibleTrigger>
+              <CollapsibleContent class="ml-4">
+                <div class="px-2 py-1 text-sm text-muted-foreground">Button.tsx</div>
+                <div class="px-2 py-1 text-sm text-muted-foreground">Card.tsx</div>
+                <div class="px-2 py-1 text-sm text-muted-foreground">Dialog.tsx</div>
+              </CollapsibleContent>
+            </Collapsible>
+            <Collapsible>
+              <CollapsibleTrigger class="flex items-center gap-1 w-full px-2 py-1 text-sm hover:bg-muted rounded">
+                <ChevronsUpDownIcon class="size-3.5" />
+                <span>utils</span>
+              </CollapsibleTrigger>
+              <CollapsibleContent class="ml-4">
+                <div class="px-2 py-1 text-sm text-muted-foreground">cn.ts</div>
+                <div class="px-2 py-1 text-sm text-muted-foreground">helpers.ts</div>
+              </CollapsibleContent>
+            </Collapsible>
+            <div class="px-2 py-1 text-sm text-muted-foreground">index.ts</div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Event Testing">
+      <div class="flex flex-col gap-4">
+        <Collapsible id="event-collapsible" class="w-[340px] space-y-2">
+          <div class="flex items-center justify-between space-x-4 px-4">
+            <h4 class="text-sm font-semibold">Toggle me</h4>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm">
+                <ChevronsUpDownIcon class="size-4" />
+                <span class="sr-only">Toggle</span>
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent>
+            <div class="rounded-md border px-4 py-2 font-mono text-sm">Content revealed!</div>
+          </CollapsibleContent>
+        </Collapsible>
+        <EventLog id="collapsible-event-log" />
+      </div>
+      <script>
+        {
+          const el = document.getElementById("event-collapsible");
+          function log(msg: string) {
+            (document.getElementById("collapsible-event-log") as any)?._log(msg);
+          }
+          el?.addEventListener("collapsible:change", (e: Event) => {
+            const { open } = (e as CustomEvent).detail;
+            log(`collapsible:change → open: ${open}`);
+          });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <div class="flex flex-col gap-4">
+        <Collapsible id="programmatic-collapsible" class="w-[340px] space-y-2">
+          <div class="flex items-center justify-between space-x-4 px-4">
+            <h4 class="text-sm font-semibold">Controlled</h4>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm">
+                <ChevronsUpDownIcon class="size-4" />
+                <span class="sr-only">Toggle</span>
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent>
+            <div class="rounded-md border px-4 py-2 font-mono text-sm">Programmatically toggled content</div>
+          </CollapsibleContent>
+        </Collapsible>
+        <div class="flex gap-2">
+          <Button id="collapsible-open" variant="outline" size="sm">Open</Button>
+          <Button id="collapsible-close" variant="outline" size="sm">Close</Button>
+        </div>
+      </div>
+      <script>
+        {
+          const collapsible = document.getElementById("programmatic-collapsible");
+          document.getElementById("collapsible-open")?.addEventListener("click", () => {
+            collapsible?.dispatchEvent(new CustomEvent("collapsible:set", { detail: { open: true } }));
+          });
+          document.getElementById("collapsible-close")?.addEventListener("click", () => {
+            collapsible?.dispatchEvent(new CustomEvent("collapsible:set", { detail: { open: false } }));
+          });
+        }
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

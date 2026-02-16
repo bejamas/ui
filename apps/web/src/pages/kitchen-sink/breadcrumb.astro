@@ -1,0 +1,77 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbSeparator,
+} from "@bejamas/ui/components/breadcrumb";
+import { SlashIcon, EllipsisIcon } from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Breadcrumb</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem><a href="#">Home</a></BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem><a href="#">Docs</a></BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem><span aria-current="page" class="text-foreground font-normal">Components</span></BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Custom Separator">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem><a href="#">Home</a></BreadcrumbItem>
+          <BreadcrumbSeparator><SlashIcon class="size-3.5" /></BreadcrumbSeparator>
+          <BreadcrumbItem><a href="#">Docs</a></BreadcrumbItem>
+          <BreadcrumbSeparator><SlashIcon class="size-3.5" /></BreadcrumbSeparator>
+          <BreadcrumbItem><span aria-current="page" class="text-foreground font-normal">Components</span></BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Collapsed (Ellipsis)">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem><a href="#">Home</a></BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <span class="flex items-center">
+              <EllipsisIcon class="size-4" />
+            </span>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem><a href="#">Components</a></BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem><span aria-current="page" class="text-foreground font-normal">Button</span></BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Long Path">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem><a href="#">Home</a></BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem><a href="#">Products</a></BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem><a href="#">Electronics</a></BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem><a href="#">Audio</a></BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem><span aria-current="page" class="text-foreground font-normal">Headphones</span></BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>

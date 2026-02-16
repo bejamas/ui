@@ -1,0 +1,134 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { NativeSelect, NativeSelectOption, NativeSelectOptGroup } from "@bejamas/ui/components/native-select";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Native Select</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <NativeSelect>
+        <NativeSelectOption value="" disabled selected>Select a fruit...</NativeSelectOption>
+        <NativeSelectOption value="apple">Apple</NativeSelectOption>
+        <NativeSelectOption value="banana">Banana</NativeSelectOption>
+        <NativeSelectOption value="blueberry">Blueberry</NativeSelectOption>
+        <NativeSelectOption value="pineapple">Pineapple</NativeSelectOption>
+      </NativeSelect>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <div class="space-y-3">
+        <NativeSelect class="h-8 text-sm">
+          <NativeSelectOption value="" disabled selected>Small</NativeSelectOption>
+          <NativeSelectOption value="a">Option A</NativeSelectOption>
+          <NativeSelectOption value="b">Option B</NativeSelectOption>
+        </NativeSelect>
+        <NativeSelect>
+          <NativeSelectOption value="" disabled selected>Default</NativeSelectOption>
+          <NativeSelectOption value="a">Option A</NativeSelectOption>
+          <NativeSelectOption value="b">Option B</NativeSelectOption>
+        </NativeSelect>
+        <NativeSelect class="h-11 text-base">
+          <NativeSelectOption value="" disabled selected>Large</NativeSelectOption>
+          <NativeSelectOption value="a">Option A</NativeSelectOption>
+          <NativeSelectOption value="b">Option B</NativeSelectOption>
+        </NativeSelect>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Label">
+      <div class="space-y-2">
+        <Label for="country-select">Country</Label>
+        <NativeSelect id="country-select">
+          <NativeSelectOption value="" disabled selected>Select a country...</NativeSelectOption>
+          <NativeSelectOption value="us">United States</NativeSelectOption>
+          <NativeSelectOption value="uk">United Kingdom</NativeSelectOption>
+          <NativeSelectOption value="de">Germany</NativeSelectOption>
+          <NativeSelectOption value="fr">France</NativeSelectOption>
+        </NativeSelect>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Option Groups">
+      <NativeSelect>
+        <NativeSelectOption value="" disabled selected>Select department...</NativeSelectOption>
+        <NativeSelectOptGroup label="Frontend">
+          <NativeSelectOption value="react">React</NativeSelectOption>
+          <NativeSelectOption value="vue">Vue</NativeSelectOption>
+          <NativeSelectOption value="angular">Angular</NativeSelectOption>
+        </NativeSelectOptGroup>
+        <NativeSelectOptGroup label="Backend">
+          <NativeSelectOption value="node">Node.js</NativeSelectOption>
+          <NativeSelectOption value="python">Python</NativeSelectOption>
+          <NativeSelectOption value="go">Go</NativeSelectOption>
+        </NativeSelectOptGroup>
+      </NativeSelect>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <NativeSelect disabled>
+        <NativeSelectOption value="" disabled selected>Disabled select</NativeSelectOption>
+        <NativeSelectOption value="a">Option A</NativeSelectOption>
+      </NativeSelect>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Invalid / Error">
+      <div class="space-y-2">
+        <NativeSelect aria-invalid="true">
+          <NativeSelectOption value="" disabled selected>Select required...</NativeSelectOption>
+          <NativeSelectOption value="a">Option A</NativeSelectOption>
+          <NativeSelectOption value="b">Option B</NativeSelectOption>
+        </NativeSelect>
+        <p class="text-sm text-destructive">Please select an option.</p>
+      </div>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Form Integration">
+      <form id="native-select-form" class="flex flex-col gap-4 p-4 border rounded-lg max-w-sm">
+        <div class="space-y-2">
+          <Label for="ns-name">Name</Label>
+          <input
+            id="ns-name"
+            name="name"
+            type="text"
+            placeholder="Enter your name"
+            class="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+          />
+        </div>
+        <div class="space-y-2">
+          <Label for="ns-department">Department</Label>
+          <NativeSelect id="ns-department" name="department">
+            <NativeSelectOption value="" disabled selected>Select department...</NativeSelectOption>
+            <NativeSelectOptGroup label="Frontend">
+              <NativeSelectOption value="react">React</NativeSelectOption>
+              <NativeSelectOption value="vue">Vue</NativeSelectOption>
+            </NativeSelectOptGroup>
+            <NativeSelectOptGroup label="Backend">
+              <NativeSelectOption value="node">Node.js</NativeSelectOption>
+              <NativeSelectOption value="python">Python</NativeSelectOption>
+            </NativeSelectOptGroup>
+          </NativeSelect>
+        </div>
+        <Button type="submit">Submit</Button>
+      </form>
+      <div id="native-select-form-output" class="text-sm text-muted-foreground"></div>
+      <script>
+        document.getElementById("native-select-form")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target as HTMLFormElement);
+          const data = Object.fromEntries(formData.entries());
+          const output = document.getElementById("native-select-form-output");
+          if (output) {
+            output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
+          }
+        });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

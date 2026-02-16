@@ -1,0 +1,144 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { RadioGroup, RadioGroupItem } from "@bejamas/ui/components/radio-group";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Radio Group</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <RadioGroup defaultValue="default">
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="default" id="r1" />
+          <Label for="r1">Default</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="comfortable" id="r2" />
+          <Label for="r2">Comfortable</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="compact" id="r3" />
+          <Label for="r3">Compact</Label>
+        </div>
+      </RadioGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Default Selected">
+      <RadioGroup defaultValue="option-2">
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="option-1" id="rs1" />
+          <Label for="rs1">Option 1</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="option-2" id="rs2" checked />
+          <Label for="rs2">Option 2 (pre-selected)</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="option-3" id="rs3" />
+          <Label for="rs3">Option 3</Label>
+        </div>
+      </RadioGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Descriptions">
+      <RadioGroup defaultValue="free">
+        <div class="flex items-start space-x-2">
+          <RadioGroupItem value="free" id="rd1" class="mt-1" />
+          <div>
+            <Label for="rd1">Free</Label>
+            <p class="text-sm text-muted-foreground">Get started with basic features at no cost.</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-2">
+          <RadioGroupItem value="pro" id="rd2" class="mt-1" />
+          <div>
+            <Label for="rd2">Pro</Label>
+            <p class="text-sm text-muted-foreground">Advanced features for growing teams.</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-2">
+          <RadioGroupItem value="enterprise" id="rd3" class="mt-1" />
+          <div>
+            <Label for="rd3">Enterprise</Label>
+            <p class="text-sm text-muted-foreground">Custom solutions for large organizations.</p>
+          </div>
+        </div>
+      </RadioGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <RadioGroup defaultValue="enabled">
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="enabled" id="rdi1" />
+          <Label for="rdi1">Enabled option</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="disabled" id="rdi2" disabled />
+          <Label for="rdi2" class="text-muted-foreground">Disabled option</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="another" id="rdi3" />
+          <Label for="rdi3">Another enabled option</Label>
+        </div>
+      </RadioGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Horizontal">
+      <RadioGroup defaultValue="left" class="flex flex-row gap-4">
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="left" id="rh1" />
+          <Label for="rh1">Left</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="center" id="rh2" />
+          <Label for="rh2">Center</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="right" id="rh3" />
+          <Label for="rh3">Right</Label>
+        </div>
+      </RadioGroup>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Form Integration">
+      <form id="radio-form" class="flex flex-col gap-4 p-4 border rounded-lg max-w-sm">
+        <div class="space-y-3">
+          <Label>Payment Method</Label>
+          <RadioGroup name="payment" defaultValue="credit-card">
+            <div class="flex items-center space-x-2">
+              <RadioGroupItem value="credit-card" id="rf1" />
+              <Label for="rf1">Credit Card</Label>
+            </div>
+            <div class="flex items-center space-x-2">
+              <RadioGroupItem value="paypal" id="rf2" />
+              <Label for="rf2">PayPal</Label>
+            </div>
+            <div class="flex items-center space-x-2">
+              <RadioGroupItem value="bank-transfer" id="rf3" />
+              <Label for="rf3">Bank Transfer</Label>
+            </div>
+          </RadioGroup>
+        </div>
+        <Button type="submit">Continue</Button>
+      </form>
+      <div id="radio-form-output" class="text-sm text-muted-foreground"></div>
+      <script>
+        document.getElementById("radio-form")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target as HTMLFormElement);
+          const data = Object.fromEntries(formData.entries());
+          const output = document.getElementById("radio-form-output");
+          if (output) {
+            output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
+          }
+        });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

@@ -1,0 +1,94 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import {
+  LinkGroup,
+  LinkGroupTitle,
+  LinkGroupList,
+  LinkGroupItem,
+} from "@bejamas/ui/components/link-group";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Link Group</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <LinkGroup>
+        <LinkGroupTitle>Company</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem href="#">About</LinkGroupItem>
+          <LinkGroupItem href="#">Blog</LinkGroupItem>
+          <LinkGroupItem href="#">Careers</LinkGroupItem>
+          <LinkGroupItem href="#">Contact</LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Without Title">
+      <LinkGroup>
+        <LinkGroupList>
+          <LinkGroupItem href="#">Documentation</LinkGroupItem>
+          <LinkGroupItem href="#">API Reference</LinkGroupItem>
+          <LinkGroupItem href="#">Changelog</LinkGroupItem>
+          <LinkGroupItem href="#">Support</LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Custom Styling">
+      <LinkGroup>
+        <LinkGroupTitle class="text-primary">Resources</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem href="#" class="text-muted-foreground hover:text-primary">Tutorials</LinkGroupItem>
+          <LinkGroupItem href="#" class="text-muted-foreground hover:text-primary">Examples</LinkGroupItem>
+          <LinkGroupItem href="#" class="text-muted-foreground hover:text-primary">Templates</LinkGroupItem>
+          <LinkGroupItem href="#" class="text-muted-foreground hover:text-primary">Showcase</LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Footer Layout">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <LinkGroup>
+          <LinkGroupTitle>Product</LinkGroupTitle>
+          <LinkGroupList>
+            <LinkGroupItem href="#">Features</LinkGroupItem>
+            <LinkGroupItem href="#">Pricing</LinkGroupItem>
+            <LinkGroupItem href="#">Integrations</LinkGroupItem>
+            <LinkGroupItem href="#">Changelog</LinkGroupItem>
+          </LinkGroupList>
+        </LinkGroup>
+        <LinkGroup>
+          <LinkGroupTitle>Company</LinkGroupTitle>
+          <LinkGroupList>
+            <LinkGroupItem href="#">About</LinkGroupItem>
+            <LinkGroupItem href="#">Blog</LinkGroupItem>
+            <LinkGroupItem href="#">Careers</LinkGroupItem>
+            <LinkGroupItem href="#">Press</LinkGroupItem>
+          </LinkGroupList>
+        </LinkGroup>
+        <LinkGroup>
+          <LinkGroupTitle>Resources</LinkGroupTitle>
+          <LinkGroupList>
+            <LinkGroupItem href="#">Documentation</LinkGroupItem>
+            <LinkGroupItem href="#">Guides</LinkGroupItem>
+            <LinkGroupItem href="#">API Reference</LinkGroupItem>
+            <LinkGroupItem href="#">Community</LinkGroupItem>
+          </LinkGroupList>
+        </LinkGroup>
+        <LinkGroup>
+          <LinkGroupTitle>Legal</LinkGroupTitle>
+          <LinkGroupList>
+            <LinkGroupItem href="#">Privacy</LinkGroupItem>
+            <LinkGroupItem href="#">Terms</LinkGroupItem>
+            <LinkGroupItem href="#">Cookie Policy</LinkGroupItem>
+            <LinkGroupItem href="#">Licenses</LinkGroupItem>
+          </LinkGroupList>
+        </LinkGroup>
+      </div>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

@@ -7,9 +7,9 @@ interface Props {
 const { title, class: className } = Astro.props;
 ---
 
-<div class:list={[className]}>
+<div class:list={["flex flex-col", className]}>
   <p class="text-sm text-muted-foreground font-medium pl-4 mb-2">{title}</p>
-  <div class="rounded-xl border border-dashed border-border/60 p-6 md:p-10 space-y-4">
+  <div class="flex-1 rounded-xl border border-dashed border-border/60 p-6 md:p-10 space-y-4">
     <slot />
   </div>
 </div>
