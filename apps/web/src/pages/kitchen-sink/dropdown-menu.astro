@@ -36,9 +36,10 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 ---
 
 <KitchenSinkLayout>
-  <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
     <h1 class="text-3xl font-bold mb-10">Dropdown Menu</h1>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="Basic">
       <p class="text-sm text-muted-foreground">
         Simple trigger with a few plain items.
@@ -199,6 +200,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </DropdownMenuContent>
       </DropdownMenu>
     </KitchenSinkSection>
+    </div>
 
     <KitchenSinkSection title="Alignment Variations">
       <p class="text-sm text-muted-foreground">
@@ -243,6 +245,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
       </div>
     </KitchenSinkSection>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="Custom Trigger (asChild)">
       <p class="text-sm text-muted-foreground">
         Uses <code class="text-xs bg-muted px-1 py-0.5 rounded">asChild</code> on
@@ -275,6 +278,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </DropdownMenuContent>
       </DropdownMenu>
     </KitchenSinkSection>
+    </div>
 
     <KitchenSinkSection title="Event Handling">
       <p class="text-sm text-muted-foreground">
@@ -365,6 +369,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
       </script>
     </KitchenSinkSection>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="Complex Real-World Example">
       <p class="text-sm text-muted-foreground">
         A "user account" dropdown combining avatar trigger, groups, labels,
@@ -481,5 +486,6 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </DialogContent>
       </Dialog>
     </KitchenSinkSection>
+    </div>
   </section>
 </KitchenSinkLayout>

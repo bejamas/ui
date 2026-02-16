@@ -8,9 +8,10 @@ import { Button } from "@bejamas/ui/components/button";
 ---
 
 <KitchenSinkLayout>
-  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
     <h1 class="text-3xl font-bold mb-10">Switch</h1>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="Basic">
       <div class="flex items-center gap-2">
         <Switch id="basic-switch" />
@@ -47,6 +48,7 @@ import { Button } from "@bejamas/ui/components/button";
         </div>
       </div>
     </KitchenSinkSection>
+    </div>
 
     <KitchenSinkSection title="Settings Panel">
       <div class="border rounded-lg divide-y max-w-md">

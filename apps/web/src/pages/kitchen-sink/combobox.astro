@@ -43,9 +43,10 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 ---
 
 <KitchenSinkLayout>
-  <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
     <h1 class="text-3xl font-bold mb-10">Combobox</h1>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="Default">
       <p class="text-sm text-muted-foreground">
         Basic combobox with framework list, filtering, and keyboard nav
@@ -525,6 +526,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </ComboboxContent>
       </Combobox>
     </KitchenSinkSection>
+    </div>
 
     <KitchenSinkSection title="Positioning (side/align)">
       <p class="text-sm text-muted-foreground">
@@ -725,6 +727,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
       </script>
     </KitchenSinkSection>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="In a Dialog">
       <p class="text-sm text-muted-foreground">
         Combobox inside a dialog — tests z-index stacking and focus management
@@ -817,6 +820,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </ComboboxContent>
       </Combobox>
     </KitchenSinkSection>
+    </div>
 
     <KitchenSinkSection title="Form Integration">
       <p class="text-sm text-muted-foreground">

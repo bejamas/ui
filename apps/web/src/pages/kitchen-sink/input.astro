@@ -7,9 +7,10 @@ import { Button } from "@bejamas/ui/components/button";
 ---
 
 <KitchenSinkLayout>
-  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
     <h1 class="text-3xl font-bold mb-10">Input</h1>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="Default">
       <Input placeholder="Type something..." />
     </KitchenSinkSection>
@@ -20,6 +21,7 @@ import { Button } from "@bejamas/ui/components/button";
         <Input id="email-input" type="email" placeholder="you@example.com" />
       </div>
     </KitchenSinkSection>
+    </div>
 
     <KitchenSinkSection title="Types">
       <div class="grid gap-4 max-w-sm">
@@ -46,6 +48,7 @@ import { Button } from "@bejamas/ui/components/button";
       </div>
     </KitchenSinkSection>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="File Upload">
       <div class="space-y-2 max-w-sm">
         <Label for="input-file">Upload file</Label>
@@ -74,6 +77,7 @@ import { Button } from "@bejamas/ui/components/button";
         <Button>Subscribe</Button>
       </div>
     </KitchenSinkSection>
+    </div>
 
     <KitchenSinkSection title="Form Integration">
       <form id="input-test-form" class="flex flex-col gap-4 p-4 border rounded-lg max-w-sm">

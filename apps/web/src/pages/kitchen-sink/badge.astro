@@ -6,9 +6,10 @@ import { CheckIcon, XIcon, AlertTriangleIcon, InfoIcon } from "@lucide/astro";
 ---
 
 <KitchenSinkLayout>
-  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
     <h1 class="text-3xl font-bold mb-10">Badge</h1>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="Variants">
       <div class="flex items-center gap-2 flex-wrap">
         <Badge>Default</Badge>
@@ -76,5 +77,6 @@ import { CheckIcon, XIcon, AlertTriangleIcon, InfoIcon } from "@lucide/astro";
         <Badge class="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 hover:bg-purple-200 dark:hover:bg-purple-800">New</Badge>
       </div>
     </KitchenSinkSection>
+    </div>
   </section>
 </KitchenSinkLayout>

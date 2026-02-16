@@ -12,9 +12,10 @@ import {
 ---
 
 <KitchenSinkLayout>
-  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
     <h1 class="text-3xl font-bold mb-10">Toggle</h1>
 
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
     <KitchenSinkSection title="Basic Toggle (default variant)">
       <div class="flex items-center gap-2">
         <Toggle aria-label="Toggle bold">
@@ -136,6 +137,7 @@ import {
         </Toggle>
       </div>
     </KitchenSinkSection>
+    </div>
 
     <KitchenSinkSection title="Event Testing">
       <p class="text-sm text-muted-foreground">
