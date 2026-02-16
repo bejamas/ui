@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.12
+
+### Patch Changes
+
+- [#51](https://github.com/bejamas/ui/pull/51) [`342c66c`](https://github.com/bejamas/ui/commit/342c66cf9ebb85fa07de8d3f3d17074c82afe527) Thanks [@thomkrupa](https://github.com/thomkrupa)! - fix max-height for code
+
 ## 0.1.11
 
 ### Patch Changes
