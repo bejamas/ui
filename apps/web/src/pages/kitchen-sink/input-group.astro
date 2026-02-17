@@ -11,7 +11,7 @@ import {
 } from "@bejamas/ui/components/input-group";
 import { Input } from "@bejamas/ui/components/input";
 import { Textarea } from "@bejamas/ui/components/textarea";
-import { Label } from "@bejamas/ui/components/label";
+import { Field, FieldLabel } from "@bejamas/ui/components/field";
 import { Button } from "@bejamas/ui/components/button";
 import { Kbd, KbdGroup } from "@bejamas/ui/components/kbd";
 import { Spinner } from "@bejamas/ui/components/spinner";
@@ -75,78 +75,81 @@ import {
       <!-- ===== Basic ===== -->
       <KitchenSinkSection title="Basic">
         <div class="space-y-4">
-          <div class="space-y-2">
-            <Label>Default (No Input Group)</Label>
+          <Field>
+            <FieldLabel>Default (No Input Group)</FieldLabel>
             <Input placeholder="Default input" />
-          </div>
-          <div class="space-y-2">
-            <Label>Input Group</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Input Group</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="InputGroup input" />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Disabled</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Disabled</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Disabled input" disabled />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Invalid</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Invalid</FieldLabel>
             <InputGroup>
-              <InputGroupInput placeholder="Invalid input" aria-invalid="true" />
+              <InputGroupInput
+                placeholder="Invalid input"
+                aria-invalid="true"
+              />
             </InputGroup>
-          </div>
+          </Field>
         </div>
       </KitchenSinkSection>
 
       <!-- ===== With Addons ===== -->
       <KitchenSinkSection title="With Addons">
         <div class="space-y-4">
-          <div class="space-y-2">
-            <Label>Inline Start</Label>
+          <Field>
+            <FieldLabel>Inline Start</FieldLabel>
             <InputGroup>
-              <InputGroupAddon class="pl-3">
+              <InputGroupAddon>
                 <SearchIcon class="size-4" />
               </InputGroupAddon>
               <InputGroupInput placeholder="Search..." />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Inline End</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Inline End</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Password" type="password" />
-              <InputGroupAddon align="inline-end" class="pr-3">
+              <InputGroupAddon align="inline-end">
                 <EyeOffIcon class="size-4" />
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Inline Start + End</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Inline Start + End</FieldLabel>
             <InputGroup>
               <InputGroupAddon class="pl-3">
                 <MicIcon class="size-4" />
               </InputGroupAddon>
               <InputGroupInput placeholder="Recording..." />
-              <InputGroupAddon align="inline-end" class="pr-3">
+              <InputGroupAddon align="inline-end">
                 <CircleIcon class="size-2 fill-red-500 text-red-500" />
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Block Start</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Block Start</FieldLabel>
             <InputGroup>
+              <InputGroupInput placeholder="Enter your first name" />
               <InputGroupAddon align="block-start" class="border-b">
                 <InputGroupText>
                   First Name
                   <InfoIcon class="size-3.5" />
                 </InputGroupText>
               </InputGroupAddon>
-              <InputGroupInput placeholder="Enter your first name" />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Block End</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Block End</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Write a bio..." />
               <InputGroupAddon align="block-end" class="border-t">
@@ -156,24 +159,24 @@ import {
                 </InputGroupText>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Multiple Icons</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Multiple Icons</FieldLabel>
             <InputGroup>
-              <InputGroupAddon class="pl-3">
+              <InputGroupAddon>
                 <CircleIcon class="size-2 fill-red-500 text-red-500" />
               </InputGroupAddon>
               <InputGroupInput placeholder="Multiple addons..." />
-              <InputGroupAddon align="inline-end" class="pr-1 gap-1">
+              <InputGroupAddon align="inline-end" class="gap-1">
                 <StarIcon class="size-4" />
                 <InputGroupButton size="icon-xs" aria-label="Copy">
                   <CopyIcon class="size-3.5" />
                 </InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>With Description</Label>
+          </Field>
+          <Field>
+            <FieldLabel>With Description</FieldLabel>
             <InputGroup>
               <InputGroupAddon class="pl-3">
                 <InfoIcon class="size-4" />
@@ -183,9 +186,9 @@ import {
             <p class="text-sm text-muted-foreground">
               Your username must be unique and between 3-20 characters.
             </p>
-          </div>
-          <div class="space-y-2">
-            <Label>Label in Addon</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Label in Addon</FieldLabel>
             <InputGroup>
               <InputGroupAddon>
                 <InputGroupText>https://</InputGroupText>
@@ -195,65 +198,65 @@ import {
                 <InputGroupText class="text-xs">Optional</InputGroupText>
               </InputGroupAddon>
             </InputGroup>
-          </div>
+          </Field>
         </div>
       </KitchenSinkSection>
 
       <!-- ===== With Buttons ===== -->
       <KitchenSinkSection title="With Buttons">
         <div class="space-y-4">
-          <div class="space-y-2">
-            <Label>Default</Label>
+          <Field>
+            <FieldLabel>Default</FieldLabel>
             <InputGroup>
-              <InputGroupAddon class="pl-1">
+              <InputGroupAddon>
                 <InputGroupButton variant="default">Subscribe</InputGroupButton>
               </InputGroupAddon>
               <InputGroupInput placeholder="Enter email..." />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Outline</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Outline</FieldLabel>
             <InputGroup>
-              <InputGroupAddon class="pl-1">
+              <InputGroupAddon>
                 <InputGroupButton variant="outline">Browse</InputGroupButton>
               </InputGroupAddon>
               <InputGroupInput placeholder="Choose a file..." />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Secondary</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Secondary</FieldLabel>
             <InputGroup>
-              <InputGroupAddon class="pl-1">
+              <InputGroupAddon>
                 <InputGroupButton variant="secondary">Upload</InputGroupButton>
               </InputGroupAddon>
               <InputGroupInput placeholder="No file selected" />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Inline End, Secondary</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Inline End, Secondary</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Search..." />
-              <InputGroupAddon align="inline-end" class="pr-1">
+              <InputGroupAddon align="inline-end">
                 <InputGroupButton variant="secondary">Search</InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Icon XS, Copy</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Icon XS, Copy</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Copy this text..." />
-              <InputGroupAddon align="inline-end" class="pr-1">
+              <InputGroupAddon align="inline-end">
                 <InputGroupButton size="icon-xs" aria-label="Copy">
                   <CopyIcon class="size-3.5" />
                 </InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Icon XS, Secondary, Trash</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Icon XS, Secondary, Trash</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Item to delete..." />
-              <InputGroupAddon align="inline-end" class="pr-1">
+              <InputGroupAddon align="inline-end">
                 <InputGroupButton
                   size="icon-xs"
                   variant="secondary"
@@ -263,18 +266,18 @@ import {
                 </InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
-          </div>
+          </Field>
         </div>
       </KitchenSinkSection>
 
       <!-- ===== With Tooltip, Dropdown, Popover ===== -->
       <KitchenSinkSection title="With Tooltip, Dropdown, Popover">
         <div class="space-y-4">
-          <div class="space-y-2">
-            <Label>Tooltip</Label>
+          <Field>
+            <FieldLabel>Tooltip</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Hover the icon for info..." />
-              <InputGroupAddon align="inline-end" class="pr-1">
+              <InputGroupAddon align="inline-end">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <InputGroupButton size="icon-xs" aria-label="Info">
@@ -285,11 +288,11 @@ import {
                 </Tooltip>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Dropdown</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Dropdown</FieldLabel>
             <InputGroup>
-              <InputGroupAddon class="pl-1">
+              <InputGroupAddon>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton size="xs">
@@ -305,15 +308,15 @@ import {
               </InputGroupAddon>
               <InputGroupInput placeholder="Phone number" type="tel" />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Popover</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Popover</FieldLabel>
             <InputGroup>
               <InputGroupAddon>
                 <InputGroupText>https://</InputGroupText>
               </InputGroupAddon>
               <InputGroupInput placeholder="example.com" />
-              <InputGroupAddon align="inline-end" class="pr-1 gap-1">
+              <InputGroupAddon align="inline-end" class="gap-1">
                 <Popover>
                   <PopoverTrigger asChild>
                     <InputGroupButton size="icon-xs" aria-label="Security info">
@@ -335,35 +338,35 @@ import {
                 </InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
-          </div>
+          </Field>
         </div>
       </KitchenSinkSection>
 
       <!-- ===== With Kbd ===== -->
       <KitchenSinkSection title="With Kbd">
         <div class="space-y-4">
-          <div class="space-y-2">
-            <Label>Kbd Start</Label>
+          <Field>
+            <FieldLabel>Kbd Start</FieldLabel>
             <InputGroup>
-              <InputGroupAddon class="pl-3">
+              <InputGroupAddon>
                 <Kbd>⌘K</Kbd>
               </InputGroupAddon>
               <InputGroupInput placeholder="Quick command..." />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Kbd End</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Kbd End</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Search..." />
               <InputGroupAddon align="inline-end" class="pr-3">
                 <Kbd>⌘K</Kbd>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Ask AI + Tab</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Ask AI + Tab</FieldLabel>
             <InputGroup>
-              <InputGroupAddon class="pl-3">
+              <InputGroupAddon>
                 <SearchIcon class="size-4" />
               </InputGroupAddon>
               <InputGroupInput placeholder="Ask AI..." />
@@ -372,60 +375,60 @@ import {
                 <Kbd>Tab</Kbd>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Sparkles + KbdGroup</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Sparkles + KbdGroup</FieldLabel>
             <InputGroup>
-              <InputGroupAddon class="pl-3">
+              <InputGroupAddon>
                 <SparklesIcon class="size-4" />
               </InputGroupAddon>
               <InputGroupInput placeholder="Generate..." />
-              <InputGroupAddon align="inline-end" class="pr-3">
+              <InputGroupAddon align="inline-end">
                 <KbdGroup>
                   <Kbd>Ctrl</Kbd>
                   <Kbd>C</Kbd>
                 </KbdGroup>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Username with Badge</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Username with Badge</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Username" value="johndoe" />
-              <InputGroupAddon align="inline-end" class="pr-3">
+              <InputGroupAddon align="inline-end" class="pr-1.5">
                 <Badge variant="default" size="sm" class="bg-green-600">
                   <CheckIcon class="size-3" />
                   Available
                 </Badge>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Search with Results Count</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Search with Results Count</FieldLabel>
             <InputGroup>
               <InputGroupAddon class="pl-3">
                 <SearchIcon class="size-4" />
               </InputGroupAddon>
               <InputGroupInput placeholder="Search..." />
-              <InputGroupAddon align="inline-end" class="pr-3">
+              <InputGroupAddon align="inline-end">
                 <span class="text-xs text-muted-foreground">12 results</span>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Disabled Search</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Disabled Search</FieldLabel>
             <InputGroup>
               <InputGroupAddon class="pl-3">
                 <SearchIcon class="size-4" />
               </InputGroupAddon>
               <InputGroupInput placeholder="Search disabled..." disabled />
-              <InputGroupAddon align="inline-end" class="pr-3">
+              <InputGroupAddon align="inline-end">
                 <Kbd>⌘K</Kbd>
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>First Name / Last Name</Label>
+          </Field>
+          <Field>
+            <FieldLabel>First Name / Last Name</FieldLabel>
             <div class="grid grid-cols-2 gap-4">
               <InputGroup>
                 <InputGroupInput placeholder="First Name" />
@@ -434,17 +437,17 @@ import {
                 <InputGroupInput placeholder="Last Name" />
               </InputGroup>
             </div>
-          </div>
-          <div class="space-y-2">
-            <Label>Loading</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Loading</FieldLabel>
             <InputGroup>
               <InputGroupInput placeholder="Loading..." disabled />
-              <InputGroupAddon align="inline-end" class="pr-3 gap-2">
+              <InputGroupAddon align="inline-end" class="gap-1">
                 <Spinner class="size-4" />
                 <span class="text-xs text-muted-foreground">Saving...</span>
               </InputGroupAddon>
             </InputGroup>
-          </div>
+          </Field>
         </div>
       </KitchenSinkSection>
     </div>
@@ -460,17 +463,17 @@ import {
           </CardDescription>
         </CardHeader>
         <CardContent class="space-y-4">
-          <div class="space-y-2">
-            <Label>Email</Label>
+          <Field>
+            <FieldLabel>Email</FieldLabel>
             <InputGroup>
               <InputGroupAddon class="pl-3">
                 <MailIcon class="size-4" />
               </InputGroupAddon>
               <InputGroupInput placeholder="you@example.com" type="email" />
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Website</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Website</FieldLabel>
             <InputGroup>
               <InputGroupAddon>
                 <InputGroupText>https://</InputGroupText>
@@ -480,9 +483,9 @@ import {
                 <ExternalLinkIcon class="size-4" />
               </InputGroupAddon>
             </InputGroup>
-          </div>
-          <div class="space-y-2">
-            <Label>Feedback</Label>
+          </Field>
+          <Field>
+            <FieldLabel>Feedback</FieldLabel>
             <InputGroup>
               <InputGroupTextarea
                 placeholder="Tell us what you think..."
@@ -492,7 +495,7 @@ import {
                 <InputGroupText>0/1000 characters</InputGroupText>
               </InputGroupAddon>
             </InputGroup>
-          </div>
+          </Field>
         </CardContent>
         <CardFooter>
           <Button variant="outline">Cancel</Button>
@@ -503,33 +506,33 @@ import {
 
     <KitchenSinkSection title="Textarea">
       <div class="space-y-4">
-        <div class="space-y-2">
-          <Label>Default</Label>
+        <Field>
+          <FieldLabel>Default</FieldLabel>
           <Textarea placeholder="Default textarea" />
-        </div>
-        <div class="space-y-2">
-          <Label>Input Group</Label>
+        </Field>
+        <Field>
+          <FieldLabel>Input Group</FieldLabel>
           <InputGroup>
             <InputGroupTextarea placeholder="InputGroup textarea" />
           </InputGroup>
-        </div>
-        <div class="space-y-2">
-          <Label>Invalid</Label>
+        </Field>
+        <Field>
+          <FieldLabel>Invalid</FieldLabel>
           <InputGroup>
             <InputGroupTextarea
               placeholder="Invalid textarea"
               aria-invalid="true"
             />
           </InputGroup>
-        </div>
-        <div class="space-y-2">
-          <Label>Disabled</Label>
+        </Field>
+        <Field>
+          <FieldLabel>Disabled</FieldLabel>
           <InputGroup>
             <InputGroupTextarea placeholder="Disabled textarea" disabled />
           </InputGroup>
-        </div>
-        <div class="space-y-2">
-          <Label>Block Start Addon</Label>
+        </Field>
+        <Field>
+          <FieldLabel>Block Start Addon</FieldLabel>
           <InputGroup class="max-w-lg">
             <InputGroupAddon align="block-start" class="border-b">
               <InputGroupText>
@@ -542,9 +545,9 @@ import {
               class="min-h-[80px]"
             />
           </InputGroup>
-        </div>
-        <div class="space-y-2">
-          <Label>Block End Addon</Label>
+        </Field>
+        <Field>
+          <FieldLabel>Block End Addon</FieldLabel>
           <InputGroup class="max-w-lg">
             <InputGroupTextarea
               placeholder="Type your message..."
@@ -562,9 +565,9 @@ import {
               </InputGroupButton>
             </InputGroupAddon>
           </InputGroup>
-        </div>
-        <div class="space-y-2">
-          <Label>Comment</Label>
+        </Field>
+        <Field>
+          <FieldLabel>Comment</FieldLabel>
           <div class="max-w-lg space-y-2">
             <InputGroup>
               <InputGroupTextarea
@@ -577,9 +580,9 @@ import {
               <Button size="sm">Post Comment</Button>
             </div>
           </div>
-        </div>
-        <div class="space-y-2">
-          <Label>Code Editor</Label>
+        </Field>
+        <Field>
+          <FieldLabel>Code Editor</FieldLabel>
           <InputGroup class="max-w-lg">
             <InputGroupAddon align="block-start" class="border-b">
               <InputGroupText class="font-mono font-medium">
@@ -593,7 +596,11 @@ import {
               >
                 <RefreshCwIcon class="size-3.5" />
               </InputGroupButton>
-              <InputGroupButton size="icon-xs" variant="ghost" aria-label="Copy">
+              <InputGroupButton
+                size="icon-xs"
+                variant="ghost"
+                aria-label="Copy"
+              >
                 <CopyIcon class="size-3.5" />
               </InputGroupButton>
             </InputGroupAddon>
@@ -608,7 +615,7 @@ import {
               </InputGroupText>
             </InputGroupAddon>
           </InputGroup>
-        </div>
+        </Field>
       </div>
     </KitchenSinkSection>
   </section>
