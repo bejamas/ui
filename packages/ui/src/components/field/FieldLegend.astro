@@ -1,0 +1,26 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  variant?: "legend" | "label";
+} & HTMLAttributes<"legend">;
+
+const {
+  class: className = "",
+  variant = "legend",
+  ...rest
+} = Astro.props as Props;
+---
+
+<legend
+  data-slot="field-legend"
+  data-variant={variant}
+  class={cn(
+    "mb-1.5 font-medium data-[variant=label]:text-sm data-[variant=legend]:text-base",
+    className,
+  )}
+  {...rest}
+>
+  <slot />
+</legend>

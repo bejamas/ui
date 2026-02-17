@@ -400,6 +400,57 @@
       ]
     },
     {
+      "name": "field",
+      "type": "registry:ui",
+      "registryDependencies": ["label", "separator"],
+      "files": [
+        {
+          "path": "ui/field/Field.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldError.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldLabel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldLegend.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldSet.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "input",
       "type": "registry:ui",
       "files": [
