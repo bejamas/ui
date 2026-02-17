@@ -42,6 +42,26 @@ const pages = [
   { href: "/kitchen-sink/toggle-group", label: "Toggle Group", description: "Single/multiple selection, orientations, sizes", js: true },
   { href: "/kitchen-sink/tooltip", label: "Tooltip", description: "Sides, alignment, delay, icon buttons, keyboard shortcuts", js: true },
 ];
+
+const rawFiles = import.meta.glob('./*.astro', { as: 'raw', eager: true }) as Record<string, string>;
+const pageFiles = Object.entries(rawFiles).filter(([path]) => !path.endsWith('index.astro'));
+
+const sectionCounts = new Map(
+  pageFiles.map(([path, content]) => [
+    path.replace('./', '').replace('.astro', ''),
+    (content.match(/<KitchenSinkSection/g) || []).length,
+  ])
+);
+
+const stats = [
+  { label: "Components", value: pageFiles.length },
+  {
+    label: "Test Sections",
+    value: pageFiles.reduce((sum, [, content]) =>
+      sum + (content.match(/<KitchenSinkSection/g) || []).length, 0),
+  },
+  { label: "JS Required", value: pages.filter(p => p.js).length },
+];
 ---
 
 <KitchenSinkLayout>
@@ -53,17 +73,35 @@ const pages = [
       </p>
     </div>
 
+    <div class="grid grid-cols-3 gap-3">
+      {stats.map(({ label, value }) => (
+        <div class="rounded-lg border border-border p-4 text-center">
+          <div class="text-2xl font-bold text-foreground">{value}</div>
+          <div class="text-sm text-muted-foreground">{label}</div>
+        </div>
+      ))}
+    </div>
+
     <div class="grid gap-3">
       {
-        pages.map(({ href, label, description }) => (
-          <a
-            href={href}
-            class="block p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
-          >
-            <div class="font-medium text-foreground">{label}</div>
-            <div class="text-sm text-muted-foreground mt-1">{description}</div>
-          </a>
-        ))
+        pages.map(({ href, label, description }) => {
+          const slug = href.split('/').pop()!;
+          const sections = sectionCounts.get(slug) || 0;
+          return (
+            <a
+              href={href}
+              class="flex items-center gap-4 p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+            >
+              <div class="flex-1 min-w-0">
+                <div class="font-medium text-foreground">{label}</div>
+                <div class="text-sm text-muted-foreground mt-1">{description}</div>
+              </div>
+              <div class="text-xs text-muted-foreground shrink-0">
+                {sections} {sections === 1 ? 'section' : 'sections'}
+              </div>
+            </a>
+          );
+        })
       }
     </div>
   </section>
