@@ -1,5 +1,6 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import { Label } from "@bejamas/ui/components/label";
 import { Input } from "@bejamas/ui/components/input";
@@ -31,12 +32,11 @@ import {
 ---
 
 <KitchenSinkLayout>
-  <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
-    <h1 class="text-3xl font-bold mb-10">Popover Component Test</h1>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Popover</h1>
 
-    <!-- 1. Basic -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">1. Basic</h2>
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
       <p class="text-sm text-muted-foreground">
         Simple popover with header, title, and description
       </p>
@@ -51,11 +51,9 @@ import {
           </PopoverHeader>
         </PopoverContent>
       </Popover>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 2. Side Variants -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">2. Side Variants</h2>
+    <KitchenSinkSection title="Side Variants">
       <p class="text-sm text-muted-foreground">
         Use the <code>side</code> prop on <code>Popover</code> to control where content
         opens.
@@ -108,11 +106,9 @@ import {
           </PopoverContent>
         </Popover>
       </div>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 3. Alignment Variants -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">3. Alignment Variants</h2>
+    <KitchenSinkSection title="Alignment Variants">
       <p class="text-sm text-muted-foreground">
         Set <code>align</code> on <code>Popover</code> for defaults, then override
         with <code>PopoverContent</code> when needed.
@@ -163,11 +159,9 @@ import {
           </PopoverHeader>
         </PopoverContent>
       </Popover>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 4. With Form -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">4. With Form</h2>
+    <KitchenSinkSection title="With Form">
       <p class="text-sm text-muted-foreground">
         Popover containing form fields (Dimensions example)
       </p>
@@ -210,11 +204,9 @@ import {
           </div>
         </PopoverContent>
       </Popover>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 5. With Close Button -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">5. With Close Button</h2>
+    <KitchenSinkSection title="With Close Button">
       <p class="text-sm text-muted-foreground">
         Using PopoverClose inside content
       </p>
@@ -234,11 +226,10 @@ import {
           </PopoverClose>
         </PopoverContent>
       </Popover>
+    </KitchenSinkSection>
     </div>
 
-    <!-- 6. Event Testing -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">6. Event Testing</h2>
+    <KitchenSinkSection title="Event Testing">
       <p class="text-sm text-muted-foreground">
         Console logging popover:change
       </p>
@@ -268,11 +259,9 @@ import {
           });
         }
       </script>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 7. In a Dialog -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">7. In a Dialog</h2>
+    <KitchenSinkSection title="In a Dialog">
       <p class="text-sm text-muted-foreground">
         Popover inside a dialog — tests z-index stacking and focus management
       </p>
@@ -302,11 +291,9 @@ import {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 8. Programmatic Control -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">8. Programmatic Control</h2>
+    <KitchenSinkSection title="Programmatic Control">
       <p class="text-sm text-muted-foreground">
         Buttons to open and close programmatically
       </p>
@@ -358,6 +345,6 @@ import {
             );
           });
       </script>
-    </div>
+    </KitchenSinkSection>
   </section>
 </KitchenSinkLayout>

@@ -1,0 +1,102 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Alert, AlertTitle, AlertDescription } from "@bejamas/ui/components/alert";
+import {
+  CheckCircleIcon,
+  AlertTriangleIcon,
+  InfoIcon,
+  XCircleIcon,
+  TerminalIcon,
+} from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Alert</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Default">
+      <Alert>
+        <TerminalIcon />
+        <AlertTitle>Heads up!</AlertTitle>
+        <AlertDescription>
+          You can add components to your app using the CLI.
+        </AlertDescription>
+      </Alert>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Destructive">
+      <Alert variant="destructive">
+        <XCircleIcon />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          Your session has expired. Please log in again.
+        </AlertDescription>
+      </Alert>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="With Icons">
+      <div class="space-y-3">
+        <Alert>
+          <CheckCircleIcon />
+          <AlertTitle>Success</AlertTitle>
+          <AlertDescription>Your changes have been saved successfully.</AlertDescription>
+        </Alert>
+        <Alert>
+          <AlertTriangleIcon />
+          <AlertTitle>Warning</AlertTitle>
+          <AlertDescription>Your account is about to reach its storage limit.</AlertDescription>
+        </Alert>
+        <Alert>
+          <InfoIcon />
+          <AlertTitle>Info</AlertTitle>
+          <AlertDescription>A new software update is available for download.</AlertDescription>
+        </Alert>
+        <Alert variant="destructive">
+          <XCircleIcon />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>There was a problem with your request.</AlertDescription>
+        </Alert>
+      </div>
+    </KitchenSinkSection>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Title Only">
+      <Alert>
+        <InfoIcon />
+        <AlertTitle>This alert has only a title, no description.</AlertTitle>
+      </Alert>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Description Only">
+      <Alert>
+        <InfoIcon />
+        <AlertDescription>
+          This alert has only a description without a title element.
+        </AlertDescription>
+      </Alert>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Custom Styled">
+      <div class="space-y-3">
+        <Alert class="border-blue-500/50 text-blue-700 dark:text-blue-400 [&>svg]:text-blue-600 dark:[&>svg]:text-blue-400">
+          <InfoIcon />
+          <AlertTitle>Information</AlertTitle>
+          <AlertDescription>
+            This is a custom blue-styled informational alert.
+          </AlertDescription>
+        </Alert>
+        <Alert class="border-amber-500/50 text-amber-700 dark:text-amber-400 [&>svg]:text-amber-600 dark:[&>svg]:text-amber-400">
+          <AlertTriangleIcon />
+          <AlertTitle>Caution</AlertTitle>
+          <AlertDescription>
+            This is a custom amber-styled warning alert.
+          </AlertDescription>
+        </Alert>
+      </div>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

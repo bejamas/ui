@@ -1,0 +1,622 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@bejamas/ui/components/input-group";
+import { Input } from "@bejamas/ui/components/input";
+import { Textarea } from "@bejamas/ui/components/textarea";
+import { Field, FieldLabel } from "@bejamas/ui/components/field";
+import { Button } from "@bejamas/ui/components/button";
+import { Kbd, KbdGroup } from "@bejamas/ui/components/kbd";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import { Badge } from "@bejamas/ui/components/badge";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@bejamas/ui/components/tooltip";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverDescription,
+} from "@bejamas/ui/components/popover";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@bejamas/ui/components/card";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@bejamas/ui/components/dropdown-menu";
+import {
+  SearchIcon,
+  EyeOffIcon,
+  MicIcon,
+  InfoIcon,
+  CopyIcon,
+  StarIcon,
+  ChevronDownIcon,
+  TrashIcon,
+  MailIcon,
+  ExternalLinkIcon,
+  ArrowUpIcon,
+  SparklesIcon,
+  CheckIcon,
+  XIcon,
+  RefreshCwIcon,
+  CornerDownLeftIcon,
+  FileCodeIcon,
+  SendIcon,
+  CircleIcon,
+  LoaderIcon,
+} from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Input Group</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+      <!-- ===== Basic ===== -->
+      <KitchenSinkSection title="Basic">
+        <div class="space-y-4">
+          <Field>
+            <FieldLabel>Default (No Input Group)</FieldLabel>
+            <Input placeholder="Default input" />
+          </Field>
+          <Field>
+            <FieldLabel>Input Group</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="InputGroup input" />
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Disabled</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Disabled input" disabled />
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Invalid</FieldLabel>
+            <InputGroup>
+              <InputGroupInput
+                placeholder="Invalid input"
+                aria-invalid="true"
+              />
+            </InputGroup>
+          </Field>
+        </div>
+      </KitchenSinkSection>
+
+      <!-- ===== With Addons ===== -->
+      <KitchenSinkSection title="With Addons">
+        <div class="space-y-4">
+          <Field>
+            <FieldLabel>Inline Start</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <SearchIcon class="size-4" />
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Search..." />
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Inline End</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Password" type="password" />
+              <InputGroupAddon align="inline-end">
+                <EyeOffIcon class="size-4" />
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Inline Start + End</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon class="pl-3">
+                <MicIcon class="size-4" />
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Recording..." />
+              <InputGroupAddon align="inline-end">
+                <CircleIcon class="size-2 fill-red-500 text-red-500" />
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Block Start</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Enter your first name" />
+              <InputGroupAddon align="block-start" class="border-b">
+                <InputGroupText>
+                  First Name
+                  <InfoIcon class="size-3.5" />
+                </InputGroupText>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Block End</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Write a bio..." />
+              <InputGroupAddon align="block-end" class="border-t">
+                <InputGroupText>
+                  20/240 characters
+                  <InfoIcon class="size-3.5" />
+                </InputGroupText>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Multiple Icons</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <CircleIcon class="size-2 fill-red-500 text-red-500" />
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Multiple addons..." />
+              <InputGroupAddon align="inline-end" class="gap-1">
+                <StarIcon class="size-4" />
+                <InputGroupButton size="icon-xs" aria-label="Copy">
+                  <CopyIcon class="size-3.5" />
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>With Description</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon class="pl-3">
+                <InfoIcon class="size-4" />
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Username" />
+            </InputGroup>
+            <p class="text-sm text-muted-foreground">
+              Your username must be unique and between 3-20 characters.
+            </p>
+          </Field>
+          <Field>
+            <FieldLabel>Label in Addon</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupText>https://</InputGroupText>
+              </InputGroupAddon>
+              <InputGroupInput placeholder="example.com" />
+              <InputGroupAddon align="inline-end">
+                <InputGroupText class="text-xs">Optional</InputGroupText>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+        </div>
+      </KitchenSinkSection>
+
+      <!-- ===== With Buttons ===== -->
+      <KitchenSinkSection title="With Buttons">
+        <div class="space-y-4">
+          <Field>
+            <FieldLabel>Default</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupButton variant="default">Subscribe</InputGroupButton>
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Enter email..." />
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Outline</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupButton variant="outline">Browse</InputGroupButton>
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Choose a file..." />
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Secondary</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupButton variant="secondary">Upload</InputGroupButton>
+              </InputGroupAddon>
+              <InputGroupInput placeholder="No file selected" />
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Inline End, Secondary</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Search..." />
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton variant="secondary">Search</InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Icon XS, Copy</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Copy this text..." />
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton size="icon-xs" aria-label="Copy">
+                  <CopyIcon class="size-3.5" />
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Icon XS, Secondary, Trash</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Item to delete..." />
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  size="icon-xs"
+                  variant="secondary"
+                  aria-label="Delete"
+                >
+                  <TrashIcon class="size-3.5" />
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+        </div>
+      </KitchenSinkSection>
+
+      <!-- ===== With Tooltip, Dropdown, Popover ===== -->
+      <KitchenSinkSection title="With Tooltip, Dropdown, Popover">
+        <div class="space-y-4">
+          <Field>
+            <FieldLabel>Tooltip</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Hover the icon for info..." />
+              <InputGroupAddon align="inline-end">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <InputGroupButton size="icon-xs" aria-label="Info">
+                      <InfoIcon class="size-3.5" />
+                    </InputGroupButton>
+                  </TooltipTrigger>
+                  <TooltipContent>This field is required</TooltipContent>
+                </Tooltip>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Dropdown</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <InputGroupButton size="xs">
+                      +1 <ChevronDownIcon class="size-3" />
+                    </InputGroupButton>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <DropdownMenuItem>+1 (US)</DropdownMenuItem>
+                    <DropdownMenuItem>+44 (UK)</DropdownMenuItem>
+                    <DropdownMenuItem>+46 (SE)</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Phone number" type="tel" />
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Popover</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupText>https://</InputGroupText>
+              </InputGroupAddon>
+              <InputGroupInput placeholder="example.com" />
+              <InputGroupAddon align="inline-end" class="gap-1">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <InputGroupButton size="icon-xs" aria-label="Security info">
+                      <InfoIcon class="size-3.5" />
+                    </InputGroupButton>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverHeader>
+                      <PopoverTitle>Secure Connection</PopoverTitle>
+                      <PopoverDescription>
+                        All connections are encrypted with TLS 1.3 for maximum
+                        security.
+                      </PopoverDescription>
+                    </PopoverHeader>
+                  </PopoverContent>
+                </Popover>
+                <InputGroupButton size="icon-xs" aria-label="Favorite">
+                  <StarIcon class="size-3.5" />
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+        </div>
+      </KitchenSinkSection>
+
+      <!-- ===== With Kbd ===== -->
+      <KitchenSinkSection title="With Kbd">
+        <div class="space-y-4">
+          <Field>
+            <FieldLabel>Kbd Start</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <Kbd>⌘K</Kbd>
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Quick command..." />
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Kbd End</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Search..." />
+              <InputGroupAddon align="inline-end" class="pr-3">
+                <Kbd>⌘K</Kbd>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Ask AI + Tab</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <SearchIcon class="size-4" />
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Ask AI..." />
+              <InputGroupAddon align="inline-end" class="pr-3 gap-2">
+                <span class="text-xs text-muted-foreground">Ask AI</span>
+                <Kbd>Tab</Kbd>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Sparkles + KbdGroup</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <SparklesIcon class="size-4" />
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Generate..." />
+              <InputGroupAddon align="inline-end">
+                <KbdGroup>
+                  <Kbd>Ctrl</Kbd>
+                  <Kbd>C</Kbd>
+                </KbdGroup>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Username with Badge</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Username" value="johndoe" />
+              <InputGroupAddon align="inline-end" class="pr-1.5">
+                <Badge variant="default" size="sm" class="bg-green-600">
+                  <CheckIcon class="size-3" />
+                  Available
+                </Badge>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Search with Results Count</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon class="pl-3">
+                <SearchIcon class="size-4" />
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Search..." />
+              <InputGroupAddon align="inline-end">
+                <span class="text-xs text-muted-foreground">12 results</span>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Disabled Search</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon class="pl-3">
+                <SearchIcon class="size-4" />
+              </InputGroupAddon>
+              <InputGroupInput placeholder="Search disabled..." disabled />
+              <InputGroupAddon align="inline-end">
+                <Kbd>⌘K</Kbd>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>First Name / Last Name</FieldLabel>
+            <div class="grid grid-cols-2 gap-4">
+              <InputGroup>
+                <InputGroupInput placeholder="First Name" />
+              </InputGroup>
+              <InputGroup>
+                <InputGroupInput placeholder="Last Name" />
+              </InputGroup>
+            </div>
+          </Field>
+          <Field>
+            <FieldLabel>Loading</FieldLabel>
+            <InputGroup>
+              <InputGroupInput placeholder="Loading..." disabled />
+              <InputGroupAddon align="inline-end" class="gap-1">
+                <Spinner class="size-4" />
+                <span class="text-xs text-muted-foreground">Saving...</span>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+        </div>
+      </KitchenSinkSection>
+    </div>
+
+    <!-- ===== Full-width sections ===== -->
+
+    <KitchenSinkSection title="In Card">
+      <Card class="max-w-md">
+        <CardHeader>
+          <CardTitle>Contact Us</CardTitle>
+          <CardDescription>
+            Fill out the form below and we'll get back to you.
+          </CardDescription>
+        </CardHeader>
+        <CardContent class="space-y-4">
+          <Field>
+            <FieldLabel>Email</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon class="pl-3">
+                <MailIcon class="size-4" />
+              </InputGroupAddon>
+              <InputGroupInput placeholder="you@example.com" type="email" />
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Website</FieldLabel>
+            <InputGroup>
+              <InputGroupAddon>
+                <InputGroupText>https://</InputGroupText>
+              </InputGroupAddon>
+              <InputGroupInput placeholder="example.com" />
+              <InputGroupAddon align="inline-end" class="pr-3">
+                <ExternalLinkIcon class="size-4" />
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Feedback</FieldLabel>
+            <InputGroup>
+              <InputGroupTextarea
+                placeholder="Tell us what you think..."
+                class="min-h-[80px]"
+              />
+              <InputGroupAddon align="block-end" class="border-t">
+                <InputGroupText>0/1000 characters</InputGroupText>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+        </CardContent>
+        <CardFooter>
+          <Button variant="outline">Cancel</Button>
+          <Button>Submit</Button>
+        </CardFooter>
+      </Card>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Textarea">
+      <div class="space-y-4">
+        <Field>
+          <FieldLabel>Default</FieldLabel>
+          <Textarea placeholder="Default textarea" />
+        </Field>
+        <Field>
+          <FieldLabel>Input Group</FieldLabel>
+          <InputGroup>
+            <InputGroupTextarea placeholder="InputGroup textarea" />
+          </InputGroup>
+        </Field>
+        <Field>
+          <FieldLabel>Invalid</FieldLabel>
+          <InputGroup>
+            <InputGroupTextarea
+              placeholder="Invalid textarea"
+              aria-invalid="true"
+            />
+          </InputGroup>
+        </Field>
+        <Field>
+          <FieldLabel>Disabled</FieldLabel>
+          <InputGroup>
+            <InputGroupTextarea placeholder="Disabled textarea" disabled />
+          </InputGroup>
+        </Field>
+        <Field>
+          <FieldLabel>Block Start Addon</FieldLabel>
+          <InputGroup class="max-w-lg">
+            <InputGroupAddon align="block-start" class="border-b">
+              <InputGroupText>
+                Feedback
+                <InfoIcon class="size-3.5" />
+              </InputGroupText>
+            </InputGroupAddon>
+            <InputGroupTextarea
+              placeholder="Write your feedback..."
+              class="min-h-[80px]"
+            />
+          </InputGroup>
+        </Field>
+        <Field>
+          <FieldLabel>Block End Addon</FieldLabel>
+          <InputGroup class="max-w-lg">
+            <InputGroupTextarea
+              placeholder="Type your message..."
+              class="min-h-[80px]"
+            />
+            <InputGroupAddon align="block-end" class="border-t">
+              <InputGroupText>0/500 characters</InputGroupText>
+              <InputGroupButton
+                size="icon-xs"
+                variant="default"
+                class="ml-auto"
+                aria-label="Send"
+              >
+                <SendIcon class="size-3.5" />
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
+        </Field>
+        <Field>
+          <FieldLabel>Comment</FieldLabel>
+          <div class="max-w-lg space-y-2">
+            <InputGroup>
+              <InputGroupTextarea
+                placeholder="Write a comment..."
+                class="min-h-[80px]"
+              />
+            </InputGroup>
+            <div class="flex justify-end gap-2">
+              <Button variant="outline" size="sm">Cancel</Button>
+              <Button size="sm">Post Comment</Button>
+            </div>
+          </div>
+        </Field>
+        <Field>
+          <FieldLabel>Code Editor</FieldLabel>
+          <InputGroup class="max-w-lg">
+            <InputGroupAddon align="block-start" class="border-b">
+              <InputGroupText class="font-mono font-medium">
+                <FileCodeIcon class="size-4" />
+                script.js
+              </InputGroupText>
+              <InputGroupButton
+                class="ml-auto"
+                size="icon-xs"
+                aria-label="Refresh"
+              >
+                <RefreshCwIcon class="size-3.5" />
+              </InputGroupButton>
+              <InputGroupButton
+                size="icon-xs"
+                variant="ghost"
+                aria-label="Copy"
+              >
+                <CopyIcon class="size-3.5" />
+              </InputGroupButton>
+            </InputGroupAddon>
+            <InputGroupTextarea
+              placeholder="console.log('Hello, world!');"
+              class="min-h-[160px] font-mono text-sm"
+            />
+            <InputGroupAddon align="block-end" class="border-t">
+              <InputGroupText>Line 1, Column 1</InputGroupText>
+              <InputGroupText class="ml-auto">
+                <Badge variant="secondary" size="sm">JavaScript</Badge>
+              </InputGroupText>
+            </InputGroupAddon>
+          </InputGroup>
+        </Field>
+      </div>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

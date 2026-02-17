@@ -3,25 +3,19 @@ import type { HTMLAttributes, HTMLTag } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
-  as?: HTMLTag;
   class?: string;
 } & HTMLAttributes<"span">;
 
-const {
-  as: Tag = "span",
-  class: className = "",
-  ...rest
-} = Astro.props as Props;
+const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<Tag
+<span
   {...rest}
   data-slot="input-group-text"
   class={cn(
-    "text-muted-foreground flex items-center gap-2 text-sm [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+    "text-muted-foreground gap-2 text-sm [&_svg:not([class*='size-'])]:size-4 flex items-center [&_svg]:pointer-events-none",
     className,
   )}
 >
   <slot />
-</Tag>
-
+</span>

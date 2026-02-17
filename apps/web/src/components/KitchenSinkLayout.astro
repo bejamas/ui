@@ -13,15 +13,45 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 const { theme = "current-theme" } = Astro.props;
 
 const pages = [
-  { href: "/kitchen-sink/combobox", label: "Combobox" },
-  { href: "/kitchen-sink/dropdown-menu", label: "Dropdown Menu" },
+  { href: "/kitchen-sink/accordion", label: "Accordion", js: true },
+  { href: "/kitchen-sink/alert", label: "Alert" },
+  { href: "/kitchen-sink/avatar", label: "Avatar" },
+  { href: "/kitchen-sink/badge", label: "Badge" },
+  { href: "/kitchen-sink/breadcrumb", label: "Breadcrumb" },
+  { href: "/kitchen-sink/button", label: "Button" },
+  { href: "/kitchen-sink/button-group", label: "Button Group" },
+  { href: "/kitchen-sink/card", label: "Card" },
+  { href: "/kitchen-sink/carousel", label: "Carousel" },
+  { href: "/kitchen-sink/checkbox", label: "Checkbox" },
+  { href: "/kitchen-sink/collapsible", label: "Collapsible", js: true },
+  { href: "/kitchen-sink/combobox", label: "Combobox", js: true },
+  { href: "/kitchen-sink/date", label: "Date" },
+  { href: "/kitchen-sink/dialog", label: "Dialog", js: true },
+  { href: "/kitchen-sink/dropdown-menu", label: "Dropdown Menu", js: true },
   { href: "/kitchen-sink/forms-actions", label: "Forms + Actions" },
-  { href: "/kitchen-sink/navigation-menu", label: "Navigation Menu" },
-  { href: "/kitchen-sink/popover", label: "Popover" },
-  { href: "/kitchen-sink/select", label: "Select" },
-  { href: "/kitchen-sink/slider", label: "Slider" },
-  { href: "/kitchen-sink/toggle", label: "Toggle" },
-  { href: "/kitchen-sink/toggle-group", label: "Toggle Group" },
+  { href: "/kitchen-sink/input", label: "Input" },
+  { href: "/kitchen-sink/input-group", label: "Input Group" },
+  { href: "/kitchen-sink/item", label: "Item" },
+  { href: "/kitchen-sink/kbd", label: "Kbd" },
+  { href: "/kitchen-sink/label", label: "Label" },
+  { href: "/kitchen-sink/link-group", label: "Link Group" },
+  { href: "/kitchen-sink/marquee", label: "Marquee" },
+  { href: "/kitchen-sink/native-select", label: "Native Select" },
+  { href: "/kitchen-sink/navigation-menu", label: "Navigation Menu", js: true },
+  { href: "/kitchen-sink/popover", label: "Popover", js: true },
+  { href: "/kitchen-sink/radio-group", label: "Radio Group" },
+  { href: "/kitchen-sink/select", label: "Select", js: true },
+  { href: "/kitchen-sink/separator", label: "Separator" },
+  { href: "/kitchen-sink/skeleton", label: "Skeleton" },
+  { href: "/kitchen-sink/slider", label: "Slider", js: true },
+  { href: "/kitchen-sink/spinner", label: "Spinner" },
+  { href: "/kitchen-sink/sticky-surface", label: "Sticky Surface" },
+  { href: "/kitchen-sink/switch", label: "Switch" },
+  { href: "/kitchen-sink/tabs", label: "Tabs", js: true },
+  { href: "/kitchen-sink/textarea", label: "Textarea" },
+  { href: "/kitchen-sink/toggle", label: "Toggle", js: true },
+  { href: "/kitchen-sink/toggle-group", label: "Toggle Group", js: true },
+  { href: "/kitchen-sink/tooltip", label: "Tooltip", js: true },
 ];
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "");
@@ -68,13 +98,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
       );
     </script>
   </head>
-  <body class="antialiased bg-background">
+  <body class="antialiased bg-muted/30">
     <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
 
     <div class="flex min-h-screen">
-      <aside
-        class="w-56 shrink-0 border-r border-border bg-background sticky top-0 h-screen overflow-y-auto"
-      >
+      <aside class="w-56 shrink-0 sticky top-0 h-screen overflow-y-auto">
         <div class="p-4">
           <a
             href="/kitchen-sink"
@@ -120,25 +148,32 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
 
         <nav class="flex flex-col gap-0.5 px-2 pb-4">
           {
-            pages.map(({ href, label }) => (
+            pages.map(({ href, label, js }) => (
               <a
                 href={href}
                 class:list={[
-                  "px-3 py-2 rounded-md text-sm transition-colors",
+                  "px-3 py-2 rounded-md text-sm transition-colors flex items-center",
                   currentPath === href
                     ? "bg-muted text-foreground font-medium"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
                 ]}
               >
                 {label}
+                {js && (
+                  <span class="ml-auto text-[10px] font-medium text-muted-foreground/70 border border-border/60 rounded px-1 py-0.5 leading-none">
+                    JS
+                  </span>
+                )}
               </a>
             ))
           }
         </nav>
       </aside>
 
-      <main class="flex-1 min-w-0">
-        <slot />
+      <main class="flex-1 min-w-0 pr-3 py-3">
+        <div class="bg-background rounded-2xl border border-border">
+          <slot />
+        </div>
       </main>
     </div>
   </body>

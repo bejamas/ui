@@ -1,0 +1,116 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Marquee } from "@bejamas/ui/components/marquee";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Marquee</h1>
+
+    <KitchenSinkSection title="Left (Default)">
+      <Marquee>
+        <img src="/demo/logo/sonos.svg" alt="Sonos" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/uber.svg" alt="Uber" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/visa.svg" alt="Visa" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/nike.svg" alt="Nike" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/open-ai.svg" alt="OpenAI" class="dark:invert h-5 self-center mx-10" />
+      </Marquee>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Right">
+      <Marquee direction="right">
+        <img src="/demo/logo/sonos.svg" alt="Sonos" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/uber.svg" alt="Uber" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/visa.svg" alt="Visa" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/nike.svg" alt="Nike" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/open-ai.svg" alt="OpenAI" class="dark:invert h-5 self-center mx-10" />
+      </Marquee>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Vertical">
+      <div class="flex gap-6 h-60">
+        <Marquee direction="top">
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/sonos.svg" alt="Sonos" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/uber.svg" alt="Uber" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/visa.svg" alt="Visa" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/nike.svg" alt="Nike" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/open-ai.svg" alt="OpenAI" class="dark:invert h-5" />
+          </div>
+        </Marquee>
+        <Marquee direction="bottom">
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/open-ai.svg" alt="OpenAI" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/nike.svg" alt="Nike" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/visa.svg" alt="Visa" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/uber.svg" alt="Uber" class="dark:invert h-5" />
+          </div>
+          <div class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center">
+            <img src="/demo/logo/sonos.svg" alt="Sonos" class="dark:invert h-5" />
+          </div>
+        </Marquee>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Speed Variations">
+      <div class="space-y-6">
+        <div>
+          <p class="text-sm text-muted-foreground mb-2">Fast (15s)</p>
+          <Marquee time={15}>
+            <img src="/demo/logo/sonos.svg" alt="Sonos" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/uber.svg" alt="Uber" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/visa.svg" alt="Visa" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/nike.svg" alt="Nike" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/open-ai.svg" alt="OpenAI" class="dark:invert h-5 self-center mx-10" />
+          </Marquee>
+        </div>
+        <div>
+          <p class="text-sm text-muted-foreground mb-2">Slow (60s)</p>
+          <Marquee time={60}>
+            <img src="/demo/logo/sonos.svg" alt="Sonos" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/uber.svg" alt="Uber" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/visa.svg" alt="Visa" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/nike.svg" alt="Nike" class="dark:invert h-5 self-center mx-10" />
+            <img src="/demo/logo/open-ai.svg" alt="OpenAI" class="dark:invert h-5 self-center mx-10" />
+          </Marquee>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Solid Variant">
+      <Marquee variant="solid">
+        <img src="/demo/logo/sonos.svg" alt="Sonos" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/uber.svg" alt="Uber" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/visa.svg" alt="Visa" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/coca-cola.svg" alt="Coca-Cola" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/nike.svg" alt="Nike" class="dark:invert h-5 self-center mx-10" />
+        <img src="/demo/logo/open-ai.svg" alt="OpenAI" class="dark:invert h-5 self-center mx-10" />
+      </Marquee>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

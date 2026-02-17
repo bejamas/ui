@@ -1,0 +1,72 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Carousel, CarouselSlide } from "@bejamas/ui/components/carousel";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Carousel</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <Carousel>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 1</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 2</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 3</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 4</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 5</div></CarouselSlide>
+      </Carousel>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Vertical">
+      <Carousel axis="y" class="h-64">
+        <CarouselSlide><div class="bg-muted rounded-xl h-48 w-full flex items-center justify-center text-muted-foreground font-medium">Slide 1</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl h-48 w-full flex items-center justify-center text-muted-foreground font-medium">Slide 2</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl h-48 w-full flex items-center justify-center text-muted-foreground font-medium">Slide 3</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl h-48 w-full flex items-center justify-center text-muted-foreground font-medium">Slide 4</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl h-48 w-full flex items-center justify-center text-muted-foreground font-medium">Slide 5</div></CarouselSlide>
+      </Carousel>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Snap Proximity">
+      <Carousel snapType="proximity">
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 1</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 2</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 3</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 4</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-64 flex items-center justify-center text-muted-foreground font-medium">Slide 5</div></CarouselSlide>
+      </Carousel>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Center Aligned">
+      <Carousel align="center">
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-48 flex items-center justify-center text-muted-foreground font-medium">Slide 1</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-48 flex items-center justify-center text-muted-foreground font-medium">Slide 2</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-48 flex items-center justify-center text-muted-foreground font-medium">Slide 3</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-48 flex items-center justify-center text-muted-foreground font-medium">Slide 4</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-[3/4] w-48 flex items-center justify-center text-muted-foreground font-medium">Slide 5</div></CarouselSlide>
+      </Carousel>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="With Fade">
+      <Carousel fade>
+        <CarouselSlide><div class="bg-muted rounded-xl aspect-video w-full flex items-center justify-center text-muted-foreground font-medium text-2xl">Slide 1</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted/80 rounded-xl aspect-video w-full flex items-center justify-center text-muted-foreground font-medium text-2xl">Slide 2</div></CarouselSlide>
+        <CarouselSlide><div class="bg-muted/60 rounded-xl aspect-video w-full flex items-center justify-center text-muted-foreground font-medium text-2xl">Slide 3</div></CarouselSlide>
+      </Carousel>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Multiple Items">
+      <Carousel>
+        <CarouselSlide class="w-1/3"><div class="bg-muted rounded-xl aspect-video flex items-center justify-center text-muted-foreground font-medium">Slide 1</div></CarouselSlide>
+        <CarouselSlide class="w-1/3"><div class="bg-muted rounded-xl aspect-video flex items-center justify-center text-muted-foreground font-medium">Slide 2</div></CarouselSlide>
+        <CarouselSlide class="w-1/3"><div class="bg-muted rounded-xl aspect-video flex items-center justify-center text-muted-foreground font-medium">Slide 3</div></CarouselSlide>
+        <CarouselSlide class="w-1/3"><div class="bg-muted rounded-xl aspect-video flex items-center justify-center text-muted-foreground font-medium">Slide 4</div></CarouselSlide>
+        <CarouselSlide class="w-1/3"><div class="bg-muted rounded-xl aspect-video flex items-center justify-center text-muted-foreground font-medium">Slide 5</div></CarouselSlide>
+        <CarouselSlide class="w-1/3"><div class="bg-muted rounded-xl aspect-video flex items-center justify-center text-muted-foreground font-medium">Slide 6</div></CarouselSlide>
+      </Carousel>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

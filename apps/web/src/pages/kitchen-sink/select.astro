@@ -1,5 +1,6 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import { Label } from "@bejamas/ui/components/label";
 import { Button } from "@bejamas/ui/components/button";
@@ -26,11 +27,9 @@ import {
 
 <KitchenSinkLayout>
   <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
-    <h1 class="text-3xl font-bold mb-10">Select Component Test</h1>
+    <h1 class="text-3xl font-bold mb-10">Select</h1>
 
-    <!-- 1. Default -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">1. Default</h2>
+    <KitchenSinkSection title="Default">
       <p class="text-sm text-muted-foreground">Basic select with fruits</p>
       <Select class="w-[200px]">
         <SelectTrigger>
@@ -44,11 +43,9 @@ import {
           <SelectItem value="orange">Orange</SelectItem>
         </SelectContent>
       </Select>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 2. Position Modes -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">2. Position Modes</h2>
+    <KitchenSinkSection title="Position Modes">
       <p class="text-sm text-muted-foreground">
         Side-by-side: item-aligned vs popper
       </p>
@@ -81,11 +78,9 @@ import {
           </Select>
         </div>
       </div>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 2b. Popper Mode Options -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">2b. Popper Mode Options</h2>
+    <KitchenSinkSection title="Popper Mode Options">
       <p class="text-sm text-muted-foreground">
         Different side, align, and offset configurations
       </p>
@@ -148,13 +143,9 @@ import {
           </Select>
         </div>
       </div>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 3. Groups with Labels and Separators -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">
-        3. Groups with Labels and Separators
-      </h2>
+    <KitchenSinkSection title="Groups with Labels and Separators">
       <p class="text-sm text-muted-foreground">
         Organized with Fruits/Vegetables/Proteins
       </p>
@@ -185,11 +176,9 @@ import {
           </SelectGroup>
         </SelectContent>
       </Select>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 4. Scrollable (Timezones) -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">4. Scrollable</h2>
+    <KitchenSinkSection title="Scrollable">
       <p class="text-sm text-muted-foreground">
         Timezone selector with many items
       </p>
@@ -237,11 +226,9 @@ import {
           </SelectGroup>
         </SelectContent>
       </Select>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 5. Sizes -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">5. Sizes</h2>
+    <KitchenSinkSection title="Sizes">
       <p class="text-sm text-muted-foreground">
         sm (h-8), default (h-9), lg (h-10) - matching Button and Input sizes
       </p>
@@ -286,11 +273,9 @@ import {
           </Select>
         </div>
       </div>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 6. Disabled Select -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">6. Disabled Select</h2>
+    <KitchenSinkSection title="Disabled Select">
       <p class="text-sm text-muted-foreground">Entire select is disabled</p>
       <Select disabled class="w-[200px]">
         <SelectTrigger disabled>
@@ -301,11 +286,9 @@ import {
           <SelectItem value="banana">Banana</SelectItem>
         </SelectContent>
       </Select>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 7. Disabled Items -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">7. Disabled Items</h2>
+    <KitchenSinkSection title="Disabled Items">
       <p class="text-sm text-muted-foreground">Mix of enabled/disabled items</p>
       <Select class="w-[200px]">
         <SelectTrigger>
@@ -322,11 +305,9 @@ import {
           <SelectItem value="available3">Available Option 3</SelectItem>
         </SelectContent>
       </Select>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 8. Invalid/Error State -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">8. Invalid/Error State</h2>
+    <KitchenSinkSection title="Invalid/Error State">
       <p class="text-sm text-muted-foreground">With aria-invalid="true"</p>
       <Select class="w-[200px]">
         <SelectTrigger aria-invalid="true">
@@ -338,11 +319,9 @@ import {
           <SelectItem value="cherry">Cherry</SelectItem>
         </SelectContent>
       </Select>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 9. With Default Value -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">9. With Default Value</h2>
+    <KitchenSinkSection title="With Default Value">
       <p class="text-sm text-muted-foreground">Pre-selected value: "banana"</p>
       <Select defaultValue="banana" class="w-[200px]">
         <SelectTrigger>
@@ -355,11 +334,9 @@ import {
           <SelectItem value="grape">Grape</SelectItem>
         </SelectContent>
       </Select>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 10. Event Testing -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">10. Event Testing</h2>
+    <KitchenSinkSection title="Event Testing">
       <p class="text-sm text-muted-foreground">
         Console logging select:change and select:open-change
       </p>
@@ -393,11 +370,9 @@ import {
           });
         }
       </script>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 11. Programmatic Control -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">11. Programmatic Control</h2>
+    <KitchenSinkSection title="Programmatic Control">
       <p class="text-sm text-muted-foreground">
         Buttons to set value, open, close
       </p>
@@ -486,11 +461,9 @@ import {
           );
         });
       </script>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 12. In a Dialog -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">12. In a Dialog</h2>
+    <KitchenSinkSection title="In a Dialog">
       <p class="text-sm text-muted-foreground">
         Select inside a dialog — tests z-index stacking and focus management
       </p>
@@ -540,11 +513,9 @@ import {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </KitchenSinkSection>
 
-    <!-- 13. Form Integration -->
-    <div class="space-y-4">
-      <h2 class="text-lg font-semibold">13. Form Integration</h2>
+    <KitchenSinkSection title="Form Integration">
       <p class="text-sm text-muted-foreground">Within a form with submit</p>
       <form
         id="test-form"
@@ -604,6 +575,6 @@ import {
             console.log("Form submitted:", data);
           });
       </script>
-    </div>
+    </KitchenSinkSection>
   </section>
 </KitchenSinkLayout>

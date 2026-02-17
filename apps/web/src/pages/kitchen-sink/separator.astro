@@ -1,0 +1,88 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Separator } from "@bejamas/ui/components/separator";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Separator</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+      <KitchenSinkSection title="Horizontal">
+        <div class="space-y-4">
+          <div>
+            <h4 class="text-sm font-medium leading-none">bejamas/ui</h4>
+            <p class="text-sm text-muted-foreground mt-1">
+              An open-source component library.
+            </p>
+          </div>
+          <Separator />
+          <p class="text-sm text-muted-foreground">
+            Build beautiful, accessible web applications with reusable
+            components.
+          </p>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Vertical">
+        <div class="flex h-5 items-center space-x-4 text-sm">
+          <span>Blog</span>
+          <Separator orientation="vertical" />
+          <span>Docs</span>
+          <Separator orientation="vertical" />
+          <span>Source</span>
+          <Separator orientation="vertical" />
+          <span>Contact</span>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="In Menu">
+        <div class="max-w-xs space-y-1">
+          <div class="px-2 py-1.5">
+            <p class="text-sm font-medium">Profile</p>
+            <p class="text-xs text-muted-foreground">
+              View and edit your profile
+            </p>
+          </div>
+          <Separator />
+          <div class="px-2 py-1.5">
+            <p class="text-sm font-medium">Settings</p>
+            <p class="text-xs text-muted-foreground">Manage your preferences</p>
+          </div>
+          <Separator />
+          <div class="px-2 py-1.5">
+            <p class="text-sm font-medium">Billing</p>
+            <p class="text-xs text-muted-foreground">
+              Manage your subscription
+            </p>
+          </div>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="In List">
+        <div class="max-w-xs">
+          <div class="flex items-center justify-between py-2">
+            <span class="text-sm text-muted-foreground">Status</span>
+            <span class="text-sm font-medium">Active</span>
+          </div>
+          <Separator />
+          <div class="flex items-center justify-between py-2">
+            <span class="text-sm text-muted-foreground">Plan</span>
+            <span class="text-sm font-medium">Pro</span>
+          </div>
+          <Separator />
+          <div class="flex items-center justify-between py-2">
+            <span class="text-sm text-muted-foreground">Members</span>
+            <span class="text-sm font-medium">12</span>
+          </div>
+          <Separator />
+          <div class="flex items-center justify-between py-2">
+            <span class="text-sm text-muted-foreground">Storage</span>
+            <span class="text-sm font-medium">24 GB</span>
+          </div>
+        </div>
+      </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>

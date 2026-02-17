@@ -2,32 +2,65 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 
 const pages = [
+  { href: "/kitchen-sink/accordion", label: "Accordion", description: "Collapsible sections, multiple open, default open, disabled items", js: true },
+  { href: "/kitchen-sink/alert", label: "Alert", description: "Default, destructive, with icons, custom styled alerts" },
+  { href: "/kitchen-sink/avatar", label: "Avatar", description: "Images, fallbacks, sizes, rounded variants, groups, dropdown trigger" },
+  { href: "/kitchen-sink/badge", label: "Badge", description: "Variants, pill shape, sizes, with icons, as links" },
+  { href: "/kitchen-sink/breadcrumb", label: "Breadcrumb", description: "Basic, custom separator, collapsed ellipsis, long paths" },
+  { href: "/kitchen-sink/button", label: "Button", description: "Variants, sizes, icons, loading states, as links" },
+  { href: "/kitchen-sink/button-group", label: "Button Group", description: "Horizontal, vertical, sizes, icons, split button, nested" },
+  { href: "/kitchen-sink/card", label: "Card", description: "Default, ghost, with media, login form, actions, grid layout" },
+  { href: "/kitchen-sink/carousel", label: "Carousel", description: "Basic, vertical, snap proximity, center aligned, fade, multiple items" },
+  { href: "/kitchen-sink/checkbox", label: "Checkbox", description: "Basic, checked, disabled, groups, indeterminate state" },
+  { href: "/kitchen-sink/collapsible", label: "Collapsible", description: "Basic, default open, file tree, events, programmatic control", js: true },
+  { href: "/kitchen-sink/combobox", label: "Combobox", description: "Searchable dropdowns, groups, async loading", js: true },
+  { href: "/kitchen-sink/date", label: "Date", description: "Short, full, long formats, with time, time only, custom locales" },
+  { href: "/kitchen-sink/dialog", label: "Dialog", description: "Basic, with form, confirmation, scrollable, programmatic control", js: true },
+  { href: "/kitchen-sink/dropdown-menu", label: "Dropdown Menu", description: "Submenus, checkboxes, radio groups, keyboard navigation", js: true },
+  { href: "/kitchen-sink/forms-actions", label: "Forms + Actions", description: "Astro Actions form POST, client RPC submit, validation errors" },
+  { href: "/kitchen-sink/input", label: "Input", description: "Types, labels, disabled, invalid, file upload, with button" },
+  { href: "/kitchen-sink/input-group", label: "Input Group", description: "Icons, text addons, buttons, kbd, spinner, textarea, form" },
+  { href: "/kitchen-sink/item", label: "Item", description: "Basic, with icon, avatar, actions, variants, sizes, item group" },
+  { href: "/kitchen-sink/kbd", label: "Kbd", description: "Single keys, combinations, in context, in button, in tooltip" },
+  { href: "/kitchen-sink/label", label: "Label", description: "Basic, with input, checkbox, switch, disabled, required" },
+  { href: "/kitchen-sink/link-group", label: "Link Group", description: "Basic, without title, custom styling, footer layout" },
+  { href: "/kitchen-sink/marquee", label: "Marquee", description: "Left, right, vertical, speed variations, solid variant" },
+  { href: "/kitchen-sink/native-select", label: "Native Select", description: "Basic, sizes, with label, option groups, disabled, error, form" },
+  { href: "/kitchen-sink/navigation-menu", label: "Navigation Menu", description: "Horizontal nav with dropdowns and mega menus", js: true },
+  { href: "/kitchen-sink/popover", label: "Popover", description: "Positioning, triggers, nested content", js: true },
+  { href: "/kitchen-sink/radio-group", label: "Radio Group", description: "Basic, default selected, descriptions, disabled, horizontal, form" },
+  { href: "/kitchen-sink/select", label: "Select", description: "Dropdowns, groups, scrollable lists, form integration", js: true },
+  { href: "/kitchen-sink/separator", label: "Separator", description: "Horizontal, vertical, in menu, in list" },
+  { href: "/kitchen-sink/skeleton", label: "Skeleton", description: "Basic shapes, avatar + text, card, table, form loading states" },
+  { href: "/kitchen-sink/slider", label: "Slider", description: "Single, range, multi-thumb, vertical, step controls", js: true },
+  { href: "/kitchen-sink/spinner", label: "Spinner", description: "Basic, sizes, in button, in badge, custom colors" },
+  { href: "/kitchen-sink/sticky-surface", label: "Sticky Surface", description: "Line, elevate, backdrop effects, combined, observeStuck" },
+  { href: "/kitchen-sink/switch", label: "Switch", description: "Basic, disabled, with descriptions, settings panel" },
+  { href: "/kitchen-sink/tabs", label: "Tabs", description: "Basic, with indicator, cards, disabled, overflow", js: true },
+  { href: "/kitchen-sink/textarea", label: "Textarea", description: "Basic, with label, disabled, error, character count, form" },
+  { href: "/kitchen-sink/toggle", label: "Toggle", description: "Variants, sizes, pressed states, programmatic control", js: true },
+  { href: "/kitchen-sink/toggle-group", label: "Toggle Group", description: "Single/multiple selection, orientations, sizes", js: true },
+  { href: "/kitchen-sink/tooltip", label: "Tooltip", description: "Sides, alignment, delay, icon buttons, keyboard shortcuts", js: true },
+];
+
+const rawFiles = import.meta.glob('./*.astro', { as: 'raw', eager: true }) as Record<string, string>;
+const pageFiles = Object.entries(rawFiles).filter(([path]) => !path.endsWith('index.astro'));
+
+const sectionCounts = new Map(
+  pageFiles.map(([path, content]) => [
+    path.replace('./', '').replace('.astro', ''),
+    (content.match(/<KitchenSinkSection/g) || []).length,
+  ])
+);
+
+const stats = [
+  { label: "Components", value: pageFiles.length },
   {
-    href: "/kitchen-sink/forms-actions",
-    label: "Forms + Actions",
-    description:
-      "Astro Actions form POST, client RPC submit, validation errors",
+    label: "Test Sections",
+    value: pageFiles.reduce((sum, [, content]) =>
+      sum + (content.match(/<KitchenSinkSection/g) || []).length, 0),
   },
-  {
-    href: "/kitchen-sink/select",
-    label: "Select",
-    description: "Dropdowns, groups, scrollable lists, form integration",
-  },
-  {
-    href: "/kitchen-sink/slider",
-    label: "Slider",
-    description: "Single, range, multi-thumb, vertical, step controls",
-  },
-  {
-    href: "/kitchen-sink/toggle",
-    label: "Toggle",
-    description: "Variants, sizes, pressed states, programmatic control",
-  },
-  {
-    href: "/kitchen-sink/toggle-group",
-    label: "Toggle Group",
-    description: "Single/multiple selection, orientations, sizes",
-  },
+  { label: "JS Required", value: pages.filter(p => p.js).length },
 ];
 ---
 
@@ -40,17 +73,35 @@ const pages = [
       </p>
     </div>
 
+    <div class="grid grid-cols-3 gap-3">
+      {stats.map(({ label, value }) => (
+        <div class="rounded-lg border border-border p-4 text-center">
+          <div class="text-2xl font-bold text-foreground">{value}</div>
+          <div class="text-sm text-muted-foreground">{label}</div>
+        </div>
+      ))}
+    </div>
+
     <div class="grid gap-3">
       {
-        pages.map(({ href, label, description }) => (
-          <a
-            href={href}
-            class="block p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
-          >
-            <div class="font-medium text-foreground">{label}</div>
-            <div class="text-sm text-muted-foreground mt-1">{description}</div>
-          </a>
-        ))
+        pages.map(({ href, label, description }) => {
+          const slug = href.split('/').pop()!;
+          const sections = sectionCounts.get(slug) || 0;
+          return (
+            <a
+              href={href}
+              class="flex items-center gap-4 p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+            >
+              <div class="flex-1 min-w-0">
+                <div class="font-medium text-foreground">{label}</div>
+                <div class="text-sm text-muted-foreground mt-1">{description}</div>
+              </div>
+              <div class="text-xs text-muted-foreground shrink-0">
+                {sections} {sections === 1 ? 'section' : 'sections'}
+              </div>
+            </a>
+          );
+        })
       }
     </div>
   </section>

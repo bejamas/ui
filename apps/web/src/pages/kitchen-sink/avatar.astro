@@ -1,0 +1,122 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Avatar, AvatarImage, AvatarFallback } from "@bejamas/ui/components/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@bejamas/ui/components/dropdown-menu";
+import { Button } from "@bejamas/ui/components/button";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Avatar</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <div class="flex items-center gap-4">
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarFallback>BJ</AvatarFallback>
+        </Avatar>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Fallback">
+      <div class="flex items-center gap-4">
+        <Avatar>
+          <AvatarFallback class="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">TK</AvatarFallback>
+        </Avatar>
+        <Avatar>
+          <AvatarFallback class="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">JD</AvatarFallback>
+        </Avatar>
+        <Avatar>
+          <AvatarFallback class="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">AB</AvatarFallback>
+        </Avatar>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <div class="flex items-center gap-4">
+        <Avatar class="size-6">
+          <AvatarImage src="https://github.com/shadcn.png" alt="xs" />
+          <AvatarFallback>XS</AvatarFallback>
+        </Avatar>
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" alt="default" />
+          <AvatarFallback>MD</AvatarFallback>
+        </Avatar>
+        <Avatar class="size-12">
+          <AvatarImage src="https://github.com/shadcn.png" alt="lg" />
+          <AvatarFallback>LG</AvatarFallback>
+        </Avatar>
+        <Avatar class="size-16">
+          <AvatarImage src="https://github.com/shadcn.png" alt="xl" />
+          <AvatarFallback>XL</AvatarFallback>
+        </Avatar>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Rounded Variants">
+      <div class="flex items-center gap-4">
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" alt="round" />
+          <AvatarFallback>RD</AvatarFallback>
+        </Avatar>
+        <Avatar class="rounded-lg">
+          <AvatarImage src="https://github.com/shadcn.png" alt="square" />
+          <AvatarFallback>SQ</AvatarFallback>
+        </Avatar>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Group (Overlapping)">
+      <div class="flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background">
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" alt="user1" />
+          <AvatarFallback>U1</AvatarFallback>
+        </Avatar>
+        <Avatar>
+          <AvatarImage src="https://github.com/vercel.png" alt="user2" />
+          <AvatarFallback>U2</AvatarFallback>
+        </Avatar>
+        <Avatar>
+          <AvatarImage src="https://github.com/astro.png" alt="user3" />
+          <AvatarFallback>U3</AvatarFallback>
+        </Avatar>
+        <Avatar>
+          <AvatarImage src="https://github.com/github.png" alt="user4" />
+          <AvatarFallback>U4</AvatarFallback>
+        </Avatar>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="As Dropdown Trigger">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button class="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
+              <AvatarFallback>BJ</AvatarFallback>
+            </Avatar>
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" class="w-48">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem>Billing</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Log out</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>

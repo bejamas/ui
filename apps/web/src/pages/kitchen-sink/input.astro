@@ -1,0 +1,112 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Input</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Default">
+      <Input placeholder="Type something..." />
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Label">
+      <div class="space-y-2 max-w-sm">
+        <Label for="email-input">Email</Label>
+        <Input id="email-input" type="email" placeholder="you@example.com" />
+      </div>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Types">
+      <div class="grid gap-4 max-w-sm">
+        <div class="space-y-2">
+          <Label for="input-email">Email</Label>
+          <Input id="input-email" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="space-y-2">
+          <Label for="input-password">Password</Label>
+          <Input id="input-password" type="password" placeholder="Enter password" />
+        </div>
+        <div class="space-y-2">
+          <Label for="input-number">Number</Label>
+          <Input id="input-number" type="number" placeholder="42" />
+        </div>
+        <div class="space-y-2">
+          <Label for="input-search">Search</Label>
+          <Input id="input-search" type="search" placeholder="Search..." />
+        </div>
+        <div class="space-y-2">
+          <Label for="input-date">Date</Label>
+          <Input id="input-date" type="date" />
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="File Upload">
+      <div class="space-y-2 max-w-sm">
+        <Label for="input-file">Upload file</Label>
+        <Input id="input-file" type="file" />
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <div class="space-y-2 max-w-sm">
+        <Input disabled placeholder="Disabled input" />
+        <Input disabled value="Disabled with value" />
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Invalid / Error">
+      <div class="space-y-2 max-w-sm">
+        <Label for="input-invalid">Email</Label>
+        <Input id="input-invalid" type="email" aria-invalid="true" value="not-an-email" />
+        <p class="text-sm text-destructive">Please enter a valid email address.</p>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Button">
+      <div class="flex gap-2 max-w-sm">
+        <Input type="email" placeholder="Enter your email" />
+        <Button>Subscribe</Button>
+      </div>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Form Integration">
+      <form id="input-test-form" class="flex flex-col gap-4 p-4 border rounded-lg max-w-sm">
+        <div class="space-y-2">
+          <Label for="form-name">Name</Label>
+          <Input id="form-name" name="name" placeholder="Your name" required />
+        </div>
+        <div class="space-y-2">
+          <Label for="form-email">Email</Label>
+          <Input id="form-email" name="email" type="email" placeholder="you@example.com" required />
+        </div>
+        <div class="space-y-2">
+          <Label for="form-age">Age</Label>
+          <Input id="form-age" name="age" type="number" placeholder="25" />
+        </div>
+        <Button type="submit">Submit</Button>
+      </form>
+      <div id="input-form-output" class="text-sm text-muted-foreground"></div>
+      <script>
+        document.getElementById("input-test-form")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target as HTMLFormElement);
+          const data = Object.fromEntries(formData.entries());
+          const output = document.getElementById("input-form-output");
+          if (output) {
+            output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
+          }
+        });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

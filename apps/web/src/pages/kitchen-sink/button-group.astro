@@ -1,0 +1,91 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { ButtonGroup } from "@bejamas/ui/components/button-group";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  AlignLeftIcon,
+  AlignCenterIcon,
+  AlignRightIcon,
+  ChevronDownIcon,
+} from "@lucide/astro";
+import { Separator } from "@bejamas/ui/components/separator";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Button Group</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Horizontal (Default)">
+      <ButtonGroup>
+        <Button variant="outline">Left</Button>
+        <Button variant="outline">Center</Button>
+        <Button variant="outline">Right</Button>
+      </ButtonGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Vertical">
+      <ButtonGroup orientation="vertical">
+        <Button variant="outline">Top</Button>
+        <Button variant="outline">Middle</Button>
+        <Button variant="outline">Bottom</Button>
+      </ButtonGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <div class="space-y-4">
+        <ButtonGroup>
+          <Button variant="outline" size="sm">Small</Button>
+          <Button variant="outline" size="sm">Group</Button>
+          <Button variant="outline" size="sm">Here</Button>
+        </ButtonGroup>
+        <ButtonGroup>
+          <Button variant="outline">Default</Button>
+          <Button variant="outline">Group</Button>
+          <Button variant="outline">Here</Button>
+        </ButtonGroup>
+        <ButtonGroup>
+          <Button variant="outline" size="lg">Large</Button>
+          <Button variant="outline" size="lg">Group</Button>
+          <Button variant="outline" size="lg">Here</Button>
+        </ButtonGroup>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Icons">
+      <ButtonGroup>
+        <Button variant="outline" size="icon"><BoldIcon class="size-4" /></Button>
+        <Button variant="outline" size="icon"><ItalicIcon class="size-4" /></Button>
+        <Button variant="outline" size="icon"><UnderlineIcon class="size-4" /></Button>
+      </ButtonGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Split Button">
+      <ButtonGroup>
+        <Button variant="outline">Save</Button>
+        <Separator orientation="vertical" />
+        <Button variant="outline" size="icon"><ChevronDownIcon class="size-4" /></Button>
+      </ButtonGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Nested">
+      <ButtonGroup>
+        <ButtonGroup>
+          <Button variant="outline" size="icon"><AlignLeftIcon class="size-4" /></Button>
+          <Button variant="outline" size="icon"><AlignCenterIcon class="size-4" /></Button>
+          <Button variant="outline" size="icon"><AlignRightIcon class="size-4" /></Button>
+        </ButtonGroup>
+        <ButtonGroup>
+          <Button variant="outline" size="icon"><BoldIcon class="size-4" /></Button>
+          <Button variant="outline" size="icon"><ItalicIcon class="size-4" /></Button>
+          <Button variant="outline" size="icon"><UnderlineIcon class="size-4" /></Button>
+        </ButtonGroup>
+      </ButtonGroup>
+    </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>

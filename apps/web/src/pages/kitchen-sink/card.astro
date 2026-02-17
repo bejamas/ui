@@ -1,0 +1,178 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import {
+  Card,
+  CardMedia,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  CardAction,
+} from "@bejamas/ui/components/card";
+import { Button } from "@bejamas/ui/components/button";
+import { Badge } from "@bejamas/ui/components/badge";
+import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/ui/components/label";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Card</h1>
+
+    <KitchenSinkSection title="Default">
+      <Card class="max-w-md">
+        <CardHeader>
+          <CardTitle>Card Title</CardTitle>
+          <CardDescription>Card description goes here with some details.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground">
+            This is the card content area. You can put any content here.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button variant="outline">Cancel</Button>
+          <Button>Save</Button>
+        </CardFooter>
+      </Card>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Ghost Variant">
+      <Card variant="ghost" class="max-w-md">
+        <CardHeader>
+          <CardTitle>Ghost Card</CardTitle>
+          <CardDescription>A card without a border or shadow.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground">
+            Ghost cards blend into the background for subtle content grouping.
+          </p>
+        </CardContent>
+      </Card>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Media">
+      <Card class="max-w-md overflow-hidden">
+        <CardMedia>
+          <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-lg font-medium">
+            Image Placeholder
+          </div>
+        </CardMedia>
+        <CardHeader>
+          <CardTitle>Beautiful Landscape</CardTitle>
+          <CardDescription>A card with a media section at the top.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p class="text-sm text-muted-foreground">
+            Cards with media are great for blog posts, product listings, and galleries.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button variant="outline" class="w-full">View Details</Button>
+        </CardFooter>
+      </Card>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Login Form">
+      <Card class="max-w-sm">
+        <CardHeader>
+          <CardTitle>Login</CardTitle>
+          <CardDescription>Enter your credentials to access your account.</CardDescription>
+        </CardHeader>
+        <CardContent class="space-y-4">
+          <div class="space-y-2">
+            <Label for="card-email">Email</Label>
+            <Input id="card-email" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="space-y-2">
+            <Label for="card-password">Password</Label>
+            <Input id="card-password" type="password" placeholder="Enter password" />
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button class="w-full">Sign In</Button>
+        </CardFooter>
+      </Card>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Actions">
+      <Card class="max-w-md">
+        <CardHeader>
+          <CardTitle>Notifications</CardTitle>
+          <CardDescription>You have 3 unread messages.</CardDescription>
+          <CardAction>
+            <Button variant="outline" size="sm">Mark all read</Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="size-2 rounded-full bg-blue-500"></div>
+              <div class="flex-1">
+                <p class="text-sm font-medium">New comment on your post</p>
+                <p class="text-xs text-muted-foreground">2 min ago</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="size-2 rounded-full bg-blue-500"></div>
+              <div class="flex-1">
+                <p class="text-sm font-medium">Someone mentioned you</p>
+                <p class="text-xs text-muted-foreground">1 hour ago</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="size-2 rounded-full bg-blue-500"></div>
+              <div class="flex-1">
+                <p class="text-sm font-medium">Your report is ready</p>
+                <p class="text-xs text-muted-foreground">3 hours ago</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Card Grid">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader>
+            <div class="flex items-center justify-between">
+              <CardTitle class="text-base">Revenue</CardTitle>
+              <Badge variant="secondary">+12%</Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p class="text-2xl font-bold">$45,231.89</p>
+            <p class="text-xs text-muted-foreground">+20.1% from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <div class="flex items-center justify-between">
+              <CardTitle class="text-base">Subscriptions</CardTitle>
+              <Badge variant="secondary">+8%</Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p class="text-2xl font-bold">+2,350</p>
+            <p class="text-xs text-muted-foreground">+180 from last month</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <div class="flex items-center justify-between">
+              <CardTitle class="text-base">Active Users</CardTitle>
+              <Badge>Live</Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p class="text-2xl font-bold">+573</p>
+            <p class="text-xs text-muted-foreground">+201 since last hour</p>
+          </CardContent>
+        </Card>
+      </div>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

@@ -1,0 +1,55 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Label } from "@bejamas/ui/components/label";
+import { Input } from "@bejamas/ui/components/input";
+import { Checkbox } from "@bejamas/ui/components/checkbox";
+import { Switch } from "@bejamas/ui/components/switch";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Label</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <Label>Username</Label>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Input">
+      <div class="space-y-2">
+        <Label for="label-input">Email</Label>
+        <Input id="label-input" type="email" placeholder="you@example.com" />
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Checkbox">
+      <div class="flex items-center gap-2">
+        <Checkbox id="label-checkbox" />
+        <Label for="label-checkbox">Accept terms and conditions</Label>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Switch">
+      <div class="flex items-center gap-2">
+        <Switch id="label-switch" />
+        <Label for="label-switch">Enable notifications</Label>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <div class="space-y-2">
+        <Label for="label-disabled" class="peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Disabled field</Label>
+        <Input id="label-disabled" disabled placeholder="Cannot edit" />
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Required">
+      <div class="space-y-2">
+        <Label for="label-required">Name <span class="text-destructive">*</span></Label>
+        <Input id="label-required" required placeholder="Enter your name" />
+      </div>
+    </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>

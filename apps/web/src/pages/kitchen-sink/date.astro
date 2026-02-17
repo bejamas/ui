@@ -1,0 +1,54 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Date } from "@bejamas/ui/components/date";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Date</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Short Format">
+      <Date format="short" datetime="2025-06-13" />
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Full Format">
+      <Date format="full" datetime="2025-06-13" />
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Long Format (Default)">
+      <Date datetime="2025-06-13" />
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Time">
+      <Date format="long" includeTime datetime="2025-06-13T14:30:00" />
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Time Only">
+      <Date format="time" datetime="2025-06-13T14:30:00" />
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Custom Locale">
+      <div class="space-y-2">
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-muted-foreground w-10">fr-FR</span>
+          <Date datetime="2025-06-13" locale="fr-FR" />
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-muted-foreground w-10">de-DE</span>
+          <Date datetime="2025-06-13" locale="de-DE" />
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-muted-foreground w-10">ja-JP</span>
+          <Date datetime="2025-06-13" locale="ja-JP" />
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-muted-foreground w-10">pl-PL</span>
+          <Date datetime="2025-06-13" locale="pl-PL" />
+        </div>
+      </div>
+    </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>
