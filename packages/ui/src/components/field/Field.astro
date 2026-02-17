@@ -291,6 +291,7 @@
  * | Prop | Type | Default |
  * |------|------|---------|
  * | `errors` | `Array<{ message?: string } \| undefined>` | `[]` |
+ * | `forceMount` | `boolean` | `false` |
  * | `class` | `string` | - |
  *
  * ```astro nocollapse
@@ -299,6 +300,12 @@
  *
  * When `errors` contains multiple unique messages, the component renders a list
  * automatically.
+ *
+ * For client-side script flows in Astro, mount once and toggle visibility:
+ *
+ * ```astro nocollapse
+ * <FieldError forceMount class="hidden" data-error-for="email" />
+ * ```
  *
  * @examples
  *

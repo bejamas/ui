@@ -1,0 +1,390 @@
+---
+export const prerender = false;
+
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import { actions, isInputError } from "astro:actions";
+import { Button } from "@bejamas/ui/components/button";
+import { Checkbox } from "@bejamas/ui/components/checkbox";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@bejamas/ui/components/field";
+import { Input } from "@bejamas/ui/components/input";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import { Textarea } from "@bejamas/ui/components/textarea";
+
+const serverResult = Astro.getActionResult(actions.contactServer);
+
+const serverFieldErrors =
+  serverResult?.error && isInputError(serverResult.error)
+    ? serverResult.error.fields
+    : {};
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold">Forms with Astro Actions</h1>
+
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">1. Server Form Action (POST)</h2>
+      <p class="text-sm text-muted-foreground">
+        This form uses native POST to <code
+          >action=&#123;actions.contactServer&#125;</code
+        >
+        and reads the result with <code>Astro.getActionResult()</code>.
+      </p>
+
+      {
+        serverResult?.data && (
+          <p class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-md px-3 py-2">
+            {serverResult.data.message}
+          </p>
+        )
+      }
+
+      {
+        serverResult?.error && !isInputError(serverResult.error) && (
+          <p class="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md px-3 py-2">
+            {serverResult.error.message}
+          </p>
+        )
+      }
+
+      <form
+        method="POST"
+        action={actions.contactServer}
+        class="w-full max-w-xl"
+      >
+        <FieldSet>
+          <FieldLegend>Contact (Server)</FieldLegend>
+          <FieldDescription>
+            Native HTML submission with server-side validation.
+          </FieldDescription>
+          <FieldGroup>
+            <Field
+              data-invalid={serverFieldErrors.name?.length ? "true" : undefined}
+            >
+              <FieldLabel for="server-name">Name</FieldLabel>
+              <Input
+                id="server-name"
+                name="name"
+                placeholder="Ada Lovelace"
+                aria-invalid={serverFieldErrors.name?.length
+                  ? "true"
+                  : undefined}
+              />
+              <FieldError
+                errors={serverFieldErrors.name?.map((message) => ({ message }))}
+              />
+            </Field>
+
+            <Field
+              data-invalid={serverFieldErrors.email?.length
+                ? "true"
+                : undefined}
+            >
+              <FieldLabel for="server-email">Email</FieldLabel>
+              <Input
+                id="server-email"
+                name="email"
+                type="email"
+                placeholder="ada@example.com"
+                aria-invalid={serverFieldErrors.email?.length
+                  ? "true"
+                  : undefined}
+              />
+              <FieldError
+                errors={serverFieldErrors.email?.map((message) => ({
+                  message,
+                }))}
+              />
+            </Field>
+
+            <Field
+              data-invalid={serverFieldErrors.message?.length
+                ? "true"
+                : undefined}
+            >
+              <FieldLabel for="server-message">Message</FieldLabel>
+              <Textarea
+                id="server-message"
+                name="message"
+                rows={4}
+                placeholder="Tell us about your project..."
+                aria-invalid={serverFieldErrors.message?.length
+                  ? "true"
+                  : undefined}
+              />
+              <FieldError
+                errors={serverFieldErrors.message?.map((message) => ({
+                  message,
+                }))}
+              />
+            </Field>
+
+            <Field orientation="horizontal">
+              <Checkbox id="server-updates" name="updates" />
+              <FieldLabel for="server-updates" class="font-normal">
+                Send product updates
+              </FieldLabel>
+            </Field>
+
+            <Button type="submit" class="w-fit">Send message</Button>
+          </FieldGroup>
+        </FieldSet>
+      </form>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">2. Client Script Action</h2>
+      <p class="text-sm text-muted-foreground">
+        This form calls <code>actions.contactClient(formData)</code> from a
+        <code>&lt;script&gt;</code> block, then renders errors inline without reloading
+        the page.
+      </p>
+
+      <form id="client-action-form" class="w-full max-w-xl">
+        <FieldSet>
+          <FieldLegend>Contact (Client)</FieldLegend>
+          <FieldDescription>
+            Client-side submit using Astro Actions RPC.
+          </FieldDescription>
+          <FieldGroup>
+            <Field data-field="name">
+              <FieldLabel for="client-name">Name</FieldLabel>
+              <Input id="client-name" name="name" placeholder="Grace Hopper" />
+              <FieldError forceMount class="hidden" data-error-for="name" />
+            </Field>
+
+            <Field data-field="email">
+              <FieldLabel for="client-email">Email</FieldLabel>
+              <Input
+                id="client-email"
+                name="email"
+                type="email"
+                placeholder="grace@example.com"
+              />
+              <FieldError forceMount class="hidden" data-error-for="email" />
+            </Field>
+
+            <Field data-field="message">
+              <FieldLabel for="client-message">Message</FieldLabel>
+              <Textarea
+                id="client-message"
+                name="message"
+                rows={4}
+                placeholder="Tell us what you need..."
+              />
+              <FieldError forceMount class="hidden" data-error-for="message" />
+            </Field>
+
+            <div class="flex items-center gap-3">
+              <Button type="submit" data-submit-button>
+                <Spinner data-icon class="hidden" />
+                <span data-submit-label>Submit with script</span>
+              </Button>
+              <Button type="reset" variant="outline" data-reset-button>
+                Reset
+              </Button>
+              <p id="client-status" class="text-sm text-muted-foreground"></p>
+            </div>
+            <p id="client-general-error" class="text-destructive text-sm"></p>
+          </FieldGroup>
+        </FieldSet>
+      </form>
+    </div>
+  </section>
+</KitchenSinkLayout>
+
+<script>
+  import { actions, isInputError } from "astro:actions";
+
+  const form = document.getElementById("client-action-form");
+  const status = document.getElementById("client-status");
+  const generalError = document.getElementById("client-general-error");
+  const fieldNames = ["name", "email", "message"];
+  const SUBMIT_MIN_DELAY_MS = 800;
+  const submitButton = form?.querySelector("[data-submit-button]");
+  const resetButton = form?.querySelector("[data-reset-button]");
+  const submitLabel = form?.querySelector("[data-submit-label]");
+  const submitSpinner = submitButton?.querySelector('[data-slot="spinner"]');
+  const idleLabel =
+    submitLabel instanceof HTMLElement
+      ? submitLabel.textContent || "Submit with script"
+      : "Submit with script";
+
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const setInvalid = (el, invalid) => {
+    if (!(el instanceof HTMLElement)) return;
+
+    if (invalid) {
+      el.dataset.invalid = "true";
+      return;
+    }
+
+    delete el.dataset.invalid;
+  };
+
+  const setAriaInvalid = (el, invalid) => {
+    if (
+      !(
+        el instanceof HTMLInputElement ||
+        el instanceof HTMLTextAreaElement ||
+        el instanceof HTMLSelectElement
+      )
+    ) {
+      return;
+    }
+
+    if (invalid) {
+      el.setAttribute("aria-invalid", "true");
+      return;
+    }
+
+    el.removeAttribute("aria-invalid");
+  };
+
+  const fieldEntries = {
+    name: {
+      wrapper: form?.querySelector('[data-field="name"]'),
+      error: form?.querySelector('[data-error-for="name"]'),
+      control: form?.querySelector('[name="name"]'),
+    },
+    email: {
+      wrapper: form?.querySelector('[data-field="email"]'),
+      error: form?.querySelector('[data-error-for="email"]'),
+      control: form?.querySelector('[name="email"]'),
+    },
+    message: {
+      wrapper: form?.querySelector('[data-field="message"]'),
+      error: form?.querySelector('[data-error-for="message"]'),
+      control: form?.querySelector('[name="message"]'),
+    },
+  };
+
+  const clearErrors = () => {
+    fieldNames.forEach((name) => {
+      const entry = fieldEntries[name];
+
+      if (entry?.error) {
+        entry.error.textContent = "";
+        entry.error.classList.add("hidden");
+      }
+      setInvalid(entry?.wrapper, false);
+      setAriaInvalid(entry?.control, false);
+    });
+
+    if (generalError) generalError.textContent = "";
+    if (status) status.textContent = "";
+  };
+
+  const setSubmitting = (submitting) => {
+    if (submitButton instanceof HTMLButtonElement) {
+      submitButton.disabled = submitting;
+    }
+    if (resetButton instanceof HTMLButtonElement) {
+      resetButton.disabled = submitting;
+    }
+
+    if (form instanceof HTMLFormElement) {
+      form.setAttribute("aria-busy", submitting ? "true" : "false");
+    }
+
+    if (submitSpinner instanceof Element) {
+      submitSpinner.classList.toggle("hidden", !submitting);
+    }
+
+    if (submitLabel instanceof HTMLElement) {
+      submitLabel.textContent = submitting ? "Submitting..." : idleLabel;
+    }
+  };
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearErrors();
+    setSubmitting(true);
+
+    let result;
+    try {
+      [result] = await Promise.all([
+        actions.contactClient(new FormData(form)),
+        wait(SUBMIT_MIN_DELAY_MS),
+      ]);
+    } catch (error) {
+      setSubmitting(false);
+
+      if (generalError) {
+        generalError.textContent =
+          error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again.";
+      }
+
+      return;
+    }
+
+    setSubmitting(false);
+
+    if (result.error) {
+      if (isInputError(result.error)) {
+        const fields = result.error.fields;
+
+        fieldNames.forEach((name) => {
+          const entry = fieldEntries[name];
+          const message = fields[name]?.[0];
+
+          if (!message) return;
+          if (entry?.error) {
+            entry.error.textContent = message;
+            entry.error.classList.remove("hidden");
+          }
+          setInvalid(entry?.wrapper, true);
+          setAriaInvalid(entry?.control, true);
+        });
+      } else if (generalError) {
+        generalError.textContent = result.error.message;
+      }
+
+      return;
+    }
+
+    form.reset();
+    if (status) status.textContent = result.data.message;
+  });
+
+  form?.addEventListener("reset", () => {
+    clearErrors();
+    setSubmitting(false);
+  });
+
+  form?.querySelectorAll("input, textarea").forEach((inputEl) => {
+    inputEl.addEventListener("input", (event) => {
+      const target = event.currentTarget;
+      if (
+        !(
+          target instanceof HTMLInputElement ||
+          target instanceof HTMLTextAreaElement
+        )
+      ) {
+        return;
+      }
+
+      const entry = fieldEntries[target.name];
+      if (!entry) return;
+
+      if (entry.error) {
+        entry.error.textContent = "";
+        entry.error.classList.add("hidden");
+      }
+      setInvalid(entry.wrapper, false);
+      setAriaInvalid(entry.control, false);
+      if (generalError) generalError.textContent = "";
+    });
+  });
+</script>

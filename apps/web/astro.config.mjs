@@ -74,7 +74,12 @@ export default defineConfig({
       sidebar: [
         {
           label: "Getting Started",
-          items: ["docs/introduction", "docs/installation", "docs/cli"],
+          items: [
+            "docs/introduction",
+            "docs/installation",
+            "docs/cli",
+            "docs/forms-astro-actions",
+          ],
         },
         {
           label: "Components",

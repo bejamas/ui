@@ -2,10 +2,32 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 
 const pages = [
-  { href: "/kitchen-sink/select", label: "Select", description: "Dropdowns, groups, scrollable lists, form integration" },
-  { href: "/kitchen-sink/slider", label: "Slider", description: "Single, range, multi-thumb, vertical, step controls" },
-  { href: "/kitchen-sink/toggle", label: "Toggle", description: "Variants, sizes, pressed states, programmatic control" },
-  { href: "/kitchen-sink/toggle-group", label: "Toggle Group", description: "Single/multiple selection, orientations, sizes" },
+  {
+    href: "/kitchen-sink/forms-actions",
+    label: "Forms + Actions",
+    description:
+      "Astro Actions form POST, client RPC submit, validation errors",
+  },
+  {
+    href: "/kitchen-sink/select",
+    label: "Select",
+    description: "Dropdowns, groups, scrollable lists, form integration",
+  },
+  {
+    href: "/kitchen-sink/slider",
+    label: "Slider",
+    description: "Single, range, multi-thumb, vertical, step controls",
+  },
+  {
+    href: "/kitchen-sink/toggle",
+    label: "Toggle",
+    description: "Variants, sizes, pressed states, programmatic control",
+  },
+  {
+    href: "/kitchen-sink/toggle-group",
+    label: "Toggle Group",
+    description: "Single/multiple selection, orientations, sizes",
+  },
 ];
 ---
 
@@ -13,19 +35,23 @@ const pages = [
   <section class="max-w-2xl mx-auto py-20 px-5 space-y-8">
     <div>
       <h1 class="text-3xl font-bold">Kitchen Sink</h1>
-      <p class="text-muted-foreground mt-2">Component test pages for manual QA and visual review.</p>
+      <p class="text-muted-foreground mt-2">
+        Component test pages for manual QA and visual review.
+      </p>
     </div>
 
     <div class="grid gap-3">
-      {pages.map(({ href, label, description }) => (
-        <a
-          href={href}
-          class="block p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
-        >
-          <div class="font-medium text-foreground">{label}</div>
-          <div class="text-sm text-muted-foreground mt-1">{description}</div>
-        </a>
-      ))}
+      {
+        pages.map(({ href, label, description }) => (
+          <a
+            href={href}
+            class="block p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+          >
+            <div class="font-medium text-foreground">{label}</div>
+            <div class="text-sm text-muted-foreground mt-1">{description}</div>
+          </a>
+        ))
+      }
     </div>
   </section>
 </KitchenSinkLayout>
