@@ -1,0 +1,287 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@bejamas/ui/components/field";
+import { Input } from "@bejamas/ui/components/input";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import { Textarea } from "@bejamas/ui/components/textarea";
+---
+
+<div
+  class="w-full max-w-md rounded-xl border border-border bg-card p-5 shadow-sm"
+  data-form-demo="contact-inline"
+>
+  <form class="space-y-4">
+    <FieldSet>
+      <FieldLegend>Inline Validation Demo</FieldLegend>
+      <FieldDescription>
+        Submit empty values to trigger server-validated errors from Astro
+        Actions.
+      </FieldDescription>
+      <FieldGroup>
+        <Field data-field="name">
+          <FieldLabel for="docs-inline-name">Name</FieldLabel>
+          <Input id="docs-inline-name" name="name" placeholder="Ada Lovelace" />
+          <FieldError forceMount class="hidden" data-error-for="name" />
+        </Field>
+
+        <Field data-field="email">
+          <FieldLabel for="docs-inline-email">Email</FieldLabel>
+          <Input
+            id="docs-inline-email"
+            name="email"
+            type="email"
+            placeholder="ada@example.com"
+          />
+          <FieldError forceMount class="hidden" data-error-for="email" />
+        </Field>
+
+        <Field data-field="message">
+          <FieldLabel for="docs-inline-message">Message</FieldLabel>
+          <Textarea
+            id="docs-inline-message"
+            name="message"
+            rows={4}
+            placeholder="Tell us what you are building..."
+          />
+          <FieldError forceMount class="hidden" data-error-for="message" />
+        </Field>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <Button type="submit" data-submit-button>
+            <Spinner data-icon class="hidden" />
+            <span data-submit-label>Validate and Submit</span>
+          </Button>
+          <Button type="reset" variant="outline" data-reset-button>
+            Reset
+          </Button>
+        </div>
+        <p data-success class="hidden text-sm text-emerald-700"></p>
+        <p data-general-error class="hidden text-sm text-destructive"></p>
+      </FieldGroup>
+    </FieldSet>
+  </form>
+</div>
+
+<script>
+  import { actions, isInputError } from "astro:actions";
+
+  const roots = document.querySelectorAll('[data-form-demo="contact-inline"]');
+  const fieldNames = ["name", "email", "message"];
+  const SUBMIT_MIN_DELAY_MS = 800;
+
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const setInvalid = (el, invalid) => {
+    if (!(el instanceof HTMLElement)) return;
+
+    if (invalid) {
+      el.dataset.invalid = "true";
+      return;
+    }
+
+    delete el.dataset.invalid;
+  };
+
+  const setAriaInvalid = (el, invalid) => {
+    if (
+      !(
+        el instanceof HTMLInputElement ||
+        el instanceof HTMLTextAreaElement ||
+        el instanceof HTMLSelectElement
+      )
+    ) {
+      return;
+    }
+
+    if (invalid) {
+      el.setAttribute("aria-invalid", "true");
+      return;
+    }
+
+    el.removeAttribute("aria-invalid");
+  };
+
+  roots.forEach((root) => {
+    if (!(root instanceof HTMLElement) || root.dataset.bound === "true") return;
+    root.dataset.bound = "true";
+
+    const form = root.querySelector("form");
+    const success = root.querySelector("[data-success]");
+    const generalError = root.querySelector("[data-general-error]");
+    const submitButton = root.querySelector("[data-submit-button]");
+    const resetButton = root.querySelector("[data-reset-button]");
+    const submitLabel = root.querySelector("[data-submit-label]");
+    const submitSpinner = submitButton?.querySelector('[data-slot="spinner"]');
+    const idleLabel =
+      submitLabel instanceof HTMLElement
+        ? submitLabel.textContent || "Validate and Submit"
+        : "Validate and Submit";
+
+    if (!(form instanceof HTMLFormElement)) return;
+
+    const fieldEntries = Object.fromEntries(
+      fieldNames.map((name) => [
+        name,
+        {
+          wrapper: root.querySelector(`[data-field="${name}"]`),
+          error: root.querySelector(`[data-error-for="${name}"]`),
+          control: form.querySelector(`[name="${name}"]`),
+        },
+      ]),
+    );
+
+    const setSubmitting = (submitting) => {
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = submitting;
+      }
+      if (resetButton instanceof HTMLButtonElement) {
+        resetButton.disabled = submitting;
+      }
+
+      form.setAttribute("aria-busy", submitting ? "true" : "false");
+
+      if (submitSpinner instanceof Element) {
+        submitSpinner.classList.toggle("hidden", !submitting);
+      }
+
+      if (submitLabel instanceof HTMLElement) {
+        submitLabel.textContent = submitting ? "Submitting..." : idleLabel;
+      }
+    };
+
+    const clearState = () => {
+      fieldNames.forEach((name) => {
+        const entry = fieldEntries[name];
+
+        if (entry?.error instanceof HTMLElement) {
+          entry.error.textContent = "";
+          entry.error.classList.add("hidden");
+        }
+
+        setInvalid(entry?.wrapper, false);
+        setAriaInvalid(entry?.control, false);
+      });
+
+      if (generalError instanceof HTMLElement) {
+        generalError.textContent = "";
+        generalError.classList.add("hidden");
+      }
+
+      if (success instanceof HTMLElement) {
+        success.textContent = "";
+        success.classList.add("hidden");
+      }
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearState();
+      setSubmitting(true);
+
+      let result;
+      try {
+        [result] = await Promise.all([
+          actions.contactClient(new FormData(form)),
+          wait(SUBMIT_MIN_DELAY_MS),
+        ]);
+      } catch (error) {
+        setSubmitting(false);
+
+        if (generalError instanceof HTMLElement) {
+          generalError.textContent =
+            error instanceof Error
+              ? error.message
+              : "Something went wrong. Please try again.";
+          generalError.classList.remove("hidden");
+        }
+
+        return;
+      }
+
+      setSubmitting(false);
+
+      if (result.error) {
+        if (isInputError(result.error)) {
+          const fields = result.error.fields;
+
+          fieldNames.forEach((name) => {
+            const entry = fieldEntries[name];
+            const message = fields[name]?.[0];
+
+            if (message && entry?.error instanceof HTMLElement) {
+              entry.error.textContent = message;
+              entry.error.classList.remove("hidden");
+              setInvalid(entry.wrapper, true);
+              setAriaInvalid(entry.control, true);
+            }
+          });
+
+          return;
+        }
+
+        if (generalError instanceof HTMLElement) {
+          generalError.textContent = result.error.message;
+          generalError.classList.remove("hidden");
+        }
+
+        return;
+      }
+
+      form.reset();
+
+      if (success instanceof HTMLElement && result.data) {
+        success.textContent = result.data.message;
+        success.classList.remove("hidden");
+      }
+    });
+
+    form.addEventListener("reset", () => {
+      clearState();
+      setSubmitting(false);
+    });
+
+    form.querySelectorAll("input, textarea").forEach((inputEl) => {
+      inputEl.addEventListener("input", (event) => {
+        const target = event.currentTarget;
+
+        if (
+          !(
+            target instanceof HTMLInputElement ||
+            target instanceof HTMLTextAreaElement
+          )
+        ) {
+          return;
+        }
+
+        const entry = fieldEntries[target.name];
+        if (!entry) return;
+
+        if (entry.error instanceof HTMLElement) {
+          entry.error.textContent = "";
+          entry.error.classList.add("hidden");
+        }
+
+        setInvalid(entry.wrapper, false);
+        setAriaInvalid(entry.control, false);
+
+        if (generalError instanceof HTMLElement) {
+          generalError.textContent = "";
+          generalError.classList.add("hidden");
+        }
+
+        if (success instanceof HTMLElement) {
+          success.textContent = "";
+          success.classList.add("hidden");
+        }
+      });
+    });
+  });
+</script>

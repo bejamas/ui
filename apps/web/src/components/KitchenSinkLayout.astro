@@ -15,6 +15,7 @@ const { theme = "current-theme" } = Astro.props;
 const pages = [
   { href: "/kitchen-sink/combobox", label: "Combobox" },
   { href: "/kitchen-sink/dropdown-menu", label: "Dropdown Menu" },
+  { href: "/kitchen-sink/forms-actions", label: "Forms + Actions" },
   { href: "/kitchen-sink/navigation-menu", label: "Navigation Menu" },
   { href: "/kitchen-sink/popover", label: "Popover" },
   { href: "/kitchen-sink/select", label: "Select" },
@@ -88,7 +89,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
           <ks-theme-select>
             <Tabs class="ks-theme-tabs" id="ks-theme-tabs">
               <TabsList class="h-9 p-1 py-0.5 rounded-md w-full">
-                <TabsIndicator class="rounded-sm duration-150 transition-transform" />
+                <TabsIndicator
+                  class="rounded-sm duration-150 transition-transform"
+                />
                 <TabsTrigger
                   value="light"
                   class="ks-theme-tab px-1.5 h-7 flex-1"
