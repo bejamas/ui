@@ -1,0 +1,47 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type ErrorItem = { message?: string } | undefined;
+
+type Props = {
+  errors?: ErrorItem[];
+} & HTMLAttributes<"div">;
+
+const { class: className = "", errors = [], ...rest } = Astro.props as Props;
+
+const hasContent = Astro.slots.has("default");
+
+const uniqueMessages = Array.from(
+  new Set(
+    errors
+      .map((error) => error?.message)
+      .filter((message): message is string => Boolean(message)),
+  ),
+);
+
+const shouldRender = hasContent || uniqueMessages.length > 0;
+---
+
+{
+  shouldRender && (
+    <div
+      role="alert"
+      data-slot="field-error"
+      class={cn("text-destructive text-sm font-normal", className)}
+      {...rest}
+    >
+      {hasContent ? (
+        <slot />
+      ) : uniqueMessages.length === 1 ? (
+        uniqueMessages[0]
+      ) : (
+        <ul class="ml-4 flex list-disc flex-col gap-1">
+          {uniqueMessages.map((message) => (
+            <li>{message}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}

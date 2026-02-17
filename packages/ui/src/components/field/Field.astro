@@ -1,0 +1,665 @@
+---
+/**
+ * @component Field
+ * @title Field
+ * @description Composable form layout primitives for labels, descriptions, grouped controls, separators, and validation messages.
+ *
+ * @preview
+ *
+ * <div class="w-full max-w-md">
+ *   <form>
+ *     <FieldGroup>
+ *       <FieldSet>
+ *         <FieldLegend>Payment Method</FieldLegend>
+ *         <FieldDescription>
+ *           All transactions are secure and encrypted
+ *         </FieldDescription>
+ *         <FieldGroup>
+ *           <Field>
+ *             <FieldLabel for="checkout-7j9-card-name-43j">Name on Card</FieldLabel>
+ *             <Input id="checkout-7j9-card-name-43j" placeholder="Evil Rabbit" required />
+ *           </Field>
+ *           <Field>
+ *             <FieldLabel for="checkout-7j9-card-number-uw1">Card Number</FieldLabel>
+ *             <Input id="checkout-7j9-card-number-uw1" placeholder="1234 5678 9012 3456" required />
+ *             <FieldDescription>Enter your 16-digit card number</FieldDescription>
+ *           </Field>
+ *           <div class="grid grid-cols-3 gap-4">
+ *             <Field>
+ *               <FieldLabel for="checkout-exp-month-ts6">Month</FieldLabel>
+ *               <Select>
+ *                 <SelectTrigger id="checkout-exp-month-ts6">
+ *                   <SelectValue placeholder="MM" />
+ *                 </SelectTrigger>
+ *                 <SelectContent>
+ *                   <SelectGroup>
+ *                     <SelectItem value="01">01</SelectItem>
+ *                     <SelectItem value="02">02</SelectItem>
+ *                     <SelectItem value="03">03</SelectItem>
+ *                     <SelectItem value="04">04</SelectItem>
+ *                     <SelectItem value="05">05</SelectItem>
+ *                     <SelectItem value="06">06</SelectItem>
+ *                     <SelectItem value="07">07</SelectItem>
+ *                     <SelectItem value="08">08</SelectItem>
+ *                     <SelectItem value="09">09</SelectItem>
+ *                     <SelectItem value="10">10</SelectItem>
+ *                     <SelectItem value="11">11</SelectItem>
+ *                     <SelectItem value="12">12</SelectItem>
+ *                   </SelectGroup>
+ *                 </SelectContent>
+ *               </Select>
+ *             </Field>
+ *             <Field>
+ *               <FieldLabel for="checkout-7j9-exp-year-f59">Year</FieldLabel>
+ *               <Select>
+ *                 <SelectTrigger id="checkout-7j9-exp-year-f59">
+ *                   <SelectValue placeholder="YYYY" />
+ *                 </SelectTrigger>
+ *                 <SelectContent>
+ *                   <SelectGroup>
+ *                     <SelectItem value="2024">2024</SelectItem>
+ *                     <SelectItem value="2025">2025</SelectItem>
+ *                     <SelectItem value="2026">2026</SelectItem>
+ *                     <SelectItem value="2027">2027</SelectItem>
+ *                     <SelectItem value="2028">2028</SelectItem>
+ *                     <SelectItem value="2029">2029</SelectItem>
+ *                   </SelectGroup>
+ *                 </SelectContent>
+ *               </Select>
+ *             </Field>
+ *             <Field>
+ *               <FieldLabel for="checkout-7j9-cvv">CVV</FieldLabel>
+ *               <Input id="checkout-7j9-cvv" placeholder="123" required />
+ *             </Field>
+ *           </div>
+ *         </FieldGroup>
+ *       </FieldSet>
+ *
+ *       <FieldSeparator />
+ *
+ *       <FieldSet>
+ *         <FieldLegend>Billing Address</FieldLegend>
+ *         <FieldDescription>
+ *           The billing address associated with your payment method
+ *         </FieldDescription>
+ *         <FieldGroup>
+ *           <Field orientation="horizontal">
+ *             <Checkbox id="checkout-7j9-same-as-shipping-wgm" checked />
+ *             <FieldLabel for="checkout-7j9-same-as-shipping-wgm" class="font-normal">
+ *               Same as shipping address
+ *             </FieldLabel>
+ *           </Field>
+ *         </FieldGroup>
+ *       </FieldSet>
+ *
+ *       <FieldSet>
+ *         <FieldGroup>
+ *           <Field>
+ *             <FieldLabel for="checkout-7j9-optional-comments">Comments</FieldLabel>
+ *             <Textarea
+ *               id="checkout-7j9-optional-comments"
+ *               placeholder="Add any additional comments"
+ *               class="resize-none"
+ *             />
+ *           </Field>
+ *         </FieldGroup>
+ *       </FieldSet>
+ *
+ *       <Field orientation="horizontal">
+ *         <Button type="submit">Submit</Button>
+ *         <Button variant="outline" type="button">Cancel</Button>
+ *       </Field>
+ *     </FieldGroup>
+ *   </form>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import {
+ *   Field,
+ *   FieldContent,
+ *   FieldDescription,
+ *   FieldError,
+ *   FieldGroup,
+ *   FieldLabel,
+ *   FieldLegend,
+ *   FieldSeparator,
+ *   FieldSet,
+ *   FieldTitle,
+ * } from '@bejamas/ui/components/field';
+ * ---
+ *
+ * <FieldGroup>
+ *   <FieldSet>
+ *     <FieldLegend>Account</FieldLegend>
+ *     <Field>
+ *       <FieldLabel for="email">Email</FieldLabel>
+ *       <Input id="email" type="email" />
+ *       <FieldError errors={[{ message: 'Email is required' }]} />
+ *     </Field>
+ *   </FieldSet>
+ * </FieldGroup>
+ * ```
+ *
+ * @api
+ *
+ * ### FieldSet
+ *
+ * Container that renders a semantic `fieldset` with spacing presets.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `class` | `string` | - |
+ *
+ * ```astro nocollapse
+ * <FieldSet>
+ *   <FieldLegend>Delivery</FieldLegend>
+ *   <FieldGroup>
+ *     <Field>
+ *       <FieldLabel for="address">Address</FieldLabel>
+ *       <Input id="address" />
+ *     </Field>
+ *   </FieldGroup>
+ * </FieldSet>
+ * ```
+ *
+ * ### FieldLegend
+ *
+ * Legend element for a `FieldSet`. Use the `label` variant to align with label sizing.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `variant` | `"legend" \| "label"` | `"legend"` |
+ * | `class` | `string` | - |
+ *
+ * ```astro nocollapse
+ * <FieldLegend variant="label">Notification Preferences</FieldLegend>
+ * ```
+ *
+ * ### FieldGroup
+ *
+ * Layout wrapper that stacks `Field` components and enables container-query
+ * responsive orientations.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `class` | `string` | - |
+ *
+ * ```astro nocollapse
+ * <FieldGroup class="@container/field-group flex flex-col gap-6">
+ *   <Field>...</Field>
+ *   <Field>...</Field>
+ * </FieldGroup>
+ * ```
+ *
+ * ### Field
+ *
+ * Core wrapper for a single field. Provides orientation control, invalid-state
+ * styling, and spacing.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `orientation` | `"vertical" \| "horizontal" \| "responsive"` | `"vertical"` |
+ * | `class` | `string` | - |
+ * | `data-invalid` | `"true" \| "false"` | - |
+ *
+ * ```astro nocollapse
+ * <Field orientation="horizontal">
+ *   <FieldLabel for="remember">Remember me</FieldLabel>
+ *   <Switch id="remember" />
+ * </Field>
+ * ```
+ *
+ * ### FieldContent
+ *
+ * Flex column for grouping control and descriptions when label/content are split.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `class` | `string` | - |
+ *
+ * ```astro nocollapse
+ * <Field orientation="horizontal">
+ *   <Checkbox id="notifications" />
+ *   <FieldContent>
+ *     <FieldLabel for="notifications">Notifications</FieldLabel>
+ *     <FieldDescription>Email, SMS, and push options.</FieldDescription>
+ *   </FieldContent>
+ * </Field>
+ * ```
+ *
+ * ### FieldLabel
+ *
+ * Label styled for both direct controls and nested `Field` children.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `class` | `string` | - |
+ * | `for` | `string` | - |
+ *
+ * ```astro nocollapse
+ * <FieldLabel for="email">Email</FieldLabel>
+ * ```
+ *
+ * ### FieldTitle
+ *
+ * Title text styled for use inside `FieldContent`.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `class` | `string` | - |
+ *
+ * ```astro nocollapse
+ * <FieldContent>
+ *   <FieldTitle>Enable Touch ID</FieldTitle>
+ *   <FieldDescription>Unlock your device faster.</FieldDescription>
+ * </FieldContent>
+ * ```
+ *
+ * ### FieldDescription
+ *
+ * Helper text slot that supports links and balanced wrapping in horizontal layouts.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `class` | `string` | - |
+ *
+ * ```astro nocollapse
+ * <FieldDescription>We never share your email with anyone.</FieldDescription>
+ * ```
+ *
+ * ### FieldSeparator
+ *
+ * Visual divider for sections inside a `FieldGroup`. Supports optional inline
+ * content through its default slot.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `class` | `string` | - |
+ *
+ * ```astro nocollapse
+ * <FieldSeparator>Or continue with</FieldSeparator>
+ * ```
+ *
+ * ### FieldError
+ *
+ * Accessible error container. Renders slot content if provided; otherwise it
+ * derives output from the `errors` array.
+ *
+ * | Prop | Type | Default |
+ * |------|------|---------|
+ * | `errors` | `Array<{ message?: string } \| undefined>` | `[]` |
+ * | `class` | `string` | - |
+ *
+ * ```astro nocollapse
+ * <FieldError errors={[{ message: "Username is required" }]} />
+ * ```
+ *
+ * When `errors` contains multiple unique messages, the component renders a list
+ * automatically.
+ *
+ * @examples
+ *
+ * ### Input
+ *
+ * <FieldSet class="w-full max-w-xs">
+ *   <FieldGroup>
+ *     <Field>
+ *       <FieldLabel for="username">Username</FieldLabel>
+ *       <Input id="username" type="text" placeholder="Max Leiter" />
+ *       <FieldDescription>
+ *         Choose a unique username for your account.
+ *       </FieldDescription>
+ *     </Field>
+ *     <Field>
+ *       <FieldLabel for="password">Password</FieldLabel>
+ *       <FieldDescription>
+ *         Must be at least 8 characters long.
+ *       </FieldDescription>
+ *       <Input id="password" type="password" placeholder="••••••••" />
+ *     </Field>
+ *   </FieldGroup>
+ * </FieldSet>
+ *
+ * ### Textarea
+ *
+ * <FieldSet class="w-full max-w-xs">
+ *   <FieldGroup>
+ *     <Field>
+ *       <FieldLabel for="feedback">Feedback</FieldLabel>
+ *       <Textarea
+ *         id="feedback"
+ *         placeholder="Your feedback helps us improve..."
+ *         rows={4}
+ *       />
+ *       <FieldDescription>
+ *         Share your thoughts about our service.
+ *       </FieldDescription>
+ *     </Field>
+ *   </FieldGroup>
+ * </FieldSet>
+ *
+ * ### Select
+ *
+ * <Field class="w-full max-w-xs">
+ *   <FieldLabel for="department">Department</FieldLabel>
+ *   <Select>
+ *     <SelectTrigger id="department">
+ *       <SelectValue placeholder="Choose department" />
+ *     </SelectTrigger>
+ *     <SelectContent>
+ *       <SelectGroup>
+ *         <SelectItem value="engineering">Engineering</SelectItem>
+ *         <SelectItem value="design">Design</SelectItem>
+ *         <SelectItem value="marketing">Marketing</SelectItem>
+ *         <SelectItem value="sales">Sales</SelectItem>
+ *         <SelectItem value="support">Customer Support</SelectItem>
+ *         <SelectItem value="hr">Human Resources</SelectItem>
+ *         <SelectItem value="finance">Finance</SelectItem>
+ *         <SelectItem value="operations">Operations</SelectItem>
+ *       </SelectGroup>
+ *     </SelectContent>
+ *   </Select>
+ *   <FieldDescription>
+ *     Select your department or area of work.
+ *   </FieldDescription>
+ * </Field>
+ *
+ * ### Slider
+ *
+ * <Field class="w-full max-w-xs">
+ *   <FieldTitle>Price Range</FieldTitle>
+ *   <FieldDescription>
+ *     Set your budget range between $200 and $800.
+ *   </FieldDescription>
+ *   <Slider
+ *     defaultValue={[200, 800]}
+ *     max={1000}
+ *     min={0}
+ *     step={10}
+ *     class="mt-2 w-full"
+ *     aria-label="Price Range"
+ *   >
+ *     <SliderTrack>
+ *       <SliderRange />
+ *     </SliderTrack>
+ *     <SliderThumb />
+ *     <SliderThumb />
+ *   </Slider>
+ * </Field>
+ *
+ * ### Fieldset
+ *
+ * <FieldSet class="w-full max-w-sm">
+ *   <FieldLegend>Address Information</FieldLegend>
+ *   <FieldDescription>
+ *     We need your address to deliver your order.
+ *   </FieldDescription>
+ *   <FieldGroup>
+ *     <Field>
+ *       <FieldLabel for="street">Street Address</FieldLabel>
+ *       <Input id="street" type="text" placeholder="123 Main St" />
+ *     </Field>
+ *     <div class="grid grid-cols-2 gap-4">
+ *       <Field>
+ *         <FieldLabel for="city">City</FieldLabel>
+ *         <Input id="city" type="text" placeholder="New York" />
+ *       </Field>
+ *       <Field>
+ *         <FieldLabel for="zip">Postal Code</FieldLabel>
+ *         <Input id="zip" type="text" placeholder="90502" />
+ *       </Field>
+ *     </div>
+ *   </FieldGroup>
+ * </FieldSet>
+ *
+ * ### Checkbox
+ *
+ * <FieldGroup class="w-full max-w-xs">
+ *   <FieldSet>
+ *     <FieldLegend variant="label">
+ *       Show these items on the desktop
+ *     </FieldLegend>
+ *     <FieldDescription>
+ *       Select the items you want to show on the desktop.
+ *     </FieldDescription>
+ *     <FieldGroup class="gap-3">
+ *       <Field orientation="horizontal">
+ *         <Checkbox id="finder-pref-9k2-hard-disks-ljj" checked />
+ *         <FieldLabel
+ *           for="finder-pref-9k2-hard-disks-ljj"
+ *           class="font-normal"
+ *         >
+ *           Hard disks
+ *         </FieldLabel>
+ *       </Field>
+ *       <Field orientation="horizontal">
+ *         <Checkbox id="finder-pref-9k2-external-disks-1yg" />
+ *         <FieldLabel
+ *           for="finder-pref-9k2-external-disks-1yg"
+ *           class="font-normal"
+ *         >
+ *           External disks
+ *         </FieldLabel>
+ *       </Field>
+ *       <Field orientation="horizontal">
+ *         <Checkbox id="finder-pref-9k2-cds-dvds-fzt" />
+ *         <FieldLabel
+ *           for="finder-pref-9k2-cds-dvds-fzt"
+ *           class="font-normal"
+ *         >
+ *           CDs, DVDs, and iPods
+ *         </FieldLabel>
+ *       </Field>
+ *       <Field orientation="horizontal">
+ *         <Checkbox id="finder-pref-9k2-connected-servers-6l2" />
+ *         <FieldLabel
+ *           for="finder-pref-9k2-connected-servers-6l2"
+ *           class="font-normal"
+ *         >
+ *           Connected servers
+ *         </FieldLabel>
+ *       </Field>
+ *     </FieldGroup>
+ *   </FieldSet>
+ *   <FieldSeparator />
+ *   <Field orientation="horizontal">
+ *     <Checkbox id="finder-pref-9k2-sync-folders-nep" checked />
+ *     <FieldContent>
+ *       <FieldLabel for="finder-pref-9k2-sync-folders-nep">
+ *         Sync Desktop & Documents folders
+ *       </FieldLabel>
+ *       <FieldDescription>
+ *         Your Desktop & Documents folders are being synced with iCloud Drive.
+ *         You can access them from other devices.
+ *       </FieldDescription>
+ *     </FieldContent>
+ *   </Field>
+ * </FieldGroup>
+ *
+ * ### Radio
+ *
+ * <FieldSet class="w-full max-w-xs">
+ *   <FieldLegend variant="label">Subscription Plan</FieldLegend>
+ *   <FieldDescription>
+ *     Yearly and lifetime plans offer significant savings.
+ *   </FieldDescription>
+ *   <RadioGroup>
+ *     <Field orientation="horizontal">
+ *       <RadioGroupItem
+ *         name="subscription-plan"
+ *         value="monthly"
+ *         id="plan-monthly"
+ *         checked
+ *       />
+ *       <FieldLabel for="plan-monthly" class="font-normal">
+ *         Monthly ($9.99/month)
+ *       </FieldLabel>
+ *     </Field>
+ *     <Field orientation="horizontal">
+ *       <RadioGroupItem
+ *         name="subscription-plan"
+ *         value="yearly"
+ *         id="plan-yearly"
+ *       />
+ *       <FieldLabel for="plan-yearly" class="font-normal">
+ *         Yearly ($99.99/year)
+ *       </FieldLabel>
+ *     </Field>
+ *     <Field orientation="horizontal">
+ *       <RadioGroupItem
+ *         name="subscription-plan"
+ *         value="lifetime"
+ *         id="plan-lifetime"
+ *       />
+ *       <FieldLabel for="plan-lifetime" class="font-normal">
+ *         Lifetime ($299.99)
+ *       </FieldLabel>
+ *     </Field>
+ *   </RadioGroup>
+ * </FieldSet>
+ *
+ * ### Switch
+ *
+ * <Field orientation="horizontal" class="w-fit">
+ *   <FieldLabel for="2fa">Multi-factor authentication</FieldLabel>
+ *   <Switch id="2fa" />
+ * </Field>
+ *
+ * ### Choice Card
+ *
+ * Wrap `Field` components inside `FieldLabel` to create selectable field groups.
+ * This works with `RadioGroupItem`, `Checkbox`, and `Switch` components.
+ *
+ * <FieldGroup class="w-full max-w-xs">
+ *   <FieldSet>
+ *     <FieldLegend variant="label">Compute Environment</FieldLegend>
+ *     <FieldDescription>
+ *       Select the compute environment for your cluster.
+ *     </FieldDescription>
+ *     <RadioGroup>
+ *       <FieldLabel for="kubernetes-r2h">
+ *         <Field orientation="horizontal">
+ *           <FieldContent>
+ *             <FieldTitle>Kubernetes</FieldTitle>
+ *             <FieldDescription>
+ *               Run GPU workloads on a K8s cluster.
+ *             </FieldDescription>
+ *           </FieldContent>
+ *           <RadioGroupItem
+ *             name="compute-environment"
+ *             value="kubernetes"
+ *             id="kubernetes-r2h"
+ *             checked
+ *           />
+ *         </Field>
+ *       </FieldLabel>
+ *       <FieldLabel for="vm-z4k">
+ *         <Field orientation="horizontal">
+ *           <FieldContent>
+ *             <FieldTitle>Virtual Machine</FieldTitle>
+ *             <FieldDescription>
+ *               Access a cluster to run GPU workloads.
+ *             </FieldDescription>
+ *           </FieldContent>
+ *           <RadioGroupItem
+ *             name="compute-environment"
+ *             value="vm"
+ *             id="vm-z4k"
+ *           />
+ *         </Field>
+ *       </FieldLabel>
+ *     </RadioGroup>
+ *   </FieldSet>
+ * </FieldGroup>
+ *
+ * ### Field Group
+ *
+ * Stack `Field` components with `FieldGroup`. Add `FieldSeparator` to divide
+ * them.
+ *
+ * <FieldGroup class="w-full max-w-xs">
+ *   <FieldSet>
+ *     <FieldLabel>Responses</FieldLabel>
+ *     <FieldDescription>
+ *       Get notified when ChatGPT responds to requests that take time, like
+ *       research or image generation.
+ *     </FieldDescription>
+ *     <FieldGroup data-slot="checkbox-group">
+ *       <Field orientation="horizontal">
+ *         <Checkbox id="push" checked disabled />
+ *         <FieldLabel for="push" class="font-normal">
+ *           Push notifications
+ *         </FieldLabel>
+ *       </Field>
+ *     </FieldGroup>
+ *   </FieldSet>
+ *   <FieldSeparator />
+ *   <FieldSet>
+ *     <FieldLabel>Tasks</FieldLabel>
+ *     <FieldDescription>
+ *       Get notified when tasks you've created have updates.
+ *       <a href="#">Manage tasks</a>
+ *     </FieldDescription>
+ *     <FieldGroup data-slot="checkbox-group">
+ *       <Field orientation="horizontal">
+ *         <Checkbox id="push-tasks" />
+ *         <FieldLabel for="push-tasks" class="font-normal">
+ *           Push notifications
+ *         </FieldLabel>
+ *       </Field>
+ *       <Field orientation="horizontal">
+ *         <Checkbox id="email-tasks" />
+ *         <FieldLabel for="email-tasks" class="font-normal">
+ *           Email notifications
+ *         </FieldLabel>
+ *       </Field>
+ *     </FieldGroup>
+ *   </FieldSet>
+ * </FieldGroup>
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+
+const fieldVariants = cva(
+  "data-[invalid=true]:text-destructive gap-2 group/field flex w-full",
+  {
+    variants: {
+      orientation: {
+        vertical: "flex-col *:w-full [&>.sr-only]:w-auto",
+        horizontal:
+          "flex-row items-center *:data-[slot=field-label]:flex-auto has-[>[data-slot=field-content]]:items-start has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        responsive:
+          "flex-col *:w-full [&>.sr-only]:w-auto @md/field-group:flex-row @md/field-group:items-center @md/field-group:*:w-auto @md/field-group:*:data-[slot=field-label]:flex-auto @md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+      },
+    },
+    defaultVariants: {
+      orientation: "vertical",
+    },
+  },
+);
+
+type FieldVariantProps = VariantProps<typeof fieldVariants>;
+
+type Props = FieldVariantProps & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  orientation = "vertical",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  role="group"
+  data-slot="field"
+  data-orientation={orientation}
+  class={cn(fieldVariants({ orientation }), className)}
+  {...rest}
+>
+  <slot />
+</div>
