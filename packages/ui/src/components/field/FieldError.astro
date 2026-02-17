@@ -6,9 +6,15 @@ type ErrorItem = { message?: string } | undefined;
 
 type Props = {
   errors?: ErrorItem[];
+  forceMount?: boolean;
 } & HTMLAttributes<"div">;
 
-const { class: className = "", errors = [], ...rest } = Astro.props as Props;
+const {
+  class: className = "",
+  errors = [],
+  forceMount = false,
+  ...rest
+} = Astro.props as Props;
 
 const hasContent = Astro.slots.has("default");
 
@@ -20,7 +26,7 @@ const uniqueMessages = Array.from(
   ),
 );
 
-const shouldRender = hasContent || uniqueMessages.length > 0;
+const shouldRender = forceMount || hasContent || uniqueMessages.length > 0;
 ---
 
 {
@@ -31,11 +37,9 @@ const shouldRender = hasContent || uniqueMessages.length > 0;
       class={cn("text-destructive text-sm font-normal", className)}
       {...rest}
     >
-      {hasContent ? (
-        <slot />
-      ) : uniqueMessages.length === 1 ? (
-        uniqueMessages[0]
-      ) : (
+      {hasContent && <slot />}
+      {!hasContent && uniqueMessages.length === 1 && uniqueMessages[0]}
+      {!hasContent && uniqueMessages.length > 1 && (
         <ul class="ml-4 flex list-disc flex-col gap-1">
           {uniqueMessages.map((message) => (
             <li>{message}</li>

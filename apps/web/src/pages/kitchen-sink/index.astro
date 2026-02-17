@@ -17,6 +17,7 @@ const pages = [
   { href: "/kitchen-sink/date", label: "Date", description: "Short, full, long formats, with time, time only, custom locales" },
   { href: "/kitchen-sink/dialog", label: "Dialog", description: "Basic, with form, confirmation, scrollable, programmatic control", js: true },
   { href: "/kitchen-sink/dropdown-menu", label: "Dropdown Menu", description: "Submenus, checkboxes, radio groups, keyboard navigation", js: true },
+  { href: "/kitchen-sink/forms-actions", label: "Forms + Actions", description: "Astro Actions form POST, client RPC submit, validation errors" },
   { href: "/kitchen-sink/input", label: "Input", description: "Types, labels, disabled, invalid, file upload, with button" },
   { href: "/kitchen-sink/input-group", label: "Input Group", description: "Icons, text addons, buttons, kbd, spinner, textarea, form" },
   { href: "/kitchen-sink/item", label: "Item", description: "Basic, with icon, avatar, actions, variants, sizes, item group" },
@@ -47,19 +48,23 @@ const pages = [
   <section class="max-w-2xl mx-auto py-20 px-5 space-y-8">
     <div>
       <h1 class="text-3xl font-bold">Kitchen Sink</h1>
-      <p class="text-muted-foreground mt-2">Component test pages for manual QA and visual review.</p>
+      <p class="text-muted-foreground mt-2">
+        Component test pages for manual QA and visual review.
+      </p>
     </div>
 
     <div class="grid gap-3">
-      {pages.map(({ href, label, description }) => (
-        <a
-          href={href}
-          class="block p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
-        >
-          <div class="font-medium text-foreground">{label}</div>
-          <div class="text-sm text-muted-foreground mt-1">{description}</div>
-        </a>
-      ))}
+      {
+        pages.map(({ href, label, description }) => (
+          <a
+            href={href}
+            class="block p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+          >
+            <div class="font-medium text-foreground">{label}</div>
+            <div class="text-sm text-muted-foreground mt-1">{description}</div>
+          </a>
+        ))
+      }
     </div>
   </section>
 </KitchenSinkLayout>

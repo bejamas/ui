@@ -28,6 +28,7 @@ const pages = [
   { href: "/kitchen-sink/date", label: "Date" },
   { href: "/kitchen-sink/dialog", label: "Dialog", js: true },
   { href: "/kitchen-sink/dropdown-menu", label: "Dropdown Menu", js: true },
+  { href: "/kitchen-sink/forms-actions", label: "Forms + Actions" },
   { href: "/kitchen-sink/input", label: "Input" },
   { href: "/kitchen-sink/input-group", label: "Input Group" },
   { href: "/kitchen-sink/item", label: "Item" },
@@ -97,13 +98,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
       );
     </script>
   </head>
-  <body class="antialiased bg-background">
+  <body class="antialiased bg-muted/30">
     <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
 
     <div class="flex min-h-screen">
-      <aside
-        class="w-56 shrink-0 border-r border-border bg-background sticky top-0 h-screen overflow-y-auto"
-      >
+      <aside class="w-56 shrink-0 sticky top-0 h-screen overflow-y-auto">
         <div class="p-4">
           <a
             href="/kitchen-sink"
@@ -118,7 +117,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
           <ks-theme-select>
             <Tabs class="ks-theme-tabs" id="ks-theme-tabs">
               <TabsList class="h-9 p-1 py-0.5 rounded-md w-full">
-                <TabsIndicator class="rounded-sm duration-150 transition-transform" />
+                <TabsIndicator
+                  class="rounded-sm duration-150 transition-transform"
+                />
                 <TabsTrigger
                   value="light"
                   class="ks-theme-tab px-1.5 h-7 flex-1"
@@ -158,15 +159,21 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
                 ]}
               >
                 {label}
-                {js && <span class="ml-auto text-[10px] font-medium text-muted-foreground/70 border border-border/60 rounded px-1 py-0.5 leading-none">JS</span>}
+                {js && (
+                  <span class="ml-auto text-[10px] font-medium text-muted-foreground/70 border border-border/60 rounded px-1 py-0.5 leading-none">
+                    JS
+                  </span>
+                )}
               </a>
             ))
           }
         </nav>
       </aside>
 
-      <main class="flex-1 min-w-0">
-        <slot />
+      <main class="flex-1 min-w-0 pr-3 py-3">
+        <div class="bg-background rounded-2xl border border-border">
+          <slot />
+        </div>
       </main>
     </div>
   </body>

@@ -1,0 +1,373 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@bejamas/ui/components/field";
+import { Input } from "@bejamas/ui/components/input";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import { Textarea } from "@bejamas/ui/components/textarea";
+---
+
+<div
+  class="w-full max-w-md rounded-xl border border-border bg-card p-5 shadow-sm"
+  data-form-demo="contact-summary"
+>
+  <div class="mb-4 flex flex-wrap gap-2">
+    <Button type="button" variant="outline" data-fill="invalid">
+      Fill Invalid Values
+    </Button>
+    <Button type="button" variant="outline" data-fill="valid">
+      Fill Valid Values
+    </Button>
+  </div>
+
+  <div
+    data-summary
+    class="hidden rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+  >
+    <p class="font-medium">Validation summary</p>
+    <ul data-summary-list class="mt-2 ml-4 list-disc space-y-1"></ul>
+  </div>
+
+  <form class="mt-4 space-y-4">
+    <FieldSet>
+      <FieldLegend>Validation Summary Demo</FieldLegend>
+      <FieldDescription>
+        Test valid and invalid payloads quickly, including a top-level error
+        summary.
+      </FieldDescription>
+      <FieldGroup>
+        <Field data-field="name">
+          <FieldLabel for="docs-summary-name">Name</FieldLabel>
+          <Input
+            id="docs-summary-name"
+            name="name"
+            placeholder="Grace Hopper"
+          />
+          <FieldError forceMount class="hidden" data-error-for="name" />
+        </Field>
+
+        <Field data-field="email">
+          <FieldLabel for="docs-summary-email">Email</FieldLabel>
+          <Input
+            id="docs-summary-email"
+            name="email"
+            type="email"
+            placeholder="grace@example.com"
+          />
+          <FieldError forceMount class="hidden" data-error-for="email" />
+        </Field>
+
+        <Field data-field="message">
+          <FieldLabel for="docs-summary-message">Message</FieldLabel>
+          <Textarea
+            id="docs-summary-message"
+            name="message"
+            rows={4}
+            placeholder="I would like a custom design system..."
+          />
+          <FieldError forceMount class="hidden" data-error-for="message" />
+        </Field>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <Button type="submit" data-submit-button>
+            <Spinner data-icon class="hidden" />
+            <span data-submit-label>Submit for Validation</span>
+          </Button>
+          <Button type="reset" variant="outline" data-reset-button>
+            Reset
+          </Button>
+          <p data-status class="text-sm text-muted-foreground"></p>
+        </div>
+      </FieldGroup>
+    </FieldSet>
+  </form>
+</div>
+
+<script>
+  import { actions, isInputError } from "astro:actions";
+
+  const roots = document.querySelectorAll('[data-form-demo="contact-summary"]');
+  const SUBMIT_MIN_DELAY_MS = 800;
+
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const fieldLabels = {
+    name: "Name",
+    email: "Email",
+    message: "Message",
+  };
+
+  const setInvalid = (el, invalid) => {
+    if (!(el instanceof HTMLElement)) return;
+
+    if (invalid) {
+      el.dataset.invalid = "true";
+      return;
+    }
+
+    delete el.dataset.invalid;
+  };
+
+  const setAriaInvalid = (el, invalid) => {
+    if (
+      !(
+        el instanceof HTMLInputElement ||
+        el instanceof HTMLTextAreaElement ||
+        el instanceof HTMLSelectElement
+      )
+    ) {
+      return;
+    }
+
+    if (invalid) {
+      el.setAttribute("aria-invalid", "true");
+      return;
+    }
+
+    el.removeAttribute("aria-invalid");
+  };
+
+  roots.forEach((root) => {
+    if (!(root instanceof HTMLElement) || root.dataset.bound === "true") return;
+    root.dataset.bound = "true";
+
+    const form = root.querySelector("form");
+    const status = root.querySelector("[data-status]");
+    const summary = root.querySelector("[data-summary]");
+    const summaryList = root.querySelector("[data-summary-list]");
+    const fillInvalid = root.querySelector('[data-fill="invalid"]');
+    const fillValid = root.querySelector('[data-fill="valid"]');
+    const submitButton = root.querySelector("[data-submit-button]");
+    const resetButton = root.querySelector("[data-reset-button]");
+    const submitLabel = root.querySelector("[data-submit-label]");
+    const submitSpinner = submitButton?.querySelector('[data-slot="spinner"]');
+    const idleLabel =
+      submitLabel instanceof HTMLElement
+        ? submitLabel.textContent || "Submit for Validation"
+        : "Submit for Validation";
+
+    if (!(form instanceof HTMLFormElement)) return;
+
+    const fieldEntries = Object.fromEntries(
+      Object.keys(fieldLabels).map((name) => [
+        name,
+        {
+          wrapper: root.querySelector(`[data-field="${name}"]`),
+          error: root.querySelector(`[data-error-for="${name}"]`),
+          control: form.querySelector(`[name="${name}"]`),
+        },
+      ]),
+    );
+
+    const setSubmitting = (submitting) => {
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = submitting;
+      }
+      if (resetButton instanceof HTMLButtonElement) {
+        resetButton.disabled = submitting;
+      }
+
+      form.setAttribute("aria-busy", submitting ? "true" : "false");
+
+      if (submitSpinner instanceof Element) {
+        submitSpinner.classList.toggle("hidden", !submitting);
+      }
+
+      if (submitLabel instanceof HTMLElement) {
+        submitLabel.textContent = submitting ? "Submitting..." : idleLabel;
+      }
+    };
+
+    const hideSummary = () => {
+      if (!(summary instanceof HTMLElement)) return;
+      summary.classList.add("hidden");
+
+      if (summaryList instanceof HTMLElement) {
+        summaryList.innerHTML = "";
+      }
+    };
+
+    const clearState = () => {
+      Object.keys(fieldLabels).forEach((name) => {
+        const entry = fieldEntries[name];
+
+        if (entry?.error instanceof HTMLElement) {
+          entry.error.textContent = "";
+          entry.error.classList.add("hidden");
+        }
+
+        setInvalid(entry?.wrapper, false);
+        setAriaInvalid(entry?.control, false);
+      });
+
+      hideSummary();
+
+      if (status instanceof HTMLElement) {
+        status.textContent = "";
+      }
+    };
+
+    fillInvalid?.addEventListener("click", () => {
+      const name = form.querySelector('input[name="name"]');
+      const email = form.querySelector('input[name="email"]');
+      const message = form.querySelector('textarea[name="message"]');
+
+      if (name instanceof HTMLInputElement) name.value = "A";
+      if (email instanceof HTMLInputElement) email.value = "wrong-email";
+      if (message instanceof HTMLTextAreaElement) message.value = "Short";
+
+      clearState();
+    });
+
+    fillValid?.addEventListener("click", () => {
+      const name = form.querySelector('input[name="name"]');
+      const email = form.querySelector('input[name="email"]');
+      const message = form.querySelector('textarea[name="message"]');
+
+      if (name instanceof HTMLInputElement) name.value = "Grace Hopper";
+      if (email instanceof HTMLInputElement) email.value = "grace@example.com";
+      if (message instanceof HTMLTextAreaElement) {
+        message.value =
+          "I want to validate Astro forms with reusable Field components.";
+      }
+
+      clearState();
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearState();
+      setSubmitting(true);
+
+      let result;
+      try {
+        [result] = await Promise.all([
+          actions.contactClient(new FormData(form)),
+          wait(SUBMIT_MIN_DELAY_MS),
+        ]);
+      } catch (error) {
+        setSubmitting(false);
+
+        if (
+          summary instanceof HTMLElement &&
+          summaryList instanceof HTMLElement
+        ) {
+          summaryList.innerHTML = "";
+          const li = document.createElement("li");
+          li.textContent =
+            error instanceof Error
+              ? error.message
+              : "Something went wrong. Please try again.";
+          summaryList.appendChild(li);
+          summary.classList.remove("hidden");
+        }
+
+        return;
+      }
+
+      setSubmitting(false);
+
+      if (result.error) {
+        if (isInputError(result.error)) {
+          const summaryItems = [];
+
+          Object.keys(fieldLabels).forEach((name) => {
+            const message = result.error.fields[name]?.[0];
+            const entry = fieldEntries[name];
+
+            if (!message) return;
+
+            summaryItems.push(`${fieldLabels[name]}: ${message}`);
+
+            if (entry?.error instanceof HTMLElement) {
+              entry.error.textContent = message;
+              entry.error.classList.remove("hidden");
+            }
+
+            setInvalid(entry?.wrapper, true);
+            setAriaInvalid(entry?.control, true);
+          });
+
+          if (
+            summaryItems.length &&
+            summary instanceof HTMLElement &&
+            summaryList instanceof HTMLElement
+          ) {
+            summaryItems.forEach((item) => {
+              const li = document.createElement("li");
+              li.textContent = item;
+              summaryList.appendChild(li);
+            });
+            summary.classList.remove("hidden");
+          }
+
+          return;
+        }
+
+        if (
+          summary instanceof HTMLElement &&
+          summaryList instanceof HTMLElement
+        ) {
+          summaryList.innerHTML = "";
+          const li = document.createElement("li");
+          li.textContent = result.error.message;
+          summaryList.appendChild(li);
+          summary.classList.remove("hidden");
+        }
+
+        return;
+      }
+
+      form.reset();
+      hideSummary();
+
+      if (status instanceof HTMLElement && result.data) {
+        status.textContent = `${result.data.message} (${new Date(
+          result.data.submittedAt,
+        ).toLocaleTimeString()})`;
+      }
+    });
+
+    form.addEventListener("reset", () => {
+      clearState();
+      setSubmitting(false);
+    });
+
+    form.querySelectorAll("input, textarea").forEach((inputEl) => {
+      inputEl.addEventListener("input", (event) => {
+        const target = event.currentTarget;
+        if (
+          !(
+            target instanceof HTMLInputElement ||
+            target instanceof HTMLTextAreaElement
+          )
+        ) {
+          return;
+        }
+
+        const entry = fieldEntries[target.name];
+        if (!entry) return;
+
+        if (entry.error instanceof HTMLElement) {
+          entry.error.textContent = "";
+          entry.error.classList.add("hidden");
+        }
+
+        setInvalid(entry.wrapper, false);
+        setAriaInvalid(entry.control, false);
+        hideSummary();
+
+        if (status instanceof HTMLElement) {
+          status.textContent = "";
+        }
+      });
+    });
+  });
+</script>
