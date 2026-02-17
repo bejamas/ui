@@ -404,6 +404,57 @@
       ]
     },
     {
+      "name": "field",
+      "type": "registry:ui",
+      "registryDependencies": ["label", "separator"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/field/Field.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/FieldContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/FieldDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/FieldError.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/FieldGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/FieldLabel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/FieldLegend.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/FieldSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/FieldSet.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/FieldTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/field/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "input",
       "type": "registry:ui",
       "files": [
