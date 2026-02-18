@@ -150,6 +150,172 @@ import { Label } from "@bejamas/ui/components/label";
       </Tabs>
     </KitchenSinkSection>
 
+    <KitchenSinkSection title="Variants Alignment">
+      <div class="flex flex-wrap items-start gap-6">
+        <Tabs defaultValue="align-indicator-overview">
+          <TabsList>
+            <TabsTrigger value="align-indicator-overview">Overview</TabsTrigger>
+            <TabsTrigger value="align-indicator-analytics"
+              >Analytics</TabsTrigger
+            >
+          </TabsList>
+        </Tabs>
+
+        <Tabs defaultValue="align-default-overview">
+          <TabsList variant="default">
+            <TabsTrigger value="align-default-overview">Overview</TabsTrigger>
+            <TabsTrigger value="align-default-analytics">Analytics</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        <Tabs defaultValue="align-line-overview">
+          <TabsList variant="line">
+            <TabsTrigger value="align-line-overview">Overview</TabsTrigger>
+            <TabsTrigger value="align-line-analytics">Analytics</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        <Tabs defaultValue="align-line-animated-overview">
+          <TabsList variant="line-animated">
+            <TabsTrigger value="align-line-animated-overview">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="align-line-animated-analytics">
+              Analytics
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Content Animations">
+      <div class="space-y-6">
+        <Tabs defaultValue="fade-overview">
+          <TabsList variant="default">
+            <TabsTrigger value="fade-overview">Overview</TabsTrigger>
+            <TabsTrigger value="fade-analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="fade-reports">Reports</TabsTrigger>
+          </TabsList>
+          <TabsContent value="fade-overview" animation="fade">
+            <p class="text-sm text-muted-foreground p-4">
+              Fade animation on tab panel entry.
+            </p>
+          </TabsContent>
+          <TabsContent value="fade-analytics" animation="fade">
+            <p class="text-sm text-muted-foreground p-4">
+              Analytics content with fade transition.
+            </p>
+          </TabsContent>
+          <TabsContent value="fade-reports" animation="fade">
+            <p class="text-sm text-muted-foreground p-4">
+              Reports content with fade transition.
+            </p>
+          </TabsContent>
+        </Tabs>
+
+        <Tabs defaultValue="slide-overview">
+          <TabsList variant="default">
+            <TabsTrigger value="slide-overview">Overview</TabsTrigger>
+            <TabsTrigger value="slide-analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="slide-reports">Reports</TabsTrigger>
+          </TabsList>
+          <TabsContent value="slide-overview" animation="slide">
+            <p class="text-sm text-muted-foreground p-4">
+              Slide animation on tab panel entry.
+            </p>
+          </TabsContent>
+          <TabsContent value="slide-analytics" animation="slide">
+            <p class="text-sm text-muted-foreground p-4">
+              Analytics content with slide transition.
+            </p>
+          </TabsContent>
+          <TabsContent value="slide-reports" animation="slide">
+            <p class="text-sm text-muted-foreground p-4">
+              Reports content with slide transition.
+            </p>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Direction Content Animation">
+      <div class="space-y-6">
+        <Tabs defaultValue="direction-overview">
+          <TabsList variant="default">
+            <TabsTrigger value="direction-overview">Overview</TabsTrigger>
+            <TabsTrigger value="direction-analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="direction-reports">Reports</TabsTrigger>
+          </TabsList>
+          <TabsContent value="direction-overview" animation="direction">
+            <p class="text-sm text-muted-foreground p-4">
+              Uses left/right direction for horizontal tab changes.
+            </p>
+          </TabsContent>
+          <TabsContent value="direction-analytics" animation="direction">
+            <p class="text-sm text-muted-foreground p-4">
+              Move across tabs to see directional panel motion.
+            </p>
+          </TabsContent>
+          <TabsContent value="direction-reports" animation="direction">
+            <p class="text-sm text-muted-foreground p-4">
+              Direction attribute comes from data-slot tabs runtime.
+            </p>
+          </TabsContent>
+        </Tabs>
+
+        <Tabs
+          defaultValue="direction-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="default" class="min-w-40">
+            <TabsTrigger value="direction-profile" class="justify-start px-3">
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="direction-billing" class="justify-start px-3">
+              Billing
+            </TabsTrigger>
+            <TabsTrigger
+              value="direction-notifications"
+              class="justify-start px-3"
+            >
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent
+              value="direction-profile"
+              animation="direction"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Uses up/down direction for vertical tab changes.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="direction-billing"
+              animation="direction"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Switch between items to verify vertical directional motion.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="direction-notifications"
+              animation="direction"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Directional animation works for keyboard and click navigation.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
     <KitchenSinkSection title="Vertical Variants">
       <div class="space-y-6">
         <Tabs
@@ -266,12 +432,18 @@ import { Label } from "@bejamas/ui/components/label";
           </TabsList>
 
           <div class="flex-1">
-            <TabsContent value="line-profile" class="mt-0 rounded-lg border p-4">
+            <TabsContent
+              value="line-profile"
+              class="mt-0 rounded-lg border p-4"
+            >
               <p class="text-sm text-muted-foreground">
                 Vertical line variant.
               </p>
             </TabsContent>
-            <TabsContent value="line-billing" class="mt-0 rounded-lg border p-4">
+            <TabsContent
+              value="line-billing"
+              class="mt-0 rounded-lg border p-4"
+            >
               <p class="text-sm text-muted-foreground">
                 Manage payment methods and invoices.
               </p>
@@ -293,10 +465,16 @@ import { Label } from "@bejamas/ui/components/label";
           class="w-full max-w-xl"
         >
           <TabsList variant="line-animated" class="min-w-40">
-            <TabsTrigger value="line-animated-profile" class="justify-start px-3">
+            <TabsTrigger
+              value="line-animated-profile"
+              class="justify-start px-3"
+            >
               Profile
             </TabsTrigger>
-            <TabsTrigger value="line-animated-billing" class="justify-start px-3">
+            <TabsTrigger
+              value="line-animated-billing"
+              class="justify-start px-3"
+            >
               Billing
             </TabsTrigger>
             <TabsTrigger
@@ -483,17 +661,17 @@ import { Label } from "@bejamas/ui/components/label";
 
     <KitchenSinkSection title="Many Tabs (Overflow)">
       <Tabs defaultValue="tab-1">
-        <div class="max-w-full overflow-x-auto pb-1">
-          <TabsList class="w-max">
-            <TabsTrigger value="tab-1">Monday</TabsTrigger>
-            <TabsTrigger value="tab-2">Tuesday</TabsTrigger>
-            <TabsTrigger value="tab-3">Wednesday</TabsTrigger>
-            <TabsTrigger value="tab-4">Thursday</TabsTrigger>
-            <TabsTrigger value="tab-5">Friday</TabsTrigger>
-            <TabsTrigger value="tab-6">Saturday</TabsTrigger>
-            <TabsTrigger value="tab-7">Sunday</TabsTrigger>
-          </TabsList>
-        </div>
+        <TabsList
+          class="w-full max-w-[20rem] justify-start overflow-x-auto [&>[data-slot=tabs-trigger]]:flex-none"
+        >
+          <TabsTrigger value="tab-1">Monday</TabsTrigger>
+          <TabsTrigger value="tab-2">Tuesday</TabsTrigger>
+          <TabsTrigger value="tab-3">Wednesday</TabsTrigger>
+          <TabsTrigger value="tab-4">Thursday</TabsTrigger>
+          <TabsTrigger value="tab-5">Friday</TabsTrigger>
+          <TabsTrigger value="tab-6">Saturday</TabsTrigger>
+          <TabsTrigger value="tab-7">Sunday</TabsTrigger>
+        </TabsList>
         <TabsContent value="tab-1"
           ><p class="text-sm text-muted-foreground p-4">
             Monday content
