@@ -1,5 +1,4 @@
 ---
-import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes, HTMLTag } from "astro/types";
 
@@ -15,10 +14,6 @@ const {
   class: className = "",
   ...rest
 } = Astro.props as Props;
-
-const tabsContentVariants = cva(
-  "focus-visible:border-ring focus-visible:ring-ring/50 flex-1 outline-none focus-visible:ring-[3px] hidden data-[state=active]:block",
-);
 ---
 
 <Tag
@@ -27,7 +22,10 @@ const tabsContentVariants = cva(
   data-slot="tabs-content"
   data-value={value}
   tabindex="0"
-  class={cn(tabsContentVariants(), className)}
+  class={cn(
+    "focus-visible:border-ring focus-visible:ring-ring/50 text-sm flex-1 outline-none focus-visible:ring-[3px] hidden data-[state=active]:block",
+    className,
+  )}
 >
   <slot />
 </Tag>

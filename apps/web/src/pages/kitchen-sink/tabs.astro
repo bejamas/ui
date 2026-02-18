@@ -7,7 +7,6 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
-  TabsIndicator,
 } from "@bejamas/ui/components/tabs";
 import {
   Card,
@@ -51,10 +50,9 @@ import { Label } from "@bejamas/ui/components/label";
       </Tabs>
     </KitchenSinkSection>
 
-    <KitchenSinkSection title="With Indicator">
+    <KitchenSinkSection title="Animated Indicator (Default)">
       <Tabs defaultValue="overview">
         <TabsList>
-          <TabsIndicator />
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
@@ -77,17 +75,347 @@ import { Label } from "@bejamas/ui/components/label";
       </Tabs>
     </KitchenSinkSection>
 
+    <KitchenSinkSection title="Shadcn Default Variant">
+      <Tabs defaultValue="default-overview">
+        <TabsList variant="default">
+          <TabsTrigger value="default-overview">Overview</TabsTrigger>
+          <TabsTrigger value="default-analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="default-reports">Reports</TabsTrigger>
+        </TabsList>
+        <TabsContent value="default-overview">
+          <p class="text-sm text-muted-foreground p-4">
+            Default variant uses active trigger background styling.
+          </p>
+        </TabsContent>
+        <TabsContent value="default-analytics">
+          <p class="text-sm text-muted-foreground p-4">
+            Analytics content for shadcn default variant.
+          </p>
+        </TabsContent>
+        <TabsContent value="default-reports">
+          <p class="text-sm text-muted-foreground p-4">
+            Reports content for shadcn default variant.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Shadcn Line Variant">
+      <Tabs defaultValue="line-overview">
+        <TabsList variant="line">
+          <TabsTrigger value="line-overview">Overview</TabsTrigger>
+          <TabsTrigger value="line-analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="line-reports">Reports</TabsTrigger>
+        </TabsList>
+        <TabsContent value="line-overview">
+          <p class="text-sm text-muted-foreground p-4">
+            Line variant uses an active underline style.
+          </p>
+        </TabsContent>
+        <TabsContent value="line-analytics">
+          <p class="text-sm text-muted-foreground p-4">
+            Analytics content for shadcn line variant.
+          </p>
+        </TabsContent>
+        <TabsContent value="line-reports">
+          <p class="text-sm text-muted-foreground p-4">
+            Reports content for shadcn line variant.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Animated Line Variant">
+      <Tabs defaultValue="line-animated-overview">
+        <TabsList variant="line-animated">
+          <TabsTrigger value="line-animated-overview">Overview</TabsTrigger>
+          <TabsTrigger value="line-animated-analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="line-animated-reports">Reports</TabsTrigger>
+        </TabsList>
+        <TabsContent value="line-animated-overview">
+          <p class="text-sm text-muted-foreground p-4">
+            Animated line variant uses a shared moving underline.
+          </p>
+        </TabsContent>
+        <TabsContent value="line-animated-analytics">
+          <p class="text-sm text-muted-foreground p-4">
+            Analytics content for animated line variant.
+          </p>
+        </TabsContent>
+        <TabsContent value="line-animated-reports">
+          <p class="text-sm text-muted-foreground p-4">
+            Reports content for animated line variant.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Vertical Variants">
+      <div class="space-y-6">
+        <Tabs
+          defaultValue="indicator-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="indicator" class="min-w-40">
+            <TabsTrigger value="indicator-profile" class="justify-start px-3">
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="indicator-billing" class="justify-start px-3">
+              Billing
+            </TabsTrigger>
+            <TabsTrigger
+              value="indicator-notifications"
+              class="justify-start px-3"
+            >
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent
+              value="indicator-profile"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Vertical indicator variant.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="indicator-billing"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Manage payment methods and invoices.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="indicator-notifications"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Configure notification preferences.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+
+        <Tabs
+          defaultValue="default-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="default" class="min-w-40">
+            <TabsTrigger value="default-profile" class="justify-start px-3">
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="default-billing" class="justify-start px-3">
+              Billing
+            </TabsTrigger>
+            <TabsTrigger
+              value="default-notifications"
+              class="justify-start px-3"
+            >
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent
+              value="default-profile"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Vertical default variant.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="default-billing"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Manage payment methods and invoices.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="default-notifications"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Configure notification preferences.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+
+        <Tabs
+          defaultValue="line-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="line" class="min-w-40">
+            <TabsTrigger value="line-profile" class="justify-start px-3">
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="line-billing" class="justify-start px-3">
+              Billing
+            </TabsTrigger>
+            <TabsTrigger value="line-notifications" class="justify-start px-3">
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent value="line-profile" class="mt-0 rounded-lg border p-4">
+              <p class="text-sm text-muted-foreground">
+                Vertical line variant.
+              </p>
+            </TabsContent>
+            <TabsContent value="line-billing" class="mt-0 rounded-lg border p-4">
+              <p class="text-sm text-muted-foreground">
+                Manage payment methods and invoices.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="line-notifications"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Configure notification preferences.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+
+        <Tabs
+          defaultValue="line-animated-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="line-animated" class="min-w-40">
+            <TabsTrigger value="line-animated-profile" class="justify-start px-3">
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="line-animated-billing" class="justify-start px-3">
+              Billing
+            </TabsTrigger>
+            <TabsTrigger
+              value="line-animated-notifications"
+              class="justify-start px-3"
+            >
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent
+              value="line-animated-profile"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Vertical animated line variant.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="line-animated-billing"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Manage payment methods and invoices.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="line-animated-notifications"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Configure notification preferences.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <div class="space-y-5">
+        <Tabs defaultValue="sm-account">
+          <div class="flex flex-wrap items-center gap-2">
+            <TabsList size="sm">
+              <TabsTrigger value="sm-account" class="text-xs px-2">
+                Account
+              </TabsTrigger>
+              <TabsTrigger value="sm-password" class="text-xs px-2">
+                Password
+              </TabsTrigger>
+            </TabsList>
+            <Button size="sm" variant="outline">Save</Button>
+          </div>
+          <TabsContent value="sm-account">
+            <p class="text-xs text-muted-foreground p-3">Small tabs.</p>
+          </TabsContent>
+          <TabsContent value="sm-password">
+            <p class="text-xs text-muted-foreground p-3">Small tabs content.</p>
+          </TabsContent>
+        </Tabs>
+
+        <Tabs defaultValue="md-account">
+          <div class="flex flex-wrap items-center gap-2">
+            <TabsList size="default">
+              <TabsTrigger value="md-account">Account</TabsTrigger>
+              <TabsTrigger value="md-password">Password</TabsTrigger>
+            </TabsList>
+            <Button variant="outline">Save</Button>
+          </div>
+          <TabsContent value="md-account">
+            <p class="text-sm text-muted-foreground p-4">Default tabs.</p>
+          </TabsContent>
+          <TabsContent value="md-password">
+            <p class="text-sm text-muted-foreground p-4">
+              Default tabs content.
+            </p>
+          </TabsContent>
+        </Tabs>
+
+        <Tabs defaultValue="lg-account">
+          <div class="flex flex-wrap items-center gap-2">
+            <TabsList size="lg">
+              <TabsTrigger value="lg-account" class="text-base px-4">
+                Account
+              </TabsTrigger>
+              <TabsTrigger value="lg-password" class="text-base px-4">
+                Password
+              </TabsTrigger>
+            </TabsList>
+            <Button size="lg" variant="outline">Save</Button>
+          </div>
+          <TabsContent value="lg-account">
+            <p class="text-base text-muted-foreground p-4">Large tabs.</p>
+          </TabsContent>
+          <TabsContent value="lg-password">
+            <p class="text-base text-muted-foreground p-4">
+              Large tabs content.
+            </p>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
     <KitchenSinkSection title="With Cards">
       <Tabs defaultValue="account-card">
         <TabsList class="w-full">
           <TabsTrigger value="account-card" class="flex-1">Account</TabsTrigger>
-          <TabsTrigger value="password-card" class="flex-1">Password</TabsTrigger>
+          <TabsTrigger value="password-card" class="flex-1"
+            >Password</TabsTrigger
+          >
         </TabsList>
         <TabsContent value="account-card">
           <Card>
             <CardHeader>
               <CardTitle>Account</CardTitle>
-              <CardDescription>Make changes to your account here.</CardDescription>
+              <CardDescription
+                >Make changes to your account here.</CardDescription
+              >
             </CardHeader>
             <CardContent class="space-y-4">
               <div class="space-y-2">
@@ -136,35 +464,71 @@ import { Label } from "@bejamas/ui/components/label";
           <TabsTrigger value="active-2">Also Active</TabsTrigger>
         </TabsList>
         <TabsContent value="active-1">
-          <p class="text-sm text-muted-foreground p-4">First active tab content.</p>
+          <p class="text-sm text-muted-foreground p-4">
+            First active tab content.
+          </p>
         </TabsContent>
         <TabsContent value="disabled-tab">
-          <p class="text-sm text-muted-foreground p-4">You shouldn't see this.</p>
+          <p class="text-sm text-muted-foreground p-4">
+            You shouldn't see this.
+          </p>
         </TabsContent>
         <TabsContent value="active-2">
-          <p class="text-sm text-muted-foreground p-4">Second active tab content.</p>
+          <p class="text-sm text-muted-foreground p-4">
+            Second active tab content.
+          </p>
         </TabsContent>
       </Tabs>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Many Tabs (Overflow)">
       <Tabs defaultValue="tab-1">
-        <TabsList>
-          <TabsTrigger value="tab-1">Monday</TabsTrigger>
-          <TabsTrigger value="tab-2">Tuesday</TabsTrigger>
-          <TabsTrigger value="tab-3">Wednesday</TabsTrigger>
-          <TabsTrigger value="tab-4">Thursday</TabsTrigger>
-          <TabsTrigger value="tab-5">Friday</TabsTrigger>
-          <TabsTrigger value="tab-6">Saturday</TabsTrigger>
-          <TabsTrigger value="tab-7">Sunday</TabsTrigger>
-        </TabsList>
-        <TabsContent value="tab-1"><p class="text-sm text-muted-foreground p-4">Monday content</p></TabsContent>
-        <TabsContent value="tab-2"><p class="text-sm text-muted-foreground p-4">Tuesday content</p></TabsContent>
-        <TabsContent value="tab-3"><p class="text-sm text-muted-foreground p-4">Wednesday content</p></TabsContent>
-        <TabsContent value="tab-4"><p class="text-sm text-muted-foreground p-4">Thursday content</p></TabsContent>
-        <TabsContent value="tab-5"><p class="text-sm text-muted-foreground p-4">Friday content</p></TabsContent>
-        <TabsContent value="tab-6"><p class="text-sm text-muted-foreground p-4">Saturday content</p></TabsContent>
-        <TabsContent value="tab-7"><p class="text-sm text-muted-foreground p-4">Sunday content</p></TabsContent>
+        <div class="max-w-full overflow-x-auto pb-1">
+          <TabsList class="w-max">
+            <TabsTrigger value="tab-1">Monday</TabsTrigger>
+            <TabsTrigger value="tab-2">Tuesday</TabsTrigger>
+            <TabsTrigger value="tab-3">Wednesday</TabsTrigger>
+            <TabsTrigger value="tab-4">Thursday</TabsTrigger>
+            <TabsTrigger value="tab-5">Friday</TabsTrigger>
+            <TabsTrigger value="tab-6">Saturday</TabsTrigger>
+            <TabsTrigger value="tab-7">Sunday</TabsTrigger>
+          </TabsList>
+        </div>
+        <TabsContent value="tab-1"
+          ><p class="text-sm text-muted-foreground p-4">
+            Monday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-2"
+          ><p class="text-sm text-muted-foreground p-4">
+            Tuesday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-3"
+          ><p class="text-sm text-muted-foreground p-4">
+            Wednesday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-4"
+          ><p class="text-sm text-muted-foreground p-4">
+            Thursday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-5"
+          ><p class="text-sm text-muted-foreground p-4">
+            Friday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-6"
+          ><p class="text-sm text-muted-foreground p-4">
+            Saturday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-7"
+          ><p class="text-sm text-muted-foreground p-4">
+            Sunday content
+          </p></TabsContent
+        >
       </Tabs>
     </KitchenSinkSection>
 
@@ -178,9 +542,21 @@ import { Label } from "@bejamas/ui/components/label";
           <TabsTrigger value="event-tab-2">Tab 2</TabsTrigger>
           <TabsTrigger value="event-tab-3">Tab 3</TabsTrigger>
         </TabsList>
-        <TabsContent value="event-tab-1"><p class="text-sm text-muted-foreground p-4">Tab 1 content</p></TabsContent>
-        <TabsContent value="event-tab-2"><p class="text-sm text-muted-foreground p-4">Tab 2 content</p></TabsContent>
-        <TabsContent value="event-tab-3"><p class="text-sm text-muted-foreground p-4">Tab 3 content</p></TabsContent>
+        <TabsContent value="event-tab-1"
+          ><p class="text-sm text-muted-foreground p-4">
+            Tab 1 content
+          </p></TabsContent
+        >
+        <TabsContent value="event-tab-2"
+          ><p class="text-sm text-muted-foreground p-4">
+            Tab 2 content
+          </p></TabsContent
+        >
+        <TabsContent value="event-tab-3"
+          ><p class="text-sm text-muted-foreground p-4">
+            Tab 3 content
+          </p></TabsContent
+        >
       </Tabs>
       <EventLog id="tabs-event-output" />
       <script>
@@ -206,9 +582,21 @@ import { Label } from "@bejamas/ui/components/label";
           <TabsTrigger value="prog-tab-2">Tab 2</TabsTrigger>
           <TabsTrigger value="prog-tab-3">Tab 3</TabsTrigger>
         </TabsList>
-        <TabsContent value="prog-tab-1"><p class="text-sm text-muted-foreground p-4">Programmatic tab 1</p></TabsContent>
-        <TabsContent value="prog-tab-2"><p class="text-sm text-muted-foreground p-4">Programmatic tab 2</p></TabsContent>
-        <TabsContent value="prog-tab-3"><p class="text-sm text-muted-foreground p-4">Programmatic tab 3</p></TabsContent>
+        <TabsContent value="prog-tab-1"
+          ><p class="text-sm text-muted-foreground p-4">
+            Programmatic tab 1
+          </p></TabsContent
+        >
+        <TabsContent value="prog-tab-2"
+          ><p class="text-sm text-muted-foreground p-4">
+            Programmatic tab 2
+          </p></TabsContent
+        >
+        <TabsContent value="prog-tab-3"
+          ><p class="text-sm text-muted-foreground p-4">
+            Programmatic tab 3
+          </p></TabsContent
+        >
       </Tabs>
       <div class="flex flex-wrap gap-2">
         <button
@@ -233,21 +621,33 @@ import { Label } from "@bejamas/ui/components/label";
       <script>
         {
           const tabs = document.getElementById("programmatic-tabs");
-          document.getElementById("set-tab-1")?.addEventListener("click", () => {
-            tabs?.dispatchEvent(
-              new CustomEvent("tabs:set", { detail: { value: "prog-tab-1" } }),
-            );
-          });
-          document.getElementById("set-tab-2")?.addEventListener("click", () => {
-            tabs?.dispatchEvent(
-              new CustomEvent("tabs:set", { detail: { value: "prog-tab-2" } }),
-            );
-          });
-          document.getElementById("set-tab-3")?.addEventListener("click", () => {
-            tabs?.dispatchEvent(
-              new CustomEvent("tabs:set", { detail: { value: "prog-tab-3" } }),
-            );
-          });
+          document
+            .getElementById("set-tab-1")
+            ?.addEventListener("click", () => {
+              tabs?.dispatchEvent(
+                new CustomEvent("tabs:set", {
+                  detail: { value: "prog-tab-1" },
+                }),
+              );
+            });
+          document
+            .getElementById("set-tab-2")
+            ?.addEventListener("click", () => {
+              tabs?.dispatchEvent(
+                new CustomEvent("tabs:set", {
+                  detail: { value: "prog-tab-2" },
+                }),
+              );
+            });
+          document
+            .getElementById("set-tab-3")
+            ?.addEventListener("click", () => {
+              tabs?.dispatchEvent(
+                new CustomEvent("tabs:set", {
+                  detail: { value: "prog-tab-3" },
+                }),
+              );
+            });
         }
       </script>
     </KitchenSinkSection>

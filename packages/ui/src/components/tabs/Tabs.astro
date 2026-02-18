@@ -9,7 +9,6 @@
  *
  * <Tabs class="w-full max-w-md" defaultValue="features">
  *   <TabsList class="w-full">
- *     <TabsIndicator />
  *     <TabsTrigger value="features" aria-selected="true">Features</TabsTrigger>
  *     <TabsTrigger value="pricing">Pricing</TabsTrigger>
  *     <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
@@ -114,7 +113,71 @@
  *   </TabsList>
  *   <TabsContent value="overview">Content...</TabsContent>
  * </Tabs>
+ *
+ * <Tabs defaultValue="overview">
+ *   <TabsList variant="line">
+ *     <TabsTrigger value="overview">Overview</TabsTrigger>
+ *     <TabsTrigger value="analytics">Analytics</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="overview">Overview content...</TabsContent>
+ *   <TabsContent value="analytics">Analytics content...</TabsContent>
+ * </Tabs>
+ *
+ * <Tabs defaultValue="overview">
+ *   <TabsList variant="line-animated">
+ *     <TabsTrigger value="overview">Overview</TabsTrigger>
+ *     <TabsTrigger value="analytics">Analytics</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="overview">Overview content...</TabsContent>
+ *   <TabsContent value="analytics">Analytics content...</TabsContent>
+ * </Tabs>
  * ```
+ *
+ * @examples
+ *
+ * ### Vertical
+ *
+ * <Tabs defaultValue="profile" orientation="vertical" class="w-full max-w-xl">
+ *   <TabsList variant="line-animated" class="min-w-40">
+ *     <TabsTrigger value="profile" class="justify-start px-3">Profile</TabsTrigger>
+ *     <TabsTrigger value="billing" class="justify-start px-3">Billing</TabsTrigger>
+ *     <TabsTrigger value="notifications" class="justify-start px-3">Notifications</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="profile" class="rounded-lg border p-4">
+ *     Profile settings content.
+ *   </TabsContent>
+ *   <TabsContent value="billing" class="rounded-lg border p-4">
+ *     Billing settings content.
+ *   </TabsContent>
+ *   <TabsContent value="notifications" class="rounded-lg border p-4">
+ *     Notifications settings content.
+ *   </TabsContent>
+ * </Tabs>
+ *
+ * ### Sizes
+ *
+ * <div class="space-y-4">
+ *   <Tabs defaultValue="sm-account">
+ *     <TabsList class="h-7 p-[2px]">
+ *       <TabsTrigger value="sm-account" class="text-xs px-2">Account</TabsTrigger>
+ *       <TabsTrigger value="sm-password" class="text-xs px-2">Password</TabsTrigger>
+ *     </TabsList>
+ *   </Tabs>
+ *
+ *   <Tabs defaultValue="md-account">
+ *     <TabsList>
+ *       <TabsTrigger value="md-account">Account</TabsTrigger>
+ *       <TabsTrigger value="md-password">Password</TabsTrigger>
+ *     </TabsList>
+ *   </Tabs>
+ *
+ *   <Tabs defaultValue="lg-account">
+ *     <TabsList class="h-10 p-1">
+ *       <TabsTrigger value="lg-account" class="text-base px-4">Account</TabsTrigger>
+ *       <TabsTrigger value="lg-password" class="text-base px-4">Password</TabsTrigger>
+ *     </TabsList>
+ *   </Tabs>
+ * </div>
  *
  * @api
  *
@@ -164,6 +227,8 @@
  *
  * | Attribute | Element | Description |
  * |-----------|---------|-------------|
+ * | `data-orientation` | tabs | Current orientation (`horizontal` or `vertical`) |
+ * | `data-variant` | tabs-list | Current list variant (`indicator`, `default`, `line`, or `line-animated`) |
  * | `data-state` | tabs-trigger | Current state (`active` or `inactive`) |
  *
  * ### CSS Variables
@@ -183,12 +248,25 @@ import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
   class?: string;
+  orientation?: "horizontal" | "vertical";
 } & HTMLAttributes<"div">;
 
-const { class: className = "", ...rest } = Astro.props as Props;
+const {
+  class: className = "",
+  orientation = "horizontal",
+  ...rest
+} = Astro.props as Props;
 ---
 
-<div {...rest} data-slot="tabs" class={cn("flex flex-col gap-2", className)}>
+<div
+  {...rest}
+  data-slot="tabs"
+  data-orientation={orientation}
+  class={cn(
+    "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
+    className,
+  )}
+>
   <slot />
 </div>
 
