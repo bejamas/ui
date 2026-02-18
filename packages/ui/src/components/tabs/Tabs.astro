@@ -7,96 +7,63 @@
  *
  * @preview
  *
- * <Tabs class="w-full max-w-md" defaultValue="features">
- *   <TabsList class="w-full">
- *     <TabsIndicator />
- *     <TabsTrigger value="features" aria-selected="true">Features</TabsTrigger>
- *     <TabsTrigger value="pricing">Pricing</TabsTrigger>
- *     <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+ * <Tabs defaultValue="overview" class="w-full max-w-[400px]">
+ *   <TabsList>
+ *     <TabsTrigger value="overview">Overview</TabsTrigger>
+ *     <TabsTrigger value="analytics">Analytics</TabsTrigger>
+ *     <TabsTrigger value="reports">Reports</TabsTrigger>
+ *     <TabsTrigger value="settings">Settings</TabsTrigger>
  *   </TabsList>
- *   <TabsContent value="features">
+ *   <TabsContent value="overview">
  *     <Card>
  *       <CardHeader>
- *         <CardTitle>Powerful Features</CardTitle>
- *         <CardDescription>Everything you need to grow your business</CardDescription>
+ *         <CardTitle>Overview</CardTitle>
+ *         <CardDescription>
+ *           View key metrics and recent activity across active projects.
+ *         </CardDescription>
  *       </CardHeader>
- *       <CardContent>
- *         <div class="space-y-4">
- *           <div class="flex items-start gap-3">
- *             <div>
- *               <h4 class="font-medium mb-1">Lightning Fast Performance <Badge variant="primary">New</Badge></h4>
- *               <p class="text-sm text-muted-foreground">Optimized for speed and efficiency</p>
- *             </div>
- *           </div>
- *           <Separator />
- *           <div class="flex items-start gap-3">
- *             <div>
- *               <h4 class="font-medium mb-1">Easy Integration <Badge variant="success">Popular</Badge></h4>
- *               <p class="text-sm text-muted-foreground">Set up in minutes, not hours</p>
- *             </div>
- *           </div>
- *         </div>
+ *       <CardContent class="text-sm text-muted-foreground">
+ *         You have 12 active projects and 3 pending tasks.
  *       </CardContent>
- *       <CardFooter>
- *         <Button variant="outline" class="w-full">Explore All Features</Button>
- *       </CardFooter>
  *     </Card>
  *   </TabsContent>
- *   <TabsContent value="pricing">
+ *   <TabsContent value="analytics">
  *     <Card>
  *       <CardHeader>
- *         <div class="flex items-center justify-between">
- *           <CardTitle>Pro Plan</CardTitle>
- *           <Badge variant="primary">Most Popular</Badge>
- *         </div>
- *         <CardDescription>Perfect for growing teams</CardDescription>
+ *         <CardTitle>Analytics</CardTitle>
+ *         <CardDescription>
+ *           Track engagement trends and performance over time.
+ *         </CardDescription>
  *       </CardHeader>
- *       <CardContent>
- *         <div class="mb-4">
- *           <span class="text-4xl font-medium">$49</span>
- *           <span class="text-muted-foreground">/month</span>
- *         </div>
- *         <ul class="space-y-2 text-sm">
- *           <li class="flex items-center gap-2">
- *             <CircleCheckIcon class="size-5" />
- *             Unlimited projects
- *           </li>
- *           <li class="flex items-center gap-2">
- *             <CircleCheckIcon class="size-5" />
- *             Priority support
- *           </li>
- *           <li class="flex items-center gap-2">
- *             <CircleCheckIcon class="size-5" />
- *             Advanced analytics
- *           </li>
- *         </ul>
+ *       <CardContent class="text-sm text-muted-foreground">
+ *         Page views are up 25% compared to last month.
  *       </CardContent>
- *       <CardFooter class="flex gap-2">
- *         <Button class="flex-1">Get Started</Button>
- *         <Button variant="outline">Compare Plans</Button>
- *       </CardFooter>
  *     </Card>
  *   </TabsContent>
- *   <TabsContent value="testimonials">
+ *   <TabsContent value="reports">
  *     <Card>
- *       <CardContent>
- *         <p class="text-lg mb-4 italic">
- *           "This product transformed how we work. Highly recommended for any growing business!"
- *         </p>
- *         <div class="flex items-center gap-3">
- *           <Avatar>
- *             <AvatarImage src="/avatars/sarah.jpg" alt="Sarah Johnson" />
- *             <AvatarFallback>SJ</AvatarFallback>
- *           </Avatar>
- *           <div>
- *             <p class="font-semibold">Sarah Johnson</p>
- *             <p class="text-sm text-muted-foreground">CEO, TechCorp</p>
- *           </div>
- *         </div>
+ *       <CardHeader>
+ *         <CardTitle>Reports</CardTitle>
+ *         <CardDescription>
+ *           Generate detailed exports for sharing and analysis.
+ *         </CardDescription>
+ *       </CardHeader>
+ *       <CardContent class="text-sm text-muted-foreground">
+ *         You have 5 reports ready to export.
  *       </CardContent>
- *       <CardFooter>
- *         <Button variant="outline" class="w-full">Read More Stories</Button>
- *       </CardFooter>
+ *     </Card>
+ *   </TabsContent>
+ *   <TabsContent value="settings">
+ *     <Card>
+ *       <CardHeader>
+ *         <CardTitle>Settings</CardTitle>
+ *         <CardDescription>
+ *           Manage account preferences and personalization options.
+ *         </CardDescription>
+ *       </CardHeader>
+ *       <CardContent class="text-sm text-muted-foreground">
+ *         Configure notifications, security, and themes.
+ *       </CardContent>
  *     </Card>
  *   </TabsContent>
  * </Tabs>
@@ -111,10 +78,119 @@
  * <Tabs defaultValue="overview">
  *   <TabsList>
  *     <TabsTrigger value="overview">Overview</TabsTrigger>
+ *     <TabsTrigger value="analytics">Analytics</TabsTrigger>
  *   </TabsList>
- *   <TabsContent value="overview">Content...</TabsContent>
+ *   <TabsContent value="overview">Overview content...</TabsContent>
+ *   <TabsContent value="analytics">Analytics content...</TabsContent>
  * </Tabs>
+ *
  * ```
+ *
+ * @examples
+ *
+ * ### Line Animated
+ *
+ * <Tabs defaultValue="overview">
+ *   <TabsList variant="line-animated" class="mb-4">
+ *     <TabsTrigger value="overview">Overview</TabsTrigger>
+ *     <TabsTrigger value="analytics">Analytics</TabsTrigger>
+ *     <TabsTrigger value="reports">Reports</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="overview">Line variant content.</TabsContent>
+ *   <TabsContent value="analytics">Analytics content.</TabsContent>
+ *   <TabsContent value="reports">Reports content.</TabsContent>
+ * </Tabs>
+ *
+ * ### Vertical
+ *
+ * <Tabs defaultValue="profile" orientation="vertical" class="w-full max-w-xl">
+ *   <TabsList class="min-w-40">
+ *     <TabsTrigger value="profile" class="justify-start px-3">Profile</TabsTrigger>
+ *     <TabsTrigger value="billing" class="justify-start px-3">Billing</TabsTrigger>
+ *     <TabsTrigger value="notifications" class="justify-start px-3">Notifications</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="profile" class="rounded-lg border p-4">
+ *     Profile settings content.
+ *   </TabsContent>
+ *   <TabsContent value="billing" class="rounded-lg border p-4">
+ *     Billing settings content.
+ *   </TabsContent>
+ *   <TabsContent value="notifications" class="rounded-lg border p-4">
+ *     Notifications settings content.
+ *   </TabsContent>
+ * </Tabs>
+ *
+ * ### Disabled
+ *
+ * <Tabs defaultValue="active">
+ *   <TabsList>
+ *     <TabsTrigger value="active">Active</TabsTrigger>
+ *     <TabsTrigger value="disabled" disabled>Disabled</TabsTrigger>
+ *     <TabsTrigger value="secondary">Secondary</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="active">Active tab content.</TabsContent>
+ *   <TabsContent value="disabled">Disabled tab content.</TabsContent>
+ *   <TabsContent value="secondary">Secondary tab content.</TabsContent>
+ * </Tabs>
+ *
+ * ### Overflow
+ *
+ * <Tabs defaultValue="monday">
+ *   <TabsList class="w-full max-w-[20rem] justify-start overflow-x-auto whitespace-nowrap">
+ *     <TabsTrigger value="monday" class="shrink-0">Monday</TabsTrigger>
+ *     <TabsTrigger value="tuesday" class="shrink-0">Tuesday</TabsTrigger>
+ *     <TabsTrigger value="wednesday" class="shrink-0">Wednesday</TabsTrigger>
+ *     <TabsTrigger value="thursday" class="shrink-0">Thursday</TabsTrigger>
+ *     <TabsTrigger value="friday" class="shrink-0">Friday</TabsTrigger>
+ *     <TabsTrigger value="saturday" class="shrink-0">Saturday</TabsTrigger>
+ *     <TabsTrigger value="sunday" class="shrink-0">Sunday</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="monday">Monday content.</TabsContent>
+ *   <TabsContent value="tuesday">Tuesday content.</TabsContent>
+ *   <TabsContent value="wednesday">Wednesday content.</TabsContent>
+ *   <TabsContent value="thursday">Thursday content.</TabsContent>
+ *   <TabsContent value="friday">Friday content.</TabsContent>
+ *   <TabsContent value="saturday">Saturday content.</TabsContent>
+ *   <TabsContent value="sunday">Sunday content.</TabsContent>
+ * </Tabs>
+ *
+ * ### Direction Animation
+ *
+ * <Tabs defaultValue="overview">
+ *   <TabsList>
+ *     <TabsTrigger value="overview">Overview</TabsTrigger>
+ *     <TabsTrigger value="analytics">Analytics</TabsTrigger>
+ *     <TabsTrigger value="reports">Reports</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="overview" animation="direction">Direction-aware overview.</TabsContent>
+ *   <TabsContent value="analytics" animation="direction">Direction-aware analytics.</TabsContent>
+ *   <TabsContent value="reports" animation="direction">Direction-aware reports.</TabsContent>
+ * </Tabs>
+ *
+ * ### Sizes
+ *
+ * <div class="space-y-4">
+ *   <Tabs defaultValue="sm-account">
+ *     <TabsList size="sm">
+ *       <TabsTrigger value="sm-account" class="text-xs px-2">Account</TabsTrigger>
+ *       <TabsTrigger value="sm-password" class="text-xs px-2">Password</TabsTrigger>
+ *     </TabsList>
+ *   </Tabs>
+ *
+ *   <Tabs defaultValue="md-account">
+ *     <TabsList size="default">
+ *       <TabsTrigger value="md-account">Account</TabsTrigger>
+ *       <TabsTrigger value="md-password">Password</TabsTrigger>
+ *     </TabsList>
+ *   </Tabs>
+ *
+ *   <Tabs defaultValue="lg-account">
+ *     <TabsList size="lg">
+ *       <TabsTrigger value="lg-account" class="text-base px-4">Account</TabsTrigger>
+ *       <TabsTrigger value="lg-password" class="text-base px-4">Password</TabsTrigger>
+ *     </TabsList>
+ *   </Tabs>
+ * </div>
  *
  * @api
  *
@@ -158,12 +234,23 @@
  * }));
  * ```
  *
+ * ### Variants
+ *
+ * | Prop | Element | Values | Default |
+ * |------|---------|--------|---------|
+ * | `variant` | tabs-list | `indicator`, `default`, `line`, `line-animated` | `indicator` |
+ * | `size` | tabs-list | `sm`, `default`, `lg` | `default` |
+ * | `animation` | tabs-content | `none`, `fade`, `slide`, `direction` | `none` |
+ *
  * ### Data Attributes
  *
  * The tabs component sets these data attributes that you can use for styling or querying state:
  *
  * | Attribute | Element | Description |
  * |-----------|---------|-------------|
+ * | `data-orientation` | tabs | Current orientation (`horizontal` or `vertical`) |
+ * | `data-variant` | tabs-list | Current list variant (`indicator`, `default`, `line`, or `line-animated`) |
+ * | `data-activation-direction` | tabs-content | Last activation direction after tab change (`left`, `right`, `up`, or `down`, not set on initial mount) |
  * | `data-state` | tabs-trigger | Current state (`active` or `inactive`) |
  *
  * ### CSS Variables
@@ -183,12 +270,25 @@ import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
   class?: string;
+  orientation?: "horizontal" | "vertical";
 } & HTMLAttributes<"div">;
 
-const { class: className = "", ...rest } = Astro.props as Props;
+const {
+  class: className = "",
+  orientation = "horizontal",
+  ...rest
+} = Astro.props as Props;
 ---
 
-<div {...rest} data-slot="tabs" class={cn("flex flex-col gap-2", className)}>
+<div
+  {...rest}
+  data-slot="tabs"
+  data-orientation={orientation}
+  class={cn(
+    "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
+    className,
+  )}
+>
   <slot />
 </div>
 

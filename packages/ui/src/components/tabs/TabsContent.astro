@@ -1,24 +1,41 @@
 ---
-import { cva } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+export const tabsContentVariants = cva(
+  "focus-visible:border-ring focus-visible:ring-ring/50 text-sm flex-1 outline-none focus-visible:ring-[3px] hidden data-[state=active]:block",
+  {
+    variants: {
+      animation: {
+        none: "",
+        fade: "data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-200",
+        slide:
+          "data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-bottom-2 data-[state=active]:duration-200",
+        direction:
+          "data-[state=active]:animate-in data-[state=active]:duration-200 data-[activation-direction=left]:slide-in-from-left-2 data-[activation-direction=right]:slide-in-from-right-2 data-[activation-direction=up]:slide-in-from-top-2 data-[activation-direction=down]:slide-in-from-bottom-2 data-[activation-direction=left]:fade-in-0 data-[activation-direction=right]:fade-in-0 data-[activation-direction=up]:fade-in-0 data-[activation-direction=down]:fade-in-0",
+      },
+    },
+    defaultVariants: {
+      animation: "none",
+    },
+  },
+);
 
 type Props = {
   as?: HTMLTag;
   value: string;
   class?: string;
-} & HTMLAttributes<"div">;
+} & VariantProps<typeof tabsContentVariants> &
+  HTMLAttributes<"div">;
 
 const {
   as: Tag = "div",
   value,
+  animation = "none",
   class: className = "",
   ...rest
 } = Astro.props as Props;
-
-const tabsContentVariants = cva(
-  "focus-visible:border-ring focus-visible:ring-ring/50 flex-1 outline-none focus-visible:ring-[3px] hidden data-[state=active]:block",
-);
 ---
 
 <Tag
@@ -27,7 +44,7 @@ const tabsContentVariants = cva(
   data-slot="tabs-content"
   data-value={value}
   tabindex="0"
-  class={cn(tabsContentVariants(), className)}
+  class={cn(tabsContentVariants({ animation }), className)}
 >
   <slot />
 </Tag>

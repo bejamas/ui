@@ -2,12 +2,7 @@
 import "@/styles/blocks.css";
 import "@bejamas/ui/styles/globals.css";
 import PresetSwitcher from "./PresetSwitcher.astro";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsIndicator,
-} from "@bejamas/ui/components/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@bejamas/ui/components/tabs";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 
 const { theme = "current-theme" } = Astro.props;
@@ -116,27 +111,24 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
           <PresetSwitcher />
           <ks-theme-select>
             <Tabs class="ks-theme-tabs" id="ks-theme-tabs">
-              <TabsList class="h-9 p-1 py-0.5 rounded-md w-full">
-                <TabsIndicator
-                  class="rounded-sm duration-150 transition-transform"
-                />
+              <TabsList class="w-full">
                 <TabsTrigger
                   value="light"
-                  class="ks-theme-tab px-1.5 h-7 flex-1"
+                  class="ks-theme-tab"
                   title="Light theme"
                 >
                   <SunIcon class="size-4" />
                 </TabsTrigger>
                 <TabsTrigger
                   value="dark"
-                  class="ks-theme-tab px-1.5 h-7 flex-1"
+                  class="ks-theme-tab"
                   title="Dark theme"
                 >
                   <MoonIcon class="size-4" />
                 </TabsTrigger>
                 <TabsTrigger
                   value="auto"
-                  class="ks-theme-tab px-1.5 h-7 flex-1"
+                  class="ks-theme-tab"
                   title="Auto (system)"
                 >
                   <LaptopIcon class="size-4" />
