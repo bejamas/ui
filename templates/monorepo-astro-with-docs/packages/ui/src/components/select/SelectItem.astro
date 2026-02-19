@@ -34,6 +34,12 @@ const {
   )}
 >
   <span
+    data-slot="select-item-text"
+    class="flex flex-1 gap-2 shrink-0 whitespace-nowrap items-center"
+    ><slot /></span
+  >
+
+  <span
     class="pointer-events-none absolute right-2 flex size-4 items-center justify-center"
   >
     <span
@@ -43,5 +49,4 @@ const {
       <CheckIcon class="size-4" />
     </span>
   </span>
-  <span data-slot="select-item-text"><slot /></span>
 </div>
