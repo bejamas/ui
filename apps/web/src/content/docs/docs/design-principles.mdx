@@ -162,18 +162,21 @@ import {
 // Select
 import {
   Select,
-  SelectControl,
-  SelectOption,
-  SelectIndicator,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@bejamas/ui/components/select";
 ---
 
 <Select>
-  <SelectIndicator />
-  <SelectControl>
-    <SelectOption value="apple">Apple</SelectOption>
-    <SelectOption value="banana">Banana</SelectOption>
-  </SelectControl>
+  <SelectTrigger>
+    <SelectValue placeholder="Select a fruit" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="apple">Apple</SelectItem>
+    <SelectItem value="banana">Banana</SelectItem>
+  </SelectContent>
 </Select>
 ```
 
