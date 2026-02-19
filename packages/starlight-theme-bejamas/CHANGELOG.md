@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.13
+
+### Patch Changes
+
+- [#60](https://github.com/bejamas/ui/pull/60) [`045558f`](https://github.com/bejamas/ui/commit/045558f12df6d2a1bcff82254baf06c79fbdd623) Thanks [@thomkrupa](https://github.com/thomkrupa)! - update theme switcher to new select
+
 ## 0.1.12
 
 ### Patch Changes
