@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@repo/ui/lib/utils";
+
+type Props = {
+  class?: string;
+  placeholder?: string;
+} & HTMLAttributes<"span">;
+
+const {
+  class: className = "",
+  placeholder = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<span
+  {...rest}
+  data-slot="select-value"
+  data-placeholder={placeholder}
+  class={cn("block truncate pointer-events-none", className)}
+>{placeholder}</span>
