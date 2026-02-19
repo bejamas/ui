@@ -86,6 +86,57 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
     </KitchenSinkSection>
     </div>
 
+    <KitchenSinkSection title="Content Animation Variants">
+      <div class="grid gap-6 md:grid-cols-2">
+        <Collapsible class="space-y-2">
+          <div class="flex items-center justify-between space-x-4 px-2">
+            <h4 class="text-sm font-semibold">None (Default)</h4>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" size="sm">Toggle</Button>
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent animation="none">
+            <div class="rounded-md border px-4 py-2 text-sm text-muted-foreground">
+              No entry or exit animation.
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        <Collapsible class="space-y-2">
+          <div class="flex items-center justify-between space-x-4 px-2">
+            <h4 class="text-sm font-semibold">Slide</h4>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" size="sm">Toggle</Button>
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent animation="slide">
+            <div class="rounded-md border px-4 py-2 text-sm text-muted-foreground">
+              Presence-based transition with panel-height animation.
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Hidden Until Found">
+      <Collapsible hiddenUntilFound class="w-[520px] max-w-full space-y-2">
+        <div class="flex items-center justify-between space-x-4 px-2">
+          <h4 class="text-sm font-semibold">Find-in-page support</h4>
+          <CollapsibleTrigger asChild>
+            <Button variant="outline" size="sm">Toggle</Button>
+          </CollapsibleTrigger>
+        </div>
+        <CollapsibleContent class="space-y-2">
+          <div class="rounded-md border px-4 py-2 text-sm text-muted-foreground">
+            Use browser find (Cmd/Ctrl+F) for <code>saturnalia-collapsible-token</code>. Closed content can be revealed by find-in-page.
+          </div>
+          <div class="rounded-md border px-4 py-2 text-sm">
+            saturnalia-collapsible-token
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    </KitchenSinkSection>
+
     <KitchenSinkSection title="Event Testing">
       <div class="flex flex-col gap-4">
         <Collapsible id="event-collapsible" class="w-[340px] space-y-2">

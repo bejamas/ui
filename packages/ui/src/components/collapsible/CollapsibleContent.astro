@@ -1,23 +1,37 @@
 ---
-import { cva } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
 type Props = {
   class?: string;
-} & HTMLAttributes<"div">;
+} & VariantProps<typeof collapsibleContentVariants> &
+  HTMLAttributes<"div">;
 
-const { class: className = "", ...rest } = Astro.props as Props;
+export const collapsibleContentVariants = cva("overflow-hidden", {
+  variants: {
+    animation: {
+      none: "",
+      slide:
+        "h-(--collapsible-panel-height) transition-[height] duration-200 ease-out motion-reduce:transition-none",
+    },
+  },
+  defaultVariants: {
+    animation: "none",
+  },
+});
 
-const contentWrapperVariants = cva(
-  "grid grid-rows-[0fr] transition-[grid-template-rows] duration-150 ease-in-out group-data-[state=open]/collapsible:grid-rows-[1fr]",
-);
-
-const contentVariants = cva("overflow-hidden min-h-0");
+const {
+  class: className = "",
+  animation = "none",
+  ...rest
+} = Astro.props as Props;
 ---
 
-<div class={cn(contentWrapperVariants())}>
-  <div {...rest} data-slot="collapsible-content" class={cn(contentVariants(), className)}>
-    <slot />
-  </div>
+<div
+  {...rest}
+  data-slot="collapsible-content"
+  class={cn(collapsibleContentVariants({ animation }), className)}
+>
+  <slot />
 </div>
