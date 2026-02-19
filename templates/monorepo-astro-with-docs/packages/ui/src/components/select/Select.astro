@@ -2,123 +2,342 @@
 /**
  * @component Select
  * @title Select
- * @description A dropdown control that lets users pick one option from a list.
+ * @description A dropdown control that lets users pick one option from a list with full keyboard navigation and accessibility support.
  * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2549-18530&t=YFStJ3V8fXEO8QD8-4
  *
  * @preview
- *
- * <div class="flex flex-col gap-2">
- *   <Label for="salad">Your favorite salad</Label>
- *   <Select class="w-[180px]">
- *     <SelectIndicator />
- *     <SelectControl name="salad" id="salad">
- *       <SelectPlaceholder>Select a fruit...</SelectPlaceholder>
- *       <SelectGroup label="Fruits">
- *         <SelectOption value="apple">Apple</SelectOption>
- *         <SelectOption value="banana">Banana</SelectOption>
- *         <SelectOption value="cherry">Cherry</SelectOption>
- *       </SelectGroup>
- *       <SelectGroup label="Vegetables">
- *         <SelectOption value="carrot">Carrot</SelectOption>
- *         <SelectOption value="broccoli">Broccoli</SelectOption>
- *       </SelectGroup>
- *     </SelectControl>
- *   </Select>
- * </div>
+ * <Select defaultValue="apple" class="w-[200px]">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Select a fruit" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="apple">Apple</SelectItem>
+ *     <SelectItem value="banana">Banana</SelectItem>
+ *     <SelectItem value="cherry">Cherry</SelectItem>
+ *   </SelectContent>
+ * </Select>
  *
  * @usage
  *
- * ```astro
+ * ```astro nocollapse
  * ---
- * import { Select, SelectControl, SelectPlaceholder, SelectOption, SelectIndicator } from '@bejamas/ui/components/select';
+ * import {
+ *   Select,
+ *   SelectTrigger,
+ *   SelectValue,
+ *   SelectContent,
+ *   SelectItem,
+ *   SelectGroup,
+ *   SelectLabel,
+ *   SelectSeparator
+ * } from '@bejamas/ui/components/select';
  * ---
  *
- * <Select>
- *   <SelectControl name="fruit">
- *     <SelectPlaceholder>Select...</SelectPlaceholder>
- *     <SelectOption value="apple">Apple</SelectOption>
- *   </SelectControl>
- *   <SelectIndicator />
+ * <Select name="fruit" defaultValue="apple">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Select a fruit" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="apple">Apple</SelectItem>
+ *     <SelectItem value="banana">Banana</SelectItem>
+ *   </SelectContent>
  * </Select>
+ * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The select emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `select:change` | `{ value: string }` | Fired when a new value is selected |
+ * | `select:open-change` | `{ open: boolean }` | Fired when the dropdown opens or closes |
+ *
+ * ```astro nocollapse
+ * <Select id="my-select">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Choose..." />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="option1">Option 1</SelectItem>
+ *     <SelectItem value="option2">Option 2</SelectItem>
+ *   </SelectContent>
+ * </Select>
+ *
+ * <script>
+ *   const select = document.getElementById('my-select');
+ *
+ *   select.addEventListener('select:change', (e) => {
+ *     console.log('Selected value:', e.detail.value);
+ *   });
+ *
+ *   select.addEventListener('select:open-change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the select programmatically by dispatching a `select:set` event:
+ *
+ * ```js nocollapse
+ * const select = document.getElementById('my-select');
+ *
+ * // Set a specific value
+ * select.dispatchEvent(new CustomEvent('select:set', {
+ *   detail: { value: 'option2' }
+ * }));
+ *
+ * // Open the select dropdown
+ * select.dispatchEvent(new CustomEvent('select:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Close the select dropdown
+ * select.dispatchEvent(new CustomEvent('select:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The select sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | select, select-trigger, select-content | Current state (`open` or `closed`) |
+ * | `data-value` | select | Currently selected value |
+ * | `data-selected` | select-item | Present when item is selected |
+ * | `data-highlighted` | select-item | Present when item is focused/highlighted |
+ * | `data-disabled` | select, select-trigger, select-item | Present when disabled |
+ * | `data-placeholder` | select-trigger | Present when showing placeholder (no value selected) |
+ *
+ * ### Position Modes
+ *
+ * The `position` prop controls how the dropdown is positioned:
+ *
+ * - **`item-aligned`** (default): The dropdown aligns with the selected item, similar to native select behavior
+ * - **`popper`**: Uses floating UI positioning with configurable side, align, and offset options
+ *
+ * ```astro nocollapse
+ * <!-- Item-aligned (default) -->
+ * <Select>...</Select>
+ *
+ * <!-- Popper mode with custom positioning -->
+ * <Select position="popper" side="bottom" align="start" sideOffset={8}>...</Select>
  * ```
  *
  * @examples
  *
- * ### Default
+ * ### With Groups
  *
- * <Select>
- *   <SelectIndicator />
- *   <SelectControl>
- *     <SelectOption value="apple">Apple</SelectOption>
- *     <SelectOption value="banana">Banana</SelectOption>
- *   </SelectControl>
+ * <Select class="w-[200px]">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Select food" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectGroup>
+ *       <SelectLabel>Fruits</SelectLabel>
+ *       <SelectItem value="apple">Apple</SelectItem>
+ *       <SelectItem value="banana">Banana</SelectItem>
+ *     </SelectGroup>
+ *     <SelectSeparator />
+ *     <SelectGroup>
+ *       <SelectLabel>Vegetables</SelectLabel>
+ *       <SelectItem value="carrot">Carrot</SelectItem>
+ *       <SelectItem value="broccoli">Broccoli</SelectItem>
+ *     </SelectGroup>
+ *   </SelectContent>
  * </Select>
  *
  * ### Sizes
  *
- * <div class="flex flex-col items-start gap-8 sm:flex-row">
- *   <Select class="w-[180px]">
- *     <SelectControl size="sm">
- *       <SelectOption value="apple">Apple</SelectOption>
- *       <SelectOption value="banana">Banana</SelectOption>
- *     </SelectControl>
- *     <SelectIndicator />
+ * <div class="flex flex-col items-start gap-4 sm:flex-row" >
+ *   <Select class="w-[180px]" size="sm">
+ *     <SelectTrigger>
+ *       <SelectValue placeholder="Small (h-8)" />
+ *     </SelectTrigger>
+ *     <SelectContent>
+ *       <SelectItem value="apple">Apple</SelectItem>
+ *       <SelectItem value="banana">Banana</SelectItem>
+ *       <SelectItem value="cherry">Cherry</SelectItem>
+ *     </SelectContent>
  *   </Select>
- *   <Select class="w-[180px]">
- *     <SelectControl size="default">
- *       <SelectOption value="apple">Apple</SelectOption>
- *       <SelectOption value="banana">Banana</SelectOption>
- *     </SelectControl>
- *     <SelectIndicator />
+ *   <Select class="w-[180px]" size="default">
+ *     <SelectTrigger>
+ *       <SelectValue placeholder="Default (h-9)" />
+ *     </SelectTrigger>
+ *     <SelectContent>
+ *       <SelectItem value="apple">Apple</SelectItem>
+ *       <SelectItem value="banana">Banana</SelectItem>
+ *       <SelectItem value="cherry">Cherry</SelectItem>
+ *     </SelectContent>
  *   </Select>
- *   <Select class="w-[180px]">
- *     <SelectControl size="lg">
- *       <SelectOption value="apple">Apple</SelectOption>
- *       <SelectOption value="banana">Banana</SelectOption>
- *     </SelectControl>
- *     <SelectIndicator />
+ *   <Select class="w-[180px]" size="lg">
+ *     <SelectTrigger size="lg">
+ *       <SelectValue placeholder="Large (h-10)" />
+ *     </SelectTrigger>
+ *     <SelectContent>
+ *       <SelectItem value="apple">Apple</SelectItem>
+ *       <SelectItem value="banana">Banana</SelectItem>
+ *       <SelectItem value="cherry">Cherry</SelectItem>
+ *     </SelectContent>
  *   </Select>
  * </div>
  *
- * ### Custom indicator
+ * ### Disabled
  *
- * <Select class="w-[180px]">
- *   <SelectIndicator>
- *     <ChevronsDownIcon class="size-4" />
- *   </SelectIndicator>
- *   <SelectControl size="default" variant="default">
- *     <SelectOption value="apple">Apple</SelectOption>
- *     <SelectOption value="banana">Banana</SelectOption>
- *   </SelectControl>
+ * <Select disabled class="w-[200px]">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Disabled" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="apple">Apple</SelectItem>
+ *     <SelectItem value="banana">Banana</SelectItem>
+ *     <SelectItem value="cherry">Cherry</SelectItem>
+ *   </SelectContent>
  * </Select>
  *
- * ### With placeholder
+ * ### With Disabled Items
  *
- * Placeholder is a hidden, selected `option` for placeholder text, it must be a child of the `control` part.
- *
- * <Select class="w-[180px]">
- *   <SelectIndicator />
- *   <SelectControl>
- *     <SelectPlaceholder>Select a fruit</SelectPlaceholder>
- *     <SelectOption value="apple">Apple</SelectOption>
- *     <SelectOption value="banana">Banana</SelectOption>
- *   </SelectControl>
+ * <Select class="w-[200px]" placeholder="Choose...">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Choose..." />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="available">Available</SelectItem>
+ *     <SelectItem value="unavailable" disabled>Unavailable</SelectItem>
+ *     <SelectItem value="another">Another option</SelectItem>
+ *   </SelectContent>
  * </Select>
+ *
+ * ### Popper Mode
+ *
+ * <div class="flex flex-wrap items-start gap-4">
+ *   <Select position="popper" side="bottom" class="w-[160px]">
+ *     <SelectTrigger>
+ *       <SelectValue placeholder="Bottom" />
+ *     </SelectTrigger>
+ *     <SelectContent position="popper">
+ *       <SelectItem value="option1">Option 1</SelectItem>
+ *       <SelectItem value="option2">Option 2</SelectItem>
+ *       <SelectItem value="option3">Option 3</SelectItem>
+ *     </SelectContent>
+ *   </Select>
+ *   <Select position="popper" side="top" class="w-[160px]">
+ *     <SelectTrigger>
+ *       <SelectValue placeholder="Top" />
+ *     </SelectTrigger>
+ *     <SelectContent position="popper">
+ *       <SelectItem value="option1">Option 1</SelectItem>
+ *       <SelectItem value="option2">Option 2</SelectItem>
+ *       <SelectItem value="option3">Option 3</SelectItem>
+ *     </SelectContent>
+ *   </Select>
+ * </div>
  */
+
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@repo/ui/lib/utils";
 
 type Props = {
   class?: string;
+  name?: string;
+  defaultValue?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  required?: boolean;
+  size?: "sm" | "default" | "lg";
+  position?: "item-aligned" | "popper";
+  side?: "top" | "bottom";
+  align?: "start" | "center" | "end";
+  sideOffset?: number;
+  alignOffset?: number;
+  avoidCollisions?: boolean;
+  collisionPadding?: number;
 } & HTMLAttributes<"div">;
 
-const { class: className = "", ...rest } = Astro.props as Props;
+const {
+  class: className = "",
+  name,
+  defaultValue,
+  placeholder,
+  disabled = false,
+  required = false,
+  size = "default",
+  position = "item-aligned",
+  side = "bottom",
+  align = "start",
+  sideOffset = 6,
+  alignOffset = 0,
+  avoidCollisions = true,
+  collisionPadding = 8,
+  ...rest
+} = Astro.props as Props;
 ---
 
 <div
   {...rest}
   data-slot="select"
-  class={cn("group/select relative inline-flex", className)}
+  data-name={name}
+  data-default-value={defaultValue}
+  data-value={defaultValue}
+  data-placeholder={placeholder}
+  data-disabled={disabled ? "" : undefined}
+  data-required={required ? "" : undefined}
+  data-size={size}
+  data-position={position}
+  data-side={side}
+  data-align={align}
+  data-side-offset={sideOffset}
+  data-align-offset={alignOffset}
+  data-avoid-collisions={avoidCollisions ? "" : undefined}
+  data-collision-padding={collisionPadding}
+  class={cn("group/select relative inline-block", className)}
 >
   <slot />
+  {
+    name && (
+      <input
+        type="hidden"
+        name={name}
+        data-slot="select-hidden-input"
+        value={defaultValue ?? ""}
+        disabled={disabled}
+        required={required}
+      />
+    )
+  }
 </div>
+{
+  defaultValue && (
+    <script is:inline>
+      (function () {
+        var s = document.currentScript;
+        var el = s.previousElementSibling;
+        if (!el || el.dataset.slot !== "select") return;
+        var v = el.dataset.defaultValue;
+        if (!v) return;
+        var item = el.querySelector(
+          '[data-slot="select-item"][data-value="' + v + '"]'
+        );
+        var val = el.querySelector("[data-slot=select-value]");
+        if (item && val) {
+          val.textContent = item.dataset.label || item.textContent.trim();
+          item.setAttribute("data-selected", "");
+        }
+      })();
+    </script>
+  )
+}
+
+<script>
+  import { createSelect } from "@data-slot/select";
+
+  document.querySelectorAll('[data-slot="select"]').forEach((el) => {
+    createSelect(el);
+  });
+</script>

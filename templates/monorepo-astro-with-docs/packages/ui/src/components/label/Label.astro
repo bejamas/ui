@@ -14,7 +14,7 @@
  *
  * @usage
  *
- * ```astro
+ * ```astro nocollapse
  * ---
  * import { Label } from '@bejamas/ui/components/label';
  * ---
@@ -26,12 +26,15 @@
 import { cn } from "@repo/ui/lib/utils";
 
 const { class: className = "", ...props } = Astro.props;
-
-const baseClass =
-  "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-foreground";
 ---
 
-<label class={cn(baseClass, className)} {...props}>
+<label
+  data-slot="label"
+  class={cn(
+    "gap-2 text-sm leading-none font-medium group-data-[disabled=true]:opacity-50 peer-disabled:opacity-50 flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed",
+    className,
+  )}
+  {...props}
+>
   <slot />
 </label>
-

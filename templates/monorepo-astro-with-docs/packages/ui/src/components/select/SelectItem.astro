@@ -1,0 +1,47 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@repo/ui/lib/utils";
+import CheckIcon from "@lucide/astro/icons/check";
+
+type Props = {
+  value: string;
+  disabled?: boolean;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  value,
+  disabled = false,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  role="option"
+  tabindex={disabled ? -1 : 0}
+  data-slot="select-item"
+  data-value={value}
+  data-disabled={disabled ? "" : undefined}
+  class={cn(
+    "group/item relative border border-transparent flex w-full cursor-default select-none items-center gap-1.5 rounded-md pr-8 pl-2 text-sm outline-hidden",
+    "group-data-[size=sm]/select-content:py-1 group-data-[size=default]/select-content:py-1.5 group-data-[size=lg]/select-content:py-2",
+    "data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
+    "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+    "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+    className,
+  )}
+>
+  <span
+    class="pointer-events-none absolute right-2 flex size-4 items-center justify-center"
+  >
+    <span
+      data-slot="select-item-indicator"
+      class="hidden group-data-[selected]/item:inline-flex"
+    >
+      <CheckIcon class="size-4" />
+    </span>
+  </span>
+  <span data-slot="select-item-text"><slot /></span>
+</div>
