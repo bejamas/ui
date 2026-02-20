@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import {
   extractComponentTagsFromExamplesSections,
   extractComponentTagsFromPreviewMarkdown,
+  parseFenceInfo,
   parseExamplesSections,
   prepareExampleContent,
 } from "@/src/docs/generate-mdx/examples";
@@ -67,9 +68,27 @@ import { SearchIcon } from '@lucide/astro';
 
     const prepared = prepareExampleContent(body);
     expect(prepared.sourceFromFence).toBe(true);
+    expect(prepared.skipPreview).toBe(false);
     expect(prepared.descriptionMD).toContain("Use this layout.");
     expect(prepared.sourceCode).toContain("import { SearchIcon }");
     expect(prepared.snippet).toBe("<Field><SearchIcon /></Field>");
+  });
+
+  test("parses astro fence flags and supports nopreview", () => {
+    const parsed = parseFenceInfo("astro nocollapse nopreview");
+    expect(parsed.lang).toBe("astro");
+    expect(parsed.flags.has("nocollapse")).toBe(true);
+    expect(parsed.flags.has("nopreview")).toBe(true);
+  });
+
+  test("marks fenced astro content with nopreview flag", () => {
+    const prepared = prepareExampleContent(`\`\`\`astro nopreview
+<Field><InputGroup /></Field>
+\`\`\``);
+    expect(prepared.sourceFromFence).toBe(true);
+    expect(prepared.skipPreview).toBe(true);
+    expect(prepared.snippet).toBe("<Field><InputGroup /></Field>");
+    expect(prepared.sourceCode).toContain("<Field><InputGroup /></Field>");
   });
 
   test("extracts component tags from fenced examples for auto imports", () => {
@@ -118,6 +137,22 @@ import { SearchIcon } from '@lucide/astro';
     expect(tags).toContain("InputGroup");
     expect(tags).toContain("InputGroupAddon");
     expect(tags).toContain("SearchIcon");
+  });
+
+  test("ignores nopreview astro fences when extracting preview component tags", () => {
+    const markdown = `\`\`\`astro nopreview
+<Field>
+  <InputGroup />
+</Field>
+\`\`\`
+
+\`\`\`astro
+<Button />
+\`\`\``;
+    const tags = extractComponentTagsFromPreviewMarkdown(markdown);
+    expect(tags).toContain("Button");
+    expect(tags).not.toContain("Field");
+    expect(tags).not.toContain("InputGroup");
   });
 });
 
@@ -234,5 +269,128 @@ import { SearchIcon } from '@lucide/astro';
     expect(mdx).toContain("sl-bejamas-component-preview");
     expect(mdx).toContain("```astro");
     expect(mdx).toContain('<Field class="max-w-sm">');
+  });
+
+  test("skips injected preview for astro fences with nopreview in usage content", () => {
+    const mdx = buildMdx({
+      importName: "InputGroup",
+      importPath: "@bejamas/ui/components/input-group",
+      title: "Input Group",
+      description: "An input group",
+      usageMDX: `\`\`\`astro nocollapse nopreview
+<Field class="max-w-sm">
+  <InputGroup />
+</Field>
+\`\`\``,
+      hasImport: false,
+      propsList: "",
+      examples: [],
+      examplesSections: [],
+      componentFolderMap: {
+        Field: "field",
+      },
+      autoImports: ["Field"],
+      lucideIcons: [],
+      primaryExampleMDX: "",
+      componentSource: "",
+      commandName: "input-group",
+      componentsAlias: "@bejamas/ui/components",
+      namedExports: [],
+      apiMDX: "",
+    });
+
+    expect(mdx).toContain("## Usage");
+    expect(mdx).toContain("```astro nocollapse nopreview");
+    expect(mdx).not.toContain("sl-bejamas-component-preview");
+  });
+
+  test("strips script tags from injected previews but keeps source fence unchanged", () => {
+    const mdx = buildMdx({
+      importName: "Popover",
+      importPath: "@bejamas/ui/components/popover",
+      title: "Popover",
+      description: "A popover",
+      usageMDX: "",
+      hasImport: false,
+      propsList: "",
+      examples: [],
+      examplesSections: [],
+      componentFolderMap: {
+        Popover: "popover",
+        PopoverContent: "popover",
+        PopoverTrigger: "popover",
+      },
+      autoImports: ["PopoverContent", "PopoverTrigger"],
+      lucideIcons: [],
+      primaryExampleMDX: "",
+      componentSource: "",
+      commandName: "popover",
+      componentsAlias: "@bejamas/ui/components",
+      namedExports: ["PopoverContent", "PopoverTrigger"],
+      apiMDX: `\`\`\`astro
+<Popover id="my-popover">
+  <PopoverTrigger variant="outline">Open</PopoverTrigger>
+  <PopoverContent>
+    <p>Content</p>
+  </PopoverContent>
+</Popover>
+<script>
+  const popover = document.getElementById('my-popover');
+  popover.addEventListener('popover:change', (e) => {
+    console.log('Is open:', e.detail.open);
+  });
+</script>
+\`\`\``,
+    });
+
+    expect(mdx).toContain("sl-bejamas-component-preview");
+    expect(mdx).toContain("<Popover id=\"my-popover\">");
+    expect(mdx).not.toContain(
+      "<script> const popover = document.getElementById('my-popover');",
+    );
+
+    const sourceMatch = mdx.match(/```astro\n([\s\S]*?)\n```/);
+    expect(sourceMatch).toBeTruthy();
+    expect(sourceMatch![1]).toContain("popover.addEventListener");
+    expect(sourceMatch![1]).toContain("console.log('Is open:', e.detail.open);");
+  });
+
+  test("skips example preview when fenced astro block uses nopreview", () => {
+    const examplesSections = parseExamplesSections(`### Hidden Preview
+
+\`\`\`astro nopreview
+<Popover>
+  <PopoverTrigger>Open</PopoverTrigger>
+  <PopoverContent>Body</PopoverContent>
+</Popover>
+\`\`\``);
+
+    const mdx = buildMdx({
+      importName: "Popover",
+      importPath: "@bejamas/ui/components/popover",
+      title: "Popover",
+      description: "A popover",
+      usageMDX: "",
+      hasImport: false,
+      propsList: "",
+      examples: [],
+      examplesSections,
+      componentFolderMap: {
+        PopoverContent: "popover",
+        PopoverTrigger: "popover",
+      },
+      autoImports: ["PopoverContent", "PopoverTrigger"],
+      lucideIcons: [],
+      primaryExampleMDX: "",
+      componentSource: "",
+      commandName: "popover",
+      componentsAlias: "@bejamas/ui/components",
+      namedExports: ["PopoverContent", "PopoverTrigger"],
+      apiMDX: "",
+    });
+
+    expect(mdx).toContain("### Hidden Preview");
+    expect(mdx).toContain("```astro");
+    expect(mdx).not.toContain("sl-bejamas-component-preview");
   });
 });
