@@ -30,6 +30,15 @@ export interface PreparedExampleContent {
    * True when source came from an explicit ```astro fenced block.
    */
   sourceFromFence: boolean;
+  /**
+   * True when the fenced astro block includes the `nopreview` flag.
+   */
+  skipPreview: boolean;
+}
+
+export interface FenceInfo {
+  lang: string;
+  flags: Set<string>;
 }
 
 type MutableSection = {
@@ -121,9 +130,21 @@ function splitAstroFrontmatter(sourceCode: string): {
   };
 }
 
+export function parseFenceInfo(infoRaw: string): FenceInfo {
+  const parts = (infoRaw || "")
+    .trim()
+    .split(/\s+/)
+    .filter((v) => v.length)
+    .map((v) => v.toLowerCase());
+  if (!parts.length) return { lang: "", flags: new Set<string>() };
+  const [lang, ...flags] = parts;
+  return { lang, flags: new Set(flags) };
+}
+
 function extractFirstAstroFence(body: string): {
   sourceCode: string;
   descriptionMD: string;
+  skipPreview: boolean;
 } | null {
   if (!body || !body.trim().length) return null;
   const lines = body.split("\n");
@@ -131,6 +152,8 @@ function extractFirstAstroFence(body: string): {
   const astroCode: string[] = [];
   let inFence = false;
   let currentFenceIsAstro = false;
+  let currentFenceSkipPreview = false;
+  let capturedSkipPreview = false;
   let capturedAstro = false;
 
   for (const line of lines) {
@@ -138,8 +161,9 @@ function extractFirstAstroFence(body: string): {
     if (trimmed.startsWith("```")) {
       if (!inFence) {
         inFence = true;
-        const info = trimmed.slice(3).trim().toLowerCase();
-        currentFenceIsAstro = info.startsWith("astro");
+        const parsed = parseFenceInfo(trimmed.slice(3).trim());
+        currentFenceIsAstro = parsed.lang === "astro";
+        currentFenceSkipPreview = parsed.flags.has("nopreview");
         if (!currentFenceIsAstro || capturedAstro) {
           outside.push(line);
         }
@@ -147,11 +171,13 @@ function extractFirstAstroFence(body: string): {
       }
       if (currentFenceIsAstro && !capturedAstro) {
         capturedAstro = true;
+        capturedSkipPreview = currentFenceSkipPreview;
       } else {
         outside.push(line);
       }
       inFence = false;
       currentFenceIsAstro = false;
+      currentFenceSkipPreview = false;
       continue;
     }
 
@@ -167,6 +193,7 @@ function extractFirstAstroFence(body: string): {
   return {
     sourceCode: astroCode.join("\n").trim(),
     descriptionMD: outside.join("\n").trim(),
+    skipPreview: capturedSkipPreview,
   };
 }
 
@@ -226,6 +253,7 @@ export function prepareExampleContent(body: string): PreparedExampleContent {
       snippet: "",
       sourceCode: "",
       sourceFromFence: false,
+      skipPreview: false,
     };
   }
 
@@ -237,6 +265,7 @@ export function prepareExampleContent(body: string): PreparedExampleContent {
       snippet: markup,
       sourceCode: fenced.sourceCode,
       sourceFromFence: true,
+      skipPreview: fenced.skipPreview,
     };
   }
 
@@ -246,6 +275,7 @@ export function prepareExampleContent(body: string): PreparedExampleContent {
     snippet: split.snippet,
     sourceCode: split.snippet,
     sourceFromFence: false,
+    skipPreview: false,
   };
 }
 
@@ -265,7 +295,8 @@ export function extractComponentTagsFromPreviewMarkdown(block: string): string[]
   const found = new Set<string>();
   const lines = block.split("\n");
   let inFence = false;
-  let fenceInfo = "";
+  let currentFenceLang = "";
+  let currentFenceFlags = new Set<string>();
   const fenceBody: string[] = [];
 
   for (const line of lines) {
@@ -273,19 +304,22 @@ export function extractComponentTagsFromPreviewMarkdown(block: string): string[]
     if (trimmed.startsWith("```")) {
       if (!inFence) {
         inFence = true;
-        fenceInfo = trimmed.slice(3).trim().toLowerCase();
+        const parsed = parseFenceInfo(trimmed.slice(3).trim());
+        currentFenceLang = parsed.lang;
+        currentFenceFlags = parsed.flags;
         fenceBody.length = 0;
         continue;
       }
 
-      if (fenceInfo.startsWith("astro")) {
+      if (currentFenceLang === "astro" && !currentFenceFlags.has("nopreview")) {
         const sourceCode = fenceBody.join("\n").trim();
         const { markup } = splitAstroFrontmatter(sourceCode);
         for (const tag of extractTags(markup)) found.add(tag);
       }
 
       inFence = false;
-      fenceInfo = "";
+      currentFenceLang = "";
+      currentFenceFlags = new Set<string>();
       fenceBody.length = 0;
       continue;
     }
@@ -307,9 +341,12 @@ export function extractComponentTagsFromExamplesSections(
   if (!sections?.length) return [];
   const found = new Set<string>();
   for (const section of sections) {
-    for (const tag of extractTags(section.introMD)) found.add(tag);
+    for (const tag of extractComponentTagsFromPreviewMarkdown(section.introMD)) {
+      found.add(tag);
+    }
     for (const item of section.items) {
       const prepared = prepareExampleContent(item.body);
+      if (prepared.skipPreview) continue;
       for (const tag of extractTags(prepared.snippet)) found.add(tag);
     }
   }

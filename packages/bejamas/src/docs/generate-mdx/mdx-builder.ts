@@ -1,4 +1,5 @@
 import {
+  parseFenceInfo,
   prepareExampleContent,
   type ParsedExampleSection,
 } from "./examples";
@@ -368,8 +369,17 @@ export function buildMdx(params: {
 
   const toMdxPreview = (snippet: string): string => {
     if (!snippet) return snippet;
+    // Raw script tags in MDX JSX preview blocks can break Acorn parsing on `{}`.
+    // Keep scripts in source fences but strip them from rendered previews.
+    const withoutScripts = snippet.replace(
+      /<script\b[^>]*>[\s\S]*?<\/script>/gi,
+      "",
+    );
     // Convert HTML comments to MDX comment blocks for preview sections
-    const withoutComments = snippet.replace(/<!--([\s\S]*?)-->/g, "{/*$1*/}");
+    const withoutComments = withoutScripts.replace(
+      /<!--([\s\S]*?)-->/g,
+      "{/*$1*/}",
+    );
     // Convert <p> tags containing components to <span> to avoid HTML validity issues
     const withConvertedParagraphs =
       convertParagraphsWithComponents(withoutComments);
@@ -389,7 +399,8 @@ export function buildMdx(params: {
     const out: string[] = [];
     let inFence = false;
     let fenceOpen = "";
-    let fenceInfo = "";
+    let currentFenceLang = "";
+    let currentFenceFlags = new Set<string>();
     const fenceBody: string[] = [];
 
     for (const line of lines) {
@@ -398,15 +409,17 @@ export function buildMdx(params: {
         if (!inFence) {
           inFence = true;
           fenceOpen = line;
-          fenceInfo = trimmed.slice(3).trim().toLowerCase();
+          const parsed = parseFenceInfo(trimmed.slice(3).trim());
+          currentFenceLang = parsed.lang;
+          currentFenceFlags = parsed.flags;
           fenceBody.length = 0;
           continue;
         }
 
-        if (fenceInfo.startsWith("astro")) {
+        if (currentFenceLang === "astro" && !currentFenceFlags.has("nopreview")) {
           const sourceCode = fenceBody.join("\n").trim();
           const prepared = prepareExampleContent(
-            `\`\`\`astro\n${sourceCode}\n\`\`\``,
+            `${fenceOpen}\n${sourceCode}\n${line}`,
           );
           if (prepared.snippet && prepared.snippet.length) {
             out.push(
@@ -424,7 +437,8 @@ export function buildMdx(params: {
 
         inFence = false;
         fenceOpen = "";
-        fenceInfo = "";
+        currentFenceLang = "";
+        currentFenceFlags = new Set<string>();
         fenceBody.length = 0;
         continue;
       }
@@ -472,29 +486,39 @@ ${(() => {
   ): string => {
     const prepared = prepareExampleContent(body);
     const titleLine = `${headingLevel} ${headingTitle}`;
-    if (!prepared.snippet || !prepared.snippet.length) {
-      return [titleLine, prepared.descriptionMD || ""]
-        .filter((v) => v && v.length)
-        .join("\n\n");
+    const blocks: string[] = [titleLine];
+    if (prepared.descriptionMD && prepared.descriptionMD.length) {
+      blocks.push(prepared.descriptionMD);
     }
 
-    const previewBody = toMdxPreview(prepared.snippet);
-    const sourceBlock = prepared.sourceFromFence
-      ? prepared.sourceCode
-      : `${(() => {
-          const lines = buildSnippetImportLines(prepared.sourceCode);
-          return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
-        })()}${prepared.sourceCode}`;
-
-    return `${titleLine}
-
-${prepared.descriptionMD ? `${prepared.descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+    if (
+      prepared.snippet &&
+      prepared.snippet.length &&
+      prepared.sourceCode &&
+      prepared.sourceCode.length &&
+      !prepared.skipPreview
+    ) {
+      const previewBody = toMdxPreview(prepared.snippet);
+      blocks.push(
+        `<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
 ${previewBody}
-</div>
+</div>`,
+      );
+    }
 
-\`\`\`astro
+    if (prepared.sourceCode && prepared.sourceCode.length) {
+      const sourceBlock = prepared.sourceFromFence
+        ? prepared.sourceCode
+        : `${(() => {
+            const lines = buildSnippetImportLines(prepared.sourceCode);
+            return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
+          })()}${prepared.sourceCode}`;
+      blocks.push(`\`\`\`astro
 ${sourceBlock}
-\`\`\``;
+\`\`\``);
+    }
+
+    return blocks.join("\n\n");
   };
 
   const renderedExampleSections: string[] = [];
