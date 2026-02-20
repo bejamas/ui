@@ -1,3 +1,8 @@
+import {
+  prepareExampleContent,
+  type ParsedExampleSection,
+} from "./examples";
+
 /**
  * Check if an import path uses the new barrel export pattern (no .astro extension)
  */
@@ -43,13 +48,33 @@ function componentToFolder(name: string): string {
   return baseMatch ? baseMatch[0].toLowerCase() : name.toLowerCase();
 }
 
+function resolveComponentFolder(
+  name: string,
+  componentFolderMap?: Record<string, string>,
+): string {
+  if (!componentFolderMap) return componentToFolder(name);
+  const direct = componentFolderMap[name];
+  if (direct && direct.length) return direct;
+
+  // Fallback: try the longest mapped prefix (e.g. InputGroup* -> input-group)
+  const prefixMatch = Object.keys(componentFolderMap)
+    .filter((key) => name.startsWith(key))
+    .sort((a, b) => b.length - a.length)[0];
+  if (prefixMatch) return componentFolderMap[prefixMatch];
+
+  return componentToFolder(name);
+}
+
 /**
  * Group component names by their folder path
  */
-function groupComponentsByFolder(components: string[]): Map<string, string[]> {
+function groupComponentsByFolder(
+  components: string[],
+  componentFolderMap?: Record<string, string>,
+): Map<string, string[]> {
   const groups = new Map<string, string[]>();
   for (const comp of components) {
-    const folder = componentToFolder(comp);
+    const folder = resolveComponentFolder(comp, componentFolderMap);
     if (!groups.has(folder)) {
       groups.set(folder, []);
     }
@@ -64,8 +89,9 @@ function groupComponentsByFolder(components: string[]): Map<string, string[]> {
 function generateBarrelImports(
   components: string[],
   componentsAlias: string,
+  componentFolderMap?: Record<string, string>,
 ): string[] {
-  const groups = groupComponentsByFolder(components);
+  const groups = groupComponentsByFolder(components, componentFolderMap);
   const lines: string[] = [];
 
   // Sort folders alphabetically for consistent output
@@ -117,7 +143,8 @@ export function buildMdx(params: {
     title: string;
     source: string;
   }>;
-  examplesBlocks: Array<{ title: string; body: string }>;
+  examplesSections: ParsedExampleSection[];
+  componentFolderMap?: Record<string, string>;
   autoImports: string[];
   lucideIcons: string[];
   primaryExampleMDX: string;
@@ -146,7 +173,8 @@ export function buildMdx(params: {
     propsList,
     propsTable,
     examples,
-    examplesBlocks,
+    examplesSections,
+    componentFolderMap,
     autoImports,
     lucideIcons,
     primaryExampleMDX,
@@ -177,7 +205,7 @@ export function buildMdx(params: {
 
   // Generate UI component imports based on pattern
   const uiAutoLines = useBarrelPattern
-    ? generateBarrelImports(sortedUiAuto, componentsAlias)
+    ? generateBarrelImports(sortedUiAuto, componentsAlias, componentFolderMap)
     : generateDefaultImports(sortedUiAuto, componentsAlias);
 
   const exampleLines = (examples ?? [])
@@ -259,7 +287,9 @@ export function buildMdx(params: {
 
       // Other UI components grouped by folder
       if (usedUi.length > 0) {
-        internal.push(...generateBarrelImports(usedUi, componentsAlias));
+        internal.push(
+          ...generateBarrelImports(usedUi, componentsAlias, componentFolderMap),
+        );
       }
     } else {
       // Old pattern: default imports
@@ -352,34 +382,74 @@ export function buildMdx(params: {
     return wrapTextNodes(normalized);
   };
 
-  // Split an example body into leading markdown description (paragraphs)
-  // and the Astro/HTML snippet that should be rendered in Preview/Source tabs
-  const splitDescriptionAndSnippet = (
-    body: string,
-  ): { descriptionMD: string; snippet: string } => {
-    if (!body || !body.trim().length) return { descriptionMD: "", snippet: "" };
-    const lines = body.split("\n");
-    let snippetStartIdx = -1;
-    for (let i = 0; i < lines.length; i++) {
-      const ln = lines[i];
-      // Skip empty lines before first meaningful content
-      if (!ln.trim().length) continue;
-      // Heuristic: consider this line the start of the snippet if it looks like Astro/HTML/JSX
-      // e.g. starts with '<' or '{'
-      if (/^\s*[<{]/.test(ln)) {
-        snippetStartIdx = i;
-        break;
+  const renderAstroPreviewsInMarkdown = (block: string): string => {
+    if (!block || !block.length) return block;
+
+    const lines = block.split("\n");
+    const out: string[] = [];
+    let inFence = false;
+    let fenceOpen = "";
+    let fenceInfo = "";
+    const fenceBody: string[] = [];
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith("```")) {
+        if (!inFence) {
+          inFence = true;
+          fenceOpen = line;
+          fenceInfo = trimmed.slice(3).trim().toLowerCase();
+          fenceBody.length = 0;
+          continue;
+        }
+
+        if (fenceInfo.startsWith("astro")) {
+          const sourceCode = fenceBody.join("\n").trim();
+          const prepared = prepareExampleContent(
+            `\`\`\`astro\n${sourceCode}\n\`\`\``,
+          );
+          if (prepared.snippet && prepared.snippet.length) {
+            out.push(
+              `<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">`,
+            );
+            out.push(toMdxPreview(prepared.snippet));
+            out.push("</div>");
+            out.push("");
+          }
+        }
+
+        out.push(fenceOpen);
+        if (fenceBody.length) out.push(...fenceBody);
+        out.push(line);
+
+        inFence = false;
+        fenceOpen = "";
+        fenceInfo = "";
+        fenceBody.length = 0;
+        continue;
       }
-      // Otherwise it's part of markdown description; keep looking until we hit markup
+
+      if (inFence) {
+        fenceBody.push(line);
+        continue;
+      }
+
+      out.push(line);
     }
-    if (snippetStartIdx <= 0) {
-      // No clear description or snippet starts at the very beginning → treat all as snippet
-      return { descriptionMD: "", snippet: body.trim() };
+
+    if (inFence) {
+      out.push(fenceOpen);
+      if (fenceBody.length) out.push(...fenceBody);
     }
-    const descriptionMD = lines.slice(0, snippetStartIdx).join("\n").trim();
-    const snippet = lines.slice(snippetStartIdx).join("\n").trim();
-    return { descriptionMD, snippet };
+
+    return out.join("\n").trim();
   };
+
+  const renderedDescriptionBodyMDX = renderAstroPreviewsInMarkdown(
+    descriptionBodyMDX || "",
+  );
+  const renderedUsageMDX = renderAstroPreviewsInMarkdown(usageMDX || "");
+  const renderedApiMDX = renderAstroPreviewsInMarkdown(apiMDX || "");
 
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length
@@ -395,41 +465,85 @@ ${(() => {
 \`\`\``
       : null;
 
-  const exampleSections: string[] = [];
-  if (examplesBlocks && examplesBlocks.length) {
-    for (const blk of examplesBlocks) {
-      const { descriptionMD, snippet } = splitDescriptionAndSnippet(blk.body);
-      const previewBody = toMdxPreview(snippet);
+  const renderExampleItem = (
+    headingLevel: "###" | "####",
+    headingTitle: string,
+    body: string,
+  ): string => {
+    const prepared = prepareExampleContent(body);
+    const titleLine = `${headingLevel} ${headingTitle}`;
+    if (!prepared.snippet || !prepared.snippet.length) {
+      return [titleLine, prepared.descriptionMD || ""]
+        .filter((v) => v && v.length)
+        .join("\n\n");
+    }
 
-      // If there's no snippet, render only header + description
-      if (!snippet || !snippet.length) {
-        exampleSections.push(
-          `### ${blk.title}
+    const previewBody = toMdxPreview(prepared.snippet);
+    const sourceBlock = prepared.sourceFromFence
+      ? prepared.sourceCode
+      : `${(() => {
+          const lines = buildSnippetImportLines(prepared.sourceCode);
+          return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
+        })()}${prepared.sourceCode}`;
 
-${descriptionMD}`.trim(),
-        );
-        continue;
-      }
+    return `${titleLine}
 
-      exampleSections.push(
-        `### ${blk.title}
-
-${descriptionMD ? `${descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+${prepared.descriptionMD ? `${prepared.descriptionMD}\n\n` : ""}<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
 ${previewBody}
 </div>
 
 \`\`\`astro
-${(() => {
-  const lines = buildSnippetImportLines(snippet);
-  return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
-})()}${snippet}
-\`\`\``,
-      );
+${sourceBlock}
+\`\`\``;
+  };
+
+  const renderedExampleSections: string[] = [];
+  if (examplesSections && examplesSections.length) {
+    let implicitExampleCounter = 1;
+
+    for (const section of examplesSections) {
+      const sectionParts: string[] = [];
+      const hasSectionTitle = !!(section.title && section.title.length);
+      if (hasSectionTitle) {
+        sectionParts.push(`### ${section.title}`);
+      }
+
+      if (section.introMD && section.introMD.length) {
+        sectionParts.push(section.introMD);
+      }
+
+      if (section.items && section.items.length) {
+        const itemHeadingLevel: "###" | "####" = hasSectionTitle
+          ? "####"
+          : "###";
+        for (const item of section.items) {
+          sectionParts.push(
+            renderExampleItem(itemHeadingLevel, item.title, item.body),
+          );
+        }
+      } else if (!hasSectionTitle && section.introMD && section.introMD.length) {
+        const prepared = prepareExampleContent(section.introMD);
+        if (prepared.snippet && prepared.snippet.length) {
+          sectionParts.length = 0;
+          sectionParts.push(
+            renderExampleItem(
+              "###",
+              `Example ${implicitExampleCounter}`,
+              section.introMD,
+            ),
+          );
+          implicitExampleCounter += 1;
+        }
+      }
+
+      if (sectionParts.length) {
+        renderedExampleSections.push(sectionParts.join("\n\n").trim());
+      }
     }
   }
   if (examples && examples.length) {
     for (const ex of examples) {
-      exampleSections.push(
+      renderedExampleSections.push(
         `### ${ex.title}
 
 <div class="not-content">
@@ -512,13 +626,17 @@ ${ex.source}
     "",
     ...importLines,
     importLines.length ? "" : null,
-    descriptionBodyMDX && descriptionBodyMDX.length ? descriptionBodyMDX : null,
-    descriptionBodyMDX && descriptionBodyMDX.length ? "" : null,
+    renderedDescriptionBodyMDX && renderedDescriptionBodyMDX.length
+      ? renderedDescriptionBodyMDX
+      : null,
+    renderedDescriptionBodyMDX && renderedDescriptionBodyMDX.length ? "" : null,
     primaryExampleSection,
     primaryExampleSection ? "" : null,
     installationSection,
     "",
-    usageMDX && usageMDX.length ? `## Usage\n\n${usageMDX}` : null,
+    renderedUsageMDX && renderedUsageMDX.length
+      ? `## Usage\n\n${renderedUsageMDX}`
+      : null,
     "",
     propsTable && propsTable.length
       ? `## Props\n\n| Prop | Type | Default |\n|---|---|---|\n${propsTable
@@ -531,11 +649,13 @@ ${ex.source}
         ? `## Props\n\n${propsList}`
         : null,
     (propsTable && propsTable.length) || propsList ? "" : null,
-    exampleSections.length
-      ? `## Examples\n\n` + exampleSections.join("\n\n")
+    renderedExampleSections.length
+      ? `## Examples\n\n` + renderedExampleSections.join("\n\n")
       : null,
-    exampleSections.length ? "" : null,
-    apiMDX && apiMDX.length ? `## API Reference\n\n${apiMDX}` : null,
+    renderedExampleSections.length ? "" : null,
+    renderedApiMDX && renderedApiMDX.length
+      ? `## API Reference\n\n${renderedApiMDX}`
+      : null,
   ].filter((v) => v !== null && v !== undefined);
 
   return lines.join("\n").trim() + "\n";
