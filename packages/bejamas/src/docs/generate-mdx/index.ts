@@ -18,6 +18,11 @@ import {
   extractComponentTagsFromMDX,
   createSourceFileFromFrontmatter,
 } from "./utils";
+import {
+  parseExamplesSections,
+  extractComponentTagsFromPreviewMarkdown,
+  extractComponentTagsFromExamplesSections,
+} from "./examples";
 import { buildMdx } from "./mdx-builder";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
@@ -95,6 +100,20 @@ async function discoverComponents(
   }
 
   return entries;
+}
+
+function buildComponentFolderMap(
+  components: ComponentEntry[],
+): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const component of components) {
+    if (!component.isFolder || !component.folderName) continue;
+    map[component.name] = component.folderName;
+    for (const sub of component.namedExports) {
+      map[sub] = component.folderName;
+    }
+  }
+  return map;
 }
 
 /**
@@ -179,6 +198,7 @@ async function main() {
 
   // Discover all components (both flat files and folders)
   const components = await discoverComponents(componentsDir);
+  const componentFolderMap = buildComponentFolderMap(components);
 
   if (DEBUG) {
     logger.info(`[docs-generator] components found: ${components.length}`);
@@ -255,9 +275,8 @@ async function main() {
       title: string;
       source: string;
     }> = [];
-    const examplesBlocksRaw = examplesMDX;
-    const examplesBlocks = parseExamplesBlocks(examplesBlocksRaw);
-    if (examplesBlocks.length === 0) {
+    const parsedExamplesSections = parseExamplesSections(examplesMDX);
+    if (parsedExamplesSections.length === 0) {
       exampleRelPaths = await discoverExamples(filePath, componentsDir);
       examples = (exampleRelPaths || []).map((rel) => {
         const posixRel = rel
@@ -275,19 +294,27 @@ async function main() {
       });
     }
 
-    const usedInUsage = extractComponentTagsFromMDX(usageMDX).filter(
+    const usedInUsage = extractComponentTagsFromPreviewMarkdown(usageMDX).filter(
       (n) => n !== pascal,
     );
-    const usedInExamples = extractComponentTagsFromMDX(examplesMDX).filter(
-      (n) => n !== pascal,
-    );
+    const usedInDescription = extractComponentTagsFromPreviewMarkdown(
+      descriptionBodyMDX,
+    ).filter((n) => n !== pascal);
+    const usedInExamples = extractComponentTagsFromExamplesSections(
+      parsedExamplesSections,
+    ).filter((n) => n !== pascal);
     const usedInPrimary = extractComponentTagsFromMDX(primaryExampleMDX).filter(
+      (n) => n !== pascal,
+    );
+    const usedInApi = extractComponentTagsFromPreviewMarkdown(apiMDX).filter(
       (n) => n !== pascal,
     );
     const autoSet = new Set<string>([
       ...usedInUsage,
+      ...usedInDescription,
       ...usedInExamples,
       ...usedInPrimary,
+      ...usedInApi,
     ]);
 
     // For folder-based components, add subcomponents used in examples to namedExports
@@ -319,7 +346,8 @@ async function main() {
       propsList,
       propsTable,
       examples,
-      examplesBlocks: parseExamplesBlocks(examplesBlocksRaw),
+      examplesSections: parsedExamplesSections,
+      componentFolderMap,
       autoImports: uiAutoImports,
       lucideIcons,
       primaryExampleMDX,
@@ -354,29 +382,6 @@ async function main() {
     logger.log(`  - ${p}`);
   });
   logger.break();
-}
-
-export function parseExamplesBlocks(
-  examplesMDX: string,
-): Array<{ title: string; body: string }> {
-  if (!examplesMDX) return [];
-  const lines = examplesMDX.split("\n");
-  const blocks: Array<{ title: string; body: string[] }> = [];
-  let current: { title: string; body: string[] } = { title: "", body: [] };
-  for (const line of lines) {
-    const heading = line.match(/^###\s+(.+)$/);
-    if (heading) {
-      if (current.title || current.body.length) blocks.push(current);
-      current = { title: heading[1].trim(), body: [] };
-      continue;
-    }
-    current.body.push(line);
-  }
-  if (current.title || current.body.length) blocks.push(current);
-  return blocks.map((b, idx) => ({
-    title: b.title || `Example ${idx + 1}`,
-    body: b.body.join("\n").trim(),
-  }));
 }
 
 export async function runDocsGenerator(): Promise<void> {
