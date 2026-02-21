@@ -441,6 +441,25 @@
     border-top: 0;
   }
 
+  .sl-bejamas-component-preview + .sl-bejamas-console-log-shell {
+    margin-top: 0;
+  }
+
+  .sl-bejamas-console-log-shell + .expressive-code {
+    margin-top: 0;
+  }
+
+  .sl-bejamas-console-log-shell + .expressive-code pre {
+    border-radius: 0;
+    border: 0;
+  }
+
+  .sl-bejamas-console-log-shell + .expressive-code {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border: 1px solid var(--border);
+    border-top: 0;
+  }
+
   .expressive-code {
     border-radius: var(--radius-lg);
   }
