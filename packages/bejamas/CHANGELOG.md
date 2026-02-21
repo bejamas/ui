@@ -1,5 +1,15 @@
 # bejamas
 
+## 0.2.8
+
+### Patch Changes
+
+- [#64](https://github.com/bejamas/ui/pull/64) [`42d6867`](https://github.com/bejamas/ui/commit/42d68678c77634983218499026f519733d988dfa) Thanks [@thomkrupa](https://github.com/thomkrupa)! - add nopreview
+
+- [#65](https://github.com/bejamas/ui/pull/65) [`24b51ec`](https://github.com/bejamas/ui/commit/24b51ec6f11c5655295651c7d4885acd5f94cffc) Thanks [@thomkrupa](https://github.com/thomkrupa)! - add console preview
+
+- [#62](https://github.com/bejamas/ui/pull/62) [`2c8b6b2`](https://github.com/bejamas/ui/commit/2c8b6b2b93f620aedc7538c1fc34974cab47cc33) Thanks [@thomkrupa](https://github.com/thomkrupa)! - fixes docs generation for complex JSDoc blocks by supporting sectioned example parsing
+
 ## 0.2.7
 
 ### Patch Changes

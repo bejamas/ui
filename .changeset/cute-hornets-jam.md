@@ -1,5 +1,0 @@
----
-"bejamas": patch
----
-
-add nopreview
