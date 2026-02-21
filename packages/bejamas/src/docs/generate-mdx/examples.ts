@@ -34,6 +34,10 @@ export interface PreparedExampleContent {
    * True when the fenced astro block includes the `nopreview` flag.
    */
   skipPreview: boolean;
+  /**
+   * True when the fenced astro block includes the `console` flag.
+   */
+  enableConsolePanel: boolean;
 }
 
 export interface FenceInfo {
@@ -130,6 +134,46 @@ function splitAstroFrontmatter(sourceCode: string): {
   };
 }
 
+function stripFrontmatterComments(frontmatter: string): string {
+  if (!frontmatter || !frontmatter.length) return "";
+  return frontmatter
+    .replace(/\/\*[\s\S]*?\*\//g, "\n")
+    .replace(/^[ \t]*\/\/.*$/gm, "")
+    .trim();
+}
+
+function isImportOnlyFrontmatter(frontmatter: string): boolean {
+  const cleaned = stripFrontmatterComments(frontmatter);
+  if (!cleaned.length) return true;
+
+  let remaining = cleaned;
+  const importFromPattern =
+    /(?:^|\n)\s*import\s+(?:type\s+)?[\s\S]*?\s+from\s+['"][^'"]+['"]\s*;?(?=\n|$)/g;
+  const importSideEffectPattern =
+    /(?:^|\n)\s*import\s+['"][^'"]+['"]\s*;?(?=\n|$)/g;
+  const exportFromPattern =
+    /(?:^|\n)\s*export\s+(?:\*\s+from|\{[\s\S]*?\}\s+from)\s+['"][^'"]+['"]\s*;?(?=\n|$)/g;
+
+  remaining = remaining
+    .replace(importFromPattern, "\n")
+    .replace(importSideEffectPattern, "\n")
+    .replace(exportFromPattern, "\n")
+    .trim();
+
+  return remaining.replace(/[;\s]/g, "").length === 0;
+}
+
+function isAstroFrontmatterPreviewUnsafe(frontmatter: string): boolean {
+  const cleaned = stripFrontmatterComments(frontmatter);
+  if (!cleaned.length) return false;
+
+  const runtimeTokenPattern =
+    /\b(?:const|let|var|function|class|if|for|while|switch|try|catch|return|throw|await|new)\b|=>|Astro\./;
+  if (runtimeTokenPattern.test(cleaned)) return true;
+
+  return !isImportOnlyFrontmatter(cleaned);
+}
+
 export function parseFenceInfo(infoRaw: string): FenceInfo {
   const parts = (infoRaw || "")
     .trim()
@@ -145,6 +189,7 @@ function extractFirstAstroFence(body: string): {
   sourceCode: string;
   descriptionMD: string;
   skipPreview: boolean;
+  enableConsolePanel: boolean;
 } | null {
   if (!body || !body.trim().length) return null;
   const lines = body.split("\n");
@@ -153,7 +198,9 @@ function extractFirstAstroFence(body: string): {
   let inFence = false;
   let currentFenceIsAstro = false;
   let currentFenceSkipPreview = false;
+  let currentFenceEnableConsolePanel = false;
   let capturedSkipPreview = false;
+  let capturedEnableConsolePanel = false;
   let capturedAstro = false;
 
   for (const line of lines) {
@@ -164,6 +211,7 @@ function extractFirstAstroFence(body: string): {
         const parsed = parseFenceInfo(trimmed.slice(3).trim());
         currentFenceIsAstro = parsed.lang === "astro";
         currentFenceSkipPreview = parsed.flags.has("nopreview");
+        currentFenceEnableConsolePanel = parsed.flags.has("console");
         if (!currentFenceIsAstro || capturedAstro) {
           outside.push(line);
         }
@@ -172,12 +220,14 @@ function extractFirstAstroFence(body: string): {
       if (currentFenceIsAstro && !capturedAstro) {
         capturedAstro = true;
         capturedSkipPreview = currentFenceSkipPreview;
+        capturedEnableConsolePanel = currentFenceEnableConsolePanel;
       } else {
         outside.push(line);
       }
       inFence = false;
       currentFenceIsAstro = false;
       currentFenceSkipPreview = false;
+      currentFenceEnableConsolePanel = false;
       continue;
     }
 
@@ -194,6 +244,7 @@ function extractFirstAstroFence(body: string): {
     sourceCode: astroCode.join("\n").trim(),
     descriptionMD: outside.join("\n").trim(),
     skipPreview: capturedSkipPreview,
+    enableConsolePanel: capturedEnableConsolePanel,
   };
 }
 
@@ -254,18 +305,21 @@ export function prepareExampleContent(body: string): PreparedExampleContent {
       sourceCode: "",
       sourceFromFence: false,
       skipPreview: false,
+      enableConsolePanel: false,
     };
   }
 
   const fenced = extractFirstAstroFence(body);
   if (fenced) {
-    const { markup } = splitAstroFrontmatter(fenced.sourceCode);
+    const { frontmatter, markup } = splitAstroFrontmatter(fenced.sourceCode);
+    const unsafeFrontmatter = isAstroFrontmatterPreviewUnsafe(frontmatter);
     return {
       descriptionMD: fenced.descriptionMD,
       snippet: markup,
       sourceCode: fenced.sourceCode,
       sourceFromFence: true,
-      skipPreview: fenced.skipPreview,
+      skipPreview: fenced.skipPreview || unsafeFrontmatter,
+      enableConsolePanel: fenced.enableConsolePanel,
     };
   }
 
@@ -276,6 +330,7 @@ export function prepareExampleContent(body: string): PreparedExampleContent {
     sourceCode: split.snippet,
     sourceFromFence: false,
     skipPreview: false,
+    enableConsolePanel: false,
   };
 }
 
@@ -295,8 +350,8 @@ export function extractComponentTagsFromPreviewMarkdown(block: string): string[]
   const found = new Set<string>();
   const lines = block.split("\n");
   let inFence = false;
+  let fenceOpen = "";
   let currentFenceLang = "";
-  let currentFenceFlags = new Set<string>();
   const fenceBody: string[] = [];
 
   for (const line of lines) {
@@ -304,22 +359,26 @@ export function extractComponentTagsFromPreviewMarkdown(block: string): string[]
     if (trimmed.startsWith("```")) {
       if (!inFence) {
         inFence = true;
+        fenceOpen = line;
         const parsed = parseFenceInfo(trimmed.slice(3).trim());
         currentFenceLang = parsed.lang;
-        currentFenceFlags = parsed.flags;
         fenceBody.length = 0;
         continue;
       }
 
-      if (currentFenceLang === "astro" && !currentFenceFlags.has("nopreview")) {
+      if (currentFenceLang === "astro") {
         const sourceCode = fenceBody.join("\n").trim();
-        const { markup } = splitAstroFrontmatter(sourceCode);
-        for (const tag of extractTags(markup)) found.add(tag);
+        const prepared = prepareExampleContent(
+          `${fenceOpen}\n${sourceCode}\n${line}`,
+        );
+        if (!prepared.skipPreview) {
+          for (const tag of extractTags(prepared.snippet)) found.add(tag);
+        }
       }
 
       inFence = false;
+      fenceOpen = "";
       currentFenceLang = "";
-      currentFenceFlags = new Set<string>();
       fenceBody.length = 0;
       continue;
     }

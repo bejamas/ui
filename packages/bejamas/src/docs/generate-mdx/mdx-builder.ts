@@ -316,6 +316,8 @@ export function buildMdx(params: {
     ].filter((v) => v !== null && v !== undefined) as string[];
   };
 
+  let consolePreviewCounter = 0;
+
   const wrapTextNodes = (snippet: string): string => {
     if (!snippet) return snippet;
     return snippet.replace(/>([^<]+)</g, (match, inner) => {
@@ -367,14 +369,34 @@ export function buildMdx(params: {
     );
   };
 
-  const toMdxPreview = (snippet: string): string => {
-    if (!snippet) return snippet;
-    // Raw script tags in MDX JSX preview blocks can break Acorn parsing on `{}`.
-    // Keep scripts in source fences but strip them from rendered previews.
-    const withoutScripts = snippet.replace(
-      /<script\b[^>]*>[\s\S]*?<\/script>/gi,
-      "",
+  type PreviewRenderOptions = {
+    enableConsolePanel?: boolean;
+  };
+
+  const extractInlineScripts = (snippet: string): {
+    markup: string;
+    scripts: string[];
+  } => {
+    if (!snippet) return { markup: snippet, scripts: [] };
+    const scripts: string[] = [];
+    const markup = snippet.replace(
+      /<script\b[^>]*>([\s\S]*?)<\/script>/gi,
+      (_, scriptBody: string) => {
+        scripts.push((scriptBody || "").trim());
+        return "";
+      },
     );
+    return { markup, scripts };
+  };
+
+  const toMdxPreview = (
+    snippet: string,
+    options: PreviewRenderOptions = {},
+  ): { markup: string; scripts: string[] } => {
+    if (!snippet) return { markup: "", scripts: [] };
+    const { enableConsolePanel = false } = options;
+    const extracted = extractInlineScripts(snippet);
+    const withoutScripts = extracted.markup;
     // Convert HTML comments to MDX comment blocks for preview sections
     const withoutComments = withoutScripts.replace(
       /<!--([\s\S]*?)-->/g,
@@ -385,11 +407,142 @@ export function buildMdx(params: {
       convertParagraphsWithComponents(withoutComments);
     // If the snippet contains user-defined <p> elements, preserve structure as-is
     if (/<p[\s>]/i.test(withConvertedParagraphs)) {
-      return normalizeInlineWhitespace(withConvertedParagraphs);
+      return {
+        markup: normalizeInlineWhitespace(withConvertedParagraphs),
+        scripts: enableConsolePanel ? extracted.scripts : [],
+      };
     }
     // Normalize whitespace to prevent MDX from splitting inline text into paragraphs
     const normalized = normalizeInlineWhitespace(withConvertedParagraphs);
-    return wrapTextNodes(normalized);
+    return {
+      markup: wrapTextNodes(normalized),
+      scripts: enableConsolePanel ? extracted.scripts : [],
+    };
+  };
+
+  const buildConsoleRuntimeSource = (
+    rootId: string,
+    panelId: string,
+    userScript: string,
+  ): string => {
+    const serializedRootId = JSON.stringify(rootId);
+    const serializedPanelId = JSON.stringify(panelId);
+    const serializedUserScript = JSON.stringify(userScript);
+
+    return `(function () {
+  var root = document.getElementById(${serializedRootId});
+  var panel = document.getElementById(${serializedPanelId});
+  if (!root || !panel) return;
+
+  var placeholder = panel.textContent || "Waiting for logs...";
+  var hasLogs = false;
+
+  var toText = function (value) {
+    if (typeof value === "string") return value;
+    if (value === undefined) return "undefined";
+    if (value === null) return "null";
+    try {
+      return JSON.stringify(value);
+    } catch (_error) {
+      return String(value);
+    }
+  };
+
+  var append = function (level, args) {
+    var stamp = new Date().toLocaleTimeString();
+    var body = Array.prototype.map.call(args, toText).join(" ");
+    var line = "[" + stamp + "] " + String(level).toUpperCase() + ": " + body;
+    var current = panel.textContent || "";
+    if (!hasLogs && current.trim() === placeholder.trim()) {
+      panel.textContent = line;
+    } else {
+      panel.textContent = current ? current + "\\n" + line : line;
+    }
+    hasLogs = true;
+    panel.scrollTop = panel.scrollHeight;
+  };
+
+  var methods = ["log", "info", "warn", "error"];
+  var proxyConsole = Object.create(console);
+  for (var i = 0; i < methods.length; i += 1) {
+    (function (methodName) {
+      var fallback = typeof console.log === "function" ? console.log.bind(console) : function () {};
+      var original =
+        typeof console[methodName] === "function"
+          ? console[methodName].bind(console)
+          : fallback;
+      proxyConsole[methodName] = function () {
+        var args = Array.prototype.slice.call(arguments);
+        original.apply(console, args);
+        append(methodName, args);
+      };
+    })(methods[i]);
+  }
+
+  try {
+    var run = new Function("console", "root", "panel", ${serializedUserScript});
+    run(proxyConsole, root, panel);
+  } catch (error) {
+    var fallbackError = typeof console.error === "function" ? console.error.bind(console) : function () {};
+    fallbackError(error);
+    append("error", [error]);
+  }
+})();`;
+  };
+
+  const renderConsoleScripts = (
+    rootId: string,
+    panelId: string,
+    scripts: string[],
+  ): string => {
+    if (!scripts.length) return "";
+    return scripts
+      .filter((script) => script && script.trim().length)
+      .map((script) => {
+        const runtimeSource = buildConsoleRuntimeSource(
+          rootId,
+          panelId,
+          script,
+        );
+        const encoded = encodeURIComponent(runtimeSource);
+        return `<script type="module" src="data:text/javascript;charset=utf-8,${encoded}"></script>`;
+      })
+      .join("\n");
+  };
+
+  const renderPreviewBlock = (
+    snippet: string,
+    options: PreviewRenderOptions = {},
+  ): string => {
+    const { enableConsolePanel = false } = options;
+    const preparedPreview = toMdxPreview(snippet, options);
+    if (!preparedPreview.markup || !preparedPreview.markup.length) return "";
+
+    if (!enableConsolePanel) {
+      return `<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+${preparedPreview.markup}
+</div>`;
+    }
+
+    consolePreviewCounter += 1;
+    const rootId = `sl-bejamas-console-preview-${consolePreviewCounter}`;
+    const panelId = `${rootId}-output`;
+    const scriptTags = renderConsoleScripts(
+      rootId,
+      panelId,
+      preparedPreview.scripts,
+    );
+    const parts = [
+      `<div id="${rootId}" class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">`,
+      preparedPreview.markup,
+      "</div>",
+      `<div class="not-content sl-bejamas-console-log-shell px-4 md:px-10 py-4 border border-border border-t-0">`,
+      `<pre id="${panelId}" data-slot="event-log" class="sl-bejamas-console-log w-full p-3 rounded-md bg-muted text-xs font-mono text-muted-foreground min-h-[80px] max-h-[200px] overflow-y-auto">Waiting for logs...</pre>`,
+      scriptTags && scriptTags.length ? scriptTags : null,
+      "</div>",
+    ].filter((part) => part !== null) as string[];
+
+    return parts.join("\n");
   };
 
   const renderAstroPreviewsInMarkdown = (block: string): string => {
@@ -416,17 +569,22 @@ export function buildMdx(params: {
           continue;
         }
 
-        if (currentFenceLang === "astro" && !currentFenceFlags.has("nopreview")) {
+        if (currentFenceLang === "astro") {
           const sourceCode = fenceBody.join("\n").trim();
           const prepared = prepareExampleContent(
             `${fenceOpen}\n${sourceCode}\n${line}`,
           );
-          if (prepared.snippet && prepared.snippet.length) {
-            out.push(
-              `<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">`,
-            );
-            out.push(toMdxPreview(prepared.snippet));
-            out.push("</div>");
+          if (
+            prepared.snippet &&
+            prepared.snippet.length &&
+            !prepared.skipPreview
+          ) {
+            const previewBlock = renderPreviewBlock(prepared.snippet, {
+              enableConsolePanel: prepared.enableConsolePanel,
+            });
+            if (previewBlock.length) {
+              out.push(previewBlock);
+            }
             out.push("");
           }
         }
@@ -467,9 +625,7 @@ export function buildMdx(params: {
 
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length
-      ? `<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-${toMdxPreview(primaryExampleMDX)}
-</div>
+      ? `${renderPreviewBlock(primaryExampleMDX)}
 
 \`\`\`astro
 ${(() => {
@@ -498,11 +654,10 @@ ${(() => {
       prepared.sourceCode.length &&
       !prepared.skipPreview
     ) {
-      const previewBody = toMdxPreview(prepared.snippet);
       blocks.push(
-        `<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-${previewBody}
-</div>`,
+        renderPreviewBlock(prepared.snippet, {
+          enableConsolePanel: prepared.enableConsolePanel,
+        }),
       );
     }
 
