@@ -13,7 +13,7 @@ type Props = {
 const {
   side,
   align,
-  sideOffset = 4,
+  sideOffset = 6,
   alignOffset = 0,
   class: className = "",
   ...rest
@@ -35,7 +35,6 @@ const {
     "hidden data-[state=open]:block duration-150 ease transition-discrete starting:data-[state=closed]:block",
     "[--origin-x:center] [--origin-y:top] data-[side=top]:[--origin-y:bottom]",
     "data-[align=start]:[--origin-x:left] data-[align=end]:[--origin-x:right]",
-    className,
   )}
 >
   <!-- Inner: visual styling + animations -->
@@ -50,6 +49,7 @@ const {
       "group-data-[side=bottom]/popover-content:slide-in-from-top-2 group-data-[side=top]/popover-content:slide-in-from-bottom-2",
       "group-data-[side=left]/popover-content:slide-in-from-right-2 group-data-[side=right]/popover-content:slide-in-from-left-2",
       "origin-[var(--origin-x)_var(--origin-y)]",
+      className,
     )}
   >
     <slot />
