@@ -54,7 +54,7 @@
  * |-------|--------|-------------|
  * | `popover:change` | `{ open: boolean }` | Fired when the popover opens or closes |
  *
- * ```astro nocollapse
+ * ```astro nocollapse console
  * <Popover id="my-popover">
  *   <PopoverTrigger variant="outline">Open</PopoverTrigger>
  *   <PopoverContent>
@@ -116,27 +116,27 @@
  * ### Side Variants
  *
  * <div class="flex gap-4 items-center justify-center py-8">
- *   <Popover side="left">
+ *   <Popover>
  *     <PopoverTrigger variant="outline">Left</PopoverTrigger>
- *     <PopoverContent>
+ *     <PopoverContent side="left">
  *       <p>Popover on the left</p>
  *     </PopoverContent>
  *   </Popover>
- *   <Popover side="top">
+ *   <Popover>
  *     <PopoverTrigger variant="outline">Top</PopoverTrigger>
- *     <PopoverContent>
+ *     <PopoverContent side="top">
  *       <p>Popover on top</p>
  *     </PopoverContent>
  *   </Popover>
- *   <Popover side="bottom">
+ *   <Popover>
  *     <PopoverTrigger variant="outline">Bottom</PopoverTrigger>
- *     <PopoverContent>
+ *     <PopoverContent side="bottom">
  *       <p>Popover on bottom</p>
  *     </PopoverContent>
  *   </Popover>
- *   <Popover side="right">
+ *   <Popover>
  *     <PopoverTrigger variant="outline">Right</PopoverTrigger>
- *     <PopoverContent>
+ *     <PopoverContent side="right">
  *       <p>Popover on the right</p>
  *     </PopoverContent>
  *   </Popover>
@@ -145,21 +145,21 @@
  * ### Alignment Variants
  *
  * <div class="flex gap-8">
- *   <Popover side="bottom" align="start">
+ *   <Popover>
  *     <PopoverTrigger variant="outline">Start</PopoverTrigger>
- *     <PopoverContent>
+ *     <PopoverContent side="bottom" align="start">
  *       <p>Start-aligned content</p>
  *     </PopoverContent>
  *   </Popover>
- *   <Popover side="bottom" align="center">
+ *   <Popover>
  *     <PopoverTrigger variant="outline">Center</PopoverTrigger>
- *     <PopoverContent>
+ *     <PopoverContent side="bottom" align="center">
  *       <p>Center-aligned content</p>
  *     </PopoverContent>
  *   </Popover>
- *   <Popover side="bottom" align="end">
+ *   <Popover>
  *     <PopoverTrigger variant="outline">End</PopoverTrigger>
- *     <PopoverContent>
+ *     <PopoverContent side="bottom" align="end">
  *       <p>End-aligned content</p>
  *     </PopoverContent>
  *   </Popover>
