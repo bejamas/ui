@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.14
+
+### Patch Changes
+
+- [#66](https://github.com/bejamas/ui/pull/66) [`50515c3`](https://github.com/bejamas/ui/commit/50515c39115a0febdfa683db9263257ec4338baf) Thanks [@thomkrupa](https://github.com/thomkrupa)! - remove margin from console
+
 ## 0.1.13
 
 ### Patch Changes
