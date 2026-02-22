@@ -373,6 +373,10 @@ export function buildMdx(params: {
     enableConsolePanel?: boolean;
   };
 
+  type MarkdownPreviewConfig = {
+    defaultPreview?: boolean;
+  };
+
   const extractInlineScripts = (snippet: string): {
     markup: string;
     scripts: string[];
@@ -545,8 +549,12 @@ ${preparedPreview.markup}
     return parts.join("\n");
   };
 
-  const renderAstroPreviewsInMarkdown = (block: string): string => {
+  const renderAstroPreviewsInMarkdown = (
+    block: string,
+    config: MarkdownPreviewConfig = {},
+  ): string => {
     if (!block || !block.length) return block;
+    const { defaultPreview = true } = config;
 
     const lines = block.split("\n");
     const out: string[] = [];
@@ -574,10 +582,14 @@ ${preparedPreview.markup}
           const prepared = prepareExampleContent(
             `${fenceOpen}\n${sourceCode}\n${line}`,
           );
+          const hasForcedPreviewFlag =
+            currentFenceFlags.has("preview") || currentFenceFlags.has("console");
+          const shouldPreview =
+            !prepared.skipPreview && (defaultPreview || hasForcedPreviewFlag);
           if (
             prepared.snippet &&
             prepared.snippet.length &&
-            !prepared.skipPreview
+            shouldPreview
           ) {
             const previewBlock = renderPreviewBlock(prepared.snippet, {
               enableConsolePanel: prepared.enableConsolePanel,
@@ -620,7 +632,9 @@ ${preparedPreview.markup}
   const renderedDescriptionBodyMDX = renderAstroPreviewsInMarkdown(
     descriptionBodyMDX || "",
   );
-  const renderedUsageMDX = renderAstroPreviewsInMarkdown(usageMDX || "");
+  const renderedUsageMDX = renderAstroPreviewsInMarkdown(usageMDX || "", {
+    defaultPreview: false,
+  });
   const renderedApiMDX = renderAstroPreviewsInMarkdown(apiMDX || "");
 
   const primaryExampleSection =
