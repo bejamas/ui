@@ -294,9 +294,9 @@ async function main() {
       });
     }
 
-    const usedInUsage = extractComponentTagsFromPreviewMarkdown(usageMDX).filter(
-      (n) => n !== pascal,
-    );
+    const usedInUsage = extractComponentTagsFromPreviewMarkdown(usageMDX, {
+      defaultPreview: false,
+    }).filter((n) => n !== pascal);
     const usedInDescription = extractComponentTagsFromPreviewMarkdown(
       descriptionBodyMDX,
     ).filter((n) => n !== pascal);

@@ -169,6 +169,24 @@ import { SearchIcon } from '@lucide/astro';
     expect(tags).toContain("SearchIcon");
   });
 
+  test("skips usage-like tags by default when preview is disabled for markdown fences", () => {
+    const markdown = `\`\`\`astro
+<Field>
+  <InputGroup />
+</Field>
+\`\`\`
+
+\`\`\`astro preview
+<Button />
+\`\`\``;
+    const tags = extractComponentTagsFromPreviewMarkdown(markdown, {
+      defaultPreview: false,
+    });
+    expect(tags).toContain("Button");
+    expect(tags).not.toContain("Field");
+    expect(tags).not.toContain("InputGroup");
+  });
+
   test("ignores nopreview astro fences when extracting preview component tags", () => {
     const markdown = `\`\`\`astro nopreview
 <Field>
@@ -271,7 +289,7 @@ import { Field } from '@bejamas/ui/components/field';
     expect(sourceMatch![1]).not.toContain("sl-bejamas-component-preview");
   });
 
-  test("renders preview for astro fences in usage content", () => {
+  test("does not render preview for astro fences in usage content by default", () => {
     const mdx = buildMdx({
       importName: "InputGroup",
       importPath: "@bejamas/ui/components/input-group",
@@ -313,8 +331,55 @@ import { SearchIcon } from '@lucide/astro';
 
     expect(mdx).toContain("## Usage");
     expect(mdx).toContain("## Align");
-    expect(mdx).toContain("sl-bejamas-component-preview");
+    expect(mdx).not.toContain("sl-bejamas-component-preview");
     expect(mdx).toContain("```astro");
+    expect(mdx).toContain('<Field class="max-w-sm">');
+  });
+
+  test("renders preview for astro fences in usage content when using preview flag", () => {
+    const mdx = buildMdx({
+      importName: "InputGroup",
+      importPath: "@bejamas/ui/components/input-group",
+      title: "Input Group",
+      description: "An input group",
+      usageMDX: `## Align
+
+\`\`\`astro preview
+---
+import { SearchIcon } from '@lucide/astro';
+---
+<Field class="max-w-sm">
+  <InputGroup>
+    <InputGroupInput />
+    <InputGroupAddon>
+      <SearchIcon />
+    </InputGroupAddon>
+  </InputGroup>
+</Field>
+\`\`\``,
+      hasImport: false,
+      propsList: "",
+      examples: [],
+      examplesSections: [],
+      componentFolderMap: {
+        Field: "field",
+        InputGroupAddon: "input-group",
+        InputGroupInput: "input-group",
+      },
+      autoImports: ["Field", "InputGroupAddon", "InputGroupInput"],
+      lucideIcons: ["SearchIcon"],
+      primaryExampleMDX: "",
+      componentSource: "",
+      commandName: "input-group",
+      componentsAlias: "@bejamas/ui/components",
+      namedExports: ["InputGroupAddon", "InputGroupInput"],
+      apiMDX: "",
+    });
+
+    expect(mdx).toContain("## Usage");
+    expect(mdx).toContain("## Align");
+    expect(mdx).toContain("sl-bejamas-component-preview");
+    expect(mdx).toContain("```astro preview");
     expect(mdx).toContain('<Field class="max-w-sm">');
   });
 

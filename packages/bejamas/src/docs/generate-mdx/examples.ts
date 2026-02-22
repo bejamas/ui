@@ -45,6 +45,10 @@ export interface FenceInfo {
   flags: Set<string>;
 }
 
+interface PreviewRenderConfig {
+  defaultPreview?: boolean;
+}
+
 type MutableSection = {
   title: string | null;
   intro: string[];
@@ -345,13 +349,18 @@ function extractTags(block: string): string[] {
   return Array.from(found);
 }
 
-export function extractComponentTagsFromPreviewMarkdown(block: string): string[] {
+export function extractComponentTagsFromPreviewMarkdown(
+  block: string,
+  config: PreviewRenderConfig = {},
+): string[] {
   if (!block || !block.length) return [];
+  const { defaultPreview = true } = config;
   const found = new Set<string>();
   const lines = block.split("\n");
   let inFence = false;
   let fenceOpen = "";
   let currentFenceLang = "";
+  let currentFenceFlags = new Set<string>();
   const fenceBody: string[] = [];
 
   for (const line of lines) {
@@ -362,6 +371,7 @@ export function extractComponentTagsFromPreviewMarkdown(block: string): string[]
         fenceOpen = line;
         const parsed = parseFenceInfo(trimmed.slice(3).trim());
         currentFenceLang = parsed.lang;
+        currentFenceFlags = parsed.flags;
         fenceBody.length = 0;
         continue;
       }
@@ -371,7 +381,11 @@ export function extractComponentTagsFromPreviewMarkdown(block: string): string[]
         const prepared = prepareExampleContent(
           `${fenceOpen}\n${sourceCode}\n${line}`,
         );
-        if (!prepared.skipPreview) {
+        const hasForcedPreviewFlag =
+          currentFenceFlags.has("preview") || currentFenceFlags.has("console");
+        const shouldPreview =
+          !prepared.skipPreview && (defaultPreview || hasForcedPreviewFlag);
+        if (shouldPreview) {
           for (const tag of extractTags(prepared.snippet)) found.add(tag);
         }
       }
@@ -379,6 +393,7 @@ export function extractComponentTagsFromPreviewMarkdown(block: string): string[]
       inFence = false;
       fenceOpen = "";
       currentFenceLang = "";
+      currentFenceFlags = new Set<string>();
       fenceBody.length = 0;
       continue;
     }
