@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.2.9
+
+### Patch Changes
+
+- [#67](https://github.com/bejamas/ui/pull/67) [`20dc7e2`](https://github.com/bejamas/ui/commit/20dc7e29e81b92c569cbd471fa4dd7cb470bd630) Thanks [@thomkrupa](https://github.com/thomkrupa)! - remove preview from usage
+
 ## 0.2.8
 
 ### Patch Changes
