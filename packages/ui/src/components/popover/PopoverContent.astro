@@ -21,7 +21,7 @@ const {
 } = Astro.props as Props;
 
 const contentVariants = cva([
-  "z-50 hidden data-[state=open]:block duration-150 ease transition-discrete starting:data-[state=closed]:block outline-hidden",
+  "z-50 duration-150 ease transition-discrete outline-hidden",
   "bg-popover text-popover-foreground ring-foreground/10 ring-1",
   "flex w-72 flex-col gap-2.5 rounded-lg p-4 text-sm shadow-md",
   "data-[state=open]:animate-in data-[state=closed]:animate-out",
@@ -34,6 +34,7 @@ const contentVariants = cva([
 
 <div
   {...rest}
+  hidden
   data-slot="popover-content"
   data-align={align}
   data-align-offset={alignOffset}
