@@ -71,7 +71,7 @@ const isRtl = dir === "rtl";
 interface OptionsProps {
   label: string;
   href: string;
-  id: "chatgpt" | "claude" | "markdown" | "v0" | "t3chat";
+  id: "chatgpt" | "claude" | "v0" | "t3chat";
 }
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "");
@@ -87,11 +87,6 @@ const prompt = userPrompt?.includes("{url}")
 const encodedPrompt = encodeURIComponent(prompt as string);
 
 const defaultOptions: OptionsProps[] = [
-  {
-    label: Astro.locals.t("view.markdown"),
-    href: `${currentPath}.md`,
-    id: "markdown",
-  },
   {
     label: Astro.locals.t("open.chatgpt"),
     href: `https://chatgpt.com/?q=${encodedPrompt}`,
