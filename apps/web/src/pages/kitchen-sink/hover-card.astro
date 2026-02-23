@@ -1,0 +1,317 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from "@bejamas/ui/components/hover-card";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@bejamas/ui/components/avatar";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@bejamas/ui/components/dialog";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Hover Card</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+      <KitchenSinkSection title="Basic">
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <Button variant="link">Hover Here</Button>
+          </HoverCardTrigger>
+          <HoverCardContent class="flex w-64 flex-col gap-0.5">
+            <div class="font-semibold">@nextjs</div>
+            <div>The React Framework - created and maintained by @vercel.</div>
+            <div class="text-muted-foreground mt-1 text-xs">
+              Joined December 2021
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="With Avatar">
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <Button variant="link">@thomkrupa</Button>
+          </HoverCardTrigger>
+          <HoverCardContent class="w-72 p-3">
+            <div class="flex gap-3">
+              <Avatar class="size-10">
+                <AvatarImage>
+                  <img
+                    src="https://github.com/thomkrupa.png"
+                    alt="@thomkrupa"
+                  />
+                </AvatarImage>
+                <AvatarFallback>TK</AvatarFallback>
+              </Avatar>
+              <div class="space-y-1">
+                <p class="font-semibold leading-none">@thomkrupa</p>
+                <p class="text-muted-foreground text-sm">
+                  Design engineer focused on Astro, design systems, and UI
+                  tooling.
+                </p>
+                <p class="text-muted-foreground text-xs">42 repositories</p>
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Timing Variants">
+        <div class="flex flex-wrap items-center gap-3">
+          <HoverCard delay={0} closeDelay={0}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">No delay</Button>
+            </HoverCardTrigger>
+            <HoverCardContent>Opens and closes immediately.</HoverCardContent>
+          </HoverCard>
+
+          <HoverCard delay={150} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">Fast</Button>
+            </HoverCardTrigger>
+            <HoverCardContent>Quick open/close timing.</HoverCardContent>
+          </HoverCard>
+
+          <HoverCard delay={700} closeDelay={300}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">Default</Button>
+            </HoverCardTrigger>
+            <HoverCardContent
+              >Default timing from the behavior package.</HoverCardContent
+            >
+          </HoverCard>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Side Variants">
+        <div class="flex flex-wrap items-center gap-3 py-8">
+          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">Left</Button>
+            </HoverCardTrigger>
+            <HoverCardContent side="left"
+              >Positioned to the left.</HoverCardContent
+            >
+          </HoverCard>
+
+          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">Top</Button>
+            </HoverCardTrigger>
+            <HoverCardContent side="top"
+              >Positioned above the trigger.</HoverCardContent
+            >
+          </HoverCard>
+
+          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">Bottom</Button>
+            </HoverCardTrigger>
+            <HoverCardContent side="bottom"
+              >Positioned below the trigger.</HoverCardContent
+            >
+          </HoverCard>
+
+          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">Right</Button>
+            </HoverCardTrigger>
+            <HoverCardContent side="right"
+              >Positioned to the right.</HoverCardContent
+            >
+          </HoverCard>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Alignment Variants">
+        <div class="flex flex-wrap items-center gap-4">
+          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">Start</Button>
+            </HoverCardTrigger>
+            <HoverCardContent side="bottom" align="start">
+              Start aligned content.
+            </HoverCardContent>
+          </HoverCard>
+
+          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">Center</Button>
+            </HoverCardTrigger>
+            <HoverCardContent side="bottom" align="center">
+              Center aligned content.
+            </HoverCardContent>
+          </HoverCard>
+
+          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+            <HoverCardTrigger asChild>
+              <Button variant="outline">End</Button>
+            </HoverCardTrigger>
+            <HoverCardContent side="bottom" align="end">
+              End aligned content.
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Rich Content">
+        <HoverCard delay={120} closeDelay={120}>
+          <HoverCardTrigger asChild>
+            <a
+              href="https://github.com/bejamas"
+              target="_blank"
+              rel="noreferrer"
+              class="text-sm font-medium underline underline-offset-4"
+            >
+              github.com/bejamas
+            </a>
+          </HoverCardTrigger>
+          <HoverCardContent class="w-80 space-y-3 p-4">
+            <div>
+              <p class="font-semibold">Bejamas</p>
+              <p class="text-muted-foreground text-sm">
+                Agency and tooling focused on composable websites and modern UI
+                systems.
+              </p>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-muted-foreground text-xs"
+                >Open source projects</span
+              >
+              <Button
+                as="a"
+                href="https://github.com/bejamas"
+                size="sm"
+                variant="outline"
+                target="_blank"
+                rel="noreferrer"
+              >
+                View org
+              </Button>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+      </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Event Testing">
+      <p class="text-sm text-muted-foreground">
+        Hover the trigger and check event output for open/close and reason.
+      </p>
+      <HoverCard id="event-hover-card" delay={100} closeDelay={100}>
+        <HoverCardTrigger asChild>
+          <Button variant="outline">Hover for events</Button>
+        </HoverCardTrigger>
+        <HoverCardContent>Event test card</HoverCardContent>
+      </HoverCard>
+      <EventLog id="hover-card-event-output" />
+      <script>
+        {
+          function log(msg: string) {
+            (document.getElementById("hover-card-event-output") as any)?._log(
+              msg,
+            );
+          }
+
+          document
+            .getElementById("event-hover-card")
+            ?.addEventListener("hover-card:change", (e: Event) => {
+              const { open, reason } = (e as CustomEvent).detail;
+              log(`hover-card:change -> open: ${open}, reason: ${reason}`);
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <HoverCard id="programmatic-hover-card" delay={0} closeDelay={0}>
+        <HoverCardTrigger asChild>
+          <Button variant="outline">Controlled Hover Card</Button>
+        </HoverCardTrigger>
+        <HoverCardContent>Controlled through external buttons.</HoverCardContent
+        >
+      </HoverCard>
+      <div class="flex flex-wrap gap-2">
+        <button
+          id="hover-card-open-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Open
+        </button>
+        <button
+          id="hover-card-close-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Close
+        </button>
+      </div>
+      <script>
+        {
+          const hoverCard = document.getElementById("programmatic-hover-card");
+
+          document
+            .getElementById("hover-card-open-btn")
+            ?.addEventListener("click", () => {
+              hoverCard?.dispatchEvent(
+                new CustomEvent("hover-card:set", { detail: { open: true } }),
+              );
+            });
+
+          document
+            .getElementById("hover-card-close-btn")
+            ?.addEventListener("click", () => {
+              hoverCard?.dispatchEvent(
+                new CustomEvent("hover-card:set", { detail: { open: false } }),
+              );
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="In a Dialog">
+      <p class="text-sm text-muted-foreground">
+        Hover card inside a dialog to test layering and pointer/focus
+        interactions.
+      </p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog with Hover Card</Button>
+        </DialogTrigger>
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Dialog + Hover Card</DialogTitle>
+            <DialogDescription>
+              Hover over the trigger to preview nested content.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="py-4">
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button variant="link">Hover inside dialog</Button>
+              </HoverCardTrigger>
+              <HoverCardContent class="w-64">
+                The hover card is rendered while the dialog is open.
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>
