@@ -404,6 +404,80 @@
       ]
     },
     {
+      "name": "field",
+      "type": "registry:ui",
+      "registryDependencies": ["label", "separator"],
+      "files": [
+        {
+          "path": "ui/field/Field.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldError.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldLabel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldLegend.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldSeparator.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldSet.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/FieldTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/field/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/hover-card"],
+      "files": [
+        {
+          "path": "ui/hover-card/HoverCard.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/hover-card/HoverCardContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/hover-card/HoverCardTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/hover-card/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "input",
       "type": "registry:ui",
       "files": [
@@ -847,10 +921,6 @@
         },
         {
           "path": "ui/tabs/TabsContent.astro",
-          "type": "registry:ui"
-        },
-        {
-          "path": "ui/tabs/TabsIndicator.astro",
           "type": "registry:ui"
         },
         {
