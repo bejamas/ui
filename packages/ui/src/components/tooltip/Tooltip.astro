@@ -2,7 +2,7 @@
 /**
  * @component Tooltip
  * @title Tooltip
- * @description A small popup that appears when hovering over or focusing on an element.
+ * @description A small popup that appears when hovering over or focusing on an element. Positioning is computed in JavaScript.
  *
  * @preview
  *
@@ -175,6 +175,29 @@
  *   </div>
  * </div>
  *
+ * ### Positioning Options
+ *
+ * Use `TooltipContent` props to configure placement/collision behavior:
+ *
+ * <div class="flex gap-3">
+ *   <Tooltip>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Collision padding</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent sideOffset={8} collisionPadding={16}>
+ *       <p>Uses larger edge padding</p>
+ *     </TooltipContent>
+ *   </Tooltip>
+ *   <Tooltip>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">No portal</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent portal={false}>
+ *       <p>Rendered in local DOM tree</p>
+ *     </TooltipContent>
+ *   </Tooltip>
+ * </div>
+ *
  * ### Disabled
  *
  * <Tooltip>
@@ -240,9 +263,14 @@
  *
  * | Attribute | Element | Description |
  * |-----------|---------|-------------|
- * | `data-state` | tooltip, tooltip-content | Current state (`open` or `closed`) |
- * | `data-side` | tooltip-content | Position relative to trigger (`top`, `right`, `bottom`, or `left`) |
- * | `data-align` | tooltip-content | Alignment (`start`, `center`, or `end`) |
+ * | `data-open` / `data-closed` | tooltip, tooltip-content, tooltip-positioner | Present while open/closed |
+ * | `data-side` | tooltip-content, tooltip-positioner | Runtime side (`top`, `right`, `bottom`, or `left`) after collision handling |
+ * | `data-align` | tooltip-content, tooltip-positioner | Runtime alignment (`start`, `center`, or `end`) |
+ * | `data-side-offset` | tooltip-content | Distance from trigger in pixels (default `4`) |
+ * | `data-align-offset` | tooltip-content | Alignment-axis offset in pixels (default `0`) |
+ * | `data-avoid-collisions` | tooltip-content | Enables collision-aware flipping/shifting (default `true`) |
+ * | `data-collision-padding` | tooltip-content | Viewport edge padding used during collision handling (default `8`) |
+ * | `data-portal` | tooltip-content | Portals tooltip while open (default `true`) |
  */
 
 import { cn } from "@bejamas/ui/lib/utils";
@@ -251,16 +279,23 @@ import type { HTMLAttributes } from "astro/types";
 type Props = {
   class?: string;
   delay?: number;
+  skipDelayDuration?: number;
 } & HTMLAttributes<"div">;
 
-const { class: className = "", delay = 0, ...rest } = Astro.props as Props;
+const {
+  class: className = "",
+  delay = 300,
+  skipDelayDuration = 300,
+  ...rest
+} = Astro.props as Props;
 ---
 
 <div
   {...rest}
   data-slot="tooltip"
   data-delay={delay}
-  class={cn("group relative inline-block", className)}
+  data-skip-delay-duration={skipDelayDuration}
+  class={cn("inline-block", className)}
 >
   <slot />
 </div>

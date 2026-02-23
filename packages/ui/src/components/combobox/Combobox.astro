@@ -135,6 +135,19 @@
  * | `data-disabled` | combobox, combobox-item | Present when disabled |
  * | `data-empty` | combobox-content | Present when no items match the filter |
  *
+ * ### Positioning
+ *
+ * Placement options are configured on `ComboboxContent`:
+ *
+ * ```astro nocollapse nopreview
+ * <Combobox>
+ *   <ComboboxInput />
+ *   <ComboboxContent side="top" align="start" sideOffset={8}>
+ *     ...
+ *   </ComboboxContent>
+ * </Combobox>
+ * ```
+ *
  * @examples
  *
  * ### Clear Button
@@ -258,12 +271,6 @@ type Props = {
   required?: boolean;
   openOnFocus?: boolean;
   autoHighlight?: boolean;
-  side?: "top" | "bottom";
-  align?: "start" | "center" | "end";
-  sideOffset?: number;
-  alignOffset?: number;
-  avoidCollisions?: boolean;
-  collisionPadding?: number;
 } & HTMLAttributes<"div">;
 
 const {
@@ -275,12 +282,6 @@ const {
   required = false,
   openOnFocus,
   autoHighlight,
-  side = "bottom",
-  align = "start",
-  sideOffset = 4,
-  alignOffset = 0,
-  avoidCollisions = true,
-  collisionPadding = 8,
   ...rest
 } = Astro.props as Props;
 ---
@@ -299,12 +300,6 @@ const {
   data-auto-highlight={autoHighlight !== undefined
     ? String(autoHighlight)
     : undefined}
-  data-side={side}
-  data-align={align}
-  data-side-offset={sideOffset}
-  data-align-offset={alignOffset}
-  data-avoid-collisions={avoidCollisions ? "" : undefined}
-  data-collision-padding={collisionPadding}
   class={cn("group/combobox relative inline-block", className)}
 >
   <slot />

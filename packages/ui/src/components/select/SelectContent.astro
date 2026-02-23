@@ -1,6 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
+import { cva } from "class-variance-authority";
 
 type Props = {
   class?: string;
@@ -10,6 +11,8 @@ type Props = {
   alignOffset?: number;
   side?: "top" | "bottom";
   sideOffset?: number;
+  avoidCollisions?: boolean;
+  collisionPadding?: number;
 } & HTMLAttributes<"div">;
 
 const {
@@ -20,8 +23,47 @@ const {
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
+  avoidCollisions = true,
+  collisionPadding = 8,
   ...rest
 } = Astro.props as Props;
+
+const contentVariants = cva(
+  [
+    "group/select-content focus-visible:outline-none z-50 hidden data-[state=open]:block",
+    "bg-popover text-popover-foreground min-w-24 rounded-lg shadow-md ring-1 ring-foreground/10",
+    "p-1 max-h-[var(--select-content-available-height,300px)] overflow-x-hidden overflow-y-auto",
+  ],
+  {
+    variants: {
+      position: {
+        "item-aligned": "relative",
+        popper:
+          "fixed transition-discrete starting:data-[state=closed]:block min-w-[var(--select-trigger-width)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 [--tw-animation-fill-mode:both]",
+      },
+      side: {
+        top: "",
+        bottom: "",
+      },
+    },
+    compoundVariants: [
+      {
+        position: "popper",
+        side: "top",
+        class: "data-[side=top]:slide-in-from-bottom-2",
+      },
+      {
+        position: "popper",
+        side: "bottom",
+        class: "data-[side=bottom]:slide-in-from-top-2",
+      },
+    ],
+    defaultVariants: {
+      position: "item-aligned",
+      side: "bottom",
+    },
+  },
+);
 ---
 
 <div
@@ -34,33 +76,9 @@ const {
   data-align-offset={alignOffset}
   data-side={side}
   data-side-offset={sideOffset}
-  class={cn(
-    "group/select-content focus-visible:outline-none z-50",
-    position === "popper" ? "fixed" : "relative",
-    "hidden data-[state=open]:block",
-    position === "popper" &&
-      "[transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
-    className,
-  )}
+  data-avoid-collisions={avoidCollisions ? "" : undefined}
+  data-collision-padding={collisionPadding}
+  class={cn(contentVariants({ position, side }), className)}
 >
-  <div
-    data-slot="select-viewport"
-    data-position={position}
-    class={cn(
-      "bg-popover text-popover-foreground min-w-36 rounded-lg shadow-md ring-1 ring-foreground/10",
-      "p-1",
-      "max-h-[var(--select-content-available-height,300px)] overflow-x-hidden overflow-y-auto",
-      position === "popper" && "min-w-[var(--select-trigger-width)]",
-      // Animations only for popper mode
-      position === "popper" && [
-        "group-data-[state=open]/select-content:animate-in group-data-[state=closed]/select-content:animate-out",
-        "group-data-[state=closed]/select-content:fade-out-0 group-data-[state=open]/select-content:fade-in-0",
-        "group-data-[state=closed]/select-content:zoom-out-95 group-data-[state=open]/select-content:zoom-in-95",
-        "group-data-[side=bottom]/select-content:slide-in-from-top-2 group-data-[side=top]/select-content:slide-in-from-bottom-2",
-      ],
-      position === "popper" && "[--tw-animation-fill-mode:both]",
-    )}
-  >
-    <slot />
-  </div>
+  <slot />
 </div>

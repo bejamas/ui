@@ -1,38 +1,64 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
+import { cva } from "class-variance-authority";
 
 type Props = {
   class?: string;
+  side?: "top" | "bottom";
+  align?: "start" | "center" | "end";
+  sideOffset?: number;
+  alignOffset?: number;
+  avoidCollisions?: boolean;
+  collisionPadding?: number;
 } & HTMLAttributes<"div">;
 
-const { class: className = "", ...rest } = Astro.props as Props;
+const {
+  class: className = "",
+  side = "bottom",
+  align = "start",
+  sideOffset = 4,
+  alignOffset = 0,
+  avoidCollisions = true,
+  collisionPadding = 8,
+  ...rest
+} = Astro.props as Props;
+
+const contentVariants = cva(
+  [
+    "z-50 hidden data-[state=open]:block [transition:display_150ms_allow-discrete] starting:data-[state=closed]:block outline-hidden",
+    "bg-popover text-popover-foreground min-w-[var(--combobox-input-width,8rem)] overflow-hidden rounded-lg shadow-md ring-1 ring-foreground/10",
+    "data-[state=open]:animate-in data-[state=closed]:animate-out",
+    "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+    "*:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:shadow-none",
+    "[--tw-animation-fill-mode:both]",
+  ],
+  {
+    variants: {
+      side: {
+        top: "data-[side=top]:slide-in-from-bottom-2",
+        bottom: "data-[side=bottom]:slide-in-from-top-2",
+      },
+    },
+    defaultVariants: {
+      side: "bottom",
+    },
+  },
+);
 ---
 
-<!-- Outer: visibility + state hooks (positioning handled by @data-slot/combobox) -->
 <div
   {...rest}
   data-slot="combobox-content"
+  data-side={side}
+  data-align={align}
+  data-side-offset={sideOffset}
+  data-align-offset={alignOffset}
+  data-avoid-collisions={avoidCollisions ? "" : undefined}
+  data-collision-padding={collisionPadding}
   hidden
-  class={cn(
-    "group/combobox-content",
-    "z-50",
-    "hidden data-[state=open]:block [transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
-    className,
-  )}
+  class={cn(contentVariants({ side }), className)}
 >
-  <!-- Inner: visual styling + animations -->
-  <div
-    class={cn(
-      "bg-popover text-popover-foreground min-w-[var(--combobox-input-width,8rem)] overflow-hidden rounded-lg shadow-md ring-1 ring-foreground/10",
-      "group-data-[state=open]/combobox-content:animate-in group-data-[state=closed]/combobox-content:animate-out",
-      "group-data-[state=closed]/combobox-content:fade-out-0 group-data-[state=open]/combobox-content:fade-in-0",
-      "group-data-[state=closed]/combobox-content:zoom-out-95 group-data-[state=open]/combobox-content:zoom-in-95",
-      "group-data-[side=bottom]/combobox-content:slide-in-from-top-2 group-data-[side=top]/combobox-content:slide-in-from-bottom-2",
-      "*:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:shadow-none",
-      "[--tw-animation-fill-mode:both]",
-    )}
-  >
-    <slot />
-  </div>
+  <slot />
 </div>
