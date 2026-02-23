@@ -98,6 +98,7 @@ export default defineConfig({
       ],
       customCss: ["./src/styles/globals.css", "@bejamas/ui/styles/globals.css"],
       logo: {
+        alt: "bejamas/ui",
         light: "./src/assets/logo-3.svg",
         dark: "./src/assets/logo-3-dark.svg",
         replacesTitle: true,
@@ -211,8 +212,21 @@ export default defineConfig({
       ],
     }),
     mdx(),
-    sitemap(),
-    robotsTxt(),
+    sitemap({
+      filter: (page) =>
+        !page.includes('/kitchen-sink/') &&
+        !page.includes('-test') &&
+        !page.includes('/ui-demo/'),
+    }),
+    robotsTxt({
+      policy: [
+        {
+          userAgent: '*',
+          allow: '/',
+          disallow: ['/kitchen-sink/', '/ui-demo/'],
+        },
+      ],
+    }),
     alpinejs(),
   ],
   vite: {
