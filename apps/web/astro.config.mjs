@@ -38,6 +38,9 @@ export default defineConfig({
       }),
     },
   },
+  prefetch: {
+    defaultStrategy: "viewport",
+  },
   integrations: [
     starlight({
       favicon: "/favicon.ico",
@@ -215,20 +218,20 @@ export default defineConfig({
     mdx(),
     sitemap({
       filter: (page) =>
-        !page.includes('/kitchen-sink/') &&
-        !page.includes('-test') &&
-        !page.includes('/ui-demo/') &&
-        !page.includes('/blocks/') &&
-        !page.includes('/ai/') &&
-        !page.includes('/health/') &&
-        !page.includes('/fintech/'),
+        !page.includes("/kitchen-sink/") &&
+        !page.includes("-test") &&
+        !page.includes("/ui-demo/") &&
+        !page.includes("/blocks/") &&
+        !page.includes("/ai/") &&
+        !page.includes("/health/") &&
+        !page.includes("/fintech/"),
     }),
     robotsTxt({
       policy: [
         {
-          userAgent: '*',
-          allow: '/',
-          disallow: ['/kitchen-sink/', '/ui-demo/'],
+          userAgent: "*",
+          allow: "/",
+          disallow: ["/kitchen-sink/", "/ui-demo/"],
         },
       ],
     }),
