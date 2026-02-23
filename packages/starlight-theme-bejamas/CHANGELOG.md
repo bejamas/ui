@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.15
+
+### Patch Changes
+
+- [#71](https://github.com/bejamas/ui/pull/71) [`4e38086`](https://github.com/bejamas/ui/commit/4e38086536db86aa7e25dbad3da28dcb0027f7a6) Thanks [@thomkrupa](https://github.com/thomkrupa)! - remove scrollbar from sidebar
+
 ## 0.1.14
 
 ### Patch Changes
