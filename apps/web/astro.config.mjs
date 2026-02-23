@@ -17,6 +17,7 @@ import alpinejs from "@astrojs/alpinejs";
 const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
+  trailingSlash: "never",
   // output: "server",
   site: "https://ui.bejamas.com",
   redirects: {
