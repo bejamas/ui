@@ -47,485 +47,578 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
     <h1 class="text-3xl font-bold mb-10">Combobox</h1>
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
-    <KitchenSinkSection title="Default">
-      <p class="text-sm text-muted-foreground">
-        Basic combobox with framework list, filtering, and keyboard nav
-      </p>
-      <Combobox class="w-[250px]">
-        <ComboboxInput placeholder="Select framework..." />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-            <ComboboxItem value="astro">Astro</ComboboxItem>
-            <ComboboxItem value="nextjs">Next.js</ComboboxItem>
-            <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
-            <ComboboxItem value="remix">Remix</ComboboxItem>
-            <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="With Clear Button">
-      <p class="text-sm text-muted-foreground">
-        showClear on ComboboxInput — clear button appears after selection, hides
-        chevron
-      </p>
-      <Combobox class="w-[250px]">
-        <ComboboxInput placeholder="Select framework..." showClear />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-            <ComboboxItem value="astro">Astro</ComboboxItem>
-            <ComboboxItem value="nextjs">Next.js</ComboboxItem>
-            <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
-            <ComboboxItem value="remix">Remix</ComboboxItem>
-            <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="With Default Value">
-      <p class="text-sm text-muted-foreground">Pre-selected value: "astro"</p>
-      <Combobox defaultValue="astro" class="w-[250px]">
-        <ComboboxInput placeholder="Select framework..." />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-            <ComboboxItem value="astro">Astro</ComboboxItem>
-            <ComboboxItem value="nextjs">Next.js</ComboboxItem>
-            <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
-            <ComboboxItem value="remix">Remix</ComboboxItem>
-            <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="Auto Highlight">
-      <p class="text-sm text-muted-foreground">
-        First visible item is auto-highlighted as user types
-      </p>
-      <Combobox autoHighlight class="w-[250px]">
-        <ComboboxInput placeholder="Start typing..." />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-            <ComboboxItem value="astro">Astro</ComboboxItem>
-            <ComboboxItem value="nextjs">Next.js</ComboboxItem>
-            <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
-            <ComboboxItem value="remix">Remix</ComboboxItem>
-            <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="Custom Items">
-      <p class="text-sm text-muted-foreground">
-        Rich content with Item, ItemContent, ItemTitle, ItemDescription inside
-        ComboboxItem
-      </p>
-      <Combobox id="custom-items-combobox" class="w-[300px]">
-        <ComboboxInput placeholder="Select country..." />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No countries found.</ComboboxEmpty>
-            <ComboboxItem value="argentina">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Argentina</ItemTitle>
-                  <ItemDescription>South America</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="australia">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Australia</ItemTitle>
-                  <ItemDescription>Oceania</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="brazil">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Brazil</ItemTitle>
-                  <ItemDescription>South America</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="canada">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Canada</ItemTitle>
-                  <ItemDescription>North America</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="china">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>China</ItemTitle>
-                  <ItemDescription>Asia</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="egypt">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Egypt</ItemTitle>
-                  <ItemDescription>Africa</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="france">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>France</ItemTitle>
-                  <ItemDescription>Europe</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="germany">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Germany</ItemTitle>
-                  <ItemDescription>Europe</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="india">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>India</ItemTitle>
-                  <ItemDescription>Asia</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="italy">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Italy</ItemTitle>
-                  <ItemDescription>Europe</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="japan">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Japan</ItemTitle>
-                  <ItemDescription>Asia</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="kenya">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Kenya</ItemTitle>
-                  <ItemDescription>Africa</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="mexico">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Mexico</ItemTitle>
-                  <ItemDescription>North America</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="nigeria">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Nigeria</ItemTitle>
-                  <ItemDescription>Africa</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="norway">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Norway</ItemTitle>
-                  <ItemDescription>Europe</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="peru">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Peru</ItemTitle>
-                  <ItemDescription>South America</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="south-korea">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>South Korea</ItemTitle>
-                  <ItemDescription>Asia</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="spain">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>Spain</ItemTitle>
-                  <ItemDescription>Europe</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="uk">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>United Kingdom</ItemTitle>
-                  <ItemDescription>Europe</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-            <ComboboxItem value="usa">
-              <Item size="sm" class="p-0 gap-2">
-                <ItemContent>
-                  <ItemTitle>United States</ItemTitle>
-                  <ItemDescription>North America</ItemDescription>
-                </ItemContent>
-              </Item>
-            </ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-      <script>
-        const customItemsCb = document.getElementById("custom-items-combobox");
-        customItemsCb?.dispatchEvent(
-          new CustomEvent("combobox:set", {
-            detail: {
-              itemToStringValue: (
-                _item: HTMLElement | null,
-                value: string | null,
-              ) => (value ? `Country: ${value}` : ""),
-            },
-          }),
-        );
-      </script>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="Groups with Labels and Separators">
-      <p class="text-sm text-muted-foreground">
-        Grouped items with ComboboxGroup, ComboboxLabel, ComboboxSeparator
-      </p>
-      <Combobox class="w-[250px]">
-        <ComboboxInput placeholder="Select framework..." />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-            <ComboboxGroup>
-              <ComboboxLabel>Frontend</ComboboxLabel>
+      <KitchenSinkSection title="Default">
+        <p class="text-sm text-muted-foreground">
+          Basic combobox with framework list, filtering, and keyboard nav
+        </p>
+        <Combobox class="w-[250px]">
+          <ComboboxInput placeholder="Select framework..." />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
               <ComboboxItem value="astro">Astro</ComboboxItem>
               <ComboboxItem value="nextjs">Next.js</ComboboxItem>
               <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
               <ComboboxItem value="remix">Remix</ComboboxItem>
               <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
-            </ComboboxGroup>
-            <ComboboxSeparator />
-            <ComboboxGroup>
-              <ComboboxLabel>Backend</ComboboxLabel>
-              <ComboboxItem value="express">Express</ComboboxItem>
-              <ComboboxItem value="hono">Hono</ComboboxItem>
-              <ComboboxItem value="fastify">Fastify</ComboboxItem>
-              <ComboboxItem value="elysia">Elysia</ComboboxItem>
-            </ComboboxGroup>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
 
-    <KitchenSinkSection title="Scrollable (Many Items)">
-      <p class="text-sm text-muted-foreground">
-        Long list of countries — tests scroll behavior and max-h-72 overflow
-      </p>
-      <Combobox class="w-[250px]">
-        <ComboboxInput placeholder="Select country..." />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No countries found.</ComboboxEmpty>
-            <ComboboxItem value="argentina">Argentina</ComboboxItem>
-            <ComboboxItem value="australia">Australia</ComboboxItem>
-            <ComboboxItem value="brazil">Brazil</ComboboxItem>
-            <ComboboxItem value="canada">Canada</ComboboxItem>
-            <ComboboxItem value="china">China</ComboboxItem>
-            <ComboboxItem value="egypt">Egypt</ComboboxItem>
-            <ComboboxItem value="france">France</ComboboxItem>
-            <ComboboxItem value="germany">Germany</ComboboxItem>
-            <ComboboxItem value="india">India</ComboboxItem>
-            <ComboboxItem value="italy">Italy</ComboboxItem>
-            <ComboboxItem value="japan">Japan</ComboboxItem>
-            <ComboboxItem value="kenya">Kenya</ComboboxItem>
-            <ComboboxItem value="mexico">Mexico</ComboboxItem>
-            <ComboboxItem value="nigeria">Nigeria</ComboboxItem>
-            <ComboboxItem value="norway">Norway</ComboboxItem>
-            <ComboboxItem value="peru">Peru</ComboboxItem>
-            <ComboboxItem value="south-korea">South Korea</ComboboxItem>
-            <ComboboxItem value="spain">Spain</ComboboxItem>
-            <ComboboxItem value="uk">United Kingdom</ComboboxItem>
-            <ComboboxItem value="usa">United States</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
+      <KitchenSinkSection title="Sizing (Match Button)">
+        <p class="text-sm text-muted-foreground">
+          `ComboboxInput` uses `InputGroup` sizing under the hood. Default is
+          `h-9`, and you can build `sm`/`lg` variants with a manual
+          `InputGroup`.
+        </p>
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <Combobox class="w-[220px]">
+              <ComboboxInput placeholder="Default (h-9)" />
+              <ComboboxContent>
+                <ComboboxList>
+                  <ComboboxItem value="astro-default">Astro</ComboboxItem>
+                  <ComboboxItem value="nextjs-default">Next.js</ComboboxItem>
+                  <ComboboxItem value="nuxt-default">Nuxt</ComboboxItem>
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+            <Button variant="outline">Default</Button>
+          </div>
 
-    <KitchenSinkSection title="Disabled Combobox">
-      <p class="text-sm text-muted-foreground">
-        Entire combobox is disabled — input is not interactable
-      </p>
-      <Combobox disabled class="w-[250px]">
-        <ComboboxInput placeholder="Disabled..." disabled />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxItem value="astro">Astro</ComboboxItem>
-            <ComboboxItem value="nextjs">Next.js</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
+          <div class="flex items-center gap-2">
+            <Combobox class="w-[220px]">
+              <InputGroup size="sm">
+                <InputGroupInput
+                  data-slot="combobox-input"
+                  placeholder="Small (h-8)"
+                  autocomplete="off"
+                />
+                <InputGroupAddon align="inline-end" class="pr-3">
+                  <button
+                    data-slot="combobox-trigger"
+                    type="button"
+                    tabindex={-1}
+                    class="text-muted-foreground/80 hover:text-foreground flex items-center justify-center transition-colors"
+                    aria-label="Toggle menu"
+                  >
+                    <ChevronDownIcon class="size-4" />
+                  </button>
+                </InputGroupAddon>
+              </InputGroup>
+              <ComboboxContent>
+                <ComboboxList>
+                  <ComboboxItem value="astro-sm">Astro</ComboboxItem>
+                  <ComboboxItem value="nextjs-sm">Next.js</ComboboxItem>
+                  <ComboboxItem value="nuxt-sm">Nuxt</ComboboxItem>
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+            <Button size="sm" variant="outline">Small</Button>
+          </div>
 
-    <KitchenSinkSection title="Disabled Items">
-      <p class="text-sm text-muted-foreground">
-        Mix of enabled/disabled items — disabled items can't be selected,
-        skipped in keyboard nav
-      </p>
-      <Combobox class="w-[250px]">
-        <ComboboxInput placeholder="Select framework..." />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-            <ComboboxItem value="astro">Astro</ComboboxItem>
-            <ComboboxItem value="nextjs" disabled
-              >Next.js (unavailable)</ComboboxItem
-            >
-            <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
-            <ComboboxItem value="remix" disabled
-              >Remix (unavailable)</ComboboxItem
-            >
-            <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
+          <div class="flex items-center gap-2">
+            <Combobox class="w-[220px]">
+              <InputGroup size="lg">
+                <InputGroupInput
+                  data-slot="combobox-input"
+                  placeholder="Large (h-10)"
+                  autocomplete="off"
+                />
+                <InputGroupAddon align="inline-end" class="pr-3">
+                  <button
+                    data-slot="combobox-trigger"
+                    type="button"
+                    tabindex={-1}
+                    class="text-muted-foreground/80 hover:text-foreground flex items-center justify-center transition-colors"
+                    aria-label="Toggle menu"
+                  >
+                    <ChevronDownIcon class="size-4" />
+                  </button>
+                </InputGroupAddon>
+              </InputGroup>
+              <ComboboxContent>
+                <ComboboxList>
+                  <ComboboxItem value="astro-lg">Astro</ComboboxItem>
+                  <ComboboxItem value="nextjs-lg">Next.js</ComboboxItem>
+                  <ComboboxItem value="nuxt-lg">Nuxt</ComboboxItem>
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+            <Button size="lg" variant="outline">Large</Button>
+          </div>
+        </div>
+      </KitchenSinkSection>
 
-    <KitchenSinkSection title="Invalid/Error State">
-      <p class="text-sm text-muted-foreground">
-        aria-invalid="true" on ComboboxInput — red ring styling
-      </p>
-      <Combobox class="w-[250px]">
-        <ComboboxInput placeholder="Required field..." aria-invalid="true" />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-            <ComboboxItem value="astro">Astro</ComboboxItem>
-            <ComboboxItem value="nextjs">Next.js</ComboboxItem>
-            <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
+      <KitchenSinkSection title="With Clear Button">
+        <p class="text-sm text-muted-foreground">
+          showClear on ComboboxInput — clear button appears after selection,
+          hides chevron
+        </p>
+        <Combobox class="w-[250px]">
+          <ComboboxInput placeholder="Select framework..." showClear />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
+              <ComboboxItem value="astro">Astro</ComboboxItem>
+              <ComboboxItem value="nextjs">Next.js</ComboboxItem>
+              <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+              <ComboboxItem value="remix">Remix</ComboboxItem>
+              <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
 
-    <KitchenSinkSection title="No Trigger Arrow">
-      <p class="text-sm text-muted-foreground">
-        showTrigger={false} — clean input without chevron, still functions as combobox
-      </p>
-      <Combobox class="w-[250px]">
-        <ComboboxInput placeholder="Type to search..." showTrigger={false} />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-            <ComboboxItem value="astro">Astro</ComboboxItem>
-            <ComboboxItem value="nextjs">Next.js</ComboboxItem>
-            <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
-            <ComboboxItem value="remix">Remix</ComboboxItem>
-            <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
+      <KitchenSinkSection title="With Default Value">
+        <p class="text-sm text-muted-foreground">Pre-selected value: "astro"</p>
+        <Combobox defaultValue="astro" class="w-[250px]">
+          <ComboboxInput placeholder="Select framework..." />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
+              <ComboboxItem value="astro">Astro</ComboboxItem>
+              <ComboboxItem value="nextjs">Next.js</ComboboxItem>
+              <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+              <ComboboxItem value="remix">Remix</ComboboxItem>
+              <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
 
-    <KitchenSinkSection title="Input Group">
-      <p class="text-sm text-muted-foreground">
-        Add an addon to the combobox by using InputGroupAddon inside a manual
-        InputGroup with data-slot="combobox-input"
-      </p>
-      <Combobox class="w-[280px]">
-        <InputGroup>
-          <InputGroupAddon class="pl-3">
-            <GlobeIcon />
-          </InputGroupAddon>
-          <InputGroupInput
-            data-slot="combobox-input"
-            placeholder="Select a timezone..."
-            autocomplete="off"
-          />
-          <InputGroupAddon align="inline-end" class="pr-3">
-            <button
-              data-slot="combobox-trigger"
-              type="button"
-              tabindex={-1}
-              class="text-muted-foreground/80 hover:text-foreground flex items-center justify-center transition-colors"
-              aria-label="Toggle menu"
-            >
-              <ChevronDownIcon class="size-4" />
-            </button>
-          </InputGroupAddon>
-        </InputGroup>
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No timezones found.</ComboboxEmpty>
-            <ComboboxGroup>
-              <ComboboxLabel>Americas</ComboboxLabel>
-              <ComboboxItem value="gmt-5-new-york"
-                >(GMT-5) New York</ComboboxItem
+      <KitchenSinkSection title="Auto Highlight">
+        <p class="text-sm text-muted-foreground">
+          First visible item is auto-highlighted as user types
+        </p>
+        <Combobox autoHighlight class="w-[250px]">
+          <ComboboxInput placeholder="Start typing..." />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
+              <ComboboxItem value="astro">Astro</ComboboxItem>
+              <ComboboxItem value="nextjs">Next.js</ComboboxItem>
+              <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+              <ComboboxItem value="remix">Remix</ComboboxItem>
+              <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Custom Items">
+        <p class="text-sm text-muted-foreground">
+          Rich content with Item, ItemContent, ItemTitle, ItemDescription inside
+          ComboboxItem
+        </p>
+        <Combobox id="custom-items-combobox" class="w-[300px]">
+          <ComboboxInput placeholder="Select country..." />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No countries found.</ComboboxEmpty>
+              <ComboboxItem value="argentina">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Argentina</ItemTitle>
+                    <ItemDescription>South America</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="australia">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Australia</ItemTitle>
+                    <ItemDescription>Oceania</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="brazil">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Brazil</ItemTitle>
+                    <ItemDescription>South America</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="canada">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Canada</ItemTitle>
+                    <ItemDescription>North America</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="china">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>China</ItemTitle>
+                    <ItemDescription>Asia</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="egypt">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Egypt</ItemTitle>
+                    <ItemDescription>Africa</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="france">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>France</ItemTitle>
+                    <ItemDescription>Europe</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="germany">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Germany</ItemTitle>
+                    <ItemDescription>Europe</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="india">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>India</ItemTitle>
+                    <ItemDescription>Asia</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="italy">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Italy</ItemTitle>
+                    <ItemDescription>Europe</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="japan">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Japan</ItemTitle>
+                    <ItemDescription>Asia</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="kenya">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Kenya</ItemTitle>
+                    <ItemDescription>Africa</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="mexico">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Mexico</ItemTitle>
+                    <ItemDescription>North America</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="nigeria">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Nigeria</ItemTitle>
+                    <ItemDescription>Africa</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="norway">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Norway</ItemTitle>
+                    <ItemDescription>Europe</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="peru">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Peru</ItemTitle>
+                    <ItemDescription>South America</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="south-korea">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>South Korea</ItemTitle>
+                    <ItemDescription>Asia</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="spain">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>Spain</ItemTitle>
+                    <ItemDescription>Europe</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="uk">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>United Kingdom</ItemTitle>
+                    <ItemDescription>Europe</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+              <ComboboxItem value="usa">
+                <Item size="sm" class="p-0 gap-2">
+                  <ItemContent>
+                    <ItemTitle>United States</ItemTitle>
+                    <ItemDescription>North America</ItemDescription>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+        <script>
+          const customItemsCb = document.getElementById(
+            "custom-items-combobox",
+          );
+          customItemsCb?.dispatchEvent(
+            new CustomEvent("combobox:set", {
+              detail: {
+                itemToStringValue: (
+                  _item: HTMLElement | null,
+                  value: string | null,
+                ) => (value ? `Country: ${value}` : ""),
+              },
+            }),
+          );
+        </script>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Groups with Labels and Separators">
+        <p class="text-sm text-muted-foreground">
+          Grouped items with ComboboxGroup, ComboboxLabel, ComboboxSeparator
+        </p>
+        <Combobox class="w-[250px]">
+          <ComboboxInput placeholder="Select framework..." />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
+              <ComboboxGroup>
+                <ComboboxLabel>Frontend</ComboboxLabel>
+                <ComboboxItem value="astro">Astro</ComboboxItem>
+                <ComboboxItem value="nextjs">Next.js</ComboboxItem>
+                <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+                <ComboboxItem value="remix">Remix</ComboboxItem>
+                <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
+              </ComboboxGroup>
+              <ComboboxSeparator />
+              <ComboboxGroup>
+                <ComboboxLabel>Backend</ComboboxLabel>
+                <ComboboxItem value="express">Express</ComboboxItem>
+                <ComboboxItem value="hono">Hono</ComboboxItem>
+                <ComboboxItem value="fastify">Fastify</ComboboxItem>
+                <ComboboxItem value="elysia">Elysia</ComboboxItem>
+              </ComboboxGroup>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Scrollable (Many Items)">
+        <p class="text-sm text-muted-foreground">
+          Long list of countries — tests scroll behavior and max-h-72 overflow
+        </p>
+        <Combobox class="w-[250px]">
+          <ComboboxInput placeholder="Select country..." />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No countries found.</ComboboxEmpty>
+              <ComboboxItem value="argentina">Argentina</ComboboxItem>
+              <ComboboxItem value="australia">Australia</ComboboxItem>
+              <ComboboxItem value="brazil">Brazil</ComboboxItem>
+              <ComboboxItem value="canada">Canada</ComboboxItem>
+              <ComboboxItem value="china">China</ComboboxItem>
+              <ComboboxItem value="egypt">Egypt</ComboboxItem>
+              <ComboboxItem value="france">France</ComboboxItem>
+              <ComboboxItem value="germany">Germany</ComboboxItem>
+              <ComboboxItem value="india">India</ComboboxItem>
+              <ComboboxItem value="italy">Italy</ComboboxItem>
+              <ComboboxItem value="japan">Japan</ComboboxItem>
+              <ComboboxItem value="kenya">Kenya</ComboboxItem>
+              <ComboboxItem value="mexico">Mexico</ComboboxItem>
+              <ComboboxItem value="nigeria">Nigeria</ComboboxItem>
+              <ComboboxItem value="norway">Norway</ComboboxItem>
+              <ComboboxItem value="peru">Peru</ComboboxItem>
+              <ComboboxItem value="south-korea">South Korea</ComboboxItem>
+              <ComboboxItem value="spain">Spain</ComboboxItem>
+              <ComboboxItem value="uk">United Kingdom</ComboboxItem>
+              <ComboboxItem value="usa">United States</ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Disabled Combobox">
+        <p class="text-sm text-muted-foreground">
+          Entire combobox is disabled — input is not interactable
+        </p>
+        <Combobox disabled class="w-[250px]">
+          <ComboboxInput placeholder="Disabled..." disabled />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxItem value="astro">Astro</ComboboxItem>
+              <ComboboxItem value="nextjs">Next.js</ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Disabled Items">
+        <p class="text-sm text-muted-foreground">
+          Mix of enabled/disabled items — disabled items can't be selected,
+          skipped in keyboard nav
+        </p>
+        <Combobox class="w-[250px]">
+          <ComboboxInput placeholder="Select framework..." />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
+              <ComboboxItem value="astro">Astro</ComboboxItem>
+              <ComboboxItem value="nextjs" disabled
+                >Next.js (unavailable)</ComboboxItem
               >
-              <ComboboxItem value="gmt-8-los-angeles"
-                >(GMT-8) Los Angeles</ComboboxItem
+              <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+              <ComboboxItem value="remix" disabled
+                >Remix (unavailable)</ComboboxItem
               >
-              <ComboboxItem value="gmt-6-chicago">(GMT-6) Chicago</ComboboxItem>
-              <ComboboxItem value="gmt-5-toronto">(GMT-5) Toronto</ComboboxItem>
-              <ComboboxItem value="gmt-8-vancouver"
-                >(GMT-8) Vancouver</ComboboxItem
+              <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Invalid/Error State">
+        <p class="text-sm text-muted-foreground">
+          aria-invalid="true" on ComboboxInput — red ring styling
+        </p>
+        <Combobox class="w-[250px]">
+          <ComboboxInput placeholder="Required field..." aria-invalid="true" />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
+              <ComboboxItem value="astro">Astro</ComboboxItem>
+              <ComboboxItem value="nextjs">Next.js</ComboboxItem>
+              <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="No Trigger Arrow">
+        <p class="text-sm text-muted-foreground">
+          showTrigger={false} — clean input without chevron, still functions as combobox
+        </p>
+        <Combobox class="w-[250px]">
+          <ComboboxInput placeholder="Type to search..." showTrigger={false} />
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
+              <ComboboxItem value="astro">Astro</ComboboxItem>
+              <ComboboxItem value="nextjs">Next.js</ComboboxItem>
+              <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+              <ComboboxItem value="remix">Remix</ComboboxItem>
+              <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Input Group">
+        <p class="text-sm text-muted-foreground">
+          Add an addon to the combobox by using InputGroupAddon inside a manual
+          InputGroup with data-slot="combobox-input"
+        </p>
+        <Combobox class="w-[280px]">
+          <InputGroup>
+            <InputGroupAddon class="pl-3">
+              <GlobeIcon />
+            </InputGroupAddon>
+            <InputGroupInput
+              data-slot="combobox-input"
+              placeholder="Select a timezone..."
+              autocomplete="off"
+            />
+            <InputGroupAddon align="inline-end" class="pr-3">
+              <button
+                data-slot="combobox-trigger"
+                type="button"
+                tabindex={-1}
+                class="text-muted-foreground/80 hover:text-foreground flex items-center justify-center transition-colors"
+                aria-label="Toggle menu"
               >
-              <ComboboxItem value="gmt-3-sao-paulo"
-                >(GMT-3) São Paulo</ComboboxItem
-              >
-            </ComboboxGroup>
-            <ComboboxSeparator />
-            <ComboboxGroup>
-              <ComboboxLabel>Europe</ComboboxLabel>
-              <ComboboxItem value="gmt-0-london">(GMT+0) London</ComboboxItem>
-              <ComboboxItem value="gmt-1-paris">(GMT+1) Paris</ComboboxItem>
-              <ComboboxItem value="gmt-1-berlin">(GMT+1) Berlin</ComboboxItem>
-              <ComboboxItem value="gmt-1-rome">(GMT+1) Rome</ComboboxItem>
-              <ComboboxItem value="gmt-1-madrid">(GMT+1) Madrid</ComboboxItem>
-              <ComboboxItem value="gmt-1-amsterdam"
-                >(GMT+1) Amsterdam</ComboboxItem
-              >
-            </ComboboxGroup>
-            <ComboboxSeparator />
-            <ComboboxGroup>
-              <ComboboxLabel>Asia/Pacific</ComboboxLabel>
-              <ComboboxItem value="gmt-9-tokyo">(GMT+9) Tokyo</ComboboxItem>
-              <ComboboxItem value="gmt-8-shanghai"
-                >(GMT+8) Shanghai</ComboboxItem
-              >
-              <ComboboxItem value="gmt-8-singapore"
-                >(GMT+8) Singapore</ComboboxItem
-              >
-              <ComboboxItem value="gmt-4-dubai">(GMT+4) Dubai</ComboboxItem>
-              <ComboboxItem value="gmt-11-sydney">(GMT+11) Sydney</ComboboxItem>
-              <ComboboxItem value="gmt-9-seoul">(GMT+9) Seoul</ComboboxItem>
-            </ComboboxGroup>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
+                <ChevronDownIcon class="size-4" />
+              </button>
+            </InputGroupAddon>
+          </InputGroup>
+          <ComboboxContent>
+            <ComboboxList>
+              <ComboboxEmpty>No timezones found.</ComboboxEmpty>
+              <ComboboxGroup>
+                <ComboboxLabel>Americas</ComboboxLabel>
+                <ComboboxItem value="gmt-5-new-york"
+                  >(GMT-5) New York</ComboboxItem
+                >
+                <ComboboxItem value="gmt-8-los-angeles"
+                  >(GMT-8) Los Angeles</ComboboxItem
+                >
+                <ComboboxItem value="gmt-6-chicago"
+                  >(GMT-6) Chicago</ComboboxItem
+                >
+                <ComboboxItem value="gmt-5-toronto"
+                  >(GMT-5) Toronto</ComboboxItem
+                >
+                <ComboboxItem value="gmt-8-vancouver"
+                  >(GMT-8) Vancouver</ComboboxItem
+                >
+                <ComboboxItem value="gmt-3-sao-paulo"
+                  >(GMT-3) São Paulo</ComboboxItem
+                >
+              </ComboboxGroup>
+              <ComboboxSeparator />
+              <ComboboxGroup>
+                <ComboboxLabel>Europe</ComboboxLabel>
+                <ComboboxItem value="gmt-0-london">(GMT+0) London</ComboboxItem>
+                <ComboboxItem value="gmt-1-paris">(GMT+1) Paris</ComboboxItem>
+                <ComboboxItem value="gmt-1-berlin">(GMT+1) Berlin</ComboboxItem>
+                <ComboboxItem value="gmt-1-rome">(GMT+1) Rome</ComboboxItem>
+                <ComboboxItem value="gmt-1-madrid">(GMT+1) Madrid</ComboboxItem>
+                <ComboboxItem value="gmt-1-amsterdam"
+                  >(GMT+1) Amsterdam</ComboboxItem
+                >
+              </ComboboxGroup>
+              <ComboboxSeparator />
+              <ComboboxGroup>
+                <ComboboxLabel>Asia/Pacific</ComboboxLabel>
+                <ComboboxItem value="gmt-9-tokyo">(GMT+9) Tokyo</ComboboxItem>
+                <ComboboxItem value="gmt-8-shanghai"
+                  >(GMT+8) Shanghai</ComboboxItem
+                >
+                <ComboboxItem value="gmt-8-singapore"
+                  >(GMT+8) Singapore</ComboboxItem
+                >
+                <ComboboxItem value="gmt-4-dubai">(GMT+4) Dubai</ComboboxItem>
+                <ComboboxItem value="gmt-11-sydney"
+                  >(GMT+11) Sydney</ComboboxItem
+                >
+                <ComboboxItem value="gmt-9-seoul">(GMT+9) Seoul</ComboboxItem>
+              </ComboboxGroup>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
     </div>
 
     <KitchenSinkSection title="Positioning (side/align)">
@@ -535,9 +628,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
       <div class="flex flex-wrap gap-8">
         <div class="space-y-2">
           <Label>Side: bottom (default)</Label>
-          <Combobox side="bottom" class="w-[200px]">
+          <Combobox class="w-[200px]">
             <ComboboxInput placeholder="Opens below" />
-            <ComboboxContent>
+            <ComboboxContent side="bottom">
               <ComboboxList>
                 <ComboboxItem value="option1">Option 1</ComboboxItem>
                 <ComboboxItem value="option2">Option 2</ComboboxItem>
@@ -548,9 +641,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </div>
         <div class="space-y-2">
           <Label>Side: top</Label>
-          <Combobox side="top" class="w-[200px]">
+          <Combobox class="w-[200px]">
             <ComboboxInput placeholder="Opens above" />
-            <ComboboxContent>
+            <ComboboxContent side="top">
               <ComboboxList>
                 <ComboboxItem value="option1">Option 1</ComboboxItem>
                 <ComboboxItem value="option2">Option 2</ComboboxItem>
@@ -561,9 +654,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </div>
         <div class="space-y-2">
           <Label>Align: center</Label>
-          <Combobox align="center" class="w-[200px]">
+          <Combobox class="w-[200px]">
             <ComboboxInput placeholder="Centered" />
-            <ComboboxContent>
+            <ComboboxContent align="center">
               <ComboboxList>
                 <ComboboxItem value="option1">Option 1</ComboboxItem>
                 <ComboboxItem value="option2">Option 2</ComboboxItem>
@@ -574,9 +667,9 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </div>
         <div class="space-y-2">
           <Label>Align: end</Label>
-          <Combobox align="end" class="w-[200px]">
+          <Combobox class="w-[200px]">
             <ComboboxInput placeholder="End aligned" />
-            <ComboboxContent>
+            <ComboboxContent align="end">
               <ComboboxList>
                 <ComboboxItem value="option1">Option 1</ComboboxItem>
                 <ComboboxItem value="option2">Option 2</ComboboxItem>
@@ -728,98 +821,122 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
     </KitchenSinkSection>
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
-    <KitchenSinkSection title="In a Dialog">
-      <p class="text-sm text-muted-foreground">
-        Combobox inside a dialog — tests z-index stacking and focus management
-      </p>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">Open Dialog with Combobox</Button>
-        </DialogTrigger>
-        <DialogContent class="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Select Framework</DialogTitle>
-            <DialogDescription>
-              Choose your preferred framework from the combobox below.
-            </DialogDescription>
-          </DialogHeader>
-          <div class="space-y-4 py-4">
-            <div class="space-y-2">
-              <Label>Framework</Label>
-              <Combobox class="w-full">
-                <ComboboxInput placeholder="Search frameworks..." />
-                <ComboboxContent>
-                  <ComboboxList>
-                    <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
-                    <ComboboxItem value="astro">Astro</ComboboxItem>
-                    <ComboboxItem value="nextjs">Next.js</ComboboxItem>
-                    <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
-                    <ComboboxItem value="remix">Remix</ComboboxItem>
-                    <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
+      <KitchenSinkSection title="In a Dialog">
+        <p class="text-sm text-muted-foreground">
+          Combobox inside a dialog — tests z-index stacking and focus management
+        </p>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline">Open Dialog with Combobox</Button>
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Select Framework</DialogTitle>
+              <DialogDescription>
+                Choose your preferred framework from the combobox below.
+              </DialogDescription>
+            </DialogHeader>
+            <div class="space-y-4 py-4">
+              <div class="space-y-2">
+                <Label>Framework</Label>
+                <Combobox class="w-full">
+                  <ComboboxInput placeholder="Search frameworks..." />
+                  <ComboboxContent>
+                    <ComboboxList>
+                      <ComboboxEmpty>No frameworks found.</ComboboxEmpty>
+                      <ComboboxItem value="astro">Astro</ComboboxItem>
+                      <ComboboxItem value="nextjs">Next.js</ComboboxItem>
+                      <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+                      <ComboboxItem value="remix">Remix</ComboboxItem>
+                      <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </div>
+              <div class="space-y-2">
+                <Label>Version</Label>
+                <Combobox class="w-full">
+                  <ComboboxInput placeholder="Search versions..." />
+                  <ComboboxContent>
+                    <ComboboxList>
+                      <ComboboxEmpty>No versions found.</ComboboxEmpty>
+                      <ComboboxItem value="latest">Latest</ComboboxItem>
+                      <ComboboxItem value="beta">Beta</ComboboxItem>
+                      <ComboboxItem value="canary">Canary</ComboboxItem>
+                      <ComboboxItem value="rc">Release Candidate</ComboboxItem>
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </div>
             </div>
-            <div class="space-y-2">
-              <Label>Version</Label>
-              <Combobox class="w-full">
-                <ComboboxInput placeholder="Search versions..." />
-                <ComboboxContent>
-                  <ComboboxList>
-                    <ComboboxEmpty>No versions found.</ComboboxEmpty>
-                    <ComboboxItem value="latest">Latest</ComboboxItem>
-                    <ComboboxItem value="beta">Beta</ComboboxItem>
-                    <ComboboxItem value="canary">Canary</ComboboxItem>
-                    <ComboboxItem value="rc">Release Candidate</ComboboxItem>
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button data-slot="dialog-close" variant="outline">Cancel</Button>
-            <Button data-slot="dialog-close">Confirm</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </KitchenSinkSection>
+            <DialogFooter>
+              <Button data-slot="dialog-close" variant="outline">Cancel</Button>
+              <Button data-slot="dialog-close">Confirm</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </KitchenSinkSection>
 
-    <KitchenSinkSection title="Popup">
-      <p class="text-sm text-muted-foreground">
-        Button trigger with ComboboxInput inside ComboboxContent — like a
-        searchable select
-      </p>
-      <Combobox class="w-[250px]">
-        <ComboboxTrigger>
-          <ComboboxValue placeholder="Select country..." />
-        </ComboboxTrigger>
-        <ComboboxContent>
-          <ComboboxInput showTrigger={false} placeholder="Search countries..." class="m-2 mb-0" />
-          <ComboboxList>
-            <ComboboxEmpty>No countries found.</ComboboxEmpty>
-            <ComboboxItem value="argentina" label="Argentina">Argentina</ComboboxItem>
-            <ComboboxItem value="australia" label="Australia">Australia</ComboboxItem>
-            <ComboboxItem value="brazil" label="Brazil">Brazil</ComboboxItem>
-            <ComboboxItem value="canada" label="Canada">Canada</ComboboxItem>
-            <ComboboxItem value="china" label="China">China</ComboboxItem>
-            <ComboboxItem value="colombia" label="Colombia">Colombia</ComboboxItem>
-            <ComboboxItem value="egypt" label="Egypt">Egypt</ComboboxItem>
-            <ComboboxItem value="france" label="France">France</ComboboxItem>
-            <ComboboxItem value="germany" label="Germany">Germany</ComboboxItem>
-            <ComboboxItem value="italy" label="Italy">Italy</ComboboxItem>
-            <ComboboxItem value="japan" label="Japan">Japan</ComboboxItem>
-            <ComboboxItem value="kenya" label="Kenya">Kenya</ComboboxItem>
-            <ComboboxItem value="mexico" label="Mexico">Mexico</ComboboxItem>
-            <ComboboxItem value="new-zealand" label="New Zealand">New Zealand</ComboboxItem>
-            <ComboboxItem value="nigeria" label="Nigeria">Nigeria</ComboboxItem>
-            <ComboboxItem value="south-africa" label="South Africa">South Africa</ComboboxItem>
-            <ComboboxItem value="south-korea" label="South Korea">South Korea</ComboboxItem>
-            <ComboboxItem value="united-kingdom" label="United Kingdom">United Kingdom</ComboboxItem>
-            <ComboboxItem value="united-states" label="United States">United States</ComboboxItem>
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </KitchenSinkSection>
+      <KitchenSinkSection title="Popup">
+        <p class="text-sm text-muted-foreground">
+          Button trigger with ComboboxInput inside ComboboxContent — like a
+          searchable select
+        </p>
+        <Combobox class="w-[250px]">
+          <ComboboxTrigger>
+            <ComboboxValue placeholder="Select country..." />
+          </ComboboxTrigger>
+          <ComboboxContent>
+            <ComboboxInput
+              showTrigger={false}
+              placeholder="Search countries..."
+              class="m-2 mb-0"
+            />
+            <ComboboxList>
+              <ComboboxEmpty>No countries found.</ComboboxEmpty>
+              <ComboboxItem value="argentina" label="Argentina"
+                >Argentina</ComboboxItem
+              >
+              <ComboboxItem value="australia" label="Australia"
+                >Australia</ComboboxItem
+              >
+              <ComboboxItem value="brazil" label="Brazil">Brazil</ComboboxItem>
+              <ComboboxItem value="canada" label="Canada">Canada</ComboboxItem>
+              <ComboboxItem value="china" label="China">China</ComboboxItem>
+              <ComboboxItem value="colombia" label="Colombia"
+                >Colombia</ComboboxItem
+              >
+              <ComboboxItem value="egypt" label="Egypt">Egypt</ComboboxItem>
+              <ComboboxItem value="france" label="France">France</ComboboxItem>
+              <ComboboxItem value="germany" label="Germany"
+                >Germany</ComboboxItem
+              >
+              <ComboboxItem value="italy" label="Italy">Italy</ComboboxItem>
+              <ComboboxItem value="japan" label="Japan">Japan</ComboboxItem>
+              <ComboboxItem value="kenya" label="Kenya">Kenya</ComboboxItem>
+              <ComboboxItem value="mexico" label="Mexico">Mexico</ComboboxItem>
+              <ComboboxItem value="new-zealand" label="New Zealand"
+                >New Zealand</ComboboxItem
+              >
+              <ComboboxItem value="nigeria" label="Nigeria"
+                >Nigeria</ComboboxItem
+              >
+              <ComboboxItem value="south-africa" label="South Africa"
+                >South Africa</ComboboxItem
+              >
+              <ComboboxItem value="south-korea" label="South Korea"
+                >South Korea</ComboboxItem
+              >
+              <ComboboxItem value="united-kingdom" label="United Kingdom"
+                >United Kingdom</ComboboxItem
+              >
+              <ComboboxItem value="united-states" label="United States"
+                >United States</ComboboxItem
+              >
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </KitchenSinkSection>
     </div>
 
     <KitchenSinkSection title="Form Integration">

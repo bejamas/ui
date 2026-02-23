@@ -31,6 +31,27 @@
  *
  * <Input type="email" placeholder="Enter your email" disabled />
  *
+ * ### Sizes
+ *
+ * <div class="grid w-full max-w-sm gap-3">
+ *   <div class="flex items-center gap-2">
+ *     <Input size="sm" placeholder="Small input (h-8)" />
+ *     <Button size="sm" variant="outline">
+ *       Small
+ *     </Button>
+ *   </div>
+ *   <div class="flex items-center gap-2">
+ *     <Input placeholder="Default input (h-9)" />
+ *     <Button variant="outline">Default</Button>
+ *   </div>
+ *   <div class="flex items-center gap-2">
+ *     <Input size="lg" placeholder="Large input (h-10)" />
+ *     <Button size="lg" variant="outline">
+ *       Large
+ *     </Button>
+ *   </div>
+ * </div>
+ *
  * ### File
  *
  * <div class="grid w-full max-w-sm items-center gap-3">
@@ -56,16 +77,53 @@
  */
 
 import { cn } from "@bejamas/ui/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
+import type { HTMLAttributes } from "astro/types";
 
-const { class: className = "", type = "text", ...props } = Astro.props;
+const inputVariants = cva(
+  "dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 rounded-lg border bg-transparent transition-colors file:h-6 file:text-sm file:font-medium focus-visible:ring-3 aria-invalid:ring-3 file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+  {
+    variants: {
+      size: {
+        sm: "h-8 px-2.5 py-1 text-xs",
+        default: "h-9 px-3 py-1 text-sm",
+        lg: "h-10 px-3.5 py-1.5 text-base",
+      },
+    },
+    defaultVariants: {
+      size: "default",
+    },
+  },
+);
+
+type InputUiSize = NonNullable<VariantProps<typeof inputVariants>["size"]>;
+type NativeInputSize = HTMLAttributes<"input">["size"];
+
+type Props = Omit<HTMLAttributes<"input">, "size"> & {
+  size?: InputUiSize | NativeInputSize;
+  nativeSize?: NativeInputSize;
+};
+
+const {
+  class: className = "",
+  type = "text",
+  size: sizeProp,
+  nativeSize,
+  ...props
+} = Astro.props as Props;
+
+const isUiSize = (value: unknown): value is InputUiSize =>
+  value === "sm" || value === "default" || value === "lg";
+
+const resolvedUiSize = isUiSize(sizeProp) ? sizeProp : "default";
+const resolvedNativeSize =
+  nativeSize ?? (!isUiSize(sizeProp) ? sizeProp : undefined);
 ---
 
 <input
   type={type}
+  size={resolvedNativeSize}
   data-slot={props["data-slot"] ?? "input"}
-  class={cn(
-    "dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-lg border bg-transparent px-2.5 py-1 text-base transition-colors file:h-6 file:text-sm file:font-medium focus-visible:ring-3 aria-invalid:ring-3 md:text-sm file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-    className,
-  )}
+  class={cn(inputVariants({ size: resolvedUiSize }), className)}
   {...props}
 />

@@ -1,0 +1,234 @@
+---
+/**
+ * @component HoverCard
+ * @title Hover Card
+ * @description For sighted users to preview content available behind a link.
+ *
+ * @preview
+ *
+ * <HoverCard delay={10} closeDelay={100}>
+ *   <HoverCardTrigger asChild>
+ *     <Button variant="link">@data-slot</Button>
+ *   </HoverCardTrigger>
+ *   <HoverCardContent class="flex w-64 flex-col gap-0.5">
+ *     <div class="font-semibold">@data-slot</div>
+ *     <div>Headless UI components for vanilla JavaScript.</div>
+ *     <div class="text-muted-foreground mt-1 text-xs">
+ *       Created by Bejamas in 2026
+ *     </div>
+ *   </HoverCardContent>
+ * </HoverCard>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import {
+ *   HoverCard,
+ *   HoverCardContent,
+ *   HoverCardTrigger,
+ * } from '@bejamas/ui/components/hover-card';
+ * import { Button } from '@bejamas/ui/components/button';
+ * ---
+ *
+ * <HoverCard>
+ *   <HoverCardTrigger asChild>
+ *     <Button variant="link">Hover Here</Button>
+ *   </HoverCardTrigger>
+ *   <HoverCardContent>
+ *     <div class="font-semibold">@nextjs</div>
+ *     <div>The React Framework - created and maintained by @vercel.</div>
+ *   </HoverCardContent>
+ * </HoverCard>
+ * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The hover card emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `hover-card:change` | `{ open: boolean, reason: string, trigger: HTMLElement, content: HTMLElement }` | Fired when visibility changes |
+ *
+ * ```astro nocollapse console
+ * <HoverCard id="my-hover-card">
+ *   <HoverCardTrigger asChild>
+ *     <Button variant="outline">Hover me</Button>
+ *   </HoverCardTrigger>
+ *   <HoverCardContent>
+ *     Hover card content
+ *   </HoverCardContent>
+ * </HoverCard>
+ *
+ * <script>
+ *   const hoverCard = document.getElementById('my-hover-card');
+ *
+ *   hoverCard.addEventListener('hover-card:change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *     console.log('Reason:', e.detail.reason);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the hover card programmatically by dispatching a `hover-card:set` event:
+ *
+ * ```js nocollapse
+ * const hoverCard = document.getElementById('my-hover-card');
+ *
+ * // Open the hover card
+ * hoverCard.dispatchEvent(new CustomEvent('hover-card:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Close the hover card
+ * hoverCard.dispatchEvent(new CustomEvent('hover-card:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The hover card sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | hover-card, hover-card-content | Current state (`open` or `closed`) |
+ * | `data-open` | hover-card, hover-card-content | Present while open |
+ * | `data-closed` | hover-card, hover-card-content | Present while closed |
+ * | `data-side` | hover-card-content | Position relative to trigger (`top`, `right`, `bottom`, or `left`) |
+ * | `data-align` | hover-card-content | Alignment (`start`, `center`, or `end`) |
+ * | `data-side-offset` | hover-card-content | Distance from trigger in pixels (default `4`) |
+ * | `data-align-offset` | hover-card-content | Alignment-axis offset in pixels (default `0`) |
+ *
+ * @examples
+ *
+ * ### With Avatar
+ *
+ * <HoverCard>
+ *   <HoverCardTrigger asChild>
+ *     <Button variant="link">@thom</Button>
+ *   </HoverCardTrigger>
+ *   <HoverCardContent class="flex w-72 gap-3 p-3">
+ *     <Avatar class="size-10 rounded-full">
+ *       <AvatarImage>
+ *         <img src="https://github.com/thomkrupa.png" alt="@thom" />
+ *       </AvatarImage>
+ *       <AvatarFallback>TK</AvatarFallback>
+ *     </Avatar>
+ *     <div class="space-y-1">
+ *       <div class="text-sm font-semibold leading-none">@thom</div>
+ *       <p class="text-muted-foreground text-sm">
+ *         Building design systems and UI tooling.
+ *       </p>
+ *     </div>
+ *   </HoverCardContent>
+ * </HoverCard>
+ *
+ * ### Different sides
+ *
+ * <div class="flex flex-wrap items-center gap-3 py-8">
+ *   <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+ *     <HoverCardTrigger asChild>
+ *       <Button variant="outline">Left</Button>
+ *     </HoverCardTrigger>
+ *     <HoverCardContent side="left">Appears on left.</HoverCardContent>
+ *   </HoverCard>
+ *   <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+ *     <HoverCardTrigger asChild>
+ *       <Button variant="outline">Top</Button>
+ *     </HoverCardTrigger>
+ *     <HoverCardContent side="top">Appears on top.</HoverCardContent>
+ *   </HoverCard>
+ *   <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+ *     <HoverCardTrigger asChild>
+ *       <Button variant="outline">Bottom</Button>
+ *     </HoverCardTrigger>
+ *     <HoverCardContent side="bottom">Appears on bottom.</HoverCardContent>
+ *   </HoverCard>
+ *   <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+ *     <HoverCardTrigger asChild>
+ *       <Button variant="outline">Right</Button>
+ *     </HoverCardTrigger>
+ *     <HoverCardContent side="right">Appears on right.</HoverCardContent>
+ *   </HoverCard>
+ * </div>
+ *
+ * ### Positioning options
+ *
+ * Configure placement options on `HoverCardContent`:
+ *
+ * <HoverCard>
+ *   <HoverCardTrigger asChild>
+ *     <Button variant="outline">Custom positioning</Button>
+ *   </HoverCardTrigger>
+ *   <HoverCardContent
+ *     side="top"
+ *     sideOffset={8}
+ *     align="start"
+ *   >
+ *     Uses content-level positioning options.
+ *   </HoverCardContent>
+ * </HoverCard>
+ *
+ * ### Custom timing
+ *
+ * <HoverCard delay={600} closeDelay={200} skipDelayDuration={300}>
+ *   <HoverCardTrigger asChild>
+ *     <Button variant="outline">Hover with delay</Button>
+ *   </HoverCardTrigger>
+ *   <HoverCardContent>
+ *     Opens after 600ms, closes after 200ms.
+ *   </HoverCardContent>
+ * </HoverCard>
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+  defaultOpen?: boolean;
+  delay?: number;
+  skipDelayDuration?: number;
+  closeDelay?: number;
+  closeOnClickOutside?: boolean;
+  closeOnEscape?: boolean;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  defaultOpen = false,
+  delay = 700,
+  skipDelayDuration = 300,
+  closeDelay = 300,
+  closeOnClickOutside = true,
+  closeOnEscape = true,
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="hover-card"
+  data-default-open={String(defaultOpen)}
+  data-delay={delay}
+  data-skip-delay-duration={skipDelayDuration}
+  data-close-delay={closeDelay}
+  data-close-on-click-outside={String(closeOnClickOutside)}
+  data-close-on-escape={String(closeOnEscape)}
+  class={cn("inline-block", className)}
+>
+  <slot />
+</div>
+
+<script>
+  import { createHoverCard } from "@data-slot/hover-card";
+
+  document.querySelectorAll('[data-slot="hover-card"]').forEach((el) => {
+    createHoverCard(el);
+  });
+</script>

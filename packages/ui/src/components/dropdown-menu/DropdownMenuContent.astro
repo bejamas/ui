@@ -1,6 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
+import { cva } from "class-variance-authority";
 
 type Props = {
   align?: "start" | "center" | "end";
@@ -18,9 +19,18 @@ const {
   class: className = "",
   ...rest
 } = Astro.props as Props;
+
+const contentVariants = cva([
+  "z-50 hidden data-[state=open]:block [transition:display_150ms_allow-discrete] starting:data-[state=closed]:block outline-hidden",
+  "min-w-32 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md",
+  "data-[state=open]:animate-in data-[state=closed]:animate-out",
+  "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+  "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+  "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
+  "origin-(--transform-origin) [--tw-animation-fill-mode:both]",
+]);
 ---
 
-<!-- Outer: data-slot target for the library (positioning + visibility only) -->
 <div
   {...rest}
   data-slot="dropdown-menu-content"
@@ -28,25 +38,7 @@ const {
   data-align-offset={alignOffset}
   data-side={side}
   data-side-offset={sideOffset}
-  class={cn(
-    "group/dropdown-menu-content",
-    "hidden data-[state=open]:block [transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
-    "[--origin-y:top] data-[side=top]:[--origin-y:bottom]",
-    "data-[align=start]:[--origin-x:left] data-[align=center]:[--origin-x:center] data-[align=end]:[--origin-x:right]",
-  )}
+  class={cn(contentVariants(), className)}
 >
-  <!-- Inner: visual styling + animations + className override -->
-  <div
-    class={cn(
-      "min-w-32 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md",
-      "group-data-[state=open]/dropdown-menu-content:animate-in group-data-[state=closed]/dropdown-menu-content:animate-out",
-      "group-data-[state=closed]/dropdown-menu-content:fade-out-0 group-data-[state=open]/dropdown-menu-content:fade-in-0",
-      "group-data-[state=closed]/dropdown-menu-content:zoom-out-95 group-data-[state=open]/dropdown-menu-content:zoom-in-95",
-      "[transform-origin:var(--origin-x)_var(--origin-y)]",
-      "[--tw-animation-fill-mode:both]",
-      className,
-    )}
-  >
-    <slot />
-  </div>
+  <slot />
 </div>

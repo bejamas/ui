@@ -1,6 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
+import { cva } from "class-variance-authority";
 
 type Props = {
   side?: "top" | "bottom" | "left" | "right";
@@ -11,16 +12,26 @@ type Props = {
 } & HTMLAttributes<"div">;
 
 const {
-  side,
-  align,
+  side = "bottom",
+  align = "center",
   sideOffset = 6,
   alignOffset = 0,
   class: className = "",
   ...rest
 } = Astro.props as Props;
+
+const contentVariants = cva([
+  "z-50 hidden data-[state=open]:block duration-150 ease transition-discrete starting:data-[state=closed]:block outline-hidden",
+  "bg-popover text-popover-foreground ring-foreground/10 ring-1",
+  "flex w-72 flex-col gap-2.5 rounded-lg p-4 text-sm shadow-md",
+  "data-[state=open]:animate-in data-[state=closed]:animate-out",
+  "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+  "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+  "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
+  "origin-(--transform-origin) [--tw-animation-fill-mode:both]",
+]);
 ---
 
-<!-- Outer: visibility + state hooks (position is computed by @data-slot/popover) -->
 <div
   {...rest}
   data-slot="popover-content"
@@ -29,29 +40,7 @@ const {
   data-side={side}
   data-side-offset={sideOffset}
   style={`--side-offset: ${sideOffset}px`}
-  class={cn(
-    "group/popover-content",
-    "z-50",
-    "hidden data-[state=open]:block duration-150 ease transition-discrete starting:data-[state=closed]:block",
-    "[--origin-x:center] [--origin-y:top] data-[side=top]:[--origin-y:bottom]",
-    "data-[align=start]:[--origin-x:left] data-[align=end]:[--origin-x:right]",
-  )}
+  class={cn(contentVariants(), className)}
 >
-  <!-- Inner: visual styling + animations -->
-  <div
-    class={cn(
-      "bg-popover text-popover-foreground ring-foreground/10 ring-1",
-      "flex flex-col gap-2.5 rounded-lg p-4 text-sm shadow-md",
-      "w-72 outline-hidden",
-      "group-data-[state=open]/popover-content:animate-in group-data-[state=closed]/popover-content:animate-out",
-      "group-data-[state=closed]/popover-content:fade-out-0 group-data-[state=open]/popover-content:fade-in-0",
-      "group-data-[state=closed]/popover-content:zoom-out-95 group-data-[state=open]/popover-content:zoom-in-95",
-      "group-data-[side=bottom]/popover-content:slide-in-from-top-2 group-data-[side=top]/popover-content:slide-in-from-bottom-2",
-      "group-data-[side=left]/popover-content:slide-in-from-right-2 group-data-[side=right]/popover-content:slide-in-from-left-2",
-      "origin-[var(--origin-x)_var(--origin-y)]",
-      className,
-    )}
-  >
-    <slot />
-  </div>
+  <slot />
 </div>

@@ -455,6 +455,29 @@
       ]
     },
     {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/hover-card"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/hover-card/HoverCard.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/hover-card/HoverCardContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/hover-card/HoverCardTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/hover-card/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "input",
       "type": "registry:ui",
       "files": [

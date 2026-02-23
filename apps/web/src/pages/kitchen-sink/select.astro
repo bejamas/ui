@@ -66,7 +66,7 @@ import {
 
         <div class="space-y-2">
           <Label for="popper-select">Popper mode</Label>
-          <Select id="popper-select" position="popper" class="w-[180px]">
+          <Select id="popper-select" class="w-[180px]">
             <SelectTrigger id="popper-select">
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
@@ -87,16 +87,11 @@ import {
       <div class="flex flex-wrap gap-8">
         <div class="space-y-2">
           <Label for="top-select">Side: top</Label>
-          <Select
-            id="top-select"
-            position="popper"
-            side="top"
-            class="w-[180px]"
-          >
+          <Select id="top-select" class="w-[180px]">
             <SelectTrigger>
               <SelectValue placeholder="Opens above" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent position="popper" side="top" class="w-[140px]">
               <SelectItem value="option1">Option 1</SelectItem>
               <SelectItem value="option2">Option 2</SelectItem>
               <SelectItem value="option3">Option 3</SelectItem>
@@ -105,11 +100,11 @@ import {
         </div>
         <div class="space-y-2">
           <Label>Align: center</Label>
-          <Select position="popper" align="center" class="w-[180px]">
+          <Select class="w-[180px]">
             <SelectTrigger>
               <SelectValue placeholder="Centered" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent position="popper" align="center" class="w-[140px]">
               <SelectItem value="option1">Option 1</SelectItem>
               <SelectItem value="option2">Option 2</SelectItem>
               <SelectItem value="option3">Option 3</SelectItem>
@@ -118,11 +113,11 @@ import {
         </div>
         <div class="space-y-2">
           <Label>Align: end</Label>
-          <Select position="popper" align="end" class="w-[180px]">
+          <Select class="w-[180px]">
             <SelectTrigger>
               <SelectValue placeholder="End aligned" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent position="popper" align="end" class="w-[140px]">
               <SelectItem value="option1">Option 1</SelectItem>
               <SelectItem value="option2">Option 2</SelectItem>
               <SelectItem value="option3">Option 3</SelectItem>
@@ -131,11 +126,11 @@ import {
         </div>
         <div class="space-y-2">
           <Label>With sideOffset: 12</Label>
-          <Select position="popper" sideOffset={12} class="w-[180px]">
+          <Select class="w-[180px]">
             <SelectTrigger>
               <SelectValue placeholder="Extra gap" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent position="popper" sideOffset={12} class="w-[140px]">
               <SelectItem value="option1">Option 1</SelectItem>
               <SelectItem value="option2">Option 2</SelectItem>
               <SelectItem value="option3">Option 3</SelectItem>
