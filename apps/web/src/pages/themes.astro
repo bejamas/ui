@@ -39,8 +39,6 @@ function parseTokenBlock(block: string) {
 const tokenValues = parseTokenBlock(extractThemeBlock(cssSource));
 const darkTokenValues = parseTokenBlock(extractDarkBlock(cssSource));
 
-// Preset keys for prev/next navigation
-const presetKeys = Object.keys(defaultPresets);
 
 type ThemeSectionItemInput = {
   label: string;
@@ -358,7 +356,7 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
   });
 </script>
 
-<script type="module" define:vars={{ presetKeys }}>
+<script>
   import {
     getStoredPreset,
     setStoredPreset,
@@ -378,7 +376,7 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
     ])
   );
 
-  const PRESET_KEYS = presetKeys;
+  const PRESET_KEYS = Object.keys(defaultPresets);
 
   document.addEventListener("DOMContentLoaded", () => {
     const select = document.getElementById("preset-switcher");
