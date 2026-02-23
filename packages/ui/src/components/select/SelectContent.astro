@@ -11,8 +11,6 @@ type Props = {
   alignOffset?: number;
   side?: "top" | "bottom";
   sideOffset?: number;
-  avoidCollisions?: boolean;
-  collisionPadding?: number;
 } & HTMLAttributes<"div">;
 
 const {
@@ -23,8 +21,6 @@ const {
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
-  avoidCollisions = true,
-  collisionPadding = 8,
   ...rest
 } = Astro.props as Props;
 
@@ -39,7 +35,7 @@ const contentVariants = cva(
       position: {
         "item-aligned": "relative",
         popper:
-          "fixed transition-discrete starting:data-[state=closed]:block min-w-[var(--select-trigger-width)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 [--tw-animation-fill-mode:both]",
+          "fixed transition-discrete starting:data-[state=closed]:block min-w-[var(--select-trigger-width)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 origin-(--transform-origin) [--tw-animation-fill-mode:both]",
       },
       side: {
         top: "",
@@ -76,8 +72,6 @@ const contentVariants = cva(
   data-align-offset={alignOffset}
   data-side={side}
   data-side-offset={sideOffset}
-  data-avoid-collisions={avoidCollisions ? "" : undefined}
-  data-collision-padding={collisionPadding}
   class={cn(contentVariants({ position, side }), className)}
 >
   <slot />

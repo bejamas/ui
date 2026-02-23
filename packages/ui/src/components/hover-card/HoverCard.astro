@@ -103,9 +103,6 @@
  * | `data-align` | hover-card-content | Alignment (`start`, `center`, or `end`) |
  * | `data-side-offset` | hover-card-content | Distance from trigger in pixels (default `4`) |
  * | `data-align-offset` | hover-card-content | Alignment-axis offset in pixels (default `0`) |
- * | `data-avoid-collisions` | hover-card-content | Enables collision-aware flipping/shifting (default `true`) |
- * | `data-collision-padding` | hover-card-content | Viewport edge padding used during collision handling (default `8`) |
- * | `data-portal` | hover-card-content | Portals hover card while open (default `true`) |
  *
  * @examples
  *
@@ -162,7 +159,7 @@
  *
  * ### Positioning options
  *
- * Configure placement/collision behavior on `HoverCardContent`:
+ * Configure placement options on `HoverCardContent`:
  *
  * <HoverCard>
  *   <HoverCardTrigger asChild>
@@ -172,8 +169,6 @@
  *     side="top"
  *     sideOffset={8}
  *     align="start"
- *     collisionPadding={16}
- *     portal={false}
  *   >
  *     Uses content-level positioning options.
  *   </HoverCardContent>

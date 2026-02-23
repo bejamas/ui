@@ -9,9 +9,6 @@ type Props = {
   side?: "top" | "bottom" | "left" | "right";
   align?: "start" | "center" | "end";
   alignOffset?: number;
-  avoidCollisions?: boolean;
-  collisionPadding?: number;
-  portal?: boolean;
 } & HTMLAttributes<"div">;
 
 const {
@@ -20,9 +17,6 @@ const {
   side = "top",
   align = "center",
   alignOffset,
-  avoidCollisions,
-  collisionPadding,
-  portal,
   ...rest
 } = Astro.props as Props;
 
@@ -62,57 +56,16 @@ const indicatorVariants = cva("pointer-events-none absolute border-4", {
   },
 });
 
-const contentVariants = cva(
-  [
-    "z-50 duration-150 ease outline-hidden",
-    "relative w-fit max-w-xs rounded-md bg-foreground px-3 py-1.5 text-xs text-background shadow-md",
-    "data-[open]:animate-in data-[closed]:animate-out",
-    "data-[closed]:fade-out-0 data-[open]:fade-in-0",
-    "data-[closed]:zoom-out-95 data-[open]:zoom-in-95",
-    "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
-    "data-[instant]:transition-none! data-[instant]:animate-none! data-instant:data-closed:animate-none! data-instant:data-closed:fade-out-0!",
-    "[--origin-x:center] [--origin-y:center]",
-    "data-[side=top]:[--origin-y:bottom] data-[side=bottom]:[--origin-y:top]",
-    "data-[side=left]:[--origin-x:right] data-[side=right]:[--origin-x:left]",
-    "origin-[var(--origin-x)_var(--origin-y)] [--tw-animation-fill-mode:both]",
-  ],
-  {
-    variants: {
-      side: {
-        top: "",
-        bottom: "",
-        left: "",
-        right: "",
-      },
-      align: {
-        start: "",
-        center: "",
-        end: "",
-      },
-    },
-    compoundVariants: [
-      {
-        align: "start",
-        class:
-          "data-[side=top]:data-[align=start]:[--origin-x:left] data-[side=bottom]:data-[align=start]:[--origin-x:left] data-[side=left]:data-[align=start]:[--origin-y:top] data-[side=right]:data-[align=start]:[--origin-y:top]",
-      },
-      {
-        align: "center",
-        class:
-          "data-[side=top]:data-[align=center]:[--origin-x:center] data-[side=bottom]:data-[align=center]:[--origin-x:center] data-[side=left]:data-[align=center]:[--origin-y:center] data-[side=right]:data-[align=center]:[--origin-y:center]",
-      },
-      {
-        align: "end",
-        class:
-          "data-[side=top]:data-[align=end]:[--origin-x:right] data-[side=bottom]:data-[align=end]:[--origin-x:right] data-[side=left]:data-[align=end]:[--origin-y:bottom] data-[side=right]:data-[align=end]:[--origin-y:bottom]",
-      },
-    ],
-    defaultVariants: {
-      side: "top",
-      align: "center",
-    },
-  },
-);
+const contentVariants = cva([
+  "z-50 duration-150 ease outline-hidden",
+  "relative w-fit max-w-xs rounded-md bg-foreground px-3 py-1.5 text-xs text-background shadow-md",
+  "data-[open]:animate-in data-[closed]:animate-out",
+  "data-[closed]:fade-out-0 data-[open]:fade-in-0",
+  "data-[closed]:zoom-out-95 data-[open]:zoom-in-95",
+  "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
+  "data-[instant]:transition-none! data-[instant]:animate-none! data-instant:data-closed:animate-none! data-instant:data-closed:fade-out-0!",
+  "origin-(--transform-origin) [--tw-animation-fill-mode:both]",
+]);
 ---
 
 <div data-slot="tooltip-portal">
@@ -125,12 +78,7 @@ const contentVariants = cva(
       data-side-offset={sideOffset}
       data-align={align}
       data-align-offset={alignOffset}
-      data-avoid-collisions={avoidCollisions === undefined
-        ? undefined
-        : String(avoidCollisions)}
-      data-collision-padding={collisionPadding}
-      data-portal={portal === undefined ? undefined : String(portal)}
-      class={cn(contentVariants({ side, align }), className)}
+      class={cn(contentVariants(), className)}
     >
       <slot />
       <div

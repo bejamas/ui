@@ -177,23 +177,23 @@
  *
  * ### Positioning Options
  *
- * Use `TooltipContent` props to configure placement/collision behavior:
+ * Use `TooltipContent` props to configure placement:
  *
  * <div class="flex gap-3">
  *   <Tooltip>
  *     <TooltipTrigger asChild>
- *       <Button variant="outline">Collision padding</Button>
+ *       <Button variant="outline">Offset</Button>
  *     </TooltipTrigger>
- *     <TooltipContent sideOffset={8} collisionPadding={16}>
- *       <p>Uses larger edge padding</p>
+ *     <TooltipContent sideOffset={8}>
+ *       <p>More distance from trigger</p>
  *     </TooltipContent>
  *   </Tooltip>
  *   <Tooltip>
  *     <TooltipTrigger asChild>
- *       <Button variant="outline">No portal</Button>
+ *       <Button variant="outline">Align offset</Button>
  *     </TooltipTrigger>
- *     <TooltipContent portal={false}>
- *       <p>Rendered in local DOM tree</p>
+ *     <TooltipContent side="bottom" align="start" alignOffset={12}>
+ *       <p>Shifted on alignment axis</p>
  *     </TooltipContent>
  *   </Tooltip>
  * </div>
@@ -268,9 +268,6 @@
  * | `data-align` | tooltip-content, tooltip-positioner | Runtime alignment (`start`, `center`, or `end`) |
  * | `data-side-offset` | tooltip-content | Distance from trigger in pixels (default `4`) |
  * | `data-align-offset` | tooltip-content | Alignment-axis offset in pixels (default `0`) |
- * | `data-avoid-collisions` | tooltip-content | Enables collision-aware flipping/shifting (default `true`) |
- * | `data-collision-padding` | tooltip-content | Viewport edge padding used during collision handling (default `8`) |
- * | `data-portal` | tooltip-content | Portals tooltip while open (default `true`) |
  */
 
 import { cn } from "@bejamas/ui/lib/utils";

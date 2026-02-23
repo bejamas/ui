@@ -8,9 +8,6 @@ type Props = {
   sideOffset?: number;
   align?: "start" | "center" | "end";
   alignOffset?: number;
-  avoidCollisions?: boolean;
-  collisionPadding?: number;
-  portal?: boolean;
   class?: string;
 } & HTMLAttributes<"div">;
 
@@ -20,41 +17,21 @@ const {
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
-  avoidCollisions,
-  collisionPadding,
-  portal,
   ...rest
 } = Astro.props as Props;
 
-const contentVariants = cva(
-  [
-    // visibility
-    "duration-150 ease transition-discrete outline-hidden",
-    // animations
-    "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-    // styles
-    "ring-foreground/10 bg-popover text-popover-foreground w-64 rounded-lg p-2.5 text-sm shadow-md ring-1",
-    // origin defaults
-    "[--origin-x:center] [--origin-y:center]",
-    "origin-[var(--origin-x)_var(--origin-y)]",
-  ],
-  {
-    variants: {
-      side: {
-        top: "data-[side=top]:slide-in-from-bottom-2 data-[side=top]:[--origin-y:bottom] data-[side=top]:data-[align=start]:[--origin-x:left] data-[side=top]:data-[align=center]:[--origin-x:center] data-[side=top]:data-[align=end]:[--origin-x:right]",
-        bottom:
-          "data-[side=bottom]:slide-in-from-top-2 data-[side=bottom]:[--origin-y:top] data-[side=bottom]:data-[align=start]:[--origin-x:left] data-[side=bottom]:data-[align=center]:[--origin-x:center] data-[side=bottom]:data-[align=end]:[--origin-x:right]",
-        left: "data-[side=left]:slide-in-from-right-2 data-[side=left]:[--origin-x:right] data-[side=left]:data-[align=start]:[--origin-y:top] data-[side=left]:data-[align=center]:[--origin-y:center] data-[side=left]:data-[align=end]:[--origin-y:bottom]",
-        right:
-          "data-[side=right]:slide-in-from-left-2 data-[side=right]:[--origin-x:left] data-[side=right]:data-[align=start]:[--origin-y:top] data-[side=right]:data-[align=center]:[--origin-y:center] data-[side=right]:data-[align=end]:[--origin-y:bottom]",
-      },
-    },
-    defaultVariants: {
-      side: "bottom",
-    },
-  },
-);
+const contentVariants = cva([
+  // visibility
+  "duration-150 ease transition-discrete outline-hidden",
+  // animations
+  "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+  "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+  "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
+  // styles
+  "ring-foreground/10 bg-popover text-popover-foreground w-64 rounded-lg p-2.5 text-sm shadow-md ring-1",
+  // origin from positioner
+  "origin-(--transform-origin)",
+]);
 ---
 
 <div data-slot="hover-card-portal">
@@ -67,12 +44,7 @@ const contentVariants = cva(
       data-side-offset={sideOffset}
       data-align={align}
       data-align-offset={alignOffset}
-      data-avoid-collisions={avoidCollisions === undefined
-        ? undefined
-        : String(avoidCollisions)}
-      data-collision-padding={collisionPadding}
-      data-portal={portal === undefined ? undefined : String(portal)}
-      class={cn(contentVariants({ side }), className)}
+      class={cn(contentVariants(), className)}
     >
       <slot />
     </div>

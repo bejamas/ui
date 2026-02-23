@@ -9,8 +9,6 @@ type Props = {
   align?: "start" | "center" | "end";
   sideOffset?: number;
   alignOffset?: number;
-  avoidCollisions?: boolean;
-  collisionPadding?: number;
 } & HTMLAttributes<"div">;
 
 const {
@@ -19,8 +17,6 @@ const {
   align = "start",
   sideOffset = 4,
   alignOffset = 0,
-  avoidCollisions = true,
-  collisionPadding = 8,
   ...rest
 } = Astro.props as Props;
 
@@ -31,6 +27,7 @@ const contentVariants = cva(
     "data-[state=open]:animate-in data-[state=closed]:animate-out",
     "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
     "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+    "origin-(--transform-origin)",
     "*:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:shadow-none",
     "[--tw-animation-fill-mode:both]",
   ],
@@ -55,8 +52,6 @@ const contentVariants = cva(
   data-align={align}
   data-side-offset={sideOffset}
   data-align-offset={alignOffset}
-  data-avoid-collisions={avoidCollisions ? "" : undefined}
-  data-collision-padding={collisionPadding}
   hidden
   class={cn(contentVariants({ side }), className)}
 >
