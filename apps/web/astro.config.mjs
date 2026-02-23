@@ -217,7 +217,11 @@ export default defineConfig({
       filter: (page) =>
         !page.includes('/kitchen-sink/') &&
         !page.includes('-test') &&
-        !page.includes('/ui-demo/'),
+        !page.includes('/ui-demo/') &&
+        !page.includes('/blocks/') &&
+        !page.includes('/ai/') &&
+        !page.includes('/health/') &&
+        !page.includes('/fintech/'),
     }),
     robotsTxt({
       policy: [
