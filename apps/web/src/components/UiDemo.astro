@@ -224,7 +224,7 @@ const countries = [
     <!-- Blog Post Card -->
     <Card>
       <CardMedia class="m-1">
-        <Image
+        <img
           src="https://gradient.bejamas.com/api/gradient.png?funkiness=30&contrast=0&w=748&h=500&seed=bejamas"
           alt="Gradient Cover"
           class="w-full h-full object-cover"
@@ -329,7 +329,12 @@ const countries = [
           <HoverCardTrigger asChild>
             <Avatar>
               <AvatarImage>
-                <img src="https://github.com/withastro.png" alt="@withastro" />
+                <Image
+                  src="https://github.com/withastro.png"
+                  alt="@withastro"
+                  width={32}
+                  height={32}
+                />
               </AvatarImage>
               <AvatarFallback>AW</AvatarFallback>
             </Avatar>
@@ -348,7 +353,12 @@ const countries = [
           <HoverCardTrigger asChild>
             <Avatar>
               <AvatarImage>
-                <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+                <Image
+                  src="https://github.com/thomkrupa.png"
+                  alt="@thomkrupa"
+                  width={32}
+                  height={32}
+                />
               </AvatarImage>
               <AvatarFallback>TK</AvatarFallback>
             </Avatar>
@@ -367,7 +377,12 @@ const countries = [
           <HoverCardTrigger asChild>
             <Avatar>
               <AvatarImage>
-                <img src="https://github.com/bejamas.png" alt="@bejamas" />
+                <Image
+                  src="https://github.com/bejamas.png"
+                  alt="@bejamas"
+                  width={32}
+                  height={32}
+                />
               </AvatarImage>
               <AvatarFallback>BJ</AvatarFallback>
             </Avatar>
