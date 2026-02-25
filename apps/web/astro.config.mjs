@@ -245,5 +245,6 @@ export default defineConfig({
   },
   adapter: vercel({
     skewProtection: true,
+    imageService: true,
   }),
 });
