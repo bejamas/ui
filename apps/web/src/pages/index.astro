@@ -1,5 +1,5 @@
 ---
-import BrowserHero from "@/components/BrowserHero.astro";
+import UiDemo from "@/components/UiDemo.astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 ---
 
@@ -53,15 +53,30 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     },
   }}
 >
-  <BrowserHero />
-  <div id="browser-hero-panel-end" class="w-full -mt-px h-px bottom-0 -z-10">
+  <div class="md:max-w-[92%] mx-auto">
+    <UiDemo />
   </div>
+  <!-- 
   <div
-    class="hidden md:block h-full fixed scroll-fade-out bg-background dark:bg-muted/30 top-14 border left-6 right-6 rounded-t-3xl"
+    class="browser-frame not-content mx-auto relative z-10 rounded-t-xl border border-border/60 border-b-0 overflow-hidden bg-background dark:bg-muted/30 md:max-w-[92%]"
   >
-  </div>
+    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border/60">
+      <div class="hidden md:flex items-center gap-1.5">
+        <span class="size-3 rounded-full bg-muted-foreground/20"></span>
+        <span class="size-3 rounded-full bg-muted-foreground/20"></span>
+        <span class="size-3 rounded-full bg-muted-foreground/20"></span>
+      </div>
+      <div class="hidden md:flex items-center gap-2 ml-auto">
+        <span class="text-sm text-muted-foreground">ui.bejamas.com</span>
+      </div>
+    </div>
+    <UiDemo />
+  </div> -->
   <div
-    class="hidden md:block h-60 z-20 fixed mix-blend-hard-light pointer-events-none bg-gradient-to-t from-muted to-transparent bottom-0 left-5 right-5 scroll-fade-out-and-move-bottom"
+    class="hidden md:block left-1 right-1 h-[calc(100%+var(--hero-height))] -mt-(--hero-height) pt-(--hero-height) absolute z-0 scroll-fade-out bg-background dark:bg-muted/30 top-14 border rounded-t-3xl"
+    style={{
+      "--hero-height": "365.5px",
+    }}
   >
   </div>
 </StarlightPage>
@@ -77,6 +92,16 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     letter-spacing: calc(var(--letter-spacing) - 0.025em);
     @apply text-3xl font-medium text-left text-balance block max-w-xl leading-[1.15];
   }
+
+  /* .browser-frame {
+    box-shadow:
+      0px 0px 0px 1.18145px rgba(5, 23, 41, 0.08),
+      0px 1.18145px 1.18145px rgba(5, 23, 41, 0.03),
+      0px 2.36289px 2.36289px rgba(5, 23, 41, 0.04),
+      0px 4.72579px 4.72579px rgba(5, 23, 41, 0.05),
+      0px 9.45157px 28.3547px rgba(5, 23, 41, 0.07),
+      0px 1.18145px 0px rgba(5, 23, 41, 0.08);
+  } */
 
   .kudos {
     display: none;
@@ -98,42 +123,16 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     }
   }
 
-  @media (min-width: 48rem) {
-    html {
-      scroll-snap-type: y mandatory;
-    }
-  }
-
   .content-panel:first-child {
     @apply pt-12;
   }
 
   .main-frame {
-    height: 100svh;
-    padding-top: 0;
     padding-inline: 0;
-    /* padding-right: 0; */
-  }
-
-  .main-frame > .lg\:sl-flex,
-  .main-frame main[data-pagefind-body],
-  .main-frame main > .content-panel:last-child,
-  .main-frame main > .content-panel:last-child > .sl-container,
-  .main-frame
-    main
-    > .content-panel:last-child
-    > .sl-container
-    > .sl-markdown-content {
-    @apply h-full;
-  }
-
-  .main-frame > div {
-    background-color: transparent;
-    border: 0;
   }
 
   .main-pane > main {
-    @apply pb-0;
+    @apply pb-0 mb-0;
   }
 
   .hero {
@@ -147,21 +146,11 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     .hero {
       scroll-snap-align: center;
 
-      @apply sticky top-18 px-0 pt-12;
+      @apply relative top-4 px-0 pt-14;
     }
 
     .main-pane > main {
       padding: var(--sl-main-pad);
-    }
-  }
-
-  @supports (animation-timeline: auto) {
-    @media (min-width: 48rem) {
-      .hero {
-        animation: fadeOutAtBottom ease-out both;
-        animation-timeline: scroll(root block);
-        animation-range: 40% 80%;
-      }
     }
   }
 
@@ -170,11 +159,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   }
 
   .sl-markdown-content {
-    @apply mx-auto max-w-full mt-0 pt-0;
-  }
-
-  .fade {
-    @apply hidden;
+    @apply mx-auto max-w-full mt-0 pt-0 relative;
   }
 
   .actions {
@@ -183,53 +168,5 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
   footer.sl-flex {
     @apply hidden;
-  }
-
-  @keyframes fadeOutAtBottom {
-    to {
-      opacity: 0;
-      transform: scale(0.99);
-    }
-  }
-
-  @keyframes fadeOutAtBottomAndMoveBottom {
-    to {
-      opacity: 0;
-      transform: translateY(100%);
-    }
-  }
-
-  @keyframes maxWidthFull {
-    to {
-      transform: scale(1) translateZ(0);
-    }
-  }
-
-  /* @media (min-width: 48rem) {
-    .browser {
-      transform: scale(0.92) translateZ(0);
-    }
-  } */
-
-  @media (min-width: 48rem) {
-    .browser {
-      transform: scale(0.92) translateZ(0);
-      animation: maxWidthFull linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 0% 100%;
-      transform-origin: center top;
-    }
-
-    .scroll-fade-out {
-      animation: fadeOutAtBottom linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 40% 80%;
-    }
-
-    .scroll-fade-out-and-move-bottom {
-      animation: fadeOutAtBottomAndMoveBottom linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 40% 80%;
-    }
   }
 </style>
