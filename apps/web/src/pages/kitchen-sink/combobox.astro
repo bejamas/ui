@@ -68,14 +68,13 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 
       <KitchenSinkSection title="Sizing (Match Button)">
         <p class="text-sm text-muted-foreground">
-          `ComboboxInput` uses `InputGroup` sizing under the hood. Default is
-          `h-9`, and you can build `sm`/`lg` variants with a manual
-          `InputGroup`.
+          Use `size` on `ComboboxInput` to match `Button` sizing. Default is
+          `h-9`, with `sm` (`h-8`) and `lg` (`h-10`) variants.
         </p>
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <Combobox class="w-[220px]">
-              <ComboboxInput placeholder="Default (h-9)" />
+              <ComboboxInput size="default" placeholder="Default (h-9)" />
               <ComboboxContent>
                 <ComboboxList>
                   <ComboboxItem value="astro-default">Astro</ComboboxItem>
@@ -89,24 +88,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 
           <div class="flex items-center gap-2">
             <Combobox class="w-[220px]">
-              <InputGroup size="sm">
-                <InputGroupInput
-                  data-slot="combobox-input"
-                  placeholder="Small (h-8)"
-                  autocomplete="off"
-                />
-                <InputGroupAddon align="inline-end" class="pr-3">
-                  <button
-                    data-slot="combobox-trigger"
-                    type="button"
-                    tabindex={-1}
-                    class="text-muted-foreground/80 hover:text-foreground flex items-center justify-center transition-colors"
-                    aria-label="Toggle menu"
-                  >
-                    <ChevronDownIcon class="size-4" />
-                  </button>
-                </InputGroupAddon>
-              </InputGroup>
+              <ComboboxInput size="sm" placeholder="Small (h-8)" />
               <ComboboxContent>
                 <ComboboxList>
                   <ComboboxItem value="astro-sm">Astro</ComboboxItem>
@@ -120,24 +102,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 
           <div class="flex items-center gap-2">
             <Combobox class="w-[220px]">
-              <InputGroup size="lg">
-                <InputGroupInput
-                  data-slot="combobox-input"
-                  placeholder="Large (h-10)"
-                  autocomplete="off"
-                />
-                <InputGroupAddon align="inline-end" class="pr-3">
-                  <button
-                    data-slot="combobox-trigger"
-                    type="button"
-                    tabindex={-1}
-                    class="text-muted-foreground/80 hover:text-foreground flex items-center justify-center transition-colors"
-                    aria-label="Toggle menu"
-                  >
-                    <ChevronDownIcon class="size-4" />
-                  </button>
-                </InputGroupAddon>
-              </InputGroup>
+              <ComboboxInput size="lg" placeholder="Large (h-10)" />
               <ComboboxContent>
                 <ComboboxList>
                   <ComboboxItem value="astro-lg">Astro</ComboboxItem>

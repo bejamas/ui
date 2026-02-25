@@ -26,7 +26,7 @@ const {
 
 const contentVariants = cva(
   [
-    "group/select-content focus-visible:outline-none z-50 hidden data-[state=open]:block",
+    "group/select-content focus-visible:outline-none z-50",
     "bg-popover text-popover-foreground min-w-24 rounded-lg shadow-md ring-1 ring-foreground/10",
     "p-1 max-h-[var(--select-content-available-height,300px)] overflow-x-hidden overflow-y-auto",
   ],
@@ -35,7 +35,7 @@ const contentVariants = cva(
       position: {
         "item-aligned": "relative",
         popper:
-          "fixed transition-discrete starting:data-[state=closed]:block min-w-[var(--select-trigger-width)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 origin-(--transform-origin) [--tw-animation-fill-mode:both]",
+          "fixed min-w-[var(--select-trigger-width)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 origin-(--transform-origin) [--tw-animation-fill-mode:both]",
       },
       side: {
         top: "",
@@ -64,6 +64,7 @@ const contentVariants = cva(
 
 <div
   {...rest}
+  hidden
   data-slot="select-content"
   data-size={size}
   data-position={position}

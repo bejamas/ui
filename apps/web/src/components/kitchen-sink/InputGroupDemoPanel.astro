@@ -78,7 +78,7 @@ const { size = "default" } = Astro.props as Props;
     <div class="space-y-4">
       <Field>
         <FieldLabel>Default (No Input Group)</FieldLabel>
-        <Input placeholder="Default input" />
+        <Input placeholder="Default input" size={size} />
       </Field>
       <Field>
         <FieldLabel>Input Group</FieldLabel>
@@ -138,7 +138,7 @@ const { size = "default" } = Astro.props as Props;
         <FieldLabel>Block Start</FieldLabel>
         <InputGroup size={size}>
           <InputGroupInput placeholder="Enter your first name" />
-          <InputGroupAddon align="block-start" class="border-b">
+          <InputGroupAddon align="block-start" class="border-b border-input">
             <InputGroupText>
               First Name
               <InfoIcon class="size-3.5" />
@@ -150,7 +150,7 @@ const { size = "default" } = Astro.props as Props;
         <FieldLabel>Block End</FieldLabel>
         <InputGroup size={size}>
           <InputGroupInput placeholder="Write a bio..." />
-          <InputGroupAddon align="block-end" class="border-t">
+          <InputGroupAddon align="block-end" class="border-t border-input">
             <InputGroupText>
               20/240 characters
               <InfoIcon class="size-3.5" />
@@ -212,7 +212,7 @@ const { size = "default" } = Astro.props as Props;
         <InputGroup size={size} class="max-w-xs">
           <InputGroupInput placeholder="InputGroup size preview" />
         </InputGroup>
-        <Button variant="outline">Button (static)</Button>
+        <Button variant="outline" size={size}>Button (static)</Button>
       </div>
     </Field>
   </KitchenSinkSection>
@@ -411,7 +411,11 @@ const { size = "default" } = Astro.props as Props;
         <InputGroup size={size}>
           <InputGroupInput placeholder="Username" value="johndoe" />
           <InputGroupAddon align="inline-end">
-            <Badge variant="default" size="sm" class="bg-green-600">
+            <Badge
+              variant="default"
+              size="sm"
+              class="bg-emerald-600 dark:bg-emerald-400"
+            >
               <CheckIcon class="size-3" />
               Available
             </Badge>

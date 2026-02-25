@@ -12,14 +12,16 @@ import XIcon from "@lucide/astro/icons/x";
 
 type Props = {
   class?: string;
+  size?: "sm" | "default" | "lg";
   placeholder?: string;
   disabled?: boolean;
   showTrigger?: boolean;
   showClear?: boolean;
-} & HTMLAttributes<"input">;
+} & Omit<HTMLAttributes<"input">, "size">;
 
 const {
   class: className = "",
+  size = "default",
   placeholder,
   disabled = false,
   showTrigger = true,
@@ -28,7 +30,7 @@ const {
 } = Astro.props as Props;
 ---
 
-<InputGroup class={cn("w-auto", className)}>
+<InputGroup size={size} class={cn("w-auto", className)}>
   <InputGroupInput
     data-slot="combobox-input"
     placeholder={placeholder}
@@ -38,7 +40,7 @@ const {
   />
   {
     (showTrigger || showClear) && (
-      <InputGroupAddon align="inline-end" class="pr-3">
+      <InputGroupAddon align="inline-end">
         {showClear && (
           <InputGroupButton
             data-slot="combobox-clear"
@@ -47,23 +49,27 @@ const {
             class="hidden [[data-value]_&]:inline-flex"
             aria-label="Clear selection"
           >
-            <XIcon class="size-3.5" />
+            <XIcon class="size-3.5 group-data-[size=sm]/input-group:size-3" />
           </InputGroupButton>
         )}
         {showTrigger && (
-          <button
+          <InputGroupButton
             data-slot="combobox-trigger"
             type="button"
+            size="icon-xs"
             tabindex={-1}
             disabled={disabled}
             class={cn(
-              "text-muted-foreground/80 hover:text-foreground flex items-center justify-center transition-colors",
+              "text-muted-foreground",
               showClear && "[[data-value]_&]:hidden",
             )}
             aria-label="Toggle menu"
           >
-            <ChevronDownIcon class="size-4" />
-          </button>
+            <ChevronDownIcon
+              data-slot="combobox-icon"
+              class="size-4 group-data-[size=sm]/input-group:size-3.5"
+            />
+          </InputGroupButton>
         )}
       </InputGroupAddon>
     )

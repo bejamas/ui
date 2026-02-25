@@ -167,6 +167,40 @@
  *   </ComboboxContent>
  * </Combobox>
  *
+ * ### Sizing
+ *
+ * Use the `size` prop on `ComboboxInput` to match button/input sizing.
+ *
+ * <div class="grid w-full max-w-sm gap-3">
+ *   <Combobox>
+ *     <ComboboxInput size="sm" placeholder="Small (h-8)" />
+ *     <ComboboxContent>
+ *       <ComboboxList>
+ *         <ComboboxItem value="astro-sm">Astro</ComboboxItem>
+ *         <ComboboxItem value="next-sm">Next.js</ComboboxItem>
+ *       </ComboboxList>
+ *     </ComboboxContent>
+ *   </Combobox>
+ *   <Combobox>
+ *     <ComboboxInput placeholder="Default (h-9)" />
+ *     <ComboboxContent>
+ *       <ComboboxList>
+ *         <ComboboxItem value="astro-default">Astro</ComboboxItem>
+ *         <ComboboxItem value="next-default">Next.js</ComboboxItem>
+ *       </ComboboxList>
+ *     </ComboboxContent>
+ *   </Combobox>
+ *   <Combobox>
+ *     <ComboboxInput size="lg" placeholder="Large (h-10)" />
+ *     <ComboboxContent>
+ *       <ComboboxList>
+ *         <ComboboxItem value="astro-lg">Astro</ComboboxItem>
+ *         <ComboboxItem value="next-lg">Next.js</ComboboxItem>
+ *       </ComboboxList>
+ *     </ComboboxContent>
+ *   </Combobox>
+ * </div>
+ *
  * ### Groups
  *
  * Use the `ComboboxGroup` and `ComboboxLabel` to group items and add a label to the group.
