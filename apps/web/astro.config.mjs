@@ -7,7 +7,6 @@ import starlightThemeBejamas from "starlight-theme-bejamas";
 import starlightPageActions from "starlight-page-actions";
 
 import vercel from "@astrojs/vercel";
-import netlify from "@astrojs/netlify";
 import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
 import { posthog } from "./src/utils/posthog";
@@ -244,9 +243,7 @@ export default defineConfig({
       noExternal: ["zod"],
     },
   },
-  adapter: isVercel
-    ? vercel({
-        skewProtection: true,
-      })
-    : netlify(),
+  adapter: vercel({
+    skewProtection: true,
+  }),
 });
