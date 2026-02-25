@@ -79,12 +79,12 @@ const {
 } = Astro.props as Props;
 
 const cardVariants = cva(
-  "group/card relative bg-card overflow-clip text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm group/card [&:has(>_[data-slot=card-media]:first-child_img)]:pt-0 [a]:hover:bg-accent/5 [a]:transition-colors duration-100",
+  "group/card bg-card overflow-clip text-card-foreground flex flex-col gap-6 rounded-xl ring-1 ring-border py-6 shadow-sm group/card [&:has(>_[data-slot=card-media]:first-child_img)]:pt-0 [a]:hover:bg-accent/5 [a]:transition-colors duration-100",
   {
     variants: {
       variant: {
         default: "",
-        ghost: "border-transparent bg-transparent shadow-none",
+        ghost: "ring-transparent bg-transparent shadow-none",
       },
     },
     defaultVariants: {
