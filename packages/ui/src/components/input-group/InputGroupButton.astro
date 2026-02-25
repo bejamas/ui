@@ -30,15 +30,16 @@ const {
 } = Astro.props as Props;
 
 const inputGroupButtonVariants = cva(
-  "gap-2 text-sm shadow-none flex items-center",
+  "inline-flex shrink-0 items-center justify-center shadow-none",
   {
     variants: {
       size: {
-        xs: "h-6 gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
-        sm: "",
+        xs: "rounded-[calc(var(--radius)-3px)] group-data-[size=sm]/input-group:h-6 group-data-[size=sm]/input-group:gap-1 group-data-[size=sm]/input-group:px-1.5 group-data-[size=sm]/input-group:text-xs group-data-[size=sm]/input-group:[&>svg:not([class*='size-'])]:size-3.5 group-data-[size=default]/input-group:h-7 group-data-[size=default]/input-group:gap-1.5 group-data-[size=default]/input-group:px-2 group-data-[size=default]/input-group:text-sm group-data-[size=default]/input-group:[&>svg:not([class*='size-'])]:size-4 group-data-[size=lg]/input-group:h-8 group-data-[size=lg]/input-group:gap-1.5 group-data-[size=lg]/input-group:px-2.5 group-data-[size=lg]/input-group:text-base group-data-[size=lg]/input-group:[&>svg:not([class*='size-'])]:size-4",
+        sm: "rounded-[calc(var(--radius)-2px)] group-data-[size=sm]/input-group:h-7 group-data-[size=sm]/input-group:gap-1.5 group-data-[size=sm]/input-group:px-2.5 group-data-[size=sm]/input-group:text-xs group-data-[size=default]/input-group:h-8 group-data-[size=default]/input-group:gap-1.5 group-data-[size=default]/input-group:px-3 group-data-[size=default]/input-group:text-sm group-data-[size=lg]/input-group:h-9 group-data-[size=lg]/input-group:gap-2 group-data-[size=lg]/input-group:px-3.5 group-data-[size=lg]/input-group:text-base",
         "icon-xs":
-          "size-6 rounded-[calc(var(--radius)-3px)] p-0 has-[>svg]:p-0",
-        "icon-sm": "size-8 p-0 has-[>svg]:p-0",
+          "rounded-[calc(var(--radius)-3px)] p-0 has-[>svg]:p-0 group-data-[size=sm]/input-group:size-6 group-data-[size=default]/input-group:size-7 group-data-[size=lg]/input-group:size-8",
+        "icon-sm":
+          "p-0 has-[>svg]:p-0 group-data-[size=sm]/input-group:size-7 group-data-[size=default]/input-group:size-8 group-data-[size=lg]/input-group:size-9",
       },
     },
     defaultVariants: {
@@ -63,7 +64,6 @@ const Tag = rawTag ?? undefined;
     <Button
       type={type}
       variant={variant}
-      data-size={size}
       data-slot="input-group-button"
       class={cn(inputGroupButtonVariants({ size }), className)}
       {...(rest as any)}

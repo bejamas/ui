@@ -1,5 +1,5 @@
 ---
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
 type Props = {
@@ -13,7 +13,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   data-slot="input-group-text"
   class={cn(
-    "text-muted-foreground gap-2 text-sm [&_svg:not([class*='size-'])]:size-4 flex items-center [&_svg]:pointer-events-none",
+    "text-muted-foreground group-data-[size=sm]/input-group:gap-1.5 group-data-[size=default]/input-group:gap-2 group-data-[size=lg]/input-group:gap-2.5 group-data-[size=sm]/input-group:text-xs group-data-[size=default]/input-group:text-sm group-data-[size=lg]/input-group:text-base [&_svg:not([class*='size-'])]:size-4 group-data-[size=sm]/input-group:[&_svg:not([class*='size-'])]:size-3.5 group-data-[size=lg]/input-group:[&_svg:not([class*='size-'])]:size-[18px] flex items-center [&_svg]:pointer-events-none",
     className,
   )}
 >

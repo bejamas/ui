@@ -22,13 +22,13 @@ const {
 
 const contentVariants = cva(
   [
-    "z-50 hidden data-[state=open]:block [transition:display_150ms_allow-discrete] starting:data-[state=closed]:block outline-hidden",
+    "z-50 outline-hidden",
     "bg-popover text-popover-foreground min-w-[var(--combobox-input-width,8rem)] overflow-hidden rounded-lg shadow-md ring-1 ring-foreground/10",
     "data-[state=open]:animate-in data-[state=closed]:animate-out",
     "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
     "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
     "origin-(--transform-origin)",
-    "*:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:shadow-none",
+    "*:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:shadow-none",
     "[--tw-animation-fill-mode:both]",
   ],
   {

@@ -8,32 +8,26 @@ type Props = {
   class?: string;
 } & HTMLAttributes<"textarea">;
 
-const {
-  as: rawTag,
-  class: className = "",
-  ...rest
-} = Astro.props as Props;
+const { as: rawTag, class: className = "", ...rest } = Astro.props as Props;
 
 const Tag = rawTag ?? undefined;
+
+const textareaClasses =
+  "flex-1 min-w-0 resize-none rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent dark:disabled:bg-transparent group-data-[size=sm]/input-group:px-2.5 group-data-[size=sm]/input-group:py-2 group-data-[size=sm]/input-group:text-xs group-data-[size=default]/input-group:px-3 group-data-[size=default]/input-group:py-2.5 group-data-[size=default]/input-group:text-sm group-data-[size=lg]/input-group:px-3.5 group-data-[size=lg]/input-group:py-3 group-data-[size=lg]/input-group:text-base";
 ---
 
-{Tag ? (
-  <Tag
-    {...rest}
-    data-slot="input-group-control"
-    class={cn(
-      "flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent",
-      className,
-    )}
-  />
-) : (
-  <Textarea
-    data-slot="input-group-control"
-    class={cn(
-      "flex-1 resize-none rounded-none border-0 bg-transparent py-3 shadow-none focus-visible:ring-0 dark:bg-transparent",
-      className,
-    )}
-    {...(rest as any)}
-  />
-)}
-
+{
+  Tag ? (
+    <Tag
+      {...rest}
+      data-slot="input-group-control"
+      class={cn(textareaClasses, className)}
+    />
+  ) : (
+    <Textarea
+      data-slot="input-group-control"
+      class={cn(textareaClasses, className)}
+      {...(rest as any)}
+    />
+  )
+}
