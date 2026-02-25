@@ -39,7 +39,9 @@ import {
     <!-- 2. Position Modes -->
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">2. Position Modes</h2>
-      <p class="text-sm text-muted-foreground">Side-by-side: item-aligned vs popper</p>
+      <p class="text-sm text-muted-foreground">
+        Side-by-side: item-aligned vs popper
+      </p>
       <div class="flex gap-8">
         <div class="space-y-2">
           <Label>Item-aligned (default)</Label>
@@ -56,7 +58,7 @@ import {
         </div>
         <div class="space-y-2">
           <Label>Popper mode</Label>
-          <Select position="popper" class="w-[180px]">
+          <Select class="w-[180px]">
             <SelectTrigger>
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
@@ -73,15 +75,17 @@ import {
     <!-- 2b. Popper Mode Options -->
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">2b. Popper Mode Options</h2>
-      <p class="text-sm text-muted-foreground">Different side, align, and offset configurations</p>
+      <p class="text-sm text-muted-foreground">
+        Different side, align, and offset configurations
+      </p>
       <div class="flex flex-wrap gap-8">
         <div class="space-y-2">
           <Label>Side: top</Label>
-          <Select position="popper" side="top" class="w-[180px]">
+          <Select class="w-[180px]">
             <SelectTrigger>
               <SelectValue placeholder="Opens above" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent position="popper" side="top">
               <SelectItem value="option1">Option 1</SelectItem>
               <SelectItem value="option2">Option 2</SelectItem>
               <SelectItem value="option3">Option 3</SelectItem>
@@ -90,11 +94,11 @@ import {
         </div>
         <div class="space-y-2">
           <Label>Align: center</Label>
-          <Select position="popper" align="center" class="w-[180px]">
+          <Select class="w-[180px]">
             <SelectTrigger>
               <SelectValue placeholder="Centered" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent position="popper" align="center">
               <SelectItem value="option1">Option 1</SelectItem>
               <SelectItem value="option2">Option 2</SelectItem>
               <SelectItem value="option3">Option 3</SelectItem>
@@ -103,11 +107,11 @@ import {
         </div>
         <div class="space-y-2">
           <Label>Align: end</Label>
-          <Select position="popper" align="end" class="w-[180px]">
+          <Select class="w-[180px]">
             <SelectTrigger>
               <SelectValue placeholder="End aligned" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent position="popper" align="end">
               <SelectItem value="option1">Option 1</SelectItem>
               <SelectItem value="option2">Option 2</SelectItem>
               <SelectItem value="option3">Option 3</SelectItem>
@@ -116,11 +120,11 @@ import {
         </div>
         <div class="space-y-2">
           <Label>With sideOffset: 12</Label>
-          <Select position="popper" sideOffset={12} class="w-[180px]">
+          <Select class="w-[180px]">
             <SelectTrigger>
               <SelectValue placeholder="Extra gap" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent position="popper" sideOffset={12}>
               <SelectItem value="option1">Option 1</SelectItem>
               <SelectItem value="option2">Option 2</SelectItem>
               <SelectItem value="option3">Option 3</SelectItem>
@@ -132,8 +136,12 @@ import {
 
     <!-- 3. Groups with Labels and Separators -->
     <div class="space-y-4">
-      <h2 class="text-lg font-semibold">3. Groups with Labels and Separators</h2>
-      <p class="text-sm text-muted-foreground">Organized with Fruits/Vegetables/Proteins</p>
+      <h2 class="text-lg font-semibold">
+        3. Groups with Labels and Separators
+      </h2>
+      <p class="text-sm text-muted-foreground">
+        Organized with Fruits/Vegetables/Proteins
+      </p>
       <Select class="w-[220px]">
         <SelectTrigger>
           <SelectValue placeholder="Select food" />
@@ -166,7 +174,9 @@ import {
     <!-- 4. Scrollable (Timezones) -->
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">4. Scrollable</h2>
-      <p class="text-sm text-muted-foreground">Timezone selector with many items</p>
+      <p class="text-sm text-muted-foreground">
+        Timezone selector with many items
+      </p>
       <Select class="w-[280px]">
         <SelectTrigger>
           <SelectValue placeholder="Select timezone" />
@@ -205,7 +215,9 @@ import {
             <SelectItem value="awst">Australian Western Time (AWST)</SelectItem>
             <SelectItem value="acst">Australian Central Time (ACST)</SelectItem>
             <SelectItem value="aest">Australian Eastern Time (AEST)</SelectItem>
-            <SelectItem value="nzst">New Zealand Standard Time (NZST)</SelectItem>
+            <SelectItem value="nzst"
+              >New Zealand Standard Time (NZST)</SelectItem
+            >
           </SelectGroup>
         </SelectContent>
       </Select>
@@ -214,7 +226,9 @@ import {
     <!-- 5. Sizes -->
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">5. Sizes</h2>
-      <p class="text-sm text-muted-foreground">sm (h-8), default (h-9), lg (h-10) - matching Button and Input sizes</p>
+      <p class="text-sm text-muted-foreground">
+        sm (h-8), default (h-9), lg (h-10) - matching Button and Input sizes
+      </p>
       <div class="flex items-end gap-4">
         <div class="space-y-2">
           <Label>Small</Label>
@@ -283,9 +297,12 @@ import {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="available1">Available Option 1</SelectItem>
-          <SelectItem value="unavailable1" disabled>Unavailable Option</SelectItem>
+          <SelectItem value="unavailable1" disabled
+            >Unavailable Option</SelectItem
+          >
           <SelectItem value="available2">Available Option 2</SelectItem>
-          <SelectItem value="unavailable2" disabled>Also Unavailable</SelectItem>
+          <SelectItem value="unavailable2" disabled>Also Unavailable</SelectItem
+          >
           <SelectItem value="available3">Available Option 3</SelectItem>
         </SelectContent>
       </Select>
@@ -327,7 +344,9 @@ import {
     <!-- 10. Event Testing -->
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">10. Event Testing</h2>
-      <p class="text-sm text-muted-foreground">Console logging select:change and select:open-change</p>
+      <p class="text-sm text-muted-foreground">
+        Console logging select:change and select:open-change
+      </p>
       <Select id="event-select" class="w-[200px]">
         <SelectTrigger>
           <SelectValue placeholder="Check console" />
@@ -356,7 +375,9 @@ import {
     <!-- 11. Programmatic Control -->
     <div class="space-y-4">
       <h2 class="text-lg font-semibold">11. Programmatic Control</h2>
-      <p class="text-sm text-muted-foreground">Buttons to set value, open, close</p>
+      <p class="text-sm text-muted-foreground">
+        Buttons to set value, open, close
+      </p>
       <div class="flex flex-col gap-4">
         <Select id="programmatic-select" class="w-[200px]">
           <SelectTrigger>
@@ -402,35 +423,43 @@ import {
         </div>
       </div>
       <script>
-        const programmaticSelect = document.getElementById("programmatic-select");
+        const programmaticSelect = document.getElementById(
+          "programmatic-select",
+        );
 
-        document.getElementById("set-apple-btn")?.addEventListener("click", () => {
-          programmaticSelect?.dispatchEvent(
-            new CustomEvent("select:set", { detail: { value: "apple" } })
-          );
-        });
+        document
+          .getElementById("set-apple-btn")
+          ?.addEventListener("click", () => {
+            programmaticSelect?.dispatchEvent(
+              new CustomEvent("select:set", { detail: { value: "apple" } }),
+            );
+          });
 
-        document.getElementById("set-banana-btn")?.addEventListener("click", () => {
-          programmaticSelect?.dispatchEvent(
-            new CustomEvent("select:set", { detail: { value: "banana" } })
-          );
-        });
+        document
+          .getElementById("set-banana-btn")
+          ?.addEventListener("click", () => {
+            programmaticSelect?.dispatchEvent(
+              new CustomEvent("select:set", { detail: { value: "banana" } }),
+            );
+          });
 
-        document.getElementById("set-cherry-btn")?.addEventListener("click", () => {
-          programmaticSelect?.dispatchEvent(
-            new CustomEvent("select:set", { detail: { value: "cherry" } })
-          );
-        });
+        document
+          .getElementById("set-cherry-btn")
+          ?.addEventListener("click", () => {
+            programmaticSelect?.dispatchEvent(
+              new CustomEvent("select:set", { detail: { value: "cherry" } }),
+            );
+          });
 
         document.getElementById("open-btn")?.addEventListener("click", () => {
           programmaticSelect?.dispatchEvent(
-            new CustomEvent("select:set", { detail: { open: true } })
+            new CustomEvent("select:set", { detail: { open: true } }),
           );
         });
 
         document.getElementById("close-btn")?.addEventListener("click", () => {
           programmaticSelect?.dispatchEvent(
-            new CustomEvent("select:set", { detail: { open: false } })
+            new CustomEvent("select:set", { detail: { open: false } }),
           );
         });
       </script>
@@ -485,16 +514,18 @@ import {
       </form>
       <div id="form-output" class="text-sm text-muted-foreground"></div>
       <script>
-        document.getElementById("test-form")?.addEventListener("submit", (e) => {
-          e.preventDefault();
-          const formData = new FormData(e.target as HTMLFormElement);
-          const data = Object.fromEntries(formData.entries());
-          const output = document.getElementById("form-output");
-          if (output) {
-            output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
-          }
-          console.log("Form submitted:", data);
-        });
+        document
+          .getElementById("test-form")
+          ?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target as HTMLFormElement);
+            const data = Object.fromEntries(formData.entries());
+            const output = document.getElementById("form-output");
+            if (output) {
+              output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
+            }
+            console.log("Form submitted:", data);
+          });
       </script>
     </div>
   </section>

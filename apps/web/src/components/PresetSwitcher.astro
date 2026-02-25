@@ -168,6 +168,21 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
     const updateUrl = (rawUrl: string): string => {
       try {
         const url = new URL(rawUrl, window.location.href);
+
+        // Handle Vercel image optimization proxy
+        if (url.pathname === "/_vercel/image" && url.searchParams.has("url")) {
+          const inner = new URL(url.searchParams.get("url")!);
+          if (inner.hostname !== "gradient.bejamas.com") return rawUrl;
+          const hasTheme = inner.searchParams.get("theme") === themeKey;
+          const hasMode = inner.searchParams.get("mode") === mode;
+          if (hasTheme && hasMode) return rawUrl;
+          inner.searchParams.set("theme", themeKey);
+          inner.searchParams.set("mode", mode);
+          url.searchParams.set("url", inner.toString());
+          return url.pathname + "?" + url.searchParams.toString();
+        }
+
+        // Direct URL fallback
         if (url.hostname !== "gradient.bejamas.com") return rawUrl;
         const hasTheme = url.searchParams.get("theme") === themeKey;
         const hasMode = url.searchParams.get("mode") === mode;
