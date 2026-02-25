@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import { Button } from "@bejamas/ui/components/button";
 import { ButtonGroup } from "@bejamas/ui/components/button-group";
 import {
@@ -223,25 +224,23 @@ const countries = [
     <!-- Blog Post Card -->
     <Card>
       <CardMedia class="m-1">
-        <img
+        <Image
           src="https://gradient.bejamas.com/api/gradient.png?funkiness=30&contrast=0&w=748&h=500&seed=bejamas"
           alt="Gradient Cover"
           class="w-full h-full object-cover"
           width="374"
           height="250"
-          loading="lazy"
+          loading="eager"
         />
       </CardMedia>
       <CardHeader>
         <div class="flex items-center gap-2 justify-between">
           <AvatarGroup>
             <Avatar>
-              <AvatarImage>
-                <img
-                  src="https://gradient.bejamas.com/api/gradient.png?funkiness=90&contrast=0&w=80&h=80&seed=bejamas-avatar"
-                  alt="grdient avatar"
-                />
-              </AvatarImage>
+              <AvatarImage
+                src="https://gradient.bejamas.com/api/gradient.png?funkiness=90&contrast=0&w=80&h=80&seed=bejamas-avatar"
+                alt="grdient avatar"
+              />
               <AvatarFallback>AW</AvatarFallback>
             </Avatar>
             <Avatar>
@@ -287,30 +286,35 @@ const countries = [
     <!-- Marquee -->
     <div class="mt-8">
       <Marquee class="dark:invert">
-        <img
+        <Image
           src="/demo/logo/sonos.svg"
           alt="Sonos"
           class="h-5 self-center mx-10"
+          loading="lazy"
         />
-        <img
+        <Image
           src="/demo/logo/uber.svg"
           alt="Uber"
           class="h-5 self-center mx-10"
+          loading="lazy"
         />
-        <img
+        <Image
           src="/demo/logo/visa.svg"
           alt="Visa"
           class="h-5 self-center mx-10"
+          loading="lazy"
         />
-        <img
+        <Image
           src="/demo/logo/coca-cola.svg"
           alt="Coca-Cola"
           class="h-6 self-center mx-10"
+          loading="lazy"
         />
-        <img
+        <Image
           src="/demo/logo/nike.svg"
           alt="Nike"
           class="h-5 self-center mx-10"
+          loading="lazy"
         />
       </Marquee>
     </div>
