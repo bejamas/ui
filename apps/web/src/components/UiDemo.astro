@@ -1,0 +1,1066 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import { ButtonGroup } from "@bejamas/ui/components/button-group";
+import {
+  Card,
+  CardMedia,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@bejamas/ui/components/card";
+import { Date } from "@bejamas/ui/components/date";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  AvatarGroup,
+} from "@bejamas/ui/components/avatar";
+import { Badge } from "@bejamas/ui/components/badge";
+import { Input } from "@bejamas/ui/components/input";
+import { Textarea } from "@bejamas/ui/components/textarea";
+import { Label } from "@bejamas/ui/components/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@bejamas/ui/components/select";
+import {
+  Field,
+  FieldLabel,
+  FieldDescription,
+} from "@bejamas/ui/components/field";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupButton,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@bejamas/ui/components/input-group";
+import { Kbd, KbdGroup } from "@bejamas/ui/components/kbd";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import {
+  Slider,
+  SliderTrack,
+  SliderRange,
+  SliderThumb,
+} from "@bejamas/ui/components/slider";
+import {
+  Item,
+  ItemContent,
+  ItemTitle,
+  ItemDescription,
+  ItemActions,
+  ItemMedia,
+} from "@bejamas/ui/components/item";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@bejamas/ui/components/tabs";
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from "@bejamas/ui/components/hover-card";
+import { Marquee } from "@bejamas/ui/components/marquee";
+import { Checkbox } from "@bejamas/ui/components/checkbox";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogContent,
+  DialogFooter,
+} from "@bejamas/ui/components/dialog";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverDescription,
+} from "@bejamas/ui/components/popover";
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxLabel,
+  ComboboxSeparator,
+} from "@bejamas/ui/components/combobox";
+import { Separator } from "@bejamas/ui/components/separator";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@bejamas/ui/components/accordion";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  NavigationMenuIndicator,
+} from "@bejamas/ui/components/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuGroup,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+} from "@bejamas/ui/components/dropdown-menu";
+import { Switch } from "@bejamas/ui/components/switch";
+import {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+} from "@bejamas/ui/components/alert";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@bejamas/ui/components/tooltip";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@bejamas/ui/components/toggle-group";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbSeparator,
+} from "@bejamas/ui/components/breadcrumb";
+import {
+  UploadIcon,
+  SaveIcon,
+  ShieldIcon,
+  InfoIcon,
+  BoldIcon,
+  PlusIcon,
+  PaperclipIcon,
+  AlignLeftIcon,
+  AlignCenterIcon,
+  AlignRightIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  TerminalIcon,
+  UserIcon,
+  SettingsIcon,
+  LogOutIcon,
+  CreditCardIcon,
+  HomeIcon,
+  BookOpenIcon,
+  ComponentIcon,
+  SearchIcon,
+  CheckIcon,
+  ArrowUpIcon,
+} from "@lucide/astro";
+
+const countries = [
+  {
+    continent: "North America",
+    items: [
+      { code: "US", name: "United States" },
+      { code: "CA", name: "Canada" },
+      { code: "MX", name: "Mexico" },
+    ],
+  },
+  {
+    continent: "Europe",
+    items: [
+      { code: "GB", name: "United Kingdom" },
+      { code: "FR", name: "France" },
+      { code: "DE", name: "Germany" },
+    ],
+  },
+  {
+    continent: "Asia",
+    items: [
+      { code: "JP", name: "Japan" },
+      { code: "KR", name: "South Korea" },
+      { code: "IN", name: "India" },
+    ],
+  },
+  {
+    continent: "South America",
+    items: [
+      { code: "BR", name: "Brazil" },
+      { code: "AR", name: "Argentina" },
+      { code: "CO", name: "Colombia" },
+    ],
+  },
+  {
+    continent: "Africa",
+    items: [
+      { code: "NG", name: "Nigeria" },
+      { code: "ZA", name: "South Africa" },
+      { code: "KE", name: "Kenya" },
+    ],
+  },
+];
+---
+
+<section
+  class="not-content relative z-10 max-w-7xl lg:max-w-full pt-0 px-0 mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10"
+>
+  <!-- LEFT COLUMN -->
+  <div class="space-y-6">
+    <!-- Blog Post Card -->
+    <Card>
+      <CardMedia>
+        <img
+          src="https://gradient.bejamas.com/api/gradient.png?funkiness=30&contrast=0&w=748&h=500&seed=bejamas"
+          alt="Gradient Cover"
+          class="w-full h-full object-cover"
+          width="374"
+          height="250"
+          loading="lazy"
+        />
+      </CardMedia>
+      <CardHeader>
+        <div class="flex items-center gap-2 justify-between">
+          <AvatarGroup>
+            <Avatar>
+              <AvatarImage>
+                <img
+                  src="https://gradient.bejamas.com/api/gradient.png?funkiness=90&contrast=0&w=80&h=80&seed=bejamas-avatar"
+                  alt="grdient avatar"
+                />
+              </AvatarImage>
+              <AvatarFallback>AW</AvatarFallback>
+            </Avatar>
+            <Avatar>
+              <AvatarImage
+                src="https://gradient.bejamas.com/api/gradient.png?funkiness=90&contrast=0&w=80&h=80&seed=bejamas-avatar-2"
+                alt="grdient avatar"
+              />
+              <AvatarFallback>AW</AvatarFallback>
+            </Avatar>
+          </AvatarGroup>
+          <Date
+            date="2025-08-24T12:00:00Z"
+            class="text-sm text-muted-foreground"
+          />
+        </div>
+      </CardHeader>
+      <CardContent class="flex flex-col gap-4">
+        <CardTitle
+          >Introducing bejamas/ui: Accessible Astro UI Component Library</CardTitle
+        >
+        <CardDescription>
+          It gives you the same copy-and-own workflow developers love in
+          shadcn/ui, but built natively for Astro, with no client-framework
+          dependency.
+        </CardDescription>
+        <div class="flex gap-2">
+          <Button>Get Started</Button>
+          <Button variant="outline">Figma Library</Button>
+        </div>
+      </CardContent>
+      <Separator />
+      <CardFooter>
+        <div class="flex items-center gap-2 flex-wrap justify-between w-full">
+          <span class="text-sm text-muted-foreground">Categories</span>
+          <div class="flex items-center gap-2">
+            <Badge variant="secondary">Design System</Badge>
+            <Badge variant="secondary">Astro</Badge>
+          </div>
+        </div>
+      </CardFooter>
+    </Card>
+
+    <!-- Marquee -->
+    <div class="mt-8">
+      <Marquee class="dark:invert">
+        <img
+          src="/demo/logo/sonos.svg"
+          alt="Sonos"
+          class="h-5 self-center mx-10"
+        />
+        <img
+          src="/demo/logo/uber.svg"
+          alt="Uber"
+          class="h-5 self-center mx-10"
+        />
+        <img
+          src="/demo/logo/visa.svg"
+          alt="Visa"
+          class="h-5 self-center mx-10"
+        />
+        <img
+          src="/demo/logo/coca-cola.svg"
+          alt="Coca-Cola"
+          class="h-6 self-center mx-10"
+        />
+        <img
+          src="/demo/logo/nike.svg"
+          alt="Nike"
+          class="h-5 self-center mx-10"
+        />
+      </Marquee>
+    </div>
+  </div>
+
+  <!-- MIDDLE COLUMN -->
+  <div class="space-y-6">
+    <!-- Avatar group + Team label + ButtonGroup -->
+    <div class="flex items-start gap-4">
+      <AvatarGroup class="items-center">
+        <HoverCard delay={10} closeDelay={300}>
+          <HoverCardTrigger asChild>
+            <Avatar>
+              <AvatarImage>
+                <img src="https://github.com/withastro.png" alt="@withastro" />
+              </AvatarImage>
+              <AvatarFallback>AW</AvatarFallback>
+            </Avatar>
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <div class="space-y-2">
+              <h4 class="text-sm leading-none font-medium">Astro</h4>
+              <p class="text-sm text-muted-foreground">
+                The web framework for content-driven websites.
+              </p>
+              <p class="text-xs text-muted-foreground">github.com/withastro</p>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+        <HoverCard delay={10} closeDelay={300}>
+          <HoverCardTrigger asChild>
+            <Avatar>
+              <AvatarImage>
+                <img src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+              </AvatarImage>
+              <AvatarFallback>TK</AvatarFallback>
+            </Avatar>
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <div class="space-y-2">
+              <h4 class="text-sm leading-none font-medium">Thom Krupa</h4>
+              <p class="text-sm text-muted-foreground">
+                Creator of bejamas/ui & data-slot.
+              </p>
+              <p class="text-xs text-muted-foreground">github.com/thomkrupa</p>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+        <HoverCard delay={10} closeDelay={300}>
+          <HoverCardTrigger asChild>
+            <Avatar>
+              <AvatarImage>
+                <img src="https://github.com/bejamas.png" alt="@bejamas" />
+              </AvatarImage>
+              <AvatarFallback>BJ</AvatarFallback>
+            </Avatar>
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <div class="space-y-2">
+              <h4 class="text-sm leading-none font-medium">Bejamas</h4>
+              <p class="text-sm text-muted-foreground">
+                Web performance company & creators of bejamas/ui.
+              </p>
+              <p class="text-xs text-muted-foreground">github.com/bejamas</p>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+      </AvatarGroup>
+      <div class="flex flex-col gap-0.5">
+        <p class="text-sm font-medium leading-none">Team</p>
+        <p class="text-muted-foreground text-sm leading-none">10+ Members</p>
+      </div>
+      <!-- <ButtonGroup class="ml-auto">
+        <Button variant="outline" size="sm">
+          <UploadIcon class="size-4" /> Upload
+        </Button>
+        <Button variant="outline" size="sm">
+          <SaveIcon class="size-4" /> Save
+        </Button>
+      </ButtonGroup> -->
+    </div>
+
+    <!-- Full Name Field -->
+    <Field>
+      <FieldLabel for="full-name">Full Name</FieldLabel>
+      <Input id="full-name" placeholder="e.g. John Doe" />
+    </Field>
+
+    <!-- Email Field -->
+    <Field>
+      <FieldLabel for="email-address">E-Mail Address</FieldLabel>
+      <Input id="email-address" type="email" placeholder="Your address" />
+    </Field>
+
+    <!-- Industry Select -->
+    <Field>
+      <FieldLabel for="industry">
+        Industry <span class="text-muted-foreground">Optional</span>
+      </FieldLabel>
+      <Select>
+        <SelectTrigger id="industry">
+          <SelectValue placeholder="Select one" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="technology">Technology</SelectItem>
+          <SelectItem value="design">Design</SelectItem>
+          <SelectItem value="marketing">Marketing</SelectItem>
+          <SelectItem value="finance">Finance</SelectItem>
+          <SelectItem value="healthcare">Healthcare</SelectItem>
+        </SelectContent>
+      </Select>
+      <FieldDescription>
+        <span class="inline-flex items-center gap-1">
+          <InfoIcon class="size-3" /> Industry is optional
+        </span>
+      </FieldDescription>
+    </Field>
+
+    <!-- Combobox -->
+    <Field>
+      <FieldLabel>Country</FieldLabel>
+      <Combobox id="country-combobox">
+        <ComboboxInput
+          placeholder="Select country..."
+          data-1p-ignore
+          showClear
+        />
+        <img
+          id="country-flag"
+          src=""
+          alt=""
+          class="absolute left-3 top-1/2 -translate-y-1/2 size-5 rounded-xs pointer-events-none z-10 hidden"
+        />
+        <ComboboxContent>
+          <ComboboxList>
+            <ComboboxEmpty>No country found.</ComboboxEmpty>
+            {
+              countries.map((group, i) => (
+                <>
+                  {i > 0 && <ComboboxSeparator />}
+                  <ComboboxGroup>
+                    <ComboboxLabel>{group.continent}</ComboboxLabel>
+                    {group.items.map((country) => (
+                      <ComboboxItem
+                        value={country.code.toLowerCase()}
+                        label={country.name}
+                      >
+                        <span class="flex items-center gap-2">
+                          <img
+                            src={`https://flag.vercel.app/m/${country.code}.svg`}
+                            alt={`${country.name} flag`}
+                            class="size-5 rounded-xs"
+                          />
+                          {country.name}
+                        </span>
+                      </ComboboxItem>
+                    ))}
+                  </ComboboxGroup>
+                </>
+              ))
+            }
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+    </Field>
+
+    <!-- Description Textarea -->
+    <Field>
+      <div class="flex items-center justify-between">
+        <FieldLabel for="description">Description</FieldLabel>
+        <span class="text-muted-foreground text-sm">10/100</span>
+      </div>
+      <Textarea id="description" placeholder="Type your message here..." />
+      <div class="flex items-center gap-2 mt-1">
+        <Button variant="ghost" size="icon-sm">
+          <BoldIcon class="size-4" />
+        </Button>
+        <Button variant="ghost" size="icon-sm">
+          <PlusIcon class="size-4" />
+        </Button>
+        <Button variant="ghost" size="icon-sm">
+          <PaperclipIcon class="size-4" />
+        </Button>
+      </div>
+    </Field>
+
+    <!-- Input Group Examples -->
+    <div class="space-y-4">
+      <!-- Search with results count -->
+      <InputGroup>
+        <InputGroupAddon>
+          <SearchIcon class="size-4" />
+        </InputGroupAddon>
+        <InputGroupInput placeholder="Search..." />
+        <InputGroupAddon align="inline-end">
+          <span class="text-xs text-muted-foreground">12 results</span>
+        </InputGroupAddon>
+      </InputGroup>
+
+      <!-- URL input -->
+      <InputGroup>
+        <InputGroupAddon>
+          <InputGroupText>https://</InputGroupText>
+        </InputGroupAddon>
+        <InputGroupInput placeholder="example.com" />
+        <InputGroupAddon align="inline-end">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <InputGroupButton size="icon-xs" aria-label="Copy">
+                <InfoIcon class="size-3.5" />
+              </InputGroupButton>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>This is a tooltip</p>
+            </TooltipContent>
+          </Tooltip>
+        </InputGroupAddon>
+      </InputGroup>
+
+      <!-- AI Chat textarea -->
+      <!-- <InputGroup>
+        <InputGroupTextarea
+          placeholder="Ask, Search or Chat..."
+          class="min-h-[80px]"
+        />
+        <InputGroupAddon align="block-end" class="border-t border-input">
+          <InputGroupButton size="icon-xs">
+            <PlusIcon class="size-3.5" />
+          </InputGroupButton>
+          <span class="text-xs text-muted-foreground">Auto</span>
+          <span class="text-xs text-muted-foreground ml-auto">52% used</span>
+          <InputGroupButton size="icon-xs" variant="default" aria-label="Send">
+            <ArrowUpIcon class="size-3.5" />
+          </InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup> -->
+
+      <!-- Input Group Textarea with Block Start Addon -->
+      <Field>
+        <InputGroup class="max-w-lg">
+          <InputGroupAddon align="block-start" class="border-b">
+            <InputGroupText>
+              Feedback
+              <Tooltip>
+                <TooltipTrigger>
+                  <InfoIcon class="size-3.5" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Feedback is optional</p>
+                </TooltipContent>
+              </Tooltip>
+            </InputGroupText>
+          </InputGroupAddon>
+          <InputGroupTextarea
+            placeholder="Write your feedback..."
+            class="min-h-[80px]"
+          />
+        </InputGroup>
+      </Field>
+
+      <!-- Terms Checkbox -->
+      <Label
+        class="border-input flex items-center gap-3 rounded-lg border px-4 py-3 font-normal"
+      >
+        <Checkbox id="terms" defaultChecked />
+        I agree to the terms and conditions
+      </Label>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="space-y-6">
+    <div class="flex space-x-2">
+      <!-- Manage Cookies Dialog -->
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Manage Cookies</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Manage Cookies</DialogTitle>
+            <DialogDescription>
+              Using websites and apps involves storing and retrieving
+              information from your device, including cookies and other
+              identifiers, which can be shared with third parties, for various
+              activities. We provide a simple tool below allowing you to tailor
+              your choices as you deem fit. You can change your consent at any
+              time. Learn more.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="mt-5">
+            <div class="flex items-center gap-3">
+              <Checkbox
+                id="cookies-necessary"
+                name="cookies-necessary"
+                disabled
+                checked
+              />
+              <Label for="cookies-necessary">
+                Strictly Necessary Cookies (always active)
+              </Label>
+            </div>
+            <p class="text-sm text-muted-foreground ml-8 mt-1">
+              These cookies are essential for the site to function and cannot be
+              toggled off. They assist with security, user authentication,
+              customer support, etc.
+            </p>
+          </div>
+          <div class="mt-5">
+            <div class="flex items-center gap-3">
+              <Checkbox id="cookies-analytics" name="cookies-analytics" />
+              <Label for="cookies-analytics">Analytics Cookies</Label>
+            </div>
+            <p class="text-sm text-muted-foreground ml-8 mt-1">
+              These cookies help us understand how visitors interact with our
+              site. They allow us to measure traffic and improve site
+              performance.
+            </p>
+          </div>
+          <div class="mt-5">
+            <div class="flex items-center gap-3">
+              <Checkbox
+                id="cookies-marketing-performance"
+                name="cookies-marketing-performance"
+              />
+              <Label for="cookies-marketing-performance">
+                Marketing Performance Cookies
+              </Label>
+            </div>
+            <p class="text-sm text-muted-foreground ml-8 mt-1">
+              These cookies help us measure the effectiveness of our marketing
+              campaigns.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" data-slot="dialog-close" class="mt-4"
+              >Close</Button
+            >
+            <Button class="mt-4">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <!-- DropdownMenu -->
+      <DropdownMenu>
+        <Button variant="outline" data-slot="dropdown-menu-trigger">
+          My Account
+        </Button>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <UserIcon class="size-4" />
+              Profile
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <SettingsIcon class="size-4" />
+              Settings
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <CreditCardIcon class="size-4" />
+              Billing
+              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <LogOutIcon class="size-4" />
+            Log out
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+
+    <!-- Kbd/KbdGroup -->
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <KbdGroup>
+        <Kbd>Ctrl</Kbd>
+        <Kbd>B</Kbd>
+      </KbdGroup>
+      <Separator orientation="vertical" class="!h-6" />
+      <div class="flex gap-1">
+        <Kbd>⌘</Kbd>
+        <Kbd>⇧</Kbd>
+        <Kbd>⌥</Kbd>
+        <Kbd>⌃</Kbd>
+      </div>
+      <Separator orientation="vertical" class="!h-6" />
+      <KbdGroup>
+        <Kbd>⌘</Kbd>
+        <Kbd>K</Kbd>
+      </KbdGroup>
+      <Separator orientation="vertical" class="!h-6" />
+      <KbdGroup>
+        <Kbd>⌘</Kbd>
+        <Kbd>⇧</Kbd>
+        <Kbd>S</Kbd>
+      </KbdGroup>
+    </div>
+
+    <!-- Spinner Card -->
+    <Card>
+      <CardContent class="flex items-center gap-3">
+        <Spinner class="size-4" />
+        <span class="text-sm text-muted-foreground"
+          >Submitting Contact Form..</span
+        >
+      </CardContent>
+    </Card>
+
+    <!-- Slider -->
+    <div class="space-y-3">
+      <div>
+        <p class="text-sm font-medium">Price Range</p>
+        <p class="text-sm text-muted-foreground">
+          Set your budget range between <span
+            id="price-min"
+            class="font-medium tabular-nums">$200</span
+          > and <span id="price-max" class="font-medium tabular-nums">$800</span
+          >.
+        </p>
+      </div>
+      <Slider id="price-slider" defaultValue={[20, 80]} max={100}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+        <SliderThumb />
+      </Slider>
+    </div>
+
+    <!-- Item -->
+    <Item variant="outline">
+      <ItemMedia mediaVariant="icon">
+        <ShieldIcon class="size-4" />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle>Security Alert</ItemTitle>
+        <ItemDescription
+          >A simple item with title and description.</ItemDescription
+        >
+      </ItemContent>
+      <ItemActions>
+        <Button variant="outline" size="sm">Click me</Button>
+      </ItemActions>
+    </Item>
+
+    <!-- Tabs -->
+    <Tabs defaultValue="overview">
+      <TabsList>
+        <TabsTrigger value="overview">Overview</TabsTrigger>
+        <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        <TabsTrigger value="reports">Reports</TabsTrigger>
+        <TabsTrigger value="settings">Settings</TabsTrigger>
+      </TabsList>
+      <TabsContent value="overview">
+        <Card>
+          <CardHeader>
+            <CardTitle>Overview</CardTitle>
+            <CardDescription>
+              View key metrics and recent activity across active projects.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div class="h-20 rounded-lg border border-dashed border-border">
+            </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+      <TabsContent value="analytics">
+        <Card>
+          <CardHeader>
+            <CardTitle>Analytics</CardTitle>
+            <CardDescription>
+              Track performance and user engagement.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </TabsContent>
+      <TabsContent value="reports">
+        <Card>
+          <CardHeader>
+            <CardTitle>Reports</CardTitle>
+            <CardDescription>
+              Generate and export detailed reports.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </TabsContent>
+      <TabsContent value="settings">
+        <Card>
+          <CardHeader>
+            <CardTitle>Settings</CardTitle>
+            <CardDescription>
+              Manage your preferences and configuration.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </TabsContent>
+    </Tabs>
+
+    <!-- Popover -->
+    <Popover>
+      <PopoverTrigger variant="outline">Open dimensions</PopoverTrigger>
+      <PopoverContent class="w-80">
+        <PopoverHeader>
+          <PopoverTitle>Dimensions</PopoverTitle>
+          <PopoverDescription
+            >Set the dimensions for the layer.</PopoverDescription
+          >
+        </PopoverHeader>
+        <div class="grid gap-3 mt-4">
+          <div class="grid grid-cols-3 items-center gap-4">
+            <Label class="text-right">Width</Label>
+            <Input class="col-span-2" placeholder="100%" />
+          </div>
+          <div class="grid grid-cols-3 items-center gap-4">
+            <Label class="text-right">Height</Label>
+            <Input class="col-span-2" placeholder="25px" />
+          </div>
+          <div class="grid grid-cols-3 items-center gap-4">
+            <Label class="text-right">Max. width</Label>
+            <Input class="col-span-2" placeholder="300px" />
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  </div>
+
+  <!-- FOURTH COLUMN -->
+  <div class="space-y-6">
+    <!-- NavigationMenu -->
+    <div class="flex items-center gap-4 justify-between">
+      <ComponentIcon class="size-5 text-foreground shrink-0" />
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem value="products">
+            <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+            <NavigationMenuContent align="center">
+              <div class="grid grid-cols-2 gap-2 w-[320px] p-2">
+                <NavigationMenuLink href="#">
+                  <div class="font-medium">Analytics</div>
+                  <div class="text-sm text-muted-foreground">
+                    Real-time insights
+                  </div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div class="font-medium">Automation</div>
+                  <div class="text-sm text-muted-foreground">
+                    Workflow builders
+                  </div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div class="font-medium">Security</div>
+                  <div class="text-sm text-muted-foreground">
+                    Enterprise-grade
+                  </div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div class="font-medium">Integrations</div>
+                  <div class="text-sm text-muted-foreground">Connect tools</div>
+                </NavigationMenuLink>
+              </div>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem value="resources">
+            <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+            <NavigationMenuContent align="end">
+              <div class="grid grid-cols-2 gap-2 w-[320px] p-2">
+                <NavigationMenuLink href="#">
+                  <div class="font-medium">Docs</div>
+                  <div class="text-sm text-muted-foreground">Get started</div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div class="font-medium">Blog</div>
+                  <div class="text-sm text-muted-foreground">
+                    Latest updates
+                  </div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div class="font-medium">Support</div>
+                  <div class="text-sm text-muted-foreground">Get help</div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div class="font-medium">Guides</div>
+                  <div class="text-sm text-muted-foreground">
+                    Best practices
+                  </div>
+                </NavigationMenuLink>
+              </div>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuIndicator />
+        </NavigationMenuList>
+      </NavigationMenu>
+    </div>
+
+    <!-- Separator -->
+    <Separator />
+
+    <!-- Breadcrumb -->
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <a class="hover:text-foreground transition-colors" href="#">
+            <HomeIcon class="size-4" />
+          </a>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <a class="hover:text-foreground transition-colors" href="#">Docs</a>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <span class="text-foreground font-normal" aria-current="page"
+            >Components</span
+          >
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+
+    <!-- Accordion -->
+    <Accordion collapsible>
+      <AccordionItem value="accessible">
+        <AccordionTrigger>Is it accessible?</AccordionTrigger>
+        <AccordionContent>
+          Yes. It adheres to the WAI-ARIA design pattern.
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="styled">
+        <AccordionTrigger>Is it styled?</AccordionTrigger>
+        <AccordionContent>
+          Yes. It comes with default styles that match your theme.
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="animated">
+        <AccordionTrigger>Is it animated?</AccordionTrigger>
+        <AccordionContent>
+          Yes. It's animated by default, with smooth open and close transitions.
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+
+    <!-- Alert (default) -->
+    <Alert>
+      <TerminalIcon class="size-4" />
+      <AlertTitle>Heads up!</AlertTitle>
+      <AlertDescription>
+        You can add components to your app using the CLI.
+      </AlertDescription>
+    </Alert>
+
+    <!-- Alert (success) -->
+    <Alert>
+      <CheckIcon class="size-4" />
+      <AlertTitle>Success</AlertTitle>
+      <AlertDescription>Your changes have been saved.</AlertDescription>
+    </Alert>
+
+    <!-- Switch toggles -->
+    <div class="space-y-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <Switch id="marketing-emails" checked />
+          <Label for="marketing-emails">Marketing emails</Label>
+        </div>
+        <p class="text-sm text-muted-foreground mt-1 ml-11">
+          Receive emails about new products and features.
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <Switch id="push-notifications" />
+        <Label for="push-notifications">Push notifications</Label>
+      </div>
+    </div>
+
+    <!-- ToggleGroup -->
+    <ToggleGroup variant="outline" multiple>
+      <ToggleGroupItem value="bold" aria-label="Toggle bold">
+        <BoldIcon class="size-4" />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="italic" aria-label="Toggle italic">
+        <ItalicIcon class="size-4" />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="underline" aria-label="Toggle underline">
+        <UnderlineIcon class="size-4" />
+      </ToggleGroupItem>
+    </ToggleGroup>
+
+    <!-- Tooltip row -->
+    <div class="flex items-center gap-2">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="outline" size="icon">
+            <PlusIcon class="size-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Add new item</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="outline" size="icon">
+            <SettingsIcon class="size-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Settings</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="outline" size="icon">
+            <UserIcon class="size-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Profile</TooltipContent>
+      </Tooltip>
+    </div>
+  </div>
+</section>
+
+<script>
+  const combobox = document.getElementById("country-combobox");
+  const flag = document.getElementById("country-flag") as HTMLImageElement;
+  const input = combobox?.querySelector<HTMLInputElement>(
+    '[data-slot="combobox-input"]',
+  );
+
+  combobox?.addEventListener("combobox:change", ((e: CustomEvent) => {
+    const value = e.detail?.value;
+    if (value && input) {
+      flag.src = `https://flag.vercel.app/m/${value.toUpperCase()}.svg`;
+      flag.classList.remove("hidden");
+      input.style.paddingLeft = "2.25rem";
+    } else if (input) {
+      flag.classList.add("hidden");
+      input.style.paddingLeft = "";
+    }
+  }) as EventListener);
+
+  // Price range slider
+  const slider = document.getElementById("price-slider");
+  const priceMin = document.getElementById("price-min");
+  const priceMax = document.getElementById("price-max");
+
+  slider?.addEventListener("slider:change", ((e: CustomEvent) => {
+    const [min, max] = e.detail.value;
+    if (priceMin) priceMin.textContent = `$${min * 10}`;
+    if (priceMax) priceMax.textContent = `$${max * 10}`;
+  }) as EventListener);
+</script>
