@@ -22,6 +22,10 @@ export default defineConfig({
   redirects: {
     "/docs": "/docs/introduction",
   },
+  image: {
+    // Example: Allow remote image optimization from a single domain
+    domains: ["gradient.bejamas.com", "github.com"],
+  },
   env: {
     schema: {
       OPENAI_API_KEY: envField.string({ context: "server", access: "secret" }),
