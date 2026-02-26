@@ -132,10 +132,9 @@
  */
 
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
 type Props = {
-  as?: HTMLTag;
   class?: string;
   multiple?: boolean;
   defaultValue?: string;
@@ -143,7 +142,6 @@ type Props = {
 } & HTMLAttributes<"div">;
 
 const {
-  as: Tag = "div",
   class: className = "",
   multiple = false,
   defaultValue = "",
@@ -152,7 +150,7 @@ const {
 } = Astro.props as Props;
 ---
 
-<Tag
+<div
   {...rest}
   data-slot="accordion"
   data-multiple={multiple}
@@ -161,15 +159,12 @@ const {
   class={cn(className)}
 >
   <slot />
-</Tag>
+</div>
 
 <script>
   import { createAccordion } from "@data-slot/accordion";
 
-  document.querySelectorAll('[data-slot="accordion"]').forEach((el) =>
-    createAccordion(el, {
-      multiple: el.dataset.multiple === "true",
-      collapsible: el.dataset.collapsible === "true",
-    }),
-  );
+  document
+    .querySelectorAll('[data-slot="accordion"]')
+    .forEach((el) => createAccordion(el));
 </script>
