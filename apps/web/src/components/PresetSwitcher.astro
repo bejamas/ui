@@ -139,6 +139,7 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
     CUSTOM_PRESETS_CHANGE_EVENT,
     type CustomPreset,
   } from "../utils/themes/custom-presets-store.ts";
+  import { syncGradientImages } from "../utils/themes/gradient-image-runtime.ts";
 
   type PresetType = {
     label: string;
@@ -161,72 +162,13 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
     };
   }
 
-  function updateGradientImageCacheKey(themeKey: string) {
+  function updateGradientImageCacheKey(
+    themeKey: string,
+    modeOverride?: "light" | "dark",
+  ) {
     if (!themeKey || typeof document === "undefined") return;
-    const mode = getCurrentMode();
-
-    const updateUrl = (rawUrl: string): string => {
-      try {
-        const url = new URL(rawUrl, window.location.href);
-
-        // Handle Vercel image optimization proxy
-        if (url.pathname === "/_vercel/image" && url.searchParams.has("url")) {
-          const inner = new URL(url.searchParams.get("url")!);
-          if (inner.hostname !== "gradient.bejamas.com") return rawUrl;
-          const hasTheme = inner.searchParams.get("theme") === themeKey;
-          const hasMode = inner.searchParams.get("mode") === mode;
-          if (hasTheme && hasMode) return rawUrl;
-          inner.searchParams.set("theme", themeKey);
-          inner.searchParams.set("mode", mode);
-          url.searchParams.set("url", inner.toString());
-          return url.pathname + "?" + url.searchParams.toString();
-        }
-
-        // Direct URL fallback
-        if (url.hostname !== "gradient.bejamas.com") return rawUrl;
-        const hasTheme = url.searchParams.get("theme") === themeKey;
-        const hasMode = url.searchParams.get("mode") === mode;
-        if (hasTheme && hasMode) return rawUrl;
-        url.searchParams.set("theme", themeKey);
-        url.searchParams.set("mode", mode);
-        return url.toString();
-      } catch {
-        return rawUrl;
-      }
-    };
-
-    const updateSrcset = (srcset: string): string => {
-      if (!srcset) return srcset;
-      return srcset
-        .split(",")
-        .map((entry) => {
-          const parts = entry.trim().split(/\s+/);
-          if (parts.length === 0) return entry;
-          const updatedUrl = updateUrl(parts[0]);
-          return parts.length > 1
-            ? `${updatedUrl} ${parts.slice(1).join(" ")}`
-            : updatedUrl;
-        })
-        .join(", ");
-    };
-
-    document.querySelectorAll("img").forEach((img) => {
-      const currentSrc = img.getAttribute("src");
-      if (currentSrc) {
-        const nextSrc = updateUrl(currentSrc);
-        if (nextSrc !== currentSrc) {
-          img.setAttribute("src", nextSrc);
-        }
-      }
-
-      const currentSrcset = img.getAttribute("srcset");
-      if (currentSrcset) {
-        const nextSrcset = updateSrcset(currentSrcset);
-        if (nextSrcset !== currentSrcset) {
-          img.setAttribute("srcset", nextSrcset);
-        }
-      }
-    });
+    const mode = modeOverride ?? getCurrentMode();
+    syncGradientImages({ themeKey, mode });
   }
 
   function applyPresetTheme(key: string) {
@@ -403,11 +345,17 @@ const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
     });
 
     // Re-apply preset when theme mode changes (light/dark toggle)
-    window.addEventListener("theme-toggle-changed", () => {
+    window.addEventListener("theme-toggle-changed", (event) => {
       const current = getStoredPreset() || Object.keys(PRESETS)[0];
       if (current) {
         applyPresetTheme(current);
-        updateGradientImageCacheKey(current);
+        const eventTheme = (event as CustomEvent<{ theme?: unknown }>).detail
+          ?.theme;
+        const mode =
+          eventTheme === "light" || eventTheme === "dark"
+            ? eventTheme
+            : undefined;
+        updateGradientImageCacheKey(current, mode);
       }
     });
 

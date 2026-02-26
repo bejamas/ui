@@ -57,6 +57,66 @@ const { theme = "current-theme", title } = Astro.props;
     <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
 
     <slot />
+
+    <script>
+      import {
+        getCurrentMode,
+        getStoredPreset,
+      } from "../utils/themes/preset-store.ts";
+      import { syncGradientImages } from "../utils/themes/gradient-image-runtime.ts";
+
+      const themeStorageKey = "starlight-theme";
+      const presetStorageKey = "theme-preset";
+
+      const toMode = (value: unknown): "light" | "dark" =>
+        value === "dark" ? "dark" : "light";
+
+      function syncPreviewGradientImages(modeOverride?: "light" | "dark") {
+        const themeKey = getStoredPreset() || "default";
+        const mode = modeOverride ?? toMode(getCurrentMode());
+        syncGradientImages({ themeKey, mode });
+      }
+
+      syncPreviewGradientImages();
+
+      window.addEventListener("storage", (event) => {
+        if (
+          event.key === themeStorageKey ||
+          event.key === presetStorageKey ||
+          event.key === "theme"
+        ) {
+          syncPreviewGradientImages();
+        }
+      });
+
+      window.addEventListener("theme-toggle-changed", (event) => {
+        const eventTheme = (event as CustomEvent<{ theme?: unknown }>).detail
+          ?.theme;
+        const mode =
+          eventTheme === "light" || eventTheme === "dark"
+            ? eventTheme
+            : undefined;
+        syncPreviewGradientImages(mode);
+      });
+
+      const prefersLight = matchMedia("(prefers-color-scheme: light)");
+      prefersLight.addEventListener("change", () => {
+        syncPreviewGradientImages();
+      });
+
+      const observer = new MutationObserver(() => {
+        syncPreviewGradientImages();
+      });
+
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme", "class"],
+      });
+
+      document.addEventListener("astro:after-swap", () => {
+        syncPreviewGradientImages();
+      });
+    </script>
   </body>
 </html>
 
