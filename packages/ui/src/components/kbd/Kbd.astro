@@ -76,31 +76,29 @@
  * You can use the `Kbd` component inside a `Tooltip` component to display a tooltip with a keyboard key.
  *
  * <div class="flex flex-wrap gap-4">
- *   <ButtonGroup>
- *     <Tooltip>
- *       <TooltipTrigger asChild>
- *         <Button variant="outline">Save</Button>
- *       </TooltipTrigger>
- *       <TooltipContent class="pr-1.5">
- *         <div class="flex items-center gap-2">
- *           Save Changes <Kbd>S</Kbd>
- *         </div>
- *       </TooltipContent>
- *     </Tooltip>
- *     <Tooltip>
- *       <TooltipTrigger asChild>
- *         <Button variant="outline">Print</Button>
- *       </TooltipTrigger>
- *       <TooltipContent class="pr-1.5">
- *         <div class="flex items-center gap-2">
- *           Print Document <KbdGroup>
- *             <Kbd>Ctrl</Kbd>
- *             <Kbd>P</Kbd>
- *           </KbdGroup>
- *         </div>
- *       </TooltipContent>
- *     </Tooltip>
- *   </ButtonGroup>
+ *   <Tooltip>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Save</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent class="pr-1.5">
+ *       <div class="flex items-center gap-2">
+ *         Save Changes <Kbd>S</Kbd>
+ *       </div>
+ *     </TooltipContent>
+ *   </Tooltip>
+ *   <Tooltip>
+ *     <TooltipTrigger asChild>
+ *       <Button variant="outline">Print</Button>
+ *     </TooltipTrigger>
+ *     <TooltipContent class="pr-1.5">
+ *       <div class="flex items-center gap-2">
+ *         Print Document <KbdGroup>
+ *           <Kbd>Ctrl</Kbd>
+ *           <Kbd>P</Kbd>
+ *         </KbdGroup>
+ *       </div>
+ *     </TooltipContent>
+ *   </Tooltip>
  * </div>
  *
  * ### Input Group
