@@ -13,7 +13,7 @@ const { as: rawTag, class: className = "", ...rest } = Astro.props as Props;
 const Tag = rawTag ?? undefined;
 
 const textareaClasses =
-  "flex-1 min-w-0 resize-none rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent dark:disabled:bg-transparent group-data-[size=sm]/input-group:px-2.5 group-data-[size=sm]/input-group:py-2 group-data-[size=sm]/input-group:text-xs group-data-[size=default]/input-group:px-3 group-data-[size=default]/input-group:py-2.5 group-data-[size=default]/input-group:text-sm group-data-[size=lg]/input-group:px-3.5 group-data-[size=lg]/input-group:py-3 group-data-[size=lg]/input-group:text-base";
+  "flex-1 min-w-0 resize-none rounded-none border-0 bg-transparent text-base shadow-none focus-visible:ring-0 dark:bg-transparent dark:disabled:bg-transparent group-data-[size=sm]/input-group:px-2.5 group-data-[size=sm]/input-group:py-2 group-data-[size=sm]/input-group:md:text-xs group-data-[size=default]/input-group:px-3 group-data-[size=default]/input-group:py-2.5 group-data-[size=default]/input-group:md:text-sm group-data-[size=lg]/input-group:px-3.5 group-data-[size=lg]/input-group:py-3 group-data-[size=lg]/input-group:md:text-base";
 ---
 
 {
