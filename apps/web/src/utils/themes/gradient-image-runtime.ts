@@ -1,3 +1,5 @@
+import * as culori from "culori";
+
 type ThemeMode = "light" | "dark";
 
 const OPTIMIZER_PATHS = new Set(["/_vercel/image", "/_image"]);
@@ -5,6 +7,7 @@ const OPTIMIZER_PATHS = new Set(["/_vercel/image", "/_image"]);
 type RewriteOptions = {
   themeKey: string;
   mode: ThemeMode;
+  color?: string;
 };
 
 type SyncOptions = RewriteOptions & {
@@ -39,7 +42,7 @@ function formatLikeInput(url: URL, rawUrl: string): string {
 
 function rewriteInnerGradientUrl(
   url: URL,
-  { themeKey, mode }: RewriteOptions,
+  { themeKey, mode, color }: RewriteOptions,
 ): boolean {
   if (!isGradientHost(url)) return false;
 
@@ -52,13 +55,41 @@ function rewriteInnerGradientUrl(
     url.searchParams.set("mode", mode);
     changed = true;
   }
+
+  if (color && url.searchParams.get("color") !== color) {
+    url.searchParams.set("color", color);
+    changed = true;
+  }
   return changed;
+}
+
+function resolveGradientColor(inputColor?: string): string | undefined {
+  const normalizeToHex = (value?: string): string | undefined => {
+    if (!value || !value.trim()) return undefined;
+    const parsed = culori.parse(value.trim());
+    if (!parsed) return undefined;
+    return culori.formatHex(parsed);
+  };
+
+  const explicitColor = normalizeToHex(inputColor);
+  if (explicitColor) return explicitColor;
+  if (typeof document === "undefined") return undefined;
+
+  const root = document.documentElement;
+  if (!root) return undefined;
+
+  const cssVar = getComputedStyle(root).getPropertyValue("--primary").trim();
+  return normalizeToHex(cssVar);
 }
 
 export function rewriteGradientImageUrl(
   rawUrl: string,
   options: RewriteOptions,
 ): string {
+  const normalizedOptions = {
+    ...options,
+    color: resolveGradientColor(options.color),
+  };
   const url = toUrl(rawUrl);
   if (!url) return rawUrl;
 
@@ -66,14 +97,14 @@ export function rewriteGradientImageUrl(
     const nestedUrl = toUrl(url.searchParams.get("url") || "");
     if (!nestedUrl) return rawUrl;
 
-    const changed = rewriteInnerGradientUrl(nestedUrl, options);
+    const changed = rewriteInnerGradientUrl(nestedUrl, normalizedOptions);
     if (!changed) return rawUrl;
 
     url.searchParams.set("url", nestedUrl.toString());
     return formatLikeInput(url, rawUrl);
   }
 
-  const changed = rewriteInnerGradientUrl(url, options);
+  const changed = rewriteInnerGradientUrl(url, normalizedOptions);
   if (!changed) return rawUrl;
   return formatLikeInput(url, rawUrl);
 }
@@ -131,4 +162,3 @@ export function syncGradientImages({
     updateUrlAttribute(source, "srcset", { themeKey, mode });
   });
 }
-
