@@ -1,17 +1,15 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
 import { Button } from "@bejamas/ui/components/button";
-import NavigationMenu from "@/ui-next/NavigationMenu.astro";
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-} from "@bejamas/ui/components/dropdown-menu";
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  NavigationMenuIndicator,
+} from "@bejamas/ui/components/navigation-menu";
 import { StickySurface } from "@bejamas/ui/components/sticky-surface";
 ---
 
@@ -24,85 +22,82 @@ import { StickySurface } from "@bejamas/ui/components/sticky-surface";
       effects={["elevate"]}
       style="--stuck-shadow: var(--shadow-sm)"
     >
-      <NavigationMenu
-        class="rounded-2xl bg-transparent group-[.is-stuck]/surface:bg-white/40 h-16 backdrop-blur-sm mx-auto transition-all duration-200 ease-out"
+      <nav
+        class="rounded-2xl bg-transparent group-[.is-stuck]/surface:bg-white/40 h-16 backdrop-blur-sm mx-auto transition-all duration-200 ease-out w-full grid grid-cols-[auto_1fr_auto] items-center py-4 px-6"
       >
-        <div slot="logo" class="flex items-center h-full">
+        <div class="flex items-center h-full">
           <img
             src="https://cdn.prod.website-files.com/624380709031623bfe4aee60/668b2b16e18e604c50a1362c_Logo-wide.svg"
             alt="Acme, Inc."
             class="h-7"
           />
         </div>
-        <ul slot="links" class="flex items-center space-x-2">
-          <li><Button as="a" href="/" variant="ghost">Home</Button></li>
-          <li>
-            <DropdownMenu>
-              <DropdownMenuTrigger>Company</DropdownMenuTrigger>
-              <DropdownMenuContent class="grid grid-cols-12 gap-2 w-120">
-                <ul class="col-span-5">
-                  <li>
-                    <a
-                      href="#"
-                      class="w-full justify-start flex-wrap hover:bg-accent flex py-2 px-2 rounded-lg"
-                    >
-                      <p class="font-medium">About</p>
-                      <div class="text-muted-foreground text-sm">
-                        Read more about our company
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      class="w-full justify-start flex-wrap hover:bg-accent flex py-2 px-2 rounded-lg"
-                    >
-                      <p class="font-medium w-full">Team</p>
-                      <div class="text-muted-foreground text-sm">
-                        Meet our heroes
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      class="w-full justify-start flex-wrap hover:bg-accent flex py-2 px-2 rounded-lg"
-                    >
-                      <p class="font-medium w-full">Blog</p>
-                      <div class="text-muted-foreground text-sm">
-                        Read our latest news
-                      </div>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      class="w-full justify-start flex-wrap hover:bg-accent flex py-2 px-2 rounded-lg"
-                    >
-                      <p class="font-medium w-full">Careers</p>
-                      <div class="text-muted-foreground text-sm">
-                        Join our team
-                      </div>
-                    </a>
-                  </li>
-                </ul>
-                <div
-                  class="bg-accent p-4 rounded-lg flex items-end relative col-span-7"
-                >
-                  <p class="font-medium relative z-10 text-white">Company</p>
-                  <img
-                    src="https://plus.unsplash.com/premium_photo-1755155931545-87b694f49769?q=80&w=2224&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    class="w-full h-full object-cover absolute top-0 left-0 rounded-lg"
-                  />
+        <NavigationMenu class="justify-center">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink href="/" class="px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 hover:text-foreground">
+                Home
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem value="company">
+              <NavigationMenuTrigger>Company</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div class="grid grid-cols-12 gap-2 w-120 p-2">
+                  <ul class="col-span-5">
+                    <li>
+                      <NavigationMenuLink href="#">
+                        <p class="font-medium">About</p>
+                        <div class="text-muted-foreground text-sm">
+                          Read more about our company
+                        </div>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink href="#">
+                        <p class="font-medium">Team</p>
+                        <div class="text-muted-foreground text-sm">
+                          Meet our heroes
+                        </div>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink href="#">
+                        <p class="font-medium">Blog</p>
+                        <div class="text-muted-foreground text-sm">
+                          Read our latest news
+                        </div>
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink href="#">
+                        <p class="font-medium">Careers</p>
+                        <div class="text-muted-foreground text-sm">
+                          Join our team
+                        </div>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                  <div
+                    class="bg-accent p-4 rounded-lg flex items-end relative col-span-7"
+                  >
+                    <p class="font-medium relative z-10 text-white">Company</p>
+                    <img
+                      src="https://plus.unsplash.com/premium_photo-1755155931545-87b694f49769?q=80&w=2224&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      class="w-full h-full object-cover absolute top-0 left-0 rounded-lg"
+                    />
+                  </div>
                 </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </li>
-          <li>
-            <Button as="a" href="#" variant="ghost">Contact</Button>
-          </li>
-        </ul>
-        <div slot="actions" class="flex items-center gap-2">
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink href="#" class="px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 hover:text-foreground">
+                Contact
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuIndicator />
+          </NavigationMenuList>
+        </NavigationMenu>
+        <div class="flex items-center gap-2">
           <Button
             variant="outline"
             class="group-[.is-stuck]/surface:opacity-0 group-[.is-stuck]/surface:blur-sm transition-all duration-300 ease-out"
@@ -121,7 +116,7 @@ import { StickySurface } from "@bejamas/ui/components/sticky-surface";
             >
           </Button>
         </div>
-      </NavigationMenu>
+      </nav>
     </StickySurface>
   </div>
 </BlockExampleLayout>

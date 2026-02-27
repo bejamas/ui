@@ -1,28 +1,45 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
-import Button from "@bejamas/ui/components/Button.astro";
-import Card from "@bejamas/ui/components/Card.astro";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  CardTitle,
+  CardDescription,
+} from "@bejamas/ui/components/card";
 import { ArrowRight } from "@lucide/astro";
 ---
 
 <BlockExampleLayout>
   <div>
-    <Card variant="ghost" class="gap-8 py-8 px-8 rounded-none">
-      <Card part="media" class="rounded-none">
+    <Card
+      variant="ghost"
+      class="gap-8 py-8 px-8 rounded-none"
+      orientation="horizontal"
+    >
+      <CardMedia>
         <img
           alt="Happy pet"
           aria-hidden="true"
           src="https://images.unsplash.com/photo-1759223293091-f4c757c79f6c?q=80&w=1536&h=660&auto=format&fit=crop"
         />
-      </Card>
-      <Card part="content" class="flex flex-col items-center justify-center p-4 md:py-32">
-        <Card part="title" class="text-3xl md:text-6xl">Your Wealth. Fully accounted</Card>
-        <Card part="description" class="mt-6 text-center max-w-[60ch]">A powerful combination of efficiency, quality and flexibility for anyone looking to streamline their design workflow.</Card>
+      </CardMedia>
+      <CardContent
+        class="flex flex-col items-center justify-center p-4 md:py-32"
+      >
+        <CardTitle class="text-3xl md:text-6xl"
+          >Your Wealth. Fully accounted</CardTitle
+        >
+        <CardDescription class="mt-6 text-center max-w-[60ch]"
+          >A powerful combination of efficiency, quality and flexibility for
+          anyone looking to streamline their design workflow.</CardDescription
+        >
         <Button as="a" href="#" class="mt-8">
           Order now
           <ArrowRight class="size-4" />
         </Button>
-      </Card>
+      </CardContent>
     </Card>
   </div>
 </BlockExampleLayout>
