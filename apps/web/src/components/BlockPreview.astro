@@ -1,6 +1,6 @@
 ---
-import Tabs from "@bejamas/ui/components/Tabs.astro";
-import Button from "@bejamas/ui/components/Button.astro";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@bejamas/ui/components/tabs";
+import { Button } from "@bejamas/ui/components/button";
 import { Laptop, Tablet, Smartphone, Terminal, Check } from "@lucide/astro";
 import Source from "@/components/Source.astro";
 
@@ -10,26 +10,23 @@ const item = Astro.props.item;
 <div x-data="{ size: 'desktop' }">
   <Tabs>
     <div class="flex justify-between mb-3 items-center">
-      <div slot="tablist" class="space-x-0.5">
-        <Button
-          role="tab"
+      <TabsList class="space-x-0.5">
+        <TabsTrigger
           size="sm"
           aria-selected="true"
           variant="ghost"
           class="aria-selected:bg-primary aria-selected:text-primary-foreground h-8 px-2.5"
-          >Preview</Button
+          >Preview</TabsTrigger
         >
-        <Button
-          role="tab"
+        <TabsTrigger
           size="sm"
           variant="ghost"
           class="aria-selected:bg-primary aria-selected:text-primary-foreground h-8 px-2.5"
-          >Source</Button
+          >Source</TabsTrigger
         >
-      </div>
+      </TabsList>
       <div class="flex space-x-0.5 items-center">
         <Button
-          size="sm"
           size="icon"
           variant="ghost"
           title="Desktop"
@@ -39,7 +36,6 @@ const item = Astro.props.item;
           <Laptop class="size-4" />
         </Button>
         <Button
-          size="sm"
           size="icon"
           variant="ghost"
           title="Tablet"
@@ -49,7 +45,6 @@ const item = Astro.props.item;
           <Tablet class="size-4" />
         </Button>
         <Button
-          size="sm"
           size="icon"
           variant="ghost"
           title="Smartphone"
@@ -70,14 +65,14 @@ const item = Astro.props.item;
         </button>
       </div>
     </div>
-    <div role="tabpanel">
+    <TabsContent>
       <iframe
         src={item.href}
         class="w-full h-full min-h-[800px] border border-border rounded-2xl data-[size='desktop']:max-w-full data-[size='tablet']:max-w-3xl data-[size='smartphone']:max-w-sm"
         :data-size="size"></iframe>
-    </div>
-    <div role="tabpanel" hidden>
+    </TabsContent>
+    <TabsContent hidden>
       <Source href={item.href} />
-    </div>
+    </TabsContent>
   </Tabs>
 </div>

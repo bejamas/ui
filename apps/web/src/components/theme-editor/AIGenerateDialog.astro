@@ -1,0 +1,107 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@bejamas/ui/components/dialog";
+import { Label } from "@bejamas/ui/components/label";
+import { Textarea } from "@bejamas/ui/components/textarea";
+import { ImagePlus, Loader2, Sparkles } from "@lucide/astro";
+---
+
+<Dialog id="ai-generate-dialog">
+  <button
+    type="button"
+    data-slot="dialog-trigger"
+    id="ai-generate-dialog-trigger"
+    class="hidden"
+  ></button>
+  <DialogContent class="sm:max-w-lg z-10001">
+    <DialogHeader>
+      <DialogTitle>
+        <span class="flex items-center gap-2">
+          <Sparkles class="size-5 text-accent" />
+          AI Generate Palette
+        </span>
+      </DialogTitle>
+      <DialogDescription>
+        Describe the palette you want to create. You can mention brands, moods,
+        colors, or upload reference images.
+      </DialogDescription>
+    </DialogHeader>
+
+    <div class="mt-4 flex flex-col gap-4">
+      <div class="w-full">
+        <Textarea
+          id="ai-prompt-textarea"
+          class="min-h-[80px]"
+          placeholder="e.g., A warm and inviting theme with earthy browns and cream accents for a cozy atmosphere..."
+          rows={3}
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <Label class="flex items-center gap-2 text-[0.8125rem] font-medium">
+          <ImagePlus class="size-4" />
+          <span>Reference Images (optional)</span>
+        </Label>
+        <div
+          class="relative cursor-pointer rounded-md border-2 border-dashed border-border p-6 text-center transition-colors hover:border-accent hover:bg-accent/5"
+          id="ai-images-dropzone"
+        >
+          <input
+            type="file"
+            id="ai-images-input"
+            accept="image/*"
+            multiple
+            class="absolute inset-0 cursor-pointer opacity-0"
+          />
+          <div class="pointer-events-none flex flex-col items-center gap-2">
+            <ImagePlus class="size-6 text-muted-foreground" />
+            <span class="text-[0.8125rem] text-muted-foreground">
+              Drop images or click to upload
+            </span>
+            <span class="text-[0.6875rem] text-muted-foreground/70">
+              Max 3 images, PNG/JPG
+            </span>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2" id="ai-images-preview"></div>
+      </div>
+
+      <div
+        class="hidden items-center gap-2 rounded-md bg-muted px-3 py-2 text-[0.8125rem] text-muted-foreground"
+        id="ai-status"
+      >
+        <span id="ai-status-icon" class="flex items-center justify-center">
+          <Loader2 class="size-4 animate-spin" />
+        </span>
+        <span id="ai-status-text">Generating palette...</span>
+      </div>
+
+      <div class="hidden text-[0.8125rem]" id="ai-reasoning">
+        <details>
+          <summary class="cursor-pointer py-2 text-muted-foreground hover:text-foreground">
+            AI Reasoning
+          </summary>
+          <div
+            class="max-h-[150px] overflow-y-auto whitespace-pre-wrap rounded-md bg-muted px-3 py-2 text-xs leading-6 text-muted-foreground"
+            id="ai-reasoning-content"
+          ></div>
+        </details>
+      </div>
+    </div>
+
+    <DialogFooter>
+      <Button variant="outline" data-slot="dialog-close">Cancel</Button>
+      <Button id="ai-generate-confirm-btn">
+        <Sparkles class="size-4" />
+        Generate
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>

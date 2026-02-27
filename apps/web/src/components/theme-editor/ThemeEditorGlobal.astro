@@ -1,0 +1,22 @@
+---
+/**
+ * ThemeEditorGlobal - Wrapper component to include on all pages
+ * This injects the theme editor panel and handles initialization
+ */
+import ThemeEditorPanel from "./ThemeEditorPanel.astro";
+---
+
+<ThemeEditorPanel />
+
+<script>
+  // Ensure theme editor persists across Astro view transitions
+  document.addEventListener("astro:after-swap", () => {
+    // Re-initialize the theme editor if it was open
+    const panel = document.getElementById("theme-editor-panel");
+    if (panel && sessionStorage.getItem("theme-editor-open") === "true") {
+      const alpine = (window as any).Alpine;
+      const panelData = alpine?.$data ? alpine.$data(panel) : null;
+      panelData?.open?.();
+    }
+  });
+</script>

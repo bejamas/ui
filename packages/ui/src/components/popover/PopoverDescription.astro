@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"p">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<p
+  {...rest}
+  data-slot="popover-description"
+  class={cn("text-muted-foreground", className)}
+>
+  <slot />
+</p>

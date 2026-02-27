@@ -1,0 +1,140 @@
+---
+/**
+ * @component Avatar
+ * @title Avatar
+ * @description An image representing a user or entity, with fallback support when unavailable.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/BejamasUI---Design-System?node-id=2531-2620&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ * <div class="flex flex-wrap items-center gap-4">
+ *   <Avatar>
+ *     <AvatarImage src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *     <AvatarFallback>TK</AvatarFallback>
+ *     <AvatarBadge />
+ *   </Avatar>
+ *   <AvatarGroup>
+ *     <Avatar>
+ *       <AvatarImage src="https://github.com/withastro.png" alt="@withastro" />
+ *       <AvatarFallback>WA</AvatarFallback>
+ *     </Avatar>
+ *     <Avatar>
+ *       <AvatarImage src="https://github.com/bejamas.png" alt="@bejamas" />
+ *       <AvatarFallback>BJ</AvatarFallback>
+ *     </Avatar>
+ *     <AvatarGroupCount>+2</AvatarGroupCount>
+ *   </AvatarGroup>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import {
+ *   Avatar,
+ *   AvatarImage,
+ *   AvatarFallback,
+ *   AvatarBadge,
+ *   AvatarGroup,
+ *   AvatarGroupCount,
+ * } from '@bejamas/ui/components/avatar';
+ * ---
+ *
+ * <Avatar size="lg">
+ *   <AvatarImage src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *   <AvatarFallback>TK</AvatarFallback>
+ *   <AvatarBadge />
+ * </Avatar>
+ * ```
+ *
+ * @examples
+ *
+ * ### Sizes
+ *
+ * <div class="flex items-center gap-4">
+ *   <Avatar size="sm">
+ *     <AvatarImage src="https://github.com/bejamas.png" alt="small" />
+ *     <AvatarFallback>SM</AvatarFallback>
+ *   </Avatar>
+ *   <Avatar>
+ *     <AvatarImage src="https://github.com/bejamas.png" alt="default" />
+ *     <AvatarFallback>MD</AvatarFallback>
+ *   </Avatar>
+ *   <Avatar size="lg">
+ *     <AvatarImage src="https://github.com/bejamas.png" alt="large" />
+ *     <AvatarFallback>LG</AvatarFallback>
+ *   </Avatar>
+ * </div>
+ *
+ * ### Badge
+ *
+ * <Avatar>
+ *   <AvatarImage src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+ *   <AvatarFallback>TK</AvatarFallback>
+ *   <AvatarBadge />
+ * </Avatar>
+ *
+ * ### Group
+ *
+ * <AvatarGroup>
+ *   <Avatar>
+ *     <AvatarImage src="https://github.com/withastro.png" alt="@withastro" />
+ *     <AvatarFallback>WA</AvatarFallback>
+ *   </Avatar>
+ *   <Avatar>
+ *     <AvatarImage src="https://github.com/bejamas.png" alt="@bejamas" />
+ *     <AvatarFallback>BJ</AvatarFallback>
+ *   </Avatar>
+ *   <Avatar>
+ *     <AvatarFallback>FS</AvatarFallback>
+ *   </Avatar>
+ *   <AvatarGroupCount>+3</AvatarGroupCount>
+ * </AvatarGroup>
+ *
+ * ### With `astro:assets` Image
+ *
+ * ```astro nopreview nocollapse
+ * ---
+ * import { Image } from "astro:assets";
+ * import profile from "@/assets/profile.jpg";
+ * import { Avatar, AvatarImage, AvatarFallback } from "@bejamas/ui/components/avatar";
+ * ---
+ *
+ * <Avatar>
+ *   <AvatarImage>
+ *     <Image src={profile} alt="Profile photo" />
+ *   </AvatarImage>
+ *   <AvatarFallback>PR</AvatarFallback>
+ * </Avatar>
+ * ```
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  class?: string;
+  size?: "default" | "sm" | "lg";
+} & HTMLAttributes<"span">;
+
+const {
+  class: className = "",
+  size = "default",
+  ...rest
+} = Astro.props as Props;
+---
+
+<span
+  {...rest}
+  data-slot="avatar"
+  data-size={size}
+  class={cn(
+    "group/avatar relative flex size-8 shrink-0 select-none rounded-full",
+    "after:absolute after:inset-0 after:rounded-full after:border after:border-border",
+    "after:mix-blend-darken dark:after:mix-blend-lighten",
+    "data-[size=sm]:size-6 data-[size=lg]:size-10",
+    "z-1",
+    className,
+  )}
+>
+  <slot />
+</span>

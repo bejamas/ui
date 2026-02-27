@@ -1,0 +1,210 @@
+---
+/**
+ * @component Popover
+ * @title Popover
+ * @description A floating panel that appears on trigger click, useful for displaying rich content like forms or additional information.
+ *
+ * @preview
+ * <Popover>
+ *   <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+ *   <PopoverContent>
+ *     <PopoverHeader>
+ *       <PopoverTitle>Dimensions</PopoverTitle>
+ *       <PopoverDescription>Set the dimensions for the layer.</PopoverDescription>
+ *     </PopoverHeader>
+ *     <div class="grid gap-2">
+ *       <div class="grid grid-cols-3 items-center gap-4">
+ *         <Label>Width</Label>
+ *         <Input class="col-span-2 h-8" value="100%" />
+ *       </div>
+ *       <div class="grid grid-cols-3 items-center gap-4">
+ *         <Label>Height</Label>
+ *         <Input class="col-span-2 h-8" value="25px" />
+ *       </div>
+ *     </div>
+ *   </PopoverContent>
+ * </Popover>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverTitle, PopoverDescription } from '@bejamas/ui/components/popover';
+ * ---
+ *
+ * <Popover>
+ *   <PopoverTrigger variant="outline">Open</PopoverTrigger>
+ *   <PopoverContent>
+ *     <PopoverHeader>
+ *       <PopoverTitle>Title</PopoverTitle>
+ *       <PopoverDescription>Description text.</PopoverDescription>
+ *     </PopoverHeader>
+ *     <p>Popover body content.</p>
+ *   </PopoverContent>
+ * </Popover>
+ * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The popover emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `popover:change` | `{ open: boolean }` | Fired when the popover opens or closes |
+ *
+ * ```astro nocollapse console
+ * <Popover id="my-popover">
+ *   <PopoverTrigger variant="outline">Open</PopoverTrigger>
+ *   <PopoverContent>
+ *     <p>Content</p>
+ *   </PopoverContent>
+ * </Popover>
+ *
+ * <script>
+ *   const popover = document.getElementById('my-popover');
+ *
+ *   popover.addEventListener('popover:change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the popover programmatically by dispatching a `popover:set` event:
+ *
+ * ```js nocollapse
+ * const popover = document.getElementById('my-popover');
+ *
+ * // Open the popover
+ * popover.dispatchEvent(new CustomEvent('popover:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Close the popover
+ * popover.dispatchEvent(new CustomEvent('popover:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The popover sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | popover, popover-content | Current state (`open` or `closed`) |
+ * | `data-side` | popover, popover-content | Position relative to trigger (`top`, `bottom`, `left`, `right`) |
+ * | `data-align` | popover, popover-content | Alignment (`start`, `center`, or `end`) |
+ *
+ * @examples
+ *
+ * ### Basic
+ *
+ * <Popover>
+ *   <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+ *   <PopoverContent>
+ *     <PopoverHeader>
+ *       <PopoverTitle>Popover Title</PopoverTitle>
+ *       <PopoverDescription>This is a simple popover.</PopoverDescription>
+ *     </PopoverHeader>
+ *   </PopoverContent>
+ * </Popover>
+ *
+ * ### Side Variants
+ *
+ * <div class="flex gap-4 items-center justify-center py-8">
+ *   <Popover>
+ *     <PopoverTrigger variant="outline">Left</PopoverTrigger>
+ *     <PopoverContent side="left">
+ *       <p>Popover on the left</p>
+ *     </PopoverContent>
+ *   </Popover>
+ *   <Popover>
+ *     <PopoverTrigger variant="outline">Top</PopoverTrigger>
+ *     <PopoverContent side="top">
+ *       <p>Popover on top</p>
+ *     </PopoverContent>
+ *   </Popover>
+ *   <Popover>
+ *     <PopoverTrigger variant="outline">Bottom</PopoverTrigger>
+ *     <PopoverContent side="bottom">
+ *       <p>Popover on bottom</p>
+ *     </PopoverContent>
+ *   </Popover>
+ *   <Popover>
+ *     <PopoverTrigger variant="outline">Right</PopoverTrigger>
+ *     <PopoverContent side="right">
+ *       <p>Popover on the right</p>
+ *     </PopoverContent>
+ *   </Popover>
+ * </div>
+ *
+ * ### Alignment Variants
+ *
+ * <div class="flex gap-8">
+ *   <Popover>
+ *     <PopoverTrigger variant="outline">Start</PopoverTrigger>
+ *     <PopoverContent side="bottom" align="start">
+ *       <p>Start-aligned content</p>
+ *     </PopoverContent>
+ *   </Popover>
+ *   <Popover>
+ *     <PopoverTrigger variant="outline">Center</PopoverTrigger>
+ *     <PopoverContent side="bottom" align="center">
+ *       <p>Center-aligned content</p>
+ *     </PopoverContent>
+ *   </Popover>
+ *   <Popover>
+ *     <PopoverTrigger variant="outline">End</PopoverTrigger>
+ *     <PopoverContent side="bottom" align="end">
+ *       <p>End-aligned content</p>
+ *     </PopoverContent>
+ *   </Popover>
+ * </div>
+ *
+ * ### With Form
+ *
+ * <Popover>
+ *   <PopoverTrigger variant="outline">Open form</PopoverTrigger>
+ *   <PopoverContent>
+ *     <PopoverHeader>
+ *       <PopoverTitle>Dimensions</PopoverTitle>
+ *       <PopoverDescription>Set the dimensions for the layer.</PopoverDescription>
+ *     </PopoverHeader>
+ *     <div class="grid gap-2">
+ *       <div class="grid grid-cols-3 items-center gap-4">
+ *         <Label>Width</Label>
+ *         <Input class="col-span-2 h-8" value="100%" />
+ *       </div>
+ *       <div class="grid grid-cols-3 items-center gap-4">
+ *         <Label>Height</Label>
+ *         <Input class="col-span-2 h-8" value="25px" />
+ *       </div>
+ *     </div>
+ *   </PopoverContent>
+ * </Popover>
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div {...rest} data-slot="popover" class={cn("inline-block", className)}>
+  <slot />
+</div>
+
+<script>
+  import { createPopover } from "@data-slot/popover";
+  document
+    .querySelectorAll('[data-slot="popover"]')
+    .forEach((el) => createPopover(el));
+</script>

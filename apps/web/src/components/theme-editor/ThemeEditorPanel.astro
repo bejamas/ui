@@ -1,0 +1,2141 @@
+---
+/**
+ * ThemeEditorPanel - Floating draggable panel for editing theme colors
+ * Triggered by Cmd/Ctrl + e
+ */
+
+import { Button } from "@bejamas/ui/components/button";
+import { Kbd } from "@bejamas/ui/components/kbd";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@bejamas/ui/components/dropdown-menu";
+import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/ui/components/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@bejamas/ui/components/select";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@bejamas/ui/components/tabs";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@bejamas/ui/components/tooltip";
+import {
+  X,
+  GripHorizontal,
+  Plus,
+  RotateCcw,
+  Trash2,
+  Upload,
+  Sparkles,
+  ChevronDown,
+  Share2,
+} from "@lucide/astro";
+import { defaultPresets } from "../../utils/themes/presets";
+import ColorInput from "./ColorInput.astro";
+import ImportDialog from "./ImportDialog.astro";
+import ExportDialog from "./ExportDialog.astro";
+import AIGenerateDialog from "./AIGenerateDialog.astro";
+import ShareDialog from "./ShareDialog.astro";
+
+// Color token sections (same as themes.astro)
+const colorSections = [
+  {
+    title: "Primary",
+    tokens: [
+      { token: "background", label: "Background" },
+      { token: "foreground", label: "Foreground" },
+      { token: "primary", label: "Primary" },
+      { token: "primary-foreground", label: "Primary FG" },
+    ],
+  },
+  {
+    title: "Secondary & Accent",
+    tokens: [
+      { token: "secondary", label: "Secondary" },
+      { token: "secondary-foreground", label: "Secondary FG" },
+      { token: "accent", label: "Accent" },
+      { token: "accent-foreground", label: "Accent FG" },
+    ],
+  },
+  {
+    title: "UI Components",
+    tokens: [
+      { token: "card", label: "Card" },
+      { token: "card-foreground", label: "Card FG" },
+      { token: "popover", label: "Popover" },
+      { token: "popover-foreground", label: "Popover FG" },
+      { token: "muted", label: "Muted" },
+      { token: "muted-foreground", label: "Muted FG" },
+    ],
+  },
+  {
+    title: "Utility & Form",
+    tokens: [
+      { token: "border", label: "Border" },
+      { token: "input", label: "Input" },
+      { token: "ring", label: "Ring" },
+    ],
+  },
+  {
+    title: "Status",
+    tokens: [
+      { token: "destructive", label: "Destructive" },
+      { token: "destructive-foreground", label: "Destructive FG" },
+    ],
+  },
+  {
+    title: "Charts",
+    tokens: [
+      { token: "chart-1", label: "Chart 1" },
+      { token: "chart-2", label: "Chart 2" },
+      { token: "chart-3", label: "Chart 3" },
+      { token: "chart-4", label: "Chart 4" },
+      { token: "chart-5", label: "Chart 5" },
+    ],
+  },
+];
+
+const presetKeys = Object.keys(defaultPresets);
+
+// Radius options for settings
+const radiusOptions = [
+  { value: "0rem", label: "None" },
+  { value: "0.25rem", label: "Small" },
+  { value: "0.5rem", label: "Medium" },
+  { value: "0.625rem", label: "Default" },
+  { value: "1rem", label: "Large" },
+  { value: "1.5rem", label: "Extra Large" },
+];
+
+const sectionTitles = [
+  "Settings",
+  ...colorSections.map((section) => section.title),
+];
+---
+
+<div
+  id="theme-editor-panel"
+  x-data={`themeEditorPanel(${JSON.stringify(sectionTitles)})`}
+  x-cloak
+  x-show="isOpen"
+  x-transition.opacity.duration.150ms
+  class="fixed right-5 top-20 z-9999 flex w-80 max-h-[calc(100vh-100px)] flex-col overflow-hidden rounded-xl border border-border bg-popover text-sm shadow-2xl"
+  style="display: none;"
+>
+  <!-- Header -->
+  <div
+    class="flex items-center justify-between border-b border-border bg-muted px-4 py-3 cursor-move select-none"
+    data-slot="header"
+    x-ref="header"
+  >
+    <div class="flex items-center gap-2">
+      <GripHorizontal class="size-4 text-muted-foreground" />
+      <span class="text-sm font-semibold">Theme Editor</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <Kbd>⌘E</Kbd>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        data-slot="close"
+        class="size-6"
+        x-ref="close"
+        @click="close()"
+      >
+        <X class="size-4" />
+      </Button>
+    </div>
+  </div>
+
+  <!-- Preset Selector -->
+  <div class="border-b border-border px-4 py-3 flex flex-col gap-2">
+    <div class="flex gap-2">
+      <DropdownMenu class="flex-1">
+        <DropdownMenuTrigger
+          variant="outline"
+          size="sm"
+          class="w-full justify-between"
+        >
+          <div class="flex items-center gap-2 min-w-0">
+            <div
+              class="flex -space-x-1 items-center shrink-0"
+              data-slot="preset-swatches"
+            >
+              <div
+                class="size-3.5 rounded-full bg-primary border border-border"
+              >
+              </div>
+              <div class="size-3.5 rounded-full bg-accent border border-border">
+              </div>
+            </div>
+            <span data-slot="preset-label" class="truncate" x-ref="presetLabel">
+              Default
+            </span>
+          </div>
+          <ChevronDown class="size-4 opacity-50 shrink-0" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          class="w-[--trigger-width]"
+          data-slot="dropdown-menu-content"
+          x-ref="presetDropdown"
+        >
+          <DropdownMenuLabel>Built-in</DropdownMenuLabel>
+          {
+            presetKeys.map((key) => (
+              <DropdownMenuItem
+                data-value={key}
+                data-slot="dropdown-menu-item"
+                class="gap-2"
+              >
+                {/* Light mode swatches */}
+                <div class="flex -space-x-1 items-center dark:hidden">
+                  <div
+                    class="size-4 rounded-full"
+                    style={`background: ${defaultPresets[key].styles.light.primary}`}
+                  />
+                  <div
+                    class="size-4 rounded-full"
+                    style={`background: ${defaultPresets[key].styles.light.accent}`}
+                  />
+                </div>
+                {/* Dark mode swatches */}
+                <div class="hidden dark:flex -space-x-1 items-center">
+                  <div
+                    class="size-4 rounded-full border border-border"
+                    style={`background: ${defaultPresets[key].styles.dark.primary}`}
+                  />
+                  <div
+                    class="size-4 rounded-full border border-border"
+                    style={`background: ${defaultPresets[key].styles.dark.accent}`}
+                  />
+                </div>
+                <span class="truncate">{defaultPresets[key].label || key}</span>
+              </DropdownMenuItem>
+            ))
+          }
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Button
+        variant="outline"
+        size="icon-sm"
+        data-slot="new-preset"
+        title="Create new preset"
+        x-ref="newPreset"
+        @click="startNewPreset()"
+      >
+        <Plus class="size-4" />
+      </Button>
+      <Button
+        variant="outline"
+        size="icon-sm"
+        data-slot="delete-preset"
+        title="Delete preset"
+        disabled
+        x-ref="deletePreset"
+        @click="deleteCurrentPreset()"
+      >
+        <Trash2 class="size-4" />
+      </Button>
+    </div>
+    <Input
+      type="text"
+      data-slot="preset-name"
+      placeholder="Preset name..."
+      x-show="isCreatingNew"
+      x-cloak
+      x-ref="presetName"
+      style="display: none;"
+      @keydown.enter.prevent="confirmNewPreset()"
+      @keydown.escape.prevent="cancelNewPreset()"
+    />
+  </div>
+
+  <!-- Mode Tabs -->
+  <div data-panel-mode-tabs x-ref="modeTabs">
+    <Tabs defaultValue="light">
+      <TabsList
+        class="w-full h-auto px-4 py-1 rounded-none border-b border-border bg-muted"
+      >
+        <TabsTrigger
+          value="light"
+          data-mode="light"
+          class="mode-tab flex-1 text-xs py-1.5"
+          @click="switchMode('light')"
+        >
+          Light
+        </TabsTrigger>
+        <TabsTrigger
+          value="dark"
+          data-mode="dark"
+          class="mode-tab flex-1 text-xs py-1.5"
+          @click="switchMode('dark')"
+        >
+          Dark
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
+  </div>
+
+  <!-- Color Sections -->
+  <div class="flex-1 overflow-y-auto py-2" data-slot="content" x-ref="content">
+    <!-- Settings Section -->
+    <div class="border-b border-border last:border-b-0">
+      <Button
+        variant="ghost"
+        class="flex items-center justify-between w-full px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-none h-auto"
+        data-slot="section-toggle"
+        @click="toggleSection('Settings')"
+      >
+        <span>Settings</span>
+        <ChevronDown
+          class="size-4 transition-transform duration-200"
+          :class="sectionsOpen['Settings'] ? 'rotate-0' : '-rotate-90'"
+        />
+      </Button>
+      <div
+        class="px-4 py-3"
+        x-show="sectionsOpen['Settings']"
+        x-cloak
+        x-transition
+      >
+        <div class="flex flex-col gap-1.5">
+          <Label for="radius-select" class="text-xs text-muted-foreground">
+            Border Radius
+          </Label>
+          <Select id="radius-select" class="w-full">
+            <SelectTrigger size="sm" x-ref="radiusSelect">
+              <SelectValue placeholder="Select radius" />
+            </SelectTrigger>
+            <SelectContent>
+              {
+                radiusOptions.map((option) => (
+                  <SelectItem value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))
+              }
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    </div>
+
+    {
+      colorSections.map((section) => (
+        <div class="border-b border-border last:border-b-0">
+          <Button
+            variant="ghost"
+            class="flex items-center justify-between w-full px-4 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-none h-auto"
+            data-slot="section-toggle"
+            @click={`toggleSection('${section.title}')`}
+          >
+            <span>{section.title}</span>
+            <ChevronDown
+              class="size-4 transition-transform duration-200"
+              x-bind:class={`sectionsOpen['${section.title}'] ? 'rotate-0' : '-rotate-90'`}
+            />
+          </Button>
+          <div
+            class="grid grid-cols-2 gap-3 px-4 py-3"
+            x-show={`sectionsOpen['${section.title}']`}
+            x-cloak
+            x-transition
+          >
+            {section.tokens.map((item) => (
+              <ColorInput
+                token={item.token}
+                label={item.label}
+                value=""
+                x-effect={`$el.setColor?.(workingStyles[currentMode]?.['${item.token}'] || '')`}
+              />
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Footer Actions -->
+  <div
+    class="flex items-center justify-between border-t border-border bg-muted px-4 py-3"
+  >
+    <div class="flex gap-1.5">
+      <Tooltip delay={400}>
+        <TooltipTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            data-slot="reset"
+            title="Reset to original"
+            x-ref="reset"
+            @click="resetToOriginal()"
+          >
+            <RotateCcw class="size-3.5" />
+          </Button>
+          <TooltipContent>
+            <p>Reset</p>
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
+
+      <Tooltip delay={400}>
+        <TooltipTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            data-action="import-css"
+            @click="openImportDialog()"
+          >
+            <Upload class="size-3.5" />
+          </Button>
+          <TooltipContent>
+            <p>Import CSS</p>
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
+
+      <Tooltip delay={400}>
+        <TooltipTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            data-action="export-json"
+            @click="openExportJsonDialog()"
+          >
+            Export
+          </Button>
+          <TooltipContent>
+            <p>Export Theme</p>
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
+
+      <Tooltip delay={400}>
+        <TooltipTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            data-action="share-theme"
+            @click="openShareDialog()"
+          >
+            <Share2 class="size-3.5" />
+          </Button>
+          <TooltipContent>
+            <p>Share Theme</p>
+          </TooltipContent>
+        </TooltipTrigger>
+      </Tooltip>
+
+      <Button
+        size="sm"
+        data-slot="save"
+        variant="outline"
+        @click="savePreset()"
+      >
+        <!-- <Save class="size-3.5" /> -->
+        Save
+      </Button>
+    </div>
+    <div class="ml-auto flex gap-1.5">
+      <Button
+        size="sm"
+        data-slot="ai-generate"
+        title="AI Generate Palette"
+        @click="openAIDialog()"
+      >
+        <Sparkles class="size-3.5" />
+        AI
+      </Button>
+    </div>
+
+    <ImportDialog />
+    <ExportDialog />
+    <AIGenerateDialog />
+    <ShareDialog />
+  </div>
+
+  <!-- Theme Editor toggle button - positioned after panel for CSS sibling selector -->
+  <!-- <button
+  type="button"
+  id="theme-editor-toggle-btn"
+  class="theme-editor-fab"
+  aria-label="Open theme editor (Cmd/Ctrl + E)"
+  title="Open theme editor (Cmd/Ctrl + E)"
+>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="13.5" cy="6.5" r="0.5" fill="currentColor"/>
+    <circle cx="17.5" cy="10.5" r="0.5" fill="currentColor"/>
+    <circle cx="8.5" cy="7.5" r="0.5" fill="currentColor"/>
+    <circle cx="6.5" cy="12.5" r="0.5" fill="currentColor"/>
+    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"/>
+  </svg>
+</button> -->
+
+  <script>
+    import Alpine from "alpinejs";
+    import { applyThemeToElement } from "../../utils/themes/apply-theme";
+    import {
+      getStoredPreset,
+      setStoredPreset,
+      getCurrentMode,
+      PRESET_CHANGE_EVENT,
+    } from "../../utils/themes/preset-store";
+    import { defaultPresets } from "../../utils/themes/presets";
+    import {
+      getAllPresets,
+      saveCustomPreset,
+      deleteCustomPreset,
+      generatePresetId,
+      getCustomPresets,
+      getEditingPresetDraft,
+      setEditingPresetDraft,
+      clearEditingPresetDraft,
+      CUSTOM_PRESETS_CHANGE_EVENT,
+      type CustomPreset,
+    } from "../../utils/themes/custom-presets-store";
+    import type { ThemeStyleProps } from "../../utils/types/theme";
+    import Prism from "prismjs";
+    import "prismjs/components/prism-json";
+    import "prismjs/components/prism-css";
+    import {
+      buildCliCommand,
+      convertStyleColors,
+      generateCssExport,
+      parseCssVariables,
+      toThemeStyleValues,
+    } from "./utils/themeEditorUtils";
+
+    const applyStoredDraftToRoot = () => {
+      if (typeof window === "undefined") return;
+      const storedId = getStoredPreset();
+      if (!storedId) return;
+      // Only apply drafts for custom presets; built-in presets should
+      // always use their canonical styles so settings like radius stay in sync.
+      if (storedId in defaultPresets) return;
+      const draft = getEditingPresetDraft(storedId);
+      if (!draft) return;
+
+      const mode = getCurrentMode();
+      applyThemeToElement(
+        { styles: draft.workingStyles, currentMode: mode },
+        document.documentElement,
+        { skipModeClass: true },
+      );
+    };
+
+    const getPanelInstance = () => {
+      const el = document.getElementById("theme-editor-panel");
+      return el ? Alpine.$data(el) : null;
+    };
+
+    const setupGlobalHandlers = () => {
+      if ((window as any).__themeEditorGlobalHandlers) return;
+      (window as any).__themeEditorGlobalHandlers = true;
+
+      document.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        const panel = getPanelInstance();
+        if (!panel) return;
+
+        if (target.closest("#ai-generate-confirm-btn")) {
+          panel.handleAIGenerate();
+        }
+        if (target.closest("#import-confirm-btn")) {
+          panel.handleImport();
+        }
+        if (target.closest("#export-json-copy-btn")) {
+          panel.handleExportJsonCopy();
+        }
+        if (target.closest("#share-retry-btn")) {
+          panel.generateShareLink();
+        }
+        if (target.closest("#share-copy-btn")) {
+          panel.handleShareCopy();
+        }
+        if (target.closest("#cli-copy-btn")) {
+          panel.handleCliCopy();
+        }
+
+        const removeBtn = target.closest("[data-ai-remove]");
+        if (removeBtn) {
+          const index = Number(
+            (removeBtn as HTMLElement).dataset.aiRemove || -1,
+          );
+          if (!Number.isNaN(index)) {
+            panel.removeAIImage(index);
+          }
+        }
+      });
+
+      document.addEventListener("select:change", (e) => {
+        const target = e.target as HTMLElement;
+        const panel = getPanelInstance();
+        if (!panel) return;
+
+        if (target.closest("#export-format-select")) {
+          panel.updateExportContent();
+        }
+      });
+
+      document.addEventListener("tabs:change", (e) => {
+        const customEvent = e as CustomEvent;
+        const target = e.target as HTMLElement;
+        const panel = getPanelInstance();
+        if (!panel || !customEvent.detail?.value) return;
+
+        if (target.closest("#export-type-tabs")) {
+          panel.setExportType(customEvent.detail.value as "json" | "css");
+        }
+
+        if (target.closest("#cli-pm-tabs")) {
+          panel.setCliPackageManager(
+            customEvent.detail.value as "pnpm" | "npm" | "yarn" | "bun",
+          );
+        }
+      });
+
+      document.addEventListener("dragover", (e) => {
+        const dropzone = (e.target as HTMLElement).closest(
+          "#ai-images-dropzone",
+        );
+        if (dropzone) {
+          e.preventDefault();
+          dropzone.classList.add("border-accent", "bg-accent/5");
+        }
+      });
+
+      document.addEventListener("dragleave", (e) => {
+        const dropzone = (e.target as HTMLElement).closest(
+          "#ai-images-dropzone",
+        );
+        if (dropzone) {
+          dropzone.classList.remove("border-accent", "bg-accent/5");
+        }
+      });
+
+      document.addEventListener("drop", (e) => {
+        const dropzone = (e.target as HTMLElement).closest(
+          "#ai-images-dropzone",
+        );
+        if (dropzone) {
+          e.preventDefault();
+          dropzone.classList.remove("border-accent", "bg-accent/5");
+          const files = e.dataTransfer?.files;
+          const panel = getPanelInstance();
+          if (files && panel) panel.handleAIImageFiles(files);
+        }
+      });
+
+      document.addEventListener("change", (e) => {
+        const input = e.target as HTMLInputElement;
+        if (input.id === "ai-images-input" && input.files) {
+          const panel = getPanelInstance();
+          if (panel) {
+            panel.handleAIImageFiles(input.files);
+            input.value = "";
+          }
+        }
+      });
+    };
+
+    document.addEventListener("alpine:init", () => {
+      if ((window as any).__themeEditorPanelData) return;
+      (window as any).__themeEditorPanelData = true;
+
+      applyStoredDraftToRoot();
+
+      Alpine.data(
+        "themeEditorPanel",
+        (sectionTitles: string[]) =>
+          ({
+            isOpen: false,
+            isDragging: false,
+            dragOffset: { x: 0, y: 0 },
+            currentPresetId: "",
+            currentMode: "light",
+            workingStyles: { light: {}, dark: {} } as {
+              light: Partial<ThemeStyleProps>;
+              dark: Partial<ThemeStyleProps>;
+            },
+            originalStyles: { light: {}, dark: {} } as {
+              light: Partial<ThemeStyleProps>;
+              dark: Partial<ThemeStyleProps>;
+            },
+            isCustomPreset: false,
+            isCreatingNew: false,
+            isSharing: false,
+            shareShortId: null as string | null,
+            currentCliPm: "bun" as "pnpm" | "npm" | "yarn" | "bun",
+            aiImages: [] as { data: string; mediaType: string }[],
+            currentExportType: "json" as "json" | "css",
+            sectionsOpen: sectionTitles.reduce(
+              (acc, title) => ({ ...acc, [title]: true }),
+              {} as Record<string, boolean>,
+            ),
+            boundKeydown: null as ((e: KeyboardEvent) => void) | null,
+            boundPresetChange: null as ((e: Event) => void) | null,
+            boundCustomPresetChange: null as ((e: Event) => void) | null,
+            boundThemeChange: null as ((e: Event) => void) | null,
+            boundMouseMove: null as ((e: MouseEvent) => void) | null,
+            boundMouseUp: null as (() => void) | null,
+            _isLoadingPreset: false,
+
+            init() {
+              setupGlobalHandlers();
+              this.setupDragging();
+              this.setupEventListeners();
+              this.loadInitialState();
+
+              this.boundKeydown = (e) => this.handleKeydown(e);
+              document.addEventListener("keydown", this.boundKeydown);
+
+              this.boundPresetChange = (e) =>
+                this.handleExternalPresetChange(e);
+              window.addEventListener(
+                PRESET_CHANGE_EVENT,
+                this.boundPresetChange,
+              );
+
+              this.boundCustomPresetChange = () => this.refreshPresetList();
+              window.addEventListener(
+                CUSTOM_PRESETS_CHANGE_EVENT,
+                this.boundCustomPresetChange,
+              );
+
+              this.boundThemeChange = (e) => this.handleExternalThemeChange(e);
+              window.addEventListener(
+                "theme-toggle-changed",
+                this.boundThemeChange,
+              );
+            },
+
+            destroy() {
+              if (this.boundKeydown)
+                document.removeEventListener("keydown", this.boundKeydown);
+              if (this.boundPresetChange)
+                window.removeEventListener(
+                  PRESET_CHANGE_EVENT,
+                  this.boundPresetChange,
+                );
+              if (this.boundCustomPresetChange)
+                window.removeEventListener(
+                  CUSTOM_PRESETS_CHANGE_EVENT,
+                  this.boundCustomPresetChange,
+                );
+              if (this.boundThemeChange)
+                window.removeEventListener(
+                  "theme-toggle-changed",
+                  this.boundThemeChange,
+                );
+              if (this.boundMouseMove)
+                document.removeEventListener("mousemove", this.boundMouseMove);
+              if (this.boundMouseUp)
+                document.removeEventListener("mouseup", this.boundMouseUp);
+            },
+
+            handleExternalThemeChange(e: Event) {
+              const customEvent = e as CustomEvent<{ theme: string }>;
+              const theme = customEvent.detail?.theme;
+              if (theme === "light" || theme === "dark") {
+                if (this.currentMode !== theme) {
+                  this.switchMode(theme, true);
+                }
+              }
+            },
+
+            handleKeydown(e: KeyboardEvent) {
+              if (
+                (e.metaKey || e.ctrlKey) &&
+                (e.key === "e" || e.key === ".")
+              ) {
+                e.preventDefault();
+                this.toggle();
+              }
+              if (e.key === "Escape" && this.isOpen) {
+                const openDialog = document.querySelector(
+                  '[data-slot="dialog-overlay"][data-state="open"]',
+                );
+                if (!openDialog) {
+                  this.close();
+                }
+              }
+            },
+
+            setupDragging() {
+              const header = this.$refs.header as HTMLElement | undefined;
+              if (!header) return;
+
+              header.addEventListener("mousedown", (e) => {
+                if ((e.target as HTMLElement).closest("button")) return;
+                this.isDragging = true;
+                const rect = this.$el.getBoundingClientRect();
+                this.dragOffset = {
+                  x: e.clientX - rect.left,
+                  y: e.clientY - rect.top,
+                };
+                this.$el.style.transition = "none";
+              });
+
+              this.boundMouseMove = (e) => {
+                if (!this.isDragging) return;
+                const x = e.clientX - this.dragOffset.x;
+                const y = e.clientY - this.dragOffset.y;
+
+                const maxX = window.innerWidth - this.$el.offsetWidth;
+                const maxY = window.innerHeight - this.$el.offsetHeight;
+
+                this.$el.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+                this.$el.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+                this.$el.style.right = "auto";
+              };
+
+              this.boundMouseUp = () => {
+                this.isDragging = false;
+                this.$el.style.transition = "";
+              };
+
+              document.addEventListener("mousemove", this.boundMouseMove);
+              document.addEventListener("mouseup", this.boundMouseUp);
+            },
+
+            setupEventListeners() {
+              const dropdown = this.$refs.presetDropdown as
+                | HTMLElement
+                | undefined;
+              dropdown?.addEventListener("click", (e) => {
+                const item = (e.target as HTMLElement).closest(
+                  '[data-slot="dropdown-menu-item"]',
+                );
+                if (item) {
+                  const id = (item as HTMLElement).dataset.value;
+                  if (id) {
+                    this.loadPreset(id);
+                  }
+                }
+              });
+
+              this.$el.addEventListener("color-change", ((e: CustomEvent) => {
+                const { token, value } = e.detail;
+                this.updateColor(token, value);
+              }) as EventListener);
+
+              const radiusSelect = document.getElementById("radius-select");
+              radiusSelect?.addEventListener("select:change", (e) => {
+                if (this._isLoadingPreset) return;
+                const { value } = (e as CustomEvent).detail;
+                this.updateRadius(value);
+              });
+            },
+
+            toggleSection(title: string) {
+              this.sectionsOpen[title] = !this.sectionsOpen[title];
+            },
+
+            loadInitialState() {
+              this.currentMode = getCurrentMode();
+              this.updateModeTabsUI();
+              this.refreshPresetList();
+
+              const storedPreset = getStoredPreset();
+              if (storedPreset) {
+                this.loadPreset(storedPreset);
+              } else {
+                this.loadPreset(Object.keys(defaultPresets)[0]);
+              }
+            },
+
+            refreshPresetList() {
+              const dropdown = this.$refs.presetDropdown as
+                | HTMLElement
+                | undefined;
+              if (!dropdown) return;
+
+              const allPresets = getAllPresets();
+              dropdown.innerHTML = "";
+
+              const builtInLabel = document.createElement("div");
+              builtInLabel.setAttribute("data-slot", "dropdown-menu-label");
+              builtInLabel.className = "px-2 py-1.5 text-sm font-medium";
+              builtInLabel.textContent = "Built-in";
+              dropdown.appendChild(builtInLabel);
+
+              Object.entries(allPresets).forEach(([id, preset]) => {
+                if (!preset.isCustom) {
+                  const item = document.createElement("div");
+                  item.setAttribute("role", "menuitem");
+                  item.setAttribute("tabindex", "0");
+                  item.setAttribute("data-slot", "dropdown-menu-item");
+                  item.setAttribute("data-value", id);
+                  item.className =
+                    "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
+                  item.textContent = preset.name || id;
+                  dropdown.appendChild(item);
+                }
+              });
+
+              const customPresets = Object.entries(allPresets).filter(
+                ([, p]) => p.isCustom,
+              );
+              if (customPresets.length > 0) {
+                const separator = document.createElement("div");
+                separator.setAttribute("data-slot", "dropdown-menu-separator");
+                separator.className = "-mx-1 my-1 h-px bg-border";
+                dropdown.appendChild(separator);
+
+                const customLabel = document.createElement("div");
+                customLabel.setAttribute("data-slot", "dropdown-menu-label");
+                customLabel.className = "px-2 py-1.5 text-sm font-medium";
+                customLabel.textContent = "Custom";
+                dropdown.appendChild(customLabel);
+
+                customPresets.forEach(([id, preset]) => {
+                  const item = document.createElement("div");
+                  item.setAttribute("role", "menuitem");
+                  item.setAttribute("tabindex", "0");
+                  item.setAttribute("data-slot", "dropdown-menu-item");
+                  item.setAttribute("data-value", id);
+                  item.className =
+                    "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
+
+                  const lightStyles = preset.styles?.light || {};
+                  const darkStyles = preset.styles?.dark || {};
+
+                  const lightSwatches = document.createElement("div");
+                  lightSwatches.className =
+                    "flex -space-x-1 items-center dark:hidden";
+                  lightSwatches.innerHTML = `
+                  <div class="size-4 rounded-full" style="background: ${lightStyles.primary || "#888"}"></div>
+                  <div class="size-4 rounded-full" style="background: ${lightStyles.accent || "#888"}"></div>
+                `;
+                  item.appendChild(lightSwatches);
+
+                  const darkSwatches = document.createElement("div");
+                  darkSwatches.className =
+                    "hidden dark:flex -space-x-1 items-center";
+                  darkSwatches.innerHTML = `
+                  <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.primary || "#888"}"></div>
+                  <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.accent || "#888"}"></div>
+                `;
+                  item.appendChild(darkSwatches);
+
+                  const label = document.createElement("span");
+                  label.className = "truncate";
+                  label.textContent = preset.name || id;
+                  item.appendChild(label);
+
+                  dropdown.appendChild(item);
+                });
+              }
+            },
+
+            loadPreset(id: string) {
+              const allPresets = getAllPresets();
+              const preset = allPresets[id];
+              if (!preset) return;
+
+              // For built-in presets, clear stale drafts so the preset's
+              // intended values (including radius) are always used fresh.
+              if (!preset.isCustom) {
+                clearEditingPresetDraft(id);
+              }
+
+              const draft = getEditingPresetDraft(id);
+              this.currentPresetId = id;
+              this.isCustomPreset = !!preset.isCustom;
+              this.shareShortId = (preset as any).shareId || null;
+
+              // Keep editor mode in sync with global light/dark mode.
+              this.currentMode = getCurrentMode();
+              this.updateModeTabsUI();
+
+              const draftWorkingStyles = draft?.workingStyles || preset.styles;
+              const draftOriginalStyles =
+                draft?.originalStyles || preset.styles;
+              this.workingStyles = JSON.parse(
+                JSON.stringify(draftWorkingStyles),
+              );
+              this.originalStyles = JSON.parse(
+                JSON.stringify(draftOriginalStyles),
+              );
+
+              const label = this.$refs.presetLabel as HTMLElement | undefined;
+              if (label) {
+                label.textContent = preset.name || id;
+              }
+
+              this.updatePresetSwatches();
+
+              const deleteBtn = this.$refs.deletePreset as HTMLButtonElement;
+              if (deleteBtn) {
+                deleteBtn.disabled = !this.isCustomPreset;
+              }
+
+              // Guard: prevent select:change from triggering updateRadius
+              // and persisting a draft while we're just syncing UI to the preset.
+              this._isLoadingPreset = true;
+              this.updateColorInputs();
+              this.updateRadiusSelect();
+              this._isLoadingPreset = false;
+
+              this.applyLivePreview();
+
+              const swatches = {
+                primaryLight: preset.styles.light?.primary || "#000",
+                accentLight: preset.styles.light?.accent || "#666",
+                primaryDark: preset.styles.dark?.primary || "#fff",
+                accentDark: preset.styles.dark?.accent || "#888",
+              };
+              setStoredPreset(id, swatches, preset.name || id);
+            },
+
+            updatePresetSwatches() {
+              const styles = this.workingStyles[this.currentMode];
+              const swatchPrimary = this.$refs.swatchPrimary as HTMLElement;
+              const swatchAccent = this.$refs.swatchAccent as HTMLElement;
+              if (swatchPrimary) {
+                swatchPrimary.style.background = styles.primary || "";
+              }
+              if (swatchAccent) {
+                swatchAccent.style.background = styles.accent || "";
+              }
+            },
+
+            updateColorInputs() {
+              const styles = this.workingStyles[this.currentMode];
+              this.$el
+                .querySelectorAll<HTMLElement>("color-input")
+                .forEach((input) => {
+                  const token = input.dataset.token;
+                  if (!token) return;
+                  const value = styles[token as keyof typeof styles];
+                  const resolved = typeof value === "string" ? value : "";
+                  (input as any).setColor?.(resolved);
+
+                  if (!(input as any).setColor) {
+                    const swatch = input.querySelector<HTMLElement>(
+                      '[data-slot="swatch"]',
+                    );
+                    const textInput = input.querySelector<HTMLInputElement>(
+                      '[data-slot="text-input"]',
+                    );
+                    if (swatch) swatch.style.background = resolved;
+                    if (textInput) textInput.value = resolved;
+                  }
+                });
+            },
+
+            persistDraft() {
+              if (!this.currentPresetId) return;
+              const presetName =
+                (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                this.currentPresetId;
+              setEditingPresetDraft(this.currentPresetId, {
+                workingStyles: JSON.parse(JSON.stringify(this.workingStyles)),
+                originalStyles: JSON.parse(JSON.stringify(this.originalStyles)),
+                currentMode: this.currentMode,
+                presetName,
+              });
+            },
+
+            updateColor(token: string, value: string) {
+              this.workingStyles[this.currentMode][
+                token as keyof ThemeStyleProps
+              ] = value;
+              this.applyLivePreview();
+
+              if (token === "primary" || token === "accent") {
+                this.updatePresetSwatches();
+              }
+              this.persistDraft();
+            },
+
+            updateRadius(value: string) {
+              this.workingStyles.light.radius = value;
+              this.applyLivePreview();
+              this.persistDraft();
+            },
+
+            updateRadiusSelect() {
+              const radiusSelect = document.getElementById("radius-select");
+              if (!radiusSelect) return;
+              const radius = this.workingStyles.light?.radius || "0.625rem";
+              radiusSelect.dispatchEvent(
+                new CustomEvent("select:set", { detail: { value: radius } })
+              );
+            },
+
+            applyLivePreview() {
+              applyThemeToElement(
+                { styles: this.workingStyles, currentMode: this.currentMode },
+                document.documentElement,
+              );
+            },
+
+            switchMode(mode: "light" | "dark", fromExternal = false) {
+              this.currentMode = mode;
+              this.updateModeTabsUI();
+              this.$nextTick(() => {
+                this.updateColorInputs();
+                this.updatePresetSwatches();
+              });
+
+              if (!fromExternal) {
+                localStorage.setItem("starlight-theme", mode);
+                document.documentElement.dataset.theme = mode;
+                document.documentElement.dataset.themeChoice = mode;
+                document.documentElement.classList.toggle(
+                  "dark",
+                  mode === "dark",
+                );
+
+                window.dispatchEvent(
+                  new CustomEvent("theme-toggle-changed", {
+                    detail: { theme: mode },
+                  }),
+                );
+
+                document
+                  .querySelector<HTMLDivElement>("#theme-tabs")
+                  ?.dispatchEvent(
+                    new CustomEvent("tabs:set", { detail: { value: mode } }),
+                  );
+              }
+
+              this.applyLivePreview();
+              this.persistDraft();
+            },
+
+            updateModeTabsUI() {
+              const tabsEl = (
+                this.$refs.modeTabs as HTMLElement | undefined
+              )?.querySelector('[data-slot="tabs"]');
+              tabsEl?.dispatchEvent(
+                new CustomEvent("tabs:set", {
+                  detail: { value: this.currentMode },
+                }),
+              );
+            },
+
+            startNewPreset() {
+              this.isCreatingNew = true;
+              this.$nextTick(() => {
+                const input = this.$refs.presetName as HTMLInputElement;
+                if (input) {
+                  input.value = `${(this.$refs.presetLabel as HTMLElement)?.textContent || "Custom"} Copy`;
+                  input.focus();
+                  input.select();
+                }
+              });
+            },
+
+            confirmNewPreset() {
+              const input = this.$refs.presetName as HTMLInputElement;
+              if (!input) return;
+
+              const name = input.value.trim();
+              if (!name) {
+                this.cancelNewPreset();
+                return;
+              }
+
+              const newPreset: CustomPreset = {
+                id: generatePresetId(),
+                name,
+                label: name,
+                createdAt: new Date().toISOString(),
+                modifiedAt: new Date().toISOString(),
+                source: "SAVED",
+                styles: JSON.parse(JSON.stringify(this.workingStyles)),
+              };
+
+              saveCustomPreset(newPreset);
+              this.cancelNewPreset();
+              this.loadPreset(newPreset.id);
+              this.showToast(`Created preset "${name}"`);
+              this.syncSharedTheme({ showToast: false });
+            },
+
+            cancelNewPreset() {
+              this.isCreatingNew = false;
+              const input = this.$refs.presetName as HTMLInputElement;
+              if (input) input.value = "";
+            },
+
+            deleteCurrentPreset() {
+              if (!this.isCustomPreset || !this.currentPresetId) return;
+
+              const allPresets = getAllPresets();
+              const preset = allPresets[this.currentPresetId];
+              if (!preset) return;
+
+              if (confirm(`Delete preset "${preset.name}"?`)) {
+                deleteCustomPreset(this.currentPresetId);
+                this.showToast(`Deleted preset "${preset.name}"`);
+                this.loadPreset(Object.keys(defaultPresets)[0]);
+              }
+            },
+
+            resetToOriginal() {
+              this.workingStyles = JSON.parse(
+                JSON.stringify(this.originalStyles),
+              );
+              this._isLoadingPreset = true;
+              this.updateColorInputs();
+              this.updateRadiusSelect();
+              this._isLoadingPreset = false;
+              this.applyLivePreview();
+              clearEditingPresetDraft(this.currentPresetId);
+              this.showToast("Reset to original");
+            },
+
+            savePreset() {
+              if (this.isCustomPreset) {
+                const customPresets = getCustomPresets();
+                const existing = customPresets[this.currentPresetId];
+                if (existing) {
+                  const updated: CustomPreset = {
+                    ...existing,
+                    styles: JSON.parse(JSON.stringify(this.workingStyles)),
+                    modifiedAt: new Date().toISOString(),
+                  };
+                  saveCustomPreset(updated);
+                  this.originalStyles = JSON.parse(
+                    JSON.stringify(this.workingStyles),
+                  );
+                  this.persistDraft();
+                  this.showToast(`Saved "${existing.name}"`);
+                  this.syncSharedTheme({ showToast: false });
+                }
+              } else {
+                this.startNewPreset();
+              }
+            },
+
+            getImportTextarea() {
+              const all = document.querySelectorAll("#import-css-textarea");
+              return (all[all.length - 1] as HTMLTextAreaElement) || null;
+            },
+
+            getImportDialog() {
+              const all = document.querySelectorAll("#import-dialog");
+              return all[all.length - 1] || null;
+            },
+
+            getAIPromptTextarea() {
+              const all = document.querySelectorAll("#ai-prompt-textarea");
+              return (all[all.length - 1] as HTMLTextAreaElement) || null;
+            },
+
+            getAIDialog() {
+              const all = document.querySelectorAll("#ai-generate-dialog");
+              return all[all.length - 1] || null;
+            },
+
+            getExportCodeJson() {
+              const all = document.querySelectorAll("#export-code-json");
+              return (all[all.length - 1] as HTMLElement) || null;
+            },
+
+            getExportCodeCss() {
+              const all = document.querySelectorAll("#export-code-css");
+              return (all[all.length - 1] as HTMLElement) || null;
+            },
+
+            getExportFormatSelect() {
+              const all = document.querySelectorAll("#export-format-select");
+              return (all[all.length - 1] as HTMLElement) || null;
+            },
+
+            getExportTypeTabs() {
+              const all = document.querySelectorAll("#export-type-tabs");
+              return (all[all.length - 1] as HTMLElement) || null;
+            },
+
+            getExportElements() {
+              const getLast = <T extends Element>(selector: string) => {
+                const all = document.querySelectorAll(selector);
+                return (all[all.length - 1] as T) || null;
+              };
+              return {
+                commandEl: getLast<HTMLElement>("#cli-command-text"),
+                noteEl: getLast<HTMLElement>("#cli-note"),
+                copyIcon: getLast<HTMLElement>("#cli-copy-icon"),
+                copiedIcon: getLast<HTMLElement>("#cli-copied-icon"),
+              };
+            },
+
+            updateExportContent() {
+              const select = this.getExportFormatSelect();
+              const format = ((select?.dataset.value || "oklch")) as
+                | "oklch"
+                | "hsl"
+                | "rgb"
+                | "hex";
+
+              const convertedStyles = convertStyleColors(
+                toThemeStyleValues(this.workingStyles as ThemeStyleProps),
+                format,
+              );
+
+              const jsonEl = this.getExportCodeJson();
+              const cssEl = this.getExportCodeCss();
+
+              if (jsonEl) {
+                const data = {
+                  name:
+                    (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                    "Theme",
+                  exportedAt: new Date().toISOString(),
+                  styles: convertedStyles,
+                };
+                const jsonStr = JSON.stringify(data, null, 2);
+                jsonEl.textContent = jsonStr;
+                if (typeof Prism !== "undefined") {
+                  jsonEl.innerHTML = Prism.highlight(
+                    jsonStr,
+                    Prism.languages.json,
+                    "json",
+                  );
+                }
+              }
+
+              if (cssEl) {
+                const cssStr = generateCssExport(
+                  convertedStyles,
+                  (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                    "Theme",
+                );
+                cssEl.textContent = cssStr;
+                if (typeof Prism !== "undefined") {
+                  cssEl.innerHTML = Prism.highlight(
+                    cssStr,
+                    Prism.languages.css,
+                    "css",
+                  );
+                }
+              }
+            },
+
+            openExportJsonDialog() {
+              const select = this.getExportFormatSelect();
+              if (select) {
+                select.dispatchEvent(
+                  new CustomEvent("select:set", { detail: { value: "oklch" } })
+                );
+              }
+              this.currentExportType = "json";
+
+              const tabs = this.getExportTypeTabs();
+              if (tabs) {
+                tabs.dispatchEvent(
+                  new CustomEvent("tabs:set", { detail: { value: "json" } }),
+                );
+              }
+
+              this.updateExportContent();
+              this.updateCliCommand();
+
+              const triggers = document.querySelectorAll(
+                "#export-json-dialog-trigger",
+              );
+              const trigger = triggers[
+                triggers.length - 1
+              ] as HTMLElement | null;
+              trigger?.click();
+            },
+
+            handleExportJsonCopy() {
+              const codeEl =
+                this.currentExportType === "json"
+                  ? this.getExportCodeJson()
+                  : this.getExportCodeCss();
+              if (!codeEl) return;
+
+              this.copyToClipboard(codeEl.textContent || "");
+              this.showToast(
+                this.currentExportType === "json"
+                  ? "JSON copied to clipboard"
+                  : "CSS copied to clipboard",
+              );
+            },
+
+            setExportType(type: "json" | "css") {
+              this.currentExportType = type;
+            },
+
+            openShareDialog() {
+              const { status, result, error } = this.getShareElements();
+
+              if (status) status.classList.remove("hidden");
+              if (result) result.classList.add("hidden");
+              if (error) error.classList.add("hidden");
+
+              const triggers = document.querySelectorAll(
+                "#share-dialog-trigger",
+              );
+              const trigger = triggers[
+                triggers.length - 1
+              ] as HTMLElement | null;
+              trigger?.click();
+
+              if (this.shareShortId) {
+                const successEls = this.getShareElements();
+                if (successEls.status)
+                  successEls.status.classList.add("hidden");
+                if (successEls.result)
+                  successEls.result.classList.remove("hidden");
+                if (successEls.urlInput) {
+                  successEls.urlInput.value = `https://ui.bejamas.com/t/${this.shareShortId}`;
+                }
+                this.updateCliCommand();
+              } else {
+                this.generateShareLink();
+              }
+            },
+
+            getShareElements() {
+              const getLast = <T extends Element>(selector: string) => {
+                const all = document.querySelectorAll(selector);
+                return (all[all.length - 1] as T) || null;
+              };
+              return {
+                status: getLast<HTMLElement>("#share-status"),
+                statusText: getLast<HTMLElement>("#share-status-text"),
+                result: getLast<HTMLElement>("#share-result"),
+                error: getLast<HTMLElement>("#share-error"),
+                errorText: getLast<HTMLElement>("#share-error-text"),
+                urlInput: getLast<HTMLInputElement>("#share-url-input"),
+                copyIcon: getLast<HTMLElement>("#share-copy-icon"),
+                copiedIcon: getLast<HTMLElement>("#share-copied-icon"),
+              };
+            },
+
+            async syncSharedTheme({ showToast = false } = {}) {
+              if (!this.isCustomPreset || !this.currentPresetId) return;
+              if (this.isSharing) return;
+              this.isSharing = true;
+
+              const controller = new AbortController();
+              const timeoutId = window.setTimeout(() => {
+                controller.abort();
+              }, 8000);
+
+              try {
+                const presetLabel =
+                  (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                  "Shared Theme";
+
+                const response = await fetch("/api/themes/share", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  signal: controller.signal,
+                  body: JSON.stringify({
+                    name: presetLabel,
+                    styles: this.workingStyles,
+                    id: this.currentPresetId,
+                    createdAt: new Date().toISOString(),
+                    shareId: this.shareShortId || undefined,
+                  }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                  throw new Error(data.error || "Failed to create share link");
+                }
+
+                this.shareShortId = data.shortId;
+
+                const customPresets = getCustomPresets();
+                const preset = customPresets[this.currentPresetId];
+                if (preset) {
+                  preset.shareId = data.shortId;
+                  saveCustomPreset(preset);
+                }
+
+                this.updateCliCommand();
+                if (showToast) {
+                  this.showToast("Share link updated");
+                }
+              } catch (error) {
+                console.error("Share sync error:", error);
+                if (showToast) {
+                  const message =
+                    error instanceof DOMException && error.name === "AbortError"
+                      ? "Share sync timed out"
+                      : error instanceof Error
+                        ? error.message
+                        : "Share sync failed";
+                  this.showToast(message);
+                }
+              } finally {
+                window.clearTimeout(timeoutId);
+                this.isSharing = false;
+              }
+            },
+
+            async generateShareLink() {
+              if (this.isSharing) return;
+              this.isSharing = true;
+
+              const loadingEls = this.getShareElements();
+              if (loadingEls.status)
+                loadingEls.status.classList.remove("hidden");
+              if (loadingEls.statusText)
+                loadingEls.statusText.textContent = "Generating share link...";
+              if (loadingEls.result) loadingEls.result.classList.add("hidden");
+              if (loadingEls.error) loadingEls.error.classList.add("hidden");
+
+              const controller = new AbortController();
+              const timeoutId = window.setTimeout(() => {
+                controller.abort();
+              }, 8000);
+
+              try {
+                const presetLabel =
+                  (this.$refs.presetLabel as HTMLElement)?.textContent ||
+                  "Shared Theme";
+
+                const response = await fetch("/api/themes/share", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  signal: controller.signal,
+                  body: JSON.stringify({
+                    name: presetLabel,
+                    styles: this.workingStyles,
+                    id: this.currentPresetId,
+                    createdAt: new Date().toISOString(),
+                    shareId: this.shareShortId || undefined,
+                  }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                  throw new Error(data.error || "Failed to create share link");
+                }
+
+                this.shareShortId = data.shortId;
+
+                if (this.isCustomPreset && this.currentPresetId) {
+                  const customPresets = getCustomPresets();
+                  const preset = customPresets[this.currentPresetId];
+                  if (preset) {
+                    preset.shareId = data.shortId;
+                    saveCustomPreset(preset);
+                  }
+                }
+
+                const successEls = this.getShareElements();
+                if (successEls.status)
+                  successEls.status.classList.add("hidden");
+                if (successEls.result)
+                  successEls.result.classList.remove("hidden");
+                if (successEls.urlInput)
+                  successEls.urlInput.value =
+                    data.fullUrl || `https://ui.bejamas.com${data.shareUrl}`;
+
+                this.updateCliCommand();
+              } catch (error) {
+                console.error("Share error:", error);
+
+                const message =
+                  error instanceof DOMException && error.name === "AbortError"
+                    ? "Share request timed out. Please try again."
+                    : error instanceof Error
+                      ? error.message
+                      : "Failed to create share link. Please try again.";
+
+                const errorEls = this.getShareElements();
+                if (errorEls.status) errorEls.status.classList.add("hidden");
+                if (errorEls.error) errorEls.error.classList.remove("hidden");
+                if (errorEls.errorText) {
+                  errorEls.errorText.textContent = message;
+                }
+              } finally {
+                window.clearTimeout(timeoutId);
+                this.isSharing = false;
+              }
+            },
+
+            handleShareCopy() {
+              const { urlInput, copyIcon, copiedIcon } =
+                this.getShareElements();
+              if (!urlInput) return;
+
+              navigator.clipboard
+                .writeText(urlInput.value)
+                .then(() => {
+                  if (copyIcon) copyIcon.classList.add("hidden");
+                  if (copiedIcon) copiedIcon.classList.remove("hidden");
+
+                  this.showToast("Link copied to clipboard");
+
+                  setTimeout(() => {
+                    if (copyIcon) copyIcon.classList.remove("hidden");
+                    if (copiedIcon) copiedIcon.classList.add("hidden");
+                  }, 2000);
+                })
+                .catch((err) => {
+                  console.error("Failed to copy:", err);
+                  this.showToast("Failed to copy link");
+                });
+            },
+
+            updateCliCommand() {
+              const { commandEl, noteEl } = this.getExportElements();
+              const presetName =
+                (this.$refs.presetLabel as HTMLElement)?.textContent || "theme";
+
+              if (commandEl) {
+                commandEl.textContent = buildCliCommand({
+                  presetName,
+                  shortId: this.shareShortId,
+                  pm: this.currentCliPm,
+                });
+              }
+
+              if (noteEl) {
+                noteEl.textContent = this.shareShortId
+                  ? "Install this theme directly into your project."
+                  : "Share your theme first to get the CLI installation command.";
+              }
+            },
+
+            setCliPackageManager(pm: "pnpm" | "npm" | "yarn" | "bun") {
+              this.currentCliPm = pm;
+              this.updateCliCommand();
+            },
+
+            handleCliCopy() {
+              const presetName =
+                (this.$refs.presetLabel as HTMLElement)?.textContent || "theme";
+              const command = buildCliCommand({
+                presetName,
+                shortId: this.shareShortId,
+                pm: this.currentCliPm,
+              });
+
+              if (!this.shareShortId) {
+                this.showToast("Share your theme first");
+                return;
+              }
+
+              const { copyIcon, copiedIcon } = this.getExportElements();
+
+              navigator.clipboard
+                .writeText(command)
+                .then(() => {
+                  if (copyIcon) copyIcon.classList.add("hidden");
+                  if (copiedIcon) copiedIcon.classList.remove("hidden");
+
+                  this.showToast("Command copied to clipboard");
+
+                  setTimeout(() => {
+                    if (copyIcon) copyIcon.classList.remove("hidden");
+                    if (copiedIcon) copiedIcon.classList.add("hidden");
+                  }, 2000);
+                })
+                .catch((err) => {
+                  console.error("Failed to copy CLI command:", err);
+                  this.showToast("Failed to copy command");
+                });
+            },
+
+            openImportDialog() {
+              const textarea = this.getImportTextarea();
+              if (textarea) textarea.value = "";
+
+              const triggers = document.querySelectorAll(
+                "#import-dialog-trigger",
+              );
+              const trigger = triggers[
+                triggers.length - 1
+              ] as HTMLElement | null;
+              trigger?.click();
+            },
+
+            handleImport() {
+              const textarea = this.getImportTextarea();
+              if (!textarea) {
+                console.error("Import textarea not found");
+                return;
+              }
+
+              const css = textarea.value.trim();
+              if (!css) {
+                this.showToast("Please paste some CSS to import");
+                return;
+              }
+
+              try {
+                const parsed = parseCssVariables(css);
+                if (
+                  Object.keys(parsed.light).length === 0 &&
+                  Object.keys(parsed.dark).length === 0
+                ) {
+                  this.showToast("No valid CSS variables found");
+                  return;
+                }
+
+                if (Object.keys(parsed.light).length > 0) {
+                  this.workingStyles.light = {
+                    ...this.workingStyles.light,
+                    ...parsed.light,
+                  };
+                }
+                if (Object.keys(parsed.dark).length > 0) {
+                  this.workingStyles.dark = {
+                    ...this.workingStyles.dark,
+                    ...parsed.dark,
+                  };
+                }
+
+                this.updateColorInputs();
+                this.updateRadiusSelect();
+                this.applyLivePreview();
+                this.persistDraft();
+
+                const dialog = this.getImportDialog();
+                const closeBtn = dialog?.querySelector(
+                  '[data-slot="dialog-close"]',
+                ) as HTMLElement;
+                closeBtn?.click();
+
+                const lightCount = Object.keys(parsed.light).length;
+                const darkCount = Object.keys(parsed.dark).length;
+                this.showToast(
+                  `Imported ${lightCount} light + ${darkCount} dark variables`,
+                );
+              } catch (e) {
+                console.error("Import error:", e);
+                this.showToast("Failed to parse CSS");
+              }
+            },
+
+            copyToClipboard(text: string) {
+              navigator.clipboard.writeText(text).catch(() => {
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+              });
+            },
+
+            showToast(message: string) {
+              const existing = document.querySelector(".theme-editor-toast");
+              existing?.remove();
+
+              const toast = document.createElement("div");
+              toast.className =
+                "theme-editor-toast fixed bottom-5 left-1/2 -translate-x-1/2 rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background shadow-lg";
+              toast.textContent = message;
+              document.body.appendChild(toast);
+
+              setTimeout(() => toast.remove(), 2500);
+            },
+
+            handleExternalPresetChange(e: Event) {
+              const detail = (e as CustomEvent).detail;
+              if (detail?.key && detail.key !== this.currentPresetId) {
+                this.loadPreset(detail.key);
+              }
+            },
+
+            toggle() {
+              if (this.isOpen) {
+                this.close();
+              } else {
+                this.open();
+              }
+            },
+
+            open() {
+              this.isOpen = true;
+              this.loadInitialState();
+              sessionStorage.setItem("theme-editor-open", "true");
+            },
+
+            close() {
+              this.isOpen = false;
+              sessionStorage.setItem("theme-editor-open", "false");
+            },
+
+            openAIDialog() {
+              const triggers = document.querySelectorAll(
+                "#ai-generate-dialog-trigger",
+              );
+              const trigger = triggers[
+                triggers.length - 1
+              ] as HTMLElement | null;
+              trigger?.click();
+
+              setTimeout(() => {
+                const promptTextarea = this.getAIPromptTextarea();
+                if (promptTextarea) promptTextarea.value = "";
+
+                this.aiImages = [];
+                this.updateAIImagePreview();
+
+                const allStatus = document.querySelectorAll("#ai-status");
+                const allReasoning = document.querySelectorAll("#ai-reasoning");
+                const allStatusIcon =
+                  document.querySelectorAll("#ai-status-icon");
+                const allGenerateBtn = document.querySelectorAll(
+                  "#ai-generate-confirm-btn",
+                );
+
+                const status = allStatus[
+                  allStatus.length - 1
+                ] as HTMLElement | null;
+                const reasoning = allReasoning[
+                  allReasoning.length - 1
+                ] as HTMLElement | null;
+                const statusIcon = allStatusIcon[
+                  allStatusIcon.length - 1
+                ] as HTMLElement | null;
+                const generateBtn = allGenerateBtn[
+                  allGenerateBtn.length - 1
+                ] as HTMLButtonElement | null;
+
+                if (status) status.classList.add("hidden");
+                if (reasoning) reasoning.classList.add("hidden");
+
+                if (statusIcon) {
+                  statusIcon.innerHTML =
+                    '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+                }
+
+                if (generateBtn) {
+                  generateBtn.disabled = false;
+                  generateBtn.innerHTML =
+                    '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+                }
+              }, 0);
+            },
+
+            handleAIImageFiles(files: FileList) {
+              const maxImages = 3;
+              const validTypes = [
+                "image/png",
+                "image/jpeg",
+                "image/jpg",
+                "image/webp",
+              ];
+
+              Array.from(files).forEach((file) => {
+                if (this.aiImages.length >= maxImages) {
+                  this.showToast(`Maximum ${maxImages} images allowed`);
+                  return;
+                }
+
+                if (!validTypes.includes(file.type)) {
+                  this.showToast(
+                    "Only PNG, JPG, and WebP images are supported",
+                  );
+                  return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                  const dataUrl = e.target?.result as string;
+                  const base64 = dataUrl.split(",")[1];
+                  this.aiImages.push({
+                    data: base64,
+                    mediaType: file.type,
+                  });
+                  this.updateAIImagePreview();
+                };
+                reader.readAsDataURL(file);
+              });
+            },
+
+            updateAIImagePreview() {
+              const allPreviews =
+                document.querySelectorAll("#ai-images-preview");
+              const preview = allPreviews[
+                allPreviews.length - 1
+              ] as HTMLElement;
+              if (!preview) return;
+
+              preview.innerHTML = this.aiImages
+                .map(
+                  (img, i) => `
+                <div class="relative size-16 overflow-hidden rounded-md border border-border">
+                  <img class="h-full w-full object-cover" src="data:${img.mediaType};base64,${img.data}" alt="Reference ${i + 1}" />
+                  <button type="button" class="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground" data-ai-remove="${i}">×</button>
+                </div>
+              `,
+                )
+                .join("");
+            },
+
+            removeAIImage(index: number) {
+              this.aiImages.splice(index, 1);
+              this.updateAIImagePreview();
+            },
+
+            async handleAIGenerate() {
+              const promptTextarea = this.getAIPromptTextarea();
+              const prompt = promptTextarea?.value.trim();
+
+              if (!prompt) {
+                this.showToast("Please enter a prompt describing your palette");
+                return;
+              }
+
+              const getStatusElements = () => {
+                const allStatus = document.querySelectorAll("#ai-status");
+                const allStatusText =
+                  document.querySelectorAll("#ai-status-text");
+                const allStatusIcon =
+                  document.querySelectorAll("#ai-status-icon");
+                const allReasoning = document.querySelectorAll("#ai-reasoning");
+                const allReasoningContent = document.querySelectorAll(
+                  "#ai-reasoning-content",
+                );
+                const allGenerateBtn = document.querySelectorAll(
+                  "#ai-generate-confirm-btn",
+                );
+                return {
+                  status: allStatus[allStatus.length - 1] as HTMLElement | null,
+                  statusText: allStatusText[
+                    allStatusText.length - 1
+                  ] as HTMLElement | null,
+                  statusIcon: allStatusIcon[
+                    allStatusIcon.length - 1
+                  ] as HTMLElement | null,
+                  reasoning: allReasoning[
+                    allReasoning.length - 1
+                  ] as HTMLElement | null,
+                  reasoningContent: allReasoningContent[
+                    allReasoningContent.length - 1
+                  ] as HTMLElement | null,
+                  generateBtn: allGenerateBtn[
+                    allGenerateBtn.length - 1
+                  ] as HTMLButtonElement | null,
+                };
+              };
+
+              const elements = getStatusElements();
+              const {
+                status,
+                statusText,
+                reasoning,
+                reasoningContent,
+                generateBtn,
+              } = elements;
+
+              if (status) status.classList.remove("hidden");
+              if (statusText) statusText.textContent = "Initializing...";
+              if (elements.statusIcon) {
+                elements.statusIcon.innerHTML =
+                  '<svg class="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+              }
+              if (reasoning) reasoning.classList.add("hidden");
+              if (generateBtn) {
+                generateBtn.disabled = true;
+                generateBtn.innerHTML =
+                  '<svg class="size-4 mr-1.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generating...';
+              }
+
+              try {
+                const response = await fetch("/api/ai/generate-palette", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    prompt,
+                    images:
+                      this.aiImages.length > 0 ? this.aiImages : undefined,
+                  }),
+                });
+
+                if (!response.ok) {
+                  const errorData = await response.json().catch(() => ({}));
+                  throw new Error(
+                    errorData.error || "Failed to generate palette",
+                  );
+                }
+
+                const reader = response.body?.getReader();
+                if (!reader) {
+                  throw new Error("No response stream available");
+                }
+
+                const decoder = new TextDecoder();
+                let buffer = "";
+                let receivedPalette: any = null;
+                let receivedReasoning: string | undefined;
+
+                while (true) {
+                  const { done, value } = await reader.read();
+                  if (done) break;
+
+                  buffer += decoder.decode(value, { stream: true });
+                  const lines = buffer.split("\n");
+                  buffer = lines.pop() || "";
+
+                  for (const line of lines) {
+                    if (line.startsWith("data: ")) {
+                      try {
+                        const event = JSON.parse(line.slice(6));
+                        const currentElements = getStatusElements();
+
+                        switch (event.type) {
+                          case "starting":
+                            if (currentElements.statusText) {
+                              currentElements.statusText.textContent =
+                                event.message || "Analyzing...";
+                            }
+                            break;
+                          case "searching":
+                            if (currentElements.statusText) {
+                              currentElements.statusText.textContent =
+                                event.message ||
+                                "Searching for brand colors...";
+                            }
+                            break;
+                          case "found_sources":
+                            if (currentElements.statusText) {
+                              currentElements.statusText.textContent =
+                                event.message || "Found sources";
+                            }
+                            break;
+                          case "generating":
+                            if (currentElements.statusText) {
+                              currentElements.statusText.textContent =
+                                event.message || "Creating your palette...";
+                            }
+                            break;
+                          case "complete":
+                            receivedPalette = event.palette;
+                            receivedReasoning = event.reasoning;
+                            if (currentElements.statusIcon) {
+                              currentElements.statusIcon.innerHTML =
+                                '<svg class="size-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>';
+                            }
+                            break;
+                          case "error":
+                            throw new Error(
+                              event.message || "Generation failed",
+                            );
+                        }
+                      } catch (parseError) {
+                        console.warn("Failed to parse SSE event:", line);
+                      }
+                    }
+                  }
+                }
+
+                if (!receivedPalette) {
+                  throw new Error("No palette received from server");
+                }
+
+                const finalElements = getStatusElements();
+
+                if (
+                  receivedReasoning &&
+                  finalElements.reasoning &&
+                  finalElements.reasoningContent
+                ) {
+                  finalElements.reasoning.classList.remove("hidden");
+                  finalElements.reasoningContent.textContent =
+                    receivedReasoning;
+                }
+
+                if (receivedPalette.light) {
+                  this.workingStyles.light = {
+                    ...this.workingStyles.light,
+                    ...receivedPalette.light,
+                  };
+                }
+                if (receivedPalette.dark) {
+                  this.workingStyles.dark = {
+                    ...this.workingStyles.dark,
+                    ...receivedPalette.dark,
+                  };
+                }
+
+                if (receivedPalette.radius) {
+                  this.workingStyles.light.radius = receivedPalette.radius;
+                }
+
+                this.updateColorInputs();
+                this.updateRadiusSelect();
+                this.applyLivePreview();
+                this.persistDraft();
+
+                const paletteName = receivedPalette.name || "AI Generated";
+                const newPreset: CustomPreset = {
+                  id: generatePresetId(),
+                  name: paletteName,
+                  label: paletteName,
+                  createdAt: new Date().toISOString(),
+                  modifiedAt: new Date().toISOString(),
+                  source: "AI",
+                  styles: {
+                    light: { ...this.workingStyles.light },
+                    dark: { ...this.workingStyles.dark },
+                  },
+                };
+                saveCustomPreset(newPreset);
+                this.refreshPresetList();
+                this.loadPreset(newPreset.id);
+                this.syncSharedTheme({ showToast: false });
+
+                if (finalElements.statusText)
+                  finalElements.statusText.textContent = `Generated "${paletteName}" palette!`;
+
+                setTimeout(() => {
+                  const aiDialog = this.getAIDialog();
+                  const closeBtn = aiDialog?.querySelector(
+                    '[data-slot="dialog-close"]',
+                  ) as HTMLElement;
+                  closeBtn?.click();
+
+                  this.showToast(`Saved "${paletteName}" as custom preset`);
+                }, 1500);
+              } catch (error) {
+                console.error("AI generation error:", error);
+                const message =
+                  error instanceof Error ? error.message : "Generation failed";
+                this.showToast(message);
+
+                const errorElements = getStatusElements();
+                if (errorElements.statusText)
+                  errorElements.statusText.textContent = `Error: ${message}`;
+              } finally {
+                const resetElements = getStatusElements();
+                if (resetElements.generateBtn) {
+                  resetElements.generateBtn.disabled = false;
+                  resetElements.generateBtn.innerHTML =
+                    '<svg class="size-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> Generate';
+                }
+              }
+            },
+          }) as unknown as object,
+      );
+    });
+  </script>
+</div>

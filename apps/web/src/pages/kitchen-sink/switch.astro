@@ -1,0 +1,112 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import { Switch } from "@bejamas/ui/components/switch";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Switch</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <div class="flex items-center gap-2">
+        <Switch id="basic-switch" />
+        <Label for="basic-switch">Airplane Mode</Label>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Default Checked">
+      <div class="flex items-center gap-2">
+        <Switch id="checked-switch" defaultChecked />
+        <Label for="checked-switch">Enabled by default</Label>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <Switch id="disabled-off" disabled />
+          <Label for="disabled-off" class="text-muted-foreground">Disabled (off)</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Switch id="disabled-on" disabled defaultChecked />
+          <Label for="disabled-on" class="text-muted-foreground">Disabled (on)</Label>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Description">
+      <div class="flex items-start gap-3">
+        <Switch id="desc-switch" class="mt-0.5" />
+        <div>
+          <Label for="desc-switch">Marketing emails</Label>
+          <p class="text-sm text-muted-foreground">Receive emails about new products, features, and more.</p>
+        </div>
+      </div>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Settings Panel">
+      <div class="border rounded-lg divide-y max-w-md">
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <Label for="setting-notifications" class="font-medium">Notifications</Label>
+            <p class="text-sm text-muted-foreground">Receive push notifications</p>
+          </div>
+          <Switch id="setting-notifications" defaultChecked />
+        </div>
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <Label for="setting-sound" class="font-medium">Sound</Label>
+            <p class="text-sm text-muted-foreground">Play sound for notifications</p>
+          </div>
+          <Switch id="setting-sound" />
+        </div>
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <Label for="setting-location" class="font-medium">Location</Label>
+            <p class="text-sm text-muted-foreground">Allow location access</p>
+          </div>
+          <Switch id="setting-location" />
+        </div>
+        <div class="flex items-center justify-between p-4">
+          <div>
+            <Label for="setting-analytics" class="font-medium">Analytics</Label>
+            <p class="text-sm text-muted-foreground">Share usage data for improvements</p>
+          </div>
+          <Switch id="setting-analytics" defaultChecked />
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Form Integration">
+      <form id="switch-form" class="flex flex-col gap-4 p-4 border rounded-lg max-w-sm">
+        <div class="flex items-center justify-between">
+          <Label for="form-dark-mode">Dark mode</Label>
+          <Switch id="form-dark-mode" name="darkMode" value="on" />
+        </div>
+        <div class="flex items-center justify-between">
+          <Label for="form-auto-save">Auto-save</Label>
+          <Switch id="form-auto-save" name="autoSave" value="on" defaultChecked />
+        </div>
+        <Button type="submit">Save Settings</Button>
+      </form>
+      <div id="switch-form-output" class="text-sm text-muted-foreground"></div>
+      <script>
+        document.getElementById("switch-form")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target as HTMLFormElement);
+          const data = Object.fromEntries(formData.entries());
+          const output = document.getElementById("switch-form-output");
+          if (output) {
+            output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
+          }
+        });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

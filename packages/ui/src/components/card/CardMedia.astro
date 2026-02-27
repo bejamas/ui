@@ -1,0 +1,27 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const mediaVariants = cva(
+  "z-0 rounded-lg overflow-hidden [&_img]:size-full [&_img]:object-cover",
+);
+---
+
+<div
+  {...rest}
+  data-slot="card-media"
+  class={cn(mediaVariants(), className)}
+>
+  <slot />
+</div>
+

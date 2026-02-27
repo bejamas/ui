@@ -1,0 +1,104 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import {
+  Slider,
+  SliderTrack,
+  SliderRange,
+  SliderThumb,
+} from "@bejamas/ui/components/slider";
+import { Label } from "@bejamas/ui/components/label";
+---
+
+<BlockExampleLayout>
+  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Slider Component Test</h1>
+
+    <!-- Basic Slider -->
+    <div class="space-y-4">
+      <Label>Basic Slider (default value: 50)</Label>
+      <Slider class="w-full" defaultValue={[50]} max={100}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+    </div>
+
+    <!-- Range Slider (Two Thumbs) -->
+    <div class="space-y-4">
+      <Label>Range Slider (values: 25, 75)</Label>
+      <Slider class="w-full" defaultValue={[25, 75]} max={100}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+        <SliderThumb />
+      </Slider>
+    </div>
+
+    <!-- Multiple Thumbs -->
+    <div class="space-y-4">
+      <Label>Multiple Thumbs (values: 20, 40, 60, 80)</Label>
+      <Slider class="w-full" defaultValue={[20, 40, 60, 80]} max={100}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+        <SliderThumb />
+        <SliderThumb />
+        <SliderThumb />
+      </Slider>
+    </div>
+
+    <!-- Vertical Slider -->
+    <div class="space-y-4">
+      <Label>Vertical Slider</Label>
+      <div class="h-48">
+        <Slider
+          class="h-full"
+          orientation="vertical"
+          defaultValue={[50]}
+          max={100}
+        >
+          <SliderTrack>
+            <SliderRange />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
+      </div>
+    </div>
+
+    <!-- Disabled Slider -->
+    <div class="space-y-4">
+      <Label>Disabled Slider</Label>
+      <Slider class="w-full" defaultValue={[50]} max={100} disabled>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+    </div>
+
+    <!-- Step Slider -->
+    <div class="space-y-4">
+      <Label>Step Slider (step: 10)</Label>
+      <Slider class="w-full" defaultValue={[50]} max={100} step={10}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+    </div>
+
+    <!-- Custom Min/Max -->
+    <div class="space-y-4">
+      <Label>Custom Min/Max (min: -50, max: 50, value: 0)</Label>
+      <Slider class="w-full" defaultValue={[0]} min={-50} max={50}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+    </div>
+  </section>
+</BlockExampleLayout>

@@ -1,0 +1,208 @@
+---
+/**
+ * @component Collapsible
+ * @title Collapsible
+ * @description An interactive component that expands and collapses content sections.
+ *
+ * @preview
+ *
+ * <Collapsible class="w-[350px] flex flex-col gap-2">
+ *   <div class="flex items-center justify-between gap-4 px-4">
+ *     <span class="text-sm font-semibold">@thomkrupa starred 3 repositories</span>
+ *     <CollapsibleTrigger asChild>
+ *       <Button variant="ghost" size="icon" class="size-8">
+ *         <ChevronsUpDownIcon class="size-4" />
+ *         <span class="sr-only">Toggle</span>
+ *       </Button>
+ *     </CollapsibleTrigger>
+ *   </div>
+ *   <div class="rounded-md border px-4 py-2 font-mono text-sm">@data-slot/collapsible</div>
+ *   <CollapsibleContent animation="slide" class="flex flex-col gap-2">
+ *     <div class="rounded-md border px-4 py-2 font-mono text-sm">@bejamas/ui</div>
+ *     <div class="rounded-md border px-4 py-2 font-mono text-sm">@astrojs/astro</div>
+ *   </CollapsibleContent>
+ * </Collapsible>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@bejamas/ui/components/collapsible';
+ * import { Button } from '@bejamas/ui/components/button';
+ * ---
+ *
+ * <Collapsible>
+ *   <CollapsibleTrigger>
+ *     <Button variant="ghost">Toggle</Button>
+ *   </CollapsibleTrigger>
+ *   <CollapsibleContent animation="slide">
+ *     Hidden content here
+ *   </CollapsibleContent>
+ * </Collapsible>
+ * ```
+ *
+ * @api
+ *
+ * ### Props
+ *
+ * | Prop | Element | Values | Default |
+ * |------|---------|--------|---------|
+ * | `open` | collapsible | `boolean` | `false` |
+ * | `hiddenUntilFound` | collapsible | `boolean` | `false` |
+ * | `animation` | collapsible-content | `none`, `slide` | `none` |
+ *
+ * `slide` uses `--collapsible-panel-height` for smooth height transitions.
+ *
+ * ### Events
+ *
+ * The collapsible emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `collapsible:change` | `{ open: boolean }` | Fired when the open state changes |
+ *
+ * ```astro nocollapse
+ * <Collapsible id="my-collapsible">
+ *   <CollapsibleTrigger>Toggle</CollapsibleTrigger>
+ *   <CollapsibleContent>Hidden content</CollapsibleContent>
+ * </Collapsible>
+ *
+ * <script>
+ *   const collapsible = document.getElementById('my-collapsible');
+ *
+ *   collapsible.addEventListener('collapsible:change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the collapsible programmatically by dispatching a `collapsible:set` event:
+ *
+ * ```js nocollapse
+ * const collapsible = document.getElementById('my-collapsible');
+ *
+ * // Open the collapsible
+ * collapsible.dispatchEvent(new CustomEvent('collapsible:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Close the collapsible
+ * collapsible.dispatchEvent(new CustomEvent('collapsible:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The collapsible sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | collapsible, collapsible-content | Current state (`open` or `closed`) |
+ * | `data-hidden-until-found` | collapsible | Enables `hidden="until-found"` when closed |
+ * | `data-starting-style` | collapsible-content | Added while enter transition styles are applied |
+ * | `data-ending-style` | collapsible-content | Added while exit transition styles are applied |
+ *
+ * ### CSS Variables
+ *
+ * The collapsible content exposes size variables for dimension animations:
+ *
+ * | Variable | Element | Description |
+ * |----------|---------|-------------|
+ * | `--collapsible-panel-height` | collapsible-content | Measured panel height |
+ * | `--collapsible-panel-width` | collapsible-content | Measured panel width |
+ *
+ * @examples
+ *
+ * ### Default open
+ *
+ * <Collapsible open class="w-[350px] flex flex-col gap-2">
+ *   <div class="flex items-center justify-between gap-4 px-4">
+ *     <span class="text-sm font-semibold">Expanded by default</span>
+ *     <CollapsibleTrigger asChild>
+ *       <Button variant="ghost" size="icon" class="size-8">
+ *         <ChevronsUpDownIcon class="size-4" />
+ *         <span class="sr-only">Toggle</span>
+ *       </Button>
+ *     </CollapsibleTrigger>
+ *   </div>
+ *   <CollapsibleContent class="flex flex-col gap-2">
+ *     <div class="rounded-md border px-4 py-2 font-mono text-sm">This content is visible by default</div>
+ *   </CollapsibleContent>
+ * </Collapsible>
+ *
+ * ### Animated content
+ *
+ * <Collapsible class="w-[350px] flex flex-col gap-2">
+ *   <CollapsibleTrigger asChild>
+ *     <Button variant="outline">Toggle with slide</Button>
+ *   </CollapsibleTrigger>
+ *   <CollapsibleContent animation="slide" class="pt-2">
+ *     <div class="rounded-md border px-4 py-2 text-sm">
+ *       This content animates panel height using CSS variables.
+ *     </div>
+ *   </CollapsibleContent>
+ * </Collapsible>
+ *
+ * ### Find-in-page support
+ *
+ * <Collapsible hiddenUntilFound class="w-[350px] flex flex-col gap-2">
+ *   <CollapsibleTrigger asChild>
+ *     <Button variant="outline">Toggle hidden-until-found content</Button>
+ *   </CollapsibleTrigger>
+ *   <CollapsibleContent class="pt-2">
+ *     <div class="rounded-md border px-4 py-2 text-sm">
+ *       Search this sentence with browser find to auto-expand.
+ *     </div>
+ *   </CollapsibleContent>
+ * </Collapsible>
+ *
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+  open?: boolean;
+  hiddenUntilFound?: boolean;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  open = false,
+  hiddenUntilFound = false,
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="collapsible"
+  data-state={open ? "open" : "closed"}
+  data-default-open={open ? true : undefined}
+  data-hidden-until-found={hiddenUntilFound ? "" : undefined}
+  class={cn(
+    "group/collapsible [&:not([data-enhanced])[data-state=closed]_[data-slot=collapsible-content]]:hidden",
+    className,
+  )}
+>
+  <slot />
+</div>
+
+<script>
+  import { createCollapsible } from "@data-slot/collapsible";
+
+  const parseBooleanDataAttribute = (value) =>
+    value !== undefined && value !== "false";
+
+  document.querySelectorAll('[data-slot="collapsible"]').forEach((el) => {
+    createCollapsible(el, {
+      defaultOpen: parseBooleanDataAttribute(el.dataset.defaultOpen),
+      hiddenUntilFound: parseBooleanDataAttribute(el.dataset.hiddenUntilFound),
+    });
+    el.setAttribute("data-enhanced", "");
+  });
+</script>

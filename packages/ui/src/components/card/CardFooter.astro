@@ -1,0 +1,27 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const footerVariants = cva(
+  "flex items-center justify-between px-6 [.border-t]:pt-6",
+);
+---
+
+<div
+  {...rest}
+  data-slot="card-footer"
+  class={cn(footerVariants(), className)}
+>
+  <slot />
+</div>
+

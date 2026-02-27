@@ -1,0 +1,114 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@bejamas/ui/components/dialog";
+import { Label } from "@bejamas/ui/components/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@bejamas/ui/components/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@bejamas/ui/components/tabs";
+import { Check, Copy } from "@lucide/astro";
+---
+
+<Dialog id="export-json-dialog">
+  <button
+    type="button"
+    data-slot="dialog-trigger"
+    id="export-json-dialog-trigger"
+    class="hidden"
+  ></button>
+  <DialogContent class="sm:max-w-3xl w-full z-10001">
+    <DialogHeader>
+      <DialogTitle>Export</DialogTitle>
+      <DialogDescription>
+        Copy the theme configuration in your preferred format.
+      </DialogDescription>
+    </DialogHeader>
+
+    <div class="rounded-(--radius) border border-border bg-card p-4 mb-2">
+      <Tabs defaultValue="bun" class="w-full" id="cli-pm-tabs">
+        <div class="flex items-center justify-between">
+          <TabsList class="h-8">
+            <TabsTrigger value="pnpm" class="text-xs px-2">pnpm</TabsTrigger>
+            <TabsTrigger value="npm" class="text-xs px-2">npm</TabsTrigger>
+            <TabsTrigger value="yarn" class="text-xs px-2">yarn</TabsTrigger>
+            <TabsTrigger value="bun" class="text-xs px-2">bun</TabsTrigger>
+          </TabsList>
+          <Button
+            id="cli-copy-btn"
+            variant="ghost"
+            size="sm"
+            class="h-8 gap-1.5 text-xs"
+          >
+            <Copy class="size-3.5" id="cli-copy-icon" />
+            <Check class="size-3.5 hidden" id="cli-copied-icon" />
+            <span>Copy</span>
+          </Button>
+        </div>
+        <div class="mt-2 rounded-md border bg-muted/50 p-3 font-mono text-sm overflow-x-auto">
+          <code id="cli-command-text"
+            >bunx shadcn@latest add
+            https://ui.bejamas.com/r/themes/theme.json</code
+          >
+        </div>
+      </Tabs>
+      <p class="text-xs text-muted-foreground mt-2" id="cli-note">
+        Requires the theme to be shared first.
+      </p>
+    </div>
+
+    <Tabs defaultValue="json" class="mt-4" id="export-type-tabs">
+      <div class="flex items-center gap-3">
+        <TabsList class="h-9">
+          <TabsTrigger value="json" class="text-sm px-2">JSON</TabsTrigger>
+          <TabsTrigger value="css" class="text-sm px-2">CSS</TabsTrigger>
+        </TabsList>
+        <div class="flex items-center gap-2 ml-auto">
+          <Label for="export-format-select" class="text-sm whitespace-nowrap">
+            Colors:
+          </Label>
+          <Select id="export-format-select" defaultValue="oklch">
+            <SelectTrigger size="sm">
+              <SelectValue placeholder="Color format" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="hsl">HSL</SelectItem>
+              <SelectItem value="rgb">RGB</SelectItem>
+              <SelectItem value="hex">HEX</SelectItem>
+              <SelectItem value="oklch">OKLCH</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <TabsContent value="json" class="mt-0">
+        <pre class="max-w-[718px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4">
+          <code id="export-code-json" class="language-json" />
+        </pre>
+      </TabsContent>
+      <TabsContent value="css" class="mt-0">
+        <pre class="max-w-[718px] font-mono text-xs max-h-[300px] overflow-auto rounded-md border bg-muted/50 p-4">
+          <code id="export-code-css" class="language-css" />
+        </pre>
+      </TabsContent>
+    </Tabs>
+    <DialogFooter>
+      <Button variant="outline" data-slot="dialog-close">Close</Button>
+      <Button id="export-json-copy-btn">Copy to Clipboard</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>

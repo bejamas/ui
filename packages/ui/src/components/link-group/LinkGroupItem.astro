@@ -1,0 +1,27 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"li">;
+
+const {
+  as: Tag = "li",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  data-slot="link-group-item"
+  class={cn(
+    "[&_a]:transition-colors [&_a]:underline-offset-4 [&_a:hover]:underline [&_a]:text-footer-primary/60 [&_a]:text-muted-foreground",
+    className,
+  )}
+>
+  <slot />
+</Tag>
+

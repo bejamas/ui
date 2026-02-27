@@ -1,0 +1,45 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "bottom";
+  sideOffset?: number;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  align = "start",
+  alignOffset = 0,
+  side = "bottom",
+  sideOffset = 4,
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="navigation-menu-content"
+  data-align={align}
+  data-align-offset={alignOffset}
+  data-side={side}
+  data-side-offset={sideOffset}
+  hidden
+  class={cn(
+    "transition-[opacity,translate,filter] duration-250 ease-[cubic-bezier(0.32,0.72,0,1)]",
+    "data-starting-style:opacity-0 data-starting-style:pointer-events-none",
+    "data-[ending-style]:opacit-0",
+    "data-[motion=from-right]:animate-in data-[motion=from-right]:fade-in data-[motion=from-right]:slide-in-from-right-50",
+    "data-[motion=from-left]:animate-in data-[motion=from-left]:fade-in data-[motion=from-left]:slide-in-from-left-50",
+    // slide exit — transition TO these values
+    "data-ending-style:animate-out data-ending-style:fade-out",
+    "data-[motion=to-left]:data-[ending-style]:slide-out-to-left-50 data-[motion=to-right]:data-[ending-style]:slide-out-to-right-50",
+    "absolute",
+    className,
+  )}
+>
+  <slot />
+</div>

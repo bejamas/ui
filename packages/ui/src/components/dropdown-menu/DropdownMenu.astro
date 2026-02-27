@@ -1,0 +1,184 @@
+---
+/**
+ * @component DropdownMenu
+ * @title Dropdown Menu
+ * @description A menu that appears on trigger click, displaying a list of actions or options.
+ *
+ * @preview
+ * <DropdownMenu>
+ *   <DropdownMenuTrigger variant="outline">Open</DropdownMenuTrigger>
+ *   <DropdownMenuContent align="start">
+ *     <DropdownMenuLabel>My Account</DropdownMenuLabel>
+ *     <DropdownMenuGroup>
+ *       <DropdownMenuItem>
+ *         Profile
+ *         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+ *       </DropdownMenuItem>
+ *       <DropdownMenuItem>Settings</DropdownMenuItem>
+ *     </DropdownMenuGroup>
+ *     <DropdownMenuSeparator />
+ *     <DropdownMenuItem disabled>API</DropdownMenuItem>
+ *     <DropdownMenuItem>Log out</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@bejamas/ui/components/dropdown-menu';
+ * ---
+ *
+ * <DropdownMenu>
+ *   <DropdownMenuTrigger variant="outline">Menu</DropdownMenuTrigger>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuItem>Item 1</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The dropdown menu emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `dropdown-menu:change` | `{ open: boolean }` | Fired when the menu opens or closes |
+ * | `dropdown-menu:select` | `{ value: string }` | Fired when an item is selected |
+ *
+ * ```astro nocollapse
+ * <DropdownMenu id="my-dropdown">
+ *   <DropdownMenuTrigger>Menu</DropdownMenuTrigger>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuItem value="edit">Edit</DropdownMenuItem>
+ *     <DropdownMenuItem value="delete">Delete</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * <script>
+ *   const dropdown = document.getElementById('my-dropdown');
+ *
+ *   dropdown.addEventListener('dropdown-menu:change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *   });
+ *
+ *   dropdown.addEventListener('dropdown-menu:select', (e) => {
+ *     console.log('Selected:', e.detail.value);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the dropdown menu programmatically by dispatching a `dropdown-menu:set` event:
+ *
+ * ```js nocollapse
+ * const dropdown = document.getElementById('my-dropdown');
+ *
+ * // Open the dropdown menu
+ * dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Close the dropdown menu
+ * dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The dropdown menu sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | dropdown-menu, dropdown-menu-content | Current state (`open` or `closed`) |
+ * | `data-side` | dropdown-menu-content | Computed position (`top`, `right`, `bottom`, or `left`) |
+ * | `data-align` | dropdown-menu-content | Alignment (`start`, `center`, or `end`) |
+ * | `data-highlighted` | dropdown-menu-item | Present when item is focused |
+ * | `data-disabled` | dropdown-menu-item | Present when item is disabled |
+ *
+ * @examples
+ *
+ * ### With Labels and Groups
+ *
+ * <DropdownMenu>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger">Account</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+ *     <DropdownMenuGroup>
+ *       <DropdownMenuItem>Edit</DropdownMenuItem>
+ *       <DropdownMenuItem>Duplicate</DropdownMenuItem>
+ *     </DropdownMenuGroup>
+ *     <DropdownMenuSeparator />
+ *     <DropdownMenuItem>Delete</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * ### With Keyboard Shortcuts
+ *
+ * <DropdownMenu>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger">Edit</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuItem>
+ *       Undo
+ *       <DropdownMenuShortcut>⌘Z</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *     <DropdownMenuItem>
+ *       Redo
+ *       <DropdownMenuShortcut>⇧⌘Z</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *     <DropdownMenuSeparator />
+ *     <DropdownMenuItem>
+ *       Cut
+ *       <DropdownMenuShortcut>⌘X</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *     <DropdownMenuItem>
+ *       Copy
+ *       <DropdownMenuShortcut>⌘C</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *     <DropdownMenuItem>
+ *       Paste
+ *       <DropdownMenuShortcut>⌘V</DropdownMenuShortcut>
+ *     </DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * ### With Disabled Items
+ *
+ * <DropdownMenu>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger">Options</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuItem>Available action</DropdownMenuItem>
+ *     <DropdownMenuItem disabled>Disabled action</DropdownMenuItem>
+ *     <DropdownMenuItem>Another action</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="dropdown-menu"
+  class={cn("relative inline-block", className)}
+>
+  <slot />
+</div>
+
+<script>
+  import { createDropdownMenu } from "@data-slot/dropdown-menu";
+  document
+    .querySelectorAll('[data-slot="dropdown-menu"]')
+    .forEach((el) => createDropdownMenu(el));
+</script>

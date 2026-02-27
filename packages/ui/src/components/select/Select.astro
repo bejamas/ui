@@ -1,0 +1,333 @@
+---
+/**
+ * @component Select
+ * @title Select
+ * @description A dropdown control that lets users pick one option from a list with full keyboard navigation and accessibility support.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2549-18530&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ * <Select defaultValue="apple" class="w-[200px]">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Select a fruit" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="apple">Apple</SelectItem>
+ *     <SelectItem value="banana">Banana</SelectItem>
+ *     <SelectItem value="cherry">Cherry</SelectItem>
+ *   </SelectContent>
+ * </Select>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import {
+ *   Select,
+ *   SelectTrigger,
+ *   SelectValue,
+ *   SelectContent,
+ *   SelectItem,
+ *   SelectGroup,
+ *   SelectLabel,
+ *   SelectSeparator
+ * } from '@bejamas/ui/components/select';
+ * ---
+ *
+ * <Select name="fruit" defaultValue="apple">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Select a fruit" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="apple">Apple</SelectItem>
+ *     <SelectItem value="banana">Banana</SelectItem>
+ *   </SelectContent>
+ * </Select>
+ * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The select emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `select:change` | `{ value: string }` | Fired when a new value is selected |
+ * | `select:open-change` | `{ open: boolean }` | Fired when the dropdown opens or closes |
+ *
+ * ```astro nocollapse console
+ * <Select id="my-select">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Choose..." />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="option1">Option 1</SelectItem>
+ *     <SelectItem value="option2">Option 2</SelectItem>
+ *   </SelectContent>
+ * </Select>
+ *
+ * <script>
+ *   const select = document.getElementById('my-select');
+ *
+ *   select.addEventListener('select:change', (e) => {
+ *     console.log('Selected value:', e.detail.value);
+ *   });
+ *
+ *   select.addEventListener('select:open-change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *   });
+ * </script>
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the select programmatically by dispatching a `select:set` event:
+ *
+ * ```js nocollapse
+ * const select = document.getElementById('my-select');
+ *
+ * // Set a specific value
+ * select.dispatchEvent(new CustomEvent('select:set', {
+ *   detail: { value: 'option2' }
+ * }));
+ *
+ * // Open the select dropdown
+ * select.dispatchEvent(new CustomEvent('select:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Close the select dropdown
+ * select.dispatchEvent(new CustomEvent('select:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The select sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | select, select-trigger, select-content | Current state (`open` or `closed`) |
+ * | `data-value` | select | Currently selected value |
+ * | `data-selected` | select-item | Present when item is selected |
+ * | `data-highlighted` | select-item | Present when item is focused/highlighted |
+ * | `data-disabled` | select, select-trigger, select-item | Present when disabled |
+ * | `data-placeholder` | select-trigger | Present when showing placeholder (no value selected) |
+ *
+ * ### Position Modes
+ *
+ * The `position` prop on `SelectContent` controls how the dropdown is positioned:
+ *
+ * - **`item-aligned`** (default): The dropdown aligns with the selected item, similar to native select behavior
+ * - **`popper`**: Uses floating UI positioning with configurable placement options on `SelectContent`
+ *
+ * ```astro nocollapse nopreview
+ * <!-- Item-aligned (default) -->
+ * <Select>
+ *   <SelectContent>...</SelectContent>
+ * </Select>
+ *
+ * <!-- Popper mode -->
+ * <Select>
+ *   <SelectContent position="popper">...</SelectContent>
+ * </Select>
+ *
+ * <!-- Custom positioning on content -->
+ * <Select>
+ *   <SelectContent position="popper" side="bottom" align="start" sideOffset={8}>
+ *     ...
+ *   </SelectContent>
+ * </Select>
+ * ```
+ *
+ * @examples
+ *
+ * ### With Groups
+ *
+ * <Select class="w-[200px]">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Select food" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectGroup>
+ *       <SelectLabel>Fruits</SelectLabel>
+ *       <SelectItem value="apple">Apple</SelectItem>
+ *       <SelectItem value="banana">Banana</SelectItem>
+ *     </SelectGroup>
+ *     <SelectSeparator />
+ *     <SelectGroup>
+ *       <SelectLabel>Vegetables</SelectLabel>
+ *       <SelectItem value="carrot">Carrot</SelectItem>
+ *       <SelectItem value="broccoli">Broccoli</SelectItem>
+ *     </SelectGroup>
+ *   </SelectContent>
+ * </Select>
+ *
+ * ### Sizes
+ *
+ * <div class="flex flex-col items-start gap-4 sm:flex-row" >
+ *   <Select class="w-[180px]" size="sm">
+ *     <SelectTrigger>
+ *       <SelectValue placeholder="Small (h-8)" />
+ *     </SelectTrigger>
+ *     <SelectContent>
+ *       <SelectItem value="apple">Apple</SelectItem>
+ *       <SelectItem value="banana">Banana</SelectItem>
+ *       <SelectItem value="cherry">Cherry</SelectItem>
+ *     </SelectContent>
+ *   </Select>
+ *   <Select class="w-[180px]" size="default">
+ *     <SelectTrigger>
+ *       <SelectValue placeholder="Default (h-9)" />
+ *     </SelectTrigger>
+ *     <SelectContent>
+ *       <SelectItem value="apple">Apple</SelectItem>
+ *       <SelectItem value="banana">Banana</SelectItem>
+ *       <SelectItem value="cherry">Cherry</SelectItem>
+ *     </SelectContent>
+ *   </Select>
+ *   <Select class="w-[180px]" size="lg">
+ *     <SelectTrigger size="lg">
+ *       <SelectValue placeholder="Large (h-10)" />
+ *     </SelectTrigger>
+ *     <SelectContent>
+ *       <SelectItem value="apple">Apple</SelectItem>
+ *       <SelectItem value="banana">Banana</SelectItem>
+ *       <SelectItem value="cherry">Cherry</SelectItem>
+ *     </SelectContent>
+ *   </Select>
+ * </div>
+ *
+ * ### Disabled
+ *
+ * <Select disabled class="w-[200px]">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Disabled" />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="apple">Apple</SelectItem>
+ *     <SelectItem value="banana">Banana</SelectItem>
+ *     <SelectItem value="cherry">Cherry</SelectItem>
+ *   </SelectContent>
+ * </Select>
+ *
+ * ### With Disabled Items
+ *
+ * <Select class="w-[200px]" placeholder="Choose...">
+ *   <SelectTrigger>
+ *     <SelectValue placeholder="Choose..." />
+ *   </SelectTrigger>
+ *   <SelectContent>
+ *     <SelectItem value="available">Available</SelectItem>
+ *     <SelectItem value="unavailable" disabled>Unavailable</SelectItem>
+ *     <SelectItem value="another">Another option</SelectItem>
+ *   </SelectContent>
+ * </Select>
+ *
+ * ### Popper Mode
+ *
+ * <div class="flex flex-wrap items-start gap-4">
+ *   <Select class="w-[160px]">
+ *     <SelectTrigger>
+ *       <SelectValue placeholder="Bottom" />
+ *     </SelectTrigger>
+ *     <SelectContent position="popper" side="bottom">
+ *       <SelectItem value="option1">Option 1</SelectItem>
+ *       <SelectItem value="option2">Option 2</SelectItem>
+ *       <SelectItem value="option3">Option 3</SelectItem>
+ *     </SelectContent>
+ *   </Select>
+ *   <Select class="w-[160px]">
+ *     <SelectTrigger>
+ *       <SelectValue placeholder="Top" />
+ *     </SelectTrigger>
+ *     <SelectContent position="popper" side="top">
+ *       <SelectItem value="option1">Option 1</SelectItem>
+ *       <SelectItem value="option2">Option 2</SelectItem>
+ *       <SelectItem value="option3">Option 3</SelectItem>
+ *     </SelectContent>
+ *   </Select>
+ * </div>
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+  name?: string;
+  defaultValue?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  required?: boolean;
+  size?: "sm" | "default" | "lg";
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  name,
+  defaultValue,
+  placeholder,
+  disabled = false,
+  required = false,
+  size = "default",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="select"
+  data-name={name}
+  data-default-value={defaultValue}
+  data-value={defaultValue}
+  data-placeholder={placeholder}
+  data-disabled={disabled ? "" : undefined}
+  data-required={required ? "" : undefined}
+  data-size={size}
+  class={cn("group/select relative inline-block", className)}
+>
+  <slot />
+  {
+    name && (
+      <input
+        type="hidden"
+        name={name}
+        data-slot="select-hidden-input"
+        value={defaultValue ?? ""}
+        disabled={disabled}
+        required={required}
+      />
+    )
+  }
+</div>
+{
+  defaultValue && (
+    <script is:inline>
+      (function () {
+        var s = document.currentScript;
+        var el = s.previousElementSibling;
+        if (!el || el.dataset.slot !== "select") return;
+        var v = el.dataset.defaultValue;
+        if (!v) return;
+        var item = el.querySelector(
+          '[data-slot="select-item"][data-value="' + v + '"]'
+        );
+        var val = el.querySelector("[data-slot=select-value]");
+        if (item && val) {
+          val.textContent = item.dataset.label || item.textContent.trim();
+          item.setAttribute("data-selected", "");
+        }
+      })();
+    </script>
+  )
+}
+
+<script>
+  import { createSelect } from "@data-slot/select";
+
+  document.querySelectorAll('[data-slot="select"]').forEach((el) => {
+    createSelect(el);
+  });
+</script>

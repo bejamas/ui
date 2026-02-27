@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="navigation-menu-indicator"
+  class={cn(
+    "absolute bg-muted/50 z-0 rounded-md data-instant:transition-opacity transition-[translate,width,height] duration-150 ease pointer-events-none opacity-0 data-[state=visible]:opacity-100",
+    "translate-x-(--indicator-left,0px) translate-y-(--indicator-top,0px)",
+    "w-(--indicator-width,0) h-(--indicator-height,0)",
+    className,
+  )}
+>
+</div>

@@ -1,0 +1,92 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Textarea } from "@bejamas/ui/components/textarea";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Textarea</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <Textarea placeholder="Type your message here..." />
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Label">
+      <div class="space-y-2">
+        <Label for="ta-label">Your message</Label>
+        <Textarea id="ta-label" placeholder="Type your message here..." />
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <Textarea disabled placeholder="This textarea is disabled..." />
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Invalid / Error">
+      <div class="space-y-2">
+        <Textarea aria-invalid="true" placeholder="Required field..." />
+        <p class="text-sm text-destructive">This field is required.</p>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Button">
+      <div class="space-y-2">
+        <Textarea placeholder="Type your message here..." />
+        <Button>Send message</Button>
+      </div>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Character Count">
+      <div class="max-w-lg space-y-2">
+        <Textarea id="ta-counter" placeholder="Type something..." maxlength="500" />
+        <p class="text-sm text-muted-foreground text-right"><span id="ta-count">0</span>/500</p>
+      </div>
+      <script>
+        {
+          const textarea = document.getElementById("ta-counter") as HTMLTextAreaElement;
+          const counter = document.getElementById("ta-count");
+          textarea?.addEventListener("input", () => {
+            if (counter) counter.textContent = String(textarea.value.length);
+          });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Form Integration">
+      <form id="textarea-form" class="flex flex-col gap-4 p-4 border rounded-lg max-w-sm">
+        <div class="space-y-2">
+          <Label for="tf-name">Name</Label>
+          <input
+            id="tf-name"
+            name="name"
+            type="text"
+            placeholder="Enter your name"
+            class="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+          />
+        </div>
+        <div class="space-y-2">
+          <Label for="tf-message">Message</Label>
+          <Textarea id="tf-message" name="message" placeholder="Type your message here..." />
+        </div>
+        <Button type="submit">Submit</Button>
+      </form>
+      <div id="textarea-form-output" class="text-sm text-muted-foreground"></div>
+      <script>
+        document.getElementById("textarea-form")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target as HTMLFormElement);
+          const data = Object.fromEntries(formData.entries());
+          const output = document.getElementById("textarea-form-output");
+          if (output) {
+            output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
+          }
+        });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

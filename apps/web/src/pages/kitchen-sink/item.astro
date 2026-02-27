@@ -1,0 +1,189 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import {
+  Item,
+  ItemContent,
+  ItemTitle,
+  ItemDescription,
+  ItemActions,
+  ItemMedia,
+  ItemGroup,
+  ItemSeparator,
+} from "@bejamas/ui/components/item";
+import { Button } from "@bejamas/ui/components/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@bejamas/ui/components/avatar";
+import { FileIcon, EllipsisIcon } from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Item</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <Item>
+        <ItemContent>
+          <ItemTitle>Project Update</ItemTitle>
+          <ItemDescription>Latest changes to the component library</ItemDescription>
+        </ItemContent>
+        <ItemActions>
+          <Button variant="outline" size="sm">View</Button>
+        </ItemActions>
+      </Item>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Icon">
+      <Item>
+        <ItemMedia>
+          <FileIcon class="size-5 text-muted-foreground" />
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle>README.md</ItemTitle>
+          <ItemDescription>Updated 2 hours ago</ItemDescription>
+        </ItemContent>
+      </Item>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Avatar">
+      <Item>
+        <ItemMedia>
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+            <AvatarFallback>TK</AvatarFallback>
+          </Avatar>
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle>Thom Krupa</ItemTitle>
+          <ItemDescription>thom@bejamas.io</ItemDescription>
+        </ItemContent>
+      </Item>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Actions">
+      <Item>
+        <ItemContent>
+          <ItemTitle>Feature Request</ItemTitle>
+          <ItemDescription>Add dark mode toggle to navigation</ItemDescription>
+        </ItemContent>
+        <ItemActions>
+          <Button variant="outline" size="sm">Edit</Button>
+          <Button variant="ghost" size="icon" class="size-8">
+            <EllipsisIcon class="size-4" />
+          </Button>
+        </ItemActions>
+      </Item>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Variants">
+      <div class="space-y-3">
+        <Item>
+          <ItemContent>
+            <ItemTitle>Default variant</ItemTitle>
+            <ItemDescription>Standard item style</ItemDescription>
+          </ItemContent>
+        </Item>
+        <Item variant="outline">
+          <ItemContent>
+            <ItemTitle>Outline variant</ItemTitle>
+            <ItemDescription>With border styling</ItemDescription>
+          </ItemContent>
+        </Item>
+        <Item variant="muted">
+          <ItemContent>
+            <ItemTitle>Muted variant</ItemTitle>
+            <ItemDescription>Subtle background</ItemDescription>
+          </ItemContent>
+        </Item>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Small Size">
+      <div class="space-y-2">
+        <Item size="sm">
+          <ItemMedia><FileIcon class="size-4 text-muted-foreground" /></ItemMedia>
+          <ItemContent>
+            <ItemTitle>index.ts</ItemTitle>
+          </ItemContent>
+        </Item>
+        <Item size="sm">
+          <ItemMedia><FileIcon class="size-4 text-muted-foreground" /></ItemMedia>
+          <ItemContent>
+            <ItemTitle>utils.ts</ItemTitle>
+          </ItemContent>
+        </Item>
+        <Item size="sm">
+          <ItemMedia><FileIcon class="size-4 text-muted-foreground" /></ItemMedia>
+          <ItemContent>
+            <ItemTitle>types.ts</ItemTitle>
+          </ItemContent>
+        </Item>
+      </div>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Item Group">
+      <ItemGroup class="max-w-md">
+        <Item>
+          <ItemMedia>
+            <Avatar>
+              <AvatarFallback class="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">NK</AvatarFallback>
+            </Avatar>
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>New comment on your post</ItemTitle>
+            <ItemDescription>Nick left a comment on "Getting Started"</ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <span class="text-xs text-muted-foreground">2m ago</span>
+          </ItemActions>
+        </Item>
+        <ItemSeparator />
+        <Item>
+          <ItemMedia>
+            <Avatar>
+              <AvatarFallback class="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">JD</AvatarFallback>
+            </Avatar>
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>Pull request merged</ItemTitle>
+            <ItemDescription>Jane merged PR #42 into main</ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <span class="text-xs text-muted-foreground">15m ago</span>
+          </ItemActions>
+        </Item>
+        <ItemSeparator />
+        <Item>
+          <ItemMedia>
+            <Avatar>
+              <AvatarFallback class="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">AB</AvatarFallback>
+            </Avatar>
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>Deployment successful</ItemTitle>
+            <ItemDescription>Production build deployed to vercel</ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <span class="text-xs text-muted-foreground">1h ago</span>
+          </ItemActions>
+        </Item>
+        <ItemSeparator />
+        <Item>
+          <ItemMedia>
+            <Avatar>
+              <AvatarFallback class="bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">TK</AvatarFallback>
+            </Avatar>
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>New team member</ItemTitle>
+            <ItemDescription>Tom joined the engineering team</ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <span class="text-xs text-muted-foreground">3h ago</span>
+          </ItemActions>
+        </Item>
+      </ItemGroup>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

@@ -1,0 +1,19 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  data-slot="field-content"
+  class={cn(
+    "gap-0.5 group/field-content flex flex-1 flex-col leading-snug",
+    className,
+  )}
+  {...rest}
+>
+  <slot />
+</div>

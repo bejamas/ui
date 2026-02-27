@@ -1,0 +1,66 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@repo/ui/lib/utils";
+
+type Props = {
+  class?: string;
+  size?: "sm" | "default" | "lg";
+  position?: "item-aligned" | "popper";
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "bottom";
+  sideOffset?: number;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  size = "default",
+  position = "item-aligned",
+  align = "start",
+  alignOffset = 0,
+  side = "bottom",
+  sideOffset = 4,
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="select-content"
+  data-size={size}
+  data-position={position}
+  data-align-trigger={position === "item-aligned"}
+  data-align={align}
+  data-align-offset={alignOffset}
+  data-side={side}
+  data-side-offset={sideOffset}
+  class={cn(
+    "group/select-content focus-visible:outline-none z-50",
+    position === "popper" ? "fixed" : "relative",
+    "hidden data-[state=open]:block",
+    position === "popper" &&
+      "[transition:display_150ms_allow-discrete] starting:data-[state=closed]:block",
+    className,
+  )}
+>
+  <div
+    data-slot="select-viewport"
+    data-position={position}
+    class={cn(
+      "bg-popover text-popover-foreground min-w-36 rounded-lg shadow-md ring-1 ring-foreground/10",
+      "p-1",
+      "max-h-[var(--select-content-available-height,300px)] overflow-x-hidden overflow-y-auto",
+      position === "popper" && "min-w-[var(--select-trigger-width)]",
+      // Animations only for popper mode
+      position === "popper" && [
+        "group-data-[state=open]/select-content:animate-in group-data-[state=closed]/select-content:animate-out",
+        "group-data-[state=closed]/select-content:fade-out-0 group-data-[state=open]/select-content:fade-in-0",
+        "group-data-[state=closed]/select-content:zoom-out-95 group-data-[state=open]/select-content:zoom-in-95",
+        "group-data-[side=bottom]/select-content:slide-in-from-top-2 group-data-[side=top]/select-content:slide-in-from-bottom-2",
+      ],
+      position === "popper" && "[--tw-animation-fill-mode:both]",
+    )}
+  >
+    <slot />
+  </div>
+</div>

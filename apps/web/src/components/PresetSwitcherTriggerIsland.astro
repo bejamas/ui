@@ -1,0 +1,101 @@
+---
+/**
+ * PresetSwitcherIsland - Server Island version of PresetSwitcher
+ *
+ * This component reads the theme cookie server-side to render the correct
+ * initial swatches without client-side flicker.
+ */
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@bejamas/ui/components/dropdown-menu";
+import { Button } from "@bejamas/ui/components/button";
+import { defaultPresets } from "../utils/themes/presets";
+import {
+  parseThemeCookie,
+  type ThemeSwatches,
+} from "../utils/themes/preset-store";
+
+export const prerender = false;
+
+// Get lean presets for rendering
+const leanPresets = Object.fromEntries(
+  Object.entries(defaultPresets).map(([key, p]) => [
+    key,
+    {
+      label: p.label ?? key,
+      styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
+    },
+  ]),
+);
+
+// Parse the theme cookie server-side
+const themeCookie = Astro.cookies.get("theme")?.value;
+let currentThemeId = "default";
+let currentSwatches: ThemeSwatches | undefined;
+let currentLabel = "Default";
+
+if (themeCookie) {
+  const parsed = parseThemeCookie(decodeURIComponent(themeCookie));
+  currentThemeId = parsed.id;
+  currentSwatches = parsed.swatches;
+
+  // Try to get label from cookie name, then built-in presets, then fallback
+  if (parsed.name) {
+    // Name is stored in cookie (6th part)
+    currentLabel = parsed.name;
+  } else {
+    const builtInPreset = leanPresets[currentThemeId];
+    if (builtInPreset) {
+      currentLabel = builtInPreset.label;
+    } else {
+      // Fallback for older cookies without name
+      currentLabel = currentThemeId.startsWith("shared-")
+        ? "Shared Theme"
+        : currentThemeId.startsWith("custom-")
+          ? "Custom Theme"
+          : currentThemeId;
+    }
+  }
+}
+
+// Get current swatches - use cookie swatches if available, otherwise use preset
+const builtInPreset = leanPresets[currentThemeId];
+const primaryLightColor =
+  currentSwatches?.primaryLight ??
+  builtInPreset?.styles.light.primary ??
+  "#000";
+const accentLightColor =
+  currentSwatches?.accentLight ?? builtInPreset?.styles.light.accent ?? "#666";
+const primaryDarkColor =
+  currentSwatches?.primaryDark ?? builtInPreset?.styles.dark.primary ?? "#fff";
+const accentDarkColor =
+  currentSwatches?.accentDark ?? builtInPreset?.styles.dark.accent ?? "#888";
+---
+
+<>
+  {/* Current selection swatches */}
+  <div class="flex -space-x-1 items-center">
+    <div
+      class="preset-swatch-primary bg-primary size-4 rounded-full border-2 border-background"
+    >
+    </div>
+    <div class="bg-accent size-4 rounded-full border-2 border-background"></div>
+  </div>
+  <span class="preset-current-label truncate">{currentLabel}</span>
+  <svg
+    class="ml-auto size-4 opacity-50"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="m6 9 6 6 6-6"></path>
+  </svg>
+</>

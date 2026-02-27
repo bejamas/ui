@@ -1,0 +1,67 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Kbd, KbdGroup } from "@bejamas/ui/components/kbd";
+import { Button } from "@bejamas/ui/components/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@bejamas/ui/components/tooltip";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Kbd</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <div class="flex items-center gap-3 flex-wrap">
+        <Kbd>⌘</Kbd>
+        <Kbd>⇧</Kbd>
+        <Kbd>⌥</Kbd>
+        <Kbd>⌃</Kbd>
+        <Kbd>Ctrl</Kbd>
+        <Kbd>Enter</Kbd>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Key Combinations">
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-muted-foreground w-16">Copy</span>
+          <KbdGroup><Kbd>⌘</Kbd><Kbd>C</Kbd></KbdGroup>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-muted-foreground w-16">Paste</span>
+          <KbdGroup><Kbd>⌘</Kbd><Kbd>V</Kbd></KbdGroup>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-muted-foreground w-16">Palette</span>
+          <KbdGroup><Kbd>⌘</Kbd><Kbd>⇧</Kbd><Kbd>P</Kbd></KbdGroup>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="In Context">
+      <p class="text-sm text-muted-foreground">
+        Press <Kbd>⌘</Kbd><Kbd>K</Kbd> to open the command palette.
+      </p>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="In Button">
+      <div class="flex items-center gap-3">
+        <Button variant="outline">Accept <Kbd>⏎</Kbd></Button>
+        <Button variant="outline">Save <Kbd>⌘</Kbd><Kbd>S</Kbd></Button>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="In Tooltip">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="outline">Save</Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <span class="flex items-center gap-2">Save <KbdGroup><Kbd>⌘</Kbd><Kbd>S</Kbd></KbdGroup></span>
+        </TooltipContent>
+      </Tooltip>
+    </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>

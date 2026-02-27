@@ -1,0 +1,26 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import { Star, Github } from "@lucide/astro";
+
+let starCount: number | null = null;
+
+try {
+  const response = await fetch("https://api.github.com/repos/bejamas/ui", {
+    headers: {
+      Accept: "application/vnd.github.v3+json",
+    },
+  });
+  if (response.ok) {
+    const data = await response.json();
+    starCount = data.stargazers_count;
+  }
+} catch (error) {
+  // Silently fail - component will render without count
+}
+
+const githubUrl = "https://github.com/bejamas/ui";
+---
+
+<span class="w-8.5 items-center flex justify-center text-center">
+  {starCount !== null ? starCount.toLocaleString() : "GitHub"}
+</span>

@@ -1,0 +1,157 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import { Checkbox } from "@bejamas/ui/components/checkbox";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Checkbox</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic">
+      <div class="flex items-center gap-2">
+        <Checkbox id="basic-checkbox" />
+        <Label for="basic-checkbox">Accept terms and conditions</Label>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Default Checked">
+      <div class="flex items-center gap-2">
+        <Checkbox id="checked-checkbox" defaultChecked />
+        <Label for="checked-checkbox">This is checked by default</Label>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Description">
+      <div class="flex items-start gap-2">
+        <Checkbox id="desc-checkbox" class="mt-1" />
+        <div>
+          <Label for="desc-checkbox">Marketing emails</Label>
+          <p class="text-sm text-muted-foreground">Receive emails about new products, features, and more.</p>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <Checkbox id="disabled-checkbox" disabled />
+          <Label for="disabled-checkbox" class="text-muted-foreground">Disabled unchecked</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Checkbox id="disabled-checked" disabled defaultChecked />
+          <Label for="disabled-checked" class="text-muted-foreground">Disabled checked</Label>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Group">
+      <fieldset class="space-y-3">
+        <legend class="text-sm font-medium">Select your interests</legend>
+        <div class="flex items-center gap-2">
+          <Checkbox id="interest-design" name="interests" value="design" />
+          <Label for="interest-design">Design</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Checkbox id="interest-dev" name="interests" value="development" />
+          <Label for="interest-dev">Development</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Checkbox id="interest-marketing" name="interests" value="marketing" />
+          <Label for="interest-marketing">Marketing</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Checkbox id="interest-sales" name="interests" value="sales" />
+          <Label for="interest-sales">Sales</Label>
+        </div>
+      </fieldset>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Indeterminate">
+      <p class="text-sm text-muted-foreground">
+        The parent checkbox shows indeterminate state when some children are checked.
+      </p>
+      <div class="space-y-3">
+        <div class="flex items-center gap-2">
+          <Checkbox id="parent-checkbox" />
+          <Label for="parent-checkbox" class="font-medium">Select all</Label>
+        </div>
+        <div class="ml-6 space-y-2">
+          <div class="flex items-center gap-2">
+            <Checkbox id="child-1" class="indeterminate-child" defaultChecked />
+            <Label for="child-1">Item 1</Label>
+          </div>
+          <div class="flex items-center gap-2">
+            <Checkbox id="child-2" class="indeterminate-child" />
+            <Label for="child-2">Item 2</Label>
+          </div>
+          <div class="flex items-center gap-2">
+            <Checkbox id="child-3" class="indeterminate-child" />
+            <Label for="child-3">Item 3</Label>
+          </div>
+        </div>
+      </div>
+      <script>
+        {
+          const parent = document.getElementById("parent-checkbox") as HTMLInputElement | null;
+          const children = document.querySelectorAll<HTMLInputElement>(".indeterminate-child");
+
+          function updateParent() {
+            if (!parent) return;
+            const checked = Array.from(children).filter((c) => c.checked);
+            if (checked.length === 0) {
+              parent.checked = false;
+              parent.indeterminate = false;
+            } else if (checked.length === children.length) {
+              parent.checked = true;
+              parent.indeterminate = false;
+            } else {
+              parent.checked = false;
+              parent.indeterminate = true;
+            }
+          }
+
+          parent?.addEventListener("change", () => {
+            children.forEach((c) => {
+              c.checked = parent.checked;
+            });
+          });
+
+          children.forEach((c) => c.addEventListener("change", updateParent));
+          updateParent();
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Form Integration">
+      <form id="checkbox-form" class="flex flex-col gap-4 p-4 border rounded-lg max-w-sm">
+        <div class="flex items-center gap-2">
+          <Checkbox id="form-terms" name="terms" value="accepted" required />
+          <Label for="form-terms">I agree to the terms</Label>
+        </div>
+        <div class="flex items-center gap-2">
+          <Checkbox id="form-newsletter" name="newsletter" value="yes" />
+          <Label for="form-newsletter">Subscribe to newsletter</Label>
+        </div>
+        <Button type="submit">Submit</Button>
+      </form>
+      <div id="checkbox-form-output" class="text-sm text-muted-foreground"></div>
+      <script>
+        document.getElementById("checkbox-form")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target as HTMLFormElement);
+          const data = Object.fromEntries(formData.entries());
+          const output = document.getElementById("checkbox-form-output");
+          if (output) {
+            output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
+          }
+        });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

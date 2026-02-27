@@ -17,24 +17,24 @@ hero:
 ---
 
 import Footer from "@/ui-next/Footer.astro";
-import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
+import { LinkGroup, LinkGroupTitle, LinkGroupList, LinkGroupItem } from "@bejamas/ui/components/link-group";
 
 <Footer>
   <div class="grid grid-cols-4 gap-4">
     <div>Acme, Inc. Logo</div>
-    <LinkGroup
-      title="Resources"
-      items={[
-        { label: "Blog", href: "/blog" },
-        { label: "Documentation", href: "/docs" },
-      ]}
-    />
-    <LinkGroup
-      title="Company"
-      items={[
-        { label: "Home", href: "/" },
-        { label: "About", href: "/about" },
-      ]}
-    />
+    <LinkGroup>
+      <LinkGroupTitle>Resources</LinkGroupTitle>
+      <LinkGroupList>
+        <LinkGroupItem><a href="#">Blog</a></LinkGroupItem>
+        <LinkGroupItem><a href="/docs">Documentation</a></LinkGroupItem>
+      </LinkGroupList>
+    </LinkGroup>
+    <LinkGroup>
+      <LinkGroupTitle>Company</LinkGroupTitle>
+      <LinkGroupList>
+        <LinkGroupItem><a href="/">Home</a></LinkGroupItem>
+        <LinkGroupItem><a href="#">About</a></LinkGroupItem>
+      </LinkGroupList>
+    </LinkGroup>
   </div>
 </Footer>

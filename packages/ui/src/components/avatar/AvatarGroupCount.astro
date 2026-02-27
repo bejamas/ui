@@ -1,0 +1,29 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  data-slot="avatar-group-count"
+  class={cn(
+    "bg-muted text-muted-foreground ring-background relative flex size-8 shrink-0 items-center justify-center rounded-full text-sm ring-2",
+    "[&>svg]:size-4",
+    "group-has-data-[size=sm]/avatar-group:size-6 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3",
+    "group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=lg]/avatar-group:[&>svg]:size-5",
+    className,
+  )}
+>
+  <slot />
+</Tag>

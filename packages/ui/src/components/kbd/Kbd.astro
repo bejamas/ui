@@ -1,0 +1,147 @@
+---
+/**
+ * @component Kbd
+ * @title Kbd
+ * @description A visual indicator for keyboard keys and shortcuts, styled to match system keyboard key appearance.
+ * @status stable
+ *
+ * @preview
+ *
+ * <div class="flex flex-col items-center gap-4">
+ *   <KbdGroup>
+ *     <Kbd>⌘</Kbd>
+ *     <Kbd>⇧</Kbd>
+ *     <Kbd>⌥</Kbd>
+ *     <Kbd>⌃</Kbd>
+ *   </KbdGroup>
+ *   <KbdGroup>
+ *     <Kbd>Ctrl</Kbd>
+ *     <span>+</span>
+ *     <Kbd>B</Kbd>
+ *   </KbdGroup>
+ *   <KbdGroup>
+ *     <Kbd>⌘</Kbd>
+ *     <Kbd>K</Kbd>
+ *   </KbdGroup>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Kbd, KbdGroup } from '@bejamas/ui/components/kbd';
+ * ---
+ *
+ * <KbdGroup>
+ *   <Kbd>⌘</Kbd>
+ *   <Kbd>K</Kbd>
+ * </KbdGroup>
+ *
+ * <KbdGroup>
+ *   <Kbd>Ctrl</Kbd>
+ *   <span>+</span>
+ *   <Kbd>B</Kbd>
+ * </KbdGroup>
+ * ```
+ *
+ * @examples
+ *
+ * ### Group
+ *
+ * Use the `KbdGroup` component to group keyboard keys together.
+ *
+ * <div class="flex flex-col items-center gap-4">
+ *   <p class="text-muted-foreground text-sm">
+ *    Use{" "}
+ *     <KbdGroup>
+ *       <Kbd>Ctrl + B</Kbd>
+ *       <Kbd>Ctrl + K</Kbd>
+ *     </KbdGroup>{" "}
+ *     to open the command palette
+ *   </p>
+ * </div>
+ *
+ * ### Button
+ *
+ * Use the `Kbd` component inside a `Button` component to display a keyboard key inside a button.
+ *
+ * <Button variant="outline">
+ *   Accept <Kbd class="translate-x-0.5">
+ *     ⏎
+ *   </Kbd>
+ * </Button>
+ *
+ * ### Tooltip
+ *
+ * You can use the `Kbd` component inside a `Tooltip` component to display a tooltip with a keyboard key.
+ *
+ * <div class="flex flex-wrap gap-4">
+ *   <ButtonGroup>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Save</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent class="pr-1.5">
+ *         <div class="flex items-center gap-2">
+ *           Save Changes <Kbd>S</Kbd>
+ *         </div>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Print</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent class="pr-1.5">
+ *         <div class="flex items-center gap-2">
+ *           Print Document <KbdGroup>
+ *             <Kbd>Ctrl</Kbd>
+ *             <Kbd>P</Kbd>
+ *           </KbdGroup>
+ *         </div>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *   </ButtonGroup>
+ * </div>
+ *
+ * ### Input Group
+ *
+ * You can use the `Kbd` component inside a `InputGroupAddon` component to display a keyboard key inside an input group.
+ *
+ * <div class="flex w-full max-w-xs flex-col gap-6">
+ *   <InputGroup>
+ *     <InputGroupInput placeholder="Search..." />
+ *     <InputGroupAddon>
+ *       <SearchIcon />
+ *     </InputGroupAddon>
+ *     <InputGroupAddon align="inline-end">
+ *       <Kbd>⌘</Kbd>
+ *       <Kbd>K</Kbd>
+ *     </InputGroupAddon>
+ *   </InputGroup>
+ * </div>
+ *
+ * @props
+ * - class?: string — Additional classes for styling.
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+
+const { class: className = "", ...props } = Astro.props;
+---
+
+<kbd
+  data-slot="kbd"
+  class={cn(
+    "bg-muted text-muted-foreground",
+    "[[data-slot=tooltip-content]_&]:bg-background/20 [[data-slot=tooltip-content]_&]:text-background",
+    "dark:[[data-slot=tooltip-content]_&]:bg-background/10",
+    "h-5 w-fit min-w-5 gap-1 rounded-sm px-1",
+    "font-sans text-xs font-medium",
+    "[&_svg:not([class*='size-'])]:size-3",
+    "pointer-events-none inline-flex items-center justify-center select-none",
+    className,
+  )}
+  {...props}
+>
+  <slot />
+</kbd>

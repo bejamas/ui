@@ -1,5 +1,91 @@
 # starlight-theme-bejamas
 
+## 0.1.15
+
+### Patch Changes
+
+- [#71](https://github.com/bejamas/ui/pull/71) [`4e38086`](https://github.com/bejamas/ui/commit/4e38086536db86aa7e25dbad3da28dcb0027f7a6) Thanks [@thomkrupa](https://github.com/thomkrupa)! - remove scrollbar from sidebar
+
+## 0.1.14
+
+### Patch Changes
+
+- [#66](https://github.com/bejamas/ui/pull/66) [`50515c3`](https://github.com/bejamas/ui/commit/50515c39115a0febdfa683db9263257ec4338baf) Thanks [@thomkrupa](https://github.com/thomkrupa)! - remove margin from console
+
+## 0.1.13
+
+### Patch Changes
+
+- [#60](https://github.com/bejamas/ui/pull/60) [`045558f`](https://github.com/bejamas/ui/commit/045558f12df6d2a1bcff82254baf06c79fbdd623) Thanks [@thomkrupa](https://github.com/thomkrupa)! - update theme switcher to new select
+
+## 0.1.12
+
+### Patch Changes
+
+- [#51](https://github.com/bejamas/ui/pull/51) [`342c66c`](https://github.com/bejamas/ui/commit/342c66cf9ebb85fa07de8d3f3d17074c82afe527) Thanks [@thomkrupa](https://github.com/thomkrupa)! - fix max-height for code
+
+## 0.1.11
+
+### Patch Changes
+
+- [#47](https://github.com/bejamas/ui/pull/47) [`099bc0f`](https://github.com/bejamas/ui/commit/099bc0f20772cc1e4e1d86e39f208737339a5693) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve background colors
+
+## 0.1.10
+
+### Patch Changes
+
+- [#45](https://github.com/bejamas/ui/pull/45) [`171f2fe`](https://github.com/bejamas/ui/commit/171f2fe63c2cb795f0f3cb30c1c16f37b5af62c1) Thanks [@thomkrupa](https://github.com/thomkrupa)! - make the page description a bit more narrow
+
+## 0.1.9
+
+### Patch Changes
+
+- [#42](https://github.com/bejamas/ui/pull/42) [`dd91b4e`](https://github.com/bejamas/ui/commit/dd91b4edbfd43a08a0b6766057b9c991bb18a5f0) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve table styling
+
+## 0.1.8
+
+### Patch Changes
+
+- [#40](https://github.com/bejamas/ui/pull/40) [`58fbd77`](https://github.com/bejamas/ui/commit/58fbd775b67b2e132662ecfd9e69f674b004e675) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve z-indexes for code blocks
+
+## 0.1.7
+
+### Patch Changes
+
+- [#30](https://github.com/bejamas/ui/pull/30) [`4f2f6d4`](https://github.com/bejamas/ui/commit/4f2f6d41ba455d0dc87ee8db45974f78c7ca4a7d) Thanks [@thomkrupa](https://github.com/thomkrupa)! - decrease inline padding for mobile component preview
+
+## 0.1.6
+
+### Patch Changes
+
+- [#25](https://github.com/bejamas/ui/pull/25) [`001ddca`](https://github.com/bejamas/ui/commit/001ddcae75e510cd5f2afca4e24af6412bf84ed9) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve source preview
+
+## 0.1.5
+
+### Patch Changes
+
+- [#19](https://github.com/bejamas/ui/pull/19) [`bd4c3a0`](https://github.com/bejamas/ui/commit/bd4c3a0b596718a25aefaf7b30d185d30693618a) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve page footer ui
+
+## 0.1.4
+
+### Patch Changes
+
+- [#17](https://github.com/bejamas/ui/pull/17) [`5751b96`](https://github.com/bejamas/ui/commit/5751b9652384891bc740947a654650cff272c2c1) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve pagination spacing
+
+## 0.1.3
+
+### Patch Changes
+
+- [#15](https://github.com/bejamas/ui/pull/15) [`067a92b`](https://github.com/bejamas/ui/commit/067a92bd34171b5403c7033cd2cccd54ad7ffe41) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve codeblock ui
+
+## 0.1.2
+
+### Patch Changes
+
+- [#6](https://github.com/bejamas/ui/pull/6) [`fcca220`](https://github.com/bejamas/ui/commit/fcca220c0d4760edbaaefbfe2ce0af512bfadc26) Thanks [@thomkrupa](https://github.com/thomkrupa)! - convert component names to PascalCase for barrel import
+
+- [#6](https://github.com/bejamas/ui/pull/6) [`41d9e97`](https://github.com/bejamas/ui/commit/41d9e97f7cee67e95d9c9eeb112762d1487d4e4f) Thanks [@thomkrupa](https://github.com/thomkrupa)! - change imports of bejamas/ui components
+
 ## 0.1.1
 
 ### Patch Changes

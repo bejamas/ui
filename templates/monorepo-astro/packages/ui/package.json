@@ -5,7 +5,7 @@
   "exports": {
     "./globals.css": "./src/styles/globals.css",
     "./lib/*": "./src/lib/*.ts",
-    "./components/*": "./src/components/*.astro"
+    "./components/*": "./src/components/*.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0"

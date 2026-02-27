@@ -1,6 +1,7 @@
 {/* This is intentionally inlined to avoid FOUC. */}
 <script is:inline>
   window.StarlightThemeProvider = (() => {
+    const storageKey = "starlight-theme";
     const themeMetaMedias = [
       "(prefers-color-scheme: light)",
       "(prefers-color-scheme: dark)",
@@ -9,6 +10,14 @@
       light: "#ffffff",
       dark: "#0f171f",
     };
+    const parseTheme = (theme) =>
+      theme === "auto" || theme === "dark" || theme === "light"
+        ? theme
+        : "auto";
+    const getStoredThemeChoice = () =>
+      parseTheme(
+        typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
+      );
 
     const themeColors = (() => {
       const html = document.documentElement;
@@ -68,31 +77,44 @@
       });
     }
 
-    const storedTheme =
-      typeof localStorage !== "undefined" &&
-      localStorage.getItem("starlight-theme");
-    const theme =
-      storedTheme ||
-      (window.matchMedia("(prefers-color-scheme: light)").matches
-        ? "light"
-        : "dark");
-    const effectiveTheme = theme === "light" ? "light" : "dark";
+    const themeChoice = getStoredThemeChoice();
+    const effectiveTheme =
+      themeChoice === "auto"
+        ? window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark"
+        : themeChoice;
     document.documentElement.dataset.theme = effectiveTheme;
+    document.documentElement.dataset.themeChoice = themeChoice;
     document.documentElement.classList.toggle(
       "dark",
       effectiveTheme === "dark",
     );
     syncThemeColor(effectiveTheme);
     return {
-      updatePickers(theme = storedTheme || "auto") {
+      updatePickers(theme) {
+        const themeChoice = parseTheme(theme ?? getStoredThemeChoice());
         document
           .querySelectorAll("starlight-theme-select")
           .forEach((picker) => {
-            const select = picker.querySelector("select");
-            if (select) select.value = theme;
+            const nativeSelect = picker.querySelector("select");
+            if (nativeSelect instanceof HTMLSelectElement) {
+              nativeSelect.value = themeChoice;
+            }
+
+            const selectRoot = picker.querySelector("#starlight-theme-select");
+            if (selectRoot instanceof HTMLElement) {
+              selectRoot.dataset.defaultValue = themeChoice;
+              selectRoot.dataset.value = themeChoice;
+              selectRoot.dispatchEvent(
+                new CustomEvent("select:set", { detail: { value: themeChoice } }),
+              );
+            }
+
             /** @type {HTMLTemplateElement | null} */
             const tmpl = document.querySelector(`#theme-icons`);
-            const newIcon = tmpl && tmpl.content.querySelector("." + theme);
+            const newIcon =
+              tmpl && tmpl.content.querySelector("." + themeChoice);
             if (newIcon) {
               const oldIcon = picker.querySelector("svg.label-icon");
               if (oldIcon) {

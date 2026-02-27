@@ -1,17 +1,26 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
 
-import Button from "@bejamas/ui/components/Button.astro";
+import { Button } from "@bejamas/ui/components/button";
 import NavigationMenu from "@/ui-next/NavigationMenu.astro";
-import MenuDropdown from "@bejamas/ui/components/Dropdown.astro";
-import StickySurface from "@bejamas/ui/components/StickySurface.astro";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+} from "@bejamas/ui/components/dropdown-menu";
+import { StickySurface } from "@bejamas/ui/components/sticky-surface";
 ---
 
 <BlockExampleLayout>
   <div class="bg-muted min-h-[1500px]">
     <div class="bg-muted text-muted-foreground p-4 w-full text-center">
       New release available! See the <a
-        href="/releases/v1.0.0"
+        href="#"
         class="text-primary">changelog</a
       > for more details.
     </div>
@@ -27,46 +36,48 @@ import StickySurface from "@bejamas/ui/components/StickySurface.astro";
         <ul slot="links" class="flex items-center space-x-2">
           <li><Button as="a" href="/" variant="ghost">Home</Button></li>
           <li>
-            <MenuDropdown>
-              <span slot="trigger">Company</span>
-              <ul slot="content">
-                <li>
-                  <Button
-                    href="#"
-                    as="a"
-                    variant="ghost"
-                    class="w-full justify-start">About</Button
-                  >
-                </li>
-                <li>
-                  <Button
-                    href="#"
-                    as="a"
-                    variant="ghost"
-                    class="w-full justify-start">Team</Button
-                  >
-                </li>
-                <li>
-                  <Button
-                    href="#"
-                    as="a"
-                    variant="ghost"
-                    class="w-full justify-start">Blog</Button
-                  >
-                </li>
-                <li>
-                  <Button
-                    href="#"
-                    as="a"
-                    variant="ghost"
-                    class="w-full justify-start">Careers</Button
-                  >
-                </li>
-              </ul>
-            </MenuDropdown>
+            <DropdownMenu>
+              <DropdownMenuTrigger>Company</DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <ul>
+                  <li>
+                    <Button
+                      href="#"
+                      as="a"
+                      variant="ghost"
+                      class="w-full justify-start">About</Button
+                    >
+                  </li>
+                  <li>
+                    <Button
+                      href="#"
+                      as="a"
+                      variant="ghost"
+                      class="w-full justify-start">Team</Button
+                    >
+                  </li>
+                  <li>
+                    <Button
+                      href="#"
+                      as="a"
+                      variant="ghost"
+                      class="w-full justify-start">Blog</Button
+                    >
+                  </li>
+                  <li>
+                    <Button
+                      href="#"
+                      as="a"
+                      variant="ghost"
+                      class="w-full justify-start">Careers</Button
+                    >
+                  </li>
+                </ul>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </li>
           <li>
-            <Button as="a" href="/contact" variant="ghost">Contact</Button>
+            <Button as="a" href="#" variant="ghost">Contact</Button>
           </li>
         </ul>
         <div slot="actions" class="flex items-center gap-2">

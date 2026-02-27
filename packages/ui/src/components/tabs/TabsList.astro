@@ -1,0 +1,70 @@
+---
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+export const tabsListVariants = cva(
+  "group/tabs-list text-muted-foreground relative inline-flex w-fit items-center justify-center group-data-[orientation=vertical]/tabs:h-fit group-data-[orientation=vertical]/tabs:flex-col",
+  {
+    variants: {
+      variant: {
+        indicator: "rounded-lg border border-input bg-muted p-[2px]",
+        default: "rounded-lg bg-muted p-[3px]",
+        line: "rounded-none bg-transparent p-0 gap-1",
+        "line-animated": "rounded-none bg-transparent p-0 gap-1",
+      },
+      size: {
+        default: "group-data-[orientation=horizontal]/tabs:h-9",
+        sm: "group-data-[orientation=horizontal]/tabs:h-8",
+        lg: "group-data-[orientation=horizontal]/tabs:h-10",
+      },
+    },
+    defaultVariants: {
+      variant: "indicator",
+      size: "default",
+    },
+  },
+);
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & VariantProps<typeof tabsListVariants> &
+  HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  variant = "indicator",
+  size = "default",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  role="tablist"
+  data-slot="tabs-list"
+  data-variant={variant}
+  class={cn(tabsListVariants({ variant, size }), className)}
+>
+  {
+    variant === "indicator" && (
+      <div
+        aria-hidden="true"
+        data-slot="tabs-indicator"
+        class="pointer-events-none absolute top-[var(--active-tab-top)] left-[var(--active-tab-left)] z-0 h-[var(--active-tab-height)] w-[var(--active-tab-width)] rounded-md bg-background shadow-sm transition-all duration-150 ease dark:border-input dark:bg-input/30"
+      />
+    )
+  }
+  {
+    variant === "line-animated" && (
+      <div
+        aria-hidden="true"
+        data-slot="tabs-indicator"
+        class="pointer-events-none absolute z-0 rounded-full bg-foreground transition-all duration-150 ease group-data-[orientation=horizontal]/tabs:left-[var(--active-tab-left)] group-data-[orientation=horizontal]/tabs:top-[calc(var(--active-tab-top)+var(--active-tab-height)-2px)] group-data-[orientation=horizontal]/tabs:h-0.5 group-data-[orientation=horizontal]/tabs:w-[var(--active-tab-width)] group-data-[orientation=vertical]/tabs:top-[var(--active-tab-top)] group-data-[orientation=vertical]/tabs:left-[calc(var(--active-tab-left)+var(--active-tab-width)-2px)] group-data-[orientation=vertical]/tabs:h-[var(--active-tab-height)] group-data-[orientation=vertical]/tabs:w-0.5"
+      />
+    )
+  }
+  <slot />
+</Tag>

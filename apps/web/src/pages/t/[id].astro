@@ -1,0 +1,606 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@bejamas/ui/components/card";
+import { Alert, AlertTitle } from "@bejamas/ui/components/alert";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@bejamas/ui/components/tabs";
+import { getSharedTheme, type SharedTheme } from "../../lib/redis";
+import {
+  CheckIcon,
+  CircleCheckIcon,
+  CircleAlertIcon,
+  CopyIcon,
+  DownloadIcon,
+  EyeIcon,
+  ShareIcon,
+  TerminalIcon,
+  XIcon,
+  ArrowLeftIcon,
+} from "@lucide/astro";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/themes");
+}
+
+const theme = await getSharedTheme(id);
+
+if (!theme) {
+  return Astro.redirect("/themes?error=theme-not-found");
+}
+
+// Get light and dark mode colors for swatches
+const lightColors = {
+  primary: theme.styles.light.primary || "#000",
+  accent: theme.styles.light.accent || "#666",
+  background: theme.styles.light.background || "#fff",
+  foreground: theme.styles.light.foreground || "#000",
+};
+
+const darkColors = {
+  primary: theme.styles.dark.primary || "#fff",
+  accent: theme.styles.dark.accent || "#888",
+  background: theme.styles.dark.background || "#000",
+  foreground: theme.styles.dark.foreground || "#fff",
+};
+
+// Format the share URL
+const shareUrl = `https://ui.bejamas.com/t/${id}`;
+
+// Generate slugified name for registry URL
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+const themeSlug = slugify(theme.name);
+const registryUrl = `https://ui.bejamas.com/r/themes/${themeSlug}-${id}.json`;
+
+// CLI commands for different package managers
+const cliCommands = {
+  pnpm: `pnpm dlx shadcn@latest add ${registryUrl}`,
+  npm: `npx shadcn@latest add ${registryUrl}`,
+  yarn: `yarn dlx shadcn@latest add ${registryUrl}`,
+  bun: `bunx shadcn@latest add ${registryUrl}`,
+};
+---
+
+<StarlightPage
+  frontmatter={{ title: `Install Theme: ${theme.name}`, template: "splash" }}
+>
+  <div class="not-content">
+    <div class="max-w-2xl mx-auto">
+      <!-- Back link -->
+      <a
+        href="/themes"
+        class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+      >
+        <ArrowLeftIcon class="size-4" />
+        Back to Themes
+      </a>
+
+      <Card>
+        <CardHeader>
+          <CardTitle class="flex items-center gap-3">
+            <div class="flex -space-x-1">
+              <div
+                class="color-swatch"
+                style={`background: ${lightColors.primary}`}
+              >
+              </div>
+              <div
+                class="color-swatch"
+                style={`background: ${lightColors.accent}`}
+              >
+              </div>
+            </div>
+            <span>{theme.name}</span>
+          </CardTitle>
+          <CardDescription>
+            Shared theme for bejamas/ui components
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <!-- Alert messages -->
+          <div id="already-installed" class="alert-container hidden">
+            <Alert class="bg-accent/10 border-accent/30 text-accent-foreground">
+              <CircleCheckIcon class="size-4" />
+              <AlertTitle>Already in your collection</AlertTitle>
+            </Alert>
+          </div>
+
+          <div id="success-message" class="alert-container hidden">
+            <Alert
+              class="bg-green-500/10 border-green-500/30 text-green-600 dark:text-green-400"
+            >
+              <CircleCheckIcon class="size-4" />
+              <AlertTitle
+                >Theme installed successfully! Redirecting...</AlertTitle
+              >
+            </Alert>
+          </div>
+
+          <div id="error-message" class="alert-container hidden">
+            <Alert variant="destructive">
+              <CircleAlertIcon class="size-4" />
+              <AlertTitle id="error-text">Failed to install theme</AlertTitle>
+            </Alert>
+          </div>
+
+          <div class="preview-section">
+            <div class="mode-preview light">
+              <div class="text-xs font-medium mb-3 opacity-60">Light Mode</div>
+              <div class="color-row">
+                <div
+                  class="preview-swatch"
+                  style={`background: ${lightColors.primary}`}
+                >
+                </div>
+                <div
+                  class="preview-swatch"
+                  style={`background: ${lightColors.accent}`}
+                >
+                </div>
+                <div
+                  class="preview-swatch"
+                  style={`background: ${lightColors.background}; border: 1px solid ${lightColors.foreground}20`}
+                >
+                </div>
+                <div
+                  class="preview-swatch"
+                  style={`background: ${lightColors.foreground}`}
+                >
+                </div>
+              </div>
+            </div>
+            <div class="mode-preview dark">
+              <div class="text-xs font-medium mb-3 opacity-60">Dark Mode</div>
+              <div class="color-row">
+                <div
+                  class="preview-swatch"
+                  style={`background: ${darkColors.primary}`}
+                >
+                </div>
+                <div
+                  class="preview-swatch"
+                  style={`background: ${darkColors.accent}`}
+                >
+                </div>
+                <div
+                  class="preview-swatch"
+                  style={`background: ${darkColors.background}; border: 1px solid ${darkColors.foreground}20`}
+                >
+                </div>
+                <div
+                  class="preview-swatch"
+                  style={`background: ${darkColors.foreground}`}
+                >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Benefits section -->
+          <div class="benefits-section">
+            <p class="text-sm font-medium mb-2">What you get:</p>
+            <ul class="text-sm text-muted-foreground space-y-1.5">
+              <li class="flex items-start gap-2">
+                <CheckIcon class="size-4 text-accent mt-0.5 shrink-0" />
+                <span>Theme saved to your browser for instant access</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <CheckIcon class="size-4 text-accent mt-0.5 shrink-0" />
+                <span>Available in the theme switcher across all pages</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <CheckIcon class="size-4 text-accent mt-0.5 shrink-0" />
+                <span>Works with light and dark mode automatically</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- CLI Installation section -->
+          <div class="cli-section">
+            <div class="flex items-center gap-2 mb-3">
+              <TerminalIcon class="size-4 text-muted-foreground" />
+              <p class="text-sm font-medium">Install via CLI</p>
+            </div>
+            <Tabs defaultValue="bun" class="cli-pm-tabs" id="cli-pm-tabs">
+              <div class="flex items-center justify-between gap-2">
+                <TabsList class="h-8">
+                  <TabsTrigger value="pnpm" class="text-xs px-2">pnpm</TabsTrigger>
+                  <TabsTrigger value="npm" class="text-xs px-2">npm</TabsTrigger>
+                  <TabsTrigger value="yarn" class="text-xs px-2">yarn</TabsTrigger>
+                  <TabsTrigger value="bun" class="text-xs px-2">bun</TabsTrigger>
+                </TabsList>
+                <Button
+                  id="cli-copy-btn"
+                  variant="ghost"
+                  size="sm"
+                  class="h-8 gap-1.5 text-xs"
+                >
+                  <CopyIcon class="size-3.5" id="cli-copy-icon" />
+                  <CheckIcon class="size-3.5 hidden" id="cli-copied-icon" />
+                  <span>Copy</span>
+                </Button>
+              </div>
+              <TabsContent value="pnpm" class="mt-2">
+                <div class="cli-command-box">
+                  <code>{cliCommands.pnpm}</code>
+                </div>
+              </TabsContent>
+              <TabsContent value="npm" class="mt-2">
+                <div class="cli-command-box">
+                  <code>{cliCommands.npm}</code>
+                </div>
+              </TabsContent>
+              <TabsContent value="yarn" class="mt-2">
+                <div class="cli-command-box">
+                  <code>{cliCommands.yarn}</code>
+                </div>
+              </TabsContent>
+              <TabsContent value="bun" class="mt-2">
+                <div class="cli-command-box">
+                  <code>{cliCommands.bun}</code>
+                </div>
+              </TabsContent>
+            </Tabs>
+            <p class="text-xs text-muted-foreground mt-2">
+              Adds the theme directly to your shadcn/ui project.
+            </p>
+          </div>
+        </CardContent>
+
+        <CardFooter class="flex gap-2">
+          <Button id="install-btn" class="flex-1 gap-2">
+            <DownloadIcon class="size-4" />
+            <span id="install-btn-text">Install Theme</span>
+          </Button>
+          <Button id="preview-btn" variant="outline" class="gap-2">
+            <EyeIcon class="size-4" />
+            Preview
+          </Button>
+          <Button
+            id="copy-btn"
+            variant="ghost"
+            size="icon"
+            title="Copy share link"
+          >
+            <ShareIcon class="size-4" />
+          </Button>
+        </CardFooter>
+      </Card>
+
+      <!-- Theme metadata -->
+      <div class="mt-6 text-center text-sm text-muted-foreground">
+        <p>
+          Theme ID: <code
+            class="px-1.5 py-0.5 rounded bg-muted font-mono text-xs">{id}</code
+          >
+        </p>
+      </div>
+    </div>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  .sl-bejamas-docs-title {
+    justify-content: center;
+  }
+</style>
+<style>
+  .color-swatch {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px solid var(--background);
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px
+      color-mix(in oklch, var(--foreground) 15%, transparent);
+  }
+
+  .preview-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    .preview-section {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mode-preview {
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .mode-preview.light {
+    background: oklch(0.98 0 0);
+    color: oklch(0.2 0.02 250);
+  }
+
+  .mode-preview.dark {
+    background: oklch(0.2 0.02 250);
+    color: oklch(0.95 0.02 250);
+  }
+
+  .color-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+
+  .preview-swatch {
+    aspect-ratio: 1;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0.25rem;
+    position: relative;
+  }
+
+  .swatch-label {
+    font-size: 0.625rem;
+    font-weight: 500;
+    opacity: 0.8;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    color: white;
+    mix-blend-mode: difference;
+  }
+
+  .alert-container {
+    margin-bottom: 1rem;
+  }
+
+  .alert-container.hidden {
+    display: none;
+  }
+
+  .alert-container.show {
+    display: block;
+  }
+
+  .benefits-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .benefits-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .cli-section {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .cli-command-box {
+    overflow-x: auto;
+    padding: 0.75rem 1rem;
+    background: var(--muted);
+    border-radius: calc(var(--radius) - 2px);
+    border: 1px solid var(--border);
+  }
+
+  .cli-command-box code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    color: var(--foreground);
+  }
+</style>
+
+<!-- Store theme data for client-side access -->
+<script is:inline define:vars={{ theme, id, shareUrl, cliCommands }}>
+  window.__SHARED_THEME__ = theme;
+  window.__THEME_ID__ = id;
+  window.__SHARE_URL__ = shareUrl;
+  window.__CLI_COMMANDS__ = cliCommands;
+</script>
+
+<script>
+  import {
+    getCustomPresets,
+    saveCustomPreset,
+    type CustomPreset,
+  } from "../../utils/themes/custom-presets-store";
+  import {
+    setStoredPreset,
+    type ThemeSwatches,
+  } from "../../utils/themes/preset-store";
+  import { applyThemeToElement } from "../../utils/themes/apply-theme";
+
+  // Get theme data from server-rendered script
+  const theme = (window as any).__SHARED_THEME__;
+  const themeId = (window as any).__THEME_ID__;
+  const shareUrl = (window as any).__SHARE_URL__;
+
+  const installBtn = document.getElementById("install-btn");
+  const installBtnText = document.getElementById("install-btn-text");
+  const previewBtn = document.getElementById("preview-btn");
+  const copyBtn = document.getElementById("copy-btn");
+  const successMessage = document.getElementById("success-message");
+  const errorMessage = document.getElementById("error-message");
+  const errorText = document.getElementById("error-text");
+  const alreadyInstalledBadge = document.getElementById("already-installed");
+
+  // Check if theme is already installed
+  function checkIfInstalled(): boolean {
+    const existing = getCustomPresets();
+    return Object.keys(existing).some(
+      (key) => key === `shared-${themeId}` || existing[key].name === theme.name,
+    );
+  }
+
+  // Update UI for already installed state
+  function updateInstalledUI(isInstalled: boolean) {
+    if (isInstalled) {
+      alreadyInstalledBadge?.classList.remove("hidden");
+      alreadyInstalledBadge?.classList.add("show");
+      if (installBtnText) {
+        installBtnText.textContent = "Reinstall Theme";
+      }
+    }
+  }
+
+  // Check on page load
+  const isAlreadyInstalled = checkIfInstalled();
+  updateInstalledUI(isAlreadyInstalled);
+
+  function showSuccess() {
+    successMessage?.classList.remove("hidden");
+    successMessage?.classList.add("show");
+    errorMessage?.classList.add("hidden");
+    errorMessage?.classList.remove("show");
+    alreadyInstalledBadge?.classList.add("hidden");
+    alreadyInstalledBadge?.classList.remove("show");
+  }
+
+  function showError(message: string) {
+    if (errorText) errorText.textContent = message;
+    errorMessage?.classList.remove("hidden");
+    errorMessage?.classList.add("show");
+    successMessage?.classList.add("hidden");
+    successMessage?.classList.remove("show");
+  }
+
+  // Install theme to localStorage
+  installBtn?.addEventListener("click", () => {
+    try {
+      // Create custom preset with shared- prefix
+      const customPreset: CustomPreset = {
+        id: `shared-${themeId}`,
+        name: theme.name,
+        label: theme.name,
+        source: "SAVED",
+        createdAt: theme.createdAt || new Date().toISOString(),
+        modifiedAt: new Date().toISOString(),
+        styles: theme.styles,
+      };
+
+      // Save to localStorage
+      saveCustomPreset(customPreset);
+
+      // Set as current theme with swatches and name
+      const swatches: ThemeSwatches = {
+        primaryLight: theme.styles.light?.primary || "#000",
+        accentLight: theme.styles.light?.accent || "#666",
+        primaryDark: theme.styles.dark?.primary || "#fff",
+        accentDark: theme.styles.dark?.accent || "#888",
+      };
+      setStoredPreset(`shared-${themeId}`, swatches, theme.name);
+
+      showSuccess();
+
+      // Redirect to themes page after a short delay
+      setTimeout(() => {
+        window.location.href = "/themes";
+      }, 1500);
+    } catch (error) {
+      console.error("Failed to install theme:", error);
+      showError("Failed to install theme. Please try again.");
+    }
+  });
+
+  // Preview theme temporarily
+  previewBtn?.addEventListener("click", () => {
+    try {
+      // Apply theme to current page
+      const mode = document.documentElement.classList.contains("dark")
+        ? "dark"
+        : "light";
+      applyThemeToElement(
+        { styles: theme.styles, currentMode: mode },
+        document.documentElement,
+        { skipModeClass: true },
+      );
+
+      // Change button text
+      if (previewBtn) {
+        previewBtn.innerHTML = `<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Previewing`;
+      }
+    } catch (error) {
+      console.error("Failed to preview theme:", error);
+      showError("Failed to preview theme.");
+    }
+  });
+
+  // Copy share link
+  copyBtn?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+
+      // Show feedback
+      const originalTitle = copyBtn.getAttribute("title");
+      copyBtn.setAttribute("title", "Copied!");
+      setTimeout(() => {
+        copyBtn.setAttribute("title", originalTitle || "Copy share link");
+      }, 2000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+    }
+  });
+
+  // CLI copy functionality
+  const cliCopyBtn = document.getElementById("cli-copy-btn");
+  const cliCopyIcon = document.getElementById("cli-copy-icon");
+  const cliCopiedIcon = document.getElementById("cli-copied-icon");
+  const cliPmTabs = document.getElementById("cli-pm-tabs");
+  const cliCommands = (window as any).__CLI_COMMANDS__ as Record<string, string>;
+
+  let currentPm = "bun";
+
+  // Listen for tab changes to track current package manager
+  cliPmTabs?.addEventListener("tabs:change", ((e: CustomEvent) => {
+    if (e.detail?.value) {
+      currentPm = e.detail.value;
+    }
+  }) as EventListener);
+
+  cliCopyBtn?.addEventListener("click", async () => {
+    try {
+      const command = cliCommands[currentPm] || cliCommands.bun;
+      await navigator.clipboard.writeText(command);
+
+      // Show success feedback
+      cliCopyIcon?.classList.add("hidden");
+      cliCopiedIcon?.classList.remove("hidden");
+
+      setTimeout(() => {
+        cliCopyIcon?.classList.remove("hidden");
+        cliCopiedIcon?.classList.add("hidden");
+      }, 2000);
+    } catch (error) {
+      console.error("Failed to copy CLI command:", error);
+    }
+  });
+</script>

@@ -1,0 +1,26 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  data-slot="avatar-group"
+  class={cn(
+    "group/avatar-group flex -space-x-2 [&_[data-slot=avatar]]:ring-2 [&_[data-slot=avatar]]:ring-background",
+    className,
+  )}
+>
+  <slot />
+</Tag>

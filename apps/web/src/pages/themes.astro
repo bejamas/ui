@@ -1,12 +1,12 @@
 ---
 import { getCollection } from "astro:content";
 import cssSource from "@bejamas/ui/styles/globals.css?raw";
-import Select from "@bejamas/ui/components/Select.astro";
 import { defaultPresets } from "../utils/themes/presets";
-import Label from "@bejamas/ui/components/Label.astro";
-import Button from "@bejamas/ui/components/Button.astro";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
 import { ArrowLeft, ArrowRight, CodeXml } from "@lucide/astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import PresetSwitcher from "../components/PresetSwitcher.astro";
 
 const docs = await getCollection("docs");
 const components = docs.filter((doc) => doc.id.startsWith("components/"));
@@ -39,16 +39,6 @@ function parseTokenBlock(block: string) {
 const tokenValues = parseTokenBlock(extractThemeBlock(cssSource));
 const darkTokenValues = parseTokenBlock(extractDarkBlock(cssSource));
 
-// Lean presets payload for the client (label + styles only)
-const leanPresets = Object.fromEntries(
-  Object.entries(defaultPresets).map(([key, p]) => [
-    key,
-    {
-      label: p.label ?? key,
-      styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
-    },
-  ]),
-);
 
 type ThemeSectionItemInput = {
   label: string;
@@ -165,6 +155,22 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
 ---
 
 <script>
+  import {
+    getCurrentMode,
+    getStoredPreset,
+  } from "../utils/themes/preset-store.ts";
+  import { syncGradientImages } from "../utils/themes/gradient-image-runtime.ts";
+
+  function syncThemeGradientImages() {
+    const themeKey = getStoredPreset() || "default";
+    syncGradientImages({ themeKey, mode: getCurrentMode() });
+  }
+
+  syncThemeGradientImages();
+  document.addEventListener("astro:after-swap", syncThemeGradientImages);
+</script>
+
+<script>
   import "../utils/themes/apply-theme.ts";
 </script>
 
@@ -175,44 +181,10 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
     <div class="not-content">
       <div class="flex items-end gap-2">
         <div>
-          <Label for="theme-presets" class="mb-2 font-medium"
+          <Label for="preset-switcher" class="mb-2 font-medium"
             >Theme Presets</Label
           >
-          <Select class="w-[180px]">
-            <Select part="indicator" />
-
-            <Select part="control" id="theme-presets">
-              {
-                Object.entries(leanPresets).map(([key, preset]) => (
-                  <Select
-                    part="option"
-                    value={key}
-                    class="px-3 py-2 rounded-md"
-                  >
-                    <div class="flex -space-x-1 items-center">
-                      <div
-                        class="size-4 rounded-full"
-                        style={`background: ${preset.styles.light.background}`}
-                      />
-                      <div
-                        class="size-4 rounded-full"
-                        style={`background: ${preset.styles.light.primary}`}
-                      />
-                      <div
-                        class="size-4 rounded-full"
-                        style={`background: ${preset.styles.light.secondary}`}
-                      />
-                      <div
-                        class="size-4 rounded-full"
-                        style={`background: ${preset.styles.light.accent}`}
-                      />
-                    </div>
-                    {preset.label}
-                  </Select>
-                ))
-              }
-            </Select>
-          </Select>
+          <PresetSwitcher />
         </div>
         <Button
           variant="outline"
@@ -330,219 +302,105 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
   });
 </script>
 
-<script type="module" define:vars={{ leanPresets }}>
-  let PRESETS = leanPresets;
-  document.addEventListener("DOMContentLoaded", async () => {
-    const select = document.getElementById("theme-presets");
+<script>
+  import {
+    getStoredPreset,
+    setStoredPreset,
+    getCurrentMode,
+    PRESET_CHANGE_EVENT,
+  } from "../utils/themes/preset-store.ts";
+  import { defaultPresets } from "../utils/themes/presets";
 
-    const getCookiePreset = () => {
-      const match = document.cookie.match(/(?:^|;)\s*theme=([^;]+)/);
-      return match ? decodeURIComponent(match[1]) : "";
-    };
+  // Build lean presets for UI updates
+  const PRESETS = Object.fromEntries(
+    Object.entries(defaultPresets).map(([key, p]) => [
+      key,
+      {
+        label: p.label ?? key,
+        styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
+      },
+    ])
+  );
 
-    // If there is a saved preset key, use from lean presets
-    const savedKey = localStorage.getItem("theme-preset");
-    // Nothing to fetch; PRESETS already has everything we need
-    const parseRgb = (cssColor) => {
-      // Expected: rgb(r, g, b) or rgba(r, g, b, a)
-      const m = cssColor
-        .replace(/\s+/g, "")
-        .match(/^rgba?\((\d+),(\d+),(\d+)(?:,([0-9.]+))?\)$/i);
-      if (!m) return null;
-      return {
-        r: Number(m[1]),
-        g: Number(m[2]),
-        b: Number(m[3]),
-        a: m[4] === undefined ? 1 : Number(m[4]),
-      };
-    };
+  const PRESET_KEYS = Object.keys(defaultPresets);
 
-    const srgbToLinear = (c) => {
-      const v = c / 255;
-      return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-    };
+  document.addEventListener("DOMContentLoaded", () => {
+    const select = document.getElementById("preset-switcher");
 
-    const relativeLuminance = (rgb) => {
-      const r = srgbToLinear(rgb.r);
-      const g = srgbToLinear(rgb.g);
-      const b = srgbToLinear(rgb.b);
-      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    };
-
-    const contrastRatio = (a, b) => {
-      const L1 = relativeLuminance(a);
-      const L2 = relativeLuminance(b);
-      const lighter = Math.max(L1, L2);
-      const darker = Math.min(L1, L2);
-      return (lighter + 0.05) / (darker + 0.05);
-    };
-
-    const getPageBackgroundColor = () => {
-      const doc = getComputedStyle(document.documentElement).backgroundColor;
-      const body = getComputedStyle(document.body).backgroundColor;
-      // Prefer non-transparent if one is transparent
-      const docRgb = parseRgb(doc);
-      if (docRgb && docRgb.a === 0) return body;
-      return doc || body;
-    };
-
-    const updateSwatchBorders = (map) => {
-      // Only apply border when the swatch is too close to page background.
-      // This keeps high-contrast tokens clean while still making "background-ish" swatches readable.
-      const pageBg = getPageBackgroundColor();
-      const pageRgb = parseRgb(pageBg);
-      if (!pageRgb) return;
-
-      const border = map.border || "rgba(0,0,0,0.15)";
-      const fg = map.foreground || "rgb(0,0,0)";
-
-      document.querySelectorAll("[data-swatch]").forEach((el) => {
-        const swatchBg = getComputedStyle(el).backgroundColor;
-        const swatchRgb = parseRgb(swatchBg);
-        if (!swatchRgb) return;
-
-        const ratio = contrastRatio(swatchRgb, pageRgb);
-        const needsBorder = ratio < 1.7;
-        el.style.boxShadow = needsBorder
-          ? `inset 0 0 0 1px color-mix(in oklch, ${border} 70%, ${fg} 30%)`
-          : "none";
-      });
-    };
-
+    // Update token labels and swatch backgrounds for the themes page display
     const updateUIForPreset = (key) => {
       const preset = PRESETS[key];
       if (!preset) return;
       const light = (preset.styles && preset.styles.light) || {};
       const dark = (preset.styles && preset.styles.dark) || {};
       const mode = getCurrentMode();
-      // update displayed values
+
+      // Update displayed token values
       document.querySelectorAll("[data-token]").forEach((el) => {
         const token = el.getAttribute("data-token");
         const source = el.getAttribute("data-source") || "light";
         const map = source === "dark" ? dark : light;
         el.textContent = map[token] || "";
       });
-      // update swatch backgrounds
+
+      // Update swatch backgrounds
       document.querySelectorAll("[data-swatch]").forEach((el) => {
         const token = el.getAttribute("data-swatch");
-        // For swatches, always reflect the current theme mode to avoid reversal
         const map = mode === "dark" ? dark : light;
         const v = map[token];
         if (v) el.style.background = v;
       });
-      // update swatch borders once styles are applied and computed colors are available
-      const currentMap = mode === "dark" ? dark : light;
-      // requestAnimationFrame(() => updateSwatchBorders(currentMap));
-      // keep select UI in sync
-      if (select && select.value !== key) select.value = key;
     };
 
-    const getCurrentMode = () => {
-      if (window.astroThemeToggle?.getTheme)
-        return window.astroThemeToggle.getTheme();
-      const el = document.documentElement;
-      const attr = el.getAttribute("data-theme");
-      if (attr === "dark" || attr === "light") return attr;
-      return el.classList.contains("dark") ? "dark" : "light";
+    // Listen for preset changes (from PresetSwitcher or other sources)
+    window.addEventListener(PRESET_CHANGE_EVENT, (e) => {
+      const key = e.detail?.key;
+      if (key) updateUIForPreset(key);
+    });
+
+    // Initial UI update
+    const initial = getStoredPreset() || PRESET_KEYS[0];
+    if (initial) updateUIForPreset(initial);
+
+    // Helper to get swatches from a preset
+    const getSwatches = (key) => {
+      const preset = PRESETS[key];
+      if (!preset) return undefined;
+      return {
+        primaryLight: preset.styles.light?.primary || "#000",
+        accentLight: preset.styles.light?.accent || "#666",
+        primaryDark: preset.styles.dark?.primary || "#fff",
+        accentDark: preset.styles.dark?.accent || "#888",
+      };
     };
 
-    const applyPreset = async (key) => {
-      let preset = PRESETS[key];
-      if (!preset) return;
-      // apply vars via external util using current theme
-      const mode = getCurrentMode();
-      window.bejamas &&
-        window.bejamas.applyThemeToElement(
-          { ...preset, currentMode: mode },
-          document.documentElement,
-        );
-      // update UI labels/swatches/select
-      updateUIForPreset(key);
-
-      // set selected preset in local storage
-      localStorage.setItem("theme-preset", key);
-
-      // set selected preset in cookies
-      document.cookie = `theme=${key}; path=/;`;
-    };
-    let isReapplyingPreset = false;
-    const saved = localStorage.getItem("theme-preset");
-    const savedCookie = getCookiePreset();
-    const initialFromSelect = (select && select.value) || "";
-    const initial =
-      saved ||
-      savedCookie ||
-      initialFromSelect ||
-      Object.keys(PRESETS)[0] ||
-      "";
-    if (initial) applyPreset(initial);
-    if (select)
-      select.addEventListener("change", (e) => applyPreset(e.target.value));
-
+    // Prev/Next buttons
     const previousPreset = document.getElementById("previous-preset");
     const nextPreset = document.getElementById("next-preset");
-    const getPresetKeys = () => Object.keys(PRESETS);
 
-    if (previousPreset)
+    if (previousPreset) {
       previousPreset.addEventListener("click", () => {
-        const keys = getPresetKeys();
-        if (!keys.length) return;
-        const current = select.value;
-        const index = keys.indexOf(current);
+        const current = getStoredPreset() || PRESET_KEYS[0];
+        const index = PRESET_KEYS.indexOf(current);
         const currentIndex = index === -1 ? 0 : index;
-        const previousIndex = (currentIndex - 1 + keys.length) % keys.length;
-        applyPreset(keys[previousIndex]);
+        const previousIndex =
+          (currentIndex - 1 + PRESET_KEYS.length) % PRESET_KEYS.length;
+        const key = PRESET_KEYS[previousIndex];
+        const preset = PRESETS[key];
+        setStoredPreset(key, getSwatches(key), preset?.label || key);
       });
-    if (nextPreset)
+    }
+
+    if (nextPreset) {
       nextPreset.addEventListener("click", () => {
-        const keys = getPresetKeys();
-        if (!keys.length) return;
-        const current = select.value;
-        const index = keys.indexOf(current);
+        const current = getStoredPreset() || PRESET_KEYS[0];
+        const index = PRESET_KEYS.indexOf(current);
         const currentIndex = index === -1 ? 0 : index;
-        const nextIndex = (currentIndex + 1) % keys.length;
-        applyPreset(keys[nextIndex]);
+        const nextIndex = (currentIndex + 1) % PRESET_KEYS.length;
+        const key = PRESET_KEYS[nextIndex];
+        const preset = PRESETS[key];
+        setStoredPreset(key, getSwatches(key), preset?.label || key);
       });
-
-    // Re-apply currently selected preset when theme mode changes
-    const reapplyCurrentPreset = async () => {
-      if (isReapplyingPreset) return;
-      isReapplyingPreset = true;
-      const current = (select && select.value) || Object.keys(PRESETS)[0] || "";
-      try {
-        if (current) await applyPreset(current);
-      } finally {
-        isReapplyingPreset = false;
-      }
-    };
-
-    window.addEventListener("theme-toggle-changed", reapplyCurrentPreset);
-    document.addEventListener("astro:after-swap", reapplyCurrentPreset);
-    window.addEventListener("storage", (event) => {
-      if (event.key === "theme-toggle" || event.key === "starlight-theme")
-        reapplyCurrentPreset();
-      if (event.key === "theme-preset" && event.newValue)
-        applyPreset(event.newValue);
-    });
-
-    let lastCookiePreset = getCookiePreset();
-    const syncFromCookie = () => {
-      const cookiePreset = getCookiePreset();
-      if (cookiePreset && cookiePreset !== lastCookiePreset) {
-        lastCookiePreset = cookiePreset;
-        applyPreset(cookiePreset);
-      }
-    };
-    window.addEventListener("focus", syncFromCookie);
-
-    // Also respond to DOM theme markers used by ThemeSelect
-    const themeDomObserver = new MutationObserver(() => {
-      // Ignore observer-triggered loops while we're already applying
-      if (!isReapplyingPreset) reapplyCurrentPreset();
-    });
-    themeDomObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme", "class", "data-theme-choice"],
-    });
+    }
   });
 </script>

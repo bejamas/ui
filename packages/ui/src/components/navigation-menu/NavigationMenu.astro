@@ -1,0 +1,362 @@
+---
+/**
+ * @component NavigationMenu
+ * @title Navigation Menu
+ * @description A menu with dropdown content and optional viewport transitions.
+ *
+ * @preview
+ *
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="products">
+ *       <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Analytics</div>
+ *             <div class="text-sm text-muted-foreground">Real-time insights</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Automation</div>
+ *             <div class="text-sm text-muted-foreground">Workflow builders</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Security</div>
+ *             <div class="text-sm text-muted-foreground">Enterprise-grade</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Integrations</div>
+ *             <div class="text-sm text-muted-foreground">Connect tools</div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuItem value="solutions">
+ *       <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
+ *       <NavigationMenuContent align="center">
+ *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Startups</div>
+ *             <div class="text-sm text-muted-foreground">Move fast</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Enterprise</div>
+ *             <div class="text-sm text-muted-foreground">Scale securely</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Agencies</div>
+ *             <div class="text-sm text-muted-foreground">Client delivery</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">E-commerce</div>
+ *             <div class="text-sm text-muted-foreground">Sell online</div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuItem value="resources">
+ *       <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+ *       <NavigationMenuContent align="center">
+ *         <div class="grid grid-cols-3 gap-2 w-[520px] p-2">
+ *           <NavigationMenuLink href="/docs">
+ *             <div class="font-medium">Docs</div>
+ *             <div class="text-sm text-muted-foreground">Get started</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Blog</div>
+ *             <div class="text-sm text-muted-foreground">Latest updates</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Support</div>
+ *             <div class="text-sm text-muted-foreground">Get help</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Events</div>
+ *             <div class="text-sm text-muted-foreground">Upcoming webinars</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Guides</div>
+ *             <div class="text-sm text-muted-foreground">Best practices</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Contact</div>
+ *             <div class="text-sm text-muted-foreground">Talk to us</div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuItem value="company">
+ *       <NavigationMenuTrigger>Company</NavigationMenuTrigger>
+ *       <NavigationMenuContent align="end">
+ *         <div class="w-[180px] p-2">
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">About</div>
+ *             <div class="text-sm text-muted-foreground">Our story</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Careers</div>
+ *             <div class="text-sm text-muted-foreground">Join the team</div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuIndicator />
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import {
+ *   NavigationMenu,
+ *   NavigationMenuList,
+ *   NavigationMenuItem,
+ *   NavigationMenuTrigger,
+ *   NavigationMenuContent,
+ *   NavigationMenuLink,
+ * } from '@bejamas/ui/components/navigation-menu';
+ * ---
+ *
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="products">
+ *       <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Analytics</div>
+ *             <div class="text-sm text-muted-foreground">Real-time insights</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Automation</div>
+ *             <div class="text-sm text-muted-foreground">Workflow builders</div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuItem value="resources">
+ *       <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+ *       <NavigationMenuContent align="center">
+ *         <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
+ *           <NavigationMenuLink href="/docs">
+ *             <div class="font-medium">Docs</div>
+ *             <div class="text-sm text-muted-foreground">Get started</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Support</div>
+ *             <div class="text-sm text-muted-foreground">Get help</div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuIndicator />
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ * ```
+ *
+ * @api
+ *
+ * ### NavigationMenu Props
+ *
+ * | Prop | Type | Default | Description |
+ * |------|------|---------|-------------|
+ * | `viewport` | `boolean` | `true` | Enable animated viewport container for content |
+ * | `delayOpen` | `number` | `0` | Delay in ms before opening menu |
+ * | `delayClose` | `number` | `0` | Delay in ms before closing menu |
+ * | `openOnFocus` | `boolean` | `false` | Open menu on keyboard focus |
+ * | `as` | `HTMLTag` | `"nav"` | HTML element to render |
+ *
+ * ### NavigationMenuItem Props
+ *
+ * | Prop | Type | Default | Description |
+ * |------|------|---------|-------------|
+ * | `value` | `string` | — | Unique identifier for the item |
+ * | `align` | `"start" \| "center" \| "end"` | `"start"` | Content alignment relative to trigger |
+ *
+ * ### Events
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `navigation-menu:change` | `{ value: string \| null }` | Fired when active item changes |
+ *
+ * ### Programmatic Control
+ *
+ * ```js nocollapse
+ * // Open a specific item
+ * element.dispatchEvent(
+ *   new CustomEvent("navigation-menu:set", { detail: { value: "products" } })
+ * );
+ *
+ * // Close the menu
+ * element.dispatchEvent(
+ *   new CustomEvent("navigation-menu:set", { detail: { value: null } })
+ * );
+ * ```
+ *
+ * @examples
+ *
+ * ### With Icons
+ *
+ * Links with Lucide icons for visual enhancement.
+ *
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="features">
+ *       <NavigationMenuTrigger>Features</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="grid gap-2 w-[320px] p-2">
+ *           <NavigationMenuLink href="#" class="flex-row items-start gap-4">
+ *             <ChartBarIcon class="size-5 mt-1 text-muted-foreground" />
+ *             <div>
+ *               <div class="font-medium">Analytics</div>
+ *               <div class="text-sm text-muted-foreground">Track your metrics</div>
+ *             </div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#" class="flex-row items-start gap-4">
+ *             <ZapIcon class="size-5 mt-1 text-muted-foreground" />
+ *             <div>
+ *               <div class="font-medium">Automation</div>
+ *               <div class="text-sm text-muted-foreground">Streamline workflows</div>
+ *             </div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#" class="flex-row items-start gap-4">
+ *             <ShieldIcon class="size-5 mt-1 text-muted-foreground" />
+ *             <div>
+ *               <div class="font-medium">Security</div>
+ *               <div class="text-sm text-muted-foreground">Enterprise-grade protection</div>
+ *             </div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuIndicator />
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ *
+ * ### Featured Card
+ *
+ * Hero-style layout with a featured item alongside regular links.
+ *
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="getting-started">
+ *       <NavigationMenuTrigger>Getting Started</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="grid grid-cols-[1fr_200px] gap-2 w-[480px] p-2">
+ *           <div class="row-span-3">
+ *             <NavigationMenuLink href="#" class="flex h-full flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline">
+ *               <div class="mb-2 text-lg font-medium">Introduction</div>
+ *               <p class="text-sm text-muted-foreground">Learn the basics and get up to speed quickly with our comprehensive guides.</p>
+ *             </NavigationMenuLink>
+ *           </div>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Installation</div>
+ *             <div class="text-sm text-muted-foreground">Step-by-step setup</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Configuration</div>
+ *             <div class="text-sm text-muted-foreground">Customize settings</div>
+ *           </NavigationMenuLink>
+ *           <NavigationMenuLink href="#">
+ *             <div class="font-medium">Examples</div>
+ *             <div class="text-sm text-muted-foreground">Code samples</div>
+ *           </NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuIndicator />
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ *
+ * ### With Simple Links
+ *
+ * Use `navigationMenuTriggerStyle()` to style regular links to match triggers.
+ *
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="products">
+ *       <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="w-[200px] p-2">
+ *           <NavigationMenuLink href="#">Product One</NavigationMenuLink>
+ *           <NavigationMenuLink href="#">Product Two</NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuItem>
+ *       <NavigationMenuLink href="#" class="px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 hover:text-accent">
+ *         Pricing
+ *       </NavigationMenuLink>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuItem>
+ *       <NavigationMenuLink href="/docs" class="px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 hover:text-accent">
+ *         Docs
+ *       </NavigationMenuLink>
+ *     </NavigationMenuItem>
+ *     <NavigationMenuIndicator />
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ *
+ * ### Without Viewport
+ *
+ * Set `viewport={false}` to render content directly without the animated viewport container.
+ *
+ * <NavigationMenu viewport={false}>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem value="menu">
+ *       <NavigationMenuTrigger>Menu</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <div class="w-[200px] p-2 rounded-md border bg-popover shadow-md">
+ *           <NavigationMenuLink href="#">Option One</NavigationMenuLink>
+ *           <NavigationMenuLink href="#">Option Two</NavigationMenuLink>
+ *         </div>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ */
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import NavigationMenuViewport from "./NavigationMenuViewport.astro";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+  viewport?: boolean;
+  delayOpen?: number;
+  delayClose?: number;
+  openOnFocus?: boolean;
+} & HTMLAttributes<"nav">;
+
+const {
+  as: Tag = "nav",
+  class: className = "",
+  viewport = true,
+  delayOpen = 0,
+  delayClose = 50,
+  openOnFocus,
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  data-slot="navigation-menu"
+  data-viewport={viewport}
+  data-delay-open={delayOpen}
+  data-delay-close={delayClose}
+  data-open-on-focus={openOnFocus}
+  class={cn("relative", className)}
+>
+  <slot />
+  {viewport && <NavigationMenuViewport />}
+</Tag>
+
+<script>
+  import { createNavigationMenu } from "@data-slot/navigation-menu";
+
+  document
+    .querySelectorAll('[data-slot="navigation-menu"]')
+    .forEach((el) => createNavigationMenu(el));
+</script>

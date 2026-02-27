@@ -1,0 +1,324 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@bejamas/ui/components/tooltip";
+import { Button } from "@bejamas/ui/components/button";
+import { Kbd } from "@bejamas/ui/components/kbd";
+import {
+  PlusIcon,
+  SettingsIcon,
+  TrashIcon,
+  CopyIcon,
+  BookmarkIcon,
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+} from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Tooltip</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+      <KitchenSinkSection title="Basic">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="outline">Hover me</Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>This is a tooltip</p>
+          </TooltipContent>
+        </Tooltip>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Sides">
+        <div class="flex items-center gap-4 flex-wrap py-8">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">Left</Button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              <p>Tooltip on left</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">Top</Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>Tooltip on top</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">Bottom</Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Tooltip on bottom</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">Right</Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Tooltip on right</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Alignment">
+        <div class="flex items-center gap-4 flex-wrap">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">Start</Button>
+            </TooltipTrigger>
+            <TooltipContent align="start">
+              <p>Aligned to start</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">Center</Button>
+            </TooltipTrigger>
+            <TooltipContent align="center">
+              <p>Aligned to center</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">End</Button>
+            </TooltipTrigger>
+            <TooltipContent align="end">
+              <p>Aligned to end</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="With Delay">
+        <div class="flex items-center gap-4 flex-wrap">
+          <Tooltip delay={0}>
+            <TooltipTrigger asChild>
+              <Button variant="outline">No delay</Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Instant tooltip (0ms)</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip delay={500}>
+            <TooltipTrigger asChild>
+              <Button variant="outline">500ms delay</Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Delayed tooltip (500ms)</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip delay={1000}>
+            <TooltipTrigger asChild>
+              <Button variant="outline">1s delay</Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Slow tooltip (1000ms)</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Positioning Options">
+        <div class="flex items-center gap-4 flex-wrap">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">sideOffset=12</Button>
+            </TooltipTrigger>
+            <TooltipContent sideOffset={12}>
+              <p>More distance from trigger</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline">alignOffset=16</Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" align="start" alignOffset={16}>
+              <p>Shifted on the alignment axis</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="On Icon Buttons">
+        <div class="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" variant="outline" aria-label="Add new">
+                <PlusIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Add new</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" variant="outline" aria-label="Settings">
+                <SettingsIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Settings</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" variant="outline" aria-label="Copy">
+                <CopyIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Copy to clipboard</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" variant="destructive" aria-label="Delete">
+                <TrashIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Delete</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="With Kbd">
+        <div class="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" variant="outline" aria-label="Bold">
+                <BoldIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent class="flex items-center gap-2">
+              <p>Bold</p>
+              <Kbd>⌘B</Kbd>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" variant="outline" aria-label="Italic">
+                <ItalicIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent class="flex items-center gap-2">
+              <p>Italic</p>
+              <Kbd>⌘I</Kbd>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" variant="outline" aria-label="Underline">
+                <UnderlineIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent class="flex items-center gap-2">
+              <p>Underline</p>
+              <Kbd>⌘U</Kbd>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" variant="outline" aria-label="Save">
+                <BookmarkIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent class="flex items-center gap-2">
+              <p>Save</p>
+              <Kbd>⌘S</Kbd>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Event Testing">
+      <p class="text-sm text-muted-foreground">
+        Hover the button and check the output for tooltip open/close events.
+      </p>
+      <Tooltip id="event-tooltip">
+        <TooltipTrigger asChild>
+          <Button variant="outline">Hover for events</Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Event tooltip</p>
+        </TooltipContent>
+      </Tooltip>
+      <EventLog id="tooltip-event-output" />
+      <script>
+        {
+          function log(msg: string) {
+            (document.getElementById("tooltip-event-output") as any)?._log(msg);
+          }
+
+          document
+            .getElementById("event-tooltip")
+            ?.addEventListener("tooltip:change", (e: Event) => {
+              const { open } = (e as CustomEvent).detail;
+              log(`tooltip:change → open: ${open}`);
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <Tooltip id="programmatic-tooltip">
+        <TooltipTrigger asChild>
+          <Button variant="outline">Controlled Tooltip</Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Programmatically controlled</p>
+        </TooltipContent>
+      </Tooltip>
+      <div class="flex flex-wrap gap-2">
+        <button
+          id="show-tooltip-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Show
+        </button>
+        <button
+          id="hide-tooltip-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Hide
+        </button>
+      </div>
+      <script>
+        {
+          const tooltip = document.getElementById("programmatic-tooltip");
+          document
+            .getElementById("show-tooltip-btn")
+            ?.addEventListener("click", () => {
+              tooltip?.dispatchEvent(
+                new CustomEvent("tooltip:set", { detail: { open: true } }),
+              );
+            });
+          document
+            .getElementById("hide-tooltip-btn")
+            ?.addEventListener("click", () => {
+              tooltip?.dispatchEvent(
+                new CustomEvent("tooltip:set", { detail: { open: false } }),
+              );
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

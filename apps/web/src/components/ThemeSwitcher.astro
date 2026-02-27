@@ -1,132 +1,149 @@
 ---
-import Select from "@bejamas/ui/components/Select.astro";
-import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from "@bejamas/ui/components/tabs";
+import { Skeleton } from "@bejamas/ui/components/skeleton";
+import { Button } from "@bejamas/ui/components/button";
+
+import { SunIcon, MoonIcon, LaptopIcon, GithubIcon } from "@lucide/astro";
+import PresetSwitcher from "./PresetSwitcher.astro";
+import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
+import GitHubLink from "./GitHubLink.astro";
+
+const githubUrl = "https://github.com/bejamas/ui";
 ---
 
-<div class="relative text-sm">
-  <div class="absolute z-10 left-3 top-2.5">
-    <SunIcon class="size-4 dark:hidden" />
-    <MoonIcon class="size-4 hidden dark:block" />
-  </div>
-  <Select showCheckmark={false}>
-    <Select part="indicator" />
-    <Select
-      onchange="window.toggleTheme(this.value)"
-      id="theme-select"
-      part="control"
-      showCheckmark={false}
-      class="pl-9 w-28"
-    >
-      <Select part="option" value="light"
-        ><SunIcon class="size-4" /> Light</Select
-      >
-      <Select part="option" value="dark"
-        ><MoonIcon class="size-4" /> Dark</Select
-      >
-      <Select part="option" value="auto"
-        ><LaptopIcon class="size-4" /> Auto</Select
-      >
-    </Select>
-  </Select>
+<div class="flex items-center gap-2">
+  <Button
+    as="a"
+    variant="outline"
+    href={githubUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="gap-1.5 w-16"
+  >
+    <GithubIcon class="size-4" />
+    <GitHubLink server:defer>
+      <Skeleton class="w-8.5 h-5 rounded-sm" slot="fallback" />
+    </GitHubLink>
+  </Button>
+  <PresetSwitcher />
+  <starlight-theme-select>
+    <Tabs class="theme-tabs" id="theme-tabs">
+      <TabsList class="h-9 p-1 py-0.5 rounded-md">
+        <TabsTrigger
+          value="light"
+          class="theme-tab px-1.5 h-7"
+          title="Light theme"
+        >
+          <SunIcon class="size-4" />
+        </TabsTrigger>
+        <TabsTrigger
+          value="dark"
+          class="theme-tab px-1.5 h-7"
+          title="Dark theme"
+        >
+          <MoonIcon class="size-4" />
+        </TabsTrigger>
+        <TabsTrigger
+          value="auto"
+          class="theme-tab px-1.5 h-7"
+          title="Auto (system)"
+        >
+          <LaptopIcon class="size-4" />
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
+  </starlight-theme-select>
 </div>
 
-<script is:inline>
-  // @ts-nocheck
-  const storageKey = "starlight-theme";
-  const themeMetaMedias = [
-    "(prefers-color-scheme: light)",
-    "(prefers-color-scheme: dark)",
-  ];
-  const themeColors = {
-    light: "#ffffff",
-    dark: "#0f171f",
-  };
+<!-- Theme Editor Panel (Cmd/Ctrl + . to toggle) -->
+<ThemeEditorGlobal />
 
-  const parseTheme = (theme) =>
+<script is:inline>
+  if (typeof StarlightThemeProvider !== "undefined") {
+    StarlightThemeProvider.updatePickers();
+  }
+</script>
+
+<script>
+  type Theme = "auto" | "dark" | "light";
+  const storageKey = "starlight-theme";
+
+  const parseTheme = (theme: unknown): Theme =>
     theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
 
-  const loadTheme = () => {
-    try {
-      if (typeof localStorage !== "undefined") {
-        return parseTheme(localStorage.getItem(storageKey));
-      }
-    } catch {}
-    return "auto";
-  };
+  const loadTheme = (): Theme =>
+    parseTheme(
+      typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
+    );
 
-  function storeTheme(theme) {
-    try {
-      if (typeof localStorage !== "undefined") {
-        localStorage.setItem(
-          storageKey,
-          theme === "light" || theme === "dark" ? theme : "",
-        );
-      }
-    } catch {}
-  }
-
-  function ensureThemeMeta(head, media) {
-    const baseSelector = `meta[name="theme-color"][media="${media}"]`;
-
-    let meta = head.querySelector(`${baseSelector}[data-theme-managed]`);
-    if (meta instanceof HTMLMetaElement) return meta;
-
-    meta = head.querySelector(baseSelector);
-    if (meta instanceof HTMLMetaElement) {
-      meta.setAttribute("data-theme-managed", "");
-      return meta;
+  function storeTheme(theme: Theme): void {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(
+        storageKey,
+        theme === "light" || theme === "dark" ? theme : "",
+      );
     }
-
-    meta = document.createElement("meta");
-    meta.setAttribute("name", "theme-color");
-    meta.setAttribute("media", media);
-    meta.setAttribute("data-theme-managed", "");
-    head.appendChild(meta);
-    return meta;
   }
 
-  function syncThemeColor(theme) {
-    const color = themeColors[theme];
-    const head = document.head;
-    if (!color || !head) return;
-
-    themeMetaMedias.forEach((media) => {
-      const meta = ensureThemeMeta(head, media);
-      meta.setAttribute("content", color);
-    });
-  }
-
-  const getPreferredColorScheme = () =>
+  const getPreferredColorScheme = (): Theme =>
     matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 
-  function applyTheme(theme) {
-    const effective = theme === "auto" ? getPreferredColorScheme() : theme;
-    document.documentElement.dataset.theme = effective;
-    document.documentElement.classList.remove("light", "dark");
-    document.documentElement.classList.add(effective);
-    syncThemeColor(effective);
+  function onThemeChange(theme: Theme): void {
+    const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
+    if (typeof StarlightThemeProvider !== "undefined") {
+      StarlightThemeProvider.updatePickers(theme);
+    }
+    document.documentElement.dataset.theme = resolved;
+    document.documentElement.dataset.themeChoice = theme;
+    document.documentElement.classList.toggle("dark", resolved === "dark");
     storeTheme(theme);
-    const select = document.getElementById("theme-select");
-    if (select instanceof HTMLSelectElement) select.value = theme;
+    // Dispatch event for other components (like PresetSwitcher) to react
+    window.dispatchEvent(
+      new CustomEvent("theme-toggle-changed", { detail: { theme: resolved } }),
+    );
+
+    document
+      .querySelector<HTMLDivElement>("#theme-tabs")
+      ?.dispatchEvent(
+        new CustomEvent("tabs:set", { detail: { value: theme } }),
+      ) as HTMLDivElement;
   }
 
-  // Initialize
-  applyTheme(loadTheme());
-
-  // UI: select changes
-  const select = document.getElementById("theme-select");
-  if (select instanceof HTMLSelectElement) {
-    select.addEventListener("change", (e) => {
-      if (e.currentTarget instanceof HTMLSelectElement) {
-        applyTheme(parseTheme(e.currentTarget.value));
-      }
-    });
-  }
-
-  window.toggleTheme = (theme) => applyTheme(parseTheme(theme));
-
-  // React to system scheme changes while in 'auto'
   matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
-    if (loadTheme() === "auto") applyTheme("auto");
+    if (loadTheme() === "auto") onThemeChange("auto");
   });
+
+  class StarlightThemeSelect extends HTMLElement {
+    connectedCallback() {
+      const currentTheme = loadTheme();
+      onThemeChange(currentTheme);
+
+      const el = document.querySelector("#theme-tabs");
+      el?.addEventListener("tabs:change", (e) => {
+        onThemeChange(parseTheme(e.detail.value));
+      });
+    }
+  }
+
+  if (!customElements.get("starlight-theme-select")) {
+    customElements.define("starlight-theme-select", StarlightThemeSelect);
+  }
 </script>
+
+<style>
+  .theme-tabs {
+    gap: 0;
+  }
+
+  .theme-tab[data-state="active"] {
+    color: var(--foreground);
+  }
+
+  .theme-tab[data-state="inactive"] {
+    color: var(--muted-foreground);
+  }
+</style>

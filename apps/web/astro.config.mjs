@@ -1,22 +1,49 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
 import starlightThemeBejamas from "starlight-theme-bejamas";
+import starlightPageActions from "starlight-page-actions";
+
 import vercel from "@astrojs/vercel";
-import netlify from "@astrojs/netlify";
 import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
 import { posthog } from "./src/utils/posthog";
 
+import alpinejs from "@astrojs/alpinejs";
+
 const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
-  // output: 'server',
+  trailingSlash: "never",
+  // output: "server",
   site: "https://ui.bejamas.com",
   redirects: {
     "/docs": "/docs/introduction",
+  },
+  image: {
+    // Example: Allow remote image optimization from a single domain
+    domains: ["gradient.bejamas.com", "github.com"],
+  },
+  env: {
+    schema: {
+      OPENAI_API_KEY: envField.string({ context: "server", access: "secret" }),
+      UPSTASH_REDIS_REST_URL: envField.string({
+        context: "server",
+        access: "secret",
+        optional: true,
+      }),
+      UPSTASH_REDIS_REST_TOKEN: envField.string({
+        context: "server",
+        access: "secret",
+        optional: true,
+      }),
+    },
+  },
+  prefetch: {
+    defaultStrategy: "viewport",
+    prefetchAll: true,
   },
   integrations: [
     starlight({
@@ -32,36 +59,55 @@ export default defineConfig({
             { label: "Themes", href: "/themes" },
           ],
           components: {
-            Button: "@bejamas/ui/components/Button.astro",
-            Select: "@bejamas/ui/components/Select.astro",
-            // ThemeSelect: "./src/components/ThemeSwitcher.astro",
+            button: "@bejamas/ui/components/button",
+            select: "@bejamas/ui/components/select",
+            ThemeSelect: "./src/components/ThemeSwitcher.astro",
+            PageTitle: "./src/components/PageTitle.astro",
           },
         }),
+        starlightPageActions(),
       ],
       components: {
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
+        PageTitle: "./src/components/PageTitle.astro",
       },
       title: "bejamas/ui",
       titleDelimiter: "-",
-      social: [
-        {
-          icon: "github",
-          label: "GitHub",
-          href: "https://github.com/bejamas/ui",
-        },
-      ],
+      // social: [
+      //   {
+      //     icon: "github",
+      //     label: "GitHub",
+      //     href: "https://github.com/bejamas/ui",
+      //   },
+      // ],
       sidebar: [
         {
           label: "Getting Started",
-          autogenerate: { directory: "docs" },
+          items: [
+            "docs/introduction",
+            "docs/installation",
+            "docs/cli",
+            "docs/forms-astro-actions",
+          ],
         },
         {
           label: "Components",
           autogenerate: { directory: "components" },
         },
+        {
+          label: "Concepts",
+          items: [
+            "docs/theming",
+            "docs/design-principles",
+            "docs/monorepo",
+            "docs/auto-generated-docs",
+            "docs/changelog",
+          ],
+        },
       ],
       customCss: ["./src/styles/globals.css", "@bejamas/ui/styles/globals.css"],
       logo: {
+        alt: "bejamas/ui",
         light: "./src/assets/logo-3.svg",
         dark: "./src/assets/logo-3-dark.svg",
         replacesTitle: true,
@@ -156,17 +202,45 @@ export default defineConfig({
         {
           tag: "script",
           attrs: {
-            type: "text/javascript",
-            id: "posthog-js",
+            src: "https://plausible.io/js/pa-FnTta3NUzdovwg1ldYIQ3.js",
+            async: true,
           },
-          content: posthog,
         },
+        {
+          tag: "script",
+          content: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`,
+        },
+        // {
+        //   tag: "script",
+        //   attrs: {
+        //     type: "text/javascript",
+        //     id: "posthog-js",
+        //   },
+        //   content: posthog,
+        // },
       ],
-      expressiveCode: true,
     }),
     mdx(),
-    sitemap(),
-    robotsTxt(),
+    sitemap({
+      filter: (page) =>
+        !page.includes("/kitchen-sink/") &&
+        !page.includes("-test") &&
+        !page.includes("/ui-demo/") &&
+        !page.includes("/blocks/") &&
+        !page.includes("/ai/") &&
+        !page.includes("/health/") &&
+        !page.includes("/fintech/"),
+    }),
+    robotsTxt({
+      policy: [
+        {
+          userAgent: "*",
+          allow: "/",
+          disallow: ["/kitchen-sink/", "/ui-demo/"],
+        },
+      ],
+    }),
+    alpinejs(),
   ],
   vite: {
     plugins: [tailwindcss()],
@@ -174,9 +248,8 @@ export default defineConfig({
       noExternal: ["zod"],
     },
   },
-  adapter: isVercel
-    ? vercel({
-        skewProtection: true,
-      })
-    : netlify(),
+  adapter: vercel({
+    skewProtection: true,
+    imageService: true,
+  }),
 });

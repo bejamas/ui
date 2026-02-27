@@ -1,0 +1,38 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+  /** Radix-like: render wrapper so the child can be the interactive element */
+  asChild?: boolean;
+} & HTMLAttributes<"button">;
+
+const {
+  class: className = "",
+  asChild = false,
+  type = "button",
+  ...rest
+} = Astro.props as Props;
+---
+
+{
+  asChild ? (
+    <div
+      data-slot="hover-card-trigger"
+      data-as-child
+      class={cn("inline-flex items-center", className)}
+    >
+      <slot />
+    </div>
+  ) : (
+    <button
+      {...rest}
+      type={type}
+      data-slot="hover-card-trigger"
+      class={cn("inline-flex items-center", className)}
+    >
+      <slot />
+    </button>
+  )
+}

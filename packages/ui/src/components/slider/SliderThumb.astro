@@ -1,0 +1,26 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="slider-thumb"
+  class={cn(
+    "border-ring ring-ring/50 absolute size-4 cursor-grab rounded-full border-2 bg-white",
+    "-translate-x-1/2 group-data-[orientation=vertical]/slider:translate-y-1/2 group-data-[orientation=vertical]/slider:translate-x-0",
+    "transition-[color,box-shadow]",
+    "hover:ring-4 focus:ring-4 focus:outline-none",
+    "data-[dragging]:cursor-grabbing",
+    "group-data-[disabled]/slider:pointer-events-none group-data-[disabled]/slider:opacity-50",
+    className,
+  )}
+>
+  <slot />
+</div>

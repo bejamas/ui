@@ -1,0 +1,206 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import { Toggle } from "@bejamas/ui/components/toggle";
+import {
+  BoldIcon,
+  ItalicIcon,
+  BookmarkIcon,
+  UnderlineIcon,
+} from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Toggle</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic Toggle (default variant)">
+      <div class="flex items-center gap-2">
+        <Toggle aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle aria-label="Toggle italic">
+          <ItalicIcon />
+        </Toggle>
+        <Toggle aria-label="Toggle underline">
+          <UnderlineIcon />
+        </Toggle>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Outline Variant">
+      <div class="flex items-center gap-2">
+        <Toggle variant="outline" aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle variant="outline" aria-label="Toggle italic">
+          <ItalicIcon />
+        </Toggle>
+        <Toggle variant="outline" aria-label="Toggle underline">
+          <UnderlineIcon />
+        </Toggle>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Text">
+      <div class="flex items-center gap-2">
+        <Toggle variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon />
+          Bookmark
+        </Toggle>
+        <Toggle variant="outline" aria-label="Toggle italic">
+          <ItalicIcon />
+          Italic
+        </Toggle>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <div class="flex items-center gap-2">
+        <Toggle size="sm" variant="outline" aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle size="default" variant="outline" aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle size="lg" variant="outline" aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+      </div>
+      <div class="flex items-center gap-2">
+        <Toggle size="sm" variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon />
+          Small
+        </Toggle>
+        <Toggle size="default" variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon />
+          Default
+        </Toggle>
+        <Toggle size="lg" variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon />
+          Large
+        </Toggle>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Default Pressed">
+      <div class="flex items-center gap-2">
+        <Toggle defaultPressed aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle defaultPressed variant="outline" aria-label="Toggle italic">
+          <ItalicIcon />
+        </Toggle>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <div class="flex items-center gap-2">
+        <Toggle disabled aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle disabled variant="outline" aria-label="Toggle italic">
+          <ItalicIcon />
+        </Toggle>
+        <Toggle disabled defaultPressed aria-label="Toggle underline">
+          <UnderlineIcon />
+        </Toggle>
+        <Toggle
+          disabled
+          defaultPressed
+          variant="outline"
+          aria-label="Toggle bookmark"
+        >
+          <BookmarkIcon />
+        </Toggle>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Icon Fill on Pressed State">
+      <p class="text-sm text-muted-foreground">
+        Using <code>group-aria-pressed/toggle:fill-foreground</code> or <code
+          >group-data-[state=on]/toggle:fill-foreground</code
+        > to fill icons when pressed
+      </p>
+      <div class="flex items-center gap-2">
+        <Toggle variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />
+        </Toggle>
+        <Toggle
+          variant="outline"
+          defaultPressed
+          aria-label="Toggle bookmark filled"
+        >
+          <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />
+        </Toggle>
+      </div>
+    </KitchenSinkSection>
+    </div>
+
+    <KitchenSinkSection title="Event Testing">
+      <p class="text-sm text-muted-foreground">
+        Click the toggle and check the output for toggle:change events
+      </p>
+      <Toggle id="event-toggle" variant="outline" aria-label="Toggle test">
+        <BoldIcon />
+        Click me
+      </Toggle>
+      <EventLog id="toggle-event-output" />
+      <script>
+        {
+          function log(msg: string) {
+            (document.getElementById("toggle-event-output") as any)?._log(msg);
+          }
+
+          document
+            .getElementById("event-toggle")
+            ?.addEventListener("toggle:change", (e: Event) => {
+              const { pressed } = (e as CustomEvent).detail;
+              log(`toggle:change → pressed: ${pressed}`);
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <div class="flex items-center gap-4">
+        <Toggle
+          id="programmatic-toggle"
+          variant="outline"
+          aria-label="Programmatic toggle"
+        >
+          <BoldIcon />
+        </Toggle>
+        <button
+          id="set-on-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set On
+        </button>
+        <button
+          id="set-off-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Off
+        </button>
+      </div>
+      <script>
+        const toggle = document.getElementById("programmatic-toggle");
+        document.getElementById("set-on-btn")?.addEventListener("click", () => {
+          toggle?.dispatchEvent(
+            new CustomEvent("toggle:set", { detail: { value: true } }),
+          );
+        });
+        document
+          .getElementById("set-off-btn")
+          ?.addEventListener("click", () => {
+            toggle?.dispatchEvent(
+              new CustomEvent("toggle:set", { detail: { value: false } }),
+            );
+          });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

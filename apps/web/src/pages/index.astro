@@ -1,20 +1,17 @@
 ---
-import BrowserHero from "@/components/BrowserHero.astro";
+import UiDemo from "@/components/UiDemo.astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 ---
 
 <StarlightPage
   frontmatter={{
-    title: "The UI system for Astro. Copy. Customize. Ship.",
+    title: "Astro UI library. Copy and own the code.",
     description:
       "Clean, lightweight Astro UI components built with Tailwind v4 and zero dependencies. Copy-paste the snippet into your project and fully own the code.",
     template: "splash",
     hero: {
-      title: `The <span class="font-serif relative inline-block pr-0.5"><div class="absolute top-0.5 lg:top-1 w-full pointer-events-none h-8 md:h-12 border-2 border-accent"><span class="absolute -left-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -left-2 -bottom-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -bottom-2 size-2 border-2 border-accent"></span></div>UI foundation</span> for large marketing sites.`,
-      tagline: `
-        Built on
-          <svg
-            class="inline-block size-5 -mr-1 dark:invert"
+      title: `<svg
+            class="inline-block size-10 -mr-1 dark:invert"
             xmlns="http://www.w3.org/2000/svg"
             width="85"
             height="107"
@@ -29,17 +26,16 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
               d="M0 69.5866C0 69.5866 14.3139 62.6137 28.6678 62.6137L39.4901 29.1204C39.8953 27.5007 41.0783 26.3999 42.4139 26.3999C43.7495 26.3999 44.9325 27.5007 45.3377 29.1204L56.1601 62.6137C73.1601 62.6137 84.8278 69.5866 84.8278 69.5866C84.8278 69.5866 60.5145 3.35233 60.467 3.21944C59.7692 1.2612 58.5911 0 57.0029 0H27.8274C26.2392 0 25.1087 1.2612 24.3634 3.21944C24.3108 3.34983 0 69.5866 0 69.5866Z"
               fill="#17191E"
             />
-          </svg>
-          Astro for high-performance, multi-market content platforms. Components
-          live in your codebase.
+          </svg> Astro <span class="font-serif relative inline-block pr-0.5"><div class="absolute top-0.5 lg:top-1 w-full pointer-events-none h-8 md:h-12 border-2 border-accent"><span class="absolute -left-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -left-2 -bottom-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -bottom-2 size-2 border-2 border-accent"></span></div>UI</span> library.`,
+      tagline: `
+        Copy-and-own code and 
           <a
             href="/docs/auto-generated-docs"
-            class="border-b border-muted-foreground/40 hover:text-foreground relative pr-4 pb-0.5 hover:border-muted-foreground/80 transition-colors group"
+            class="border-b border-muted-foreground/40 hover:text-foreground relative pb-0.5 hover:border-muted-foreground/80 transition-colors group"
           >
-            Docs are generated automatically
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform ease-in-out duration-200 lucide-arrow-up-right-icon lucide-arrow-up-right inline-block size-4 absolute right-0 top-1"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-          </a>
-          .
+            auto-generated component docs
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform ease-in-out duration-200 lucide-arrow-up-right-icon lucide-arrow-up-right inline-block size-4"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a> — scale content platforms instead of maintaining UI systems.
       `,
       actions: [
         {
@@ -57,15 +53,30 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     },
   }}
 >
-  <BrowserHero />
-  <div id="browser-hero-panel-end" class="w-full mt-[-1px] h-px bottom-0 -z-10">
+  <div class="max-w-[96rem] mx-auto">
+    <UiDemo />
   </div>
+  <!-- 
   <div
-    class="hidden md:block h-full fixed scroll-fade-out bg-muted top-14 border left-6 right-6 rounded-t-3xl"
+    class="browser-frame not-content mx-auto relative z-10 rounded-t-xl border border-border/60 border-b-0 overflow-hidden bg-background dark:bg-muted/30 md:max-w-[92%]"
   >
-  </div>
+    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-border/60">
+      <div class="hidden md:flex items-center gap-1.5">
+        <span class="size-3 rounded-full bg-muted-foreground/20"></span>
+        <span class="size-3 rounded-full bg-muted-foreground/20"></span>
+        <span class="size-3 rounded-full bg-muted-foreground/20"></span>
+      </div>
+      <div class="hidden md:flex items-center gap-2 ml-auto">
+        <span class="text-sm text-muted-foreground">ui.bejamas.com</span>
+      </div>
+    </div>
+    <UiDemo />
+  </div> -->
   <div
-    class="hidden md:block h-60 z-20 fixed mix-blend-hard-light pointer-events-none bg-gradient-to-t from-muted to-transparent bottom-0 left-5 right-5 scroll-fade-out-and-move-bottom"
+    class="hidden md:block left-1 right-1 h-[calc(100%+var(--hero-height))] -mt-(--hero-height) pt-(--hero-height) absolute z-0 scroll-fade-out bg-background dark:bg-muted/30 top-14 border rounded-t-3xl"
+    style={{
+      "--hero-height": "365.5px",
+    }}
   >
   </div>
 </StarlightPage>
@@ -79,8 +90,18 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
   .hero h1 {
     letter-spacing: calc(var(--letter-spacing) - 0.025em);
-    @apply text-3xl font-medium text-left text-balance block max-w-2xl leading-[1.15];
+    @apply text-3xl font-medium text-left text-balance block max-w-xl leading-[1.15];
   }
+
+  /* .browser-frame {
+    box-shadow:
+      0px 0px 0px 1.18145px rgba(5, 23, 41, 0.08),
+      0px 1.18145px 1.18145px rgba(5, 23, 41, 0.03),
+      0px 2.36289px 2.36289px rgba(5, 23, 41, 0.04),
+      0px 4.72579px 4.72579px rgba(5, 23, 41, 0.05),
+      0px 9.45157px 28.3547px rgba(5, 23, 41, 0.07),
+      0px 1.18145px 0px rgba(5, 23, 41, 0.08);
+  } */
 
   .kudos {
     display: none;
@@ -93,7 +114,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   .tagline {
     text-align: left;
     font-size: 1.1875rem;
-    max-width: 56ch;
+    max-width: 50ch;
   }
 
   @media (min-width: 48rem) {
@@ -102,70 +123,34 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     }
   }
 
-  @media (min-width: 48rem) {
-    html {
-      scroll-snap-type: y mandatory;
-    }
-  }
-
   .content-panel:first-child {
     @apply pt-12;
   }
 
   .main-frame {
-    height: 100svh;
-    padding-top: 0;
     padding-inline: 0;
-    /* padding-right: 0; */
-  }
-
-  .main-frame > .lg\:sl-flex,
-  .main-frame main[data-pagefind-body],
-  .main-frame main > .content-panel:last-child,
-  .main-frame main > .content-panel:last-child > .sl-container,
-  .main-frame
-    main
-    > .content-panel:last-child
-    > .sl-container
-    > .sl-markdown-content {
-    @apply h-full;
-  }
-
-  .main-frame > div {
-    background-color: transparent;
-    border: 0;
   }
 
   .main-pane > main {
-    @apply pb-0;
+    @apply pb-0 mb-0;
   }
 
   .hero {
     opacity: 1;
     transform-origin: left center;
 
-    @apply px-0 lg:px-4 pt-12 pb-10 lg:pb-18 z-10 md:max-w-[92%] mx-auto relative;
+    @apply px-0 lg:px-4 pt-12 pb-10 lg:pb-18 z-10 max-w-[96rem] mx-auto relative;
   }
 
   @media (min-width: 48rem) {
     .hero {
       scroll-snap-align: center;
 
-      @apply sticky top-18 px-0 pt-12;
+      @apply relative top-4 px-0 pt-14;
     }
 
     .main-pane > main {
       padding: var(--sl-main-pad);
-    }
-  }
-
-  @supports (animation-timeline: auto) {
-    @media (min-width: 48rem) {
-      .hero {
-        animation: fadeOutAtBottom ease-out both;
-        animation-timeline: scroll(root block);
-        animation-range: 40% 80%;
-      }
     }
   }
 
@@ -174,11 +159,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   }
 
   .sl-markdown-content {
-    @apply mx-auto max-w-full mt-0 pt-0;
-  }
-
-  .fade {
-    @apply hidden;
+    @apply mx-auto max-w-full mt-0 pt-0 relative;
   }
 
   .actions {
@@ -187,53 +168,5 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
   footer.sl-flex {
     @apply hidden;
-  }
-
-  @keyframes fadeOutAtBottom {
-    to {
-      opacity: 0;
-      transform: scale(0.99);
-    }
-  }
-
-  @keyframes fadeOutAtBottomAndMoveBottom {
-    to {
-      opacity: 0;
-      transform: translateY(100%);
-    }
-  }
-
-  @keyframes maxWidthFull {
-    to {
-      transform: scale(1) translateZ(0);
-    }
-  }
-
-  /* @media (min-width: 48rem) {
-    .browser {
-      transform: scale(0.92) translateZ(0);
-    }
-  } */
-
-  @media (min-width: 48rem) {
-    .browser {
-      transform: scale(0.92) translateZ(0);
-      animation: maxWidthFull linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 0% 100%;
-      transform-origin: center top;
-    }
-
-    .scroll-fade-out {
-      animation: fadeOutAtBottom linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 40% 80%;
-    }
-
-    .scroll-fade-out-and-move-bottom {
-      animation: fadeOutAtBottomAndMoveBottom linear both;
-      animation-timeline: scroll(root block);
-      animation-range: 40% 80%;
-    }
   }
 </style>

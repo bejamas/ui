@@ -1,0 +1,476 @@
+---
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@bejamas/ui/components/dropdown-menu";
+import { Button } from "@bejamas/ui/components/button";
+import { ButtonGroup } from "@bejamas/ui/components/button-group";
+import { Skeleton } from "@bejamas/ui/components/skeleton";
+
+import { defaultPresets } from "../utils/themes/presets";
+import { SparklesIcon } from "@lucide/astro";
+import PresetSwitcherTriggerIsland from "./PresetSwitcherTriggerIsland.astro";
+
+const leanPresets = Object.fromEntries(
+  Object.entries(defaultPresets).map(([key, p]) => [
+    key,
+    {
+      label: p.label ?? key,
+      styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
+    },
+  ]),
+);
+
+// Get initial values from default preset for SSR
+const defaultPreset = defaultPresets["default"];
+const defaultPrimaryLight = defaultPreset?.styles?.light?.primary || "#000";
+const defaultAccentLight = defaultPreset?.styles?.light?.accent || "#666";
+const defaultPrimaryDark = defaultPreset?.styles?.dark?.primary || "#fff";
+const defaultAccentDark = defaultPreset?.styles?.dark?.accent || "#888";
+---
+
+<preset-switcher-wrapper data-presets={JSON.stringify(leanPresets)}>
+  <DropdownMenu align="center">
+    <!-- <ButtonGroup> -->
+    <Button
+      variant="outline"
+      data-slot="dropdown-menu-trigger"
+      class="preset-switcher-trigger w-[180px] justify-start gap-2"
+    >
+      <PresetSwitcherTriggerIsland server:defer>
+        <Skeleton class="w-[172px] h-5 rounded-sm" slot="fallback" />
+      </PresetSwitcherTriggerIsland>
+    </Button>
+    <!-- <Button
+      variant="outline"
+      data-slot="dropdown-menu-trigger"
+      class="preset-switcher-trigger w-[180px] justify-start gap-2"
+    >
+      {/* Current selection swatches */}
+      <div class="preset-current-swatches flex -space-x-1 items-center">
+        <div
+          class="preset-swatch-primary size-4 rounded-full border-2 border-background"
+          style={`background: ${defaultPrimaryLight}`}
+        >
+        </div>
+        <div
+          class="preset-swatch-accent size-4 rounded-full border-2 border-background"
+          style={`background: ${defaultAccentLight}`}
+        >
+        </div>
+      </div>
+      <span class="preset-current-label truncate">Default</span>
+      <svg
+        class="ml-auto size-4 opacity-50"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m6 9 6 6 6-6"></path>
+      </svg>
+    </Button> -->
+    <!-- <Button data-slot="new-preset" title="Create new preset">
+        <SparklesIcon class="size-4" /> AI Theme
+      </Button>
+    </ButtonGroup> -->
+
+    <DropdownMenuContent class="w-[180px]">
+      <DropdownMenuLabel>Presets</DropdownMenuLabel>
+      {
+        Object.entries(leanPresets).map(([key, preset]) => (
+          <DropdownMenuItem data-preset-key={key} class="cursor-pointer gap-2">
+            {/* Light mode swatches */}
+            <div class="flex -space-x-1 items-center dark:hidden">
+              <div
+                class="size-4 rounded-full"
+                style={`background: ${preset.styles.light.primary}`}
+              />
+              <div
+                class="size-4 rounded-full"
+                style={`background: ${preset.styles.light.accent}`}
+              />
+            </div>
+            {/* Dark mode swatches */}
+            <div class="hidden dark:flex -space-x-1 items-center">
+              <div
+                class="size-4 rounded-full border border-border"
+                style={`background: ${preset.styles.dark.primary}`}
+              />
+              <div
+                class="size-4 rounded-full border border-border"
+                style={`background: ${preset.styles.dark.accent}`}
+              />
+            </div>
+            <span class="truncate">{preset.label}</span>
+          </DropdownMenuItem>
+        ))
+      }
+
+      {/* Custom themes section - populated client-side */}
+      <div class="custom-themes-section hidden">
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>Custom Themes</DropdownMenuLabel>
+        <div class="custom-themes-list"></div>
+      </div>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</preset-switcher-wrapper>
+
+<script>
+  import { applyThemeToElement } from "../utils/themes/apply-theme.ts";
+  import {
+    getStoredPreset,
+    setStoredPreset,
+    getCurrentMode,
+    PRESET_CHANGE_EVENT,
+    type ThemeSwatches,
+  } from "../utils/themes/preset-store.ts";
+  import {
+    getCustomPresets,
+    getEditingPresetDraft,
+    CUSTOM_PRESETS_CHANGE_EVENT,
+    type CustomPreset,
+  } from "../utils/themes/custom-presets-store.ts";
+  import { syncGradientImages } from "../utils/themes/gradient-image-runtime.ts";
+
+  type PresetType = {
+    label: string;
+    styles: { light: Record<string, string>; dark: Record<string, string> };
+  };
+
+  // Global presets cache (populated from first element's data-presets)
+  let PRESETS: Record<string, PresetType> = {};
+
+  // Flag to prevent recursive event handling
+  let isApplyingPreset = false;
+
+  // Helper to extract swatches from a preset
+  function getSwatchesFromPreset(preset: PresetType): ThemeSwatches {
+    return {
+      primaryLight: preset.styles.light.primary || "#000",
+      accentLight: preset.styles.light.accent || "#666",
+      primaryDark: preset.styles.dark.primary || "#fff",
+      accentDark: preset.styles.dark.accent || "#888",
+    };
+  }
+
+  function updateGradientImageCacheKey(
+    themeKey: string,
+    modeOverride?: "light" | "dark",
+  ) {
+    if (!themeKey || typeof document === "undefined") return;
+    const mode = modeOverride ?? getCurrentMode();
+    syncGradientImages({ themeKey, mode });
+  }
+
+  function applyPresetTheme(key: string) {
+    // Check built-in presets first, then custom presets
+    let preset: PresetType | undefined = PRESETS[key];
+    let isBuiltIn = !!preset;
+    if (!preset) {
+      const customPresets = getCustomPresets();
+      const customPreset = customPresets[key];
+      if (customPreset) {
+        preset = {
+          label: customPreset.name,
+          styles: customPreset.styles as PresetType["styles"],
+        };
+      }
+    }
+
+    if (!preset) {
+      console.warn(`Preset "${key}" not found`);
+      return;
+    }
+
+    // Only use drafts for custom presets; built-in presets always use
+    // their canonical values so radius and other settings stay in sync.
+    const draft = isBuiltIn ? null : getEditingPresetDraft(key);
+    const mode = getCurrentMode();
+    const styles = draft?.workingStyles || preset.styles;
+
+    // Apply theme CSS variables to document (do not touch light/dark class; ThemeProvider owns it)
+    applyThemeToElement(
+      { styles, currentMode: mode },
+      document.documentElement,
+      { skipModeClass: true },
+    );
+
+    // Update current swatches and label display
+    updateCurrentDisplay(key, preset);
+  }
+
+  function updateCurrentDisplay(key: string, preset: PresetType) {
+    const mode = getCurrentMode();
+    const styles = mode === "dark" ? preset.styles.dark : preset.styles.light;
+
+    // Update all swatch indicators and labels
+    document.querySelectorAll("preset-switcher-wrapper").forEach((wrapper) => {
+      const container = wrapper.querySelector(".preset-current-swatches");
+      const label = wrapper.querySelector(".preset-current-label");
+
+      if (container) {
+        const primary = container.querySelector(
+          ".preset-swatch-primary",
+        ) as HTMLElement;
+        const accent = container.querySelector(
+          ".preset-swatch-accent",
+        ) as HTMLElement;
+
+        if (primary) primary.style.background = styles.primary || "";
+        if (accent) accent.style.background = styles.accent || "";
+      }
+
+      if (label) {
+        label.textContent = preset.label;
+      }
+
+      // Update selected state on items
+      wrapper.querySelectorAll("[data-preset-key]").forEach((item) => {
+        const itemKey = (item as HTMLElement).dataset.presetKey;
+        item.toggleAttribute("data-selected", itemKey === key);
+      });
+    });
+  }
+
+  function syncAllDropdowns(key: string) {
+    isApplyingPreset = true;
+    // Find the preset to get label
+    let preset: PresetType | undefined = PRESETS[key];
+    if (!preset) {
+      const customPresets = getCustomPresets();
+      const customPreset = customPresets[key];
+      if (customPreset) {
+        preset = {
+          label: customPreset.name,
+          styles: customPreset.styles as PresetType["styles"],
+        };
+      }
+    }
+    if (preset) {
+      updateCurrentDisplay(key, preset);
+    }
+    queueMicrotask(() => {
+      isApplyingPreset = false;
+    });
+  }
+
+  function renderCustomThemes(wrapper: HTMLElement) {
+    const customPresets = getCustomPresets();
+    const section = wrapper.querySelector(".custom-themes-section");
+    const list = wrapper.querySelector(".custom-themes-list");
+
+    if (!section || !list) return;
+
+    const customEntries = Object.entries(customPresets);
+
+    if (customEntries.length === 0) {
+      section.classList.add("hidden");
+      return;
+    }
+
+    section.classList.remove("hidden");
+    const mode = getCurrentMode();
+
+    list.innerHTML = customEntries
+      .map(([key, preset]) => {
+        const lightStyles = preset.styles?.light || {};
+        const darkStyles = preset.styles?.dark || {};
+
+        return `
+          <div
+            role="menuitem"
+            tabindex="0"
+            data-slot="dropdown-menu-item"
+            data-preset-key="${key}"
+            data-custom="true"
+            class="relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground group/dropdown-menu-item"
+          >
+            <div class="flex -space-x-1 items-center dark:hidden">
+              <div class="size-4 rounded-full" style="background: ${lightStyles.primary || "#888"}"></div>
+              <div class="size-4 rounded-full" style="background: ${lightStyles.accent || "#888"}"></div>
+            </div>
+            <div class="hidden dark:flex -space-x-1 items-center">
+              <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.primary || "#888"}"></div>
+              <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.accent || "#888"}"></div>
+            </div>
+            <span class="truncate">${preset.name}</span>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  // Global event listeners (only set up once)
+  let globalListenersInitialized = false;
+
+  function initGlobalListeners() {
+    if (globalListenersInitialized) return;
+    globalListenersInitialized = true;
+
+    // Listen for preset changes from other sources (e.g., BrowserHero)
+    window.addEventListener(PRESET_CHANGE_EVENT, ((e: CustomEvent) => {
+      const key = e.detail?.key;
+      if (key) {
+        syncAllDropdowns(key);
+        applyPresetTheme(key);
+        updateGradientImageCacheKey(key);
+      }
+    }) as EventListener);
+
+    // Listen for custom presets changes
+    window.addEventListener(CUSTOM_PRESETS_CHANGE_EVENT, () => {
+      document
+        .querySelectorAll("preset-switcher-wrapper")
+        .forEach((wrapper) => {
+          renderCustomThemes(wrapper as HTMLElement);
+        });
+    });
+
+    // Sync when localStorage changes (cross-tab)
+    window.addEventListener("storage", (e) => {
+      if (e.key === "theme-preset" && e.newValue) {
+        applyPresetTheme(e.newValue);
+        syncAllDropdowns(e.newValue);
+        updateGradientImageCacheKey(e.newValue);
+      }
+    });
+
+    // Re-apply preset when theme mode changes (light/dark toggle)
+    window.addEventListener("theme-toggle-changed", (event) => {
+      const current = getStoredPreset() || Object.keys(PRESETS)[0];
+      if (current) {
+        applyPresetTheme(current);
+        const eventTheme = (event as CustomEvent<{ theme?: unknown }>).detail
+          ?.theme;
+        const mode =
+          eventTheme === "light" || eventTheme === "dark"
+            ? eventTheme
+            : undefined;
+        updateGradientImageCacheKey(current, mode);
+      }
+    });
+
+    // Handle Astro page transitions
+    document.addEventListener("astro:after-swap", () => {
+      const current = getStoredPreset() || Object.keys(PRESETS)[0];
+      if (current) {
+        applyPresetTheme(current);
+        syncAllDropdowns(current);
+        updateGradientImageCacheKey(current);
+      }
+      // Re-render custom themes after page swap
+      document
+        .querySelectorAll("preset-switcher-wrapper")
+        .forEach((wrapper) => {
+          renderCustomThemes(wrapper as HTMLElement);
+        });
+    });
+  }
+
+  // Custom element for each PresetSwitcher instance
+  class PresetSwitcherWrapper extends HTMLElement {
+    connectedCallback() {
+      // Parse presets from data attribute (first element populates global cache)
+      if (Object.keys(PRESETS).length === 0) {
+        const presetsJson = this.dataset.presets;
+        if (presetsJson) {
+          try {
+            PRESETS = JSON.parse(presetsJson);
+          } catch (e) {
+            console.error("Failed to parse presets:", e);
+          }
+        }
+      }
+
+      // Initialize global listeners once
+      initGlobalListeners();
+
+      // Render custom themes
+      renderCustomThemes(this);
+
+      // Get initial preset and apply
+      const stored = getStoredPreset();
+      const initial = stored || Object.keys(PRESETS)[0] || "";
+
+      if (initial) {
+        applyPresetTheme(initial);
+        syncAllDropdowns(initial);
+        updateGradientImageCacheKey(initial);
+      }
+
+      // Handle dropdown item clicks (using event delegation)
+      const content = this.querySelector('[data-slot="dropdown-menu-content"]');
+      content?.addEventListener("click", (e) => {
+        if (isApplyingPreset) return;
+
+        const target = (e.target as HTMLElement).closest("[data-preset-key]");
+        if (!target) return;
+
+        const key = (target as HTMLElement).dataset.presetKey;
+        if (!key) return;
+
+        applyPresetTheme(key);
+
+        // Get swatches and name for the preset
+        const preset =
+          PRESETS[key] ||
+          (() => {
+            const custom = getCustomPresets()[key];
+            return custom
+              ? {
+                  label: custom.name,
+                  styles: custom.styles as PresetType["styles"],
+                }
+              : null;
+          })();
+        const swatches = preset ? getSwatchesFromPreset(preset) : undefined;
+        const name = preset?.label;
+        setStoredPreset(key, swatches, name);
+      });
+
+      // Also handle keyboard selection
+      content?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          const target = (e.target as HTMLElement).closest("[data-preset-key]");
+          if (!target) return;
+
+          e.preventDefault();
+          const key = (target as HTMLElement).dataset.presetKey;
+          if (!key) return;
+
+          applyPresetTheme(key);
+
+          // Get swatches and name for the preset
+          const preset =
+            PRESETS[key] ||
+            (() => {
+              const custom = getCustomPresets()[key];
+              return custom
+                ? {
+                    label: custom.name,
+                    styles: custom.styles as PresetType["styles"],
+                  }
+                : null;
+            })();
+          const swatches = preset ? getSwatchesFromPreset(preset) : undefined;
+          const name = preset?.label;
+          setStoredPreset(key, swatches, name);
+        }
+      });
+    }
+  }
+
+  // Register custom element
+  if (!customElements.get("preset-switcher-wrapper")) {
+    customElements.define("preset-switcher-wrapper", PresetSwitcherWrapper);
+  }
+</script>

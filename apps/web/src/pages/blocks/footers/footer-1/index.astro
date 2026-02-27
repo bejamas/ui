@@ -1,58 +1,101 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
-import Footer from "@/ui-next/Footer.astro";
-import LinkGroup from "@bejamas/ui/components/LinkGroup.astro";
+// import {
+//   Footer,
+//   FooterTop,
+//   FooterMain,
+//   FooterBottom,
+//   FooterContainer,
+//   FooterGrid,
+//   FooterRow,
+//   FooterLogo,
+// } from "../../../ui-next/footer";
+import {
+  LinkGroup,
+  LinkGroupTitle,
+  LinkGroupList,
+  LinkGroupItem,
+} from "@bejamas/ui/components/link-group";
 import CTA from "./components/cta.astro";
+import { Button } from "@bejamas/ui/components/button";
 ---
 
 <BlockExampleLayout>
-  <Footer class="rounded-t-xl">
-    <CTA />
-    <div class="py-10 grid grid-cols-4 gap-4 mx-auto max-w-5xl">
-      <div>Acme, Inc. Logo</div>
-      <div class="space-y-6">
-        <LinkGroup
-          title="Resources"
-          items={[
-            { label: "Blog", href: "/blog" },
-            { label: "Documentation", href: "/docs" },
-            { label: "Pricing", href: "/pricing" },
-            { label: "Support", href: "/support" },
-          ]}
-        />
-        <LinkGroup
-          title="Resources"
-          items={[
-            { label: "Blog", href: "/blog" },
-            { label: "Documentation", href: "/docs" },
-            { label: "Pricing", href: "/pricing" },
-            { label: "Support", href: "/support" },
-          ]}
-        />
-      </div>
+  <!-- <Footer>
+    <FooterTop>
+      <FooterContainer>
+        <div class="text-center py-10">
+          <h2 class="text-3xl font-medium mb-4">Ready to get started?</h2>
+          <Button>Get Started</Button>
+        </div>
+      </FooterContainer>
+    </FooterTop>
+    <FooterMain>
+      <FooterContainer>
+        <FooterGrid columns={4}>
+          <div>
+            <img src="/logo.svg" alt="Acme" class="h-8" />
+          </div>
+          <LinkGroup>
+            <LinkGroupTitle>Resources</LinkGroupTitle>
+            <LinkGroupList>
+              <LinkGroupItem><a href="/blog">Blog</a></LinkGroupItem>
+              <LinkGroupItem><a href="/docs">Documentation</a></LinkGroupItem>
+            </LinkGroupList>
+          </LinkGroup>
+          <LinkGroup>
+            <LinkGroupTitle>Company</LinkGroupTitle>
+            <LinkGroupList>
+              <LinkGroupItem><a href="#">About</a></LinkGroupItem>
+              <LinkGroupItem><a href="#">Careers</a></LinkGroupItem>
+            </LinkGroupList>
+          </LinkGroup>
+          <LinkGroup>
+            <LinkGroupTitle>Legal</LinkGroupTitle>
+            <LinkGroupList>
+              <LinkGroupItem><a href="/privacy">Privacy</a></LinkGroupItem>
+              <LinkGroupItem><a href="/terms">Terms</a></LinkGroupItem>
+            </LinkGroupList>
+          </LinkGroup>
+        </FooterGrid>
+      </FooterContainer>
+    </FooterMain>
+    <FooterBottom separator="soft">
+      <FooterContainer>
+        <FooterRow align="between">
+          <span>© 2025 Acme Inc. All rights reserved.</span>
+          <nav class="flex gap-4">
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+          </nav>
+        </FooterRow>
 
-      <LinkGroup
-        title="Company"
-        items={[
-          { label: "Home", href: "/" },
-          { label: "About", href: "/about" },
-          { label: "Contact", href: "/contact" },
-          { label: "Careers", href: "/careers" },
-          { label: "Press", href: "/press" },
-        ]}
-      />
-      <LinkGroup
-        title="Legal"
-        items={[
-          { label: "Privacy Policy", href: "/privacy-policy" },
-          { label: "Terms of Service", href: "/terms-of-service" },
-        ]}
-      />
-    </div>
-    <div class="border-t border-footer-border">
-      <div class="mx-auto max-w-5xl py-6">
-        <p>2025 Bejamas. All rights reserved.</p>
-      </div>
-    </div>
-  </Footer>
+        <FooterLogo size="xl" bleed="full">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1536"
+            height="485"
+            viewBox="0 0 1536 485"
+            fill="none"
+          >
+            <path
+              d="M1145.23 484.473H1020.39L1182.97 3.82764H1337.16L1499.42 484.473H1374.9L1262 124.795H1258.13L1145.23 484.473ZM1129.1 295.118H1390.07V383.505H1129.1V295.118Z"
+              fill="#1B1B1B"></path>
+            <path
+              d="M667.345 484.473V3.82764H865.409C901.538 3.82764 932.721 10.3868 958.958 23.5051C985.194 36.4083 1005.41 54.9029 1019.6 78.9889C1034.01 102.86 1041.22 131.139 1041.22 163.828C1041.22 197.161 1033.9 225.441 1019.28 248.666C1004.87 271.892 984.226 289.634 957.345 301.892C930.463 313.935 898.743 319.957 862.183 319.957H736.7V228.344H840.571C857.99 228.344 872.614 226.086 884.441 221.57C896.485 217.053 905.517 210.064 911.538 200.602C917.775 190.924 920.893 178.666 920.893 163.828C920.893 148.989 917.775 136.731 911.538 127.053C905.517 117.161 896.485 109.849 884.441 105.118C872.614 100.172 857.882 97.6986 840.248 97.6986H783.151V484.473H667.345ZM930.571 484.473L813.474 264.795H937.667L1057.67 484.473H930.571Z"
+              fill="#1B1B1B"></path>
+            <path
+              d="M611.849 3.82764V484.473H496.043V3.82764H611.849Z"
+              fill="#1B1B1B"></path>
+            <path
+              d="M136.452 3.82764L243.226 355.763H247.742L355.161 3.82764H484.839L322.581 484.473H168.387L5.80664 3.82764H136.452Z"
+              fill="#1B1B1B"></path>
+            <path
+              d="M1452.49 55.0532C1452.49 49.7008 1453.78 44.8502 1456.36 40.5014C1458.99 36.1525 1462.5 32.6878 1466.9 30.1072C1471.29 27.4788 1476.14 26.1646 1481.45 26.1646C1486.13 26.1646 1490.43 27.1921 1494.35 29.247C1498.32 31.3019 1501.57 34.0976 1504.1 37.634C1506.68 41.1704 1508.21 45.1847 1508.69 49.6769H1492.34C1491.82 47.383 1490.5 45.5192 1488.4 44.0855C1486.35 42.6041 1484.03 41.8634 1481.45 41.8634C1479.06 41.8634 1476.86 42.4607 1474.85 43.6554C1472.85 44.8024 1471.24 46.3794 1470.05 48.3866C1468.86 50.3459 1468.26 52.5203 1468.26 54.9098C1468.26 57.3471 1468.86 59.5693 1470.05 61.5764C1471.24 63.5358 1472.85 65.1128 1474.85 66.3075C1476.86 67.5023 1479.06 68.0996 1481.45 68.0996C1484.08 68.0996 1486.37 67.3828 1488.33 65.9491C1490.34 64.4677 1491.58 62.6039 1492.06 60.3578H1508.47C1507.99 64.8022 1506.49 68.7926 1503.96 72.329C1501.47 75.8654 1498.27 78.661 1494.35 80.716C1490.43 82.7709 1486.13 83.8223 1481.45 83.8701C1476.14 83.8223 1471.29 82.5081 1466.9 79.9275C1462.5 77.3468 1458.99 73.8821 1456.36 69.5333C1453.78 65.1367 1452.49 60.31 1452.49 55.0532ZM1480.95 110.106C1473.4 110.106 1466.27 108.673 1459.58 105.805C1452.94 102.938 1447.09 98.9954 1442.02 93.9775C1436.96 88.9118 1432.99 83.0577 1430.12 76.415C1427.3 69.7723 1425.89 62.6517 1425.89 55.0532C1425.94 47.4547 1427.4 40.3341 1430.27 33.6914C1433.13 27.0009 1437.08 21.1467 1442.09 16.1289C1447.16 11.0632 1453.01 7.12059 1459.66 4.30103C1466.3 1.43368 1473.4 0 1480.95 0C1488.59 0 1495.74 1.43368 1502.38 4.30103C1509.02 7.12059 1514.85 11.0632 1519.87 16.1289C1524.94 21.1467 1528.88 27.0009 1531.7 33.6914C1534.57 40.3341 1536 47.4547 1536 55.0532C1536.05 62.6517 1534.64 69.7723 1531.77 76.415C1528.95 83.0577 1525.01 88.9118 1519.94 93.9775C1514.92 98.9954 1509.07 102.938 1502.38 105.805C1495.74 108.673 1488.59 110.106 1480.95 110.106ZM1480.95 90.8951C1485.92 90.8951 1490.58 89.9632 1494.92 88.0994C1499.32 86.2356 1503.17 83.6789 1506.47 80.4292C1509.76 77.1318 1512.34 73.3326 1514.21 69.0315C1516.07 64.6827 1517 60.0233 1517 55.0532C1517 50.0831 1516.07 45.4236 1514.21 41.0748C1512.34 36.6782 1509.74 32.8312 1506.39 29.5337C1503.1 26.2363 1499.27 23.6796 1494.92 21.8636C1490.62 19.9998 1485.96 19.0679 1480.95 19.0679C1476.02 19.0679 1471.39 19.9998 1467.04 21.8636C1462.74 23.7273 1458.94 26.308 1455.64 29.6054C1452.34 32.9029 1449.76 36.726 1447.9 41.0748C1446.04 45.4236 1445.1 50.0831 1445.1 55.0532C1445.1 59.9755 1446.01 64.611 1447.83 68.9598C1449.69 73.3087 1452.27 77.1318 1455.57 80.4292C1458.87 83.7267 1462.67 86.3073 1466.97 88.1711C1471.32 89.9871 1475.98 90.8951 1480.95 90.8951Z"
+              fill="#1B1B1B"></path>
+          </svg>
+        </FooterLogo>
+      </FooterContainer>
+    </FooterBottom>
+  </Footer> -->
 </BlockExampleLayout>

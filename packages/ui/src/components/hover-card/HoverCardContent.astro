@@ -1,0 +1,54 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import { cva } from "class-variance-authority";
+
+type Props = {
+  side?: "top" | "bottom" | "left" | "right";
+  sideOffset?: number;
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  side = "bottom",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+  ...rest
+} = Astro.props as Props;
+
+const contentVariants = cva([
+  // visibility
+  "duration-150 ease data-instant:duration-0 transition-discrete outline-hidden",
+  // animations
+  "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+  "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+  "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
+  "data-[instant]:transition-none! data-[instant]:animate-none!",
+  "data-instant:data-[state=closed]:animate-none! data-instant:data-[state=closed]:fade-out-0! data-instant:data-[state=closed]:opacity-100! data-instant:data-[state=closed]:scale-100! data-instant:data-[state=closed]:translate-x-0! data-instant:data-[state=closed]:translate-y-0!",
+  // styles
+  "ring-foreground/10 bg-popover text-popover-foreground w-64 rounded-lg p-2.5 text-sm shadow-md ring-1",
+  // origin from positioner
+  "origin-(--transform-origin)",
+]);
+---
+
+<div data-slot="hover-card-portal">
+  <div data-slot="hover-card-positioner" class="isolate z-50">
+    <div
+      {...rest}
+      hidden
+      data-slot="hover-card-content"
+      data-side={side}
+      data-side-offset={sideOffset}
+      data-align={align}
+      data-align-offset={alignOffset}
+      class={cn(contentVariants(), className)}
+    >
+      <slot />
+    </div>
+  </div>
+</div>

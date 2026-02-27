@@ -1,25 +1,30 @@
 ---
 title: Design Principles
-description: The design principles behind the bejamas/ui library.
+description: A system for creating UI libraries and design systems with built-in governance, accessibility, and documentation.
 sidebar:
   order: 3
 ---
 
-`bejamas/ui` is an Astro-native component library. The way components are structured is as important as how they look.
+`bejamas/ui` is a system for creating UI libraries and design systems in Astro. It handles governance around UI components, accessibility, and component documentation — providing structure and patterns that scale from small component libraries to full design systems.
 
-1. **Flat-file structure.** One file = one component. Markup, variants, and component parts (e.g. `header`, `content`, `footer`) live together.
-2. **Docs in code.** Documentation is auto-generated from comments within each component file; there’s no separate source of truth to maintain.
-3. **Themeable.** Components use token-based classes (e.g. `bg-background`, `text-primary`) instead of hard-coded colors.
-4. **Composable.** We prefer small primitives over heavy abstractions. Code should be easy to read, copy, and modify.
-5. **Astro-native, zero-JS by default.** Components are server-first and ship no client JavaScript unless they truly need it.
-6. **Framework-agnostic.** We don’t bundle React, Vue, or any other client framework. You’re free to add your own [Astro islands](https://docs.astro.build/en/concepts/islands/) or framework of choice on top where needed.
-7. **shadcn/ui aligned.** shadcn/ui aligned. We follow shadcn’s markup patterns and class naming where useful, so you can reuse component examples and patterns from the shadcn registry and adapt them easily for Astro.
+The way components are structured is as important as how they look.
+
+## Core Principles
+
+1. **Docs in code.** Documentation is auto-generated from structured comments within each component file (inspired by JSDoc). There's no separate source of truth to maintain — the code IS the documentation.
+2. **Accessibility built-in.** Components follow WAI-ARIA design patterns. Interactive components use `@data-slot` libraries that handle focus management, keyboard navigation, and screen reader support out of the box.
+3. **Folder-per-component structure.** Each component family lives in its own folder (e.g., `card/`, `dialog/`). Sub-components are separate `.astro` files, and the folder exports them via a barrel `index.ts` file.
+4. **Themeable.** Components use token-based classes (e.g. `bg-background`, `text-primary`) instead of hard-coded colors, making it easy to adapt to any brand.
+5. **Composable.** We prefer small primitives over heavy abstractions. Code should be easy to read, copy, and modify.
+6. **Astro-native, zero-JS by default.** Components are server-first and ship no client JavaScript unless they truly need it.
+7. **Framework-agnostic.** We don't bundle React, Vue, or any other client framework. You're free to add your own [Astro islands](https://docs.astro.build/en/concepts/islands/) or framework of choice on top where needed.
+8. **shadcn/ui aligned.** We follow shadcn's markup patterns and class naming where useful, so you can reuse component examples and patterns from the shadcn registry and adapt them easily for Astro.
 
 ---
 
 ## Composition
 
-React libraries often use subcomponents, for example:
+React libraries often use subcomponents:
 
 ```tsx
 import {
@@ -37,191 +42,198 @@ import {
 </Card>;
 ```
 
-Astro doesn't support `<Card.Header>` syntax, and we want to keep one file per component, not one file per subcomponent.
-
-Instead, we use a `part` prop on the same component.
+In Astro, we use the same pattern with barrel exports:
 
 ```astro
 ---
-import Card from "@bejamas/ui/components/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@bejamas/ui/components/card";
 ---
 
 <Card>
-  <Card part="header">
-    <Card part="title">Title</Card>
-    <Card part="description">Description</Card>
-  </Card>
+  <CardHeader>
+    <CardTitle>Title</CardTitle>
+    <CardDescription>Description</CardDescription>
+  </CardHeader>
 
-  <Card part="content"> Card content </Card>
+  <CardContent> Card content </CardContent>
 
-  <Card part="footer"> Footer actions </Card>
+  <CardFooter> Footer actions </CardFooter>
 </Card>
 ```
 
 Here:
 
-- `Card` without `part` is the `root` card.
-- `Card part="header"` renders the `header` part and is slotted into the `root`.
-- `Card part="title"` and `Card part="description"` are smaller primitives rendered inside the `header`.
-- `Card part="content"` and `Card part="footer"` do the same for `content` and `footer`.
+- `Card` is the root card container.
+- `CardHeader` renders the header section and contains `CardTitle` and `CardDescription`.
+- `CardContent` and `CardFooter` are sibling sections within the card.
 
-All of this is implemented in a single `Card.astro` file.
+Each subcomponent is its own `.astro` file within the `card/` folder, and all are exported from `card/index.ts`.
 
-### How `part` works internally
+### How the folder structure works
 
-The same component file switches on `part` and renders the right fragment:
+Each component family has its own folder:
 
-```astro
----
-type CardPart =
-  | "root"
-  | "header"
-  | "title"
-  | "description"
-  | "content"
-  | "footer";
+```
+components/
+├── card/
+│   ├── Card.astro
+│   ├── CardHeader.astro
+│   ├── CardTitle.astro
+│   ├── CardDescription.astro
+│   ├── CardContent.astro
+│   ├── CardFooter.astro
+│   └── index.ts
+├── button/
+│   ├── Button.astro
+│   └── index.ts
+└── ...
+```
 
-export type Props = {
-  part?: CardPart;
-  class?: string;
-  // …
-};
+The `index.ts` barrel file exports all subcomponents:
 
-const { part = "root", class: className = "", ...rest } = Astro.props as Props;
----
-
-{
-  part === "root" && (
-    <div class="card-root" {...rest}>
-      <slot />
-    </div>
-  )
-}
-
-{
-  part === "header" && (
-    <div slot="header" class="card-header" {...rest}>
-      <slot />
-    </div>
-  )
-}
-
-{
-  part === "title" && (
-    <div data-slot="card-title" class="card-title" {...rest}>
-      <slot />
-    </div>
-  )
-}
-
-{
-  part === "description" && (
-    <div data-slot="card-description" class="card-description" {...rest}>
-      <slot />
-    </div>
-  )
-}
-
-{
-  part === "content" && (
-    <div slot="content" class="card-content" {...rest}>
-      <slot />
-    </div>
-  )
-}
-
-{
-  part === "footer" && (
-    <div slot="footer" class="card-footer" {...rest}>
-      <slot />
-    </div>
-  )
-}
+```ts
+export { default as Card } from "./Card.astro";
+export { default as CardHeader } from "./CardHeader.astro";
+export { default as CardTitle } from "./CardTitle.astro";
+export { default as CardDescription } from "./CardDescription.astro";
+export { default as CardContent } from "./CardContent.astro";
+export { default as CardFooter } from "./CardFooter.astro";
 ```
 
 This gives us:
 
-- a single, copy-and-pasteable file,
-- multiple "subcomponents" via `part`,
-- and predictable DOM/slots for styling and theming.
+- clear, predictable import paths,
+- each subcomponent is focused and easy to understand,
+- users can import just what they need,
+- and consistent patterns across all component families.
 
-### Why not use slots alone?
+### Why use separate files?
 
-We experimented with a slots-only API and ran into several limitations.
+We split components into separate files because:
 
-1. **Slots can't be nested.** You can't express a header that contains its own named slots for title and description:
+1. **Each file is focused.** `CardTitle.astro` only handles the title - its props, styles, and behavior are all in one place.
+2. **Import only what you need.** If you only use `Card` and `CardContent`, you don't need to import the others.
+3. **Easier to extend.** Adding a new subcomponent means creating a new file and adding it to the barrel export.
+4. **Better IDE support.** Separate files give better autocomplete and jump-to-definition behavior.
 
-```astro
-<!-- This won't work -->
-<div>
-  <slot name="header">
-    <slot name="title" />
-    <slot name="description" />
-  </slot>
-</div>
-```
+### Consistent patterns across components
 
-2. **Slots can't receive props.** You can't pass layout or variant information into a slot:
-
-```astro
-<!-- This won't work -->
-<div>
-  <slot name="header" class="text-2xl font-bold" />
-</div>
-```
-
-3. **Styling depends on user wrappers.** With slots, the final DOM changes depending on whether the user wraps content:
+All multi-part components follow the same structure:
 
 ```astro
 ---
-import Card from "@bejamas/ui/components/card";
-import Button from "@bejamas/ui/components/button";
+// Dialog
+import {
+  Dialog,
+  DialogTrigger,
+  DialogClose,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogContent,
+  DialogFooter,
+} from "@bejamas/ui/components/dialog";
 ---
 
-<Card>
-  <Fragment slot="footer">
-    <Button>Save</Button>
-  </Fragment>
-
-  <div slot="footer">
-    <Button>Save</Button>
-  </div>
-</Card>
+<Dialog>
+  <DialogTrigger>Open Dialog</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Dialog Title</DialogTitle>
+      <DialogDescription>Dialog description text.</DialogDescription>
+    </DialogHeader>
+    <p>Dialog body content goes here.</p>
+    <DialogFooter>
+      <DialogClose>Close</DialogClose>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
 ```
-
-In the first case the button is a direct child of the footer; in the second it's wrapped in an extra `<div>`.
-
-This changes how flex, gap, and other layout rules behave and makes consistent styling harder.
-
-4. **Slot order is fixed inside the component.** The order of named slots is decided in the implementation:
 
 ```astro
-<div class="card-root">
-  <slot name="header" />
-  <slot name="media" />
-  <slot name="content" />
-  <slot name="footer" />
-</div>
+---
+// Select
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@bejamas/ui/components/select";
+---
+
+<Select>
+  <SelectTrigger>
+    <SelectValue placeholder="Select a fruit" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="apple">Apple</SelectItem>
+    <SelectItem value="banana">Banana</SelectItem>
+  </SelectContent>
+</Select>
 ```
 
-Users can't reorder these sections (for example, putting the `media` above the `content`) without forking the component.
+This consistency makes the library predictable - once you learn one component, you know how to use them all.
 
-The `part` prop solves these problems:
+---
 
-- layout is defined in one place (the component),
-- parts can be added and composed inside that layout,
-- and the public API stays small and predictable.
+## JavaScript Interactions
 
-### Why not split into many files?
+While most components are purely CSS-based, some require JavaScript for interactive behavior like dialogs, accordions, and tabs. Rather than bundling framework-specific code or writing custom scripts for each component, we use [**`@data-slot`**](https://data-slot.com) — a set of headless UI libraries designed and maintained by Bejamas as a separate project.
 
-We want components to be **easy to copy into projects** and easy to read in one go.
+### What is [@data-slot](https://data-slot.com)?
 
-One file per component means:
+`@data-slot` is a collection of framework-agnostic, headless UI libraries that provide accessible interactive behavior through simple JavaScript functions. Each library handles a specific UI pattern:
 
-- open `Card.astro` and you see `root`, `header`, `title`, `description`, `content`, `footer`, `overlay`, and variants in one place;
-- docs comments live next to the implementation;
-- copying a component doesn't require chasing a tree of imports.
+- `@data-slot/dialog` — Modal dialogs with focus trapping, escape-to-close, and backdrop clicks
+- `@data-slot/accordion` — Collapsible sections with keyboard navigation
+- `@data-slot/tabs` — Tabbed interfaces with ARIA support
 
-React shadcn uses multiple exports per file (`Card`, `CardHeader`, `CardFooter`, …).
+### How it works
 
-In Astro we get a similar multi-part API by using a single component with a part prop instead of multiple files.
+Components that need JavaScript use `data-slot` attributes to mark interactive elements. The corresponding `@data-slot` library initializes these elements with the required behavior:
+
+```astro
+---
+// Dialog.astro
+---
+
+<div data-slot="dialog">
+  <slot />
+</div>
+
+<script>
+  import { createDialog } from "@data-slot/dialog";
+
+  document
+    .querySelectorAll('[data-slot="dialog"]')
+    .forEach((el) => createDialog(el));
+</script>
+```
+
+The Astro component remains purely presentational — it renders HTML with data attributes. The `<script>` tag runs client-side to enhance those elements with JavaScript behavior.
+
+### Why @data-slot?
+
+1. **Separation of concerns.** UI components define structure and styles. Interactive behavior is maintained separately and can be tested independently.
+2. **Framework-agnostic.** Unlike Radix (React-only) or Headless UI (React/Vue), `@data-slot` does not require a framework to be installed.
+3. **Progressive enhancement.** Components render server-side with full HTML and CSS. JavaScript adds interactive behavior after hydration.
+4. **Minimal bundle size.** Each library is small and focused. You only ship the JavaScript needed for components you actually use.
+5. **Accessible by default.** All `@data-slot` libraries follow WAI-ARIA design patterns and handle focus management, keyboard navigation, and screen reader support.
+
+### Which components use @data-slot?
+
+Currently, three components use `@data-slot` libraries:
+
+- **Dialog** — Uses `@data-slot/dialog` for modal behavior
+- **Accordion** — Uses `@data-slot/accordion` for collapsible sections
+- **Tabs** — Uses `@data-slot/tabs` for tabbed interfaces
+
+All other components are CSS-only and ship zero JavaScript to the client.

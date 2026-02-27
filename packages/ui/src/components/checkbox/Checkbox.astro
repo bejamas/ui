@@ -1,0 +1,88 @@
+---
+/**
+ * @component Checkbox
+ * @title Checkbox
+ * @description An accessible control for toggling between checked and unchecked states. Built on native HTML checkbox.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2525-5683&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <div class="flex flex-col gap-6 not-content">
+ * <div class="flex items-center gap-3">
+ *   <Checkbox id="terms" />
+ *   <Label for="terms">Accept terms and conditions</Label>
+ * </div>
+ *
+ * <div class="flex items-start gap-3">
+ *   <Checkbox id="terms-2" defaultChecked />
+ *   <div class="grid gap-2">
+ *     <Label for="terms-2">Accept terms and conditions</Label>
+ *     <p class="text-muted-foreground text-sm">
+ *       By clicking this checkbox, you agree to the terms and conditions.
+ *     </p>
+ *   </div>
+ * </div>
+ *
+ * <div class="flex items-center gap-3">
+ *   <Checkbox id="toggle" disabled />
+ *   <Label for="toggle">Enable notifications</Label>
+ * </div>
+ *
+ * <Label
+ *   class="hover:bg-accent/5 border-border flex items-start gap-3 rounded-lg border p-3 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 dark:has-[:checked]:border-blue-900 dark:has-[:checked]:bg-blue-950"
+ * >
+ *   <Checkbox
+ *     id="toggle-2"
+ *     defaultChecked
+ *     class="checked:border-blue-600 checked:bg-blue-600 dark:checked:border-blue-700 dark:checked:bg-blue-700"
+ *   />
+ *   <div class="grid gap-1.5 font-normal">
+ *     <p class="text-sm leading-none font-medium">Enable notifications</p>
+ *     <p class="text-muted-foreground text-sm">
+ *       You can enable or disable notifications at any time.
+ *     </p>
+ *   </div>
+ * </Label>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Checkbox } from '@bejamas/ui/components/checkbox';
+ * import { Label } from '@bejamas/ui/components/label';
+ * ---
+ *
+ * <div class="flex items-center gap-3">
+ *   <Checkbox id="terms" />
+ *   <Label for="terms">Accept terms and conditions</Label>
+ * </div>
+ * ```
+ */
+
+const { class: className = "", id = "", name = id, ...props } = Astro.props;
+
+import { Check } from "@lucide/astro";
+import { cn } from "@bejamas/ui/lib/utils";
+
+const baseWrapper =
+  "peer appearance-none size-4 shrink-0 rounded-[4px] border border-input shadow-xs outline-none transition-colors checked:bg-primary checked:border-primary dark:bg-input/30 dark:checked:bg-primary dark:checked:border-primary focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:checked:border-primary disabled:cursor-not-allowed disabled:opacity-50 group-has-disabled/field:opacity-50 relative after:absolute after:-inset-x-3 after:-inset-y-2";
+---
+
+<label class="inline-flex items-center gap-2 cursor-pointer">
+  <span class="relative inline-flex items-center justify-center">
+    <input
+      id={id}
+      name={name}
+      type="checkbox"
+      class={cn(baseWrapper, className)}
+      {...props}
+    />
+    <span
+      class="pointer-events-none absolute inset-0 grid place-content-center transition-opacity opacity-0 peer-checked:opacity-100 text-primary-foreground"
+    >
+      <Check class="size-3.5" />
+    </span>
+  </span>
+  <slot />
+</label>

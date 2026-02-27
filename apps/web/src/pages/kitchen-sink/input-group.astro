@@ -1,0 +1,83 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import InputGroupDemoPanel from "@/components/kitchen-sink/InputGroupDemoPanel.astro";
+import { Field, FieldLabel } from "@bejamas/ui/components/field";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@bejamas/ui/components/select";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Input Group</h1>
+
+    <div class="max-w-xs">
+      <Field>
+        <FieldLabel htmlFor="input-group-demo-size-trigger"
+          >Demo Size</FieldLabel
+        >
+        <Select
+          id="input-group-size-control"
+          defaultValue="default"
+          class="w-[220px]"
+        >
+          <SelectTrigger id="input-group-demo-size-trigger">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="sm">Small (h-8)</SelectItem>
+            <SelectItem value="default">Default (h-9)</SelectItem>
+            <SelectItem value="lg">Large (h-10)</SelectItem>
+          </SelectContent>
+        </Select>
+      </Field>
+    </div>
+
+    <div data-input-group-panel-root class="space-y-12">
+      <div data-size-panel="sm" hidden aria-hidden="true">
+        <InputGroupDemoPanel size="sm" />
+      </div>
+      <div data-size-panel="default">
+        <InputGroupDemoPanel size="default" />
+      </div>
+      <div data-size-panel="lg" hidden aria-hidden="true">
+        <InputGroupDemoPanel size="lg" />
+      </div>
+    </div>
+
+    <script>
+      const panelRoot = document.querySelector<HTMLElement>(
+        "[data-input-group-panel-root]",
+      );
+      const sizeControl = document.getElementById("input-group-size-control");
+      const validSizes = new Set(["sm", "default", "lg"]);
+
+      const setVisiblePanel = (nextSize?: string) => {
+        if (!panelRoot) return;
+
+        const size = validSizes.has(nextSize ?? "")
+          ? (nextSize ?? "default")
+          : "default";
+
+        panelRoot
+          .querySelectorAll<HTMLElement>("[data-size-panel]")
+          .forEach((panel) => {
+            const isActive = panel.dataset.sizePanel === size;
+            panel.hidden = !isActive;
+            panel.setAttribute("aria-hidden", String(!isActive));
+          });
+      };
+
+      setVisiblePanel("default");
+
+      sizeControl?.addEventListener("select:change", (event) => {
+        const detail = (event as CustomEvent<{ value?: string }>).detail;
+        setVisiblePanel(detail?.value);
+      });
+    </script>
+  </section>
+</KitchenSinkLayout>

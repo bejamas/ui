@@ -1,0 +1,45 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import { cva } from "class-variance-authority";
+
+type Props = {
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "bottom" | "left" | "right";
+  sideOffset?: number;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  align = "start",
+  alignOffset = 0,
+  side = "bottom",
+  sideOffset = 4,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const contentVariants = cva([
+  "z-50 outline-hidden",
+  "min-w-32 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md",
+  "data-[state=open]:animate-in data-[state=closed]:animate-out",
+  "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+  "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+  "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
+  "origin-(--transform-origin) [--tw-animation-fill-mode:both]",
+]);
+---
+
+<div
+  {...rest}
+  hidden
+  data-slot="dropdown-menu-content"
+  data-align={align}
+  data-align-offset={alignOffset}
+  data-side={side}
+  data-side-offset={sideOffset}
+  class={cn(contentVariants(), className)}
+>
+  <slot />
+</div>

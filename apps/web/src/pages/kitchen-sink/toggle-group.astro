@@ -1,0 +1,326 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import { ToggleGroup, ToggleGroupItem } from "@bejamas/ui/components/toggle-group";
+import {
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  AlignLeftIcon,
+  AlignCenterIcon,
+  AlignRightIcon,
+  AlignVerticalJustifyStartIcon,
+  AlignVerticalJustifyCenterIcon,
+  AlignVerticalJustifyEndIcon,
+} from "@lucide/astro";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Toggle Group</h1>
+
+    <KitchenSinkSection title="Basic Single Selection (default variant)">
+      <ToggleGroup defaultValue="center">
+        <ToggleGroupItem value="left" aria-label="Align left">
+          <AlignLeftIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="center" aria-label="Align center">
+          <AlignCenterIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="right" aria-label="Align right">
+          <AlignRightIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Outline Variant">
+      <ToggleGroup variant="outline" defaultValue="center">
+        <ToggleGroupItem value="left" aria-label="Align left">
+          <AlignLeftIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="center" aria-label="Align center">
+          <AlignCenterIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="right" aria-label="Align right">
+          <AlignRightIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Multiple Selection">
+      <p class="text-sm text-muted-foreground">
+        Multiple items can be selected simultaneously
+      </p>
+      <ToggleGroup multiple defaultValue={["bold", "italic"]} variant="outline">
+        <ToggleGroupItem value="bold" aria-label="Toggle bold">
+          <BoldIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="italic" aria-label="Toggle italic">
+          <ItalicIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="underline" aria-label="Toggle underline">
+          <UnderlineIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-16">Small:</span>
+          <ToggleGroup size="sm" variant="outline" defaultValue="center">
+            <ToggleGroupItem value="left" aria-label="Align left">
+              <AlignLeftIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="center" aria-label="Align center">
+              <AlignCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="right" aria-label="Align right">
+              <AlignRightIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-16">Default:</span>
+          <ToggleGroup size="default" variant="outline" defaultValue="center">
+            <ToggleGroupItem value="left" aria-label="Align left">
+              <AlignLeftIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="center" aria-label="Align center">
+              <AlignCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="right" aria-label="Align right">
+              <AlignRightIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-16">Large:</span>
+          <ToggleGroup size="lg" variant="outline" defaultValue="center">
+            <ToggleGroupItem value="left" aria-label="Align left">
+              <AlignLeftIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="center" aria-label="Align center">
+              <AlignCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="right" aria-label="Align right">
+              <AlignRightIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Vertical Orientation">
+      <div class="flex gap-8">
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">Default variant</p>
+          <ToggleGroup orientation="vertical" defaultValue="middle">
+            <ToggleGroupItem value="top" aria-label="Align top">
+              <AlignVerticalJustifyStartIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="middle" aria-label="Align middle">
+              <AlignVerticalJustifyCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="bottom" aria-label="Align bottom">
+              <AlignVerticalJustifyEndIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">Outline variant</p>
+          <ToggleGroup orientation="vertical" variant="outline" defaultValue="middle">
+            <ToggleGroupItem value="top" aria-label="Align top">
+              <AlignVerticalJustifyStartIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="middle" aria-label="Align middle">
+              <AlignVerticalJustifyCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="bottom" aria-label="Align bottom">
+              <AlignVerticalJustifyEndIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled">
+      <div class="flex gap-4">
+        <ToggleGroup disabled defaultValue="center">
+          <ToggleGroupItem value="left" aria-label="Align left">
+            <AlignLeftIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="center" aria-label="Align center">
+            <AlignCenterIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="right" aria-label="Align right">
+            <AlignRightIcon />
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <ToggleGroup disabled variant="outline" defaultValue="center">
+          <ToggleGroupItem value="left" aria-label="Align left">
+            <AlignLeftIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="center" aria-label="Align center">
+            <AlignCenterIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="right" aria-label="Align right">
+            <AlignRightIcon />
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Event Testing">
+      <p class="text-sm text-muted-foreground">
+        Click the toggles and check the output for toggle-group:change events
+      </p>
+      <ToggleGroup id="event-toggle-group" variant="outline" defaultValue="center">
+        <ToggleGroupItem value="left" aria-label="Align left">
+          <AlignLeftIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="center" aria-label="Align center">
+          <AlignCenterIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="right" aria-label="Align right">
+          <AlignRightIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <EventLog id="toggle-group-event-output" />
+      <script>
+        {
+          const eventGroup = document.getElementById("event-toggle-group");
+
+          function log(msg: string) {
+            (document.getElementById("toggle-group-event-output") as any)?._log(msg);
+          }
+
+          eventGroup?.addEventListener("toggle-group:change", (e: Event) => {
+            const { value } = (e as CustomEvent).detail;
+            log(`toggle-group:change → value: ${JSON.stringify(value)}`);
+          });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <ToggleGroup id="programmatic-toggle-group" variant="outline">
+        <ToggleGroupItem value="left" aria-label="Align left">
+          <AlignLeftIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="center" aria-label="Align center">
+          <AlignCenterIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="right" aria-label="Align right">
+          <AlignRightIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <div class="flex items-center gap-2">
+        <button
+          id="set-left-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Left
+        </button>
+        <button
+          id="set-center-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Center
+        </button>
+        <button
+          id="set-right-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Right
+        </button>
+        <button
+          id="clear-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Clear
+        </button>
+      </div>
+      <script>
+        const toggleGroup = document.getElementById("programmatic-toggle-group");
+        document.getElementById("set-left-btn")?.addEventListener("click", () => {
+          toggleGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: ["left"] } })
+          );
+        });
+        document.getElementById("set-center-btn")?.addEventListener("click", () => {
+          toggleGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: ["center"] } })
+          );
+        });
+        document.getElementById("set-right-btn")?.addEventListener("click", () => {
+          toggleGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: ["right"] } })
+          );
+        });
+        document.getElementById("clear-btn")?.addEventListener("click", () => {
+          toggleGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: [] } })
+          );
+        });
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Multiple Selection with Programmatic Control">
+      <ToggleGroup id="multi-programmatic" multiple variant="outline">
+        <ToggleGroupItem value="bold" aria-label="Toggle bold">
+          <BoldIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="italic" aria-label="Toggle italic">
+          <ItalicIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="underline" aria-label="Toggle underline">
+          <UnderlineIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <div class="flex items-center gap-2">
+        <button
+          id="set-all-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Select All
+        </button>
+        <button
+          id="set-bold-italic-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Bold + Italic
+        </button>
+        <button
+          id="clear-multi-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Clear All
+        </button>
+      </div>
+      <script>
+        const multiGroup = document.getElementById("multi-programmatic");
+        document.getElementById("set-all-btn")?.addEventListener("click", () => {
+          multiGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", {
+              detail: { value: ["bold", "italic", "underline"] },
+            })
+          );
+        });
+        document.getElementById("set-bold-italic-btn")?.addEventListener("click", () => {
+          multiGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", {
+              detail: { value: ["bold", "italic"] },
+            })
+          );
+        });
+        document.getElementById("clear-multi-btn")?.addEventListener("click", () => {
+          multiGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: [] } })
+          );
+        });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

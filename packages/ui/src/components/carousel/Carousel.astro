@@ -1,0 +1,108 @@
+---
+/**
+ * @component Carousel
+ * @title Carousel
+ * @description A CSS scroll-snap carousel using only Tailwind classes (no JS).
+ *
+ * @preview
+ *
+ * <!-- Horizontal images with center snapping -->
+ * <Carousel class="gap-4 p-2" align="center">
+ *   <CarouselSlide><img src="https://images.unsplash.com/photo-1759332978018-a6efdacf4d11?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1290" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide>
+ *   <CarouselSlide><img src="https://plus.unsplash.com/premium_photo-1760541740387-e0af5182d805?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1335" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide>
+ *   <CarouselSlide><img src="https://images.unsplash.com/photo-1760659391924-86d657118008?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2340" alt="Example" class="w-120 h-96 object-cover rounded-lg" /></CarouselSlide>
+ * </Carousel>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Carousel, CarouselSlide } from '@bejamas/ui/components/carousel';
+ * ---
+ *
+ * <Carousel>
+ *   <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 1</div></CarouselSlide>
+ *   <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 2</div></CarouselSlide>
+ *   <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 3</div></CarouselSlide>
+ * </Carousel>
+ * ```
+ *
+ * @props
+ * - axis?: "x" | "y" — Scroll direction. Default: "x".
+ * - snapType?: "mandatory" | "proximity" — Scroll-snap behavior. Default: "mandatory".
+ * - align?: "start" | "center" | "end" — Child snap alignment. Default: "start".
+ * - fade?: boolean — Add edge fade via CSS mask on the scroll axis. Default: false.
+ */
+
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Axis = "x" | "y";
+type SnapType = "mandatory" | "proximity";
+type Align = "start" | "center" | "end";
+
+type Props = {
+  as?: HTMLTag;
+  axis?: Axis;
+  snapType?: SnapType;
+  align?: Align;
+  fade?: boolean;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  axis = "x",
+  snapType = "mandatory",
+  align = "start",
+  fade = false,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const carouselVariants = cva(
+  "relative w-full overflow-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+  {
+    variants: {
+      axis: {
+        x: "flex flex-row snap-x",
+        y: "flex flex-col snap-y",
+      },
+      snapType: {
+        mandatory: "snap-mandatory",
+        proximity: "snap-proximity",
+      },
+      align: {
+        start:
+          "[&>[data-slot=carousel-slide]]:snap-start [&>[data-slot=carousel-slide]]:shrink-0",
+        center:
+          "[&>[data-slot=carousel-slide]]:snap-center [&>[data-slot=carousel-slide]]:shrink-0",
+        end: "[&>[data-slot=carousel-slide]]:snap-end [&>[data-slot=carousel-slide]]:shrink-0",
+      },
+    },
+    defaultVariants: {
+      axis: "x",
+      snapType: "mandatory",
+      align: "start",
+    },
+  },
+);
+
+const defaultFadeX = "mask-x-from-80% mask-x-to-95%";
+const defaultFadeY = "mask-y-from-80% mask-y-to-95%";
+---
+
+<Tag
+  {...rest}
+  data-slot="carousel"
+  class={cn(
+    carouselVariants({ axis, snapType, align }),
+    fade && axis === "x" && defaultFadeX,
+    fade && axis === "y" && defaultFadeY,
+    className,
+  )}
+>
+  <slot />
+</Tag>
+

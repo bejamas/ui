@@ -1,0 +1,103 @@
+---
+/**
+ * @component Card
+ * @title Card
+ * @description UI container for grouping content with header, footer, etc.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2543-3884&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <Card class="w-full max-w-sm">
+ *   <CardMedia class="m-1">
+ *     <img src="https://gradient.bejamas.com/api/gradient.png?funkiness=30&contrast=0&w=748&h=500&seed=bejamas" alt="Gradient Cover" class="w-full h-full object-cover" width="374" height="250" loading="lazy" />
+ *   </CardMedia>
+ *   <CardHeader>
+ *     <div class="flex items-center gap-2 justify-between">
+ *       <div class="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2">
+ *         <Avatar>
+ *           <AvatarImage>
+ *             <img src="https://gradient.bejamas.com/api/gradient.png?funkiness=90&contrast=0&w=80&h=80&seed=bejamas-avatar" alt="grdient avatar" />
+ *           </AvatarImage>
+ *           <AvatarFallback>AW</AvatarFallback>
+ *         </Avatar>
+ *       </div>
+ *       <Date date="2025-08-24T12:00:00Z" class="text-sm text-muted-foreground" />
+ *     </div>
+ *   </CardHeader>
+ *   <CardContent class="space-y-4">
+ *     <CardTitle>Strong Foundations, Built to Scale</CardTitle>
+ *     <CardDescription>Like any enduring system, a scalable design system relies on clear structure, solid foundations, and careful layering over time.</CardDescription>
+ *     <Button variant="outline" as="a" href="#">Read more</Button>
+ *   </CardContent>
+ *   <Separator />
+ *   <CardFooter>
+ *     <p class="text-sm text-muted-foreground">Categories</p>
+ *     <div class="flex items-center gap-2">
+ *       <Badge variant="secondary">Marketing</Badge>
+ *       <Badge variant="secondary">UI Design</Badge>
+ *     </div>
+ *   </CardFooter>
+ * </Card>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@bejamas/ui/components/card';
+ * ---
+ *
+ * <Card>
+ *   <CardHeader>
+ *     <CardTitle>Card Title</CardTitle>
+ *     <CardDescription>Card Description</CardDescription>
+ *   </CardHeader>
+ *   <CardContent>
+ *     Card content goes here.
+ *   </CardContent>
+ *   <CardFooter>
+ *     <button>OK</button>
+ *   </CardFooter>
+ * </Card>
+ * ```
+ */
+
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type CardVariant = "default" | "ghost";
+
+type Props = {
+  variant?: CardVariant;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  variant = "default",
+  ...rest
+} = Astro.props as Props;
+
+const cardVariants = cva(
+  "group/card bg-card overflow-clip text-card-foreground flex flex-col gap-6 rounded-xl ring-1 ring-border py-6 shadow-sm group/card [&:has(>_[data-slot=card-media]:first-child_img)]:pt-0 [a]:hover:bg-accent/5 [a]:transition-colors duration-100",
+  {
+    variants: {
+      variant: {
+        default: "",
+        ghost: "ring-transparent bg-transparent shadow-none",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  },
+);
+---
+
+<div
+  {...rest}
+  data-slot="card"
+  class={cn(cardVariants({ variant }), className)}
+>
+  <slot />
+</div>

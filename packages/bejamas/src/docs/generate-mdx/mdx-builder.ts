@@ -1,3 +1,126 @@
+import {
+  parseFenceInfo,
+  prepareExampleContent,
+  type ParsedExampleSection,
+} from "./examples";
+
+/**
+ * Check if an import path uses the new barrel export pattern (no .astro extension)
+ */
+function isBarrelImport(path: string): boolean {
+  return !path.endsWith(".astro");
+}
+
+/**
+ * Convert a PascalCase component name to its folder path (kebab-case).
+ * Examples:
+ *   - "Card" → "card"
+ *   - "CardHeader" → "card"
+ *   - "InputGroup" → "input-group"
+ *   - "InputGroupAddon" → "input-group"
+ *   - "StickySurface" → "sticky-surface"
+ *   - "RadioGroup" → "radio-group"
+ *   - "RadioGroupItem" → "radio-group"
+ */
+function componentToFolder(name: string): string {
+  // Known multi-word component families (in PascalCase order)
+  // These map to kebab-case folder names
+  const multiWordFamilies = [
+    "InputGroup",
+    "LinkGroup",
+    "RadioGroup",
+    "ButtonGroup",
+    "StickySurface",
+  ];
+
+  // Check for multi-word families first (order matters - longer matches first)
+  const sortedFamilies = multiWordFamilies.sort((a, b) => b.length - a.length);
+  for (const family of sortedFamilies) {
+    if (name === family || name.startsWith(family)) {
+      // InputGroup → input-group
+      return family.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+    }
+  }
+
+  // For regular names, extract the base component (first PascalCase word)
+  // CardHeader → Card → card
+  // AvatarFallback → Avatar → avatar
+  const baseMatch = name.match(/^[A-Z][a-z]*/);
+  return baseMatch ? baseMatch[0].toLowerCase() : name.toLowerCase();
+}
+
+function resolveComponentFolder(
+  name: string,
+  componentFolderMap?: Record<string, string>,
+): string {
+  if (!componentFolderMap) return componentToFolder(name);
+  const direct = componentFolderMap[name];
+  if (direct && direct.length) return direct;
+
+  // Fallback: try the longest mapped prefix (e.g. InputGroup* -> input-group)
+  const prefixMatch = Object.keys(componentFolderMap)
+    .filter((key) => name.startsWith(key))
+    .sort((a, b) => b.length - a.length)[0];
+  if (prefixMatch) return componentFolderMap[prefixMatch];
+
+  return componentToFolder(name);
+}
+
+/**
+ * Group component names by their folder path
+ */
+function groupComponentsByFolder(
+  components: string[],
+  componentFolderMap?: Record<string, string>,
+): Map<string, string[]> {
+  const groups = new Map<string, string[]>();
+  for (const comp of components) {
+    const folder = resolveComponentFolder(comp, componentFolderMap);
+    if (!groups.has(folder)) {
+      groups.set(folder, []);
+    }
+    groups.get(folder)!.push(comp);
+  }
+  return groups;
+}
+
+/**
+ * Generate import lines for UI components using the barrel import pattern
+ */
+function generateBarrelImports(
+  components: string[],
+  componentsAlias: string,
+  componentFolderMap?: Record<string, string>,
+): string[] {
+  const groups = groupComponentsByFolder(components, componentFolderMap);
+  const lines: string[] = [];
+
+  // Sort folders alphabetically for consistent output
+  const sortedFolders = Array.from(groups.keys()).sort();
+
+  for (const folder of sortedFolders) {
+    const names = groups.get(folder)!.sort();
+    lines.push(
+      `import { ${names.join(", ")} } from '${componentsAlias}/${folder}';`,
+    );
+  }
+
+  return lines;
+}
+
+/**
+ * Generate import lines for UI components using the old default import pattern
+ */
+function generateDefaultImports(
+  components: string[],
+  componentsAlias: string,
+): string[] {
+  return components
+    .slice()
+    .sort()
+    .map((name) => `import ${name} from '${componentsAlias}/${name}.astro';`);
+}
+
 export function buildMdx(params: {
   importName: string;
   importPath: string;
@@ -21,13 +144,24 @@ export function buildMdx(params: {
     title: string;
     source: string;
   }>;
-  examplesBlocks: Array<{ title: string; body: string }>;
+  examplesSections: ParsedExampleSection[];
+  componentFolderMap?: Record<string, string>;
   autoImports: string[];
   lucideIcons: string[];
   primaryExampleMDX: string;
   componentSource: string;
   commandName: string;
   componentsAlias: string;
+  /**
+   * Optional: additional named exports from the main component's barrel.
+   * Used when the main component has subcomponents (e.g., Card, CardHeader, CardTitle).
+   * If provided, these will be included in the main import statement.
+   */
+  namedExports?: string[];
+  /**
+   * Optional: API reference documentation (events, programmatic control, data attributes).
+   */
+  apiMDX?: string;
 }): string {
   const {
     importName,
@@ -40,7 +174,8 @@ export function buildMdx(params: {
     propsList,
     propsTable,
     examples,
-    examplesBlocks,
+    examplesSections,
+    componentFolderMap,
     autoImports,
     lucideIcons,
     primaryExampleMDX,
@@ -48,7 +183,12 @@ export function buildMdx(params: {
     commandName,
     figmaUrl,
     componentsAlias,
+    namedExports,
+    apiMDX,
   } = params;
+
+  // Detect if we should use the new barrel import pattern
+  const useBarrelPattern = isBarrelImport(importPath);
 
   const sortedLucide = (lucideIcons ?? []).slice().sort();
   const lucideTopLine = sortedLucide.length
@@ -61,21 +201,36 @@ export function buildMdx(params: {
     .filter((v) => v != null)
     .slice()
     .sort((a, b) => String(a).localeCompare(String(b)));
+
   const sortedUiAuto = (autoImports ?? []).slice().sort();
-  const uiAutoLines = sortedUiAuto.map(
-    (name) => `import ${name} from '${componentsAlias}/${name}.astro';`,
-  );
+
+  // Generate UI component imports based on pattern
+  const uiAutoLines = useBarrelPattern
+    ? generateBarrelImports(sortedUiAuto, componentsAlias, componentFolderMap)
+    : generateDefaultImports(sortedUiAuto, componentsAlias);
+
   const exampleLines = (examples ?? [])
     .map((ex) => `import ${ex.importName} from '${ex.importPath}';`)
     .sort((a, b) => a.localeCompare(b));
-  const internalTopImports = [
-    !hasImport ? `import ${importName} from '${importPath}';` : null,
-    ...uiAutoLines,
-    ...exampleLines,
-  ]
+
+  // Build main component import
+  let mainImportLine: string | null = null;
+  if (!hasImport) {
+    if (useBarrelPattern) {
+      // New pattern: named exports
+      const exports = [importName, ...(namedExports ?? [])].sort();
+      mainImportLine = `import { ${exports.join(", ")} } from '${importPath}';`;
+    } else {
+      // Old pattern: default export
+      mainImportLine = `import ${importName} from '${importPath}';`;
+    }
+  }
+
+  const internalTopImports = [mainImportLine, ...uiAutoLines, ...exampleLines]
     .filter((v) => v != null)
     .slice()
     .sort((a, b) => String(a).localeCompare(String(b)));
+
   const importLines = [
     ...externalTopImports,
     externalTopImports.length && internalTopImports.length ? "" : null,
@@ -97,22 +252,60 @@ export function buildMdx(params: {
     if (!snippet || !snippet.length) return [];
     const used = extractTags(snippet);
     const usedIcons = sortedLucide.filter((n) => used.has(n));
-    const usedUi = (autoImports ?? [])
-      .filter((n) => used.has(n))
-      .slice()
-      .sort();
+
+    // Find UI components used in snippet
+    const usedUi = (autoImports ?? []).filter((n) => used.has(n));
+
+    // Check if main component (and its subcomponents) are used
     const includeMain = !hasImport && used.has(importName);
+
+    // For new pattern, also check for subcomponents from the main barrel
+    const usedNamedExports =
+      useBarrelPattern && namedExports
+        ? namedExports.filter((n) => used.has(n))
+        : [];
 
     const external: string[] = [];
     if (usedIcons.length) {
       external.push(`import { ${usedIcons.join(", ")} } from '@lucide/astro';`);
     }
+
     const internal: string[] = [];
-    if (includeMain)
-      internal.push(`import ${importName} from '${importPath}';`);
-    internal.push(
-      ...usedUi.map((name) => `import ${name} from '${componentsAlias}/${name}.astro';`),
-    );
+
+    if (useBarrelPattern) {
+      // New pattern: group by folder and use named imports
+
+      // Main component and its subcomponents
+      if (includeMain || usedNamedExports.length > 0) {
+        const mainExports = [
+          ...(includeMain ? [importName] : []),
+          ...usedNamedExports,
+        ].sort();
+        internal.push(
+          `import { ${mainExports.join(", ")} } from '${importPath}';`,
+        );
+      }
+
+      // Other UI components grouped by folder
+      if (usedUi.length > 0) {
+        internal.push(
+          ...generateBarrelImports(usedUi, componentsAlias, componentFolderMap),
+        );
+      }
+    } else {
+      // Old pattern: default imports
+      if (includeMain) {
+        internal.push(`import ${importName} from '${importPath}';`);
+      }
+      internal.push(
+        ...usedUi
+          .slice()
+          .sort()
+          .map(
+            (name) => `import ${name} from '${componentsAlias}/${name}.astro';`,
+          ),
+      );
+    }
 
     const externalSorted = external.slice().sort((a, b) => a.localeCompare(b));
     const internalSorted = internal.slice().sort((a, b) => a.localeCompare(b));
@@ -123,128 +316,436 @@ export function buildMdx(params: {
     ].filter((v) => v !== null && v !== undefined) as string[];
   };
 
+  let consolePreviewCounter = 0;
+
   const wrapTextNodes = (snippet: string): string => {
     if (!snippet) return snippet;
     return snippet.replace(/>([^<]+)</g, (match, inner) => {
       const trimmed = inner.trim();
       if (!trimmed.length) return match;
+      // Skip if the entire trimmed content is a JSX expression
       if (/^\{[\s\S]*\}$/.test(trimmed)) return match;
+      // Skip if the content already contains JSX expressions (e.g., "Use{\" \"}" or mixed content)
+      // This prevents double-wrapping and breaking inline JSX whitespace expressions
+      if (/\{[^}]*\}/.test(inner)) return match;
       return `>{${JSON.stringify(inner)}}<`;
     });
   };
 
-  const toMdxPreview = (snippet: string): string => {
+  /**
+   * Normalize whitespace in preview content.
+   * This collapses ALL newlines and multiple spaces into single spaces to prevent
+   * MDX parsing issues. In particular, a '>' at the start of a line is interpreted
+   * as a block quote marker by MDX, which causes "Unexpected lazy line" errors.
+   */
+  const normalizeInlineWhitespace = (snippet: string): string => {
     if (!snippet) return snippet;
-    // Convert HTML comments to MDX comment blocks for preview sections
-    const withoutComments = snippet.replace(/<!--([\s\S]*?)-->/g, "{/*$1*/}");
-    return wrapTextNodes(withoutComments);
+    // Collapse ALL newlines and multiple whitespace into single spaces
+    // This prevents MDX from interpreting '>' at start of line as block quote
+    return snippet.replace(/\s+/g, " ").trim();
   };
 
-  // Split an example body into leading markdown description (paragraphs)
-  // and the Astro/HTML snippet that should be rendered in Preview/Source tabs
-  const splitDescriptionAndSnippet = (
-    body: string,
-  ): { descriptionMD: string; snippet: string } => {
-    if (!body || !body.trim().length) return { descriptionMD: "", snippet: "" };
-    const lines = body.split("\n");
-    let snippetStartIdx = -1;
-    for (let i = 0; i < lines.length; i++) {
-      const ln = lines[i];
-      // Skip empty lines before first meaningful content
-      if (!ln.trim().length) continue;
-      // Heuristic: consider this line the start of the snippet if it looks like Astro/HTML/JSX
-      // e.g. starts with '<' or '{'
-      if (/^\s*[<{]/.test(ln)) {
-        snippetStartIdx = i;
-        break;
-      }
-      // Otherwise it's part of markdown description; keep looking until we hit markup
-    }
-    if (snippetStartIdx <= 0) {
-      // No clear description or snippet starts at the very beginning → treat all as snippet
-      return { descriptionMD: "", snippet: body.trim() };
-    }
-    const descriptionMD = lines.slice(0, snippetStartIdx).join("\n").trim();
-    const snippet = lines.slice(snippetStartIdx).join("\n").trim();
-    return { descriptionMD, snippet };
+  /**
+   * Convert <p> tags that contain component tags to <span> tags.
+   * This is necessary because components may render as block elements (like <div>),
+   * and HTML doesn't allow block elements inside <p>. The browser would automatically
+   * close the <p> before any block element, breaking the layout.
+   */
+  const convertParagraphsWithComponents = (snippet: string): string => {
+    if (!snippet) return snippet;
+    // Detect if a <p> tag contains component tags (PascalCase like <KbdGroup>)
+    // If so, convert <p> to <span> to allow block-level children
+    return snippet.replace(
+      /<p(\s[^>]*)?>([^]*?)<\/p>/gi,
+      (match, attrs, content) => {
+        // Check if content contains component tags (PascalCase)
+        if (/<[A-Z][A-Za-z0-9]*/.test(content)) {
+          // Convert to span with inline-block display to preserve paragraph-like behavior
+          const spanAttrs = attrs || "";
+          return `<span${spanAttrs} style="display:block">${content}</span>`;
+        }
+        return match;
+      },
+    );
   };
+
+  type PreviewRenderOptions = {
+    enableConsolePanel?: boolean;
+  };
+
+  type MarkdownPreviewConfig = {
+    defaultPreview?: boolean;
+  };
+
+  const extractInlineScripts = (snippet: string): {
+    markup: string;
+    scripts: string[];
+  } => {
+    if (!snippet) return { markup: snippet, scripts: [] };
+    const scripts: string[] = [];
+    const markup = snippet.replace(
+      /<script\b[^>]*>([\s\S]*?)<\/script>/gi,
+      (_, scriptBody: string) => {
+        scripts.push((scriptBody || "").trim());
+        return "";
+      },
+    );
+    return { markup, scripts };
+  };
+
+  const toMdxPreview = (
+    snippet: string,
+    options: PreviewRenderOptions = {},
+  ): { markup: string; scripts: string[] } => {
+    if (!snippet) return { markup: "", scripts: [] };
+    const { enableConsolePanel = false } = options;
+    const extracted = extractInlineScripts(snippet);
+    const withoutScripts = extracted.markup;
+    // Convert HTML comments to MDX comment blocks for preview sections
+    const withoutComments = withoutScripts.replace(
+      /<!--([\s\S]*?)-->/g,
+      "{/*$1*/}",
+    );
+    // Convert <p> tags containing components to <span> to avoid HTML validity issues
+    const withConvertedParagraphs =
+      convertParagraphsWithComponents(withoutComments);
+    // If the snippet contains user-defined <p> elements, preserve structure as-is
+    if (/<p[\s>]/i.test(withConvertedParagraphs)) {
+      return {
+        markup: normalizeInlineWhitespace(withConvertedParagraphs),
+        scripts: enableConsolePanel ? extracted.scripts : [],
+      };
+    }
+    // Normalize whitespace to prevent MDX from splitting inline text into paragraphs
+    const normalized = normalizeInlineWhitespace(withConvertedParagraphs);
+    return {
+      markup: wrapTextNodes(normalized),
+      scripts: enableConsolePanel ? extracted.scripts : [],
+    };
+  };
+
+  const buildConsoleRuntimeSource = (
+    rootId: string,
+    panelId: string,
+    userScript: string,
+  ): string => {
+    const serializedRootId = JSON.stringify(rootId);
+    const serializedPanelId = JSON.stringify(panelId);
+    const serializedUserScript = JSON.stringify(userScript);
+
+    return `(function () {
+  var root = document.getElementById(${serializedRootId});
+  var panel = document.getElementById(${serializedPanelId});
+  if (!root || !panel) return;
+
+  var placeholder = panel.textContent || "Waiting for logs...";
+  var hasLogs = false;
+
+  var toText = function (value) {
+    if (typeof value === "string") return value;
+    if (value === undefined) return "undefined";
+    if (value === null) return "null";
+    try {
+      return JSON.stringify(value);
+    } catch (_error) {
+      return String(value);
+    }
+  };
+
+  var append = function (level, args) {
+    var stamp = new Date().toLocaleTimeString();
+    var body = Array.prototype.map.call(args, toText).join(" ");
+    var line = "[" + stamp + "] " + String(level).toUpperCase() + ": " + body;
+    var current = panel.textContent || "";
+    if (!hasLogs && current.trim() === placeholder.trim()) {
+      panel.textContent = line;
+    } else {
+      panel.textContent = current ? current + "\\n" + line : line;
+    }
+    hasLogs = true;
+    panel.scrollTop = panel.scrollHeight;
+  };
+
+  var methods = ["log", "info", "warn", "error"];
+  var proxyConsole = Object.create(console);
+  for (var i = 0; i < methods.length; i += 1) {
+    (function (methodName) {
+      var fallback = typeof console.log === "function" ? console.log.bind(console) : function () {};
+      var original =
+        typeof console[methodName] === "function"
+          ? console[methodName].bind(console)
+          : fallback;
+      proxyConsole[methodName] = function () {
+        var args = Array.prototype.slice.call(arguments);
+        original.apply(console, args);
+        append(methodName, args);
+      };
+    })(methods[i]);
+  }
+
+  try {
+    var run = new Function("console", "root", "panel", ${serializedUserScript});
+    run(proxyConsole, root, panel);
+  } catch (error) {
+    var fallbackError = typeof console.error === "function" ? console.error.bind(console) : function () {};
+    fallbackError(error);
+    append("error", [error]);
+  }
+})();`;
+  };
+
+  const renderConsoleScripts = (
+    rootId: string,
+    panelId: string,
+    scripts: string[],
+  ): string => {
+    if (!scripts.length) return "";
+    return scripts
+      .filter((script) => script && script.trim().length)
+      .map((script) => {
+        const runtimeSource = buildConsoleRuntimeSource(
+          rootId,
+          panelId,
+          script,
+        );
+        const encoded = encodeURIComponent(runtimeSource);
+        return `<script type="module" src="data:text/javascript;charset=utf-8,${encoded}"></script>`;
+      })
+      .join("\n");
+  };
+
+  const renderPreviewBlock = (
+    snippet: string,
+    options: PreviewRenderOptions = {},
+  ): string => {
+    const { enableConsolePanel = false } = options;
+    const preparedPreview = toMdxPreview(snippet, options);
+    if (!preparedPreview.markup || !preparedPreview.markup.length) return "";
+
+    if (!enableConsolePanel) {
+      return `<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+${preparedPreview.markup}
+</div>`;
+    }
+
+    consolePreviewCounter += 1;
+    const rootId = `sl-bejamas-console-preview-${consolePreviewCounter}`;
+    const panelId = `${rootId}-output`;
+    const scriptTags = renderConsoleScripts(
+      rootId,
+      panelId,
+      preparedPreview.scripts,
+    );
+    const parts = [
+      `<div id="${rootId}" class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">`,
+      preparedPreview.markup,
+      "</div>",
+      `<div class="not-content sl-bejamas-console-log-shell px-4 md:px-10 py-4 border border-border border-t-0">`,
+      `<pre id="${panelId}" data-slot="event-log" class="sl-bejamas-console-log w-full p-3 rounded-md bg-muted text-xs font-mono text-muted-foreground min-h-[80px] max-h-[200px] overflow-y-auto">Waiting for logs...</pre>`,
+      scriptTags && scriptTags.length ? scriptTags : null,
+      "</div>",
+    ].filter((part) => part !== null) as string[];
+
+    return parts.join("\n");
+  };
+
+  const renderAstroPreviewsInMarkdown = (
+    block: string,
+    config: MarkdownPreviewConfig = {},
+  ): string => {
+    if (!block || !block.length) return block;
+    const { defaultPreview = true } = config;
+
+    const lines = block.split("\n");
+    const out: string[] = [];
+    let inFence = false;
+    let fenceOpen = "";
+    let currentFenceLang = "";
+    let currentFenceFlags = new Set<string>();
+    const fenceBody: string[] = [];
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith("```")) {
+        if (!inFence) {
+          inFence = true;
+          fenceOpen = line;
+          const parsed = parseFenceInfo(trimmed.slice(3).trim());
+          currentFenceLang = parsed.lang;
+          currentFenceFlags = parsed.flags;
+          fenceBody.length = 0;
+          continue;
+        }
+
+        if (currentFenceLang === "astro") {
+          const sourceCode = fenceBody.join("\n").trim();
+          const prepared = prepareExampleContent(
+            `${fenceOpen}\n${sourceCode}\n${line}`,
+          );
+          const hasForcedPreviewFlag =
+            currentFenceFlags.has("preview") || currentFenceFlags.has("console");
+          const shouldPreview =
+            !prepared.skipPreview && (defaultPreview || hasForcedPreviewFlag);
+          if (
+            prepared.snippet &&
+            prepared.snippet.length &&
+            shouldPreview
+          ) {
+            const previewBlock = renderPreviewBlock(prepared.snippet, {
+              enableConsolePanel: prepared.enableConsolePanel,
+            });
+            if (previewBlock.length) {
+              out.push(previewBlock);
+            }
+            out.push("");
+          }
+        }
+
+        out.push(fenceOpen);
+        if (fenceBody.length) out.push(...fenceBody);
+        out.push(line);
+
+        inFence = false;
+        fenceOpen = "";
+        currentFenceLang = "";
+        currentFenceFlags = new Set<string>();
+        fenceBody.length = 0;
+        continue;
+      }
+
+      if (inFence) {
+        fenceBody.push(line);
+        continue;
+      }
+
+      out.push(line);
+    }
+
+    if (inFence) {
+      out.push(fenceOpen);
+      if (fenceBody.length) out.push(...fenceBody);
+    }
+
+    return out.join("\n").trim();
+  };
+
+  const renderedDescriptionBodyMDX = renderAstroPreviewsInMarkdown(
+    descriptionBodyMDX || "",
+  );
+  const renderedUsageMDX = renderAstroPreviewsInMarkdown(usageMDX || "", {
+    defaultPreview: false,
+  });
+  const renderedApiMDX = renderAstroPreviewsInMarkdown(apiMDX || "");
 
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length
-      ? `<DocsTabs>
-  <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-md min-h-[450px] items-center [&_input]:max-w-xs">
-${toMdxPreview(primaryExampleMDX)}
-    </div>
-  </DocsTabItem>
-  <DocsTabItem label="Source">
+      ? `${renderPreviewBlock(primaryExampleMDX)}
 
 \`\`\`astro
 ${(() => {
   const lines = buildSnippetImportLines(primaryExampleMDX);
   return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
 })()}${primaryExampleMDX}
-\`\`\`
-  </DocsTabItem>
-</DocsTabs>`
+\`\`\``
       : null;
 
-  const exampleSections: string[] = [];
-  if (examplesBlocks && examplesBlocks.length) {
-    for (const blk of examplesBlocks) {
-      const { descriptionMD, snippet } = splitDescriptionAndSnippet(blk.body);
-      const previewBody = toMdxPreview(snippet);
+  const renderExampleItem = (
+    headingLevel: "###" | "####",
+    headingTitle: string,
+    body: string,
+  ): string => {
+    const prepared = prepareExampleContent(body);
+    const titleLine = `${headingLevel} ${headingTitle}`;
+    const blocks: string[] = [titleLine];
+    if (prepared.descriptionMD && prepared.descriptionMD.length) {
+      blocks.push(prepared.descriptionMD);
+    }
 
-      // If there's no snippet, render only header + description
-      if (!snippet || !snippet.length) {
-        exampleSections.push(
-          `### ${blk.title}
+    if (
+      prepared.snippet &&
+      prepared.snippet.length &&
+      prepared.sourceCode &&
+      prepared.sourceCode.length &&
+      !prepared.skipPreview
+    ) {
+      blocks.push(
+        renderPreviewBlock(prepared.snippet, {
+          enableConsolePanel: prepared.enableConsolePanel,
+        }),
+      );
+    }
 
-${descriptionMD}`.trim(),
-        );
-        continue;
+    if (prepared.sourceCode && prepared.sourceCode.length) {
+      const sourceBlock = prepared.sourceFromFence
+        ? prepared.sourceCode
+        : `${(() => {
+            const lines = buildSnippetImportLines(prepared.sourceCode);
+            return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
+          })()}${prepared.sourceCode}`;
+      blocks.push(`\`\`\`astro
+${sourceBlock}
+\`\`\``);
+    }
+
+    return blocks.join("\n\n");
+  };
+
+  const renderedExampleSections: string[] = [];
+  if (examplesSections && examplesSections.length) {
+    let implicitExampleCounter = 1;
+
+    for (const section of examplesSections) {
+      const sectionParts: string[] = [];
+      const hasSectionTitle = !!(section.title && section.title.length);
+      if (hasSectionTitle) {
+        sectionParts.push(`### ${section.title}`);
       }
 
-      exampleSections.push(
-        `### ${blk.title}
+      if (section.introMD && section.introMD.length) {
+        sectionParts.push(section.introMD);
+      }
 
-${descriptionMD ? `${descriptionMD}\n\n` : ""}<DocsTabs>
-  <DocsTabItem label="Preview">
-    <div class="not-content sl-bejamas-component-preview flex justify-center px-10 py-12 border border-border rounded-md min-h-[450px] items-center [&_input]:max-w-xs">
-${previewBody}
-    </div>
-  </DocsTabItem>
-  <DocsTabItem label="Source">
+      if (section.items && section.items.length) {
+        const itemHeadingLevel: "###" | "####" = hasSectionTitle
+          ? "####"
+          : "###";
+        for (const item of section.items) {
+          sectionParts.push(
+            renderExampleItem(itemHeadingLevel, item.title, item.body),
+          );
+        }
+      } else if (!hasSectionTitle && section.introMD && section.introMD.length) {
+        const prepared = prepareExampleContent(section.introMD);
+        if (prepared.snippet && prepared.snippet.length) {
+          sectionParts.length = 0;
+          sectionParts.push(
+            renderExampleItem(
+              "###",
+              `Example ${implicitExampleCounter}`,
+              section.introMD,
+            ),
+          );
+          implicitExampleCounter += 1;
+        }
+      }
 
-\`\`\`astro
-${(() => {
-  const lines = buildSnippetImportLines(snippet);
-  return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
-})()}${snippet}
-\`\`\`
-  </DocsTabItem>
-</DocsTabs>`,
-      );
+      if (sectionParts.length) {
+        renderedExampleSections.push(sectionParts.join("\n\n").trim());
+      }
     }
   }
   if (examples && examples.length) {
     for (const ex of examples) {
-      exampleSections.push(
+      renderedExampleSections.push(
         `### ${ex.title}
 
-<DocsTabs>
-  <DocsTabItem label="Preview">
-    <div class="not-content">
-      <${ex.importName} />
-    </div>
-  </DocsTabItem>
-  <DocsTabItem label="Source">
+<div class="not-content">
+  <${ex.importName} />
+</div>
 
 \`\`\`astro
 ${ex.source}
-\`\`\`
-  </DocsTabItem>
-</DocsTabs>`,
+\`\`\``,
       );
     }
   }
@@ -277,45 +778,27 @@ ${ex.source}
   };
 
   const installationSection = `## Installation
-<DocsTabs syncKey="installation">
-   <DocsTabItem label="CLI">
 
 <DocsTabs syncKey="pkg">
   <DocsTabItem label="bun">
-
-\`\`\`bash
- bunx bejamas add ${commandName}
-\`\`\`
-
+  \`\`\`bash
+  bunx bejamas add ${commandName}
+  \`\`\`
   </DocsTabItem>
   <DocsTabItem label="npm">
-
-\`\`\`bash
- npx bejamas add ${commandName}
-\`\`\`
-
+  \`\`\`bash
+  npx bejamas add ${commandName}
+  \`\`\`
   </DocsTabItem>
   <DocsTabItem label="pnpm">
-
-\`\`\`bash
- pnpm dlx bejamas add ${commandName}
-\`\`\`
-
+  \`\`\`bash
+  pnpm dlx bejamas add ${commandName}
+  \`\`\`
   </DocsTabItem>
   <DocsTabItem label="yarn">
-
-\`\`\`bash
- yarn dlx bejamas add ${commandName}
-\`\`\`
-
-  </DocsTabItem>
-</DocsTabs>
-</DocsTabItem>
-<DocsTabItem label="Manual">
-
-\`\`\`astro
-${componentSource}
-\`\`\`
+  \`\`\`bash
+  yarn dlx bejamas add ${commandName}
+  \`\`\`
   </DocsTabItem>
 </DocsTabs>`;
 
@@ -336,13 +819,17 @@ ${componentSource}
     "",
     ...importLines,
     importLines.length ? "" : null,
-    descriptionBodyMDX && descriptionBodyMDX.length ? descriptionBodyMDX : null,
-    descriptionBodyMDX && descriptionBodyMDX.length ? "" : null,
+    renderedDescriptionBodyMDX && renderedDescriptionBodyMDX.length
+      ? renderedDescriptionBodyMDX
+      : null,
+    renderedDescriptionBodyMDX && renderedDescriptionBodyMDX.length ? "" : null,
     primaryExampleSection,
     primaryExampleSection ? "" : null,
     installationSection,
     "",
-    usageMDX && usageMDX.length ? `## Usage\n\n${usageMDX}` : null,
+    renderedUsageMDX && renderedUsageMDX.length
+      ? `## Usage\n\n${renderedUsageMDX}`
+      : null,
     "",
     propsTable && propsTable.length
       ? `## Props\n\n| Prop | Type | Default |\n|---|---|---|\n${propsTable
@@ -355,8 +842,12 @@ ${componentSource}
         ? `## Props\n\n${propsList}`
         : null,
     (propsTable && propsTable.length) || propsList ? "" : null,
-    exampleSections.length
-      ? `## Examples\n\n` + exampleSections.join("\n\n")
+    renderedExampleSections.length
+      ? `## Examples\n\n` + renderedExampleSections.join("\n\n")
+      : null,
+    renderedExampleSections.length ? "" : null,
+    renderedApiMDX && renderedApiMDX.length
+      ? `## API Reference\n\n${renderedApiMDX}`
       : null,
   ].filter((v) => v !== null && v !== undefined);
 

@@ -62,16 +62,24 @@ const applyThemeColors = (
   });
 };
 
+export interface ApplyThemeToElementOptions {
+  /** When true, do not set/remove the dark class; caller owns light/dark mode (e.g. ThemeProvider). */
+  skipModeClass?: boolean;
+}
+
 // Exported function to apply theme styles to an element
 export const applyThemeToElement = (
   themeState: ThemeEditorState,
   rootElement: HTMLElement,
+  options?: ApplyThemeToElementOptions,
 ) => {
   const { currentMode: mode, styles: themeStyles } = themeState;
 
   if (!rootElement) return;
 
-  updateThemeClass(rootElement, mode);
+  if (!options?.skipModeClass) {
+    updateThemeClass(rootElement, mode);
+  }
   // Apply common styles (like border-radius) based on the 'light' mode definition
   applyCommonStyles(rootElement, themeStyles.light);
   // Apply mode-specific colors

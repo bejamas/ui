@@ -1,0 +1,91 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+import { cva } from "class-variance-authority";
+
+type Props = {
+  class?: string;
+  sideOffset?: number;
+  side?: "top" | "bottom" | "left" | "right";
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  sideOffset,
+  side = "top",
+  align = "center",
+  alignOffset,
+  ...rest
+} = Astro.props as Props;
+
+const indicatorVariants = cva("pointer-events-none absolute border-4", {
+  variants: {
+    side: {
+      top: "border-foreground border-b-0 border-r-transparent border-l-transparent top-full",
+      bottom:
+        "border-foreground border-t-0 border-r-transparent border-l-transparent bottom-full",
+      left: "border-foreground border-r-0 border-t-transparent border-b-transparent left-full",
+      right:
+        "border-foreground border-l-0 border-t-transparent border-b-transparent right-full",
+    },
+    align: {
+      start: "",
+      center: "",
+      end: "",
+    },
+  },
+  compoundVariants: [
+    { side: "top", align: "start", class: "left-2" },
+    { side: "top", align: "center", class: "left-1/2 -translate-x-1/2" },
+    { side: "top", align: "end", class: "right-2" },
+    { side: "bottom", align: "start", class: "left-2" },
+    { side: "bottom", align: "center", class: "left-1/2 -translate-x-1/2" },
+    { side: "bottom", align: "end", class: "right-2" },
+    { side: "left", align: "start", class: "top-2" },
+    { side: "left", align: "center", class: "top-1/2 -translate-y-1/2" },
+    { side: "left", align: "end", class: "bottom-2" },
+    { side: "right", align: "start", class: "top-2" },
+    { side: "right", align: "center", class: "top-1/2 -translate-y-1/2" },
+    { side: "right", align: "end", class: "bottom-2" },
+  ],
+  defaultVariants: {
+    side: "top",
+    align: "center",
+  },
+});
+
+const contentVariants = cva([
+  "z-50 outline-hidden",
+  "relative w-fit max-w-xs rounded-md bg-foreground px-3 py-1.5 text-xs text-background shadow-md",
+  "data-[open]:animate-in data-[closed]:animate-out",
+  "data-[closed]:fade-out-0 data-[open]:fade-in-0",
+  "data-[closed]:zoom-out-95 data-[open]:zoom-in-95",
+  "data-instant:animate-none! data-instant:transition-none!",
+  "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
+  "origin-(--transform-origin) [--tw-animation-fill-mode:both]",
+]);
+---
+
+<div data-slot="tooltip-portal">
+  <div data-slot="tooltip-positioner" class="isolate z-50">
+    <div
+      {...rest}
+      hidden
+      data-slot="tooltip-content"
+      data-side={side}
+      data-side-offset={sideOffset}
+      data-align={align}
+      data-align-offset={alignOffset}
+      class={cn(contentVariants(), className)}
+    >
+      <slot />
+      <div
+        data-slot="tooltip-indicator"
+        class={indicatorVariants({ side, align })}
+      >
+      </div>
+    </div>
+  </div>
+</div>

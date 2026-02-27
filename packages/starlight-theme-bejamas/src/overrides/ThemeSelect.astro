@@ -1,5 +1,11 @@
 ---
-import Select from "virtual:starlight-theme-bejamas/components/Select.astro";
+import {
+  Select,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+} from "virtual:starlight-theme-bejamas/components/select";
 
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 ---
@@ -11,23 +17,21 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
       <MoonIcon class="theme-icon theme-icon-dark size-4" />
       <LaptopIcon class="theme-icon theme-icon-auto size-4" />
     </div>
-    <Select showCheckmark={false}>
-      <Select part="indicator" />
-      <Select
-        part="control"
-        showCheckmark={false}
-        class="sl-bejamas-theme-select-control"
-      >
-        <Select part="option" value="light"
-          ><SunIcon class="size-4" /> Light</Select
+    <Select defaultValue="auto" id="starlight-theme-select">
+      <SelectTrigger class="sl-bejamas-theme-select-control">
+        <SelectValue placeholder="Theme" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="light" class="flex items-center gap-2"
+          ><SunIcon class="size-4" /> Light</SelectItem
         >
-        <Select part="option" value="dark"
-          ><MoonIcon class="size-4" /> Dark</Select
+        <SelectItem value="dark" class="flex items-center gap-2"
+          ><MoonIcon class="size-4" /> Dark</SelectItem
         >
-        <Select part="option" value="auto"
-          ><LaptopIcon class="size-4" /> Auto</Select
+        <SelectItem value="auto" class="flex items-center gap-2"
+          ><LaptopIcon class="size-4" /> Auto</SelectItem
         >
-      </Select>
+      </SelectContent>
     </Select>
   </div>
 </starlight-theme-select>
@@ -77,9 +81,10 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
     constructor() {
       super();
       onThemeChange(loadTheme());
-      this.querySelector("select")?.addEventListener("change", (e) => {
-        if (e.currentTarget instanceof HTMLSelectElement) {
-          onThemeChange(parseTheme(e.currentTarget.value));
+      const select = this.querySelector("#starlight-theme-select");
+      select?.addEventListener("select:change", (e) => {
+        if (e.detail.value) {
+          onThemeChange(parseTheme(e.detail.value));
         }
       });
     }

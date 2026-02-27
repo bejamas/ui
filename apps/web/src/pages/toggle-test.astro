@@ -1,0 +1,212 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import { Toggle } from "@bejamas/ui/components/toggle";
+import {
+  BoldIcon,
+  ItalicIcon,
+  BookmarkIcon,
+  UnderlineIcon,
+} from "@lucide/astro";
+---
+
+<BlockExampleLayout>
+  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Toggle Component Test</h1>
+
+    <!-- Basic Toggle -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Basic Toggle (default variant)</h2>
+      <div class="flex items-center gap-2">
+        <Toggle aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle aria-label="Toggle italic">
+          <ItalicIcon />
+        </Toggle>
+        <Toggle aria-label="Toggle underline">
+          <UnderlineIcon />
+        </Toggle>
+      </div>
+    </div>
+
+    <!-- Outline Variant -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Outline Variant</h2>
+      <div class="flex items-center gap-2">
+        <Toggle variant="outline" aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle variant="outline" aria-label="Toggle italic">
+          <ItalicIcon />
+        </Toggle>
+        <Toggle variant="outline" aria-label="Toggle underline">
+          <UnderlineIcon />
+        </Toggle>
+      </div>
+    </div>
+
+    <!-- With Text -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">With Text</h2>
+      <div class="flex items-center gap-2">
+        <Toggle variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon />
+          Bookmark
+        </Toggle>
+        <Toggle variant="outline" aria-label="Toggle italic">
+          <ItalicIcon />
+          Italic
+        </Toggle>
+      </div>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Sizes</h2>
+      <div class="flex items-center gap-2">
+        <Toggle size="sm" variant="outline" aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle size="default" variant="outline" aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle size="lg" variant="outline" aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+      </div>
+      <div class="flex items-center gap-2">
+        <Toggle size="sm" variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon />
+          Small
+        </Toggle>
+        <Toggle size="default" variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon />
+          Default
+        </Toggle>
+        <Toggle size="lg" variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon />
+          Large
+        </Toggle>
+      </div>
+    </div>
+
+    <!-- Default Pressed -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Default Pressed</h2>
+      <div class="flex items-center gap-2">
+        <Toggle defaultPressed aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle defaultPressed variant="outline" aria-label="Toggle italic">
+          <ItalicIcon />
+        </Toggle>
+      </div>
+    </div>
+
+    <!-- Disabled -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Disabled</h2>
+      <div class="flex items-center gap-2">
+        <Toggle disabled aria-label="Toggle bold">
+          <BoldIcon />
+        </Toggle>
+        <Toggle disabled variant="outline" aria-label="Toggle italic">
+          <ItalicIcon />
+        </Toggle>
+        <Toggle disabled defaultPressed aria-label="Toggle underline">
+          <UnderlineIcon />
+        </Toggle>
+        <Toggle
+          disabled
+          defaultPressed
+          variant="outline"
+          aria-label="Toggle bookmark"
+        >
+          <BookmarkIcon />
+        </Toggle>
+      </div>
+    </div>
+
+    <!-- Icon Fill on Pressed State -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Icon Fill on Pressed State</h2>
+      <p class="text-sm text-muted-foreground">
+        Using <code>group-data-[state=on]/toggle:fill-foreground</code> to fill
+        icons when pressed
+      </p>
+      <div class="flex items-center gap-2">
+        <Toggle variant="outline" aria-label="Toggle bookmark">
+          <BookmarkIcon class="group-data-[state=on]/toggle:fill-foreground" />
+        </Toggle>
+        <Toggle
+          variant="outline"
+          defaultPressed
+          aria-label="Toggle bookmark filled"
+        >
+          <BookmarkIcon class="group-data-[state=on]/toggle:fill-foreground" />
+        </Toggle>
+      </div>
+    </div>
+
+    <!-- Event Testing -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Event Testing</h2>
+      <p class="text-sm text-muted-foreground">
+        Click the toggle and check the console for toggle:change events
+      </p>
+      <Toggle id="event-toggle" variant="outline" aria-label="Toggle test">
+        <BoldIcon />
+        Click me
+      </Toggle>
+      <script>
+        document
+          .getElementById("event-toggle")
+          ?.addEventListener("toggle:change", (e: Event) => {
+            const detail = (e as CustomEvent).detail;
+            console.log("toggle:change event:", detail);
+          });
+      </script>
+    </div>
+
+    <!-- Programmatic Control -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Programmatic Control</h2>
+      <div class="flex items-center gap-4">
+        <Toggle
+          id="programmatic-toggle"
+          variant="outline"
+          aria-label="Programmatic toggle"
+        >
+          <BoldIcon />
+        </Toggle>
+        <button
+          id="set-on-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set On
+        </button>
+        <button
+          id="set-off-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Off
+        </button>
+      </div>
+      <script>
+        const toggle = document.getElementById("programmatic-toggle");
+        document.getElementById("set-on-btn")?.addEventListener("click", () => {
+          toggle?.dispatchEvent(
+            new CustomEvent("toggle:set", { detail: { value: true } })
+          );
+        });
+        document
+          .getElementById("set-off-btn")
+          ?.addEventListener("click", () => {
+            toggle?.dispatchEvent(
+              new CustomEvent("toggle:set", { detail: { value: false } })
+            );
+          });
+      </script>
+    </div>
+  </section>
+</BlockExampleLayout>

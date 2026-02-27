@@ -1,0 +1,79 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import { cva } from "class-variance-authority";
+
+type Props = {
+  class?: string;
+  size?: "sm" | "default" | "lg";
+  position?: "item-aligned" | "popper";
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "bottom";
+  sideOffset?: number;
+} & HTMLAttributes<"div">;
+
+const {
+  class: className = "",
+  size = "default",
+  position = "item-aligned",
+  align = "start",
+  alignOffset = 0,
+  side = "bottom",
+  sideOffset = 4,
+  ...rest
+} = Astro.props as Props;
+
+const contentVariants = cva(
+  [
+    "group/select-content focus-visible:outline-none z-50",
+    "bg-popover text-popover-foreground min-w-24 rounded-lg shadow-md ring-1 ring-foreground/10",
+    "p-1 max-h-[var(--select-content-available-height,300px)] overflow-x-hidden overflow-y-auto",
+  ],
+  {
+    variants: {
+      position: {
+        "item-aligned": "relative",
+        popper:
+          "fixed min-w-[var(--select-trigger-width)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 origin-(--transform-origin) [--tw-animation-fill-mode:both]",
+      },
+      side: {
+        top: "",
+        bottom: "",
+      },
+    },
+    compoundVariants: [
+      {
+        position: "popper",
+        side: "top",
+        class: "data-[side=top]:slide-in-from-bottom-2",
+      },
+      {
+        position: "popper",
+        side: "bottom",
+        class: "data-[side=bottom]:slide-in-from-top-2",
+      },
+    ],
+    defaultVariants: {
+      position: "item-aligned",
+      side: "bottom",
+    },
+  },
+);
+---
+
+<div
+  {...rest}
+  hidden
+  data-slot="select-content"
+  data-size={size}
+  data-position={position}
+  data-align-trigger={position === "item-aligned"}
+  data-align={align}
+  data-align-offset={alignOffset}
+  data-side={side}
+  data-side-offset={sideOffset}
+  class={cn(contentVariants({ position, side }), className)}
+>
+  <slot />
+</div>

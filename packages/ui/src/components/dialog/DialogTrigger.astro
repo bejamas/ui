@@ -1,0 +1,37 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+  /** Radix-like: render wrapper so the child can be the interactive element */
+  asChild?: boolean;
+} & HTMLAttributes<"button">;
+
+const {
+  class: className = "",
+  asChild = false,
+  type = "button",
+  ...rest
+} = Astro.props as Props;
+
+const defaultClasses =
+  "cursor-pointer select-none outline-none group-focus-within:pointer-events-none inline-flex items-center gap-1";
+---
+
+{
+  asChild ? (
+    <div data-slot="dialog-trigger" data-as-child class={cn(defaultClasses, className)}>
+      <slot />
+    </div>
+  ) : (
+    <button
+      {...rest}
+      type={type}
+      data-slot="dialog-trigger"
+      class={cn(defaultClasses, className)}
+    >
+      <slot />
+    </button>
+  )
+}

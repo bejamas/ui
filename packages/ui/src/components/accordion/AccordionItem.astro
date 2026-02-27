@@ -1,0 +1,29 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  value: string;
+  open?: boolean;
+  class?: string;
+} & HTMLAttributes<"details">;
+
+const {
+  value,
+  open = false,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const itemVariants = cva("border-b last:border-b-0");
+---
+
+<div
+  {...rest}
+  data-value={value}
+  data-slot="accordion-item"
+  class={cn(itemVariants(), "group/accordion", className)}
+>
+  <slot />
+</div>

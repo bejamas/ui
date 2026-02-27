@@ -1,0 +1,23 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  hidden
+  data-slot="dialog-overlay"
+  class={cn(
+    "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 bg-background/50 backdrop-blur-sm",
+    "duration-300 transition-discrete [--tw-animation-fill-mode:both]",
+    className,
+  )}
+  {...rest}
+>
+  <slot />
+</div>

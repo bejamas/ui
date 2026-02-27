@@ -1,4 +1,4 @@
-import { ThemePreset } from "../types/theme";
+import type { ThemePreset } from "../types/theme";
 
 export const defaultPresets: Record<string, ThemePreset> = {
   default: {
@@ -51,7 +51,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
         foreground: "oklch(0.97 0.020 250)",
         card: "oklch(0.225 0.020 250)",
         "card-foreground": "oklch(0.97 0 0)",
-        popover: "oklch(0.256 0.020 250)",
+        popover: "oklch(0.22 0.020 250)",
         "popover-foreground": "oklch(0.97 0 0)",
         primary: "oklch(0.97 0 0)",
         "primary-foreground": "oklch(0.2 0.044 250)",
@@ -115,7 +115,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "chart-3": "oklch(0.78 0.16 79)",
         "chart-4": "oklch(0.64 0.13 79)",
         "chart-5": "oklch(0.53 0.11 79)",
-        radius: "1.25rem",
+        radius: "1.5rem",
         "shadow-color": "oklch(0 0 0)",
         "shadow-opacity": "0.1",
         "shadow-blur": "3px",
@@ -168,15 +168,15 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "popover-foreground": "oklch(0.22 0 0)",
         primary: "oklch(0.22 0 0)",
         "primary-foreground": "oklch(1 0 0)",
-        secondary: "oklch(1 0 0)",
+        secondary: "oklch(0.955 0.0000 0.0)",
         "secondary-foreground": "oklch(0.41 0 0)",
-        muted: "oklch(0.93 0 0)",
+        muted: "oklch(0.962 0.0011 17.2)",
         "muted-foreground": "oklch(0.51 0 0)",
         accent: "oklch(0.54 0.27 288)",
         "accent-foreground": "oklch(1 0 0)",
         destructive: "oklch(0.59 0.21 26)",
         "destructive-foreground": "oklch(1 0 0)",
-        border: "oklch(0.920 0 0)",
+        border: "oklch(0.876 0.0000 0.0)",
         input: "oklch(0.89 0 0)",
         ring: "oklch(0.54 0.27 288)",
         "chart-1": "oklch(0.54 0.27 288)",
@@ -221,7 +221,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
         "font-sans": "Plus Jakarta Sans, sans-serif",
         "font-serif": "Lora, serif",
         "font-mono": "IBM Plex Mono, monospace",
-        radius: "1.4rem",
+
         "shadow-color": "hsl(0 0% 0%)",
         "shadow-opacity": "0.16",
         "shadow-blur": "3px",

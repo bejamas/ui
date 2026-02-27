@@ -19,8 +19,8 @@ export default defineConfig({
           ],
           components: {
             // This is needed if you want to use your UI components in the docs site
-            Button: "@repo/ui/components/Button.astro",
-            Select: "@repo/ui/components/Select.astro",
+            button: "@repo/ui/components/button",
+            select: "@repo/ui/components/select",
           },
         }),
       ],

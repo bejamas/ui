@@ -1,0 +1,49 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Align = "inline-start" | "inline-end" | "block-start" | "block-end";
+
+type Props = {
+  align?: Align;
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  align = "inline-start",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const addonVariants = cva(
+  "text-muted-foreground h-auto group-data-[size=sm]/input-group:py-1.5 group-data-[size=default]/input-group:py-2 group-data-[size=lg]/input-group:py-2.5 gap-2 font-medium group-data-[size=sm]/input-group:text-xs group-data-[size=default]/input-group:text-sm group-data-[size=lg]/input-group:text-base group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4 group-data-[size=sm]/input-group:[&>svg:not([class*='size-'])]:size-3.5 flex cursor-text items-center justify-center select-none",
+  {
+    variants: {
+      align: {
+        "inline-start":
+          "order-first pl-2 has-[button]:ml-[-0.3rem] has-[[data-slot=input-group-button]]:ml-[-0.3rem] has-[kbd]:ml-[-0.15rem]",
+        "inline-end":
+          "order-last pr-2 has-[button]:mr-[-0.3rem] has-[[data-slot=input-group-button]]:mr-[-0.3rem] has-[kbd]:mr-[-0.15rem]",
+        "block-start":
+          "order-first w-full justify-start group-data-[size=sm]/input-group:px-2.5 group-data-[size=default]/input-group:px-3 group-data-[size=lg]/input-group:px-3.5 pt-2 group-has-[>[data-slot=input-group-control]]/input-group:pt-2 [.border-b]:mb-2",
+        "block-end":
+          "order-last w-full justify-start group-data-[size=sm]/input-group:px-2.5 group-data-[size=default]/input-group:px-3 group-data-[size=lg]/input-group:px-3.5 pb-2 group-has-[>[data-slot=input-group-control]]/input-group:pb-2 [.border-t]:mt-2",
+      },
+    },
+    defaultVariants: {
+      align: "inline-start",
+    },
+  },
+);
+---
+
+<div
+  {...rest}
+  role="group"
+  data-slot="input-group-addon"
+  data-align={align}
+  class={cn(addonVariants({ align }), className)}
+>
+  <slot />
+</div>

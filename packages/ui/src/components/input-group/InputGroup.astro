@@ -1,0 +1,148 @@
+---
+/**
+ * @component InputGroup
+ * @title Input Group
+ * @description An input field with attached addons like icons, buttons, or text labels.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2549-20918&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <div class="grid w-full max-w-sm gap-6">
+ *   <InputGroup>
+ *     <InputGroupInput placeholder="Search..." />
+ *     <InputGroupAddon>
+ *       <SearchIcon />
+ *     </InputGroupAddon>
+ *     <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
+ *   </InputGroup>
+ *
+ *   <InputGroup>
+ *     <InputGroupInput placeholder="example.com" />
+ *     <InputGroupAddon>
+ *       <InputGroupText>https://</InputGroupText>
+ *     </InputGroupAddon>
+ *     <InputGroupAddon align="inline-end">
+ *       <InputGroupButton size="xs">Check</InputGroupButton>
+ *     </InputGroupAddon>
+ *   </InputGroup>
+ *
+ *   <InputGroup>
+ *     <InputGroupTextarea placeholder="Ask, Search or Chat..." />
+ *     <InputGroupAddon align="block-end">
+ *       <InputGroupButton size="icon-xs" class="rounded-full">
+ *         <PlusIcon />
+ *       </InputGroupButton>
+ *       <InputGroupButton variant="ghost">Auto</InputGroupButton>
+ *       <InputGroupText class="ml-auto">52% used</InputGroupText>
+ *       <Separator orientation="vertical" class="!h-4" />
+ *       <InputGroupButton size="icon-xs" variant="default" class="rounded-full">
+ *         <ArrowUpIcon />
+ *         <span class="sr-only">Send</span>
+ *       </InputGroupButton>
+ *     </InputGroupAddon>
+ *   </InputGroup>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { InputGroup, InputGroupInput, InputGroupAddon, InputGroupButton, InputGroupText } from '@bejamas/ui/components/input-group';
+ * ---
+ *
+ * <InputGroup>
+ *   <InputGroupInput placeholder="Search..." />
+ *   <InputGroupAddon><SearchIcon /></InputGroupAddon>
+ * </InputGroup>
+ * ```
+ *
+ * @examples
+ *
+ * ### Sizes
+ *
+ * <div class="grid w-full max-w-sm gap-3">
+ *   <InputGroup size="sm">
+ *     <InputGroupInput placeholder="Small (h-8)" />
+ *   </InputGroup>
+ *   <InputGroup>
+ *     <InputGroupInput placeholder="Default (h-9)" />
+ *   </InputGroup>
+ *   <InputGroup size="lg">
+ *     <InputGroupInput placeholder="Large (h-10)" />
+ *   </InputGroup>
+ * </div>
+ *
+ * @api
+ *
+ * | Prop | Type | Default |
+ * | --- | --- | --- |
+ * | `size` | `"sm" \| "default" \| "lg"` | `"default"` |
+ */
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  as?: HTMLTag;
+  size?: VariantProps<typeof inputGroupVariants>["size"];
+  class?: string;
+} & HTMLAttributes<"div">;
+
+const {
+  as: Tag = "div",
+  size = "default",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const inputGroupVariants = cva(
+  "border-input dark:bg-input/30 has-[:focus-visible]:border-ring has-[:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 has-disabled:bg-input/50 dark:has-disabled:bg-input/80 rounded-lg border transition-colors in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:ring-0 has-disabled:opacity-50 has-[:focus-visible]:ring-3 has-[[data-slot][aria-invalid=true]]:ring-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto group/input-group relative flex w-full min-w-0 items-center outline-none",
+  {
+    variants: {
+      size: {
+        sm: "h-8 has-[>[data-align=block-end]]:[&>input[data-slot=input-group-control]]:pt-2 has-[>[data-align=block-start]]:[&>input[data-slot=input-group-control]]:pb-2 has-[>[data-align=inline-end]]:[&>[data-slot=input-group-control]]:pr-1.5 has-[>[data-align=inline-start]]:[&>[data-slot=input-group-control]]:pl-1.5",
+        default:
+          "h-9 has-[>[data-align=block-end]]:[&>input[data-slot=input-group-control]]:pt-2.5 has-[>[data-align=block-start]]:[&>input[data-slot=input-group-control]]:pb-2.5 has-[>[data-align=inline-end]]:[&>[data-slot=input-group-control]]:pr-1.5 has-[>[data-align=inline-start]]:[&>[data-slot=input-group-control]]:pl-1.5",
+        lg: "h-10 has-[>[data-align=block-end]]:[&>input[data-slot=input-group-control]]:pt-3 has-[>[data-align=block-start]]:[&>input[data-slot=input-group-control]]:pb-3 has-[>[data-align=inline-end]]:[&>[data-slot=input-group-control]]:pr-2 has-[>[data-align=inline-start]]:[&>[data-slot=input-group-control]]:pl-2",
+      },
+    },
+    defaultVariants: {
+      size: "default",
+    },
+  },
+);
+---
+
+<Tag
+  {...rest}
+  role="group"
+  data-slot="input-group"
+  data-size={size}
+  class={cn(inputGroupVariants({ size }), className)}
+>
+  <slot />
+</Tag>
+
+<script type="module">
+  // Focus the nearest input when clicking on addons (unless clicking a button)
+  document.addEventListener("click", (e) => {
+    const addon = e.target.closest("[data-slot='input-group-addon']");
+    if (!addon) return;
+    if (e.target.closest("button")) return;
+    const root = addon.closest("[data-slot='input-group']");
+    if (!root) return;
+    const input = root.querySelector("[data-slot='input-group-control']");
+    input?.focus();
+  });
+  // Disabled styling passthrough when any control is disabled
+  document.querySelectorAll("[data-slot='input-group']").forEach((group) => {
+    const updateDisabled = () => {
+      const ctrl = group.querySelector("[data-slot='input-group-control']");
+      group.dataset.disabled = ctrl?.hasAttribute("disabled")
+        ? "true"
+        : "false";
+    };
+    updateDisabled();
+    group.addEventListener("change", updateDisabled, { capture: true });
+  });
+</script>

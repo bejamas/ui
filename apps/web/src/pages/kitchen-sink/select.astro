@@ -1,0 +1,575 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import { Label } from "@bejamas/ui/components/label";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+  SelectLabel,
+  SelectSeparator,
+} from "@bejamas/ui/components/select";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@bejamas/ui/components/dialog";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Select</h1>
+
+    <KitchenSinkSection title="Default">
+      <p class="text-sm text-muted-foreground">Basic select with fruits</p>
+      <Select class="w-[200px]">
+        <SelectTrigger>
+          <SelectValue placeholder="Select a fruit" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="cherry">Cherry</SelectItem>
+          <SelectItem value="grape">Grape</SelectItem>
+          <SelectItem value="orange">Orange</SelectItem>
+        </SelectContent>
+      </Select>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Position Modes">
+      <p class="text-sm text-muted-foreground">
+        Side-by-side: item-aligned vs popper
+      </p>
+      <div class="flex gap-8">
+        <div class="space-y-2">
+          <Label for="item-aligned-select">Item-aligned (default)</Label>
+          <Select id="item-aligned-select" class="w-[180px]">
+            <SelectTrigger id="item-aligned-select">
+              <SelectValue placeholder="Select..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="option1">Option 1</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div class="space-y-2">
+          <Label for="popper-select">Popper mode</Label>
+          <Select id="popper-select" class="w-[180px]">
+            <SelectTrigger id="popper-select">
+              <SelectValue placeholder="Select..." />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectItem value="option1">Option 1</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Popper Mode Options">
+      <p class="text-sm text-muted-foreground">
+        Different side, align, and offset configurations
+      </p>
+      <div class="flex flex-wrap gap-8">
+        <div class="space-y-2">
+          <Label for="top-select">Side: top</Label>
+          <Select id="top-select" class="w-[180px]">
+            <SelectTrigger>
+              <SelectValue placeholder="Opens above" />
+            </SelectTrigger>
+            <SelectContent position="popper" side="top" class="w-[140px]">
+              <SelectItem value="option1">Option 1</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="space-y-2">
+          <Label>Align: center</Label>
+          <Select class="w-[180px]">
+            <SelectTrigger>
+              <SelectValue placeholder="Centered" />
+            </SelectTrigger>
+            <SelectContent position="popper" align="center" class="w-[140px]">
+              <SelectItem value="option1">Option 1</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="space-y-2">
+          <Label>Align: end</Label>
+          <Select class="w-[180px]">
+            <SelectTrigger>
+              <SelectValue placeholder="End aligned" />
+            </SelectTrigger>
+            <SelectContent position="popper" align="end" class="w-[140px]">
+              <SelectItem value="option1">Option 1</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="space-y-2">
+          <Label>With sideOffset: 12</Label>
+          <Select class="w-[180px]">
+            <SelectTrigger>
+              <SelectValue placeholder="Extra gap" />
+            </SelectTrigger>
+            <SelectContent position="popper" sideOffset={12} class="w-[140px]">
+              <SelectItem value="option1">Option 1</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Groups with Labels and Separators">
+      <p class="text-sm text-muted-foreground">
+        Organized with Fruits/Vegetables/Proteins
+      </p>
+      <Select class="w-[220px]">
+        <SelectTrigger>
+          <SelectValue placeholder="Select food" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Fruits</SelectLabel>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
+            <SelectItem value="cherry">Cherry</SelectItem>
+          </SelectGroup>
+          <SelectSeparator />
+          <SelectGroup>
+            <SelectLabel>Vegetables</SelectLabel>
+            <SelectItem value="carrot">Carrot</SelectItem>
+            <SelectItem value="broccoli">Broccoli</SelectItem>
+            <SelectItem value="spinach">Spinach</SelectItem>
+          </SelectGroup>
+          <SelectSeparator />
+          <SelectGroup>
+            <SelectLabel>Proteins</SelectLabel>
+            <SelectItem value="chicken">Chicken</SelectItem>
+            <SelectItem value="beef">Beef</SelectItem>
+            <SelectItem value="tofu">Tofu</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Scrollable">
+      <p class="text-sm text-muted-foreground">
+        Timezone selector with many items
+      </p>
+      <Select class="w-[280px]">
+        <SelectTrigger>
+          <SelectValue placeholder="Select timezone" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>North America</SelectLabel>
+            <SelectItem value="est">Eastern Standard Time (EST)</SelectItem>
+            <SelectItem value="cst">Central Standard Time (CST)</SelectItem>
+            <SelectItem value="mst">Mountain Standard Time (MST)</SelectItem>
+            <SelectItem value="pst">Pacific Standard Time (PST)</SelectItem>
+            <SelectItem value="akst">Alaska Standard Time (AKST)</SelectItem>
+            <SelectItem value="hst">Hawaii Standard Time (HST)</SelectItem>
+          </SelectGroup>
+          <SelectSeparator />
+          <SelectGroup>
+            <SelectLabel>Europe</SelectLabel>
+            <SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
+            <SelectItem value="cet">Central European Time (CET)</SelectItem>
+            <SelectItem value="eet">Eastern European Time (EET)</SelectItem>
+            <SelectItem value="wet">Western European Time (WET)</SelectItem>
+          </SelectGroup>
+          <SelectSeparator />
+          <SelectGroup>
+            <SelectLabel>Asia</SelectLabel>
+            <SelectItem value="msk">Moscow Time (MSK)</SelectItem>
+            <SelectItem value="ist">India Standard Time (IST)</SelectItem>
+            <SelectItem value="cst-asia">China Standard Time (CST)</SelectItem>
+            <SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
+            <SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
+            <SelectItem value="sgt">Singapore Time (SGT)</SelectItem>
+          </SelectGroup>
+          <SelectSeparator />
+          <SelectGroup>
+            <SelectLabel>Australia & Pacific</SelectLabel>
+            <SelectItem value="awst">Australian Western Time (AWST)</SelectItem>
+            <SelectItem value="acst">Australian Central Time (ACST)</SelectItem>
+            <SelectItem value="aest">Australian Eastern Time (AEST)</SelectItem>
+            <SelectItem value="nzst"
+              >New Zealand Standard Time (NZST)</SelectItem
+            >
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <p class="text-sm text-muted-foreground">
+        sm (h-8), default (h-9), lg (h-10) - matching Button and Input sizes
+      </p>
+      <div class="flex items-end gap-4">
+        <div class="space-y-2">
+          <Label>Small</Label>
+          <Select class="w-[180px]">
+            <SelectTrigger size="sm">
+              <SelectValue placeholder="Small size" />
+            </SelectTrigger>
+            <SelectContent size="sm">
+              <SelectItem value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+              <SelectItem value="cherry">Cherry</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="space-y-2">
+          <Label>Default</Label>
+          <Select class="w-[180px]">
+            <SelectTrigger>
+              <SelectValue placeholder="Default size" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+              <SelectItem value="cherry">Cherry</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="space-y-2">
+          <Label>Large</Label>
+          <Select class="w-[180px]">
+            <SelectTrigger size="lg">
+              <SelectValue placeholder="Large size" />
+            </SelectTrigger>
+            <SelectContent size="lg">
+              <SelectItem value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+              <SelectItem value="cherry">Cherry</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled Select">
+      <p class="text-sm text-muted-foreground">Entire select is disabled</p>
+      <Select disabled class="w-[200px]">
+        <SelectTrigger disabled>
+          <SelectValue placeholder="Disabled" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+        </SelectContent>
+      </Select>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled Items">
+      <p class="text-sm text-muted-foreground">Mix of enabled/disabled items</p>
+      <Select class="w-[200px]">
+        <SelectTrigger>
+          <SelectValue placeholder="Select option" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="available1">Available Option 1</SelectItem>
+          <SelectItem value="unavailable1" disabled
+            >Unavailable Option</SelectItem
+          >
+          <SelectItem value="available2">Available Option 2</SelectItem>
+          <SelectItem value="unavailable2" disabled>Also Unavailable</SelectItem
+          >
+          <SelectItem value="available3">Available Option 3</SelectItem>
+        </SelectContent>
+      </Select>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Invalid/Error State">
+      <p class="text-sm text-muted-foreground">With aria-invalid="true"</p>
+      <Select class="w-[200px]">
+        <SelectTrigger aria-invalid="true">
+          <SelectValue placeholder="Required field" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="cherry">Cherry</SelectItem>
+        </SelectContent>
+      </Select>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Default Value">
+      <p class="text-sm text-muted-foreground">Pre-selected value: "banana"</p>
+      <Select defaultValue="banana" class="w-[200px]">
+        <SelectTrigger>
+          <SelectValue placeholder="Select a fruit" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="cherry">Cherry</SelectItem>
+          <SelectItem value="grape">Grape</SelectItem>
+        </SelectContent>
+      </Select>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Event Testing">
+      <p class="text-sm text-muted-foreground">
+        Console logging select:change and select:open-change
+      </p>
+      <Select id="event-select" class="w-[200px]">
+        <SelectTrigger>
+          <SelectValue placeholder="Check console" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="option1">Option 1</SelectItem>
+          <SelectItem value="option2">Option 2</SelectItem>
+          <SelectItem value="option3">Option 3</SelectItem>
+        </SelectContent>
+      </Select>
+      <EventLog id="select-event-output" />
+      <script>
+        {
+          const eventSelect = document.getElementById("event-select");
+
+          function log(msg: string) {
+            (document.getElementById("select-event-output") as any)?._log(msg);
+          }
+
+          eventSelect?.addEventListener("select:change", (e: Event) => {
+            const { value } = (e as CustomEvent).detail;
+            log(`select:change → value: "${value}"`);
+          });
+
+          eventSelect?.addEventListener("select:open-change", (e: Event) => {
+            const { open } = (e as CustomEvent).detail;
+            log(`select:open-change → open: ${open}`);
+          });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <p class="text-sm text-muted-foreground">
+        Buttons to set value, open, close
+      </p>
+      <div class="flex flex-col gap-4">
+        <Select id="programmatic-select" class="w-[200px]">
+          <SelectTrigger>
+            <SelectValue placeholder="Control me" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
+            <SelectItem value="cherry">Cherry</SelectItem>
+          </SelectContent>
+        </Select>
+        <div class="flex flex-wrap gap-2">
+          <button
+            id="set-apple-btn"
+            class="px-3 py-1.5 text-sm border rounded-lg hover:bg-muted"
+          >
+            Set "Apple"
+          </button>
+          <button
+            id="set-banana-btn"
+            class="px-3 py-1.5 text-sm border rounded-lg hover:bg-muted"
+          >
+            Set "Banana"
+          </button>
+          <button
+            id="set-cherry-btn"
+            class="px-3 py-1.5 text-sm border rounded-lg hover:bg-muted"
+          >
+            Set "Cherry"
+          </button>
+          <button
+            id="open-btn"
+            class="px-3 py-1.5 text-sm border rounded-lg hover:bg-muted"
+          >
+            Open
+          </button>
+          <button
+            id="close-btn"
+            class="px-3 py-1.5 text-sm border rounded-lg hover:bg-muted"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      <script>
+        const programmaticSelect = document.getElementById(
+          "programmatic-select",
+        );
+
+        document
+          .getElementById("set-apple-btn")
+          ?.addEventListener("click", () => {
+            programmaticSelect?.dispatchEvent(
+              new CustomEvent("select:set", { detail: { value: "apple" } }),
+            );
+          });
+
+        document
+          .getElementById("set-banana-btn")
+          ?.addEventListener("click", () => {
+            programmaticSelect?.dispatchEvent(
+              new CustomEvent("select:set", { detail: { value: "banana" } }),
+            );
+          });
+
+        document
+          .getElementById("set-cherry-btn")
+          ?.addEventListener("click", () => {
+            programmaticSelect?.dispatchEvent(
+              new CustomEvent("select:set", { detail: { value: "cherry" } }),
+            );
+          });
+
+        document.getElementById("open-btn")?.addEventListener("click", () => {
+          programmaticSelect?.dispatchEvent(
+            new CustomEvent("select:set", { detail: { open: true } }),
+          );
+        });
+
+        document.getElementById("close-btn")?.addEventListener("click", () => {
+          programmaticSelect?.dispatchEvent(
+            new CustomEvent("select:set", { detail: { open: false } }),
+          );
+        });
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="In a Dialog">
+      <p class="text-sm text-muted-foreground">
+        Select inside a dialog — tests z-index stacking and focus management
+      </p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Open Dialog with Select</Button>
+        </DialogTrigger>
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Preferences</DialogTitle>
+            <DialogDescription>
+              Configure your preferences using the selects below.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="space-y-4 py-4">
+            <div class="space-y-2">
+              <Label>Favorite Fruit</Label>
+              <Select class="w-full">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a fruit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="apple">Apple</SelectItem>
+                  <SelectItem value="banana">Banana</SelectItem>
+                  <SelectItem value="cherry">Cherry</SelectItem>
+                  <SelectItem value="grape">Grape</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div class="space-y-2">
+              <Label>Priority</Label>
+              <Select class="w-full">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button data-slot="dialog-close" variant="outline">Cancel</Button>
+            <Button data-slot="dialog-close">Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Form Integration">
+      <p class="text-sm text-muted-foreground">Within a form with submit</p>
+      <form
+        id="test-form"
+        class="flex flex-col gap-4 p-4 border rounded-lg max-w-sm"
+      >
+        <div class="space-y-2">
+          <Label for="name">Name</Label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Enter your name"
+            class="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+          />
+        </div>
+        <div class="space-y-2">
+          <Label>Favorite Fruit</Label>
+          <Select name="fruit" class="w-full">
+            <SelectTrigger>
+              <SelectValue placeholder="Select a fruit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+              <SelectItem value="cherry">Cherry</SelectItem>
+              <SelectItem value="grape">Grape</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="space-y-2">
+          <Label>Priority</Label>
+          <Select name="priority" required class="w-full">
+            <SelectTrigger>
+              <SelectValue placeholder="Select priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="medium">Medium</SelectItem>
+              <SelectItem value="high">High</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <Button type="submit">Submit</Button>
+      </form>
+      <div id="form-output" class="text-sm text-muted-foreground"></div>
+      <script>
+        document
+          .getElementById("test-form")
+          ?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target as HTMLFormElement);
+            const data = Object.fromEntries(formData.entries());
+            const output = document.getElementById("form-output");
+            if (output) {
+              output.textContent = `Form data: ${JSON.stringify(data, null, 2)}`;
+            }
+            console.log("Form submitted:", data);
+          });
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

@@ -1,0 +1,78 @@
+---
+/**
+ * @component Breadcrumb
+ * @title Breadcrumb
+ * @description A navigation path showing the user's location in the site hierarchy with links to parent pages.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2543-3603&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <Breadcrumb>
+ *   <BreadcrumbList>
+ *     <BreadcrumbItem><a class="hover:text-foreground transition-colors" href="/">Home</a></BreadcrumbItem>
+ *     <BreadcrumbSeparator />
+ *     <BreadcrumbItem><a class="hover:text-foreground transition-colors" href="/docs">Docs</a></BreadcrumbItem>
+ *     <BreadcrumbSeparator />
+ *     <BreadcrumbItem><span class="text-foreground font-normal" aria-current="page">Page</span></BreadcrumbItem>
+ *   </BreadcrumbList>
+ * </Breadcrumb>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbSeparator } from '@bejamas/ui/components/breadcrumb';
+ * ---
+ *
+ * <Breadcrumb>
+ *   <BreadcrumbList>
+ *     <BreadcrumbItem><a href="/">Home</a></BreadcrumbItem>
+ *     <BreadcrumbSeparator />
+ *     <BreadcrumbItem><span aria-current="page">Page</span></BreadcrumbItem>
+ *   </BreadcrumbList>
+ * </Breadcrumb>
+ * ```
+ *
+ * @examples
+ *
+ * ### Custom separator
+ *
+ *  <Breadcrumb>
+ *    <BreadcrumbList>
+ *       <BreadcrumbItem><a class="hover:text-foreground transition-colors" href="/">Home</a></BreadcrumbItem>
+ *       <BreadcrumbSeparator>
+ *         <SlashIcon />
+ *       </BreadcrumbSeparator>
+ *       <BreadcrumbItem><a class="hover:text-foreground transition-colors" href="/docs">Docs</a></BreadcrumbItem>
+ *       <BreadcrumbSeparator>
+ *         <SlashIcon />
+ *       </BreadcrumbSeparator>
+ *       <BreadcrumbItem><span class="text-foreground font-normal" aria-current="page">Page</span></BreadcrumbItem>
+ *   </BreadcrumbList>
+ * </Breadcrumb>
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+} & HTMLAttributes<"nav">;
+
+const {
+  as: Tag = "nav",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Tag
+  {...rest}
+  aria-label="breadcrumb"
+  data-slot="breadcrumb"
+  class={cn(className)}
+>
+  <slot />
+</Tag>
+

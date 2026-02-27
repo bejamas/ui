@@ -1,0 +1,137 @@
+---
+/**
+ * @component Spinner
+ * @title Spinner
+ * @description A loading indicator component that displays an animated spinning icon.
+ *
+ * @preview
+ *
+ * <Item variant="muted" class="w-full max-w-xs">
+ *   <ItemMedia>
+ *     <Spinner />
+ *   </ItemMedia>
+ *   <ItemContent>
+ *     <ItemTitle class="line-clamp-1">Submitting Contact Form...</ItemTitle>
+ *   </ItemContent>
+ * </Item>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Spinner } from '@bejamas/ui/components/spinner';
+ * ---
+ *
+ * <Spinner />
+ * ```
+ *
+ * ## Customization
+ *
+ * You can replace the default spinner icon with any other icon by editing the `Spinner` component.
+ *
+ * ```astro showLineNumbers title="components/ui/spinner/Spinner.astro" nocollapse nopreview
+ * ---
+ * import { cn } from "@bejamas/ui/lib/utils";
+ * import { Loader as LoaderIcon } from "@lucide/astro";
+ *
+ * const { class: className = "", ...props } = Astro.props;
+ * ---
+ *
+ * <LoaderIcon
+ *   data-slot="spinner"
+ *   role="status"
+ *   aria-label="Loading"
+ *   class={cn("size-4 animate-spin", className)}
+ *   {...props}
+ * />
+ * ```
+ *
+ * @examples
+ *
+ * ### Size
+ *
+ * Use the `size-*` utility class to change the size of the spinner.
+ *
+ * <div class="flex items-center gap-6">
+ *   <Spinner class="size-3" />
+ *   <Spinner class="size-4" />
+ *   <Spinner class="size-6" />
+ *   <Spinner class="size-8" />
+ * </div>
+ *
+ * ### Button
+ *
+ * Add a spinner to a button to indicate a loading state. Remember to use the `data-icon` attribute for proper spacing.
+ *
+ * <div class="flex flex-col items-center gap-4">
+ *   <Button disabled size="sm">
+ *     <Spinner data-icon />
+ *     Loading...
+ *   </Button>
+ *   <Button variant="outline" disabled size="sm">
+ *     <Spinner data-icon />
+ *     Please wait
+ *   </Button>
+ *   <Button variant="secondary" disabled size="sm">
+ *     <Spinner data-icon />
+ *     Processing
+ *   </Button>
+ * </div>
+ *
+ * ### Badge
+ *
+ * Add a spinner to a badge to indicate a loading state.
+ *
+ * <div class="flex items-center gap-4 [--radius:1.2rem]">
+ *   <Badge>
+ *     <Spinner data-icon />
+ *     Syncing
+ *   </Badge>
+ *   <Badge variant="secondary">
+ *     <Spinner data-icon />
+ *     Updating
+ *   </Badge>
+ *   <Badge variant="outline">
+ *     <Spinner data-icon />
+ *     Processing
+ *   </Badge>
+ * </div>
+ *
+ * ### Input Group
+ *
+ * <div class="flex w-full max-w-md flex-col gap-4">
+ *   <InputGroup>
+ *     <InputGroupInput placeholder="Send a message..." disabled />
+ *     <InputGroupAddon align="inline-end">
+ *       <Spinner />
+ *     </InputGroupAddon>
+ *   </InputGroup>
+ *   <InputGroup>
+ *     <InputGroupTextarea placeholder="Send a message..." disabled />
+ *     <InputGroupAddon align="block-end">
+ *       <Spinner /> Validating...
+ *       <InputGroupButton class="ml-auto" variant="default">
+ *         <ArrowUpIcon />
+ *         <span class="sr-only">Send</span>
+ *       </InputGroupButton>
+ *     </InputGroupAddon>
+ *   </InputGroup>
+ * </div>
+ *
+ * @props
+ * - class?: string — Additional classes for styling (e.g., size-3, size-6).
+ */
+
+import { cn } from "@bejamas/ui/lib/utils";
+import { Loader2 as Loader2Icon } from "@lucide/astro";
+
+const { class: className = "", ...props } = Astro.props;
+---
+
+<Loader2Icon
+  data-slot="spinner"
+  role="status"
+  aria-label="Loading"
+  class={cn("size-4 animate-spin", className)}
+  {...props}
+/>

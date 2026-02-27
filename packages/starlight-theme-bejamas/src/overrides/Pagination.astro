@@ -1,6 +1,5 @@
 ---
-// import { Icon } from "@astrojs/starlight/components";
-import Button from "virtual:starlight-theme-bejamas/components/Button.astro";
+import { Button } from "virtual:starlight-theme-bejamas/components/button";
 import { ArrowRight, ArrowLeft } from "@lucide/astro";
 
 const { dir, pagination } = Astro.locals.starlightRoute;
@@ -8,7 +7,7 @@ const { prev, next } = pagination;
 const isRtl = dir === "rtl";
 ---
 
-<div class="sl-flex sl-justify-between print:hidden z-10" dir={dir}>
+<div class="print:hidden z-10 pagination-links" dir={dir}>
   {
     prev && (
       <Button as="a" href={prev.href} rel="prev" variant="outline">
@@ -27,26 +26,20 @@ const isRtl = dir === "rtl";
   }
 </div>
 
-<!-- <div class="text-center text-sm text-muted-foreground page-footer">
-  <p>
-    Built at <a href="https://bejamas.com" class="underline underline-offset-4"
-      >Bejamas</a
-    >.
-  </p>
-</div> -->
-
 <style>
   @layer starlight.core {
     .pagination-links {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+      display: flex;
+      justify-content: flex-end;
       gap: 1rem;
+      margin-top: calc(var(--spacing) * 5);
     }
 
     [rel="next"] {
       justify-content: end;
       text-align: end;
       flex-direction: row-reverse;
+      margin-left: auto;
     }
 
     svg {

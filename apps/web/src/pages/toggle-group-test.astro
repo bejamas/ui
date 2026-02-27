@@ -1,0 +1,341 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import { ToggleGroup, ToggleGroupItem } from "@bejamas/ui/components/toggle-group";
+import {
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  AlignLeftIcon,
+  AlignCenterIcon,
+  AlignRightIcon,
+  AlignVerticalJustifyStartIcon,
+  AlignVerticalJustifyCenterIcon,
+  AlignVerticalJustifyEndIcon,
+} from "@lucide/astro";
+---
+
+<BlockExampleLayout>
+  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Toggle Group Component Test</h1>
+
+    <!-- Basic Single Selection -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Basic Single Selection (default variant)</h2>
+      <ToggleGroup defaultValue="center">
+        <ToggleGroupItem value="left" aria-label="Align left">
+          <AlignLeftIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="center" aria-label="Align center">
+          <AlignCenterIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="right" aria-label="Align right">
+          <AlignRightIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+    </div>
+
+    <!-- Outline Variant -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Outline Variant</h2>
+      <ToggleGroup variant="outline" defaultValue="center">
+        <ToggleGroupItem value="left" aria-label="Align left">
+          <AlignLeftIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="center" aria-label="Align center">
+          <AlignCenterIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="right" aria-label="Align right">
+          <AlignRightIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+    </div>
+
+    <!-- Multiple Selection -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Multiple Selection</h2>
+      <p class="text-sm text-muted-foreground">
+        Multiple items can be selected simultaneously
+      </p>
+      <ToggleGroup multiple defaultValue={["bold", "italic"]} variant="outline">
+        <ToggleGroupItem value="bold" aria-label="Toggle bold">
+          <BoldIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="italic" aria-label="Toggle italic">
+          <ItalicIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="underline" aria-label="Toggle underline">
+          <UnderlineIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+    </div>
+
+    <!-- Sizes -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Sizes</h2>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-16">Small:</span>
+          <ToggleGroup size="sm" variant="outline" defaultValue="center">
+            <ToggleGroupItem value="left" aria-label="Align left">
+              <AlignLeftIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="center" aria-label="Align center">
+              <AlignCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="right" aria-label="Align right">
+              <AlignRightIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-16">Default:</span>
+          <ToggleGroup size="default" variant="outline" defaultValue="center">
+            <ToggleGroupItem value="left" aria-label="Align left">
+              <AlignLeftIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="center" aria-label="Align center">
+              <AlignCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="right" aria-label="Align right">
+              <AlignRightIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-muted-foreground w-16">Large:</span>
+          <ToggleGroup size="lg" variant="outline" defaultValue="center">
+            <ToggleGroupItem value="left" aria-label="Align left">
+              <AlignLeftIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="center" aria-label="Align center">
+              <AlignCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="right" aria-label="Align right">
+              <AlignRightIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vertical Orientation -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Vertical Orientation</h2>
+      <div class="flex gap-8">
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">Default variant</p>
+          <ToggleGroup orientation="vertical" defaultValue="middle">
+            <ToggleGroupItem value="top" aria-label="Align top">
+              <AlignVerticalJustifyStartIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="middle" aria-label="Align middle">
+              <AlignVerticalJustifyCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="bottom" aria-label="Align bottom">
+              <AlignVerticalJustifyEndIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">Outline variant</p>
+          <ToggleGroup orientation="vertical" variant="outline" defaultValue="middle">
+            <ToggleGroupItem value="top" aria-label="Align top">
+              <AlignVerticalJustifyStartIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="middle" aria-label="Align middle">
+              <AlignVerticalJustifyCenterIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="bottom" aria-label="Align bottom">
+              <AlignVerticalJustifyEndIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disabled -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Disabled</h2>
+      <div class="flex gap-4">
+        <ToggleGroup disabled defaultValue="center">
+          <ToggleGroupItem value="left" aria-label="Align left">
+            <AlignLeftIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="center" aria-label="Align center">
+            <AlignCenterIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="right" aria-label="Align right">
+            <AlignRightIcon />
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <ToggleGroup disabled variant="outline" defaultValue="center">
+          <ToggleGroupItem value="left" aria-label="Align left">
+            <AlignLeftIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="center" aria-label="Align center">
+            <AlignCenterIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="right" aria-label="Align right">
+            <AlignRightIcon />
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+    </div>
+
+    <!-- Event Testing -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Event Testing</h2>
+      <p class="text-sm text-muted-foreground">
+        Click the toggles and check the console for toggle-group:change events
+      </p>
+      <ToggleGroup id="event-toggle-group" variant="outline" defaultValue="center">
+        <ToggleGroupItem value="left" aria-label="Align left">
+          <AlignLeftIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="center" aria-label="Align center">
+          <AlignCenterIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="right" aria-label="Align right">
+          <AlignRightIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <div id="event-output" class="text-sm p-3 bg-muted rounded-lg font-mono">
+        Selected: ["center"]
+      </div>
+      <script>
+        const eventGroup = document.getElementById("event-toggle-group");
+        const eventOutput = document.getElementById("event-output");
+        eventGroup?.addEventListener("toggle-group:change", (e: Event) => {
+          const detail = (e as CustomEvent).detail;
+          console.log("toggle-group:change event:", detail);
+          if (eventOutput) {
+            eventOutput.textContent = `Selected: ${JSON.stringify(detail.value)}`;
+          }
+        });
+      </script>
+    </div>
+
+    <!-- Programmatic Control -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Programmatic Control</h2>
+      <ToggleGroup id="programmatic-toggle-group" variant="outline">
+        <ToggleGroupItem value="left" aria-label="Align left">
+          <AlignLeftIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="center" aria-label="Align center">
+          <AlignCenterIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="right" aria-label="Align right">
+          <AlignRightIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <div class="flex items-center gap-2">
+        <button
+          id="set-left-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Left
+        </button>
+        <button
+          id="set-center-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Center
+        </button>
+        <button
+          id="set-right-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Right
+        </button>
+        <button
+          id="clear-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Clear
+        </button>
+      </div>
+      <script>
+        const toggleGroup = document.getElementById("programmatic-toggle-group");
+        document.getElementById("set-left-btn")?.addEventListener("click", () => {
+          toggleGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: ["left"] } })
+          );
+        });
+        document.getElementById("set-center-btn")?.addEventListener("click", () => {
+          toggleGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: ["center"] } })
+          );
+        });
+        document.getElementById("set-right-btn")?.addEventListener("click", () => {
+          toggleGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: ["right"] } })
+          );
+        });
+        document.getElementById("clear-btn")?.addEventListener("click", () => {
+          toggleGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: [] } })
+          );
+        });
+      </script>
+    </div>
+
+    <!-- Multiple Selection with Programmatic Control -->
+    <div class="space-y-4">
+      <h2 class="text-lg font-semibold">Multiple Selection with Programmatic Control</h2>
+      <ToggleGroup id="multi-programmatic" multiple variant="outline">
+        <ToggleGroupItem value="bold" aria-label="Toggle bold">
+          <BoldIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="italic" aria-label="Toggle italic">
+          <ItalicIcon />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="underline" aria-label="Toggle underline">
+          <UnderlineIcon />
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <div class="flex items-center gap-2">
+        <button
+          id="set-all-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Select All
+        </button>
+        <button
+          id="set-bold-italic-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Bold + Italic
+        </button>
+        <button
+          id="clear-multi-btn"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Clear All
+        </button>
+      </div>
+      <script>
+        const multiGroup = document.getElementById("multi-programmatic");
+        document.getElementById("set-all-btn")?.addEventListener("click", () => {
+          multiGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", {
+              detail: { value: ["bold", "italic", "underline"] },
+            })
+          );
+        });
+        document.getElementById("set-bold-italic-btn")?.addEventListener("click", () => {
+          multiGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", {
+              detail: { value: ["bold", "italic"] },
+            })
+          );
+        });
+        document.getElementById("clear-multi-btn")?.addEventListener("click", () => {
+          multiGroup?.dispatchEvent(
+            new CustomEvent("toggle-group:set", { detail: { value: [] } })
+          );
+        });
+      </script>
+    </div>
+  </section>
+</BlockExampleLayout>

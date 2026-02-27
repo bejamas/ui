@@ -1,8 +1,8 @@
 ---
 import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
-import Button from "@bejamas/ui/components/Button.astro";
+import { Button } from "@bejamas/ui/components/button";
 import NavigationMenu from "@/ui-next/NavigationMenu.astro";
-import StickySurface from "@bejamas/ui/components/StickySurface.astro";
+import { StickySurface } from "@bejamas/ui/components/sticky-surface";
 ---
 
 <BlockExampleLayout theme="tokyo">
@@ -50,41 +50,21 @@ import StickySurface from "@bejamas/ui/components/StickySurface.astro";
         slot="actions"
         class="flex col-span-2 justify-end items-center gap-2"
       >
-        <Button
-          variant="secondary"
-          class="group-[.is-stuck]/surface:bg-primary group-[.is-stuck]/surface:text-primary-foreground text-base font-semibold"
-          >Get Started</Button
-        >
+        <Button variant="outline" class="text-base">Sign Up</Button>
       </div>
     </NavigationMenu>
   </StickySurface>
 
-  <div class="max-w-[1600px] mx-auto py-20 grid grid-cols-12">
-    <div class="col-span-6 col-start-7">
-      <h1 class="text-3xl tracking-tighter max-w-sm">
-        Make your crypto move with us Want to get the best prices in DeFi right
-        now?
-      </h1>
+  <section class="py-20 relative z-10 max-w-[1600px] mx-auto px-5">
+    <h1 class="text-7xl font-medium tracking-tight">
+      AI-powered financial management for businesses
+    </h1>
+    <p class="text-3xl mt-8">
+      A powerful combination of efficiency, quality and flexibility for anyone
+      looking to streamline their design workflow.
+    </p>
+    <div class="mt-10">
+      <Button size="lg">Get Started</Button>
     </div>
-  </div>
-
-  <div class="relative">
-    <img
-      src="/demo/ce1eef98818713195a5a8fbd1428cd3a9ba2baa9.png"
-      class="object-contain absolute left-0 z-30 h-full w-auto"
-    />
-    <img
-      src="/demo/ce1eef98818713195a5a8fbd1428cd3a9ba2baa9.png"
-      class="w-auto h-full object-contain absolute z-20 left-1/4"
-    />
-    <img
-      src="/demo/5da428d9994d1e1aa4dbc7149569a331e2b4cc0c.png"
-      class="w-1/2 h-full object-contain left-1/2 relative"
-    />
-    <div
-      class="absolute max-w-md bottom-50 z-30 left-1/2 w-full text-white text-4xl font-medium"
-    >
-      <h2>A predictive, presonalised trading platform</h2>
-    </div>
-  </div>
+  </section>
 </BlockExampleLayout>

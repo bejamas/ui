@@ -1,0 +1,324 @@
+---
+title: Forms with Astro Actions
+description: Build validated forms in Astro with Actions and bejamas/ui Field primitives.
+sidebar:
+  order: 8
+---
+
+import {
+  Tabs as DocsTabs,
+  TabItem as DocsTabItem,
+} from "@astrojs/starlight/components";
+import FormActionInlineDemo from "@/components/docs/forms/FormActionInlineDemo.astro";
+import FormActionSummaryDemo from "@/components/docs/forms/FormActionSummaryDemo.astro";
+
+In this guide, we will build a contact form with Astro Actions and bejamas/ui Field primitives.
+
+You will use:
+
+- **Astro Actions** for server-side validation and mutation.
+- **Standard HTML forms** for progressive enhancement.
+- **`Field` primitives** (`Field`, `FieldSet`, `FieldError`, etc.) for consistent UI.
+
+## Prerequisites
+
+- Astro v5+ project.
+- `@bejamas/ui` components installed.
+- `zod` (already present in Astro).
+
+## Live Demos
+
+These demos are interactive and call real Astro Actions from this docs page.
+
+### Inline field errors
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 py-12 md:px-10 border border-border rounded-t-lg">
+  <FormActionInlineDemo />
+</div>
+
+Submit with empty fields first, then update values and submit again.
+
+### Error summary and quick-fill presets
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 py-12 md:px-10 border border-border rounded-t-lg">
+  <FormActionSummaryDemo />
+</div>
+
+Use the quick-fill buttons to test both invalid and valid payloads fast.
+
+## Implementation
+
+### 1. Define Actions
+
+Create `src/actions/index.ts`:
+
+```ts title="src/actions/index.ts" showLineNumbers nocollapse
+import { defineAction } from "astro:actions";
+import { z } from "astro:schema";
+
+const contactInput = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters."),
+  email: z.string().trim().email("Enter a valid email address."),
+  message: z.string().trim().min(10, "Message must be at least 10 characters."),
+});
+
+export const server = {
+  contactServer: defineAction({
+    accept: "form",
+    input: contactInput,
+    handler: async (input) => {
+      return {
+        message: `Thanks ${input.name}, your message has been received.`,
+      };
+    },
+  }),
+
+  contactClient: defineAction({
+    accept: "form",
+    input: contactInput,
+    handler: async (input) => {
+      return {
+        message: `Submitted from client script for ${input.name}.`,
+      };
+    },
+  }),
+};
+```
+
+### 2. Choose a Submission Pattern
+
+<DocsTabs>
+  <DocsTabItem label="A: Native POST + Server Render">
+
+Use a standard form with `method="POST"` and `action={actions.contactServer}`.
+Then read submission results on render with `Astro.getActionResult()`.
+
+```astro title="src/pages/contact.astro" showLineNumbers nocollapse
+---
+export const prerender = false;
+
+import { actions, isInputError } from "astro:actions";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@bejamas/ui/components/field";
+import { Input } from "@bejamas/ui/components/input";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import { Textarea } from "@bejamas/ui/components/textarea";
+import { Button } from "@bejamas/ui/components/button";
+
+const result = Astro.getActionResult(actions.contactServer);
+const fields =
+  result?.error && isInputError(result.error) ? result.error.fields : {};
+---
+
+<form method="POST" action={actions.contactServer} class="w-full max-w-xl">
+  <FieldSet>
+    <FieldLegend>Contact us</FieldLegend>
+    <FieldGroup>
+      <Field>
+        <FieldLabel for="name">Name</FieldLabel>
+        <Input id="name" name="name" />
+        <FieldError errors={fields.name?.map((message) => ({ message }))} />
+      </Field>
+
+      <Field>
+        <FieldLabel for="email">Email</FieldLabel>
+        <Input id="email" name="email" type="email" />
+        <FieldError errors={fields.email?.map((message) => ({ message }))} />
+      </Field>
+
+      <Field>
+        <FieldLabel for="message">Message</FieldLabel>
+        <Textarea id="message" name="message" rows={4} />
+        <FieldError errors={fields.message?.map((message) => ({ message }))} />
+      </Field>
+
+      <Button type="submit" class="w-fit" data-submit-button>
+        <Spinner data-icon class="hidden" />
+        <span data-submit-label>Send</span>
+      </Button>
+      <Button type="reset" variant="outline" class="w-fit" data-reset-button>
+        Reset
+      </Button>
+    </FieldGroup>
+  </FieldSet>
+</form>
+
+{result?.data && <p>{result.data.message}</p>}
+```
+
+  </DocsTabItem>
+
+  <DocsTabItem label="B: Client Script + RPC">
+
+Handle submit in a client `<script>` and call `actions.contactClient(formData)`.
+
+```astro title="src/pages/contact.astro" showLineNumbers nocollapse
+---
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@bejamas/ui/components/field";
+import { Input } from "@bejamas/ui/components/input";
+import { Spinner } from "@bejamas/ui/components/spinner";
+import { Textarea } from "@bejamas/ui/components/textarea";
+import { Button } from "@bejamas/ui/components/button";
+---
+
+<form id="client-action-form" class="w-full max-w-xl">
+  <FieldSet>
+    <FieldLegend>Contact us</FieldLegend>
+    <FieldGroup>
+      <Field>
+        <FieldLabel for="name">Name</FieldLabel>
+        <Input id="name" name="name" />
+        <FieldError forceMount class="hidden" data-error-for="name" />
+      </Field>
+
+      <Field>
+        <FieldLabel for="email">Email</FieldLabel>
+        <Input id="email" name="email" type="email" />
+        <FieldError forceMount class="hidden" data-error-for="email" />
+      </Field>
+
+      <Field>
+        <FieldLabel for="message">Message</FieldLabel>
+        <Textarea id="message" name="message" rows={4} />
+        <FieldError forceMount class="hidden" data-error-for="message" />
+      </Field>
+
+      <Button type="submit" class="w-fit" data-submit-button>
+        <Spinner data-icon class="hidden" />
+        <span data-submit-label>Send</span>
+      </Button>
+      <Button type="reset" variant="outline" class="w-fit" data-reset-button>
+        Reset
+      </Button>
+    </FieldGroup>
+  </FieldSet>
+</form>
+
+<script>
+  import { actions, isInputError } from "astro:actions";
+
+  const form = document.getElementById("client-action-form");
+  const submitButton = form?.querySelector("[data-submit-button]");
+  const resetButton = form?.querySelector("[data-reset-button]");
+  const submitLabel = form?.querySelector("[data-submit-label]");
+  const submitSpinner = submitButton?.querySelector('[data-slot="spinner"]');
+  const idleLabel =
+    submitLabel instanceof HTMLElement
+      ? submitLabel.textContent || "Send"
+      : "Send";
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const setSubmitting = (submitting) => {
+    if (submitButton instanceof HTMLButtonElement) {
+      submitButton.disabled = submitting;
+    }
+    if (resetButton instanceof HTMLButtonElement) {
+      resetButton.disabled = submitting;
+    }
+    if (submitSpinner instanceof Element) {
+      submitSpinner.classList.toggle("hidden", !submitting);
+    }
+    if (submitLabel instanceof HTMLElement) {
+      submitLabel.textContent = submitting ? "Submitting..." : idleLabel;
+    }
+  };
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+
+    const [result] = await Promise.all([
+      actions.contactClient(new FormData(form)),
+      wait(900),
+    ]);
+    setSubmitting(false);
+
+    if (result.error && isInputError(result.error)) {
+      const fields = result.error.fields;
+      // write message text into [data-error-for] nodes and remove `hidden`
+      return;
+    }
+
+    if (result.data) {
+      form.reset();
+    }
+  });
+
+  form?.addEventListener("reset", () => {
+    setSubmitting(false);
+    // clear custom error nodes for [data-error-for]
+  });
+</script>
+```
+
+  </DocsTabItem>
+</DocsTabs>
+
+### 3. Field-Level Validation with `FieldError`
+
+`FieldError` accepts an array shape compatible with action field messages:
+
+```astro
+<FieldError errors={fields.email?.map((message) => ({ message }))} />
+```
+
+If multiple unique messages are present, `FieldError` renders a list automatically.
+
+For client-script forms in Astro, mount `FieldError` once and toggle visibility:
+
+```astro
+<FieldError forceMount class="hidden" data-error-for="email" />
+```
+
+Then set text and remove `hidden` when validation fails.
+
+### 4. Calling Actions from Server Code
+
+Use `Astro.callAction()` when invoking an action from a page endpoint-like flow.
+
+```ts title="server call example" showLineNumbers nocollapse
+import { actions } from "astro:actions";
+
+const formData = new FormData();
+formData.set("name", "Ada Lovelace");
+formData.set("email", "ada@example.com");
+formData.set("message", "Interested in your Astro UI system.");
+
+const result = await Astro.callAction(actions.contactServer, formData);
+```
+
+### 5. Production Notes
+
+- Action POST flows require **on-demand rendering** routes.
+- For pages that handle form submissions, set:
+
+```tsx
+export const prerender = false;
+```
+
+- Astro performs request-origin checks for Action requests.
+
+### 6. Which Pattern Should You Use?
+
+| Pattern                                 | Best for                               | Pros                                                  | Tradeoff                                        |
+| --------------------------------------- | -------------------------------------- | ----------------------------------------------------- | ----------------------------------------------- |
+| Native POST + `Astro.getActionResult()` | Content sites, progressive enhancement | Works without JS, straightforward SSR error rendering | Full-page navigation cycle                      |
+| Client script + `actions.*(formData)`   | App-like interactions                  | No page reload, granular UX control                   | Requires client JS and manual UI state handling |
+
+## References
+
+- [Astro Actions Guide](https://docs.astro.build/en/guides/actions/)
+- [Astro `astro:actions` API reference](https://docs.astro.build/en/reference/modules/astro-actions/)

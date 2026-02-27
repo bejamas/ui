@@ -1,0 +1,48 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+type Props = {
+  as?: HTMLTag;
+  class?: string;
+  src?: string;
+  alt?: string;
+} & HTMLAttributes<"img">;
+
+const {
+  as,
+  class: className = "",
+  src,
+  alt = "",
+  ...rest
+} = Astro.props as Props;
+
+const Tag = (as ?? "div") as HTMLTag;
+---
+
+{
+  src || as === "img" ? (
+    <img
+      {...rest}
+      data-slot="avatar-image"
+      src={src}
+      alt={alt}
+      class={cn(
+        "relative z-10 rounded-full aspect-square size-full object-cover",
+        className,
+      )}
+    />
+  ) : (
+    <Tag
+      {...rest}
+      data-slot="avatar-image"
+      class={cn(
+        "relative z-10 rounded-full aspect-square size-full overflow-hidden",
+        "[&_img]:size-full [&_img]:object-cover",
+        className,
+      )}
+    >
+      <slot />
+    </Tag>
+  )
+}

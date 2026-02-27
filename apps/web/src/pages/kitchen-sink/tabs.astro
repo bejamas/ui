@@ -1,0 +1,833 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import EventLog from "@/components/EventLog.astro";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@bejamas/ui/components/tabs";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@bejamas/ui/components/card";
+import { Button } from "@bejamas/ui/components/button";
+import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/ui/components/label";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Tabs</h1>
+
+    <KitchenSinkSection title="Basic">
+      <Tabs defaultValue="account">
+        <TabsList>
+          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="password">Password</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
+        <TabsContent value="account">
+          <p class="text-sm text-muted-foreground p-4">
+            Make changes to your account here. Click save when you're done.
+          </p>
+        </TabsContent>
+        <TabsContent value="password">
+          <p class="text-sm text-muted-foreground p-4">
+            Change your password here. After saving, you'll be logged out.
+          </p>
+        </TabsContent>
+        <TabsContent value="settings">
+          <p class="text-sm text-muted-foreground p-4">
+            Configure your application settings and preferences.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Animated Indicator (Default)">
+      <Tabs defaultValue="overview">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
+        </TabsList>
+        <TabsContent value="overview">
+          <p class="text-sm text-muted-foreground p-4">
+            Overview of your dashboard with key metrics.
+          </p>
+        </TabsContent>
+        <TabsContent value="analytics">
+          <p class="text-sm text-muted-foreground p-4">
+            Detailed analytics and usage statistics.
+          </p>
+        </TabsContent>
+        <TabsContent value="reports">
+          <p class="text-sm text-muted-foreground p-4">
+            Generated reports and downloadable data.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Shadcn Default Variant">
+      <Tabs defaultValue="default-overview">
+        <TabsList variant="default">
+          <TabsTrigger value="default-overview">Overview</TabsTrigger>
+          <TabsTrigger value="default-analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="default-reports">Reports</TabsTrigger>
+        </TabsList>
+        <TabsContent value="default-overview">
+          <p class="text-sm text-muted-foreground p-4">
+            Default variant uses active trigger background styling.
+          </p>
+        </TabsContent>
+        <TabsContent value="default-analytics">
+          <p class="text-sm text-muted-foreground p-4">
+            Analytics content for shadcn default variant.
+          </p>
+        </TabsContent>
+        <TabsContent value="default-reports">
+          <p class="text-sm text-muted-foreground p-4">
+            Reports content for shadcn default variant.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Shadcn Line Variant">
+      <Tabs defaultValue="line-overview">
+        <TabsList variant="line">
+          <TabsTrigger value="line-overview">Overview</TabsTrigger>
+          <TabsTrigger value="line-analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="line-reports">Reports</TabsTrigger>
+        </TabsList>
+        <TabsContent value="line-overview">
+          <p class="text-sm text-muted-foreground p-4">
+            Line variant uses an active underline style.
+          </p>
+        </TabsContent>
+        <TabsContent value="line-analytics">
+          <p class="text-sm text-muted-foreground p-4">
+            Analytics content for shadcn line variant.
+          </p>
+        </TabsContent>
+        <TabsContent value="line-reports">
+          <p class="text-sm text-muted-foreground p-4">
+            Reports content for shadcn line variant.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Animated Line Variant">
+      <Tabs defaultValue="line-animated-overview">
+        <TabsList variant="line-animated">
+          <TabsTrigger value="line-animated-overview">Overview</TabsTrigger>
+          <TabsTrigger value="line-animated-analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="line-animated-reports">Reports</TabsTrigger>
+        </TabsList>
+        <TabsContent value="line-animated-overview">
+          <p class="text-sm text-muted-foreground p-4">
+            Animated line variant uses a shared moving underline.
+          </p>
+        </TabsContent>
+        <TabsContent value="line-animated-analytics">
+          <p class="text-sm text-muted-foreground p-4">
+            Analytics content for animated line variant.
+          </p>
+        </TabsContent>
+        <TabsContent value="line-animated-reports">
+          <p class="text-sm text-muted-foreground p-4">
+            Reports content for animated line variant.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Variants Alignment">
+      <div class="flex flex-wrap items-start gap-6">
+        <Tabs defaultValue="align-indicator-overview">
+          <TabsList>
+            <TabsTrigger value="align-indicator-overview">Overview</TabsTrigger>
+            <TabsTrigger value="align-indicator-analytics"
+              >Analytics</TabsTrigger
+            >
+          </TabsList>
+        </Tabs>
+
+        <Tabs defaultValue="align-default-overview">
+          <TabsList variant="default">
+            <TabsTrigger value="align-default-overview">Overview</TabsTrigger>
+            <TabsTrigger value="align-default-analytics">Analytics</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        <Tabs defaultValue="align-line-overview">
+          <TabsList variant="line">
+            <TabsTrigger value="align-line-overview">Overview</TabsTrigger>
+            <TabsTrigger value="align-line-analytics">Analytics</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        <Tabs defaultValue="align-line-animated-overview">
+          <TabsList variant="line-animated">
+            <TabsTrigger value="align-line-animated-overview">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="align-line-animated-analytics">
+              Analytics
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Content Animations">
+      <div class="space-y-6">
+        <Tabs defaultValue="fade-overview">
+          <TabsList variant="default">
+            <TabsTrigger value="fade-overview">Overview</TabsTrigger>
+            <TabsTrigger value="fade-analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="fade-reports">Reports</TabsTrigger>
+          </TabsList>
+          <TabsContent value="fade-overview" animation="fade">
+            <p class="text-sm text-muted-foreground p-4">
+              Fade animation on tab panel entry.
+            </p>
+          </TabsContent>
+          <TabsContent value="fade-analytics" animation="fade">
+            <p class="text-sm text-muted-foreground p-4">
+              Analytics content with fade transition.
+            </p>
+          </TabsContent>
+          <TabsContent value="fade-reports" animation="fade">
+            <p class="text-sm text-muted-foreground p-4">
+              Reports content with fade transition.
+            </p>
+          </TabsContent>
+        </Tabs>
+
+        <Tabs defaultValue="slide-overview">
+          <TabsList variant="default">
+            <TabsTrigger value="slide-overview">Overview</TabsTrigger>
+            <TabsTrigger value="slide-analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="slide-reports">Reports</TabsTrigger>
+          </TabsList>
+          <TabsContent value="slide-overview" animation="slide">
+            <p class="text-sm text-muted-foreground p-4">
+              Slide animation on tab panel entry.
+            </p>
+          </TabsContent>
+          <TabsContent value="slide-analytics" animation="slide">
+            <p class="text-sm text-muted-foreground p-4">
+              Analytics content with slide transition.
+            </p>
+          </TabsContent>
+          <TabsContent value="slide-reports" animation="slide">
+            <p class="text-sm text-muted-foreground p-4">
+              Reports content with slide transition.
+            </p>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Direction Content Animation">
+      <div class="space-y-6">
+        <Tabs defaultValue="direction-overview">
+          <TabsList variant="default">
+            <TabsTrigger value="direction-overview">Overview</TabsTrigger>
+            <TabsTrigger value="direction-analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="direction-reports">Reports</TabsTrigger>
+          </TabsList>
+          <TabsContent value="direction-overview" animation="direction">
+            <p class="text-sm text-muted-foreground p-4">
+              Uses left/right direction for horizontal tab changes.
+            </p>
+          </TabsContent>
+          <TabsContent value="direction-analytics" animation="direction">
+            <p class="text-sm text-muted-foreground p-4">
+              Move across tabs to see directional panel motion.
+            </p>
+          </TabsContent>
+          <TabsContent value="direction-reports" animation="direction">
+            <p class="text-sm text-muted-foreground p-4">
+              Direction attribute comes from data-slot tabs runtime.
+            </p>
+          </TabsContent>
+        </Tabs>
+
+        <Tabs
+          defaultValue="direction-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="default" class="min-w-40">
+            <TabsTrigger value="direction-profile" class="justify-start px-3">
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="direction-billing" class="justify-start px-3">
+              Billing
+            </TabsTrigger>
+            <TabsTrigger
+              value="direction-notifications"
+              class="justify-start px-3"
+            >
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent
+              value="direction-profile"
+              animation="direction"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Uses up/down direction for vertical tab changes.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="direction-billing"
+              animation="direction"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Switch between items to verify vertical directional motion.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="direction-notifications"
+              animation="direction"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Directional animation works for keyboard and click navigation.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Vertical Variants">
+      <div class="space-y-6">
+        <Tabs
+          defaultValue="indicator-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="indicator" class="min-w-40">
+            <TabsTrigger value="indicator-profile" class="justify-start px-3">
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="indicator-billing" class="justify-start px-3">
+              Billing
+            </TabsTrigger>
+            <TabsTrigger
+              value="indicator-notifications"
+              class="justify-start px-3"
+            >
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent
+              value="indicator-profile"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Vertical indicator variant.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="indicator-billing"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Manage payment methods and invoices.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="indicator-notifications"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Configure notification preferences.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+
+        <Tabs
+          defaultValue="default-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="default" class="min-w-40">
+            <TabsTrigger value="default-profile" class="justify-start px-3">
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="default-billing" class="justify-start px-3">
+              Billing
+            </TabsTrigger>
+            <TabsTrigger
+              value="default-notifications"
+              class="justify-start px-3"
+            >
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent
+              value="default-profile"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Vertical default variant.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="default-billing"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Manage payment methods and invoices.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="default-notifications"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Configure notification preferences.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+
+        <Tabs
+          defaultValue="line-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="line" class="min-w-40">
+            <TabsTrigger value="line-profile" class="justify-start px-3">
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="line-billing" class="justify-start px-3">
+              Billing
+            </TabsTrigger>
+            <TabsTrigger value="line-notifications" class="justify-start px-3">
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent
+              value="line-profile"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Vertical line variant.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="line-billing"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Manage payment methods and invoices.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="line-notifications"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Configure notification preferences.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+
+        <Tabs
+          defaultValue="line-animated-profile"
+          orientation="vertical"
+          class="w-full max-w-xl"
+        >
+          <TabsList variant="line-animated" class="min-w-40">
+            <TabsTrigger
+              value="line-animated-profile"
+              class="justify-start px-3"
+            >
+              Profile
+            </TabsTrigger>
+            <TabsTrigger
+              value="line-animated-billing"
+              class="justify-start px-3"
+            >
+              Billing
+            </TabsTrigger>
+            <TabsTrigger
+              value="line-animated-notifications"
+              class="justify-start px-3"
+            >
+              Notifications
+            </TabsTrigger>
+          </TabsList>
+
+          <div class="flex-1">
+            <TabsContent
+              value="line-animated-profile"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Vertical animated line variant.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="line-animated-billing"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Manage payment methods and invoices.
+              </p>
+            </TabsContent>
+            <TabsContent
+              value="line-animated-notifications"
+              class="mt-0 rounded-lg border p-4"
+            >
+              <p class="text-sm text-muted-foreground">
+                Configure notification preferences.
+              </p>
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Sizes">
+      <div class="space-y-5">
+        <Tabs defaultValue="sm-account">
+          <div class="flex flex-wrap items-center gap-2">
+            <TabsList size="sm">
+              <TabsTrigger value="sm-account" class="text-xs px-2">
+                Account
+              </TabsTrigger>
+              <TabsTrigger value="sm-password" class="text-xs px-2">
+                Password
+              </TabsTrigger>
+            </TabsList>
+            <Button size="sm" variant="outline">Save</Button>
+          </div>
+          <TabsContent value="sm-account">
+            <p class="text-xs text-muted-foreground p-3">Small tabs.</p>
+          </TabsContent>
+          <TabsContent value="sm-password">
+            <p class="text-xs text-muted-foreground p-3">Small tabs content.</p>
+          </TabsContent>
+        </Tabs>
+
+        <Tabs defaultValue="md-account">
+          <div class="flex flex-wrap items-center gap-2">
+            <TabsList size="default">
+              <TabsTrigger value="md-account">Account</TabsTrigger>
+              <TabsTrigger value="md-password">Password</TabsTrigger>
+            </TabsList>
+            <Button variant="outline">Save</Button>
+          </div>
+          <TabsContent value="md-account">
+            <p class="text-sm text-muted-foreground p-4">Default tabs.</p>
+          </TabsContent>
+          <TabsContent value="md-password">
+            <p class="text-sm text-muted-foreground p-4">
+              Default tabs content.
+            </p>
+          </TabsContent>
+        </Tabs>
+
+        <Tabs defaultValue="lg-account">
+          <div class="flex flex-wrap items-center gap-2">
+            <TabsList size="lg">
+              <TabsTrigger value="lg-account" class="text-base px-4">
+                Account
+              </TabsTrigger>
+              <TabsTrigger value="lg-password" class="text-base px-4">
+                Password
+              </TabsTrigger>
+            </TabsList>
+            <Button size="lg" variant="outline">Save</Button>
+          </div>
+          <TabsContent value="lg-account">
+            <p class="text-base text-muted-foreground p-4">Large tabs.</p>
+          </TabsContent>
+          <TabsContent value="lg-password">
+            <p class="text-base text-muted-foreground p-4">
+              Large tabs content.
+            </p>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="With Cards">
+      <Tabs defaultValue="account-card">
+        <TabsList class="w-full">
+          <TabsTrigger value="account-card" class="flex-1">Account</TabsTrigger>
+          <TabsTrigger value="password-card" class="flex-1"
+            >Password</TabsTrigger
+          >
+        </TabsList>
+        <TabsContent value="account-card">
+          <Card>
+            <CardHeader>
+              <CardTitle>Account</CardTitle>
+              <CardDescription
+                >Make changes to your account here.</CardDescription
+              >
+            </CardHeader>
+            <CardContent class="space-y-4">
+              <div class="space-y-2">
+                <Label for="tabs-name">Name</Label>
+                <Input id="tabs-name" value="Jane Doe" />
+              </div>
+              <div class="space-y-2">
+                <Label for="tabs-username">Username</Label>
+                <Input id="tabs-username" value="@janedoe" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button>Save changes</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+        <TabsContent value="password-card">
+          <Card>
+            <CardHeader>
+              <CardTitle>Password</CardTitle>
+              <CardDescription>Change your password here.</CardDescription>
+            </CardHeader>
+            <CardContent class="space-y-4">
+              <div class="space-y-2">
+                <Label for="tabs-current-pw">Current password</Label>
+                <Input id="tabs-current-pw" type="password" />
+              </div>
+              <div class="space-y-2">
+                <Label for="tabs-new-pw">New password</Label>
+                <Input id="tabs-new-pw" type="password" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button>Save password</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled Tab">
+      <Tabs defaultValue="active-1">
+        <TabsList>
+          <TabsTrigger value="active-1">Active</TabsTrigger>
+          <TabsTrigger value="disabled-tab" disabled>Disabled</TabsTrigger>
+          <TabsTrigger value="active-2">Also Active</TabsTrigger>
+        </TabsList>
+        <TabsContent value="active-1">
+          <p class="text-sm text-muted-foreground p-4">
+            First active tab content.
+          </p>
+        </TabsContent>
+        <TabsContent value="disabled-tab">
+          <p class="text-sm text-muted-foreground p-4">
+            You shouldn't see this.
+          </p>
+        </TabsContent>
+        <TabsContent value="active-2">
+          <p class="text-sm text-muted-foreground p-4">
+            Second active tab content.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Many Tabs (Overflow)">
+      <Tabs defaultValue="tab-1">
+        <TabsList
+          class="w-full max-w-[20rem] justify-start overflow-x-auto [&>[data-slot=tabs-trigger]]:flex-none"
+        >
+          <TabsTrigger value="tab-1">Monday</TabsTrigger>
+          <TabsTrigger value="tab-2">Tuesday</TabsTrigger>
+          <TabsTrigger value="tab-3">Wednesday</TabsTrigger>
+          <TabsTrigger value="tab-4">Thursday</TabsTrigger>
+          <TabsTrigger value="tab-5">Friday</TabsTrigger>
+          <TabsTrigger value="tab-6">Saturday</TabsTrigger>
+          <TabsTrigger value="tab-7">Sunday</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tab-1"
+          ><p class="text-sm text-muted-foreground p-4">
+            Monday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-2"
+          ><p class="text-sm text-muted-foreground p-4">
+            Tuesday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-3"
+          ><p class="text-sm text-muted-foreground p-4">
+            Wednesday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-4"
+          ><p class="text-sm text-muted-foreground p-4">
+            Thursday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-5"
+          ><p class="text-sm text-muted-foreground p-4">
+            Friday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-6"
+          ><p class="text-sm text-muted-foreground p-4">
+            Saturday content
+          </p></TabsContent
+        >
+        <TabsContent value="tab-7"
+          ><p class="text-sm text-muted-foreground p-4">
+            Sunday content
+          </p></TabsContent
+        >
+      </Tabs>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Event Testing">
+      <p class="text-sm text-muted-foreground">
+        Switch tabs and check the output for tabs:change events.
+      </p>
+      <Tabs id="event-tabs" defaultValue="event-tab-1">
+        <TabsList>
+          <TabsTrigger value="event-tab-1">Tab 1</TabsTrigger>
+          <TabsTrigger value="event-tab-2">Tab 2</TabsTrigger>
+          <TabsTrigger value="event-tab-3">Tab 3</TabsTrigger>
+        </TabsList>
+        <TabsContent value="event-tab-1"
+          ><p class="text-sm text-muted-foreground p-4">
+            Tab 1 content
+          </p></TabsContent
+        >
+        <TabsContent value="event-tab-2"
+          ><p class="text-sm text-muted-foreground p-4">
+            Tab 2 content
+          </p></TabsContent
+        >
+        <TabsContent value="event-tab-3"
+          ><p class="text-sm text-muted-foreground p-4">
+            Tab 3 content
+          </p></TabsContent
+        >
+      </Tabs>
+      <EventLog id="tabs-event-output" />
+      <script>
+        {
+          function log(msg: string) {
+            (document.getElementById("tabs-event-output") as any)?._log(msg);
+          }
+
+          document
+            .getElementById("event-tabs")
+            ?.addEventListener("tabs:change", (e: Event) => {
+              const { value } = (e as CustomEvent).detail;
+              log(`tabs:change → value: "${value}"`);
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Programmatic Control">
+      <Tabs id="programmatic-tabs" defaultValue="prog-tab-1">
+        <TabsList>
+          <TabsTrigger value="prog-tab-1">Tab 1</TabsTrigger>
+          <TabsTrigger value="prog-tab-2">Tab 2</TabsTrigger>
+          <TabsTrigger value="prog-tab-3">Tab 3</TabsTrigger>
+        </TabsList>
+        <TabsContent value="prog-tab-1"
+          ><p class="text-sm text-muted-foreground p-4">
+            Programmatic tab 1
+          </p></TabsContent
+        >
+        <TabsContent value="prog-tab-2"
+          ><p class="text-sm text-muted-foreground p-4">
+            Programmatic tab 2
+          </p></TabsContent
+        >
+        <TabsContent value="prog-tab-3"
+          ><p class="text-sm text-muted-foreground p-4">
+            Programmatic tab 3
+          </p></TabsContent
+        >
+      </Tabs>
+      <div class="flex flex-wrap gap-2">
+        <button
+          id="set-tab-1"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Tab 1
+        </button>
+        <button
+          id="set-tab-2"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Tab 2
+        </button>
+        <button
+          id="set-tab-3"
+          class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"
+        >
+          Set Tab 3
+        </button>
+      </div>
+      <script>
+        {
+          const tabs = document.getElementById("programmatic-tabs");
+          document
+            .getElementById("set-tab-1")
+            ?.addEventListener("click", () => {
+              tabs?.dispatchEvent(
+                new CustomEvent("tabs:set", {
+                  detail: { value: "prog-tab-1" },
+                }),
+              );
+            });
+          document
+            .getElementById("set-tab-2")
+            ?.addEventListener("click", () => {
+              tabs?.dispatchEvent(
+                new CustomEvent("tabs:set", {
+                  detail: { value: "prog-tab-2" },
+                }),
+              );
+            });
+          document
+            .getElementById("set-tab-3")
+            ?.addEventListener("click", () => {
+              tabs?.dispatchEvent(
+                new CustomEvent("tabs:set", {
+                  detail: { value: "prog-tab-3" },
+                }),
+              );
+            });
+        }
+      </script>
+    </KitchenSinkSection>
+  </section>
+</KitchenSinkLayout>

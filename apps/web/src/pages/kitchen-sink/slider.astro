@@ -1,0 +1,100 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import {
+  Slider,
+  SliderTrack,
+  SliderRange,
+  SliderThumb,
+} from "@bejamas/ui/components/slider";
+import { Label } from "@bejamas/ui/components/label";
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Slider</h1>
+
+    <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
+    <KitchenSinkSection title="Basic Slider">
+      <Label>Basic Slider (default value: 50)</Label>
+      <Slider class="w-full" defaultValue={[50]} max={100}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Range Slider">
+      <Label>Range Slider (values: 25, 75)</Label>
+      <Slider class="w-full" defaultValue={[25, 75]} max={100}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+        <SliderThumb />
+      </Slider>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Multiple Thumbs">
+      <Label>Multiple Thumbs (values: 20, 40, 60, 80)</Label>
+      <Slider class="w-full" defaultValue={[20, 40, 60, 80]} max={100}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+        <SliderThumb />
+        <SliderThumb />
+        <SliderThumb />
+      </Slider>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Vertical Slider">
+      <Label>Vertical Slider</Label>
+      <div class="h-48">
+        <Slider
+          class="h-full"
+          orientation="vertical"
+          defaultValue={[50]}
+          max={100}
+        >
+          <SliderTrack>
+            <SliderRange />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
+      </div>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Disabled Slider">
+      <Label>Disabled Slider</Label>
+      <Slider class="w-full" defaultValue={[50]} max={100} disabled>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Step Slider">
+      <Label>Step Slider (step: 10)</Label>
+      <Slider class="w-full" defaultValue={[50]} max={100} step={10}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+    </KitchenSinkSection>
+
+    <KitchenSinkSection title="Custom Min/Max">
+      <Label>Custom Min/Max (min: -50, max: 50, value: 0)</Label>
+      <Slider class="w-full" defaultValue={[0]} min={-50} max={50}>
+        <SliderTrack>
+          <SliderRange />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+    </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>
