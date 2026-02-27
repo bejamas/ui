@@ -39,7 +39,6 @@ function parseTokenBlock(block: string) {
 const tokenValues = parseTokenBlock(extractThemeBlock(cssSource));
 const darkTokenValues = parseTokenBlock(extractDarkBlock(cssSource));
 
-
 type ThemeSectionItemInput = {
   label: string;
   token: string;
@@ -246,7 +245,7 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
   @reference "tailwindcss";
 
   .content-panel {
-    @apply text-center border-0 pt-14 pb-0;
+    @apply text-center border-0 pt-8 pb-0;
   }
 
   .content-panel h1 {
@@ -319,7 +318,7 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
         label: p.label ?? key,
         styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
       },
-    ])
+    ]),
   );
 
   const PRESET_KEYS = Object.keys(defaultPresets);

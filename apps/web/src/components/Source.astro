@@ -163,7 +163,7 @@ function getLangFromPath(path: string): string {
     <div class="text-sm text-muted-foreground">No source found.</div>
   ) : (
     <div
-      class="grid md:grid-cols-[220px_1fr] bg-card rounded-xl border border-border"
+      class="grid md:grid-cols-[220px_1fr] bg-card rounded-xl border border-border overflow-clip"
       x-data={`{ active: '${defaultActiveLabel}', open: ${JSON.stringify(openInitObj)} }`}
     >
       <aside class="h-max">
@@ -196,7 +196,7 @@ function getLangFromPath(path: string): string {
                 code={f.code}
                 lang={getLangFromPath(f.displayName)}
                 meta="nocollapse"
-                class="h-[800px] overflow-y-auto rounded-none [&_pre]:rounded-none"
+                class="h-[800px] overflow-y-auto rounded-none [&_pre]:rounded-none [&_pre]:border-none"
               />
             </div>
           </div>
