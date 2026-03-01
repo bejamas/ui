@@ -46,7 +46,9 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
     }
   </div>
   <div class="sl-flex sl-bejamas-header-search sl-justify-end print:hidden">
-    <GitHubStarsButton class="md:sl-hidden" />
+    <div class="md:sl-hidden">
+      <GitHubStarsButton />
+    </div>
     {shouldRenderSearch && (
       <div class="sl-hidden md:sl-flex">
         <Search />
@@ -54,7 +56,7 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
     )}
   </div>
   <div class="sl-hidden md:sl-flex print:hidden right-group">
-    <GitHubStarsButton class="sl-hidden md:sl-flex" />
+    <GitHubStarsButton />
     <div class="sl-flex social-icons">
       <SocialIcons />
     </div>
