@@ -4,6 +4,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 ---
 
 <StarlightPage
+  hasSidebar={true}
   frontmatter={{
     title: "Astro UI library. Copy and own the code.",
     description:
@@ -53,10 +54,9 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     },
   }}
 >
-  <div class="max-w-[96rem] mx-auto">
+  <div class="max-w-384 mx-auto">
     <UiDemo />
-  </div>
-  <!-- 
+    <!-- 
   <div
     class="browser-frame not-content mx-auto relative z-10 rounded-t-xl border border-border/60 border-b-0 overflow-hidden bg-background dark:bg-muted/30 md:max-w-[92%]"
   >
@@ -72,28 +72,24 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     </div>
     <UiDemo />
   </div> -->
-  <div
-    class="hidden md:block left-1 right-1 h-[calc(100%+var(--hero-height))] -mt-(--hero-height) pt-(--hero-height) absolute z-0 scroll-fade-out bg-background dark:bg-muted/30 top-14 border rounded-t-3xl"
-    style={{
-      "--hero-height": "365.5px",
-    }}
-  >
+    <div
+      class="page-bg hidden md:block left-1 right-1 h-[calc(100%+var(--hero-height))] -mt-(--hero-height) pt-(--hero-height) absolute z-0 scroll-fade-out top-8 border border-b-0 rounded-t-3xl"
+      style={{
+        "--hero-height": "365.5px",
+      }}
+    >
+    </div>
   </div>
-</StarlightPage>
 
-<style is:global>
-  @reference "tailwindcss";
+  <style is:global>
+    @reference "tailwindcss";
 
-  :root {
-    --sl-nav-height: auto;
-  }
+    .hero h1 {
+      letter-spacing: calc(var(--letter-spacing) - 0.025em);
+      @apply text-3xl font-medium text-left text-balance block max-w-xl leading-[1.15];
+    }
 
-  .hero h1 {
-    letter-spacing: calc(var(--letter-spacing) - 0.025em);
-    @apply text-3xl font-medium text-left text-balance block max-w-xl leading-[1.15];
-  }
-
-  /* .browser-frame {
+    /* .browser-frame {
     box-shadow:
       0px 0px 0px 1.18145px rgba(5, 23, 41, 0.08),
       0px 1.18145px 1.18145px rgba(5, 23, 41, 0.03),
@@ -103,70 +99,81 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
       0px 1.18145px 0px rgba(5, 23, 41, 0.08);
   } */
 
-  .kudos {
-    display: none;
-  }
-
-  .hero .copy {
-    @apply items-start;
-  }
-
-  .tagline {
-    text-align: left;
-    font-size: 1.1875rem;
-    max-width: 50ch;
-  }
-
-  @media (min-width: 48rem) {
-    .hero h1 {
-      @apply text-5xl;
+    :root:after {
+      left: calc(var(--spacing) * 6);
+      /* border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border); */
     }
-  }
 
-  .content-panel:first-child {
-    @apply pt-12;
-  }
+    .kudos {
+      display: none;
+    }
 
-  .main-frame {
-    padding-inline: 0;
-  }
+    .hero .copy {
+      @apply items-start;
+    }
 
-  .main-pane > main {
-    @apply pb-0 mb-0;
-  }
+    .tagline {
+      text-align: left;
+      font-size: 1.1875rem;
+      max-width: 50ch;
+    }
 
-  .hero {
-    opacity: 1;
-    transform-origin: left center;
+    @media (min-width: 48rem) {
+      .hero h1 {
+        @apply text-5xl;
+      }
+    }
 
-    @apply px-0 lg:px-4 pt-12 pb-10 lg:pb-18 z-10 max-w-[96rem] mx-auto relative;
-  }
+    .page-bg {
+      background-color: var(--sl-main-frame-inner-background);
+    }
 
-  @media (min-width: 48rem) {
-    .hero {
-      scroll-snap-align: center;
+    .content-panel:first-child {
+      @apply pt-0;
+    }
 
-      @apply relative top-4 px-0 pt-14;
+    .main-frame {
+      padding-inline: 0;
     }
 
     .main-pane > main {
-      padding: var(--sl-main-pad);
+      @apply pb-0 mb-0;
     }
-  }
 
-  .sl-container {
-    @apply max-w-full;
-  }
+    .hero {
+      opacity: 1;
+      transform-origin: left center;
 
-  .sl-markdown-content {
-    @apply mx-auto max-w-full mt-0 pt-0 relative;
-  }
+      @apply px-0 lg:px-4 pt-12 pb-10 lg:pb-18 z-10 max-w-[96rem] mx-auto relative;
+    }
 
-  .actions {
-    @apply justify-start;
-  }
+    @media (min-width: 48rem) {
+      .hero {
+        scroll-snap-align: center;
 
-  footer.sl-flex {
-    @apply hidden;
-  }
-</style>
+        @apply relative px-0 pt-14;
+      }
+
+      .main-pane > main {
+        padding: var(--sl-main-pad);
+      }
+    }
+
+    .sl-container {
+      @apply max-w-full;
+    }
+
+    .sl-markdown-content {
+      @apply mx-auto max-w-full mt-0 pt-0 relative;
+    }
+
+    .actions {
+      @apply justify-start;
+    }
+
+    footer.sl-flex {
+      @apply hidden;
+    }
+  </style>
+</StarlightPage>

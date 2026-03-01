@@ -1,7 +1,4 @@
 ---
-import { Button } from "@bejamas/ui/components/button";
-import { Star, Github } from "@lucide/astro";
-
 let starCount: number | null = null;
 
 try {
@@ -17,8 +14,6 @@ try {
 } catch (error) {
   // Silently fail - component will render without count
 }
-
-const githubUrl = "https://github.com/bejamas/ui";
 ---
 
 <span class="w-8.5 items-center flex justify-center text-center">

@@ -3,17 +3,36 @@
 @import "@fontsource-variable/inter/index.css";
 
 @layer bejamas {
+  html {
+    background-color: var(--sl-page-background);
+  }
+
   @media (min-width: 50rem) {
     :root::after {
       content: "";
       position: fixed;
       inset: 0;
       right: calc(var(--spacing) * 6);
-      background: linear-gradient(
-        var(--sl-page-background) 49.99%,
-        var(--sl-main-frame-inner-background) 50%
-      );
+      background:
+        linear-gradient(
+            to bottom,
+            transparent 50%,
+            var(--sl-main-frame-inner-border) 50%
+          )
+          left / 1px 100% no-repeat,
+        linear-gradient(
+            to bottom,
+            transparent 50%,
+            var(--sl-main-frame-inner-border) 50%
+          )
+          right / 1px 100% no-repeat,
+        linear-gradient(
+          to bottom,
+          var(--sl-page-background) 49.99%,
+          var(--sl-main-frame-inner-background) 50%
+        );
       z-index: -1;
+      left: var(--sl-sidebar-width);
     }
   }
 
@@ -107,12 +126,12 @@
     --sl-main-frame-inner-background: color-mix(
       in oklab,
       var(--muted) 30%,
-      transparent
+      var(--background)
     );
     --sl-main-frame-inner-border: color-mix(
       in oklab,
       var(--border) 50%,
-      transparent
+      var(--background)
     );
   }
 }
@@ -197,6 +216,32 @@
     border-inline-start: 0;
     padding-inline-start: 0;
     margin-bottom: 1px;
+  }
+
+  @media (max-width: 49.99rem) {
+    .sidebar-pane .sidebar-content {
+      --sl-sidebar-item-padding-inline: 0.5rem;
+      padding-top: calc(var(--spacing) * 3);
+    }
+
+    .sidebar-content::before {
+      display: none;
+    }
+
+    .sidebar-content .large {
+      font-size: var(--sl-text-xl);
+      line-height: 1.25;
+    }
+
+    .sidebar-content ul ul a > span {
+      font-size: var(--sl-text-lg);
+      line-height: 1.35;
+    }
+
+    .sidebar-content .group-label > span {
+      font-size: var(--sl-text-sm);
+      font-weight: 500;
+    }
   }
 
   .right-sidebar-container {
