@@ -4,31 +4,13 @@ import {
   TabsList,
   TabsTrigger,
 } from "@bejamas/ui/components/tabs";
-import { Skeleton } from "@bejamas/ui/components/skeleton";
-import { Button } from "@bejamas/ui/components/button";
 
-import { SunIcon, MoonIcon, LaptopIcon, GithubIcon } from "@lucide/astro";
+import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 import PresetSwitcher from "./PresetSwitcher.astro";
 import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
-import GitHubLink from "./GitHubLink.astro";
-
-const githubUrl = "https://github.com/bejamas/ui";
 ---
 
 <div class="flex items-center gap-2">
-  <Button
-    as="a"
-    variant="outline"
-    href={githubUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="gap-1.5 w-16"
-  >
-    <GithubIcon class="size-4" />
-    <GitHubLink server:defer>
-      <Skeleton class="w-8.5 h-5 rounded-sm" slot="fallback" />
-    </GitHubLink>
-  </Button>
   <PresetSwitcher />
   <starlight-theme-select>
     <Tabs class="theme-tabs" id="theme-tabs">

@@ -199,6 +199,32 @@
     margin-bottom: 1px;
   }
 
+  @media (max-width: 49.99rem) {
+    .sidebar-pane .sidebar-content {
+      --sl-sidebar-item-padding-inline: 0.5rem;
+      padding-top: calc(var(--spacing) * 3);
+    }
+
+    .sidebar-content::before {
+      display: none;
+    }
+
+    .sidebar-content .large {
+      font-size: var(--sl-text-xl);
+      line-height: 1.25;
+    }
+
+    .sidebar-content ul ul a > span {
+      font-size: var(--sl-text-lg);
+      line-height: 1.35;
+    }
+
+    .sidebar-content .group-label > span {
+      font-size: var(--sl-text-sm);
+      font-weight: 500;
+    }
+  }
+
   .right-sidebar-container {
     max-width: 20rem;
     margin-right: 0;

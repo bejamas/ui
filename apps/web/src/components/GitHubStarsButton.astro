@@ -1,0 +1,28 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import { Skeleton } from "@bejamas/ui/components/skeleton";
+import { GithubIcon } from "@lucide/astro";
+import GitHubLink from "./GitHubLink.astro";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props as Props;
+const githubUrl = "https://github.com/bejamas/ui";
+---
+
+<Button
+  as="a"
+  variant="outline"
+  href={githubUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  class:list={["gap-1.5 w-16", className]}
+  aria-label="View GitHub repository stars"
+>
+  <GithubIcon class="size-4" />
+  <GitHubLink server:defer>
+    <Skeleton class="w-8.5 h-5 rounded-sm" slot="fallback" />
+  </GitHubLink>
+</Button>
