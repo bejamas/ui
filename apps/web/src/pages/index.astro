@@ -73,7 +73,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     <UiDemo />
   </div> -->
     <div
-      class="page-bg hidden md:block left-1 right-1 h-[calc(100%+var(--hero-height)-calc(var(--spacing)*7))] -mt-(--hero-height) pt-(--hero-height) absolute z-0 scroll-fade-out top-14 border border-b-0 rounded-t-3xl"
+      class="page-bg hidden md:block left-1 right-1 h-[calc(100%+var(--hero-height))] -mt-(--hero-height) pt-(--hero-height) absolute z-0 scroll-fade-out top-8 border border-b-0 rounded-t-3xl"
       style={{
         "--hero-height": "365.5px",
       }}
@@ -130,7 +130,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     }
 
     .content-panel:first-child {
-      @apply pt-12;
+      @apply pt-0;
     }
 
     .main-frame {
@@ -152,7 +152,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
       .hero {
         scroll-snap-align: center;
 
-        @apply relative top-4 px-0 pt-14;
+        @apply relative px-0 pt-14;
       }
 
       .main-pane > main {
