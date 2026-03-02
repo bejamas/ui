@@ -7,7 +7,7 @@
     background-color: var(--sl-page-background);
   }
 
-  @media (min-width: 50rem) {
+  @media (min-width: 64rem) {
     :root::after {
       content: "";
       position: fixed;
@@ -734,6 +734,16 @@
     width: calc(var(--spacing) * 8);
     height: calc(var(--spacing) * 8);
     font-size: calc(var(--spacing) * 8);
+  }
+
+  @media (min-width: 50rem) and (max-width: calc(64rem - 0.01rem)) {
+    starlight-menu-button button {
+      display: flex;
+    }
+
+    [data-mobile-menu-expanded] {
+      overflow: hidden;
+    }
   }
 
   #starlight__on-this-page--mobile {
