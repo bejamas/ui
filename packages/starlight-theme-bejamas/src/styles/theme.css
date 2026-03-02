@@ -32,7 +32,15 @@
           var(--sl-main-frame-inner-background) 50%
         );
       z-index: -1;
+      left: calc(var(--spacing) * 6);
+    }
+
+    :root[data-has-sidebar]::after {
       left: var(--sl-sidebar-width);
+    }
+
+    :root[data-has-sidebar]:has(.page-mobile-sidebar-only)::after {
+      left: calc(var(--spacing) * 6);
     }
   }
 

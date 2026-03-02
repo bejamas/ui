@@ -123,6 +123,11 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
       :global(:root[data-has-sidebar]) {
         --__sidebar-pad: calc(2 * var(--sl-nav-pad-x));
       }
+      :global(.page-mobile-sidebar-only) .header {
+        --__sidebar-pad: 0rem;
+        display: flex;
+        grid-template-columns: none;
+      }
       :global(:root:not([data-has-toc])) {
         --__toc-width: 0rem;
       }

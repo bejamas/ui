@@ -10,7 +10,13 @@ const shouldRenderSidebarNav = hasSidebar || template === "splash";
 const isSplashTemplate = template === "splash";
 ---
 
-<div class:list={["page sl-flex", shouldRenderSidebarNav && "page-has-sidebar-nav"]}>
+<div
+  class:list={[
+    "page sl-flex",
+    shouldRenderSidebarNav && "page-has-sidebar-nav",
+    isSplashTemplate && "page-mobile-sidebar-only",
+  ]}
+>
   <header class="header">
     <slot name="header" />
     <div class="fade"></div>
@@ -99,7 +105,7 @@ const isSplashTemplate = template === "splash";
     )
   }
 
-  <div class="main-frame">
+  <div class:list={["main-frame", isSplashTemplate && "main-frame-splash"]}>
     {
       template === "splash" ? (
         <slot />
@@ -220,6 +226,18 @@ const isSplashTemplate = template === "splash";
       /* padding-inline-start: var(--sl-content-inline-start); */
     }
 
+    .main-frame-splash {
+      position: relative;
+      isolation: isolate;
+      --sl-splash-frame-top: calc(var(--spacing) * 8);
+      --sl-splash-frame-inline: 0;
+    }
+
+    .main-frame-splash > * {
+      position: relative;
+      z-index: 1;
+    }
+
     .main-frame-inner {
       position: relative;
       background-color: var(--sl-main-frame-inner-background);
@@ -235,6 +253,27 @@ const isSplashTemplate = template === "splash";
       .main-frame-inner {
         margin-inline: 0;
         margin-top: 0;
+      }
+    }
+
+    @media (min-width: 48rem) {
+      .main-frame-splash::before {
+        content: "";
+        position: absolute;
+        inset-inline: var(--sl-splash-frame-inline);
+        inset-block-start: var(--sl-splash-frame-top);
+        inset-block-end: 0;
+        border: 1px solid var(--sl-main-frame-inner-border);
+        border-bottom: 0;
+        border-radius: calc(var(--radius) + 12px) calc(var(--radius) + 12px) 0 0;
+        background-color: var(--sl-main-frame-inner-background);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Pages with their own local splash frame keep full control. */
+      :global(.main-frame-splash:has(.page-bg))::before {
+        content: none;
       }
     }
 
@@ -261,6 +300,11 @@ const isSplashTemplate = template === "splash";
     } */
 
     @media (min-width: 64rem) {
+      .page-mobile-sidebar-only {
+        --sl-sidebar-width: 0;
+        --sl-content-inline-start: 0;
+      }
+
       :global([data-has-sidebar]) .header,
       .page-has-sidebar-nav .header {
         padding-inline-end: var(--sl-nav-pad-x);
