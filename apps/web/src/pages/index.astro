@@ -145,18 +145,13 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
       opacity: 1;
       transform-origin: left center;
 
-      @apply px-0 lg:px-4 pt-12 pb-10 lg:pb-18 z-10 max-w-[96rem] mx-auto relative;
+      @apply px-0 sm:px-6 md:px-8 pt-12 pb-10 lg:pb-18 z-10 max-w-384 lg:pt-14 mx-auto relative;
     }
 
     @media (min-width: 48rem) {
-      .hero {
-        scroll-snap-align: center;
-
-        @apply relative px-0 pt-14;
-      }
-
       .main-pane > main {
         padding: var(--sl-main-pad);
+        padding-bottom: 0;
       }
     }
 
