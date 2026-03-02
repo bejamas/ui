@@ -1,5 +1,13 @@
 # starlight-theme-bejamas
 
+## 0.1.17
+
+### Patch Changes
+
+- [#80](https://github.com/bejamas/ui/pull/80) [`c3f2b3a`](https://github.com/bejamas/ui/commit/c3f2b3a2f94f8c60657e33bab49320a5d5258e11) Thanks [@thomkrupa](https://github.com/thomkrupa)! - fix shared splash layout bg
+
+- [#82](https://github.com/bejamas/ui/pull/82) [`043d0fa`](https://github.com/bejamas/ui/commit/043d0faa76a34f25620f7ad8bc30d8aa9be8e3be) Thanks [@thomkrupa](https://github.com/thomkrupa)! - fix sidebar margin
+
 ## 0.1.16
 
 ### Patch Changes
