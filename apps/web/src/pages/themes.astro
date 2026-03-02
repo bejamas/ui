@@ -273,56 +273,12 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
 </style>
 
 <script>
-  // Keep UI in sync with Starlight's theme toggle (and DOM state)
-  function getThemeFromDom() {
-    const apiTheme = window.astroThemeToggle?.getTheme?.();
-    if (apiTheme === "dark" || apiTheme === "light") return apiTheme;
-    const el = document.documentElement;
-    const attr = el.getAttribute("data-theme");
-    if (attr === "dark" || attr === "light") return attr;
-    return el.classList.contains("dark") ? "dark" : "light";
-  }
-
-  function updateDataSourceFromDom() {
-    const currentTheme = getThemeFromDom();
-    document.querySelectorAll("[data-source]").forEach((el) => {
-      el.setAttribute("data-source", currentTheme);
-    });
-  }
-
-  // Initial sync
-  updateDataSourceFromDom();
-
-  // Astro swaps can re-mount DOM; re-sync after swap
-  document.addEventListener("astro:after-swap", updateDataSourceFromDom);
-
-  // Patch Starlight API to emit our event too
-  if (window.astroThemeToggle?.setTheme) {
-    const originalSet = window.astroThemeToggle.setTheme;
-    window.astroThemeToggle.setTheme = (theme) => {
-      originalSet(theme);
-      window.dispatchEvent(
-        new CustomEvent("theme-toggle-changed", { detail: { theme } }),
-      );
-      updateDataSourceFromDom();
-    };
-  }
-
-  // Fallback: observe DOM mutations to theme markers
-  const observer = new MutationObserver(updateDataSourceFromDom);
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme", "class"],
-  });
-</script>
-
-<script>
   import {
     getStoredPreset,
     setStoredPreset,
-    getCurrentMode,
     PRESET_CHANGE_EVENT,
   } from "../utils/themes/preset-store.ts";
+  import { CUSTOM_PRESETS_CHANGE_EVENT } from "../utils/themes/custom-presets-store.ts";
   import { defaultPresets } from "../utils/themes/presets";
 
   // Build lean presets for UI updates
@@ -338,61 +294,52 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
 
   const PRESET_KEYS = Object.keys(defaultPresets);
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const select = document.getElementById("preset-switcher");
+  const THEMES_PAGE_INIT_KEY = "__bejamasThemesPageTokenCardsInit";
+  const THEMES_PAGE_FRAME_KEY = "__bejamasThemesPageTokenCardsFrame";
 
-    // Update token labels and swatch backgrounds for the themes page display
-    const updateUIForPreset = (key) => {
-      const preset = PRESETS[key];
-      if (!preset) return;
-      const light = (preset.styles && preset.styles.light) || {};
-      const dark = (preset.styles && preset.styles.dark) || {};
-      const mode = getCurrentMode();
+  function refreshTokenCards() {
+    const computed = getComputedStyle(document.documentElement);
 
-      // Update displayed token values
-      document.querySelectorAll("[data-token]").forEach((el) => {
-        const token = el.getAttribute("data-token");
-        const source = el.getAttribute("data-source") || "light";
-        const map = source === "dark" ? dark : light;
-        el.textContent = map[token] || "";
-      });
-
-      // Update swatch backgrounds
-      document.querySelectorAll("[data-swatch]").forEach((el) => {
-        const token = el.getAttribute("data-swatch");
-        const map = mode === "dark" ? dark : light;
-        const v = map[token];
-        if (v) el.style.background = v;
-      });
-    };
-
-    // Listen for preset changes (from PresetSwitcher or other sources)
-    window.addEventListener(PRESET_CHANGE_EVENT, (e) => {
-      const key = e.detail?.key;
-      if (key) updateUIForPreset(key);
+    document.querySelectorAll<HTMLElement>("[data-token]").forEach((el) => {
+      const token = el.getAttribute("data-token");
+      if (!token) return;
+      const value = computed.getPropertyValue(`--${token}`).trim();
+      el.textContent = value;
     });
 
-    // Initial UI update
-    const initial = getStoredPreset() || PRESET_KEYS[0];
-    if (initial) updateUIForPreset(initial);
+    document.querySelectorAll<HTMLElement>("[data-swatch]").forEach((el) => {
+      const token = el.getAttribute("data-swatch");
+      if (!token) return;
+      el.style.background = `var(--${token})`;
+    });
+  }
 
-    // Helper to get swatches from a preset
-    const getSwatches = (key) => {
-      const preset = PRESETS[key];
-      if (!preset) return undefined;
-      return {
-        primaryLight: preset.styles.light?.primary || "#000",
-        accentLight: preset.styles.light?.accent || "#666",
-        primaryDark: preset.styles.dark?.primary || "#fff",
-        accentDark: preset.styles.dark?.accent || "#888",
-      };
+  function scheduleTokenCardRefresh() {
+    const windowWithState = window as Window & Record<string, unknown>;
+    if (windowWithState[THEMES_PAGE_FRAME_KEY]) return;
+    windowWithState[THEMES_PAGE_FRAME_KEY] = requestAnimationFrame(() => {
+      windowWithState[THEMES_PAGE_FRAME_KEY] = undefined;
+      refreshTokenCards();
+    });
+  }
+
+  function getSwatches(key) {
+    const preset = PRESETS[key];
+    if (!preset) return undefined;
+    return {
+      primaryLight: preset.styles.light?.primary || "#000",
+      accentLight: preset.styles.light?.accent || "#666",
+      primaryDark: preset.styles.dark?.primary || "#fff",
+      accentDark: preset.styles.dark?.accent || "#888",
     };
+  }
 
-    // Prev/Next buttons
+  function bindPresetNavigationButtons() {
     const previousPreset = document.getElementById("previous-preset");
     const nextPreset = document.getElementById("next-preset");
 
-    if (previousPreset) {
+    if (previousPreset && !previousPreset.hasAttribute("data-themes-bound")) {
+      previousPreset.setAttribute("data-themes-bound", "true");
       previousPreset.addEventListener("click", () => {
         const current = getStoredPreset() || PRESET_KEYS[0];
         const index = PRESET_KEYS.indexOf(current);
@@ -405,7 +352,8 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
       });
     }
 
-    if (nextPreset) {
+    if (nextPreset && !nextPreset.hasAttribute("data-themes-bound")) {
+      nextPreset.setAttribute("data-themes-bound", "true");
       nextPreset.addEventListener("click", () => {
         const current = getStoredPreset() || PRESET_KEYS[0];
         const index = PRESET_KEYS.indexOf(current);
@@ -416,5 +364,45 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
         setStoredPreset(key, getSwatches(key), preset?.label || key);
       });
     }
-  });
+  }
+
+  function initThemesPageTokenCards() {
+    bindPresetNavigationButtons();
+
+    const windowWithState = window as Window & Record<string, unknown>;
+    if (windowWithState[THEMES_PAGE_INIT_KEY]) {
+      scheduleTokenCardRefresh();
+      return;
+    }
+    windowWithState[THEMES_PAGE_INIT_KEY] = true;
+
+    window.addEventListener(PRESET_CHANGE_EVENT, scheduleTokenCardRefresh);
+    window.addEventListener("theme-toggle-changed", scheduleTokenCardRefresh);
+    window.addEventListener(
+      CUSTOM_PRESETS_CHANGE_EVENT,
+      scheduleTokenCardRefresh,
+    );
+    document.addEventListener("astro:after-swap", () => {
+      bindPresetNavigationButtons();
+      scheduleTokenCardRefresh();
+    });
+
+    const observer = new MutationObserver((records) => {
+      if (records.length > 0) scheduleTokenCardRefresh();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["style", "data-theme", "class"],
+    });
+
+    scheduleTokenCardRefresh();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initThemesPageTokenCards, {
+      once: true,
+    });
+  } else {
+    initThemesPageTokenCards();
+  }
 </script>
