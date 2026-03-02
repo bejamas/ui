@@ -175,7 +175,10 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
 </script>
 
 <!-- Removed IndexedDB population; lean presets are used directly -->
-<StarlightPage frontmatter={{ title: "Themes", template: "splash" }}>
+<StarlightPage
+  hasSidebar={true}
+  frontmatter={{ title: "Themes", template: "splash" }}
+>
   <!-- {JSON.stringify(leanPresets)} -->
   <div>
     <div class="not-content">

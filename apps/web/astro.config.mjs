@@ -23,7 +23,7 @@ export default defineConfig({
     "/docs": "/docs/introduction",
   },
   image: {
-    // Example: Allow remote image optimization from a single domain
+    // Allow remote image optimization from a single domain
     domains: ["gradient.bejamas.com", "github.com"],
   },
   env: {
@@ -60,6 +60,7 @@ export default defineConfig({
           components: {
             button: "@bejamas/ui/components/button",
             select: "@bejamas/ui/components/select",
+            Header: "./src/components/starlight/Header.astro",
             ThemeSelect: "./src/components/ThemeSwitcher.astro",
             PageTitle: "./src/components/PageTitle.astro",
           },
@@ -67,6 +68,7 @@ export default defineConfig({
         starlightPageActions(),
       ],
       components: {
+        Header: "./src/components/starlight/Header.astro",
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
         PageTitle: "./src/components/PageTitle.astro",
       },

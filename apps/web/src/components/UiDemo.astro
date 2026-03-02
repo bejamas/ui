@@ -217,7 +217,7 @@ const countries = [
 ---
 
 <section
-  class="not-content relative z-10 max-w-[96rem] pt-0 px-0 mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10"
+  class="not-content relative z-10 max-w-384 pt-0 px-0 sm:px-6 md:px-8 mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-10 pb-14"
 >
   <!-- LEFT COLUMN -->
   <div class="space-y-6">
@@ -718,11 +718,6 @@ const countries = [
 
     <!-- Kbd/KbdGroup -->
     <div class="flex flex-wrap items-center justify-between gap-4">
-      <KbdGroup>
-        <Kbd>Ctrl</Kbd>
-        <Kbd>B</Kbd>
-      </KbdGroup>
-      <Separator orientation="vertical" class="!h-6" />
       <div class="flex gap-1">
         <Kbd>⌘</Kbd>
         <Kbd>⇧</Kbd>
@@ -872,7 +867,7 @@ const countries = [
   </div>
 
   <!-- FOURTH COLUMN -->
-  <div class="space-y-6">
+  <div class="space-y-6 lg:hidden 2xl:block">
     <!-- NavigationMenu -->
     <div class="flex items-center gap-4 justify-between">
       <ComponentIcon class="size-5 text-foreground shrink-0" />

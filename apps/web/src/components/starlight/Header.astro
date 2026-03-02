@@ -10,6 +10,8 @@ import ThemeSelect from "virtual:starlight/components/ThemeSelect";
 import options from "virtual:starlight-theme-bejamas/user-config";
 
 import { Button } from "virtual:starlight-theme-bejamas/components/button";
+import GitHubStarsButton from "@/components/GitHubStarsButton.astro";
+
 /**
  * Render the `Search` component if Pagefind is enabled or the default search component has been overridden.
  */
@@ -44,9 +46,17 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
     }
   </div>
   <div class="sl-flex sl-bejamas-header-search sl-justify-end print:hidden">
-    {shouldRenderSearch && <Search />}
+    <div class="header-mobile-stars">
+      <GitHubStarsButton />
+    </div>
+    {shouldRenderSearch && (
+      <div class="header-desktop-search">
+        <Search />
+      </div>
+    )}
   </div>
   <div class="header-desktop-right print:hidden right-group">
+    <GitHubStarsButton />
     <div class="sl-flex social-icons">
       <SocialIcons />
     </div>
@@ -65,6 +75,8 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
 
     .sl-bejamas-header-search {
       margin-left: auto;
+      align-items: center;
+      gap: 0.375rem;
     }
 
     .header {
@@ -81,6 +93,11 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
       display: none;
     }
 
+    .header-mobile-stars {
+      display: block;
+    }
+
+    .header-desktop-search,
     .header-desktop-right {
       display: none;
     }
@@ -90,6 +107,11 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
         display: block;
       }
 
+      .header-mobile-stars {
+        display: none;
+      }
+
+      .header-desktop-search,
       .header-desktop-right {
         display: flex;
       }
