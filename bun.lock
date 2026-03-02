@@ -104,7 +104,7 @@
     },
     "packages/starlight-theme-bejamas": {
       "name": "starlight-theme-bejamas",
-      "version": "0.1.15",
+      "version": "0.1.16",
       "dependencies": {
         "@expressive-code/plugin-line-numbers": "^0.41.3",
         "@fontsource-variable/inter": "^5.2.8",
@@ -120,20 +120,20 @@
       "name": "@bejamas/ui",
       "version": "0.1.0",
       "dependencies": {
-        "@data-slot/accordion": "^0.2.103",
-        "@data-slot/collapsible": "^0.2.103",
-        "@data-slot/combobox": "^0.2.103",
-        "@data-slot/dialog": "^0.2.103",
-        "@data-slot/dropdown-menu": "^0.2.103",
-        "@data-slot/hover-card": "^0.2.103",
-        "@data-slot/navigation-menu": "^0.2.103",
-        "@data-slot/popover": "^0.2.103",
-        "@data-slot/select": "^0.2.103",
-        "@data-slot/slider": "^0.2.103",
-        "@data-slot/tabs": "^0.2.103",
-        "@data-slot/toggle": "^0.2.103",
-        "@data-slot/toggle-group": "^0.2.103",
-        "@data-slot/tooltip": "^0.2.103",
+        "@data-slot/accordion": "^0.2.104",
+        "@data-slot/collapsible": "^0.2.104",
+        "@data-slot/combobox": "^0.2.104",
+        "@data-slot/dialog": "^0.2.104",
+        "@data-slot/dropdown-menu": "^0.2.104",
+        "@data-slot/hover-card": "^0.2.104",
+        "@data-slot/navigation-menu": "^0.2.104",
+        "@data-slot/popover": "^0.2.104",
+        "@data-slot/select": "^0.2.104",
+        "@data-slot/slider": "^0.2.104",
+        "@data-slot/tabs": "^0.2.104",
+        "@data-slot/toggle": "^0.2.104",
+        "@data-slot/toggle-group": "^0.2.104",
+        "@data-slot/tooltip": "^0.2.104",
         "@lucide/astro": "^0.540.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -142,7 +142,7 @@
         "tw-animate-css": "^1.4.0",
       },
       "devDependencies": {
-        "@types/node": "^22.19.12",
+        "@types/node": "^22.19.13",
         "eslint": "^9.39.3",
         "typescript": "^5.9.3",
       },
@@ -301,35 +301,35 @@
 
     "@dabh/diagnostics": ["@dabh/diagnostics@2.0.8", "", { "dependencies": { "@so-ric/colorspace": "^1.1.6", "enabled": "2.0.x", "kuler": "^2.0.0" } }, "sha512-R4MSXTVnuMzGD7bzHdW2ZhhdPC/igELENcq5IjEverBvq5hn1SXCWcsi6eSsdWP0/Ur+SItRRjAktmdoX/8R/Q=="],
 
-    "@data-slot/accordion": ["@data-slot/accordion@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-TIOySdZ710uOkRcKmbPUtir0uS+ZgilipsguVVy0g0JwpEK3wkCaYVAjnmzTFE3kQK7TK/aRyQhcl+6R52xtYQ=="],
+    "@data-slot/accordion": ["@data-slot/accordion@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-wcw0y/alBC9WrRNvClX6eWSy65zmvfJTmvFaFphtz+eO3q1GsN7ZKBHXlCxEeTJkOS6TJtsuCmvngUdNnZ1nPA=="],
 
-    "@data-slot/collapsible": ["@data-slot/collapsible@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-yBKxqVBQ/o1+Lg04Eqp/J6Hk8Wylk5z7YUjeXewL14wcfIG0YSCAexwB8p7jWBgaRsvf6ZIS8IVsk/9BxOIAPw=="],
+    "@data-slot/collapsible": ["@data-slot/collapsible@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-9l9ijsm5+TXeIW2VmntHKd8IPRhH/P8zj8ejoYeF6fxE1yA5RYK0cDdCVx9GXZpv7HfnZ5X8+gpfSMArrY71gQ=="],
 
-    "@data-slot/combobox": ["@data-slot/combobox@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-gZlicqvaqI3srdzeOCFOQcvhvD9otXmTkO2vbXxN5kkJhivf6tkzMWrQYb5XTtUz3ry+ftUfvT52dR+Y7ISH2Q=="],
+    "@data-slot/combobox": ["@data-slot/combobox@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-UwwhVbU7B8vie5vVNAqxuZwGGv2HgQhzrDyMSjE4R9q3AGVJtS1sqoSo8QXVhXUH5/hZVP+vS3VxI6M9IqqzPA=="],
 
-    "@data-slot/core": ["@data-slot/core@0.2.104", "", {}, "sha512-dN9pbMJUV97CgdNgHFvkdhFyoF68qhvx0E3wmceVSWezuEmzp45ZkQpPVqfEDOC2NYtQvDTfhT5LtQY2qHJR6A=="],
+    "@data-slot/core": ["@data-slot/core@0.2.105", "", {}, "sha512-fs0QydFFviBGZHoOIgw9li3uXp0cJkQWfuh+qQ/wH+JJBatJDtzlLTGgqQj5mK++2HSSf5ETyUG0KIiGwSy0cA=="],
 
-    "@data-slot/dialog": ["@data-slot/dialog@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-Fbjm3aca51dNcMRaqnMovesBFISMSo7Wlam4pGS2nwr6Jrd+7MPaEDh1sAszEZbVuTQq4RgIOzURVwc5vD9KvQ=="],
+    "@data-slot/dialog": ["@data-slot/dialog@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-xEJQAVr5HwCAexU4RyZcneW48P1jUDLKbWLswlXj6caSjC03iaxPpgn6qdHIAP09zLIpOgEOmGcfh4ffgNw9lw=="],
 
-    "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-6WNLjZ0/yYhill5GROH6y72E6Aim4ss5H7K5sb4FE27INReAyeTZjn3R36zzU1UNUg9BuhP8VXwUp7u23XyqtQ=="],
+    "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-KF6icUVpZ6Skyt4PDSJxKu9XrsGH8uNpTsyBbN2Q0QrCuly1HhsEzk0WOYf8naUQrcyE9Eu5gbZF+ClWKLrUag=="],
 
-    "@data-slot/hover-card": ["@data-slot/hover-card@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-jfyHW0ux68aAt9qnqLnALGTmwyBDbYJvvBG/kCH1P/+duWQ1txlyV+mvvTsTcLSc51sFpYEBi8Svbmekzse3kg=="],
+    "@data-slot/hover-card": ["@data-slot/hover-card@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-qSCrNiTacviTgEGJUHn2HhtAWFKTu93rXzEBf6unElM4KD6zR/EhptA/EGJs9EkqaHvuYaptfEMpiRNxpUW/gw=="],
 
-    "@data-slot/navigation-menu": ["@data-slot/navigation-menu@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-YgcgfJ7b8WrvgDLE6RAAEgL6ItiygocuPNvCMeEot/7tB9eVZfwxrzyij371V6KNRBE0WUpl1zEr8sOBZpSfhA=="],
+    "@data-slot/navigation-menu": ["@data-slot/navigation-menu@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-oUBiaPMBu4ZAt33FPkpHnHcq+J3Zvi74X3zsl3vODi5V1KzY2HpgZCIgT+77Ioo9vrbQuXBZL1UA2yahRVGYLg=="],
 
-    "@data-slot/popover": ["@data-slot/popover@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-MI/P/rCx1Z4/JWlm5o0f5ZfwvqDjkcEmC4JQSBJQwpZpe1F8Bk9GCQNyRbrXCRs9fpWvdAGsQUZ/OOW+rXOvqg=="],
+    "@data-slot/popover": ["@data-slot/popover@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-5dzJ7Rh6juDE6wWwewmTw6g5PpsxTP2AObChsG+7tWJ1vhWz68Hp7FcDS6sI/FhFng9HCRLpmD8teW0dlx4A3g=="],
 
-    "@data-slot/select": ["@data-slot/select@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-ck+73WaZ93kzWEyVCklv4Ep0m0wPVLk0zIp6rZjUhYKxozOTkeaauP7q4HdT4OcZChLYfyA0OsiRCfXwAi9MUQ=="],
+    "@data-slot/select": ["@data-slot/select@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-Z8Fpu3QlhzbVygnBy4kGdXIaBXW8g94Z0rp3hh8AcUUhyos+hNCP5aLFfwoOOkjXqZBDNZVwWtf1QBDmtZ4UFg=="],
 
-    "@data-slot/slider": ["@data-slot/slider@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-3ZKLImjwAskof4ERkMIZGhiVG6HPAoNBcaJpBlpYLK/uIb/EkPCOSqOCwwTWxJXQ1zTuptT9ElkjGvApj+7kMA=="],
+    "@data-slot/slider": ["@data-slot/slider@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-G/nj2KZlPK+gf1ZuPkmeHDDzbOpaD+VgIT/vGplF8M5A99W1ci/TBpWu+dKktM0nUP3MuMMBAeKhib9md+B0rw=="],
 
-    "@data-slot/tabs": ["@data-slot/tabs@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-S/Thedds60O6DXg2+8AM2eqpoT/UGo4ezNgUlYbb6bKbFcJHIXJsOGhEZr8GQ537aW9VbgvT8T3p8QlcvoumTg=="],
+    "@data-slot/tabs": ["@data-slot/tabs@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-RvVHGSa0cJE8brg4pOrWBt/mRME2MDVEH3xhokvFD577/M4jhTXCl9tLUyubSD3bwF4dYl9Sn5c/+/YjCwq1fA=="],
 
-    "@data-slot/toggle": ["@data-slot/toggle@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-09hDrY0Lb2Cs0EpObIcrfK9QOTzqW37sB7rg14DqC6NM2aYO0hQh0Z1ArmD+tXTUYzkv6GgT3Q1kxmjykecmXQ=="],
+    "@data-slot/toggle": ["@data-slot/toggle@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-LzYyfAyMPQSdyBDSUX/wG2LuiGMB7uzfms0XpTV8qijY0j8qIY2+wVc3WYYvJfnYCxcU+Kn5UopmrMCY+aSHzg=="],
 
-    "@data-slot/toggle-group": ["@data-slot/toggle-group@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-bKA1QbZyATyP/P2skJ+ki/IWGIy/ZkVtZp6pe8geK5jSMY61QMPq0IOwVKZDJXaRle2Yt6fsvjBrNO9fqskmJg=="],
+    "@data-slot/toggle-group": ["@data-slot/toggle-group@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-e/cM6ZMfOmkvDsFEWH0BaUPXcp2mtm0SuDHn3noymlh8OMKmcUnmrH4R4BmmZrIW2MoDFtornhwxlyfcenBhSw=="],
 
-    "@data-slot/tooltip": ["@data-slot/tooltip@0.2.104", "", { "dependencies": { "@data-slot/core": "0.2.104" } }, "sha512-UlwbxE6sF4gzNb9rQLEnxrKtmgcP8ERPHqnLJysvLplswOv3XQAN8f5e/+dSTI1b742tPFg6w+ks5jSzWlLtBw=="],
+    "@data-slot/tooltip": ["@data-slot/tooltip@0.2.105", "", { "dependencies": { "@data-slot/core": "0.2.105" } }, "sha512-2ymDMKi8WcjeaenbXulvWsX55AvuykDDH9XV8NatsfuoWhQp9YmjEyQKn9ixeNdhcPpSK0vNJ1jhXXqoMGXseg=="],
 
     "@dependents/detective-less": ["@dependents/detective-less@5.0.1", "", { "dependencies": { "gonzales-pe": "^4.3.0", "node-source-walk": "^7.0.1" } }, "sha512-Y6+WUMsTFWE5jb20IFP4YGa5IrGY/+a/FbOSjDF/wz9gepU2hwCYSXRHP/vPwBvwcY3SVMASt4yXxbXNXigmZQ=="],
 
