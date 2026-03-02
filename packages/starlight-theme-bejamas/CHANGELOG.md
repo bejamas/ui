@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.1.16
+
+### Patch Changes
+
+- [#78](https://github.com/bejamas/ui/pull/78) [`a2d6526`](https://github.com/bejamas/ui/commit/a2d6526f3c6e205d1ccd219665afef299263db9c) Thanks [@thomkrupa](https://github.com/thomkrupa)! - improve mobile design
+
 ## 0.1.15
 
 ### Patch Changes
