@@ -39,7 +39,6 @@ function parseTokenBlock(block: string) {
 const tokenValues = parseTokenBlock(extractThemeBlock(cssSource));
 const darkTokenValues = parseTokenBlock(extractDarkBlock(cssSource));
 
-
 type ThemeSectionItemInput = {
   label: string;
   token: string;
@@ -176,77 +175,82 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
 
 <!-- Removed IndexedDB population; lean presets are used directly -->
 <StarlightPage
-  hasSidebar={true}
+  hasSidebar={false}
   frontmatter={{ title: "Themes", template: "splash" }}
 >
   <!-- {JSON.stringify(leanPresets)} -->
-  <div>
-    <div class="not-content">
-      <div class="flex items-end gap-2">
-        <div>
-          <Label for="preset-switcher" class="mb-2 font-medium"
-            >Theme Presets</Label
-          >
-          <PresetSwitcher />
-        </div>
-        <Button
-          variant="outline"
-          id="previous-preset"
-          size="icon"
-          aria-label="Previous preset"><ArrowLeft class="size-4" /></Button
+  <div class="not-content max-w-384 mx-auto px-0 sm:px-6 md:px-8">
+    <div class="flex items-end gap-2">
+      <div>
+        <Label for="preset-switcher" class="mb-2 font-medium"
+          >Theme Presets</Label
         >
-        <Button
-          variant="outline"
-          id="next-preset"
-          size="icon"
-          aria-label="Next preset"><ArrowRight class="size-4" /></Button
-        >
-        <!-- <Button variant="outline">Copy Code <CodeXml class="size-4" /></Button> -->
+        <PresetSwitcher />
       </div>
+      <Button
+        variant="outline"
+        id="previous-preset"
+        size="icon"
+        aria-label="Previous preset"><ArrowLeft class="size-4" /></Button
+      >
+      <Button
+        variant="outline"
+        id="next-preset"
+        size="icon"
+        aria-label="Next preset"><ArrowRight class="size-4" /></Button
+      >
+      <!-- <Button variant="outline">Copy Code <CodeXml class="size-4" /></Button> -->
     </div>
-    <div class="not-content mt-10">
-      <section class="space-y-10 text-left">
-        {
-          sections.map((section) => (
-            <div class="space-y-10 border-b pb-10 border-border">
-              <h2 class="text-base font-semibold">{section.title}</h2>
-              <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 border-bottom border-border">
-                {section.items.map((item) => {
-                  const source =
-                    item.source === "dark" ? darkTokenValues : tokenValues;
-                  const value = source[item.token] ?? "";
-                  return (
-                    <div class="flex items-center gap-5">
+  </div>
+  <div
+    class="not-content mt-10 relative z-10 max-w-384 mx-auto px-0 sm:px-6 md:px-8"
+  >
+    <section class="space-y-10 text-left">
+      {
+        sections.map((section) => (
+          <div class="space-y-10 border-b pb-10 border-border">
+            <h2 class="text-base font-semibold">{section.title}</h2>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 border-bottom border-border">
+              {section.items.map((item) => {
+                const source =
+                  item.source === "dark" ? darkTokenValues : tokenValues;
+                const value = source[item.token] ?? "";
+                return (
+                  <div class="flex items-center gap-5">
+                    <div
+                      class="size-15 rounded-md"
+                      data-swatch={item.token}
+                      data-source={item.source ?? "light"}
+                      style={`background: var(--${item.token}); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 15%, transparent);`}
+                    />
+                    <div class="text-left">
+                      <div class="mb-1 text-sm font-medium">{item.label}</div>
                       <div
-                        class="size-15 rounded-md"
-                        data-swatch={item.token}
+                        class="font-mono text-xs text-muted-foreground"
+                        data-token={item.token}
                         data-source={item.source ?? "light"}
-                        style={`background: var(--${item.token}); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 15%, transparent);`}
-                      />
-                      <div class="text-left">
-                        <div class="mb-1 text-sm font-medium">{item.label}</div>
-                        <div
-                          class="font-mono text-xs text-muted-foreground"
-                          data-token={item.token}
-                          data-source={item.source ?? "light"}
-                        >
-                          {value}
-                        </div>
+                      >
+                        {value}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })}
             </div>
-          ))
-        }
-      </section>
-    </div>
+          </div>
+        ))
+      }
+    </section>
   </div>
 </StarlightPage>
 
 <style is:global>
   @reference "tailwindcss";
+
+  .sl-bejamas-docs-title {
+    position: relative;
+    z-index: 20;
+  }
 
   .content-panel {
     @apply text-center border-0 pt-14 pb-0;
@@ -258,6 +262,13 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
 
   .sl-container {
     @apply max-w-7xl;
+  }
+
+  @media (min-width: 48rem) {
+    .main-frame-splash {
+      --sl-splash-frame-top: calc(var(--spacing) * 18);
+      --sl-splash-frame-inline: calc(var(--spacing) * 6);
+    }
   }
 </style>
 
@@ -322,7 +333,7 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
         label: p.label ?? key,
         styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
       },
-    ])
+    ]),
   );
 
   const PRESET_KEYS = Object.keys(defaultPresets);

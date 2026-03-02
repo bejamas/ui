@@ -86,8 +86,9 @@ const cliCommands = {
   hasSidebar={true}
   frontmatter={{ title: `Install Theme: ${theme.name}`, template: "splash" }}
 >
-  <div class="not-content">
-    <div class="max-w-2xl mx-auto">
+  <div class="relative">
+    <div class="not-content relative z-10">
+      <div class="max-w-2xl mx-auto">
       <!-- Back link -->
       <a
         href="/themes"
@@ -298,6 +299,11 @@ const cliCommands = {
           >
         </p>
       </div>
+      </div>
+    </div>
+    <div
+      class="page-bg hidden md:block left-1 right-1 absolute z-0 scroll-fade-out top-8 bottom-0 border border-b-0 rounded-t-3xl"
+    >
     </div>
   </div>
 </StarlightPage>
@@ -305,9 +311,15 @@ const cliCommands = {
 <style is:global>
   .sl-bejamas-docs-title {
     justify-content: center;
+    position: relative;
+    z-index: 20;
   }
 </style>
 <style>
+  .page-bg {
+    background-color: var(--sl-main-frame-inner-background);
+  }
+
   .color-swatch {
     width: 2rem;
     height: 2rem;
