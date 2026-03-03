@@ -1,0 +1,18 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+type Props = {
+  class?: string;
+} & HTMLAttributes<"tbody">;
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<tbody data-slot="table-body" class={cn("[&_tr:last-child]:border-0", className)} {...rest}>
+  <slot />
+</tbody>
+
