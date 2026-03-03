@@ -923,6 +923,48 @@
       ]
     },
     {
+      "name": "table",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/table/Table.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/table/TableBody.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/table/TableCaption.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/table/TableCell.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/table/TableFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/table/TableHead.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/table/TableHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/table/TableRow.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/table/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "tabs",
       "type": "registry:ui",
       "dependencies": ["@data-slot/tabs"],
