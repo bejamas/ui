@@ -1110,10 +1110,16 @@ const sectionTitles = [
                 );
 
                 document
-                  .querySelector<HTMLDivElement>("#theme-tabs")
-                  ?.dispatchEvent(
-                    new CustomEvent("tabs:set", { detail: { value: mode } }),
-                  );
+                  .querySelectorAll<HTMLDivElement>(
+                    'starlight-theme-select [data-slot="tabs"]',
+                  )
+                  .forEach((tabsEl) => {
+                    tabsEl.dataset.defaultValue = mode;
+                    tabsEl.dataset.value = mode;
+                    tabsEl.dispatchEvent(
+                      new CustomEvent("tabs:set", { detail: { value: mode } }),
+                    );
+                  });
               }
 
               this.applyLivePreview();

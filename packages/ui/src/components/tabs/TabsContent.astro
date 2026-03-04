@@ -22,12 +22,11 @@ export const tabsContentVariants = cva(
   },
 );
 
-type Props = {
+interface Props extends VariantProps<typeof tabsContentVariants>, HTMLAttributes<"div"> {
   as?: HTMLTag;
   value: string;
   class?: string;
-} & VariantProps<typeof tabsContentVariants> &
-  HTMLAttributes<"div">;
+}
 
 const {
   as: Tag = "div",

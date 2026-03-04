@@ -202,7 +202,7 @@
  * |-------|--------|-------------|
  * | `tabs:change` | `{ value: string }` | Fired when the selected tab changes |
  *
- * ```astro nocollapse
+ * ```astro nocollapse console
  * <Tabs id="my-tabs" defaultValue="tab1">
  *   <TabsList>
  *     <TabsTrigger value="tab1">Tab 1</TabsTrigger>
@@ -268,14 +268,16 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   class?: string;
   orientation?: "horizontal" | "vertical";
-} & HTMLAttributes<"div">;
+  defaultValue?: string;
+}
 
 const {
   class: className = "",
   orientation = "horizontal",
+  defaultValue,
   ...rest
 } = Astro.props as Props;
 ---
@@ -284,6 +286,7 @@ const {
   {...rest}
   data-slot="tabs"
   data-orientation={orientation}
+  data-default-value={defaultValue}
   class={cn(
     "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
     className,
