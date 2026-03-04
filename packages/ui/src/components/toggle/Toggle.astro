@@ -154,6 +154,6 @@ const {
 <script>
   import { createToggle } from "@data-slot/toggle";
   document
-    .querySelectorAll('[data-slot="toggle"]')
+    .querySelectorAll<HTMLElement>('[data-slot="toggle"]')
     .forEach((el) => createToggle(el));
 </script>

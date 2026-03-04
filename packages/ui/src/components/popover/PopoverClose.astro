@@ -11,7 +11,7 @@ const { as: Tag = "button", class: className = "", ...rest } = Astro.props as Pr
 ---
 
 <Tag
-  {...rest}
+  {...(rest as any)}
   data-slot="popover-close"
   class={cn(className)}
 >

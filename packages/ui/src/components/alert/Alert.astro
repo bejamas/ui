@@ -46,18 +46,16 @@
  */
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
 type AlertVariant = "default" | "destructive";
 
 interface Props extends HTMLAttributes<"div"> {
-  as?: HTMLTag;
   variant?: AlertVariant;
   class?: string;
 }
 
 const {
-  as: Tag = "div",
   class: className = "",
   variant = "default",
   ...rest
@@ -80,11 +78,11 @@ const alertVariants = cva(
 );
 ---
 
-<Tag
+<div
   {...rest}
   data-slot="alert"
   role="alert"
   class={cn(alertVariants({ variant }), className)}
 >
   <slot />
-</Tag>
+</div>

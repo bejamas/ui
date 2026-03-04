@@ -54,7 +54,7 @@ const Tag = rawTag ?? undefined;
 {
   Tag ? (
     <Tag
-      {...rest}
+      {...(rest as any)}
       data-slot="input-group-button"
       class={cn(inputGroupButtonVariants({ size }), className)}
     >

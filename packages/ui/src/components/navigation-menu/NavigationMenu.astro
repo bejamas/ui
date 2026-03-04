@@ -357,6 +357,6 @@ const {
   import { createNavigationMenu } from "@data-slot/navigation-menu";
 
   document
-    .querySelectorAll('[data-slot="navigation-menu"]')
+    .querySelectorAll<HTMLElement>('[data-slot="navigation-menu"]')
     .forEach((el) => createNavigationMenu(el));
 </script>

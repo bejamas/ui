@@ -19,7 +19,7 @@ const controlClasses =
 {
   Tag ? (
     <Tag
-      {...rest}
+      {...(rest as any)}
       data-slot="input-group-control"
       class={cn(controlClasses, className)}
     />
