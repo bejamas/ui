@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import { Separator } from "../separator";
 
-type Props = HTMLAttributes<"div">;
+interface Props extends HTMLAttributes<"div"> {}
 
 const { class: className = "", ...rest } = Astro.props as Props;
 

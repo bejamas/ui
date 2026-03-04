@@ -5,11 +5,11 @@ import type { HTMLAttributes, HTMLTag } from "astro/types";
 
 type ItemMediaVariant = "default" | "icon" | "image";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   as?: HTMLTag;
   mediaVariant?: ItemMediaVariant;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
   as: Tag = "div",

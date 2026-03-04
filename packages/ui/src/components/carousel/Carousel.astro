@@ -42,14 +42,14 @@ type Axis = "x" | "y";
 type SnapType = "mandatory" | "proximity";
 type Align = "start" | "center" | "end";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   as?: HTMLTag;
   axis?: Axis;
   snapType?: SnapType;
   align?: Align;
   fade?: boolean;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
   as: Tag = "div",

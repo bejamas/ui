@@ -232,9 +232,9 @@
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
-type Props = {
+interface Props extends HTMLAttributes<"table"> {
   class?: string;
-} & HTMLAttributes<"table">;
+}
 
 const { class: className = "", ...rest } = Astro.props as Props;
 ---

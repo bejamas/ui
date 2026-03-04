@@ -4,10 +4,10 @@ import { cn } from "@bejamas/ui/lib/utils";
 
 type ErrorItem = { message?: string } | undefined;
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   errors?: ErrorItem[];
   forceMount?: boolean;
-} & HTMLAttributes<"div">;
+}
 
 const {
   class: className = "",

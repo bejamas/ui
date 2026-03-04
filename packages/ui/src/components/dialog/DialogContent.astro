@@ -6,9 +6,9 @@ import DialogClose from "./DialogClose.astro";
 import DialogOverlay from "./DialogOverlay.astro";
 import { X } from "@lucide/astro";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   showCloseButton?: boolean;
-} & HTMLAttributes<"div">;
+}
 
 const {
   showCloseButton = true,

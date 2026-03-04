@@ -164,11 +164,11 @@
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   class?: string;
   open?: boolean;
   hiddenUntilFound?: boolean;
-} & HTMLAttributes<"div">;
+}
 
 const {
   class: className = "",

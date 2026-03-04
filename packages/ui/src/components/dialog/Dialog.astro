@@ -158,13 +158,13 @@
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   defaultOpen?: boolean;
   class?: string;
   closeOnClickOutside?: boolean;
   closeOnEscape?: boolean;
   lockScroll?: boolean;
-} & HTMLAttributes<"div">;
+}
 
 const {
   class: className = "",

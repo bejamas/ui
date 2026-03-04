@@ -3,10 +3,10 @@ import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes, HTMLTag } from "astro/types";
 
-type Props = {
+interface Props extends HTMLAttributes<"ol"> {
   as?: HTMLTag;
   class?: string;
-} & HTMLAttributes<"ol">;
+}
 
 const {
   as: Tag = "ol",

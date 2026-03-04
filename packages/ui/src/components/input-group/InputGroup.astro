@@ -82,11 +82,11 @@ import type { HTMLAttributes, HTMLTag } from "astro/types";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   as?: HTMLTag;
   size?: VariantProps<typeof inputGroupVariants>["size"];
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
   as: Tag = "div",

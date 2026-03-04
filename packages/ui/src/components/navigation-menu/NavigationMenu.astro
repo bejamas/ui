@@ -320,14 +320,14 @@ import type { HTMLAttributes, HTMLTag } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import NavigationMenuViewport from "./NavigationMenuViewport.astro";
 
-type Props = {
+interface Props extends HTMLAttributes<"nav"> {
   as?: HTMLTag;
   class?: string;
   viewport?: boolean;
   delayOpen?: number;
   delayClose?: number;
   openOnFocus?: boolean;
-} & HTMLAttributes<"nav">;
+}
 
 const {
   as: Tag = "nav",

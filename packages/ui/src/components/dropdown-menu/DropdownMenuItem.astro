@@ -2,11 +2,11 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   disabled?: boolean;
   inset?: boolean;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
   disabled = false,

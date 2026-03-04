@@ -6,19 +6,19 @@ import { Button } from "../button";
 
 type GroupButtonSize = "xs" | "sm" | "icon-xs" | "icon-sm";
 
-type Props = {
+interface Props extends HTMLAttributes<"button"> {
   as?: HTMLTag;
   size?: GroupButtonSize;
   variant?:
-    | "default"
-    | "secondary"
-    | "outline"
-    | "ghost"
-    | "destructive"
-    | "link";
+  | "default"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "destructive"
+  | "link";
   type?: "button" | "submit" | "reset";
   class?: string;
-} & HTMLAttributes<"button">;
+}
 
 const {
   as: rawTag,

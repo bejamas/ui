@@ -2,10 +2,10 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props extends HTMLAttributes<"span"> {
   class?: string;
   placeholder?: string;
-} & HTMLAttributes<"span">;
+}
 
 const {
   class: className = "",

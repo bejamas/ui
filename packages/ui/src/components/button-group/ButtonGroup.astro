@@ -89,10 +89,10 @@
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props {
   orientation?: "horizontal" | "vertical";
   class?: string;
-};
+}
 
 const {
   orientation = "horizontal",

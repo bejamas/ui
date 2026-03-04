@@ -50,11 +50,11 @@ import type { HTMLAttributes, HTMLTag } from "astro/types";
 
 type AlertVariant = "default" | "destructive";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   as?: HTMLTag;
   variant?: AlertVariant;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
   as: Tag = "div",
