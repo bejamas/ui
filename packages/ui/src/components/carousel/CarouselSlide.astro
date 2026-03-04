@@ -1,24 +1,22 @@
 ---
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"div"> {
-  as?: HTMLTag;
   class?: string;
 }
 
 const {
-  as: Tag = "div",
   class: className = "",
   ...rest
 } = Astro.props as Props;
 ---
 
-<Tag
+<div
   {...rest}
   data-slot="carousel-slide"
   class={cn("shrink-0", className)}
 >
   <slot />
-</Tag>
+</div>
 
