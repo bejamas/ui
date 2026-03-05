@@ -17,7 +17,7 @@ const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
   trailingSlash: "never",
-  // output: "server",
+  output: "server",
   site: "https://ui.bejamas.com",
   redirects: {
     "/docs": "/docs/introduction",
@@ -74,13 +74,6 @@ export default defineConfig({
       },
       title: "bejamas/ui",
       titleDelimiter: "-",
-      // social: [
-      //   {
-      //     icon: "github",
-      //     label: "GitHub",
-      //     href: "https://github.com/bejamas/ui",
-      //   },
-      // ],
       sidebar: [
         {
           label: "Getting Started",
@@ -106,7 +99,7 @@ export default defineConfig({
           ],
         },
       ],
-      customCss: ["./src/styles/globals.css", "@bejamas/ui/styles/globals.css"],
+      customCss: ["./src/styles/globals.css"],
       logo: {
         alt: "bejamas/ui",
         light: "./src/assets/logo-3.svg",

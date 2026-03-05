@@ -923,6 +923,48 @@
       ]
     },
     {
+      "name": "table",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/table/Table.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/table/TableBody.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/table/TableCaption.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/table/TableCell.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/table/TableFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/table/TableHead.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/table/TableHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/table/TableRow.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/table/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "tabs",
       "type": "registry:ui",
       "dependencies": ["@data-slot/tabs"],

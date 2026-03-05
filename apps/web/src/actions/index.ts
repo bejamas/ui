@@ -1,5 +1,5 @@
 import { defineAction } from "astro:actions";
-import { z } from "astro:schema";
+import { z } from "astro/zod";
 
 const contactInput = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters."),
