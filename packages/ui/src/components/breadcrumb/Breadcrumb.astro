@@ -53,26 +53,24 @@
  */
 
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"nav"> {
   class?: string;
-} & HTMLAttributes<"nav">;
+}
 
 const {
-  as: Tag = "nav",
   class: className = "",
   ...rest
 } = Astro.props as Props;
 ---
 
-<Tag
+<nav
   {...rest}
   aria-label="breadcrumb"
   data-slot="breadcrumb"
   class={cn(className)}
 >
   <slot />
-</Tag>
+</nav>
 

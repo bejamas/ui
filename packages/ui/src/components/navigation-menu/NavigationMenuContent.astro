@@ -2,13 +2,13 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   class?: string;
   align?: "start" | "center" | "end";
   alignOffset?: number;
   side?: "top" | "bottom";
   sideOffset?: number;
-} & HTMLAttributes<"div">;
+}
 
 const {
   class: className = "",

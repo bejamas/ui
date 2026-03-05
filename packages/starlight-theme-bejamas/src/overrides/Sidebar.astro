@@ -4,12 +4,23 @@ import SidebarPersister from "@astrojs/starlight/components/SidebarPersister.ast
 import SidebarSublist from "@astrojs/starlight/components/SidebarSublist.astro";
 
 const { sidebar } = Astro.locals.starlightRoute;
+const { template } = Astro.locals.starlightRoute.entry.data;
+const isSplashTemplate = template === "splash";
 ---
 
-<SidebarPersister>
-  <div class="fade"></div>
-  <SidebarSublist sublist={sidebar} />
-</SidebarPersister>
+{
+  isSplashTemplate ? (
+    <>
+      <div class="fade"></div>
+      <SidebarSublist sublist={sidebar} />
+    </>
+  ) : (
+    <SidebarPersister>
+      <div class="fade"></div>
+      <SidebarSublist sublist={sidebar} />
+    </SidebarPersister>
+  )
+}
 
 <div class="md:sl-hidden">
   <MobileMenuFooter />

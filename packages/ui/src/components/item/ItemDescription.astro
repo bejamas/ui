@@ -1,20 +1,18 @@
 ---
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"p"> {
   class?: string;
-} & HTMLAttributes<"p">;
+}
 
 const {
-  as: Tag = "p",
   class: className = "",
   ...rest
 } = Astro.props as Props;
 ---
 
-<Tag
+<p
   {...rest}
   data-slot="item-description"
   class={cn(
@@ -24,5 +22,5 @@ const {
   )}
 >
   <slot />
-</Tag>
+</p>
 

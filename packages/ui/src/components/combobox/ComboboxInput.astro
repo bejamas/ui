@@ -10,14 +10,14 @@ import {
 import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 import XIcon from "@lucide/astro/icons/x";
 
-type Props = {
+interface Props extends Omit<HTMLAttributes<"input">, "size"> {
   class?: string;
   size?: "sm" | "default" | "lg";
   placeholder?: string;
   disabled?: boolean;
   showTrigger?: boolean;
   showClear?: boolean;
-} & Omit<HTMLAttributes<"input">, "size">;
+}
 
 const {
   class: className = "",

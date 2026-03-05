@@ -90,10 +90,10 @@ import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 
-type Props = {
+interface Props extends HTMLAttributes<"select"> {
   class?: string;
   size?: "sm" | "default" | "lg";
-} & HTMLAttributes<"select">;
+}
 
 const {
   class: className = "",

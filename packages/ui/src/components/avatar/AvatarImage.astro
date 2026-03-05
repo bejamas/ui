@@ -1,27 +1,23 @@
 ---
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"img"> {
   class?: string;
   src?: string;
   alt?: string;
-} & HTMLAttributes<"img">;
+}
 
 const {
-  as,
   class: className = "",
   src,
   alt = "",
   ...rest
 } = Astro.props as Props;
-
-const Tag = (as ?? "div") as HTMLTag;
 ---
 
 {
-  src || as === "img" ? (
+  src ? (
     <img
       {...rest}
       data-slot="avatar-image"
@@ -33,7 +29,7 @@ const Tag = (as ?? "div") as HTMLTag;
       )}
     />
   ) : (
-    <Tag
+    <div
       {...rest}
       data-slot="avatar-image"
       class={cn(
@@ -43,6 +39,6 @@ const Tag = (as ?? "div") as HTMLTag;
       )}
     >
       <slot />
-    </Tag>
+    </div>
   )
 }

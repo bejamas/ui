@@ -17,13 +17,13 @@ const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
   trailingSlash: "never",
-  // output: "server",
+  output: "server",
   site: "https://ui.bejamas.com",
   redirects: {
     "/docs": "/docs/introduction",
   },
   image: {
-    // Example: Allow remote image optimization from a single domain
+    // Allow remote image optimization from a single domain
     domains: ["gradient.bejamas.com", "github.com"],
   },
   env: {
@@ -61,6 +61,7 @@ export default defineConfig({
           components: {
             button: "@bejamas/ui/components/button",
             select: "@bejamas/ui/components/select",
+            Header: "./src/components/starlight/Header.astro",
             ThemeSelect: "./src/components/ThemeSwitcher.astro",
             PageTitle: "./src/components/PageTitle.astro",
           },
@@ -68,18 +69,12 @@ export default defineConfig({
         starlightPageActions(),
       ],
       components: {
+        Header: "./src/components/starlight/Header.astro",
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
         PageTitle: "./src/components/PageTitle.astro",
       },
       title: "bejamas/ui",
       titleDelimiter: "-",
-      // social: [
-      //   {
-      //     icon: "github",
-      //     label: "GitHub",
-      //     href: "https://github.com/bejamas/ui",
-      //   },
-      // ],
       sidebar: [
         {
           label: "Getting Started",
@@ -105,7 +100,7 @@ export default defineConfig({
           ],
         },
       ],
-      customCss: ["./src/styles/globals.css", "@bejamas/ui/styles/globals.css"],
+      customCss: ["./src/styles/globals.css"],
       logo: {
         alt: "bejamas/ui",
         light: "./src/assets/logo-3.svg",
@@ -245,7 +240,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     ssr: {
-      noExternal: ["zod"],
+      noExternal: ["zod", "nanoid"],
     },
   },
   adapter: vercel({

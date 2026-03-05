@@ -134,12 +134,12 @@
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   class?: string;
   multiple?: boolean;
   defaultValue?: string;
   collapsible?: boolean;
-} & HTMLAttributes<"div">;
+}
 
 const {
   class: className = "",

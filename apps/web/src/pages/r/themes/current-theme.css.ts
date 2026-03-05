@@ -17,7 +17,7 @@ const parseCookies = (request: Request) => {
       }
       return acc;
     },
-    {} as Record<string, string>
+    {} as Record<string, string>,
   );
 };
 
@@ -61,7 +61,7 @@ export async function GET({
               Vary: "Cookie",
               "Content-Type": "text/css",
             },
-          }
+          },
         );
       }
       // Fall through to default if shared theme not found
@@ -89,7 +89,7 @@ export async function GET({
               Vary: "Cookie",
               "Content-Type": "text/css",
             },
-          }
+          },
         );
       }
 
@@ -112,7 +112,7 @@ export async function GET({
               Vary: "Cookie",
               "Content-Type": "text/css",
             },
-          }
+          },
         );
       }
     }
@@ -135,12 +135,13 @@ export async function GET({
             Vary: "Cookie",
             "Content-Type": "text/css",
           },
-        }
+        },
       );
     }
 
     // Try built-in presets
-    const builtInPreset = defaultPresets[themeId as keyof typeof defaultPresets];
+    const builtInPreset =
+      defaultPresets[themeId as keyof typeof defaultPresets];
     if (builtInPreset) {
       const generated = applyThemeToCss({
         currentMode: "light",
@@ -157,7 +158,7 @@ export async function GET({
             Vary: "Cookie",
             "Content-Type": "text/css",
           },
-        }
+        },
       );
     }
 
@@ -178,7 +179,7 @@ export async function GET({
           Vary: "Cookie",
           "Content-Type": "text/css",
         },
-      }
+      },
     );
   } catch (e) {
     console.error("Error fetching the theme registry item:", e);

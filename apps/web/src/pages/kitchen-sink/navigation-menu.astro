@@ -20,11 +20,118 @@ import BookOpenIcon from "@lucide/astro/icons/book-open";
 import HeadphonesIcon from "@lucide/astro/icons/headphones";
 import NewspaperIcon from "@lucide/astro/icons/newspaper";
 import RocketIcon from "@lucide/astro/icons/rocket";
+
+const components = [
+  {
+    title: "Alert",
+    href: "/docs/components/alert/",
+    description:
+      "Displays important messages with title and description content.",
+  },
+  {
+    title: "Sheet",
+    href: "/docs/components/sheet/",
+    description: "A side panel component built on top of dialog primitives.",
+  },
+  {
+    title: "Native Select",
+    href: "/docs/components/native-select/",
+    description:
+      "A styled native select element for choosing one option from a list.",
+  },
+  {
+    title: "Tabs",
+    href: "/docs/components/tabs/",
+    description:
+      "A set of layered sections of content displayed one at a time.",
+  },
+];
 ---
 
 <KitchenSinkLayout>
   <section class="max-w-4xl mx-auto py-20 px-5 space-y-12">
     <h1 class="text-3xl font-bold mb-10">Navigation Menu</h1>
+
+    <KitchenSinkSection title="fulldev/ui">
+      <NavigationMenu>
+        <NavigationMenuList class="flex-wrap gap-1">
+          <NavigationMenuItem value="getting-started">
+            <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul class="w-96 p-1">
+                <li>
+                  <NavigationMenuLink
+                    href="/docs"
+                    class="w-full flex-col items-start"
+                  >
+                    <span class="font-medium leading-none">Introduction</span>
+                    <span class="text-muted-foreground line-clamp-2 text-sm">
+                      Re-usable components built with Tailwind CSS.
+                    </span>
+                  </NavigationMenuLink>
+                </li>
+                <li>
+                  <NavigationMenuLink
+                    href="/docs/installation/"
+                    class="w-full flex-col items-start"
+                  >
+                    <span class="font-medium leading-none">Installation</span>
+                    <span class="text-muted-foreground line-clamp-2 text-sm">
+                      How to install dependencies and structure your app.
+                    </span>
+                  </NavigationMenuLink>
+                </li>
+                <li>
+                  <NavigationMenuLink
+                    href="/docs/"
+                    class="w-full flex-col items-start"
+                  >
+                    <span class="font-medium leading-none">Typography</span>
+                    <span class="text-muted-foreground line-clamp-2 text-sm">
+                      Styles for headings, paragraphs, lists, and more.
+                    </span>
+                  </NavigationMenuLink>
+                </li>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem value="components" class="hidden md:block">
+            <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul
+                class="grid w-[400px] gap-2 p-1 md:w-[500px] md:grid-cols-2 lg:w-[600px]"
+              >
+                {
+                  components.map((component) => (
+                    <li>
+                      <NavigationMenuLink
+                        href={component.href}
+                        class="w-full flex-col items-start"
+                      >
+                        <span class="font-medium leading-none">
+                          {component.title}
+                        </span>
+                        <span class="text-muted-foreground line-clamp-2 text-sm">
+                          {component.description}
+                        </span>
+                      </NavigationMenuLink>
+                    </li>
+                  ))
+                }
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem value="docs">
+            <NavigationMenuLink
+              href="/docs"
+              class={navigationMenuTriggerStyle()}
+            >
+              Docs
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </KitchenSinkSection>
 
     <KitchenSinkSection title="Basic">
       <p class="text-sm text-muted-foreground">
@@ -562,9 +669,9 @@ import RocketIcon from "@lucide/astro/icons/rocket";
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem value="medium" align="center">
+          <NavigationMenuItem value="medium">
             <NavigationMenuTrigger>Medium</NavigationMenuTrigger>
-            <NavigationMenuContent>
+            <NavigationMenuContent align="center">
               <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
                 <NavigationMenuLink href="#">
                   <div class="font-medium">Analytics</div>
@@ -589,9 +696,9 @@ import RocketIcon from "@lucide/astro/icons/rocket";
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem value="wide" align="center">
+          <NavigationMenuItem value="wide">
             <NavigationMenuTrigger>Wide</NavigationMenuTrigger>
-            <NavigationMenuContent>
+            <NavigationMenuContent align="center">
               <div class="grid grid-cols-3 gap-2 w-[520px] p-2">
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <BookOpenIcon class="size-5 mt-1 text-muted-foreground" />
@@ -743,9 +850,7 @@ import RocketIcon from "@lucide/astro/icons/rocket";
                   <RocketIcon class="size-5 mt-1 text-muted-foreground" />
                   <div>
                     <div class="font-medium">Changelog</div>
-                    <div class="text-sm text-muted-foreground">
-                      What's new
-                    </div>
+                    <div class="text-sm text-muted-foreground">What's new</div>
                   </div>
                 </NavigationMenuLink>
               </div>

@@ -3,9 +3,9 @@ import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const { class: className = "", ...rest } = Astro.props as Props;
 
@@ -18,7 +18,7 @@ const contentVariants = cva("overflow-hidden min-h-0 [&[hidden]]:!block");
 const contentInnerVariants = cva("pt-0 pb-4");
 ---
 
-<div class={cn("group/accordion", rest.class)} {...rest}>
+<div class={cn("group/accordion", className)} {...rest}>
   <div class={cn(contentWrapperVariants())}>
     <div data-slot="accordion-content" class={cn(contentVariants())}>
       <div class={cn(contentInnerVariants(), className)}>

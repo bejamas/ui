@@ -254,7 +254,7 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   class?: string;
   name?: string;
   defaultValue?: string;
@@ -262,7 +262,7 @@ type Props = {
   disabled?: boolean;
   required?: boolean;
   size?: "sm" | "default" | "lg";
-} & HTMLAttributes<"div">;
+}
 
 const {
   class: className = "",

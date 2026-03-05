@@ -34,7 +34,7 @@
  * - fade?: boolean — Add edge fade via CSS mask on the scroll axis. Default: false.
  */
 
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
@@ -42,17 +42,15 @@ type Axis = "x" | "y";
 type SnapType = "mandatory" | "proximity";
 type Align = "start" | "center" | "end";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"div"> {
   axis?: Axis;
   snapType?: SnapType;
   align?: Align;
   fade?: boolean;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
-  as: Tag = "div",
   axis = "x",
   snapType = "mandatory",
   align = "start",
@@ -93,7 +91,7 @@ const defaultFadeX = "mask-x-from-80% mask-x-to-95%";
 const defaultFadeY = "mask-y-from-80% mask-y-to-95%";
 ---
 
-<Tag
+<div
   {...rest}
   data-slot="carousel"
   class={cn(
@@ -104,5 +102,5 @@ const defaultFadeY = "mask-y-from-80% mask-y-to-95%";
   )}
 >
   <slot />
-</Tag>
+</div>
 

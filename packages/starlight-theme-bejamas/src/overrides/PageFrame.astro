@@ -3,17 +3,28 @@ import MobileMenuToggle from "virtual:starlight/components/MobileMenuToggle";
 
 const { hasSidebar } = Astro.locals.starlightRoute;
 const { template } = Astro.locals.starlightRoute.entry.data;
+
+// Splash templates disable Starlight's sidebar by default, but we still want
+// the mobile menu toggle there to expose docs/components navigation.
+const shouldRenderSidebarNav = hasSidebar || template === "splash";
+const isSplashTemplate = template === "splash";
 ---
 
-<div class="page sl-flex">
+<div
+  class:list={[
+    "page sl-flex",
+    shouldRenderSidebarNav && "page-has-sidebar-nav",
+    isSplashTemplate && "page-mobile-sidebar-only",
+  ]}
+>
   <header class="header">
     <slot name="header" />
     <div class="fade"></div>
   </header>
   {
-    hasSidebar && (
+    shouldRenderSidebarNav && (
       <nav
-        class="sidebar print:hidden"
+        class:list={["sidebar print:hidden", isSplashTemplate && "sidebar-splash"]}
         aria-label={Astro.locals.t("sidebarNav.accessibleLabel")}
       >
         <MobileMenuToggle />
@@ -26,7 +37,75 @@ const { template } = Astro.locals.starlightRoute.entry.data;
     )
   }
 
-  <div class="main-frame">
+  {
+    isSplashTemplate && (
+      <script is:inline>
+        (() => {
+          const installReset = () => {
+            const nav = document.querySelector("nav.sidebar-splash");
+            if (!(nav instanceof HTMLElement)) return () => {};
+
+            const pane = nav.querySelector("#starlight__sidebar");
+            const toggle = nav.querySelector("starlight-menu-button");
+
+            if (!(pane instanceof HTMLElement)) return () => {};
+
+            const resetToTop = () => {
+              pane.scrollTop = 0;
+            };
+
+            // Avoid opening splash menus at a persisted offset.
+            resetToTop();
+
+            if (!(toggle instanceof HTMLElement)) return () => {};
+
+            const onToggleChange = () => {
+              if (toggle.getAttribute("aria-expanded") === "true") {
+                requestAnimationFrame(resetToTop);
+              }
+            };
+
+            const onToggleClick = () => {
+              requestAnimationFrame(onToggleChange);
+            };
+
+            toggle.addEventListener("click", onToggleClick);
+
+            const observer = new MutationObserver(onToggleChange);
+            observer.observe(toggle, {
+              attributes: true,
+              attributeFilter: ["aria-expanded"],
+            });
+
+            return () => {
+              toggle.removeEventListener("click", onToggleClick);
+              observer.disconnect();
+            };
+          };
+
+          let cleanup = installReset();
+
+          const onAstroPageLoad = () => {
+            cleanup();
+            cleanup = installReset();
+          };
+
+          document.addEventListener("astro:page-load", onAstroPageLoad);
+
+          addEventListener(
+            "pagehide",
+            () => {
+              cleanup();
+              document.removeEventListener("astro:page-load", onAstroPageLoad);
+            },
+            { once: true },
+          );
+        })();
+      </script>
+    )
+  }
+
+  <div class:list={["main-frame", isSplashTemplate && "main-frame-splash"]}>
     {
       template === "splash" ? (
         <slot />
@@ -89,13 +168,14 @@ const { template } = Astro.locals.starlightRoute.entry.data;
       background-color: var(--background);
     }
 
-    @media (min-width: 72rem) {
+    @media (min-width: 64rem) {
       .header {
         background-color: transparent;
       }
     }
 
-    :global([data-has-sidebar]) .header {
+    :global([data-has-sidebar]) .header,
+    .page-has-sidebar-nav .header {
       padding-inline-end: calc(
         var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size)
       );
@@ -109,8 +189,17 @@ const { template } = Astro.locals.starlightRoute.entry.data;
       inset-inline-start: 0;
       width: 100%;
       background-color: var(--background);
-      overflow-y: auto;
+      height: 100svh;
+      overflow: scroll;
+      overflow-y: scroll;
+      overflow-x: hidden;
       scrollbar-width: none;
+      scroll-behavior: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      overscroll-behavior-y: contain;
+      top: 0;
+      padding-top: calc(var(--spacing) * 18);
     }
 
     :global([aria-expanded="true"]) ~ .sidebar-pane {
@@ -130,11 +219,28 @@ const { template } = Astro.locals.starlightRoute.entry.data;
         content: "";
         padding-bottom: 1px;
       }
+
+      .sidebar-pane {
+        padding-top: 0;
+        margin-top: calc(var(--spacing) * 18);
+      }
     }
 
     .main-frame {
       padding-top: calc(var(--sl-nav-height) + var(--sl-mobile-toc-height));
       /* padding-inline-start: var(--sl-content-inline-start); */
+    }
+
+    .main-frame-splash {
+      position: relative;
+      isolation: isolate;
+      --sl-splash-frame-top: calc(var(--spacing) * 8);
+      --sl-splash-frame-inline: 0;
+    }
+
+    .main-frame-splash > * {
+      position: relative;
+      z-index: 1;
     }
 
     .main-frame-inner {
@@ -155,7 +261,28 @@ const { template } = Astro.locals.starlightRoute.entry.data;
       }
     }
 
-    .main-frame-inner::before,
+    @media (min-width: 48rem) {
+      .main-frame-splash::before {
+        content: "";
+        position: absolute;
+        inset-inline: var(--sl-splash-frame-inline);
+        inset-block-start: var(--sl-splash-frame-top);
+        inset-block-end: 0;
+        border: 1px solid var(--sl-main-frame-inner-border);
+        border-bottom: 0;
+        border-radius: calc(var(--radius) + 12px) calc(var(--radius) + 12px) 0 0;
+        background-color: var(--sl-main-frame-inner-background);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Pages with their own local splash frame keep full control. */
+      :global(.main-frame-splash:has(.page-bg))::before {
+        content: none;
+      }
+    }
+
+    /* .main-frame-inner::before,
     .main-frame-inner::after {
       content: "";
       position: absolute;
@@ -175,10 +302,16 @@ const { template } = Astro.locals.starlightRoute.entry.data;
 
     .main-frame-inner::after {
       right: -1px;
-    }
+    } */
 
-    @media (min-width: 50rem) {
-      :global([data-has-sidebar]) .header {
+    @media (min-width: 64rem) {
+      .page-mobile-sidebar-only {
+        --sl-sidebar-width: 0;
+        --sl-content-inline-start: 0;
+      }
+
+      :global([data-has-sidebar]) .header,
+      .page-has-sidebar-nav .header {
         padding-inline-end: var(--sl-nav-pad-x);
       }
       .sidebar-pane {
@@ -186,6 +319,11 @@ const { template } = Astro.locals.starlightRoute.entry.data;
         width: var(--sl-sidebar-width);
         background-color: var(--sl-color-bg-sidebar);
         border-inline-end: 1px solid var(--sl-color-hairline-shade);
+      }
+
+      /* Keep splash templates desktop layout unchanged; only mobile gets menu panel. */
+      .sidebar-splash .sidebar-pane {
+        display: none;
       }
     }
   }

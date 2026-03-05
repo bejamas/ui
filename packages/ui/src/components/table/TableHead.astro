@@ -1,0 +1,25 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"th"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<th
+  data-slot="table-head"
+  class={cn(
+    "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+    className,
+  )}
+  {...rest}
+>
+  <slot />
+</th>
+
