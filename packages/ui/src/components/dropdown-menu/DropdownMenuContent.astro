@@ -3,13 +3,13 @@ import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import { cva } from "class-variance-authority";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   align?: "start" | "center" | "end";
   alignOffset?: number;
   side?: "top" | "bottom" | "left" | "right";
   sideOffset?: number;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
   align = "start",

@@ -57,17 +57,17 @@
  * ```
  */
 
-import type { HTMLTag, Polymorphic } from "astro/types";
+import type { HTMLTag } from "astro/types";
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props {
   as?: HTMLTag;
   variant?: "default" | "secondary" | "destructive" | "outline";
   class?: string;
   shape?: "default" | "pill";
   size?: "default" | "sm";
-};
+}
 
 const {
   as = "span",
@@ -76,7 +76,7 @@ const {
   shape = "default",
   size = "default",
   ...props
-} = Astro.props;
+} = Astro.props as Props;
 
 const badgeVariants = cva(
   [

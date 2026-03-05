@@ -1,18 +1,16 @@
 ---
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
 type ItemMediaVariant = "default" | "icon" | "image";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"div"> {
   mediaVariant?: ItemMediaVariant;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
-  as: Tag = "div",
   class: className = "",
   mediaVariant = "default",
   ...rest
@@ -36,11 +34,11 @@ const itemMediaVariants = cva(
 );
 ---
 
-<Tag
+<div
   {...rest}
   data-slot="item-media"
   class={cn(itemMediaVariants({ variant: mediaVariant }), className)}
 >
   <slot />
-</Tag>
+</div>
 

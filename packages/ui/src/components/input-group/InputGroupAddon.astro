@@ -5,10 +5,10 @@ import { cn } from "@bejamas/ui/lib/utils";
 
 type Align = "inline-start" | "inline-end" | "block-start" | "block-end";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   align?: Align;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
   align = "inline-start",

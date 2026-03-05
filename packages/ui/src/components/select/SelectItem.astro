@@ -3,11 +3,11 @@ import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import CheckIcon from "@lucide/astro/icons/check";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   value: string;
   disabled?: boolean;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
   value,

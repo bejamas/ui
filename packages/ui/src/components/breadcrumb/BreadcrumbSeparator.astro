@@ -1,15 +1,13 @@
 ---
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"li"> {
   class?: string;
-} & HTMLAttributes<"li">;
+}
 
 const {
-  as: Tag = "li",
   class: className = "",
   ...rest
 } = Astro.props as Props;
@@ -17,7 +15,7 @@ const {
 const separatorVariants = cva("[&>svg]:size-3.5");
 ---
 
-<Tag
+<li
   {...rest}
   role="presentation"
   aria-hidden="true"
@@ -39,5 +37,5 @@ const separatorVariants = cva("[&>svg]:size-3.5");
       <path d="m9 18 6-6-6-6" />
     </svg>
   </slot>
-</Tag>
+</li>
 

@@ -2,9 +2,9 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props extends HTMLAttributes<"legend"> {
   variant?: "legend" | "label";
-} & HTMLAttributes<"legend">;
+}
 
 const {
   class: className = "",

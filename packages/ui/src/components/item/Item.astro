@@ -36,22 +36,20 @@
  * ```
  */
 
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
 type ItemRootVariant = "default" | "outline" | "muted";
 type ItemRootSize = "default" | "sm";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"div"> {
   variant?: ItemRootVariant;
   size?: ItemRootSize;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
-  as: Tag = "div",
   class: className = "",
   variant = "default",
   size = "default",
@@ -80,7 +78,7 @@ const itemVariants = cva(
 );
 ---
 
-<Tag
+<div
   {...rest}
   data-slot="item"
   data-variant={variant}
@@ -88,4 +86,4 @@ const itemVariants = cva(
   class={cn(itemVariants({ variant, size }), className)}
 >
   <slot />
-</Tag>
+</div>

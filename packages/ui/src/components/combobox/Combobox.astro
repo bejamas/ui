@@ -296,7 +296,7 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   class?: string;
   name?: string;
   defaultValue?: string;
@@ -305,7 +305,7 @@ type Props = {
   required?: boolean;
   openOnFocus?: boolean;
   autoHighlight?: boolean;
-} & HTMLAttributes<"div">;
+}
 
 const {
   class: className = "",

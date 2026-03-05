@@ -31,26 +31,24 @@
  * ```
  */
 
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"div"> {
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
-  as: Tag = "div",
   class: className = "",
   ...rest
 } = Astro.props as Props;
 ---
 
-<Tag
+<div
   {...rest}
   data-slot="link-group"
   class={cn("flex flex-col gap-2", className)}
 >
   <slot />
-</Tag>
+</div>
 

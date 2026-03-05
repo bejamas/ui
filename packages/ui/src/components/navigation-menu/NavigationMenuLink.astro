@@ -1,16 +1,15 @@
 ---
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"a"> {
   class?: string;
-} & HTMLAttributes<"a">;
+}
 
-const { as: Tag = "a", class: className = "", ...rest } = Astro.props as Props;
+const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<Tag
+<a
   {...rest}
   data-slot="navigation-menu-link"
   class={cn(
@@ -19,4 +18,4 @@ const { as: Tag = "a", class: className = "", ...rest } = Astro.props as Props;
   )}
 >
   <slot />
-</Tag>
+</a>

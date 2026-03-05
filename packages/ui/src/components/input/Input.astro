@@ -99,10 +99,10 @@ const inputVariants = cva(
 type InputUiSize = NonNullable<VariantProps<typeof inputVariants>["size"]>;
 type NativeInputSize = HTMLAttributes<"input">["size"];
 
-type Props = Omit<HTMLAttributes<"input">, "size"> & {
+interface Props extends Omit<HTMLAttributes<"input">, "size"> {
   size?: InputUiSize | NativeInputSize;
   nativeSize?: NativeInputSize;
-};
+}
 
 const {
   class: className = "",

@@ -167,7 +167,7 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
+interface Props extends Omit<HTMLAttributes<"div">, "class"> {
   variant?: "default" | "outline";
   size?: "default" | "sm" | "lg";
   defaultValue?: string | string[];
@@ -175,7 +175,7 @@ type Props = {
   orientation?: "horizontal" | "vertical";
   disabled?: boolean;
   class?: string;
-} & Omit<HTMLAttributes<"div">, "class">;
+}
 
 const {
   variant = "default",
@@ -209,7 +209,7 @@ const {
 
 <script>
   import { createToggleGroup } from "@data-slot/toggle-group";
-  document.querySelectorAll('[data-slot="toggle-group"]').forEach((el) => {
+  document.querySelectorAll<HTMLElement>('[data-slot="toggle-group"]').forEach((el) => {
     const defaultValue = el.dataset.defaultValue;
     createToggleGroup(el, {
       multiple: el.dataset.multiple === "true",

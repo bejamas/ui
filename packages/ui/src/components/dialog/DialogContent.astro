@@ -1,14 +1,14 @@
 ---
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
 import DialogClose from "./DialogClose.astro";
 import DialogOverlay from "./DialogOverlay.astro";
 import { X } from "@lucide/astro";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   showCloseButton?: boolean;
-} & HTMLAttributes<"div">;
+}
 
 const {
   showCloseButton = true,

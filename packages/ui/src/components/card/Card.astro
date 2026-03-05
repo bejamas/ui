@@ -67,10 +67,10 @@ import type { HTMLAttributes } from "astro/types";
 
 type CardVariant = "default" | "ghost";
 
-type Props = {
+interface Props extends HTMLAttributes<"div"> {
   variant?: CardVariant;
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
   class: className = "",
