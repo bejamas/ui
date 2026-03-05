@@ -1,0 +1,87 @@
+diff --git a/schemas/badge.ts b/schemas/badge.ts
+index f3f1f738f68123ecb1c4eba12952dbb8d7bbefd0..68b8638367ef00d8216b1d24da1cd56fc2b0aa11 100644
+--- a/schemas/badge.ts
++++ b/schemas/badge.ts
+@@ -10,7 +10,7 @@ const badgeSchema = badgeBaseSchema.extend({
+ });
+ 
+ const i18nBadgeSchema = badgeBaseSchema.extend({
+-	text: z.union([z.string(), z.record(z.string())]),
++	text: z.union([z.string(), z.record(z.string(), z.string())]),
+ });
+ 
+ export const BadgeComponentSchema = badgeSchema
+diff --git a/schemas/head.ts b/schemas/head.ts
+index d868e85969e412ea6d8eb29a450fa3df3e79b0fb..32eed68da11b3ba51061dbfbb73e25e090511529 100644
+--- a/schemas/head.ts
++++ b/schemas/head.ts
+@@ -7,7 +7,7 @@ export const HeadConfigSchema = () =>
+ 				/** Name of the HTML tag to add to `<head>`, e.g. `'meta'`, `'link'`, or `'script'`. */
+ 				tag: z.enum(['title', 'base', 'link', 'style', 'meta', 'script', 'noscript', 'template']),
+ 				/** Attributes to set on the tag, e.g. `{ rel: 'stylesheet', href: '/custom.css' }`. */
+-				attrs: z.record(z.union([z.string(), z.boolean(), z.undefined()])).optional(),
++				attrs: z.record(z.string(), z.union([z.string(), z.boolean(), z.undefined()])).optional(),
+ 				/** Content to place inside the tag (optional). */
+ 				content: z.string().optional(),
+ 			})
+diff --git a/schemas/hero.ts b/schemas/hero.ts
+index e1af1f90676b59fb9a95a341740ffc4fec1ed7f9..8b38a87a92882511468e1075e97db54ce559dd14 100644
+--- a/schemas/hero.ts
++++ b/schemas/hero.ts
+@@ -62,7 +62,7 @@ export const HeroSchema = ({ image }: SchemaContext) =>
+ 					})
+ 					.optional(),
+ 				/** HTML attributes to add to the link */
+-				attrs: z.record(z.union([z.string(), z.number(), z.boolean()])).optional(),
++				attrs: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+ 			})
+ 			.array()
+ 			.default([]),
+diff --git a/schemas/sidebar.ts b/schemas/sidebar.ts
+index b76bc80e961fa57ffa292f361d727a6bf5f744ed..366a5d42d98d21b1fba4e506a664483c1edec21a 100644
+--- a/schemas/sidebar.ts
++++ b/schemas/sidebar.ts
+@@ -8,7 +8,7 @@ const SidebarBaseSchema = z.object({
+ 	/** The visible label for this item in the sidebar. */
+ 	label: z.string(),
+ 	/** Translations of the `label` for each supported language. */
+-	translations: z.record(z.string()).default({}),
++	translations: z.record(z.string(), z.string()).default({}),
+ 	/** Adds a badge to the item */
+ 	badge: I18nBadgeConfigSchema(),
+ });
+@@ -30,7 +30,7 @@ const SidebarGroupSchema = SidebarBaseSchema.extend({
+ // `Record<string, string | number | boolean | undefined>` but typed as `HTMLAttributes<'a'>`
+ // for user convenience.
+ const linkHTMLAttributesSchema = z.record(
+-	z.union([z.string(), z.number(), z.boolean(), z.undefined(), z.null()])
++	z.string(), z.union([z.string(), z.number(), z.boolean(), z.undefined(), z.null()])
+ ) as z.Schema<Omit<HTMLAttributes<'a'>, keyof AstroBuiltinAttributes | 'children'>>;
+ export type LinkHTMLAttributes = z.infer<typeof linkHTMLAttributesSchema>;
+ 
+diff --git a/schemas/site-title.ts b/schemas/site-title.ts
+index ad5e62b64729e90dc6c3975d9594cab1cc01e1aa..b655fcd56d932db7e4540e9d66e8216605610c41 100644
+--- a/schemas/site-title.ts
++++ b/schemas/site-title.ts
+@@ -2,7 +2,7 @@ import { z } from 'astro/zod';
+ 
+ export const TitleConfigSchema = () =>
+ 	z
+-		.union([z.string(), z.record(z.string())])
++		.union([z.string(), z.record(z.string(), z.string())])
+ 		.describe('Title for your website. Will be used in metadata and as browser tab title.');
+ 
+ // transform the title for runtime use
+diff --git a/utils/plugins.ts b/utils/plugins.ts
+index d51663e1929f329db705e10d0c89d22776e8ef29..8316370063efc6607b7f8e6dc574e1debbd53a20 100644
+--- a/utils/plugins.ts
++++ b/utils/plugins.ts
+@@ -230,7 +230,7 @@ const configSetupHookSchema = z
+ 				 */
+ 				updateConfig: z.function(
+ 					z.tuple([
+-						z.record(z.any()) as z.Schema<Partial<Omit<StarlightUserConfig, 'routeMiddleware'>>>,
++						z.record(z.string(), z.any()) as z.Schema<Partial<Omit<StarlightUserConfig, 'routeMiddleware'>>>,
+ 					]),
+ 					z.void()
+ 				),

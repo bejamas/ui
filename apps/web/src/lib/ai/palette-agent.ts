@@ -1,7 +1,7 @@
 import { OPENAI_API_KEY } from "astro:env/server";
 import { generateText, generateObject } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
-import { z } from "zod";
+import { z } from "astro/zod";
 
 const openai = createOpenAI({
   apiKey: OPENAI_API_KEY,
