@@ -120,20 +120,20 @@
       "name": "@bejamas/ui",
       "version": "0.1.0",
       "dependencies": {
-        "@data-slot/accordion": "^0.2.111",
-        "@data-slot/collapsible": "^0.2.111",
-        "@data-slot/combobox": "^0.2.111",
-        "@data-slot/dialog": "^0.2.111",
-        "@data-slot/dropdown-menu": "^0.2.111",
-        "@data-slot/hover-card": "^0.2.111",
-        "@data-slot/navigation-menu": "^0.2.111",
-        "@data-slot/popover": "^0.2.111",
-        "@data-slot/select": "^0.2.111",
-        "@data-slot/slider": "^0.2.111",
-        "@data-slot/tabs": "^0.2.111",
-        "@data-slot/toggle": "^0.2.111",
-        "@data-slot/toggle-group": "^0.2.111",
-        "@data-slot/tooltip": "^0.2.111",
+        "@data-slot/accordion": "^0.2.113",
+        "@data-slot/collapsible": "^0.2.113",
+        "@data-slot/combobox": "^0.2.112",
+        "@data-slot/dialog": "^0.2.113",
+        "@data-slot/dropdown-menu": "^0.2.113",
+        "@data-slot/hover-card": "^0.2.113",
+        "@data-slot/navigation-menu": "^0.2.113",
+        "@data-slot/popover": "^0.2.113",
+        "@data-slot/select": "^0.2.113",
+        "@data-slot/slider": "^0.2.112",
+        "@data-slot/tabs": "^0.2.113",
+        "@data-slot/toggle": "^0.2.113",
+        "@data-slot/toggle-group": "^0.2.113",
+        "@data-slot/tooltip": "^0.2.113",
         "@lucide/astro": "^0.540.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -301,35 +301,35 @@
 
     "@dabh/diagnostics": ["@dabh/diagnostics@2.0.8", "", { "dependencies": { "@so-ric/colorspace": "^1.1.6", "enabled": "2.0.x", "kuler": "^2.0.0" } }, "sha512-R4MSXTVnuMzGD7bzHdW2ZhhdPC/igELENcq5IjEverBvq5hn1SXCWcsi6eSsdWP0/Ur+SItRRjAktmdoX/8R/Q=="],
 
-    "@data-slot/accordion": ["@data-slot/accordion@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-g6oFgXCuH/BboDXmBZ9XXYmI94ZoVVd/lvRCfkPFM5XYmwCt633iIORm6ciUw/WZi+y/6k0MEcK0HVBuhtDZoQ=="],
+    "@data-slot/accordion": ["@data-slot/accordion@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-HHZ6zD2XGrUfGvNlzV/ariNVZlNFiobapv8zA/5Ae/m8Qzx2UrEq71xhONZq0w9T0EaDUnFRNNfSvRjD/XFgbQ=="],
 
-    "@data-slot/collapsible": ["@data-slot/collapsible@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-/y25s6EsigihxgWcmjUsK/uWFx/euQSlFGepqE6gYbu4ojvhPYIaFORoJWli7bitw9qIAvwzNsisHwR1RABrJA=="],
+    "@data-slot/collapsible": ["@data-slot/collapsible@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-B5WX8sbr9JBY0Hj/2NjmbPW4vDjgpbzRKNfWqxG9X7oJXiwhNvqlMEXoob13z+sR5U75hk9VOsQluNPoGTV/1w=="],
 
-    "@data-slot/combobox": ["@data-slot/combobox@0.2.112", "", { "dependencies": { "@data-slot/core": "0.2.112" } }, "sha512-j/uAzUf9Kx+/jud9ldyEVWY1s1Liejw/mNLqL+E66nX6NCdd8JDm+jYR4Ernzf+FIe9eZ4vMBxcfCAce+9nveA=="],
+    "@data-slot/combobox": ["@data-slot/combobox@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-CT/xcoj7TvnQ2hFjVJq+D5C0hnMRsB6PfY9akqoQSTOLGGQEy6vo4WoE2L2TMA6MLZNijBOzb1R7WY6ZAbQdmw=="],
 
-    "@data-slot/core": ["@data-slot/core@0.2.113", "", {}, "sha512-xuwDICMyGPeEz8YcPzfpTL13mRZGekQAU6Wq03RKNM+jY47j5+cUAenEC4TPdSI7MwcEWydHCW7klvHPh1G0cQ=="],
+    "@data-slot/core": ["@data-slot/core@0.2.116", "", {}, "sha512-DqrlZ3tVql7X/ZYpoqG1hLTF0MQaFP6OjBVFudcavuVQ0m13ZOdduDvydrUxAW0bnx6F0r4Z7cx0IJ/uQeZ5kQ=="],
 
-    "@data-slot/dialog": ["@data-slot/dialog@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-40vyPl/k44c2cPysYGfF0PKDTFhuobDDrmns6giI/KNCE7a1Fv3X78iqVMoLW+p08MiWt844MNWHpen8ulvFLQ=="],
+    "@data-slot/dialog": ["@data-slot/dialog@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-Q+yd1sOAbPRGB4j6g4WMSDQm0GY4/BvbUUa/vz87GA5bBns+rvv69PHDU20590OXdob00twSKNnrhX+592rOvQ=="],
 
-    "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-mRZDN8m9m2ZQu9YC0M396uWVS67A22yqIbbpY5dU7xr5MFPtlM88sLHHG8zmU7QQvNCWjwfWVvjIKQO5RR7CYw=="],
+    "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-OIR0BFiUAdMQnhfeNaLFJJiX+tgw3/Pj7XKMkpPMtz+VeRofs68Kt+ySGtHELrRz60FpE9D7xTsWbkMJpHjmZw=="],
 
-    "@data-slot/hover-card": ["@data-slot/hover-card@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-J5sYj+xqfLdZhZ/FC/ehqnjuQIfrKnE1KTGOVnGBNGEk7v7sR9FyIYu8XmncLVNZTDBUID2aSak/ACPdUCVUOA=="],
+    "@data-slot/hover-card": ["@data-slot/hover-card@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-JM2ShTKQ9bTJwzMFG18vGvnnjXPNzn8bHBP5TlLAcpe6nfLhPfFuvU2itW0Zd6fdR5ACvxiE6oCKJ5mxbcNR8g=="],
 
-    "@data-slot/navigation-menu": ["@data-slot/navigation-menu@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-eFDWDgNhkM62YtKfVn15AjAs/IKuwqt7wz4MNKH/dDuoZEnLnB1ZAH4u9r9WXdXl29y3mLsuC2ZO7w8YxEVeoQ=="],
+    "@data-slot/navigation-menu": ["@data-slot/navigation-menu@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-hkPYtQ2A6LxQ6mJCQcGnP21J8daRuGIWuF3FqUN2+VnDgkb/0hwS6vtlLUbzzcZ+FiM6RaudRSiu7NKBXMe2vA=="],
 
-    "@data-slot/popover": ["@data-slot/popover@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-fuMVyncBg9bZNR/26xwvk88maqq6c7laI5TS/YrDpDKSP4wxK6CJFhztzQcD+4iHIV7GCivlLnt1rOHU1Dkx9g=="],
+    "@data-slot/popover": ["@data-slot/popover@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-UYGkmk4peV0zCY8LSyVcJmfWZnTfl0oF3uD5Goxl/ixyxFvtgGhcDm8NFqU6cPJXsRVVzdMXN6hbFmUhLwL0/w=="],
 
-    "@data-slot/select": ["@data-slot/select@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-tFG5XemGLxNYfi88aif8XZ0QA//eQIGq6Kv3BriuI4bRCB4pgWGCnremx/jUX0aZ9z/Pcofzjb/r6eDs26v0Lw=="],
+    "@data-slot/select": ["@data-slot/select@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-kukmwU60fzWOT8rSYBK6VlQZjb5qUYZvpGZap/8BHmiKbzjsle1GmmPPX6CEtPcuGEPsi6uOkIqbKtLqPy1mxg=="],
 
-    "@data-slot/slider": ["@data-slot/slider@0.2.112", "", { "dependencies": { "@data-slot/core": "0.2.112" } }, "sha512-OiyNIv2ZQD5T9xpXhOTRpinpkG/9IK1c0WS/M/2DXfGTHynxm9hghr0KGk4+wM3MSLxN+SuBcyBH7anKshqY7g=="],
+    "@data-slot/slider": ["@data-slot/slider@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-00cBEsm000NgUdwM5cTHFunXBMd1tE010wMuT0EtOaggJsqDPpPT5s29d6AeDv1cqfJdVia0GV8Gsp0Js5bv5g=="],
 
-    "@data-slot/tabs": ["@data-slot/tabs@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-9B7899Dabc6x9xIGk5M075S56eJXoTBZD0Mqy89CWtG0mI82p+dG8GQZnNm+T5UNz7JZLrpB1P2HDViV7m84xw=="],
+    "@data-slot/tabs": ["@data-slot/tabs@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-hCR6y02KfSK4fwBk7In6568WHxd3/thDHZZMkCrJBlkryRS4rnEBgLROanyFEDaO3eDhqwa2kjsRC4VaGXEhzw=="],
 
-    "@data-slot/toggle": ["@data-slot/toggle@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-ukrUjVQElVukBD8tlB6voBx5sqhpCsXRgXn9JRdgirwSRyUHy9rgy6bNOmSRtiBJIzkcoMyJK12vyy8HMciQ6A=="],
+    "@data-slot/toggle": ["@data-slot/toggle@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-1hUzCD0GMe+PBxK8ZNQw+ap4Zg0Odg9fflgpeANcqMecDfCL0IyaRZHpCCdbmmDj3bTWp+r6U2u1OgL9nj4xwg=="],
 
-    "@data-slot/toggle-group": ["@data-slot/toggle-group@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-B/vQgJgUs4ftajRRGsZ2PAB1Efjlipc8XJ+wE+2WGKP606YInGNWiGBz2RdL7H8YdJF4UnBXhiSucxTGVfVv8w=="],
+    "@data-slot/toggle-group": ["@data-slot/toggle-group@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-OcgKNVnf/aak2F2fPbdIhxUJN/oOOD9IaWEMec7i1+Ou8OdnzCSZWU9mv8Aqw/Jvse+rWVJ5bTSB4M1dUsupbw=="],
 
-    "@data-slot/tooltip": ["@data-slot/tooltip@0.2.113", "", { "dependencies": { "@data-slot/core": "0.2.113" } }, "sha512-FYJkW5IBt8iaLbTPShCzoZHFr4W5PtUQPMvlrqEBai4zui4RhciSXCx5yF9NfbSDexrFnyip+wvmGTHug+cuWg=="],
+    "@data-slot/tooltip": ["@data-slot/tooltip@0.2.116", "", { "dependencies": { "@data-slot/core": "0.2.116" } }, "sha512-RsNIHVMNK27kVPJMJl3B+my4bVlYke03wokyrUr3pzFS6mTfx81EQlXlfpanOuwgDfcXUOBY0Roin3Ku+EzqlA=="],
 
     "@dependents/detective-less": ["@dependents/detective-less@5.0.1", "", { "dependencies": { "gonzales-pe": "^4.3.0", "node-source-walk": "^7.0.1" } }, "sha512-Y6+WUMsTFWE5jb20IFP4YGa5IrGY/+a/FbOSjDF/wz9gepU2hwCYSXRHP/vPwBvwcY3SVMASt4yXxbXNXigmZQ=="],
 
@@ -3074,10 +3074,6 @@
     "@changesets/write/prettier": ["prettier@2.8.8", "", { "bin": { "prettier": "bin-prettier.js" } }, "sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q=="],
 
     "@cspotcode/source-map-support/@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.9", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.0.3", "@jridgewell/sourcemap-codec": "^1.4.10" } }, "sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ=="],
-
-    "@data-slot/combobox/@data-slot/core": ["@data-slot/core@0.2.112", "", {}, "sha512-LxX/HkuDUTi8Eyb4Qw72vz9p6wtn0yXdfsIxlYC+XzBG+VFSL7Ezhk0l7az98vNeJ1cyqNbJR87Mw6JqZsd2HQ=="],
-
-    "@data-slot/slider/@data-slot/core": ["@data-slot/core@0.2.112", "", {}, "sha512-LxX/HkuDUTi8Eyb4Qw72vz9p6wtn0yXdfsIxlYC+XzBG+VFSL7Ezhk0l7az98vNeJ1cyqNbJR87Mw6JqZsd2HQ=="],
 
     "@dotenvx/dotenvx/commander": ["commander@11.1.0", "", {}, "sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ=="],
 
