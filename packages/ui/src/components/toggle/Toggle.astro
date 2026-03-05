@@ -123,11 +123,11 @@ const toggleVariants = cva(
 
 type ToggleVariantProps = VariantProps<typeof toggleVariants>;
 
-type Props = ToggleVariantProps & {
+interface Props extends ToggleVariantProps, Omit<HTMLAttributes<"button">, "class"> {
   defaultPressed?: boolean;
   disabled?: boolean;
   class?: string;
-} & Omit<HTMLAttributes<"button">, "class">;
+}
 
 const {
   variant,
@@ -154,6 +154,6 @@ const {
 <script>
   import { createToggle } from "@data-slot/toggle";
   document
-    .querySelectorAll('[data-slot="toggle"]')
+    .querySelectorAll<HTMLElement>('[data-slot="toggle"]')
     .forEach((el) => createToggle(el));
 </script>

@@ -652,7 +652,7 @@ const fieldVariants = cva(
 
 type FieldVariantProps = VariantProps<typeof fieldVariants>;
 
-type Props = FieldVariantProps & HTMLAttributes<"div">;
+interface Props extends FieldVariantProps, HTMLAttributes<"div"> {}
 
 const {
   class: className = "",

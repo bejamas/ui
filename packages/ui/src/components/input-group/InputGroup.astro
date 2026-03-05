@@ -78,25 +78,23 @@
  * | --- | --- | --- |
  * | `size` | `"sm" \| "default" \| "lg"` | `"default"` |
  */
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends HTMLAttributes<"div"> {
   size?: VariantProps<typeof inputGroupVariants>["size"];
   class?: string;
-} & HTMLAttributes<"div">;
+}
 
 const {
-  as: Tag = "div",
   size = "default",
   class: className = "",
   ...rest
 } = Astro.props as Props;
 
 const inputGroupVariants = cva(
-  "border-input dark:bg-input/30 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 has-disabled:bg-input/50 dark:has-disabled:bg-input/80 rounded-lg border transition-colors in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:ring-0 has-disabled:opacity-50 has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot][aria-invalid=true]]:ring-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto group/input-group relative flex w-full min-w-0 items-center outline-none",
+  "border-input dark:bg-input/30 has-[:focus-visible]:border-ring has-[:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 has-disabled:bg-input/50 dark:has-disabled:bg-input/80 rounded-lg border transition-colors in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:ring-0 has-disabled:opacity-50 has-[:focus-visible]:ring-3 has-[[data-slot][aria-invalid=true]]:ring-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto group/input-group relative flex w-full min-w-0 items-center outline-none",
   {
     variants: {
       size: {
@@ -113,7 +111,7 @@ const inputGroupVariants = cva(
 );
 ---
 
-<Tag
+<div
   {...rest}
   role="group"
   data-slot="input-group"
@@ -121,9 +119,9 @@ const inputGroupVariants = cva(
   class={cn(inputGroupVariants({ size }), className)}
 >
   <slot />
-</Tag>
+</div>
 
-<script type="module">
+<script is:inline type="module">
   // Focus the nearest input when clicking on addons (unless clicking a button)
   document.addEventListener("click", (e) => {
     const addon = e.target.closest("[data-slot='input-group-addon']");

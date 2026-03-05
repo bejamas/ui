@@ -2,18 +2,17 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-type Props = {
-  as?: string;
+interface Props extends HTMLAttributes<"button"> {
   class?: string;
-} & HTMLAttributes<"button">;
+}
 
-const { as: Tag = "button", class: className = "", ...rest } = Astro.props as Props;
+const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<Tag
+<button
   {...rest}
   data-slot="popover-close"
   class={cn(className)}
 >
   <slot />
-</Tag>
+</button>

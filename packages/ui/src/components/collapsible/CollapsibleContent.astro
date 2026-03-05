@@ -3,10 +3,9 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
-type Props = {
+interface Props extends VariantProps<typeof collapsibleContentVariants>, HTMLAttributes<"div"> {
   class?: string;
-} & VariantProps<typeof collapsibleContentVariants> &
-  HTMLAttributes<"div">;
+}
 
 export const collapsibleContentVariants = cva("overflow-hidden", {
   variants: {

@@ -4,34 +4,16 @@ import {
   TabsList,
   TabsTrigger,
 } from "@bejamas/ui/components/tabs";
-import { Skeleton } from "@bejamas/ui/components/skeleton";
-import { Button } from "@bejamas/ui/components/button";
 
-import { SunIcon, MoonIcon, LaptopIcon, GithubIcon } from "@lucide/astro";
+import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 import PresetSwitcher from "./PresetSwitcher.astro";
 import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
-import GitHubLink from "./GitHubLink.astro";
-
-const githubUrl = "https://github.com/bejamas/ui";
 ---
 
 <div class="flex items-center gap-2">
-  <Button
-    as="a"
-    variant="outline"
-    href={githubUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="gap-1.5 w-16"
-  >
-    <GithubIcon class="size-4" />
-    <GitHubLink server:defer>
-      <Skeleton class="w-8.5 h-5 rounded-sm" slot="fallback" />
-    </GitHubLink>
-  </Button>
   <PresetSwitcher />
   <starlight-theme-select>
-    <Tabs class="theme-tabs" id="theme-tabs">
+    <Tabs defaultValue="auto" class="theme-tabs">
       <TabsList class="h-9 p-1 py-0.5 rounded-md">
         <TabsTrigger
           value="light"
@@ -92,6 +74,20 @@ const githubUrl = "https://github.com/bejamas/ui";
   const getPreferredColorScheme = (): Theme =>
     matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 
+  function syncThemeTabs(theme: Theme): void {
+    document
+      .querySelectorAll<HTMLDivElement>(
+        'starlight-theme-select [data-slot="tabs"]',
+      )
+      .forEach((tabsEl) => {
+        tabsEl.dataset.defaultValue = theme;
+        tabsEl.dataset.value = theme;
+        tabsEl.dispatchEvent(
+          new CustomEvent("tabs:set", { detail: { value: theme } }),
+        );
+      });
+  }
+
   function onThemeChange(theme: Theme): void {
     const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
     if (typeof StarlightThemeProvider !== "undefined") {
@@ -105,12 +101,7 @@ const githubUrl = "https://github.com/bejamas/ui";
     window.dispatchEvent(
       new CustomEvent("theme-toggle-changed", { detail: { theme: resolved } }),
     );
-
-    document
-      .querySelector<HTMLDivElement>("#theme-tabs")
-      ?.dispatchEvent(
-        new CustomEvent("tabs:set", { detail: { value: theme } }),
-      ) as HTMLDivElement;
+    syncThemeTabs(theme);
   }
 
   matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
@@ -118,14 +109,30 @@ const githubUrl = "https://github.com/bejamas/ui";
   });
 
   class StarlightThemeSelect extends HTMLElement {
+    private tabsEl: HTMLDivElement | null = null;
+
+    private onTabsChange = (event: Event) => {
+      const value = (event as CustomEvent<{ value?: unknown }>).detail?.value;
+      if (typeof value !== "string") return;
+
+      const nextTheme = parseTheme(value);
+      const currentTheme = parseTheme(document.documentElement.dataset.themeChoice);
+      if (nextTheme === currentTheme) return;
+
+      onThemeChange(nextTheme);
+    };
+
     connectedCallback() {
       const currentTheme = loadTheme();
       onThemeChange(currentTheme);
 
-      const el = document.querySelector("#theme-tabs");
-      el?.addEventListener("tabs:change", (e) => {
-        onThemeChange(parseTheme(e.detail.value));
-      });
+      this.tabsEl = this.querySelector<HTMLDivElement>('[data-slot="tabs"]');
+      this.tabsEl?.addEventListener("tabs:change", this.onTabsChange);
+    }
+
+    disconnectedCallback() {
+      this.tabsEl?.removeEventListener("tabs:change", this.onTabsChange);
+      this.tabsEl = null;
     }
   }
 

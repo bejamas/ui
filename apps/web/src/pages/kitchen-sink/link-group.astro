@@ -14,81 +14,145 @@ import {
     <h1 class="text-3xl font-bold mb-10">Link Group</h1>
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
-    <KitchenSinkSection title="Basic">
-      <LinkGroup>
-        <LinkGroupTitle>Company</LinkGroupTitle>
-        <LinkGroupList>
-          <LinkGroupItem href="#">About</LinkGroupItem>
-          <LinkGroupItem href="#">Blog</LinkGroupItem>
-          <LinkGroupItem href="#">Careers</LinkGroupItem>
-          <LinkGroupItem href="#">Contact</LinkGroupItem>
-        </LinkGroupList>
-      </LinkGroup>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="Without Title">
-      <LinkGroup>
-        <LinkGroupList>
-          <LinkGroupItem href="#">Documentation</LinkGroupItem>
-          <LinkGroupItem href="#">API Reference</LinkGroupItem>
-          <LinkGroupItem href="#">Changelog</LinkGroupItem>
-          <LinkGroupItem href="#">Support</LinkGroupItem>
-        </LinkGroupList>
-      </LinkGroup>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="Custom Styling">
-      <LinkGroup>
-        <LinkGroupTitle class="text-primary">Resources</LinkGroupTitle>
-        <LinkGroupList>
-          <LinkGroupItem href="#" class="text-muted-foreground hover:text-primary">Tutorials</LinkGroupItem>
-          <LinkGroupItem href="#" class="text-muted-foreground hover:text-primary">Examples</LinkGroupItem>
-          <LinkGroupItem href="#" class="text-muted-foreground hover:text-primary">Templates</LinkGroupItem>
-          <LinkGroupItem href="#" class="text-muted-foreground hover:text-primary">Showcase</LinkGroupItem>
-        </LinkGroupList>
-      </LinkGroup>
-    </KitchenSinkSection>
-    </div>
-
-    <KitchenSinkSection title="Footer Layout">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-        <LinkGroup>
-          <LinkGroupTitle>Product</LinkGroupTitle>
-          <LinkGroupList>
-            <LinkGroupItem href="#">Features</LinkGroupItem>
-            <LinkGroupItem href="#">Pricing</LinkGroupItem>
-            <LinkGroupItem href="#">Integrations</LinkGroupItem>
-            <LinkGroupItem href="#">Changelog</LinkGroupItem>
-          </LinkGroupList>
-        </LinkGroup>
+      <KitchenSinkSection title="Basic">
         <LinkGroup>
           <LinkGroupTitle>Company</LinkGroupTitle>
           <LinkGroupList>
-            <LinkGroupItem href="#">About</LinkGroupItem>
-            <LinkGroupItem href="#">Blog</LinkGroupItem>
-            <LinkGroupItem href="#">Careers</LinkGroupItem>
-            <LinkGroupItem href="#">Press</LinkGroupItem>
+            <LinkGroupItem>
+              <a href="#">About</a>
+            </LinkGroupItem>
+            <LinkGroupItem>
+              <a href="#">Blog</a>
+            </LinkGroupItem>
+            <LinkGroupItem>
+              <a href="#">Careers</a>
+            </LinkGroupItem>
+            <LinkGroupItem>
+              <a href="#">Contact</a>
+            </LinkGroupItem>
           </LinkGroupList>
         </LinkGroup>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Without Title">
         <LinkGroup>
-          <LinkGroupTitle>Resources</LinkGroupTitle>
           <LinkGroupList>
-            <LinkGroupItem href="#">Documentation</LinkGroupItem>
-            <LinkGroupItem href="#">Guides</LinkGroupItem>
-            <LinkGroupItem href="#">API Reference</LinkGroupItem>
-            <LinkGroupItem href="#">Community</LinkGroupItem>
+            <LinkGroupItem>
+              <a href="#">Documentation</a>
+            </LinkGroupItem>
+            <LinkGroupItem>
+              <a href="#">API Reference</a>
+            </LinkGroupItem>
+            <LinkGroupItem>
+              <a href="#">Changelog</a>
+            </LinkGroupItem>
+            <LinkGroupItem>
+              <a href="#">Support</a>
+            </LinkGroupItem>
           </LinkGroupList>
         </LinkGroup>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Custom Styling">
         <LinkGroup>
-          <LinkGroupTitle>Legal</LinkGroupTitle>
+          <LinkGroupTitle class="text-primary">Resources</LinkGroupTitle>
           <LinkGroupList>
-            <LinkGroupItem href="#">Privacy</LinkGroupItem>
-            <LinkGroupItem href="#">Terms</LinkGroupItem>
-            <LinkGroupItem href="#">Cookie Policy</LinkGroupItem>
-            <LinkGroupItem href="#">Licenses</LinkGroupItem>
+            <LinkGroupItem>
+              <a href="#" class="text-muted-foreground hover:text-primary"
+                >Tutorials</a
+              >
+            </LinkGroupItem>
           </LinkGroupList>
+          <LinkGroupItem>
+            <a href="#" class="text-muted-foreground hover:text-primary"
+              >Examples</a
+            >
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#" class="text-muted-foreground hover:text-primary"
+              >Templates</a
+            >
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#" class="text-muted-foreground hover:text-primary"
+              >Showcase</a
+            >
+          </LinkGroupItem>
         </LinkGroup>
-      </div>
-    </KitchenSinkSection>
+      </KitchenSinkSection>
+    </div>
   </section>
+
+  <KitchenSinkSection title="Footer Layout">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <LinkGroup>
+        <LinkGroupTitle>Product</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem>
+            <a href="#">Features</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Pricing</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Integrations</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Changelog</a>
+          </LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+      <LinkGroup>
+        <LinkGroupTitle>Company</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem>
+            <a href="#">About</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Blog</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Careers</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Press</a>
+          </LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+      <LinkGroup>
+        <LinkGroupTitle>Resources</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem>
+            <a href="#">Documentation</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Guides</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">API Reference</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Community</a>
+          </LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+      <LinkGroup>
+        <LinkGroupTitle>Legal</LinkGroupTitle>
+        <LinkGroupList>
+          <LinkGroupItem>
+            <a href="#">Privacy</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Terms</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Cookie Policy</a>
+          </LinkGroupItem>
+          <LinkGroupItem>
+            <a href="#">Licenses</a>
+          </LinkGroupItem>
+        </LinkGroupList>
+      </LinkGroup>
+    </div>
+  </KitchenSinkSection>
 </KitchenSinkLayout>

@@ -140,7 +140,8 @@ export function getCurrentMode(): "light" | "dark" {
   if (typeof window === "undefined") return "light";
 
   if ((window as any).astroThemeToggle?.getTheme) {
-    return (window as any).astroThemeToggle.getTheme();
+    const mode = (window as any).astroThemeToggle.getTheme();
+    if (mode === "dark" || mode === "light") return mode;
   }
   const el = document.documentElement;
   const attr = el.getAttribute("data-theme");

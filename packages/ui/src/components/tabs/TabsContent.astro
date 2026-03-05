@@ -1,7 +1,7 @@
 ---
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
 export const tabsContentVariants = cva(
   "focus-visible:border-ring focus-visible:ring-ring/50 text-sm flex-1 outline-none focus-visible:ring-[3px] hidden data-[state=active]:block",
@@ -22,15 +22,12 @@ export const tabsContentVariants = cva(
   },
 );
 
-type Props = {
-  as?: HTMLTag;
+interface Props extends VariantProps<typeof tabsContentVariants>, HTMLAttributes<"div"> {
   value: string;
   class?: string;
-} & VariantProps<typeof tabsContentVariants> &
-  HTMLAttributes<"div">;
+}
 
 const {
-  as: Tag = "div",
   value,
   animation = "none",
   class: className = "",
@@ -38,7 +35,7 @@ const {
 } = Astro.props as Props;
 ---
 
-<Tag
+<div
   {...rest}
   role="tabpanel"
   data-slot="tabs-content"
@@ -47,4 +44,4 @@ const {
   class={cn(tabsContentVariants({ animation }), className)}
 >
   <slot />
-</Tag>
+</div>

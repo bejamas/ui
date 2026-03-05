@@ -46,7 +46,7 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
   <div class="sl-flex sl-bejamas-header-search sl-justify-end print:hidden">
     {shouldRenderSearch && <Search />}
   </div>
-  <div class="sl-hidden md:sl-flex print:hidden right-group">
+  <div class="header-desktop-right print:hidden right-group">
     <div class="sl-flex social-icons">
       <SocialIcons />
     </div>
@@ -81,9 +81,17 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
       display: none;
     }
 
-    @media (min-width: 50rem) {
+    .header-desktop-right {
+      display: none;
+    }
+
+    @media (min-width: 64rem) {
       .sl-bejamas-main-nav {
         display: block;
+      }
+
+      .header-desktop-right {
+        display: flex;
       }
     }
 
@@ -114,6 +122,11 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
     @media (min-width: 64rem) {
       :global(:root[data-has-sidebar]) {
         --__sidebar-pad: calc(2 * var(--sl-nav-pad-x));
+      }
+      :global(.page-mobile-sidebar-only) .header {
+        --__sidebar-pad: 0rem;
+        display: flex;
+        grid-template-columns: none;
       }
       :global(:root:not([data-has-toc])) {
         --__toc-width: 0rem;
