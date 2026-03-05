@@ -99,7 +99,7 @@ export default defineConfig({
           ],
         },
       ],
-      customCss: ["./src/styles/globals.css", "@bejamas/ui/styles/globals.css"],
+      customCss: ["./src/styles/globals.css"],
       logo: {
         alt: "bejamas/ui",
         light: "./src/assets/logo-3.svg",
