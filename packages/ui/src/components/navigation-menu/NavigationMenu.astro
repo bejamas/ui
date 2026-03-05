@@ -272,6 +272,7 @@
  * ### With Simple Links
  *
  * Use `navigationMenuTriggerStyle()` to style regular links to match triggers.
+ * When `<NavigationMenuIndicator />` is present, the indicator owns the surface highlight.
  *
  * <NavigationMenu>
  *   <NavigationMenuList>
@@ -285,12 +286,12 @@
  *       </NavigationMenuContent>
  *     </NavigationMenuItem>
  *     <NavigationMenuItem>
- *       <NavigationMenuLink href="#" class="px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 rounded-sm hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground">
+ *       <NavigationMenuLink href="#" class="navigation-menu-trigger-surface px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 rounded-sm hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground">
  *         Pricing
  *       </NavigationMenuLink>
  *     </NavigationMenuItem>
  *     <NavigationMenuItem>
- *       <NavigationMenuLink href="/docs" class="px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 rounded-sm hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground">
+ *       <NavigationMenuLink href="/docs" class="navigation-menu-trigger-surface px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 rounded-sm hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground">
  *         Docs
  *       </NavigationMenuLink>
  *     </NavigationMenuItem>
@@ -360,3 +361,12 @@ const {
     .querySelectorAll('[data-slot="navigation-menu"]')
     .forEach((el) => createNavigationMenu(el));
 </script>
+
+<style is:global>
+  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:hover,
+  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:focus,
+  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:focus-visible,
+  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface[data-state="open"] {
+    background-color: transparent;
+  }
+</style>
