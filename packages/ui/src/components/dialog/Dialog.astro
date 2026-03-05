@@ -155,7 +155,6 @@
  *
  */
 
-import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"div"> {
@@ -190,7 +189,7 @@ const {
 <script>
   import { createDialog } from "@data-slot/dialog";
 
-  document.querySelectorAll('[data-slot="dialog"]').forEach((el) =>
+  document.querySelectorAll<HTMLElement>('[data-slot="dialog"]').forEach((el) =>
     createDialog(el, {
       defaultOpen: el.dataset.defaultOpen === "true",
       closeOnClickOutside: el.dataset.closeOnClickOutside === "true",

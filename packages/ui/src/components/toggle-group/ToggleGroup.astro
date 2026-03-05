@@ -209,7 +209,7 @@ const {
 
 <script>
   import { createToggleGroup } from "@data-slot/toggle-group";
-  document.querySelectorAll('[data-slot="toggle-group"]').forEach((el) => {
+  document.querySelectorAll<HTMLElement>('[data-slot="toggle-group"]').forEach((el) => {
     const defaultValue = el.dataset.defaultValue;
     createToggleGroup(el, {
       multiple: el.dataset.multiple === "true",

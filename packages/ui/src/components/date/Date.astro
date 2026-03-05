@@ -51,11 +51,11 @@ const {
 } = Astro.props;
 
 // Helper: parse date input
-function parseDate(input) {
+function parseDate(input: string | globalThis.Date | null | undefined) {
   if (!input) return null;
-  if (input instanceof Date) return input;
+  if (input instanceof globalThis.Date) return input;
   // Try to parse string
-  const d = new Date(input);
+  const d = new globalThis.Date(input);
   return isNaN(d.getTime()) ? null : d;
 }
 
@@ -67,7 +67,7 @@ let timeText = "";
 let formatted = "";
 let html = "";
 if (parsedDate) {
-  let dateOptions;
+  let dateOptions: Intl.DateTimeFormatOptions | undefined;
   switch (format) {
     case "short":
       dateOptions = { dateStyle: "short" };
@@ -117,7 +117,7 @@ if (parsedDate) {
     Astro.slots.has("default") ? (
       <Fragment set:html={html} />
     ) : (
-      <time dateTime={parsedDate.toISOString()} class={className} {...props}>
+      <time datetime={parsedDate.toISOString()} class={className} {...props}>
         {formatted}
       </time>
     )

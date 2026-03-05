@@ -1,5 +1,5 @@
 ---
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import { Button } from "../button";
@@ -7,7 +7,6 @@ import { Button } from "../button";
 type GroupButtonSize = "xs" | "sm" | "icon-xs" | "icon-sm";
 
 interface Props extends HTMLAttributes<"button"> {
-  as?: HTMLTag;
   size?: GroupButtonSize;
   variant?:
   | "default"
@@ -21,7 +20,6 @@ interface Props extends HTMLAttributes<"button"> {
 }
 
 const {
-  as: rawTag,
   size = "xs",
   variant = "ghost",
   type = "button",
@@ -47,28 +45,14 @@ const inputGroupButtonVariants = cva(
     },
   },
 );
-
-const Tag = rawTag ?? undefined;
 ---
 
-{
-  Tag ? (
-    <Tag
-      {...rest}
-      data-slot="input-group-button"
-      class={cn(inputGroupButtonVariants({ size }), className)}
-    >
-      <slot />
-    </Tag>
-  ) : (
-    <Button
-      type={type}
-      variant={variant}
-      data-slot="input-group-button"
-      class={cn(inputGroupButtonVariants({ size }), className)}
-      {...(rest as any)}
-    >
-      <slot />
-    </Button>
-  )
-}
+<Button
+  type={type}
+  variant={variant}
+  data-slot="input-group-button"
+  class={cn(inputGroupButtonVariants({ size }), className)}
+  {...rest}
+>
+  <slot />
+</Button>

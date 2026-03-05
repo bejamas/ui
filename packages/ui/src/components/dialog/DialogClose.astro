@@ -1,20 +1,15 @@
 ---
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"button"> {
-  as?: HTMLTag;
   class?: string;
 }
 
-const {
-  as: Tag = "button",
-  class: className = "",
-  ...rest
-} = Astro.props as Props;
+const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<Tag
+<button
   {...rest}
   data-slot="dialog-close"
   data-dialog-close
@@ -25,4 +20,4 @@ const {
 >
   <slot />
   {!Astro.slots.has("default") && <span class="sr-only">Close</span>}
-</Tag>
+</button>

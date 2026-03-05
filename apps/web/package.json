@@ -11,7 +11,8 @@
     "astro": "astro",
     "build:registry": "bun x shadcn@latest registry:build",
     "build:docs": "bun x bejamas@canary docs:build",
-    "normalize-component-paths-in-registry": "bun run scripts/normalize-paths.ts"
+    "normalize-component-paths-in-registry": "bun run scripts/normalize-paths.ts",
+    "check-types": "astro check"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.12",

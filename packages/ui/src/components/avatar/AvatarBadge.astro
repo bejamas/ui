@@ -1,20 +1,18 @@
 ---
 import { cn } from "@bejamas/ui/lib/utils";
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"span"> {
-  as?: HTMLTag;
   class?: string;
 }
 
 const {
-  as: Tag = "span",
   class: className = "",
   ...rest
 } = Astro.props as Props;
 ---
 
-<Tag
+<span
   {...rest}
   data-slot="avatar-badge"
   class={cn(
@@ -26,4 +24,4 @@ const {
   )}
 >
   <slot />
-</Tag>
+</span>

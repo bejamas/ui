@@ -165,7 +165,6 @@
  * | `delayOpen` | `number` | `0` | Delay in ms before opening menu |
  * | `delayClose` | `number` | `0` | Delay in ms before closing menu |
  * | `openOnFocus` | `boolean` | `false` | Open menu on keyboard focus |
- * | `as` | `HTMLTag` | `"nav"` | HTML element to render |
  *
  * ### NavigationMenuItem Props
  *
@@ -316,12 +315,11 @@
  *   </NavigationMenuList>
  * </NavigationMenu>
  */
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import NavigationMenuViewport from "./NavigationMenuViewport.astro";
 
 interface Props extends HTMLAttributes<"nav"> {
-  as?: HTMLTag;
   class?: string;
   viewport?: boolean;
   delayOpen?: number;
@@ -330,7 +328,6 @@ interface Props extends HTMLAttributes<"nav"> {
 }
 
 const {
-  as: Tag = "nav",
   class: className = "",
   viewport = true,
   delayOpen = 0,
@@ -340,7 +337,7 @@ const {
 } = Astro.props as Props;
 ---
 
-<Tag
+<nav
   {...rest}
   data-slot="navigation-menu"
   data-viewport={viewport}
@@ -351,12 +348,12 @@ const {
 >
   <slot />
   {viewport && <NavigationMenuViewport />}
-</Tag>
+</nav>
 
 <script>
   import { createNavigationMenu } from "@data-slot/navigation-menu";
 
   document
-    .querySelectorAll('[data-slot="navigation-menu"]')
+    .querySelectorAll<HTMLElement>('[data-slot="navigation-menu"]')
     .forEach((el) => createNavigationMenu(el));
 </script>

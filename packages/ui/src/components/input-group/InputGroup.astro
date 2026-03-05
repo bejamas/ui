@@ -78,18 +78,16 @@
  * | --- | --- | --- |
  * | `size` | `"sm" \| "default" \| "lg"` | `"default"` |
  */
-import type { HTMLAttributes, HTMLTag } from "astro/types";
+import type { HTMLAttributes } from "astro/types";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
 interface Props extends HTMLAttributes<"div"> {
-  as?: HTMLTag;
   size?: VariantProps<typeof inputGroupVariants>["size"];
   class?: string;
 }
 
 const {
-  as: Tag = "div",
   size = "default",
   class: className = "",
   ...rest
@@ -113,7 +111,7 @@ const inputGroupVariants = cva(
 );
 ---
 
-<Tag
+<div
   {...rest}
   role="group"
   data-slot="input-group"
@@ -121,9 +119,9 @@ const inputGroupVariants = cva(
   class={cn(inputGroupVariants({ size }), className)}
 >
   <slot />
-</Tag>
+</div>
 
-<script type="module">
+<script is:inline type="module">
   // Focus the nearest input when clicking on addons (unless clicking a button)
   document.addEventListener("click", (e) => {
     const addon = e.target.closest("[data-slot='input-group-addon']");
