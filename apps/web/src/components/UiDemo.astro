@@ -840,7 +840,9 @@ const countries = [
 
     <!-- Popover -->
     <Popover>
-      <PopoverTrigger variant="outline">Open dimensions</PopoverTrigger>
+      <PopoverTrigger asChild>
+        <Button variant="outline">Open dimensions</Button>
+      </PopoverTrigger>
       <PopoverContent class="w-80">
         <PopoverHeader>
           <PopoverTitle>Dimensions</PopoverTitle>
