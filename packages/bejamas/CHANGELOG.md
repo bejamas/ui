@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.2.10
+
+### Patch Changes
+
+- [#93](https://github.com/bejamas/ui/pull/93) [`48d08fe`](https://github.com/bejamas/ui/commit/48d08febf9deb9609bb33f7110ec96906c5c1e31) Thanks [@thomkrupa](https://github.com/thomkrupa)! - normlize script examples in JSDoc
+
 ## 0.2.9
 
 ### Patch Changes
