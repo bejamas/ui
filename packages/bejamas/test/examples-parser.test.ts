@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import { readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
 import {
   extractComponentTagsFromExamplesSections,
   extractComponentTagsFromPreviewMarkdown,
@@ -104,7 +106,44 @@ import { SearchIcon } from '@lucide/astro';
     expect(prepared.sourceFromFence).toBe(true);
     expect(prepared.skipPreview).toBe(false);
     expect(prepared.enableConsolePanel).toBe(true);
+    expect(prepared.consoleScripts).toEqual([]);
     expect(prepared.sourceCode).toContain("console.log('ready');");
+  });
+
+  test("pairs astro console fences with an adjacent js fence", () => {
+    const prepared = prepareExampleContent(`\`\`\`astro console
+<Popover />
+\`\`\`
+
+\`\`\`js nocollapse
+  console.log('ready');
+\`\`\``);
+    expect(prepared.sourceFromFence).toBe(true);
+    expect(prepared.skipPreview).toBe(false);
+    expect(prepared.enableConsolePanel).toBe(true);
+    expect(prepared.consoleScripts).toEqual(["console.log('ready');"]);
+    expect(prepared.sourceCode).toBe("<Popover />");
+    expect(prepared.companionSourceMD).toContain("```js nocollapse");
+    expect(prepared.mergeCompanionWithSource).toBe(true);
+    expect(prepared.companionIntroMD).toBe("");
+  });
+
+  test("pairs console fences and preserves prose before the js fence", () => {
+    const prepared = prepareExampleContent(`\`\`\`astro console
+<Popover />
+\`\`\`
+
+Attach listeners on the client:
+
+\`\`\`js
+console.log('ready');
+\`\`\``);
+    expect(prepared.enableConsolePanel).toBe(true);
+    expect(prepared.consoleScripts).toEqual(["console.log('ready');"]);
+    expect(prepared.companionSourceMD).toContain("```js");
+    expect(prepared.companionIntroMD).toBe("Attach listeners on the client:");
+    expect(prepared.mergeCompanionWithSource).toBe(false);
+    expect(prepared.descriptionMD).toBe("");
   });
 
   test("auto-skips preview for fenced astro content with runtime frontmatter", () => {
@@ -432,6 +471,117 @@ import { SearchIcon } from '@lucide/astro';
     expect(sourceMatch![1]).toContain("console.log('Is open:', e.detail.open);");
   });
 
+  test("renders console panel for adjacent js fences in astro console examples", () => {
+    const mdx = buildMdx({
+      importName: "Popover",
+      importPath: "@bejamas/ui/components/popover",
+      title: "Popover",
+      description: "A popover",
+      usageMDX: `\`\`\`astro console
+<Popover id="my-popover">
+  <PopoverTrigger variant="outline">Open</PopoverTrigger>
+  <PopoverContent>
+    <p>Content</p>
+  </PopoverContent>
+</Popover>
+\`\`\`
+
+\`\`\`js nocollapse
+  const popover = document.getElementById('my-popover');
+  popover.addEventListener('popover:change', (e) => {
+    console.log('Is open:', e.detail.open);
+  });
+\`\`\``,
+      hasImport: false,
+      propsList: "",
+      examples: [],
+      examplesSections: [],
+      componentFolderMap: {
+        PopoverContent: "popover",
+        PopoverTrigger: "popover",
+      },
+      autoImports: ["PopoverContent", "PopoverTrigger"],
+      lucideIcons: [],
+      primaryExampleMDX: "",
+      componentSource: "",
+      commandName: "popover",
+      componentsAlias: "@bejamas/ui/components",
+      namedExports: ["PopoverContent", "PopoverTrigger"],
+      apiMDX: "",
+    });
+
+    expect(mdx).toContain("sl-bejamas-component-preview");
+    expect(mdx).toContain("data-slot=\"event-log\"");
+    expect(mdx).toContain("data:text/javascript;charset=utf-8,");
+    expect(mdx).toMatch(/```astro console\n<Popover id="my-popover">[\s\S]*?\n<script>/);
+    expect(mdx).not.toContain("```js nocollapse");
+
+    const sourceMatch = mdx.match(/```astro console\n([\s\S]*?)\n```/);
+    expect(sourceMatch).toBeTruthy();
+    expect(sourceMatch![1]).toContain("<script>");
+    expect(sourceMatch![1]).toContain("popover.addEventListener");
+    expect(mdx).toContain("popover.addEventListener");
+  });
+
+  test("keeps prose between paired console fences while rendering the script as astro source", () => {
+    const mdx = buildMdx({
+      importName: "Tabs",
+      importPath: "@bejamas/ui/components/tabs",
+      title: "Tabs",
+      description: "Tabs",
+      usageMDX: `\`\`\`astro console
+<Tabs id="my-tabs" defaultValue="tab1">
+  <TabsList>
+    <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+    <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="tab1">Content 1</TabsContent>
+  <TabsContent value="tab2">Content 2</TabsContent>
+</Tabs>
+\`\`\`
+
+Attach listeners on the client:
+
+\`\`\`js
+const tabs = document.getElementById('my-tabs');
+tabs?.addEventListener('tabs:change', (e) => {
+  console.log('Selected tab:', e.detail.value);
+});
+\`\`\``,
+      hasImport: false,
+      propsList: "",
+      examples: [],
+      examplesSections: [],
+      componentFolderMap: {
+        TabsContent: "tabs",
+        TabsList: "tabs",
+        TabsTrigger: "tabs",
+      },
+      autoImports: ["TabsContent", "TabsList", "TabsTrigger"],
+      lucideIcons: [],
+      primaryExampleMDX: "",
+      componentSource: "",
+      commandName: "tabs",
+      componentsAlias: "@bejamas/ui/components",
+      namedExports: ["TabsContent", "TabsList", "TabsTrigger"],
+      apiMDX: "",
+    });
+
+    expect(mdx).toContain("sl-bejamas-component-preview");
+    expect(mdx).toContain("data-slot=\"event-log\"");
+    expect(mdx).toContain("Attach listeners on the client:");
+    expect(mdx).toContain("```astro\n<script>");
+    expect(mdx).not.toContain("```js");
+
+    const usageMatch = mdx.match(
+      /```astro console\n([\s\S]*?)\n```\n\nAttach listeners on the client:\n\n```astro\n<script>\n([\s\S]*?)\n```/,
+    );
+    expect(usageMatch).toBeTruthy();
+    expect(usageMatch![1]).not.toContain("<script>");
+    expect(usageMatch![2]).toContain("tabs?.addEventListener");
+  });
+
   test("skips injected preview for astro fences with nopreview in usage content", () => {
     const mdx = buildMdx({
       importName: "InputGroup",
@@ -670,5 +820,36 @@ const { class: className = "", ...props } = Astro.props;
     expect(mdx).toContain("data-slot=\"event-log\"");
     expect(mdx).toContain("data:text/javascript;charset=utf-8,");
     expect(mdx).toContain("```astro");
+  });
+
+  test("component JSDoc examples do not contain inline script tags", () => {
+    const componentsDir = path.resolve(import.meta.dir, "../../ui/src/components");
+    const astroFiles: string[] = [];
+    const stack = [componentsDir];
+
+    while (stack.length) {
+      const currentDir = stack.pop()!;
+      for (const entry of readdirSync(currentDir, { withFileTypes: true })) {
+        const entryPath = path.join(currentDir, entry.name);
+        if (entry.isDirectory()) {
+          stack.push(entryPath);
+          continue;
+        }
+        if (entry.isFile() && entry.name.endsWith(".astro")) {
+          astroFiles.push(entryPath);
+        }
+      }
+    }
+
+    const violations = astroFiles
+      .sort()
+      .filter((filePath) =>
+        /^\s*\* (?:<\/?script>|&lt;\/?script&gt;)/m.test(
+          readFileSync(filePath, "utf-8"),
+        ),
+      )
+      .map((filePath) => path.relative(componentsDir, filePath));
+
+    expect(violations).toEqual([]);
   });
 });
