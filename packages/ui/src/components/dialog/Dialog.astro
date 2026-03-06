@@ -87,14 +87,14 @@
  *     <DialogDescription>Description</DialogDescription>
  *   </DialogContent>
  * </Dialog>
+ * ```
  *
- * <script>
+ * ```js nocollapse
  *   const dialog = document.getElementById('my-dialog');
  *
  *   dialog.addEventListener('dialog:change', (e) => {
  *     console.log('Is open:', e.detail.open);
  *   });
- * </script>
  * ```
  *
  * ### Programmatic Control
@@ -189,12 +189,7 @@ const {
 <script>
   import { createDialog } from "@data-slot/dialog";
 
-  document.querySelectorAll<HTMLElement>('[data-slot="dialog"]').forEach((el) =>
-    createDialog(el, {
-      defaultOpen: el.dataset.defaultOpen === "true",
-      closeOnClickOutside: el.dataset.closeOnClickOutside === "true",
-      closeOnEscape: el.dataset.closeOnEscape === "true",
-      lockScroll: el.dataset.lockScroll === "true",
-    }),
-  );
+  document
+    .querySelectorAll<HTMLElement>('[data-slot="dialog"]')
+    .forEach((el) => createDialog(el));
 </script>

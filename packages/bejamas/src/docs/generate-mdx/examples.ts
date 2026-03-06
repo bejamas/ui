@@ -38,6 +38,26 @@ export interface PreparedExampleContent {
    * True when the fenced astro block includes the `console` flag.
    */
   enableConsolePanel: boolean;
+  /**
+   * Explicit console scripts sourced from an adjacent JS/TS fence.
+   */
+  consoleScripts: string[];
+  /**
+   * Raw markdown for a paired source fence that should render after the astro block.
+   */
+  companionSourceMD: string;
+  /**
+   * Markdown that appears between the astro fence and its paired JS/TS fence.
+   */
+  companionIntroMD: string;
+  /**
+   * Markdown that appears after a paired JS/TS fence.
+   */
+  trailingDescriptionMD: string;
+  /**
+   * True when the paired JS/TS fence had no prose between it and the astro fence.
+   */
+  mergeCompanionWithSource: boolean;
 }
 
 export interface FenceInfo {
@@ -189,66 +209,163 @@ export function parseFenceInfo(infoRaw: string): FenceInfo {
   return { lang, flags: new Set(flags) };
 }
 
+export function decodeEscapedScriptTags(source: string): string {
+  if (!source || !source.length) return source;
+  return source
+    .replace(/&lt;script&gt;/gi, "<script>")
+    .replace(/&lt;\/script&gt;/gi, "</script>");
+}
+
+type ParsedFenceBlock = {
+  openLine: string;
+  closeLine: string;
+  lang: string;
+  flags: Set<string>;
+  body: string;
+  startLine: number;
+  endLine: number;
+};
+
+const CONSOLE_SCRIPT_FENCE_LANGS = new Set([
+  "js",
+  "ts",
+  "javascript",
+  "typescript",
+]);
+
+function parseFenceBlocks(body: string): {
+  lines: string[];
+  fences: ParsedFenceBlock[];
+} {
+  const lines = body.split("\n");
+  const fences: ParsedFenceBlock[] = [];
+  let active:
+    | {
+        startLine: number;
+        openLine: string;
+        lang: string;
+        flags: Set<string>;
+        bodyLines: string[];
+      }
+    | null = null;
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("```")) {
+      if (active) active.bodyLines.push(line);
+      continue;
+    }
+
+    if (!active) {
+      const parsed = parseFenceInfo(trimmed.slice(3).trim());
+      active = {
+        startLine: i,
+        openLine: line,
+        lang: parsed.lang,
+        flags: parsed.flags,
+        bodyLines: [],
+      };
+      continue;
+    }
+
+    fences.push({
+      openLine: active.openLine,
+      closeLine: line,
+      lang: active.lang,
+      flags: active.flags,
+      body: active.bodyLines.join("\n"),
+      startLine: active.startLine,
+      endLine: i,
+    });
+    active = null;
+  }
+
+  return { lines, fences };
+}
+
+function serializeFenceBlock(fence: ParsedFenceBlock): string {
+  const parts = [fence.openLine];
+  if (fence.body.length) parts.push(fence.body);
+  parts.push(fence.closeLine);
+  return parts.join("\n");
+}
+
+function buildRemainingMarkdown(
+  lines: string[],
+  fences: ParsedFenceBlock[],
+  consumedFenceIndexes: Set<number>,
+): string {
+  const skippedLines = new Set<number>();
+  for (const [index, fence] of fences.entries()) {
+    if (!consumedFenceIndexes.has(index)) continue;
+    for (let line = fence.startLine; line <= fence.endLine; line += 1) {
+      skippedLines.add(line);
+    }
+  }
+
+  return lines
+    .filter((_, index) => !skippedLines.has(index))
+    .join("\n")
+    .trim();
+}
+
 function extractFirstAstroFence(body: string): {
   sourceCode: string;
   descriptionMD: string;
   skipPreview: boolean;
   enableConsolePanel: boolean;
+  consoleScripts: string[];
+  companionSourceMD: string;
+  companionIntroMD: string;
+  trailingDescriptionMD: string;
+  mergeCompanionWithSource: boolean;
 } | null {
   if (!body || !body.trim().length) return null;
-  const lines = body.split("\n");
-  const outside: string[] = [];
-  const astroCode: string[] = [];
-  let inFence = false;
-  let currentFenceIsAstro = false;
-  let currentFenceSkipPreview = false;
-  let currentFenceEnableConsolePanel = false;
-  let capturedSkipPreview = false;
-  let capturedEnableConsolePanel = false;
-  let capturedAstro = false;
+  const { lines, fences } = parseFenceBlocks(body);
+  const astroFenceIndex = fences.findIndex((fence) => fence.lang === "astro");
+  if (astroFenceIndex === -1) return null;
 
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("```")) {
-      if (!inFence) {
-        inFence = true;
-        const parsed = parseFenceInfo(trimmed.slice(3).trim());
-        currentFenceIsAstro = parsed.lang === "astro";
-        currentFenceSkipPreview = parsed.flags.has("nopreview");
-        currentFenceEnableConsolePanel = parsed.flags.has("console");
-        if (!currentFenceIsAstro || capturedAstro) {
-          outside.push(line);
-        }
-        continue;
+  const astroFence = fences[astroFenceIndex];
+  const consumedFenceIndexes = new Set<number>([astroFenceIndex]);
+  let companionSourceMD = "";
+  let consoleScripts: string[] = [];
+  let companionIntroMD = "";
+  let trailingDescriptionMD = "";
+  let mergeCompanionWithSource = false;
+
+  if (astroFence.flags.has("console")) {
+    const nextFence = fences[astroFenceIndex + 1];
+    if (nextFence && CONSOLE_SCRIPT_FENCE_LANGS.has(nextFence.lang)) {
+      consumedFenceIndexes.add(astroFenceIndex + 1);
+      companionSourceMD = serializeFenceBlock(nextFence);
+      companionIntroMD = lines
+        .slice(astroFence.endLine + 1, nextFence.startLine)
+        .join("\n")
+        .trim();
+      trailingDescriptionMD = lines.slice(nextFence.endLine + 1).join("\n").trim();
+      mergeCompanionWithSource = companionIntroMD.length === 0;
+      const normalizedScript = nextFence.body.trim();
+      if (normalizedScript.length) {
+        consoleScripts = [normalizedScript];
       }
-      if (currentFenceIsAstro && !capturedAstro) {
-        capturedAstro = true;
-        capturedSkipPreview = currentFenceSkipPreview;
-        capturedEnableConsolePanel = currentFenceEnableConsolePanel;
-      } else {
-        outside.push(line);
-      }
-      inFence = false;
-      currentFenceIsAstro = false;
-      currentFenceSkipPreview = false;
-      currentFenceEnableConsolePanel = false;
-      continue;
     }
-
-    if (inFence && currentFenceIsAstro && !capturedAstro) {
-      astroCode.push(line);
-      continue;
-    }
-
-    outside.push(line);
   }
 
-  if (!capturedAstro) return null;
+  const descriptionMD = companionSourceMD.length
+    ? lines.slice(0, astroFence.startLine).join("\n").trim()
+    : buildRemainingMarkdown(lines, fences, consumedFenceIndexes);
+
   return {
-    sourceCode: astroCode.join("\n").trim(),
-    descriptionMD: outside.join("\n").trim(),
-    skipPreview: capturedSkipPreview,
-    enableConsolePanel: capturedEnableConsolePanel,
+    sourceCode: decodeEscapedScriptTags(astroFence.body.trim()),
+    descriptionMD,
+    skipPreview: astroFence.flags.has("nopreview"),
+    enableConsolePanel: astroFence.flags.has("console"),
+    consoleScripts,
+    companionSourceMD,
+    companionIntroMD,
+    trailingDescriptionMD,
+    mergeCompanionWithSource,
   };
 }
 
@@ -310,6 +427,11 @@ export function prepareExampleContent(body: string): PreparedExampleContent {
       sourceFromFence: false,
       skipPreview: false,
       enableConsolePanel: false,
+      consoleScripts: [],
+      companionSourceMD: "",
+      companionIntroMD: "",
+      trailingDescriptionMD: "",
+      mergeCompanionWithSource: false,
     };
   }
 
@@ -324,6 +446,11 @@ export function prepareExampleContent(body: string): PreparedExampleContent {
       sourceFromFence: true,
       skipPreview: fenced.skipPreview || unsafeFrontmatter,
       enableConsolePanel: fenced.enableConsolePanel,
+      consoleScripts: fenced.consoleScripts,
+      companionSourceMD: fenced.companionSourceMD,
+      companionIntroMD: fenced.companionIntroMD,
+      trailingDescriptionMD: fenced.trailingDescriptionMD,
+      mergeCompanionWithSource: fenced.mergeCompanionWithSource,
     };
   }
 
@@ -335,6 +462,11 @@ export function prepareExampleContent(body: string): PreparedExampleContent {
     sourceFromFence: false,
     skipPreview: false,
     enableConsolePanel: false,
+    consoleScripts: [],
+    companionSourceMD: "",
+    companionIntroMD: "",
+    trailingDescriptionMD: "",
+    mergeCompanionWithSource: false,
   };
 }
 
