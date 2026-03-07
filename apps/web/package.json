@@ -9,7 +9,7 @@
     "build": "bun run build:registry && bun run normalize-component-paths-in-registry && bun run build:docs && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "build:registry": "bun x shadcn@latest registry:build",
+    "build:registry": "bun x shadcn@latest build",
     "build:docs": "bun x bejamas@canary docs:build",
     "normalize-component-paths-in-registry": "bun run scripts/normalize-paths.ts",
     "check-types": "astro check"
