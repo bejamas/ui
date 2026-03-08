@@ -23,11 +23,10 @@ const {
 const contentVariants = cva(
   [
     "z-50 outline-hidden",
-    "bg-popover text-popover-foreground min-w-[var(--combobox-input-width,8rem)] overflow-hidden rounded-lg shadow-md ring-1 ring-foreground/10",
-    "data-[state=open]:animate-in data-[state=closed]:animate-out",
-    "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-    "origin-(--transform-origin)",
+    "bg-popover text-popover-foreground overflow-hidden rounded-lg shadow-md ring-1 ring-foreground/10 duration-100",
+    "data-open:animate-in data-closed:animate-out",
+    "data-closed:fade-out-0 data-open:fade-in-0",
+    "data-closed:zoom-out-95 data-open:zoom-in-95",
     "*:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:shadow-none",
     "[--tw-animation-fill-mode:both]",
   ],
@@ -53,7 +52,11 @@ const contentVariants = cva(
   data-side-offset={sideOffset}
   data-align-offset={alignOffset}
   hidden
-  class={cn("cn-combobox-content", contentVariants({ side }), className)}
+  class={cn(
+    "cn-combobox-content cn-combobox-content-logical cn-menu-target group/combobox-content relative w-[var(--anchor-width)] max-h-[var(--available-height)] max-w-[var(--available-width)] min-w-[max(8rem,var(--anchor-width))] origin-(--transform-origin)",
+    contentVariants({ side }),
+    className,
+  )}
 >
   <slot />
 </div>

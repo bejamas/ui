@@ -35,14 +35,10 @@ const {
   )}
 >
   <span
-    class="pointer-events-none absolute right-2 flex size-4 items-center justify-center"
+    data-slot="combobox-item-indicator"
+    class="cn-combobox-item-indicator pointer-events-none absolute right-2 flex size-4 items-center justify-center"
   >
-    <span
-      data-slot="combobox-item-indicator"
-      class="cn-combobox-item-indicator hidden group-data-[selected]/item:inline-flex"
-    >
-      <CheckIcon class="size-4" />
-    </span>
+    <CheckIcon class="size-4" />
   </span>
   <span data-slot="combobox-item-text" class="cn-combobox-item-text"><slot /></span>
 </div>
