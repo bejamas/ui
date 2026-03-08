@@ -1,7 +1,6 @@
 ---
 import "@/styles/blocks.css";
 import "@bejamas/ui/styles/globals.css";
-import PresetSwitcher from "./PresetSwitcher.astro";
 import { Tabs, TabsList, TabsTrigger } from "@bejamas/ui/components/tabs";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 
@@ -109,7 +108,6 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
         </div>
 
         <div class="px-4 pb-4 flex flex-col gap-2">
-          <PresetSwitcher />
           <ks-theme-select>
             <Tabs class="ks-theme-tabs" id="ks-theme-tabs">
               <TabsList class="w-full">

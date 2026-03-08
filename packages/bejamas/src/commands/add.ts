@@ -121,13 +121,14 @@ interface SubfolderMapResult {
 async function buildSubfolderMap(
   components: string[],
   registryUrl: string,
+  style: string,
 ): Promise<SubfolderMapResult> {
   const filenameToSubfolders = new Map<string, string[]>();
   const componentInfo = new Map<string, ComponentFileInfo>();
 
   // First pass: collect all filename -> subfolder mappings
   for (const componentName of components) {
-    const registryItem = await fetchRegistryItem(componentName, registryUrl);
+    const registryItem = await fetchRegistryItem(componentName, registryUrl, style);
     if (!registryItem) continue;
 
     const subfolder = getSubfolderFromPaths(registryItem.files);
@@ -520,6 +521,8 @@ export const add = new Command()
       );
     }
 
+    const activeStyle = uiConfig?.style || config?.style || "bejamas-bejamas";
+
     // Process components ONE AT A TIME to avoid index.ts conflicts
     // When shadcn runs with multiple components, files with same name overwrite each other
     const totalComponents = componentsToAdd.length;
@@ -540,6 +543,7 @@ export const add = new Command()
       const subfolderMapResult = await buildSubfolderMap(
         [component],
         registryUrl,
+        activeStyle,
       );
 
       // Run shadcn for just this component
@@ -559,6 +563,7 @@ export const add = new Command()
           uiDir,
           registryUrl,
           verbose,
+          activeStyle,
         );
         skippedCount = reorgResult.skippedFiles.length;
       }

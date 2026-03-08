@@ -19,7 +19,7 @@
         typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
       );
 
-    const themeColors = (() => {
+    const readThemeColors = () => {
       const html = document.documentElement;
       const prevTheme = html.dataset.theme;
       const prevDark = html.classList.contains("dark");
@@ -45,7 +45,7 @@
       }
 
       return { light, dark };
-    })();
+    };
 
     function ensureThemeMeta(head, media) {
       const baseSelector = `meta[name="theme-color"][media="${media}"]`;
@@ -67,6 +67,7 @@
     }
 
     function syncThemeColor(theme) {
+      const themeColors = readThemeColors();
       const color = themeColors[theme];
       const head = document.head;
       if (!color || !head) return;
@@ -92,6 +93,14 @@
     );
     syncThemeColor(effectiveTheme);
     return {
+      refreshThemeColors(theme) {
+        const themeChoice = parseTheme(
+          theme ?? document.documentElement.dataset.themeChoice,
+        );
+        const effectiveTheme =
+          themeChoice === "auto" ? getPreferredColorScheme() : themeChoice;
+        syncThemeColor(effectiveTheme);
+      },
       updatePickers(theme) {
         const themeChoice = parseTheme(theme ?? getStoredThemeChoice());
         document
@@ -125,4 +134,83 @@
       },
     };
   })();
+</script>
+
+<script>
+  import {
+    buildCurrentThemeStylesheetHref,
+    CURRENT_THEME_STYLESHEET_SELECTOR,
+  } from "../lib/theme-stylesheet";
+
+  const PRESET_CHANGE_EVENT = "bejamas:preset-change";
+  const SETUP_KEY = "__bejamasCurrentThemeStylesheetSync";
+  let reloadFrame = 0;
+  let reloadVersion = 0;
+
+  function refreshCurrentThemeStylesheet() {
+    const links = Array.from(
+      document.head.querySelectorAll(CURRENT_THEME_STYLESHEET_SELECTOR),
+    ).filter(
+      (link): link is HTMLLinkElement => link instanceof HTMLLinkElement,
+    );
+    const currentLink = links.at(-1);
+
+    if (!currentLink) {
+      window.StarlightThemeProvider?.refreshThemeColors?.();
+      return;
+    }
+
+    reloadVersion += 1;
+
+    const replacement = currentLink.cloneNode(false) as HTMLLinkElement;
+    const sourceHref = currentLink.getAttribute("href") ?? currentLink.href;
+    replacement.href = buildCurrentThemeStylesheetHref(sourceHref, `${Date.now()}-${reloadVersion}`);
+
+    replacement.addEventListener(
+      "load",
+      () => {
+        links.forEach((link) => {
+          if (link !== replacement) {
+            link.remove();
+          }
+        });
+        window.StarlightThemeProvider?.refreshThemeColors?.();
+      },
+      { once: true },
+    );
+
+    replacement.addEventListener(
+      "error",
+      () => {
+        replacement.remove();
+        window.StarlightThemeProvider?.refreshThemeColors?.();
+      },
+      { once: true },
+    );
+
+    currentLink.after(replacement);
+  }
+
+  const scheduleCurrentThemeStylesheetRefresh = () => {
+    if (reloadFrame) {
+      return;
+    }
+
+    reloadFrame = requestAnimationFrame(() => {
+      reloadFrame = 0;
+      refreshCurrentThemeStylesheet();
+    });
+  };
+
+  if (!(SETUP_KEY in window)) {
+    window[SETUP_KEY] = true;
+
+    window.addEventListener(
+      PRESET_CHANGE_EVENT,
+      scheduleCurrentThemeStylesheetRefresh,
+    );
+    document.addEventListener("astro:after-swap", () => {
+      window.StarlightThemeProvider?.refreshThemeColors?.();
+    });
+  }
 </script>

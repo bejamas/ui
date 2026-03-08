@@ -1,0 +1,180 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import { getRadiusValue } from "@bejamas/create-config/browser";
+import type { CreatePickerMarkerKind } from "@/utils/create-sidebar";
+
+interface Props {
+  kind: CreatePickerMarkerKind;
+  value: string;
+  label: string;
+  color?: string;
+  family?: string;
+  class?: string;
+}
+
+const {
+  kind,
+  value,
+  label,
+  color,
+  family,
+  class: className = "",
+} = Astro.props as Props;
+
+const iconLibraryAbbreviations: Record<string, string> = {
+  lucide: "Lu",
+  hugeicons: "Hu",
+  tabler: "Tb",
+  phosphor: "Ph",
+  remixicon: "Ri",
+};
+
+const styleInitial = label.slice(0, 1).toUpperCase();
+const iconLibraryLabel = iconLibraryAbbreviations[value] ?? label.slice(0, 2);
+const radius = getRadiusValue(
+  value as Parameters<typeof getRadiusValue>[0],
+);
+---
+
+{
+  kind === "swatch" && (
+    <span
+      class={cn(
+        "inline-flex size-4 shrink-0 rounded-full border border-white/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]",
+        className,
+      )}
+      data-create-picker-marker
+      aria-hidden="true"
+      style={color ? `background:${color};` : undefined}
+    ></span>
+  )
+}
+
+{
+  kind === "style" && (
+    <span
+      class={cn(
+        "inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-[9px] font-semibold uppercase text-white/80",
+        className,
+      )}
+      data-create-picker-marker
+      aria-hidden="true"
+    >
+      {styleInitial}
+    </span>
+  )
+}
+
+{
+  kind === "icon-library" && (
+    <span
+      class={cn(
+        "inline-flex min-w-4 shrink-0 items-center justify-center text-[10px] font-semibold tracking-[0.08em] text-white/80 uppercase",
+        className,
+      )}
+      data-create-picker-marker
+      aria-hidden="true"
+    >
+      {iconLibraryLabel}
+    </span>
+  )
+}
+
+{
+  kind === "font" && (
+    <span
+      class={cn(
+        "inline-flex min-w-5 shrink-0 items-center justify-center text-sm font-medium text-white/85",
+        className,
+      )}
+      data-create-picker-marker
+      aria-hidden="true"
+      style={family ? `font-family:${family};` : undefined}
+    >
+      Aa
+    </span>
+  )
+}
+
+{
+  kind === "radius" && (
+    <span
+      class={cn(
+        "inline-flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-white/18 bg-white/4",
+        className,
+      )}
+      data-create-picker-marker
+      aria-hidden="true"
+      style={`border-radius:${radius};`}
+    >
+      <span class="size-1.5 rounded-full bg-white/55"></span>
+    </span>
+  )
+}
+
+{
+  kind === "menu-color" && (
+    <span
+      class={cn(
+        "inline-flex h-4 w-5 shrink-0 overflow-hidden rounded-[6px] border border-white/18 bg-white/5",
+        className,
+      )}
+      data-create-picker-marker
+      aria-hidden="true"
+    >
+      <span
+        class:list={[
+          "block h-full w-1/2",
+          value === "inverted" ? "bg-neutral-950" : "bg-neutral-100",
+        ]}
+      ></span>
+      <span
+        class:list={[
+          "block h-full w-1/2",
+          value === "inverted" ? "bg-neutral-100" : "bg-neutral-950",
+        ]}
+      ></span>
+    </span>
+  )
+}
+
+{
+  kind === "menu-accent" && (
+    <span
+      class={cn(
+        "inline-flex h-4 w-5 shrink-0 items-center rounded-full border border-white/18 px-0.5",
+        className,
+      )}
+      data-create-picker-marker
+      aria-hidden="true"
+    >
+      <span
+        class:list={[
+          "block h-2.5 rounded-full transition-all",
+          value === "bold"
+            ? "w-full bg-white/90"
+            : "w-2 bg-white/55",
+        ]}
+      ></span>
+    </span>
+  )
+}
+
+{
+  kind === "template" && (
+    <span
+      class={cn(
+        "inline-flex h-4 w-5 shrink-0 items-center justify-between rounded-[6px] border border-white/18 bg-white/4 p-0.5",
+        className,
+      )}
+      data-create-picker-marker
+      aria-hidden="true"
+    >
+      <span class="h-full w-[34%] rounded-[4px] bg-white/55"></span>
+      <span class="flex h-full w-[56%] flex-col justify-between">
+        <span class="h-[38%] rounded-[3px] bg-white/28"></span>
+        <span class="h-[38%] rounded-[3px] bg-white/18"></span>
+      </span>
+    </span>
+  )
+}

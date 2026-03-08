@@ -30,7 +30,7 @@ const { class: className = "", ...props } = Astro.props;
 
 <label
   data-slot="label"
-  class={cn(
+  class={cn("cn-label", 
     "gap-2 text-sm leading-none font-medium group-data-[disabled=true]:opacity-50 peer-disabled:opacity-50 flex items-center select-none group-data-[disabled=true]:pointer-events-none peer-disabled:cursor-not-allowed",
     className,
   )}

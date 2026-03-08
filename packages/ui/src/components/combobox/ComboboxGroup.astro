@@ -13,7 +13,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   role="group"
   data-slot="combobox-group"
-  class={cn("scroll-my-1", className)}
+  class={cn("cn-combobox-group", "scroll-my-1", className)}
 >
   <slot />
 </div>

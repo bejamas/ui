@@ -12,6 +12,10 @@ const { class: className = "", ...rest } = Astro.props as Props;
 const titleVariants = cva("leading-none font-medium text-xl text-balance");
 ---
 
-<div {...rest} data-slot="card-title" class={cn(titleVariants(), className)}>
+<div
+  {...rest}
+  data-slot="card-title"
+  class={cn("cn-card-title", titleVariants(), className)}
+>
   <slot />
 </div>

@@ -61,18 +61,15 @@ const { theme = "current-theme", title } = Astro.props;
     <script>
       import {
         getCurrentMode,
-        getStoredPreset,
       } from "../utils/themes/preset-store.ts";
       import { syncGradientImages } from "../utils/themes/gradient-image-runtime.ts";
 
       const themeStorageKey = "starlight-theme";
-      const presetStorageKey = "theme-preset";
-
       const toMode = (value: unknown): "light" | "dark" =>
         value === "dark" ? "dark" : "light";
 
       function syncPreviewGradientImages(modeOverride?: "light" | "dark") {
-        const themeKey = getStoredPreset() || "default";
+        const themeKey = "default";
         const mode = modeOverride ?? toMode(getCurrentMode());
         syncGradientImages({ themeKey, mode });
       }
@@ -80,11 +77,7 @@ const { theme = "current-theme", title } = Astro.props;
       syncPreviewGradientImages();
 
       window.addEventListener("storage", (event) => {
-        if (
-          event.key === themeStorageKey ||
-          event.key === presetStorageKey ||
-          event.key === "theme"
-        ) {
+        if (event.key === themeStorageKey || event.key === "theme") {
           syncPreviewGradientImages();
         }
       });

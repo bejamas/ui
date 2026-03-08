@@ -37,8 +37,12 @@ const itemMediaVariants = cva(
 <div
   {...rest}
   data-slot="item-media"
-  class={cn(itemMediaVariants({ variant: mediaVariant }), className)}
+  class={cn(
+    "cn-item-media",
+    `cn-item-media-variant-${mediaVariant}`,
+    itemMediaVariants({ variant: mediaVariant }),
+    className,
+  )}
 >
   <slot />
 </div>
-

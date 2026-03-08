@@ -20,7 +20,7 @@ const separatorVariants = cva("[&>svg]:size-3.5");
   role="presentation"
   aria-hidden="true"
   data-slot="breadcrumb-separator"
-  class={cn(separatorVariants(), className)}
+  class={cn("cn-breadcrumb-separator", separatorVariants(), className)}
 >
   <slot>
     <svg

@@ -164,8 +164,8 @@ export type Props = (ButtonAsButton | ButtonAsAnchor) & ButtonOwnProps;
 
 const {
   as: Tag = "button",
-  variant,
-  size,
+  variant = "default",
+  size = "default",
   class: className = "",
   ...rest
 } = Astro.props as Props;
@@ -180,6 +180,17 @@ const {
 */
 }
 <!-- @ts-expect-error – union Props + dynamic Tag confuse JSX typing (see comment above) -->
-<Tag class={cn(buttonVariants({ variant, size }), className)} {...rest}>
+<Tag
+  data-variant={variant}
+  data-size={size}
+  class={cn(
+    "cn-button",
+    `cn-button-variant-${variant}`,
+    `cn-button-size-${size}`,
+    buttonVariants({ variant, size }),
+    className,
+  )}
+  {...rest}
+>
   <slot />
 </Tag>

@@ -1,4 +1,5 @@
 ---
+import { cn } from "@bejamas/ui/lib/utils";
 /**
  * @component Date
  * @description Formats and displays dates and times in human-readable styles.
@@ -117,14 +118,20 @@ if (parsedDate) {
     Astro.slots.has("default") ? (
       <Fragment set:html={html} />
     ) : (
-      <time datetime={parsedDate.toISOString()} class={className} {...props}>
+      <time
+        datetime={parsedDate.toISOString()}
+        class={cn("cn-date", className)}
+        {...props}
+      >
         {formatted}
       </time>
     )
   ) : (
-    <span class={["text-destructive", className].join(" ")} {...props}>
+    <span
+      class={cn("cn-date cn-date-invalid text-destructive", className)}
+      {...props}
+    >
       Invalid date
     </span>
   )
 }
-

@@ -12,7 +12,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <p
   {...rest}
   data-slot="popover-description"
-  class={cn("text-muted-foreground", className)}
+  class={cn("cn-popover-description text-muted-foreground", className)}
 >
   <slot />
 </p>

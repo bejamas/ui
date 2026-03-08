@@ -18,8 +18,7 @@ const contentVariants = cva("px-6");
 <div
   {...rest}
   data-slot="card-content"
-  class={cn(contentVariants(), className)}
+  class={cn("cn-card-content", contentVariants(), className)}
 >
   <slot />
 </div>
-

@@ -1,0 +1,472 @@
+---
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@bejamas/ui/components/accordion";
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarImage,
+} from "@bejamas/ui/components/avatar";
+import { Badge } from "@bejamas/ui/components/badge";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/ui/components/card";
+import { Checkbox } from "@bejamas/ui/components/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@bejamas/ui/components/dropdown-menu";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@bejamas/ui/components/field";
+import { Input } from "@bejamas/ui/components/input";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemSeparator,
+  ItemTitle,
+} from "@bejamas/ui/components/item";
+import {
+  Popover,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverDescription,
+  PopoverTrigger,
+} from "@bejamas/ui/components/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@bejamas/ui/components/select";
+import { Separator } from "@bejamas/ui/components/separator";
+import { Switch } from "@bejamas/ui/components/switch";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@bejamas/ui/components/tabs";
+import { Textarea } from "@bejamas/ui/components/textarea";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@bejamas/ui/components/toggle-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@bejamas/ui/components/tooltip";
+import {
+  BellIcon,
+  BoldIcon,
+  CalendarIcon,
+  CreditCardIcon,
+  EllipsisIcon,
+  GlobeIcon,
+  ItalicIcon,
+  SparklesIcon,
+  UnderlineIcon,
+} from "@lucide/astro";
+
+interface Props {
+  iconLibraryLabel?: string;
+  styleLabel?: string;
+  fontLabel?: string;
+  templateLabel?: string;
+  radiusLabel?: string;
+  menuColorLabel?: string;
+  menuInverted?: boolean;
+}
+
+const {
+  iconLibraryLabel = "Lucide",
+  styleLabel = "Nova",
+  fontLabel = "Geist",
+  templateLabel = "astro",
+  radiusLabel = "default",
+  menuColorLabel = "default",
+  menuInverted = false,
+} = Astro.props as Props;
+---
+
+<div class="min-h-screen bg-background text-foreground">
+  <div class="mx-auto flex max-w-6xl flex-col gap-8 p-6 md:p-8">
+    <div class="grid gap-3 md:grid-cols-[1.4fr_0.9fr]">
+      <Card>
+        <CardHeader>
+          <!-- <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <Badge>bejamas/ui</Badge>
+                <Badge variant="outline" data-create-icon-library-label
+                  >{iconLibraryLabel}</Badge
+                >
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary" data-create-style-label
+                  >{styleLabel}</Badge
+                >
+                <Badge variant="outline" data-create-font-label
+                  >{fontLabel}</Badge
+                >
+                <Badge variant="outline" data-create-template-label
+                  >{templateLabel}</Badge
+                >
+                <Badge variant="outline" data-create-radius-label
+                  >{radiusLabel}</Badge
+                >
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm"> Workspace </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  Billing
+                  <DropdownMenuShortcut>G B</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Team settings
+                  <DropdownMenuShortcut>G T</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Sign out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div> -->
+          <CardTitle
+            >Ship an Astro design system without hand-tuning every token.</CardTitle
+          >
+          <CardDescription>
+            Preview a style preset, confirm the form controls, and copy the init
+            command.
+          </CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-4 md:grid-cols-2">
+          <FieldGroup class="gap-4">
+            <Field>
+              <FieldLabel for="preview-project-name">Project name</FieldLabel>
+              <Input id="preview-project-name" value="bejamas-site" />
+            </Field>
+            <Field>
+              <FieldLabel for="preview-feedback">Feedback</FieldLabel>
+              <Textarea
+                id="preview-feedback"
+                rows={4}
+                placeholder="A compact create flow with sane defaults."
+              />
+            </Field>
+          </FieldGroup>
+          <FieldGroup class="gap-4">
+            <Field>
+              <FieldLabel for="preview-region">Region</FieldLabel>
+              <Select class="w-full" defaultValue="eu">
+                <SelectTrigger id="preview-region">
+                  <SelectValue placeholder="Europe / Warsaw" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="eu">Europe / Warsaw</SelectItem>
+                  <SelectItem value="us">United States / New York</SelectItem>
+                  <SelectItem value="apac">Asia Pacific / Tokyo</SelectItem>
+                </SelectContent>
+              </Select>
+              <FieldDescription>
+                Match the preview workspace to the team’s operating region.
+              </FieldDescription>
+            </Field>
+            <div class="rounded-xl border border-border p-4">
+              <FieldGroup data-slot="checkbox-group">
+                <Field orientation="horizontal">
+                  <Switch id="preview-email-digests" checked />
+                  <FieldContent>
+                    <FieldLabel for="preview-email-digests"
+                      >Email digests</FieldLabel
+                    >
+                    <FieldDescription>
+                      Weekly product updates and component release notes.
+                    </FieldDescription>
+                  </FieldContent>
+                </Field>
+                <Field orientation="horizontal">
+                  <Checkbox id="preview-release-notes" checked />
+                  <FieldContent>
+                    <FieldLabel for="preview-release-notes">
+                      Keep release notes pinned
+                    </FieldLabel>
+                    <FieldDescription>
+                      Highlight important changes for the workspace after
+                      deploys.
+                    </FieldDescription>
+                  </FieldContent>
+                </Field>
+              </FieldGroup>
+            </div>
+          </FieldGroup>
+        </CardContent>
+        <Separator />
+        <CardFooter class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <Avatar>
+              <AvatarImage src="https://github.com/thomkrupa.png" alt="Thom" />
+              <AvatarFallback>TK</AvatarFallback>
+              <AvatarBadge />
+            </Avatar>
+            <div class="text-sm">
+              <p class="font-medium">Design System Team</p>
+              <p class="text-muted-foreground">3 reviewers online</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <Button variant="outline">Preview docs</Button>
+            <Button>
+              <SparklesIcon class="size-4" />
+              Create project
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick actions</CardTitle>
+          <CardDescription
+            >Check the shape of compact interactive components.</CardDescription
+          >
+        </CardHeader>
+        <CardContent class="space-y-4">
+          <ToggleGroup variant="outline" defaultValue="bold">
+            <ToggleGroupItem value="bold" aria-label="Bold">
+              <BoldIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="italic" aria-label="Italic">
+              <ItalicIcon />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="underline" aria-label="Underline">
+              <UnderlineIcon />
+            </ToggleGroupItem>
+          </ToggleGroup>
+
+          <Tabs defaultValue="overview">
+            <TabsList variant="indicator">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="activity">Activity</TabsTrigger>
+            </TabsList>
+            <TabsContent value="overview" class="pt-3">
+              <Item variant="outline">
+                <ItemMedia>
+                  <BellIcon class="size-4 text-muted-foreground" />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>Notifications enabled</ItemTitle>
+                  <ItemDescription
+                    >Product updates and component releases.</ItemDescription
+                  >
+                </ItemContent>
+                <ItemActions>
+                  <Button variant="ghost" size="icon" aria-label="More">
+                    <EllipsisIcon class="size-4" />
+                  </Button>
+                </ItemActions>
+              </Item>
+            </TabsContent>
+            <TabsContent value="activity" class="pt-3">
+              <ItemGroup class="rounded-xl border border-border">
+                <Item>
+                  <ItemMedia>
+                    <CalendarIcon class="size-4 text-muted-foreground" />
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle>Weekly review</ItemTitle>
+                    <ItemDescription>Thursday at 13:00 CET</ItemDescription>
+                  </ItemContent>
+                </Item>
+                <ItemSeparator />
+                <Item>
+                  <ItemMedia>
+                    <GlobeIcon class="size-4 text-muted-foreground" />
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle>Registry synced</ItemTitle>
+                    <ItemDescription
+                      >Styles and docs are in sync.</ItemDescription
+                    >
+                  </ItemContent>
+                </Item>
+              </ItemGroup>
+            </TabsContent>
+          </Tabs>
+
+          <div class="grid gap-3 rounded-xl border border-border p-4">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-sm font-medium">Menu surface</p>
+                <p class="text-sm text-muted-foreground">
+                  Accent and inversion should be obvious here.
+                </p>
+              </div>
+              <Badge variant="outline" data-create-menu-color-label
+                >{menuColorLabel}</Badge
+              >
+            </div>
+            <div
+              data-create-menu-preview
+              class:list={[
+                "cn-menu-target rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-md",
+                menuInverted && "dark",
+              ]}
+            >
+              <div
+                class="rounded-[calc(var(--radius)-2px)] bg-accent px-3 py-2 text-sm text-accent-foreground"
+              >
+                Active menu item
+              </div>
+              <div class="px-3 py-2 text-sm text-muted-foreground">
+                Secondary action
+              </div>
+              <div class="mt-1 border-t border-border px-3 py-2 text-sm">
+                Open billing portal
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+      <Card>
+        <CardHeader>
+          <CardTitle>Structured content</CardTitle>
+          <CardDescription
+            >Accordion, popovers, and grouped items should all pick up the same
+            style language.</CardDescription
+          >
+        </CardHeader>
+        <CardContent class="grid gap-4">
+          <Accordion collapsible class="w-full">
+            <AccordionItem value="item-1">
+              <AccordionTrigger
+                >How does the preset affect the install flow?</AccordionTrigger
+              >
+              <AccordionContent>
+                The init command writes style, base color, RTL, and component
+                defaults into the generated project.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger
+                >Can I still add components later?</AccordionTrigger
+              >
+              <AccordionContent>
+                Yes. The registry stays style-aware, so later installs keep
+                matching the preset.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          <div class="flex flex-wrap gap-3">
+            <Popover>
+              <PopoverTrigger variant="outline">Billing summary</PopoverTrigger>
+              <PopoverContent align="start">
+                <PopoverHeader>
+                  <PopoverTitle>Current plan</PopoverTitle>
+                  <PopoverDescription
+                    >Starter workspace, 3 seats, monthly billing.</PopoverDescription
+                  >
+                </PopoverHeader>
+              </PopoverContent>
+            </Popover>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline">
+                  <CreditCardIcon class="size-4" />
+                  Card required
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Connect billing before enabling production usage.
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>People</CardTitle>
+          <CardDescription
+            >Avatar, badge, and item density all stay consistent.</CardDescription
+          >
+        </CardHeader>
+        <CardContent class="space-y-4">
+          <div class="flex items-center gap-3">
+            <Avatar size="lg">
+              <AvatarImage src="https://github.com/withastro.png" alt="Astro" />
+              <AvatarFallback>AS</AvatarFallback>
+            </Avatar>
+            <div>
+              <p class="font-medium">Astro Platform Team</p>
+              <p class="text-sm text-muted-foreground">Registry maintainers</p>
+            </div>
+            <Badge variant="secondary">Core</Badge>
+          </div>
+
+          <ItemGroup class="rounded-xl border border-border">
+            <Item>
+              <ItemMedia>
+                <Avatar size="sm">
+                  <AvatarFallback>RM</AvatarFallback>
+                </Avatar>
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>Release manager</ItemTitle>
+                <ItemDescription>Last published 18 minutes ago.</ItemDescription
+                >
+              </ItemContent>
+            </Item>
+            <ItemSeparator />
+            <Item>
+              <ItemMedia>
+                <Avatar size="sm">
+                  <AvatarFallback>DX</AvatarFallback>
+                </Avatar>
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>Developer experience</ItemTitle>
+                <ItemDescription
+                  >Owns the CLI and docs pipeline.</ItemDescription
+                >
+              </ItemContent>
+            </Item>
+          </ItemGroup>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</div>

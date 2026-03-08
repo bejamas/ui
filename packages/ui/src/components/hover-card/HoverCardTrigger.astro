@@ -21,7 +21,7 @@ const {
     <div
       data-slot="hover-card-trigger"
       data-as-child
-      class={cn("inline-flex items-center", className)}
+      class={cn("cn-hover-card-trigger", "inline-flex items-center", className)}
     >
       <slot />
     </div>
@@ -30,7 +30,7 @@ const {
       {...rest}
       type={type}
       data-slot="hover-card-trigger"
-      class={cn("inline-flex items-center", className)}
+      class={cn("cn-hover-card-trigger", "inline-flex items-center", className)}
     >
       <slot />
     </button>

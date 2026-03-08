@@ -13,7 +13,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   data-slot="dialog-close"
   data-dialog-close
-  class={cn(
+  class={cn("cn-dialog-close", 
     "ring-offset-background focus-visible:ring-ring rounded-xs opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-offset-2 focus:outline-hidden focus:outline-none focus:ring-0 inline-flex items-center gap-2",
     className,
   )}

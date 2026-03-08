@@ -25,6 +25,7 @@ const {
   data-value={value}
   data-disabled={disabled ? "" : undefined}
   class={cn(
+    "cn-select-item",
     "group/item relative border border-transparent flex w-full cursor-default select-none items-center gap-1.5 rounded-md pr-8 pl-2 text-sm outline-hidden",
     "group-data-[size=sm]/select-content:py-1 group-data-[size=default]/select-content:py-1.5 group-data-[size=lg]/select-content:py-2",
     "data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
@@ -35,17 +36,15 @@ const {
 >
   <span
     data-slot="select-item-text"
-    class="flex flex-1 gap-2 shrink-0 whitespace-nowrap items-center"
+    class="cn-select-item-text flex flex-1 gap-2 shrink-0 whitespace-nowrap items-center"
     ><slot /></span
   >
 
   <span
-    class="pointer-events-none absolute right-2 flex size-4 items-center justify-center"
+    data-slot="select-item-indicator"
+    class="cn-select-item-indicator pointer-events-none absolute right-2 flex size-4 items-center justify-center"
   >
-    <span
-      data-slot="select-item-indicator"
-      class="hidden group-data-[selected]/item:inline-flex"
-    >
+    <span class="hidden items-center justify-center group-data-[selected]/item:inline-flex">
       <CheckIcon class="size-4" />
     </span>
   </span>

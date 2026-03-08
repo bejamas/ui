@@ -109,11 +109,14 @@
  * | Attribute | Element | Description |
  * |-----------|---------|-------------|
  * | `data-state` | select, select-trigger, select-content | Current state (`open` or `closed`) |
+ * | `data-open` / `data-closed` | select, select-trigger, select-content | Presence attributes for style-driven open/close animations |
  * | `data-value` | select | Currently selected value |
  * | `data-selected` | select-item | Present when item is selected |
  * | `data-highlighted` | select-item | Present when item is focused/highlighted |
  * | `data-disabled` | select, select-trigger, select-item | Present when disabled |
  * | `data-placeholder` | select-trigger | Present when showing placeholder (no value selected) |
+ * | `data-align-trigger` | select-content | Present when item-aligned positioning is active |
+ * | `data-position` | select-content, select-viewport | Positioning mode (`item-aligned` or `popper`) |
  *
  * ### Position Modes
  *
@@ -281,51 +284,17 @@ const {
   data-slot="select"
   data-name={name}
   data-default-value={defaultValue}
-  data-value={defaultValue}
   data-placeholder={placeholder}
   data-disabled={disabled ? "" : undefined}
   data-required={required ? "" : undefined}
   data-size={size}
-  class={cn("group/select relative inline-block", className)}
+  class={cn("cn-select", "group/select relative inline-block", className)}
 >
   <slot />
-  {
-    name && (
-      <input
-        type="hidden"
-        name={name}
-        data-slot="select-hidden-input"
-        value={defaultValue ?? ""}
-        disabled={disabled}
-        required={required}
-      />
-    )
-  }
 </div>
-{
-  defaultValue && (
-    <script is:inline>
-      (function () {
-        var s = document.currentScript;
-        var el = s.previousElementSibling;
-        if (!el || el.dataset.slot !== "select") return;
-        var v = el.dataset.defaultValue;
-        if (!v) return;
-        var item = el.querySelector(
-          '[data-slot="select-item"][data-value="' + v + '"]'
-        );
-        var val = el.querySelector("[data-slot=select-value]");
-        if (item && val) {
-          val.textContent = item.dataset.label || item.textContent.trim();
-          item.setAttribute("data-selected", "");
-        }
-      })();
-    </script>
-  )
-}
 
 <script>
-  import { createSelect } from "@data-slot/select";
+  import { createSelect } from "@bejamas/ui/lib/select";
 
   document.querySelectorAll('[data-slot="select"]').forEach((el) => {
     createSelect(el);

@@ -18,8 +18,7 @@ const descriptionVariants = cva("text-muted-foreground text-sm");
 <div
   {...rest}
   data-slot="card-description"
-  class={cn(descriptionVariants(), className)}
+  class={cn("cn-card-description", descriptionVariants(), className)}
 >
   <slot />
 </div>
-

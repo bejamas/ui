@@ -21,7 +21,7 @@ const defaultClasses =
 
 {
   asChild ? (
-    <div data-slot="dialog-trigger" data-as-child class={cn(defaultClasses, className)}>
+    <div data-slot="dialog-trigger" data-as-child class={cn("cn-dialog-trigger", defaultClasses, className)}>
       <slot />
     </div>
   ) : (
@@ -29,7 +29,7 @@ const defaultClasses =
       {...rest}
       type={type}
       data-slot="dialog-trigger"
-      class={cn(defaultClasses, className)}
+      class={cn("cn-dialog-trigger", defaultClasses, className)}
     >
       <slot />
     </button>

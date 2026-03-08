@@ -12,7 +12,7 @@ const {
 } = Astro.props as Props;
 ---
 
-<thead data-slot="table-header" class={cn("[&_tr]:border-b", className)} {...rest}>
+<thead data-slot="table-header" class={cn("cn-table-header", "[&_tr]:border-b", className)} {...rest}>
   <slot />
 </thead>
 

@@ -20,7 +20,7 @@ const listVariants = cva(
 <ol
   {...rest}
   data-slot="breadcrumb-list"
-  class={cn(listVariants(), className)}
+  class={cn("cn-breadcrumb-list", listVariants(), className)}
 >
   <slot />
 </ol>

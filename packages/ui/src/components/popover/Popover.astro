@@ -198,7 +198,7 @@ interface Props extends HTMLAttributes<"div"> {
 const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<div {...rest} data-slot="popover" class={cn("inline-block", className)}>
+<div {...rest} data-slot="popover" class={cn("cn-popover", "inline-block", className)}>
   <slot />
 </div>
 

@@ -14,7 +14,7 @@ const { class: className = "", value, ...rest } = Astro.props as Props;
   {...rest}
   data-slot="navigation-menu-item"
   data-value={value}
-  class={cn("static", className)}
+  class={cn("cn-navigation-menu-item", "static", className)}
 >
   <slot />
 </li>

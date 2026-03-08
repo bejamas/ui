@@ -18,7 +18,7 @@ const {
 
 {
   asChild ? (
-    <div data-slot="tooltip-trigger" data-as-child class={cn(className)}>
+    <div data-slot="tooltip-trigger" data-as-child class={cn("cn-tooltip-trigger", className)}>
       <slot />
     </div>
   ) : (
@@ -26,7 +26,7 @@ const {
       {...rest}
       type={type}
       data-slot="tooltip-trigger"
-      class={cn(className)}
+      class={cn("cn-tooltip-trigger", className)}
     >
       <slot />
     </button>

@@ -50,6 +50,8 @@ const {
   aria-orientation={orientation}
   aria-hidden={decorative ? "true" : undefined}
   class={cn(
+    "cn-separator",
+    orientation === "vertical" ? "cn-separator-vertical" : "cn-separator-horizontal",
     "bg-border shrink-0",
     orientation === "vertical" ? "h-full w-px" : "h-px w-full",
     className,
@@ -57,4 +59,3 @@ const {
   {...props}
 >
 </div>
-

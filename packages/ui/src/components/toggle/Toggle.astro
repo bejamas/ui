@@ -145,7 +145,7 @@ const {
   data-default-pressed={defaultPressed ? "" : undefined}
   data-disabled={disabled ? "true" : undefined}
   disabled={disabled}
-  class={cn(toggleVariants({ variant, size }), className)}
+  class={cn("cn-toggle", toggleVariants({ variant, size }), className)}
   {...rest}
 >
   <slot />

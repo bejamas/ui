@@ -20,7 +20,7 @@ const {
   type="button"
   data-slot="combobox-trigger"
   data-size={size}
-  class={cn(
+  class={cn("cn-combobox-trigger", 
     "border-input data-[placeholder]:text-muted-foreground dark:bg-input/30 dark:hover:bg-input/50",
     "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
     "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:ring-[3px]",
@@ -37,12 +37,12 @@ const {
   <span
     data-slot="combobox-trigger-indicator"
     data-size={size}
-    class={cn(
+    class={cn("cn-combobox-trigger-indicator", 
       "inline-flex items-center justify-center rounded-[calc(var(--radius)-3px)] text-muted-foreground transition-colors",
       "data-[size=sm]:size-6 data-[size=default]:size-7 data-[size=lg]:size-8",
       "group-hover/combobox-trigger:bg-secondary group-focus-visible/combobox-trigger:bg-secondary",
     )}
   >
-    <ChevronDownIcon class="size-4" data-slot="combobox-icon" />
+    <ChevronDownIcon class="cn-combobox-icon size-4" data-slot="combobox-icon" />
   </span>
 </button>

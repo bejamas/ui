@@ -13,7 +13,11 @@ const { inset = false, class: className = "", ...rest } = Astro.props as Props;
 <div
   {...rest}
   data-slot="dropdown-menu-label"
-  class={cn("px-2 py-1.5 text-sm font-medium", inset && "pl-8", className)}
+  class={cn(
+    "cn-dropdown-menu-label px-2 py-1.5 text-sm font-medium",
+    inset && "pl-8",
+    className,
+  )}
 >
   <slot />
 </div>

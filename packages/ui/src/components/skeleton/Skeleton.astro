@@ -114,7 +114,7 @@ const { class: className = "", ...props } = Astro.props;
 
 <div
   data-slot="skeleton"
-  class={cn("bg-muted rounded-md animate-pulse", className)}
+  class={cn("cn-skeleton", "bg-muted rounded-md animate-pulse", className)}
   {...props}
 >
   <slot />

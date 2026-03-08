@@ -1,77 +1,21 @@
-export const PRESET_COOKIE_NAME = "theme";
 export const PRESET_STORAGE_KEY = "theme-preset";
 export const PRESET_CHANGE_EVENT = "bejamas:preset-change";
-const PRESET_COOKIE_DOMAIN = ".bejamas.com";
+import {
+  encodeThemeCookie,
+  getThemeCookieAttributes,
+  parseThemeCookie,
+  PRESET_COOKIE_NAME,
+  type ParsedThemeCookie,
+  type ThemeSwatches,
+} from "./theme-cookie";
 
-// Cookie format: theme={id}|{primaryLight}|{accentLight}|{primaryDark}|{accentDark}|{name}
-// Example: theme=custom-abc|oklch(0.2 0.04 250)|oklch(0.6 0.23 250)|oklch(0.97 0 0)|oklch(0.6 0.23 250)|My Theme
-
-export interface ThemeSwatches {
-  primaryLight: string;
-  accentLight: string;
-  primaryDark: string;
-  accentDark: string;
-}
-
-export interface ParsedThemeCookie {
-  id: string;
-  swatches?: ThemeSwatches;
-  name?: string;
-}
-
-/**
- * Parse the theme cookie value into id, swatches, and name
- */
-export function parseThemeCookie(cookieValue: string): ParsedThemeCookie {
-  const parts = cookieValue.split("|");
-  const id = parts[0];
-
-  if (parts.length >= 5) {
-    return {
-      id,
-      swatches: {
-        primaryLight: parts[1],
-        accentLight: parts[2],
-        primaryDark: parts[3],
-        accentDark: parts[4],
-      },
-      name: parts[5] || undefined, // 6th part is the name
-    };
-  }
-
-  return { id };
-}
-
-/**
- * Encode theme id, swatches, and name into cookie value
- */
-export function encodeThemeCookie(
-  id: string,
-  swatches?: ThemeSwatches,
-  name?: string
-): string {
-  if (!swatches) return id;
-  const base = `${id}|${swatches.primaryLight}|${swatches.accentLight}|${swatches.primaryDark}|${swatches.accentDark}`;
-  return name ? `${base}|${name}` : base;
-}
-
-function getCookieAttributes(): string {
-  if (typeof document === "undefined" || typeof location === "undefined") {
-    return "path=/; SameSite=Lax";
-  }
-
-  const attributes = ["path=/", "SameSite=Lax"];
-
-  if (location.protocol === "https:") {
-    attributes.push("Secure");
-  }
-
-  if (location.hostname.endsWith("bejamas.com")) {
-    attributes.push(`Domain=${PRESET_COOKIE_DOMAIN}`);
-  }
-
-  return attributes.join("; ");
-}
+export {
+  encodeThemeCookie,
+  parseThemeCookie,
+  PRESET_COOKIE_NAME,
+  type ParsedThemeCookie,
+  type ThemeSwatches,
+} from "./theme-cookie";
 
 /**
  * Get the stored preset key from cookie (priority) or localStorage (fallback)
@@ -124,7 +68,7 @@ export function setStoredPreset(key: string, swatches?: ThemeSwatches, name?: st
   if (typeof document === "undefined") return;
 
   const cookieValue = encodeThemeCookie(key, swatches, name);
-  document.cookie = `${PRESET_COOKIE_NAME}=${encodeURIComponent(cookieValue)}; ${getCookieAttributes()};`;
+  document.cookie = `${PRESET_COOKIE_NAME}=${encodeURIComponent(cookieValue)}; ${getThemeCookieAttributes()};`;
   try {
     localStorage.setItem(PRESET_STORAGE_KEY, key);
   } catch {}

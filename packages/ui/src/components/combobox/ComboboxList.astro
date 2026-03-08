@@ -12,7 +12,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   {...rest}
   data-slot="combobox-list"
-  class={cn(
+  class={cn("cn-combobox-list", 
     "max-h-72 overflow-y-auto overscroll-contain scroll-py-1 p-1",
     className,
   )}

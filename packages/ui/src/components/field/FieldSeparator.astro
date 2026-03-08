@@ -14,6 +14,7 @@ const hasContent = Astro.slots.has("default");
   data-slot="field-separator"
   data-content={hasContent ? "true" : undefined}
   class={cn(
+    "cn-field-separator",
     "-my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2 relative",
     className,
   )}
@@ -23,7 +24,7 @@ const hasContent = Astro.slots.has("default");
   {
     hasContent && (
       <span
-        class="text-muted-foreground px-2 bg-background relative mx-auto block w-fit"
+        class="cn-field-separator-content text-muted-foreground px-2 bg-background relative mx-auto block w-fit"
         data-slot="field-separator-content"
       >
         <slot />

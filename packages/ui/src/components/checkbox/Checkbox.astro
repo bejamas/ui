@@ -75,11 +75,12 @@ const baseWrapper =
       id={id}
       name={name}
       type="checkbox"
-      class={cn(baseWrapper, className)}
+      class={cn("cn-checkbox", baseWrapper, className)}
       {...props}
     />
     <span
-      class="pointer-events-none absolute inset-0 grid place-content-center transition-opacity opacity-0 peer-checked:opacity-100 text-primary-foreground"
+      data-slot="checkbox-indicator"
+      class="cn-checkbox-indicator pointer-events-none absolute inset-0 grid place-content-center transition-opacity opacity-0 peer-checked:opacity-100 text-primary-foreground"
     >
       <Check class="size-3.5" />
     </span>

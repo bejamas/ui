@@ -27,9 +27,9 @@ export type PathRewriteMap = Map<string, string>;
 export async function fetchRegistryItem(
   componentName: string,
   registryUrl: string,
+  style = "bejamas-bejamas",
 ): Promise<RegistryItem | null> {
-  // Handle style-prefixed URLs (e.g., styles/new-york-v4/avatar.json)
-  const url = `${registryUrl}/styles/new-york-v4/${componentName}.json`;
+  const url = `${registryUrl}/styles/${style}/${componentName}.json`;
 
   try {
     const response = await fetch(url);
@@ -111,6 +111,7 @@ export async function buildPathRewriteMap(
   components: string[],
   uiDir: string,
   registryUrl: string,
+  style = "bejamas-bejamas",
 ): Promise<PathRewriteMap> {
   const rewrites: PathRewriteMap = new Map();
 
@@ -120,7 +121,7 @@ export async function buildPathRewriteMap(
 
   for (const componentName of components) {
     try {
-      const registryItem = await fetchRegistryItem(componentName, registryUrl);
+      const registryItem = await fetchRegistryItem(componentName, registryUrl, style);
       if (!registryItem) continue;
 
       const subfolder = getSubfolderFromPaths(registryItem.files);
@@ -183,6 +184,7 @@ export async function reorganizeComponents(
   uiDir: string,
   registryUrl: string,
   verbose: boolean,
+  style = "bejamas-bejamas",
 ): Promise<ReorganizeResult> {
   const result: ReorganizeResult = { totalMoved: 0, movedFiles: [], skippedFiles: [] };
 
@@ -192,7 +194,7 @@ export async function reorganizeComponents(
 
   for (const componentName of components) {
     try {
-      const registryItem = await fetchRegistryItem(componentName, registryUrl);
+      const registryItem = await fetchRegistryItem(componentName, registryUrl, style);
       if (!registryItem) {
         if (verbose) {
           logger.info(
@@ -282,4 +284,3 @@ export async function reorganizeComponents(
 
   return result;
 }
-

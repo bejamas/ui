@@ -25,7 +25,7 @@ const {
   data-value={value}
   data-label={label}
   data-disabled={disabled ? "" : undefined}
-  class={cn(
+  class={cn("cn-combobox-item", 
     "group/item relative flex w-full cursor-default select-none items-center gap-1.5 rounded-md py-1.5 pr-8 pl-2 text-sm outline-hidden",
     "data-[highlighted]:bg-accent",
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -39,10 +39,10 @@ const {
   >
     <span
       data-slot="combobox-item-indicator"
-      class="hidden group-data-[selected]/item:inline-flex"
+      class="cn-combobox-item-indicator hidden group-data-[selected]/item:inline-flex"
     >
       <CheckIcon class="size-4" />
     </span>
   </span>
-  <span data-slot="combobox-item-text"><slot /></span>
+  <span data-slot="combobox-item-text" class="cn-combobox-item-text"><slot /></span>
 </div>

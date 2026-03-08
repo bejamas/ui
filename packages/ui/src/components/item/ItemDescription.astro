@@ -16,6 +16,7 @@ const {
   {...rest}
   data-slot="item-description"
   class={cn(
+    "cn-item-description",
     "text-muted-foreground line-clamp-2 text-sm leading-normal font-normal text-balance",
     "[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
     className,
@@ -23,4 +24,3 @@ const {
 >
   <slot />
 </p>
-

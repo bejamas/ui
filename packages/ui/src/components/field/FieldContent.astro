@@ -10,6 +10,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   data-slot="field-content"
   class={cn(
+    "cn-field-content",
     "gap-0.5 group/field-content flex flex-1 flex-col leading-snug",
     className,
   )}

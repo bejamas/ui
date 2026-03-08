@@ -36,8 +36,8 @@ const contentVariants = cva([
 ]);
 ---
 
-<div data-slot="hover-card-portal">
-  <div data-slot="hover-card-positioner" class="isolate z-50">
+<div data-slot="hover-card-portal" class="cn-hover-card-portal">
+  <div data-slot="hover-card-positioner" class="cn-hover-card-positioner isolate z-50">
     <div
       {...rest}
       hidden
@@ -46,7 +46,7 @@ const contentVariants = cva([
       data-side-offset={sideOffset}
       data-align={align}
       data-align-offset={alignOffset}
-      class={cn(contentVariants(), className)}
+      class={cn("cn-hover-card-content", contentVariants(), className)}
     >
       <slot />
     </div>

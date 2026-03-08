@@ -12,7 +12,7 @@ const {
 } = Astro.props as Props;
 ---
 
-<caption data-slot="table-caption" class={cn("text-muted-foreground mt-4 text-sm", className)} {...rest}>
+<caption data-slot="table-caption" class={cn("cn-table-caption", "text-muted-foreground mt-4 text-sm", className)} {...rest}>
   <slot />
 </caption>
 

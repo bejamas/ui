@@ -83,7 +83,13 @@ const itemVariants = cva(
   data-slot="item"
   data-variant={variant}
   data-size={size}
-  class={cn(itemVariants({ variant, size }), className)}
+  class={cn(
+    "cn-item",
+    `cn-item-variant-${variant}`,
+    `cn-item-size-${size}`,
+    itemVariants({ variant, size }),
+    className,
+  )}
 >
   <slot />
 </div>

@@ -92,6 +92,7 @@ const stickySurfaceVariants = cva(
 );
 
 const effectClasses = cn(
+  "cn-sticky-surface",
   stickySurfaceVariants({
     line: hasLine,
     elevate: hasElevate,
@@ -149,4 +150,3 @@ const styleVars = Object.entries(defaultVars)
     })();
   </script>
 )}
-

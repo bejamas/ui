@@ -52,9 +52,8 @@ const thumbClass =
       {...props}
       aria-checked={props.checked ?? undefined}
     />
-    <span class={cn(trackClass, className)} aria-hidden="true"></span>
-    <span class={thumbClass} aria-hidden="true"></span>
+    <span class={cn("cn-switch", trackClass, className)} aria-hidden="true"></span>
+    <span class={cn("cn-switch-thumb", thumbClass)} aria-hidden="true"></span>
   </span>
   <slot />
 </label>
-

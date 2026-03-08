@@ -287,7 +287,10 @@ const {
   data-slot="tabs"
   data-orientation={orientation}
   data-default-value={defaultValue}
+  data-horizontal={orientation === "horizontal" ? "true" : undefined}
+  data-vertical={orientation === "vertical" ? "true" : undefined}
   class={cn(
+    "cn-tabs",
     "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
     className,
   )}

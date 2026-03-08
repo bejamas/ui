@@ -18,7 +18,11 @@ const triggerVariants = cva(
 
 {
   asChild ? (
-    <div data-slot="accordion-trigger" data-as-child class={cn(triggerVariants(), className)}>
+    <div
+      data-slot="accordion-trigger"
+      data-as-child
+      class={cn("cn-accordion-trigger", triggerVariants(), className)}
+    >
       <slot />
     </div>
   ) : (
@@ -26,19 +30,23 @@ const triggerVariants = cva(
       {...rest}
       type={type}
       data-slot="accordion-trigger"
-      class={cn(triggerVariants(), className)}
+      class={cn("cn-accordion-trigger", triggerVariants(), className)}
     >
       <span class="flex-1">
         <slot />
       </span>
       {
         Astro.slots.has("icon") ? (
-          <span class="inline-flex items-center justify-center transition-transform duration-200 group-open/accordion:rotate-180">
+          <span
+            data-slot="accordion-trigger-icon"
+            class="cn-accordion-trigger-icon inline-flex items-center justify-center transition-transform duration-200 group-open/accordion:rotate-180"
+          >
             <slot name="icon" />
           </span>
         ) : (
           <svg
-            class="size-4 shrink-0 text-muted-foreground translate-y-0.5 transition-transform duration-200 group-open/accordion:rotate-180"
+            data-slot="accordion-trigger-icon"
+            class="cn-accordion-trigger-icon size-4 shrink-0 text-muted-foreground translate-y-0.5 transition-transform duration-200 group-open/accordion:rotate-180"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

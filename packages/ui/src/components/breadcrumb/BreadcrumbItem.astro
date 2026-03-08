@@ -18,7 +18,7 @@ const itemVariants = cva("inline-flex items-center gap-1.5");
 <li
   {...rest}
   data-slot="breadcrumb-item"
-  class={cn(itemVariants(), className)}
+  class={cn("cn-breadcrumb-item", itemVariants(), className)}
 >
   <slot />
 </li>

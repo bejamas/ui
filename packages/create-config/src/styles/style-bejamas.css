@@ -1,0 +1,57 @@
+.style-bejamas {
+  .cn-button {
+    @apply shadow-xs;
+  }
+
+  .cn-card {
+    @apply rounded-xl border border-border bg-card text-card-foreground shadow-xs;
+  }
+
+  .cn-card-header {
+    @apply gap-1.5 px-6;
+  }
+
+  .cn-card-content {
+    @apply px-6;
+  }
+
+  .cn-card-footer {
+    @apply px-6 pb-6;
+  }
+
+  .cn-input,
+  .cn-textarea,
+  .cn-select-trigger,
+  .cn-native-select,
+  .cn-combobox-trigger {
+    @apply rounded-lg;
+  }
+
+  .cn-dropdown-menu-content,
+  .cn-popover-content,
+  .cn-tooltip-content,
+  .cn-select-content,
+  .cn-combobox-content,
+  .cn-dialog-content,
+  .cn-hover-card-content {
+    @apply rounded-lg shadow-md;
+  }
+
+  .cn-item {
+    @apply rounded-lg;
+  }
+
+  .cn-tabs-list {
+    @apply rounded-lg;
+  }
+
+  .cn-tabs-trigger,
+  .cn-toggle,
+  .cn-toggle-group-item {
+    @apply rounded-md;
+  }
+
+  .cn-badge {
+    @apply rounded-full;
+  }
+}

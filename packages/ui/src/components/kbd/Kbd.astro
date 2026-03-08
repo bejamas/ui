@@ -129,7 +129,7 @@ const { class: className = "", ...props } = Astro.props;
 
 <kbd
   data-slot="kbd"
-  class={cn(
+  class={cn("cn-kbd", 
     "bg-muted text-muted-foreground",
     "[[data-slot=tooltip-content]_&]:bg-background/20 [[data-slot=tooltip-content]_&]:text-background",
     "dark:[[data-slot=tooltip-content]_&]:bg-background/10",

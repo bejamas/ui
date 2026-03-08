@@ -43,7 +43,7 @@ const addonVariants = cva(
   role="group"
   data-slot="input-group-addon"
   data-align={align}
-  class={cn(addonVariants({ align }), className)}
+  class={cn("cn-input-group-addon", addonVariants({ align }), className)}
 >
   <slot />
 </div>

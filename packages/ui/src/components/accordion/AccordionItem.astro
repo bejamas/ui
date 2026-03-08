@@ -23,7 +23,7 @@ const itemVariants = cva("border-b last:border-b-0");
   {...rest}
   data-value={value}
   data-slot="accordion-item"
-  class={cn(itemVariants(), "group/accordion", className)}
+  class={cn("cn-accordion-item", itemVariants(), "group/accordion", className)}
 >
   <slot />
 </div>

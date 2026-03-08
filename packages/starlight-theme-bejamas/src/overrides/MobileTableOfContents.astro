@@ -87,12 +87,12 @@ const { toc } = Astro.locals.starlightRoute;
       align-items: center;
       justify-content: space-between;
       border: 1px solid var(--sl-color-gray-5);
-      border-radius: 0.5rem;
+      border-radius: calc(var(--radius) - 2px);
       padding-block: 0.5rem;
       padding-inline-start: 0.75rem;
       padding-inline-end: 0.5rem;
       line-height: 1;
-      background-color: var(--sl-color-black);
+      background-color: var(--background);
       user-select: none;
       cursor: pointer;
       font-weight: 500;
@@ -133,11 +133,11 @@ const { toc } = Astro.locals.starlightRoute;
       transition: background 200ms ease-out;
     }
     details[open] .toggle {
-      color: var(--sl-color-white);
+      color: var(--foreground);
       border-color: var(--sl-color-accent);
     }
     details .toggle:hover {
-      color: var(--sl-color-white);
+      color: var(--foreground);
       border-color: var(--sl-color-gray-2);
     }
 
@@ -152,7 +152,7 @@ const { toc } = Astro.locals.starlightRoute;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      color: var(--sl-color-white);
+      color: var(--foreground);
     }
 
     .dropdown {
@@ -164,7 +164,7 @@ const { toc } = Astro.locals.starlightRoute;
         85vh - var(--sl-nav-height) - var(--sl-mobile-toc-height)
       );
       overflow-y: auto;
-      background-color: var(--sl-color-black);
+      background-color: var(--popover);
       box-shadow: var(--sl-shadow-md);
       overscroll-behavior: contain;
     }

@@ -49,10 +49,8 @@
   }
 
   :root {
-    --sl-font: "Inter Variable", sans-serif;
-    --sl-font-mono: "Geist Mono", monospace;
-
-    --radius: 0.5rem;
+    --sl-font: var(--font-sans);
+    --sl-font-mono: var(--font-mono);
 
     --sl-color-text-accent: var(--accent-foreground);
 
@@ -74,8 +72,7 @@
 
     --sl-color-gray-2: var(--input);
 
-    --default-font-family: "Inter Variable", sans-serif;
-    --font-sans: "Inter Variable", sans-serif;
+    --default-font-family: var(--font-sans);
 
     --sl-color-bg: var(--background);
     --sl-color-fg: var(--foreground);

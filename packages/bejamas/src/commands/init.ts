@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { preFlightInit } from "@/src/preflights/preflight-init";
+import { applyDesignSystemToProject } from "@/src/utils/apply-design-system";
 
 import { BASE_COLORS, BUILTIN_REGISTRIES } from "@/src/registry/constants";
 import { clearRegistryContext } from "@/src/registry/context";
@@ -17,6 +18,14 @@ import { Command } from "commander";
 import { execa } from "execa";
 import fsExtra from "fs-extra";
 import { z } from "zod";
+import {
+  DEFAULT_DESIGN_SYSTEM_CONFIG,
+  decodePreset,
+  designSystemConfigSchema,
+  encodePreset,
+  isPresetCode,
+  type DesignSystemConfig,
+} from "@bejamas/create-config/server";
 
 // process.on("exit", (code) => {
 //   const filePath = path.resolve(process.cwd(), "components.json")
@@ -32,6 +41,51 @@ import { z } from "zod";
 
 // Default fallback registry endpoint for shadcn (expects /r)
 const DEFAULT_REGISTRY_URL = "https://ui.bejamas.com/r";
+
+function resolveDesignSystemConfig(
+  options: Pick<
+    z.infer<typeof initOptionsSchema>,
+    "preset" | "template" | "rtl" | "baseColor"
+  >,
+): DesignSystemConfig {
+  if (options.preset && isPresetCode(options.preset)) {
+    const decoded = decodePreset(options.preset);
+    if (decoded) {
+      return designSystemConfigSchema.parse({
+        ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+        ...decoded,
+        template: options.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
+        rtl: options.rtl ?? false,
+      });
+    }
+  }
+
+  const baseColor = options.baseColor ?? DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor;
+
+  return designSystemConfigSchema.parse({
+    ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+    template: options.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
+    rtl: options.rtl ?? false,
+    baseColor,
+    theme:
+      baseColor === DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor
+        ? DEFAULT_DESIGN_SYSTEM_CONFIG.theme
+        : baseColor,
+  });
+}
+
+function buildInitUrl(config: DesignSystemConfig) {
+  const params = new URLSearchParams({
+    preset: encodePreset(config),
+    template: config.template,
+  });
+
+  if (config.rtl) {
+    params.set("rtl", "true");
+  }
+
+  return `https://ui.bejamas.com/init?${params.toString()}`;
+}
 
 export const initOptionsSchema = z.object({
   cwd: z.string(),
@@ -54,9 +108,11 @@ export const initOptionsSchema = z.object({
         return true;
       },
       {
-        message: "Invalid template. Please use 'next' or 'next-monorepo'.",
+        message:
+          "Invalid template. Please use 'astro', 'astro-monorepo', or 'astro-with-component-docs-monorepo'.",
       },
     ),
+  preset: z.string().optional(),
   baseColor: z
     .string()
     .optional()
@@ -75,6 +131,7 @@ export const initOptionsSchema = z.object({
       },
     ),
   baseStyle: z.boolean(),
+  rtl: z.boolean().default(false),
 });
 
 export const init = new Command()
@@ -90,6 +147,7 @@ export const init = new Command()
     "the base color to use. (neutral, gray, zinc, stone, slate)",
     undefined,
   )
+  .option("-p, --preset <preset>", "the encoded create preset to use")
   .option("-y, --yes", "skip confirmation prompt.", true)
   .option("-d, --defaults,", "use default configuration.", false)
   .option("-f, --force", "force overwrite of existing configuration.", false)
@@ -111,6 +169,7 @@ export const init = new Command()
   .option("--css-variables", "use css variables for theming.", true)
   .option("--no-css-variables", "do not use css variables for theming.")
   .option("--no-base-style", "do not install the base shadcn style.")
+  .option("--rtl", "enable right-to-left output", false)
   .action(async (_components, opts) => {
     try {
       await runInit(opts);
@@ -127,6 +186,7 @@ export async function runInit(
     skipPreflight?: boolean;
   },
 ) {
+  const designConfig = resolveDesignSystemConfig(options);
   let projectInfo;
   let newProjectTemplate;
   if (!options.skipPreflight) {
@@ -152,6 +212,11 @@ export async function runInit(
       "astro-with-component-docs-monorepo": "apps/web",
       astro: "",
     } as const;
+    await applyDesignSystemToProject(options.cwd, {
+      ...designConfig,
+      template: newProjectTemplate,
+    });
+
     options.cwd = path.resolve(options.cwd, projectPath[newProjectTemplate]);
 
     logger.log(
@@ -178,23 +243,20 @@ export async function runInit(
       ...process.env,
       REGISTRY_URL: process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL,
     };
+    const initUrl = buildInitUrl(designConfig);
     if (await fsExtra.pathExists(localShadcnPath)) {
-      await execa(localShadcnPath, ["init", "--base-color", "neutral"], {
+      await execa(localShadcnPath, ["init", initUrl], {
         stdio: "inherit",
         cwd: options.cwd,
         env,
       });
     } else {
       // Follow user's runner preference (npx, bunx, pnpm dlx)
-      await execa(
-        "npx",
-        ["-y", "shadcn@latest", "init", "--base-color", "neutral"],
-        {
-          stdio: "inherit",
-          cwd: options.cwd,
-          env,
-        },
-      );
+      await execa("npx", ["-y", "shadcn@latest", "init", initUrl], {
+        stdio: "inherit",
+        cwd: options.cwd,
+        env,
+      });
     }
   } catch (err) {
     // shadcn already printed the detailed error to stdio, avoid double-reporting

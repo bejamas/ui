@@ -16,10 +16,10 @@ const {
   {...rest}
   data-slot="item-content"
   class={cn(
+    "cn-item-content",
     "flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none",
     className,
   )}
 >
   <slot />
 </div>
-

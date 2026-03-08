@@ -124,6 +124,6 @@ const resolvedNativeSize =
   type={type}
   size={resolvedNativeSize}
   data-slot={props["data-slot"] ?? "input"}
-  class={cn(inputVariants({ size: resolvedUiSize }), className)}
+  class={cn("cn-input", inputVariants({ size: resolvedUiSize }), className)}
   {...props}
 />

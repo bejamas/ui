@@ -60,8 +60,6 @@ import {
 } from "@bejamas/ui/components/popover";
 
 import Icon from "./icons/Icon.astro";
-import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
-
 import config from "virtual:starlight-page-actions/config";
 
 const { dir, pagination, template, entry } = Astro.locals.starlightRoute;
@@ -384,7 +382,7 @@ const options = [...filteredDefaultOptions, ...customOptions];
       font-size: 1.875rem;
       line-height: 1.2;
       font-weight: 500;
-      color: var(--sl-color-white);
+      color: var(--foreground);
     }
 
     /* @media (min-width: 50rem) {

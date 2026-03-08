@@ -68,8 +68,8 @@ const contentVariants = cva([
 ]);
 ---
 
-<div data-slot="tooltip-portal">
-  <div data-slot="tooltip-positioner" class="isolate z-50">
+<div data-slot="tooltip-portal" class="cn-tooltip-portal">
+  <div data-slot="tooltip-positioner" class="cn-tooltip-positioner isolate z-50">
     <div
       {...rest}
       hidden
@@ -78,12 +78,19 @@ const contentVariants = cva([
       data-side-offset={sideOffset}
       data-align={align}
       data-align-offset={alignOffset}
-      class={cn(contentVariants(), className)}
+      class={cn(
+        "cn-tooltip-content cn-tooltip-content-logical",
+        contentVariants(),
+        className,
+      )}
     >
       <slot />
       <div
         data-slot="tooltip-indicator"
-        class={indicatorVariants({ side, align })}
+        class={cn("cn-tooltip-indicator", 
+          "cn-tooltip-arrow cn-tooltip-arrow-logical",
+          indicatorVariants({ side, align }),
+        )}
       >
       </div>
     </div>

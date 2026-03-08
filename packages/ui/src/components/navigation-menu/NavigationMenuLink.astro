@@ -12,7 +12,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <a
   {...rest}
   data-slot="navigation-menu-link"
-  class={cn(
+  class={cn("cn-navigation-menu-link", 
     "data-active:focus:bg-muted data-active:hover:bg-muted data-active:bg-muted/50 data-active:text-foreground hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground focus-visible:ring-ring/50 [&_svg:not([class*='text-'])]:text-muted-foreground flex flex-col gap-1 rounded-sm p-3 transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
     className,
   )}

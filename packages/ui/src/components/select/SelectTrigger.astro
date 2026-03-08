@@ -21,6 +21,7 @@ const {
   data-slot="select-trigger"
   data-size={size}
   class={cn(
+    "cn-select-trigger",
     "border-input data-[placeholder]:text-muted-foreground dark:bg-input/30 dark:hover:bg-input/50",
     "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
     "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive aria-invalid:ring-[3px]",
@@ -35,7 +36,7 @@ const {
 >
   <slot />
   <ChevronDownIcon
-    class="size-4 text-muted-foreground -mr-0.75"
+    class="cn-select-icon cn-select-trigger-icon size-4 text-muted-foreground -mr-0.75"
     data-slot="select-icon"
   />
 </button>

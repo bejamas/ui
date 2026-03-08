@@ -29,7 +29,6 @@
  *     <CardDescription>Like any enduring system, a scalable design system relies on clear structure, solid foundations, and careful layering over time.</CardDescription>
  *     <Button variant="outline" as="a" href="#">Read more</Button>
  *   </CardContent>
- *   <Separator />
  *   <CardFooter>
  *     <p class="text-sm text-muted-foreground">Categories</p>
  *     <div class="flex items-center gap-2">
@@ -97,7 +96,7 @@ const cardVariants = cva(
 <div
   {...rest}
   data-slot="card"
-  class={cn(cardVariants({ variant }), className)}
+  class={cn("cn-card", cardVariants({ variant }), className)}
 >
   <slot />
 </div>

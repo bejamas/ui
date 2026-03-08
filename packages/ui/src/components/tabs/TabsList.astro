@@ -44,14 +44,14 @@ const {
   role="tablist"
   data-slot="tabs-list"
   data-variant={variant}
-  class={cn(tabsListVariants({ variant, size }), className)}
+  class={cn("cn-tabs-list", tabsListVariants({ variant, size }), className)}
 >
   {
     variant === "indicator" && (
       <div
         aria-hidden="true"
         data-slot="tabs-indicator"
-        class="pointer-events-none absolute top-[var(--active-tab-top)] left-[var(--active-tab-left)] z-0 h-[var(--active-tab-height)] w-[var(--active-tab-width)] rounded-md bg-background shadow-sm transition-all duration-150 ease dark:border-input dark:bg-input/30"
+        class="cn-tabs-indicator pointer-events-none absolute top-[var(--active-tab-top)] left-[var(--active-tab-left)] z-0 h-[var(--active-tab-height)] w-[var(--active-tab-width)] rounded-md bg-background shadow-sm transition-all duration-150 ease dark:border-input dark:bg-input/30"
       />
     )
   }
@@ -60,7 +60,7 @@ const {
       <div
         aria-hidden="true"
         data-slot="tabs-indicator"
-        class="pointer-events-none absolute z-0 rounded-full bg-foreground transition-all duration-150 ease group-data-[orientation=horizontal]/tabs:left-[var(--active-tab-left)] group-data-[orientation=horizontal]/tabs:top-[calc(var(--active-tab-top)+var(--active-tab-height)-2px)] group-data-[orientation=horizontal]/tabs:h-0.5 group-data-[orientation=horizontal]/tabs:w-[var(--active-tab-width)] group-data-[orientation=vertical]/tabs:top-[var(--active-tab-top)] group-data-[orientation=vertical]/tabs:left-[calc(var(--active-tab-left)+var(--active-tab-width)-2px)] group-data-[orientation=vertical]/tabs:h-[var(--active-tab-height)] group-data-[orientation=vertical]/tabs:w-0.5"
+        class="cn-tabs-indicator pointer-events-none absolute z-0 rounded-full bg-foreground transition-all duration-150 ease group-data-[orientation=horizontal]/tabs:left-[var(--active-tab-left)] group-data-[orientation=horizontal]/tabs:top-[calc(var(--active-tab-top)+var(--active-tab-height)-2px)] group-data-[orientation=horizontal]/tabs:h-0.5 group-data-[orientation=horizontal]/tabs:w-[var(--active-tab-width)] group-data-[orientation=vertical]/tabs:top-[var(--active-tab-top)] group-data-[orientation=vertical]/tabs:left-[calc(var(--active-tab-left)+var(--active-tab-width)-2px)] group-data-[orientation=vertical]/tabs:h-[var(--active-tab-height)] group-data-[orientation=vertical]/tabs:w-0.5"
       />
     )
   }

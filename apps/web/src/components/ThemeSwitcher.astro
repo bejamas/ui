@@ -1,39 +1,21 @@
 ---
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@bejamas/ui/components/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@bejamas/ui/components/tabs";
 
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
-import PresetSwitcher from "./PresetSwitcher.astro";
 import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
 ---
 
-<div class="flex items-center gap-2">
-  <PresetSwitcher />
+<div class="flex items-center">
   <starlight-theme-select>
     <Tabs defaultValue="auto" class="theme-tabs">
-      <TabsList class="h-9 p-1 py-0.5 rounded-md">
-        <TabsTrigger
-          value="light"
-          class="theme-tab px-1.5 h-7"
-          title="Light theme"
-        >
+      <TabsList>
+        <TabsTrigger value="light" class="theme-tab" title="Light theme">
           <SunIcon class="size-4" />
         </TabsTrigger>
-        <TabsTrigger
-          value="dark"
-          class="theme-tab px-1.5 h-7"
-          title="Dark theme"
-        >
+        <TabsTrigger value="dark" class="theme-tab" title="Dark theme">
           <MoonIcon class="size-4" />
         </TabsTrigger>
-        <TabsTrigger
-          value="auto"
-          class="theme-tab px-1.5 h-7"
-          title="Auto (system)"
-        >
+        <TabsTrigger value="auto" class="theme-tab" title="Auto (system)">
           <LaptopIcon class="size-4" />
         </TabsTrigger>
       </TabsList>
@@ -41,8 +23,10 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
   </starlight-theme-select>
 </div>
 
-<!-- Theme Editor Panel (Cmd/Ctrl + . to toggle) -->
-<ThemeEditorGlobal />
+<!-- Legacy theme editor stays mounted but hidden during the /create transition. -->
+<div hidden aria-hidden="true">
+  <ThemeEditorGlobal />
+</div>
 
 <script is:inline>
   if (typeof StarlightThemeProvider !== "undefined") {
@@ -97,7 +81,6 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
     document.documentElement.dataset.themeChoice = theme;
     document.documentElement.classList.toggle("dark", resolved === "dark");
     storeTheme(theme);
-    // Dispatch event for other components (like PresetSwitcher) to react
     window.dispatchEvent(
       new CustomEvent("theme-toggle-changed", { detail: { theme: resolved } }),
     );
@@ -116,7 +99,9 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
       if (typeof value !== "string") return;
 
       const nextTheme = parseTheme(value);
-      const currentTheme = parseTheme(document.documentElement.dataset.themeChoice);
+      const currentTheme = parseTheme(
+        document.documentElement.dataset.themeChoice,
+      );
       if (nextTheme === currentTheme) return;
 
       onThemeChange(nextTheme);

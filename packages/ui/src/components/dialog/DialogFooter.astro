@@ -12,7 +12,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   {...rest}
   data-slot="dialog-footer"
-  class={cn("flex justify-end gap-2", className)}
+  class={cn("cn-dialog-footer", "flex justify-end gap-2", className)}
 >
   <slot />
 </div>

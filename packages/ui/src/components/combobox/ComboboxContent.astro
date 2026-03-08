@@ -53,7 +53,7 @@ const contentVariants = cva(
   data-side-offset={sideOffset}
   data-align-offset={alignOffset}
   hidden
-  class={cn(contentVariants({ side }), className)}
+  class={cn("cn-combobox-content", contentVariants({ side }), className)}
 >
   <slot />
 </div>

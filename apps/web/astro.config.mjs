@@ -55,6 +55,7 @@ export default defineConfig({
           nav: [
             { label: "Docs", href: "/docs/introduction" },
             { label: "Components", href: "/components" },
+            { label: "Create", href: "/create" },
             { label: "Themes", href: "/themes" },
           ],
           components: {
@@ -99,7 +100,7 @@ export default defineConfig({
           ],
         },
       ],
-      customCss: ["./src/styles/globals.css"],
+      customCss: ["./src/styles/theme-fonts.css", "./src/styles/globals.css"],
       logo: {
         alt: "bejamas/ui",
         light: "./src/assets/logo-3.svg",
@@ -112,6 +113,7 @@ export default defineConfig({
           attrs: {
             href: "/r/themes/current-theme.css",
             rel: "stylesheet",
+            "data-current-theme-stylesheet": "",
           },
         },
         {

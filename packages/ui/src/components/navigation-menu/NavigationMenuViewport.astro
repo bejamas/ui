@@ -11,14 +11,14 @@ const { class: className = "", ...rest } = Astro.props as Props;
 
 <div
   data-slot="navigation-menu-viewport-positioner"
-  class={cn(
+  class={cn("cn-navigation-menu-viewport-positioner", 
     "isolate z-50 transition-[left,top] duration-250 ease data-ending-style:opacity-0",
   )}
 >
   <div
     {...rest}
     data-slot="navigation-menu-viewport"
-    class={cn(
+    class={cn("cn-navigation-menu-viewport", 
       "bg-popover shadow-lg rounded-lg outline outline-border overflow-clip",
       "w-(--viewport-width,0) h-(--viewport-height,0)",
       "origin-(--transform-origin)",

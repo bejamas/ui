@@ -20,7 +20,7 @@ const mediaVariants = cva(
 <div
   {...rest}
   data-slot="card-media"
-  class={cn(mediaVariants(), className)}
+  class={cn("cn-card-media", mediaVariants(), className)}
 >
   <slot />
 </div>

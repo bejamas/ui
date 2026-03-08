@@ -9,7 +9,16 @@ export const formatNumber = (num?: number) => {
 };
 
 export const formatHsl = (hsl: Hsl) => {
-  return `hsl(${formatNumber(hsl.h)} ${formatNumber(hsl.s * 100)}% ${formatNumber(hsl.l * 100)}%)`;
+  const alpha =
+    typeof hsl.alpha === "number" && Number.isFinite(hsl.alpha)
+      ? hsl.alpha
+      : undefined;
+  const alphaSuffix =
+    typeof alpha === "number" && alpha < 1
+      ? ` / ${formatNumber(alpha * 100)}%`
+      : "";
+
+  return `hsl(${formatNumber(hsl.h)} ${formatNumber(hsl.s * 100)}% ${formatNumber(hsl.l * 100)}%${alphaSuffix})`;
 };
 
 export const colorFormatter = (

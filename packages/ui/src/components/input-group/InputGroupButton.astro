@@ -51,7 +51,7 @@ const inputGroupButtonVariants = cva(
   type={type}
   variant={variant}
   data-slot="input-group-button"
-  class={cn(inputGroupButtonVariants({ size }), className)}
+  class={cn("cn-input-group-button", inputGroupButtonVariants({ size }), className)}
   {...rest}
 >
   <slot />

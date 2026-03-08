@@ -94,7 +94,7 @@ const defaultFadeY = "mask-y-from-80% mask-y-to-95%";
 <div
   {...rest}
   data-slot="carousel"
-  class={cn(
+  class={cn("cn-carousel", 
     carouselVariants({ axis, snapType, align }),
     fade && axis === "x" && defaultFadeX,
     fade && axis === "y" && defaultFadeY,

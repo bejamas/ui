@@ -15,6 +15,10 @@ const controlClasses =
 
 <Input
   data-slot="input-group-control"
-  class={cn(controlClasses, className)}
+  class={cn(
+    "cn-input-group-control cn-input-group-input",
+    controlClasses,
+    className,
+  )}
   {...rest}
 />

@@ -82,7 +82,7 @@ const alertVariants = cva(
   {...rest}
   data-slot="alert"
   role="alert"
-  class={cn(alertVariants({ variant }), className)}
+  class={cn("cn-alert", alertVariants({ variant }), className)}
 >
   <slot />
 </div>

@@ -345,7 +345,7 @@ const {
   data-delay-open={delayOpen}
   data-delay-close={delayClose}
   data-open-on-focus={openOnFocus}
-  class={cn("relative", className)}
+  class={cn("cn-navigation-menu", "relative", className)}
 >
   <slot />
   {viewport && <NavigationMenuViewport />}
@@ -360,7 +360,7 @@ const {
 </script>
 
 <style is:global>
-  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:hover,
+  [data-slot="navigation-menu-list"]:has( class="cn-navigation-menu-indicator cn-navigation-menu-list"> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:hover,
   [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:focus,
   [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:focus-visible,
   [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface[data-state="open"] {

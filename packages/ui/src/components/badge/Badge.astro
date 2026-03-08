@@ -119,6 +119,11 @@ const Tag = as;
 const classes = cn(badgeVariants({ variant, shape, size, className }));
 ---
 
-<Tag class={classes} {...props}>
+<Tag
+  data-variant={variant}
+  data-size={size}
+  class={cn("cn-badge", `cn-badge-variant-${variant}`, classes)}
+  {...props}
+>
   <slot />
 </Tag>

@@ -17,7 +17,10 @@ export function updateImportAliases(
   // This treats the remote as coming from a faux registry.
   let specifier = moduleSpecifier;
   if (isRemote && specifier.startsWith("@/")) {
-    specifier = specifier.replace(/^@\//, "@/registry/new-york/");
+    specifier = specifier.replace(
+      /^@\//,
+      `@/registry/${config.style || "bejamas-bejamas"}/`,
+    );
   }
 
   // Not a registry import.
@@ -132,4 +135,3 @@ export async function fixAstroImports(cwd: string, isVerbose: boolean) {
     }
   }
 }
-

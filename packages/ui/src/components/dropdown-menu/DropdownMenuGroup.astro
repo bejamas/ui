@@ -13,7 +13,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   role="group"
   data-slot="dropdown-menu-group"
-  class={cn("", className)}
+  class={cn("cn-dropdown-menu-group", "", className)}
 >
   <slot />
 </div>

@@ -116,7 +116,7 @@ const inputGroupVariants = cva(
   role="group"
   data-slot="input-group"
   data-size={size}
-  class={cn(inputGroupVariants({ size }), className)}
+  class={cn("cn-input-group", inputGroupVariants({ size }), className)}
 >
   <slot />
 </div>

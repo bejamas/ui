@@ -48,6 +48,7 @@ const {
   data-value={value}
   disabled={disabled}
   class={cn(
+    "cn-toggle-group-item",
     toggleVariants({ variant, size }),
     // Inherit variant from parent when not set
     !variant && "group-data-[variant=outline]/toggle-group:border group-data-[variant=outline]/toggle-group:border-input group-data-[variant=outline]/toggle-group:bg-transparent",

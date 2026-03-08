@@ -37,7 +37,7 @@ const {
     disabled={disabled}
     autocomplete="off"
     {...rest}
-  />
+   class="cn-combobox-input" />
   {
     (showTrigger || showClear) && (
       <InputGroupAddon align="inline-end">
@@ -46,7 +46,7 @@ const {
             data-slot="combobox-clear"
             type="button"
             size="icon-xs"
-            class="hidden [[data-value]_&]:inline-flex"
+            class="cn-combobox-clear hidden [[data-value]_&]:inline-flex"
             aria-label="Clear selection"
           >
             <XIcon class="size-3.5 group-data-[size=sm]/input-group:size-3" />
@@ -59,7 +59,7 @@ const {
             size="icon-xs"
             tabindex={-1}
             disabled={disabled}
-            class={cn(
+            class={cn("cn-combobox-trigger", 
               "text-muted-foreground",
               showClear && "[[data-value]_&]:hidden",
             )}
@@ -67,7 +67,7 @@ const {
           >
             <ChevronDownIcon
               data-slot="combobox-icon"
-              class="size-4 group-data-[size=sm]/input-group:size-3.5"
+              class="cn-combobox-icon size-4 group-data-[size=sm]/input-group:size-3.5"
             />
           </InputGroupButton>
         )}

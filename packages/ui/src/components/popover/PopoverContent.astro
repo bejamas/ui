@@ -41,7 +41,11 @@ const contentVariants = cva([
   data-side={side}
   data-side-offset={sideOffset}
   style={`--side-offset: ${sideOffset}px`}
-  class={cn(contentVariants(), className)}
+  class={cn(
+    "cn-popover-content cn-popover-content-logical",
+    contentVariants(),
+    className,
+  )}
 >
   <slot />
 </div>

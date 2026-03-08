@@ -8,6 +8,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: var(--bejamas-font-family, ui-sans-serif, system-ui, sans-serif);
+  --font-serif: var(--bejamas-font-family-serif, ui-serif, Georgia, Cambria, serif);
+  --font-mono: var(--bejamas-font-family-mono, ui-monospace, SFMono-Regular, monospace);
   --radius-xs: calc(var(--radius) - 6px);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -157,6 +160,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 }
 

@@ -37,7 +37,9 @@ export async function getConfig(cwd: string) {
 
   // Set default icon library if not provided.
   if (!config.iconLibrary) {
-    config.iconLibrary = config.style === "new-york" ? "radix" : "lucide";
+    config.iconLibrary = config.style?.startsWith("new-york")
+      ? "radix"
+      : "lucide";
   }
 
   return await resolveConfigPaths(cwd, config);
@@ -214,8 +216,8 @@ export function findCommonRoot(cwd: string, resolvedPath: string) {
 
 // TODO: Cache this call.
 export async function getTargetStyleFromConfig(cwd: string, fallback: string) {
-  const projectInfo = await getProjectInfo(cwd);
-  return projectInfo?.tailwindVersion === "v4" ? "new-york-v4" : fallback;
+  await getProjectInfo(cwd);
+  return fallback;
 }
 
 type DeepPartial<T> = {

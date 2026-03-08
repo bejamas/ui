@@ -39,7 +39,11 @@ const contentVariants = cva([
   data-align-offset={alignOffset}
   data-side={side}
   data-side-offset={sideOffset}
-  class={cn(contentVariants(), className)}
+  class={cn(
+    "cn-dropdown-menu-content cn-dropdown-menu-content-logical",
+    contentVariants(),
+    className,
+  )}
 >
   <slot />
 </div>

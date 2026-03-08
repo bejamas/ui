@@ -594,7 +594,7 @@
  *       Get notified when ChatGPT responds to requests that take time, like
  *       research or image generation.
  *     </FieldDescription>
- *     <FieldGroup data-slot="checkbox-group">
+ *     <FieldGroup data-slot="checkbox-group" class="cn-checkbox-group">
  *       <Field orientation="horizontal">
  *         <Checkbox id="push" checked disabled />
  *         <FieldLabel for="push" class="font-normal">
@@ -610,7 +610,7 @@
  *       Get notified when tasks you've created have updates.
  *       <a href="#">Manage tasks</a>
  *     </FieldDescription>
- *     <FieldGroup data-slot="checkbox-group">
+ *     <FieldGroup data-slot="checkbox-group" class="cn-checkbox-group">
  *       <Field orientation="horizontal">
  *         <Checkbox id="push-tasks" />
  *         <FieldLabel for="push-tasks" class="font-normal">
@@ -665,7 +665,7 @@ const {
   role="group"
   data-slot="field"
   data-orientation={orientation}
-  class={cn(fieldVariants({ orientation }), className)}
+  class={cn("cn-field", fieldVariants({ orientation }), className)}
   {...rest}
 >
   <slot />

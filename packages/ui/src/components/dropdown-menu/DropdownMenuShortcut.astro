@@ -13,6 +13,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   data-slot="dropdown-menu-shortcut"
   class={cn(
+    "cn-dropdown-menu-shortcut",
     "ml-auto text-xs tracking-widest text-muted-foreground ",
     "group-data-highlighted/dropdown-menu-item:text-accent-foreground/70",
     className,

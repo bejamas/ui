@@ -1,0 +1,80 @@
+---
+import {
+  catalogs,
+  getCompiledStyleCss,
+} from "@bejamas/create-config/server";
+import CreatePreviewSurface from "@/components/create/CreatePreviewSurface.astro";
+import createPreviewScript from "@/scripts/create-preview.ts?url";
+import {
+  buildDesignSystemThemeCss,
+} from "@/utils/themes/design-system-adapter";
+import { buildIframeThemeSyncInlineScript } from "@/utils/themes/iframe-theme-sync";
+import { parseCreateSearchParams } from "@/utils/create";
+import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
+import themeFontsStylesheet from "@/styles/theme-fonts.css?url";
+
+const result = parseCreateSearchParams(Astro.url.searchParams);
+const config = result.success ? result.data : undefined;
+const currentConfig = config ?? undefined;
+const themeCss = currentConfig ? buildDesignSystemThemeCss(currentConfig) : "";
+const compiledStyleCss = currentConfig ? await getCompiledStyleCss(currentConfig.style) : "";
+const iframeThemeSyncScript = buildIframeThemeSyncInlineScript();
+const currentRadiusLabel = currentConfig
+  ? getCreatePickerSelectedOption("radius", currentConfig)?.label ?? currentConfig.radius
+  : undefined;
+---
+
+<!doctype html>
+<html lang="en" dir={currentConfig?.rtl ? "rtl" : "ltr"}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline set:html={iframeThemeSyncScript}></script>
+    <link rel="stylesheet" href={themeFontsStylesheet} />
+    <style is:global>@import "@bejamas/ui/styles/globals.css";</style>
+    <style id="create-theme-css" set:html={themeCss}></style>
+    <style id="create-style-css" set:html={compiledStyleCss}></style>
+  </head>
+  <body class:list={currentConfig ? [`style-${currentConfig.style}`] : []}>
+    {
+      currentConfig ? (
+        <CreatePreviewSurface
+          iconLibraryLabel={
+            catalogs.iconLibraries.find(
+              (library) => library.name === currentConfig.iconLibrary,
+            )?.label ?? currentConfig.iconLibrary
+          }
+          styleLabel={
+            catalogs.styles.find((style) => style.name === currentConfig.style)?.title ??
+            currentConfig.style
+          }
+          fontLabel={
+            catalogs.fonts.find((font) => font.name === `font-${currentConfig.font}`)?.title ??
+            currentConfig.font
+          }
+          templateLabel={currentConfig.template}
+          radiusLabel={currentRadiusLabel}
+          menuColorLabel={currentConfig.menuColor}
+          menuInverted={currentConfig.menuColor === "inverted"}
+        />
+      ) : (
+        <div class="grid min-h-screen place-items-center bg-background text-foreground">
+          <p class="text-sm text-muted-foreground">Invalid preview config.</p>
+        </div>
+      )
+    }
+    <script
+      define:vars={{
+        styleCssByStyle: Object.fromEntries(
+          await Promise.all(
+            catalogs.styles.map(async (style) => [
+              style.name,
+              await getCompiledStyleCss(style.name),
+            ]),
+          ),
+        ),
+      }}
+    >window.__BEJAMAS_CREATE_PREVIEW__ = { styleCssByStyle };</script>
+    <script type="module" src={createPreviewScript}></script>
+  </body>
+</html>

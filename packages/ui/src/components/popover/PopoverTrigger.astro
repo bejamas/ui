@@ -14,13 +14,13 @@ const { class: className = "", asChild = false, ...rest } = Astro.props as Props
 
 {
   asChild ? (
-    <div data-slot="popover-trigger" data-as-child class={cn("inline-flex items-center", className)}>
+    <div data-slot="popover-trigger" data-as-child class={cn("cn-popover-trigger", "inline-flex items-center", className)}>
       <slot />
     </div>
   ) : (
     <Button
       data-slot="popover-trigger"
-      class={cn("inline-flex items-center", className)}
+      class={cn("cn-popover-trigger", "inline-flex items-center", className)}
       {...rest as any}
     >
       <slot />

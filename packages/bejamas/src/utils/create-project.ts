@@ -1,5 +1,6 @@
 import os from "os";
 import path from "path";
+import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import { initOptionsSchema } from "@/src/commands/init";
 import { getPackageManager } from "@/src/utils/get-package-manager";
@@ -18,8 +19,9 @@ export const TEMPLATES = {
   "astro-with-component-docs-monorepo": "astro-with-component-docs-monorepo",
 } as const;
 
-const MONOREPO_TEMPLATE_URL =
-  "https://codeload.github.com/bejamas/ui/tar.gz/main";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const LOCAL_TEMPLATES_DIR = path.resolve(__dirname, "../../../../templates");
 
 export async function createProject(
   options: Pick<
@@ -144,68 +146,31 @@ async function createProjectFromTemplate(
     `Creating a new project from template. This may take a few minutes.`,
   ).start();
 
-  const TEMPLATE_TAR_SUBPATH: Record<keyof typeof TEMPLATES, string> = {
-    astro: "ui-main/templates/astro",
-    "astro-monorepo": "ui-main/templates/monorepo-astro",
-    "astro-with-component-docs-monorepo":
-      "ui-main/templates/monorepo-astro-with-docs",
+  const TEMPLATE_DIRNAME: Record<keyof typeof TEMPLATES, string> = {
+    astro: "astro",
+    "astro-monorepo": "monorepo-astro",
+    "astro-with-component-docs-monorepo": "monorepo-astro-with-docs",
   };
 
   try {
-    // Load local .env if present to allow GITHUB_TOKEN/GH_TOKEN
     dotenv.config({ quiet: true });
-    const templatePath = path.join(
-      os.tmpdir(),
-      `bejamas-template-${Date.now()}`,
+    const templatePath = path.join(os.tmpdir(), `bejamas-template-${Date.now()}`);
+    const templateSource = path.resolve(
+      LOCAL_TEMPLATES_DIR,
+      TEMPLATE_DIRNAME[options.templateKey],
     );
-    await fs.ensureDir(templatePath);
 
-    // Auth via environment variables (.env supported)
-    const authToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-    const usedAuth = Boolean(authToken);
-    const headers: Record<string, string> = {
-      "User-Agent": "bejamas-cli",
-    };
-    if (authToken) {
-      headers["Authorization"] = `Bearer ${authToken}`;
+    if (!(await fs.pathExists(templateSource))) {
+      throw new Error(`Local template not found: ${templateSource}`);
     }
 
-    const response = await fetch(MONOREPO_TEMPLATE_URL, { headers });
-    if (!response.ok) {
-      if (
-        response.status === 401 ||
-        response.status === 403 ||
-        (!usedAuth && response.status === 404)
-      ) {
-        throw new Error(
-          "Unauthorized to access private template. Set GITHUB_TOKEN or GH_TOKEN (in .env or env) with repo access and try again.",
-        );
-      }
-      if (response.status === 404) {
-        throw new Error("Failed to download template: not found.");
-      }
-      throw new Error(
-        `Failed to download template: ${response.status} ${response.statusText}`,
-      );
-    }
+    await fs.copy(templateSource, projectPath, {
+      filter: (source) => {
+        const basename = path.basename(source);
+        return basename !== "node_modules" && basename !== ".astro";
+      },
+    });
 
-    const tarPath = path.resolve(templatePath, "template.tar.gz");
-    await fs.writeFile(tarPath, Buffer.from(await response.arrayBuffer()));
-
-    const tarSubpath = TEMPLATE_TAR_SUBPATH[options.templateKey];
-    const leafName = tarSubpath.split("/").pop() as string;
-
-    await execa("tar", [
-      "-xzf",
-      tarPath,
-      "-C",
-      templatePath,
-      "--strip-components=2",
-      tarSubpath,
-    ]);
-
-    const extractedPath = path.resolve(templatePath, leafName);
-    await fs.move(extractedPath, projectPath);
     await fs.remove(templatePath);
 
     await execa(options.packageManager, ["install"], {
