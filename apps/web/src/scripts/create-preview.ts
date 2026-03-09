@@ -1,11 +1,17 @@
 import {
   catalogs,
+  getDocumentDirection,
+  getDocumentLanguage,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import { syncSemanticIconsInRoot } from "@bejamas/semantic-icons/browser";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
+import { getCreatePreviewCopy } from "@/utils/create-preview-i18n";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
-import { normalizeThemeOverrides, type ThemeOverrides } from "@/utils/themes/create-theme";
+import {
+  normalizeThemeOverrides,
+  type ThemeOverrides,
+} from "@/utils/themes/create-theme";
 
 type PreviewMessage = {
   type: "bejamas:create-preview";
@@ -55,21 +61,27 @@ window.addEventListener("message", (event: MessageEvent<PreviewMessage>) => {
   });
   document.body.classList.add(`style-${config.style}`);
 
-  document.documentElement.dir = config.rtl ? "rtl" : "ltr";
+  document.documentElement.dir = getDocumentDirection(config);
+  document.documentElement.lang = getDocumentLanguage(config);
+
+  const copy = getCreatePreviewCopy(getDocumentLanguage(config));
 
   setText(
     "[data-create-icon-library-label]",
-    catalogs.iconLibraries.find((library) => library.name === config.iconLibrary)?.label ??
-      config.iconLibrary,
+    catalogs.iconLibraries.find(
+      (library) => library.name === config.iconLibrary,
+    )?.label ?? config.iconLibrary,
   );
   syncSemanticIconsInRoot(document, config.iconLibrary);
   setText(
     "[data-create-style-label]",
-    catalogs.styles.find((style) => style.name === config.style)?.title ?? config.style,
+    catalogs.styles.find((style) => style.name === config.style)?.title ??
+      config.style,
   );
   setText(
     "[data-create-font-label]",
-    catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ?? config.font,
+    catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ??
+      config.font,
   );
   setText("[data-create-template-label]", config.template);
   setText(
@@ -77,14 +89,56 @@ window.addEventListener("message", (event: MessageEvent<PreviewMessage>) => {
     getCreatePickerSelectedOption("radius", config)?.label ?? config.radius,
   );
   setText("[data-create-menu-color-label]", config.menuColor);
+  setLocalizedText(copy);
+  setLocalizedPlaceholders(copy);
 
-  document.querySelectorAll<HTMLElement>("[data-create-menu-preview], .cn-menu-target").forEach((node) => {
-    node.classList.toggle("dark", config.menuColor === "inverted");
-  });
+  document
+    .querySelectorAll<HTMLElement>(
+      "[data-create-menu-preview], .cn-menu-target",
+    )
+    .forEach((node) => {
+      node.classList.toggle("dark", config.menuColor === "inverted");
+    });
 });
 
 function setText(selector: string, value: string) {
   document.querySelectorAll<HTMLElement>(selector).forEach((node) => {
     node.textContent = value;
   });
+}
+
+function setLocalizedText(copy: Record<string, string>) {
+  document
+    .querySelectorAll<HTMLElement>("[data-create-preview-text]")
+    .forEach((node) => {
+      const key = node.dataset.createPreviewText;
+      if (!key || !(key in copy)) {
+        return;
+      }
+
+      node.textContent = copy[key];
+    });
+}
+
+function setLocalizedPlaceholders(copy: Record<string, string>) {
+  document
+    .querySelectorAll<HTMLElement>("[data-create-preview-placeholder]")
+    .forEach((node) => {
+      const key = node.dataset.createPreviewPlaceholder;
+      if (!key || !(key in copy)) {
+        return;
+      }
+
+      const value = copy[key];
+      if (
+        node instanceof HTMLInputElement ||
+        node instanceof HTMLTextAreaElement
+      ) {
+        node.placeholder = value;
+        return;
+      }
+
+      node.textContent = value;
+      node.setAttribute("data-placeholder", value);
+    });
 }

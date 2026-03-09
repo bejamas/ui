@@ -19,6 +19,12 @@ export const TEMPLATE_VALUES = [
 ] as const;
 
 export type TemplateValue = (typeof TEMPLATE_VALUES)[number];
+export const RTL_LANGUAGE_VALUES = ["ar", "fa", "he"] as const;
+export const APP_LANGUAGE_VALUES = ["en", ...RTL_LANGUAGE_VALUES] as const;
+export const DEFAULT_LANGUAGE = "en" as const;
+
+export type RtlLanguageValue = (typeof RTL_LANGUAGE_VALUES)[number];
+export type AppLanguageValue = (typeof APP_LANGUAGE_VALUES)[number];
 
 const FONT_VALUES = fonts.map((font) => font.name.replace("font-", "")) as [
   string,
@@ -39,6 +45,7 @@ export const designSystemConfigSchema = z
     menuColor: z.enum(PRESET_MENU_COLORS),
     template: z.enum(TEMPLATE_VALUES).default("astro"),
     rtl: z.boolean().default(false),
+    rtlLanguage: z.enum(RTL_LANGUAGE_VALUES).default("ar"),
   })
   .superRefine((config, context) => {
     if (
@@ -60,6 +67,7 @@ export const DEFAULT_DESIGN_SYSTEM_CONFIG: DesignSystemConfig = {
   ...DEFAULT_PRESET_CONFIG,
   template: "astro",
   rtl: false,
+  rtlLanguage: "ar",
 };
 
 const RADIUS_VALUES = {
@@ -131,6 +139,16 @@ export function getFontValue(name: DesignSystemConfig["font"]) {
 
 export function getFontPackageName(name: DesignSystemConfig["font"]) {
   return `@fontsource-variable/${name}`;
+}
+
+export function getDocumentLanguage(
+  config: Pick<DesignSystemConfig, "rtl" | "rtlLanguage">,
+): AppLanguageValue {
+  return config.rtl ? config.rtlLanguage : DEFAULT_LANGUAGE;
+}
+
+export function getDocumentDirection(config: Pick<DesignSystemConfig, "rtl">) {
+  return config.rtl ? "rtl" : "ltr";
 }
 
 export function mergeDesignSystemConfig(

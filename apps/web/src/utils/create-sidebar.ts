@@ -1,5 +1,6 @@
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
+  RTL_LANGUAGE_VALUES,
   STYLES,
   TEMPLATE_VALUES,
   catalogs,
@@ -17,7 +18,8 @@ export type CreatePickerName =
   | "radius"
   | "menuColor"
   | "menuAccent"
-  | "template";
+  | "template"
+  | "rtlLanguage";
 
 export type CreatePickerMarkerKind =
   | "style"
@@ -27,7 +29,8 @@ export type CreatePickerMarkerKind =
   | "radius"
   | "menu-color"
   | "menu-accent"
-  | "template";
+  | "template"
+  | "language";
 
 export type CreatePickerOption = {
   value: string;
@@ -77,6 +80,12 @@ const TEMPLATE_OPTIONS = [
   },
 ] as const satisfies readonly CreatePickerOption[];
 
+const RTL_LANGUAGE_OPTIONS = [
+  { value: "ar", label: "Arabic", markerValue: "ar" },
+  { value: "fa", label: "Persian", markerValue: "fa" },
+  { value: "he", label: "Hebrew", markerValue: "he" },
+] as const satisfies readonly CreatePickerOption[];
+
 export const CREATE_PICKER_LABELS: Record<CreatePickerName, string> = {
   style: "Style",
   baseColor: "Base Color",
@@ -87,6 +96,7 @@ export const CREATE_PICKER_LABELS: Record<CreatePickerName, string> = {
   menuColor: "Menu Color",
   menuAccent: "Menu Accent",
   template: "Template",
+  rtlLanguage: "Language",
 };
 
 export const CREATE_PICKER_MARKERS: Record<
@@ -102,6 +112,7 @@ export const CREATE_PICKER_MARKERS: Record<
   menuColor: "menu-color",
   menuAccent: "menu-accent",
   template: "template",
+  rtlLanguage: "language",
 };
 
 function getThemeColor(theme: (typeof catalogs.themes)[number]) {
@@ -157,6 +168,16 @@ export function getCreatePickerOptions(
         label: option?.label ?? template,
       };
     }),
+    rtlLanguage: RTL_LANGUAGE_VALUES.map((language) => {
+      const option = RTL_LANGUAGE_OPTIONS.find(
+        (item) => item.value === language,
+      );
+      return {
+        value: language,
+        label: option?.label ?? language,
+        markerValue: option?.markerValue ?? language,
+      };
+    }),
   } satisfies Record<CreatePickerName, CreatePickerOption[]>;
 }
 
@@ -208,7 +229,10 @@ function chooseRandom<T>(values: readonly T[]) {
 }
 
 export function createRandomDesignSystemConfig(
-  current: Pick<DesignSystemConfig, "template" | "rtl"> = DEFAULT_DESIGN_SYSTEM_CONFIG,
+  current: Pick<DesignSystemConfig, "template" | "rtl"> &
+    Partial<
+      Pick<DesignSystemConfig, "rtlLanguage">
+    > = DEFAULT_DESIGN_SYSTEM_CONFIG,
 ): DesignSystemConfig {
   const baseColor = chooseRandom(catalogs.baseColors)?.name ?? "neutral";
   const theme =
@@ -224,8 +248,9 @@ export function createRandomDesignSystemConfig(
       chooseRandom(catalogs.iconLibraries.map((item) => item.name)) ??
       DEFAULT_DESIGN_SYSTEM_CONFIG.iconLibrary,
     font:
-      chooseRandom(catalogs.fonts.map((font) => font.name.replace("font-", ""))) ??
-      DEFAULT_DESIGN_SYSTEM_CONFIG.font,
+      chooseRandom(
+        catalogs.fonts.map((font) => font.name.replace("font-", "")),
+      ) ?? DEFAULT_DESIGN_SYSTEM_CONFIG.font,
     radius:
       chooseRandom(RADIUS_OPTIONS.map((option) => option.value)) ??
       DEFAULT_DESIGN_SYSTEM_CONFIG.radius,
@@ -237,5 +262,7 @@ export function createRandomDesignSystemConfig(
       DEFAULT_DESIGN_SYSTEM_CONFIG.menuAccent,
     template: current.template,
     rtl: current.rtl,
+    rtlLanguage:
+      current.rtlLanguage ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
   };
 }

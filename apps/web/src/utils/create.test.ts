@@ -19,6 +19,7 @@ describe("parseCreateSearchParams", () => {
       radius: "default",
       template: "astro",
       rtl: false,
+      rtlLanguage: "ar",
     });
   });
 
@@ -82,10 +83,11 @@ describe("parseCreateSearchParams", () => {
       radius: "default",
       template: "astro",
       rtl: false,
+      rtlLanguage: "ar",
     });
   });
 
-  test("still takes template and rtl from the URL when restoring from the fallback preset", () => {
+  test("still takes template, rtl, and lang from the URL when restoring from the fallback preset", () => {
     const fallbackPreset = encodePreset({
       font: "playfair-display",
       radius: "large",
@@ -94,6 +96,7 @@ describe("parseCreateSearchParams", () => {
       new URLSearchParams({
         template: "astro-monorepo",
         rtl: "true",
+        lang: "he",
       }),
       { fallbackPreset },
     );
@@ -107,6 +110,23 @@ describe("parseCreateSearchParams", () => {
     expect(result.data.radius).toBe("large");
     expect(result.data.template).toBe("astro-monorepo");
     expect(result.data.rtl).toBe(true);
+    expect(result.data.rtlLanguage).toBe("he");
+  });
+
+  test("ignores lang when rtl is disabled", () => {
+    const result = parseCreateSearchParams(
+      new URLSearchParams({
+        lang: "fa",
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.data.rtl).toBe(false);
+    expect(result.data.rtlLanguage).toBe("ar");
   });
 
   test("keeps explicit invalid URL presets as errors instead of silently falling back", () => {

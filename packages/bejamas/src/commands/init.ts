@@ -24,6 +24,7 @@ import {
   designSystemConfigSchema,
   encodePreset,
   isPresetCode,
+  RTL_LANGUAGE_VALUES,
   type DesignSystemConfig,
 } from "@bejamas/create-config/server";
 import type { RegistryItem } from "shadcn/schema";
@@ -43,12 +44,17 @@ import type { RegistryItem } from "shadcn/schema";
 // Default fallback registry endpoint for shadcn (expects /r)
 const DEFAULT_REGISTRY_URL = "https://ui.bejamas.com/r";
 
-function resolveDesignSystemConfig(
+export function resolveDesignSystemConfig(
   options: Pick<
     z.infer<typeof initOptionsSchema>,
-    "preset" | "template" | "rtl" | "baseColor"
+    "preset" | "template" | "rtl" | "baseColor" | "lang"
   >,
 ): DesignSystemConfig {
+  const rtlLanguage =
+    options.rtl && options.lang
+      ? (options.lang as DesignSystemConfig["rtlLanguage"])
+      : DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage;
+
   if (options.preset && isPresetCode(options.preset)) {
     const decoded = decodePreset(options.preset);
     if (decoded) {
@@ -57,6 +63,7 @@ function resolveDesignSystemConfig(
         ...decoded,
         template: options.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
         rtl: options.rtl ?? false,
+        rtlLanguage,
       });
     }
   }
@@ -67,6 +74,7 @@ function resolveDesignSystemConfig(
     ...DEFAULT_DESIGN_SYSTEM_CONFIG,
     template: options.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
     rtl: options.rtl ?? false,
+    rtlLanguage,
     baseColor,
     theme:
       baseColor === DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor
@@ -75,7 +83,7 @@ function resolveDesignSystemConfig(
   });
 }
 
-function buildInitUrl(config: DesignSystemConfig, themeRef?: string) {
+export function buildInitUrl(config: DesignSystemConfig, themeRef?: string) {
   const params = new URLSearchParams({
     preset: encodePreset(config),
     template: config.template,
@@ -83,6 +91,7 @@ function buildInitUrl(config: DesignSystemConfig, themeRef?: string) {
 
   if (config.rtl) {
     params.set("rtl", "true");
+    params.set("lang", config.rtlLanguage);
   }
 
   if (themeRef) {
@@ -174,6 +183,7 @@ export const initOptionsSchema = z.object({
     ),
   baseStyle: z.boolean(),
   rtl: z.boolean().default(false),
+  lang: z.enum(RTL_LANGUAGE_VALUES).optional(),
   themeRef: z.string().optional(),
 });
 
@@ -214,6 +224,7 @@ export const init = new Command()
   .option("--no-css-variables", "do not use css variables for theming.")
   .option("--no-base-style", "do not install the base shadcn style.")
   .option("--rtl", "enable right-to-left output", false)
+  .option("--lang <lang>", "set the RTL language. (ar, fa, he)")
   .action(async (_components, opts) => {
     try {
       await runInit(opts);
@@ -256,20 +267,26 @@ export async function runInit(
       "astro-with-component-docs-monorepo": "apps/web",
       astro: "",
     } as const;
-    await applyDesignSystemToProject(options.cwd, {
-      ...designConfig,
-      template: newProjectTemplate,
-    }, {
-      themeCss: options.themeRef
-        ? await fetchInitThemeCss(buildInitUrl(
-            {
-              ...designConfig,
-              template: newProjectTemplate,
-            },
-            options.themeRef,
-          ))
-        : undefined,
-    });
+    await applyDesignSystemToProject(
+      options.cwd,
+      {
+        ...designConfig,
+        template: newProjectTemplate,
+      },
+      {
+        themeCss: options.themeRef
+          ? ((await fetchInitThemeCss(
+              buildInitUrl(
+                {
+                  ...designConfig,
+                  template: newProjectTemplate,
+                },
+                options.themeRef,
+              ),
+            )) ?? undefined)
+          : undefined,
+      },
+    );
 
     options.cwd = path.resolve(options.cwd, projectPath[newProjectTemplate]);
 

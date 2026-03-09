@@ -83,6 +83,10 @@ import {
 } from "@bejamas/ui/components/tooltip";
 import SemanticIcon from "@/components/icons/SemanticIcon.astro";
 import type { IconLibraryName } from "@bejamas/create-config/server";
+import {
+  CREATE_PREVIEW_TRANSLATIONS,
+  type CreatePreviewCopy,
+} from "@/utils/create-preview-i18n";
 
 interface Props {
   iconLibrary?: IconLibraryName;
@@ -93,6 +97,7 @@ interface Props {
   radiusLabel?: string;
   menuColorLabel?: string;
   menuInverted?: boolean;
+  copy?: CreatePreviewCopy;
 }
 
 const {
@@ -104,6 +109,7 @@ const {
   radiusLabel = "default",
   menuColorLabel = "default",
   menuInverted = false,
+  copy = CREATE_PREVIEW_TRANSLATIONS.en,
 } = Astro.props as Props;
 ---
 
@@ -153,44 +159,79 @@ const {
               </DropdownMenuContent>
             </DropdownMenu>
           </div> -->
-          <CardTitle
-            >Ship an Astro design system without hand-tuning every token.</CardTitle
+          <CardTitle data-create-preview-text="hero.title"
+            >{copy["hero.title"]}</CardTitle
           >
-          <CardDescription>
-            Preview a style preset, confirm the form controls, and copy the init
-            command.
+          <CardDescription data-create-preview-text="hero.description">
+            {copy["hero.description"]}
           </CardDescription>
         </CardHeader>
         <CardContent class="grid gap-4 md:grid-cols-2">
           <FieldGroup class="gap-4">
             <Field>
-              <FieldLabel for="preview-project-name">Project name</FieldLabel>
+              <FieldLabel
+                for="preview-project-name"
+                data-create-preview-text="form.projectName"
+              >
+                {copy["form.projectName"]}
+              </FieldLabel>
               <Input id="preview-project-name" value="bejamas-site" />
             </Field>
             <Field>
-              <FieldLabel for="preview-feedback">Feedback</FieldLabel>
+              <FieldLabel
+                for="preview-feedback"
+                data-create-preview-text="form.feedback"
+              >
+                {copy["form.feedback"]}
+              </FieldLabel>
               <Textarea
                 id="preview-feedback"
                 rows={4}
-                placeholder="A compact create flow with sane defaults."
+                placeholder={copy["form.feedbackPlaceholder"]}
+                data-create-preview-placeholder="form.feedbackPlaceholder"
               />
             </Field>
           </FieldGroup>
           <FieldGroup class="gap-4">
             <Field>
-              <FieldLabel for="preview-region">Region</FieldLabel>
+              <FieldLabel
+                for="preview-region"
+                data-create-preview-text="form.region"
+              >
+                {copy["form.region"]}
+              </FieldLabel>
               <Select class="w-full" defaultValue="eu">
                 <SelectTrigger id="preview-region">
-                  <SelectValue placeholder="Europe / Warsaw" />
+                  <SelectValue
+                    placeholder={copy["form.regionPlaceholder"]}
+                    data-create-preview-placeholder="form.regionPlaceholder"
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="eu">Europe / Warsaw</SelectItem>
-                  <SelectItem value="us">United States / New York</SelectItem>
-                  <SelectItem value="apac">Asia Pacific / Tokyo</SelectItem>
+                  <SelectItem
+                    value="eu"
+                    data-create-preview-text="form.regionEu"
+                  >
+                    {copy["form.regionEu"]}
+                  </SelectItem>
+                  <SelectItem
+                    value="us"
+                    data-create-preview-text="form.regionUs"
+                  >
+                    {copy["form.regionUs"]}
+                  </SelectItem>
+                  <SelectItem
+                    value="apac"
+                    data-create-preview-text="form.regionApac"
+                  >
+                    {copy["form.regionApac"]}
+                  </SelectItem>
                 </SelectContent>
               </Select>
-              <FieldDescription>
-                Match the preview workspace to the team’s operating region.
+              <FieldDescription
+                data-create-preview-text="form.regionDescription"
+              >
+                {copy["form.regionDescription"]}
               </FieldDescription>
             </Field>
             <div class="rounded-xl border border-border p-4">
@@ -198,23 +239,32 @@ const {
                 <Field orientation="horizontal">
                   <Switch id="preview-email-digests" checked />
                   <FieldContent>
-                    <FieldLabel for="preview-email-digests"
-                      >Email digests</FieldLabel
+                    <FieldLabel
+                      for="preview-email-digests"
+                      data-create-preview-text="form.emailDigests"
                     >
-                    <FieldDescription>
-                      Weekly product updates and component release notes.
+                      {copy["form.emailDigests"]}
+                    </FieldLabel>
+                    <FieldDescription
+                      data-create-preview-text="form.emailDigestsDescription"
+                    >
+                      {copy["form.emailDigestsDescription"]}
                     </FieldDescription>
                   </FieldContent>
                 </Field>
                 <Field orientation="horizontal">
                   <Checkbox id="preview-release-notes" checked />
                   <FieldContent>
-                    <FieldLabel for="preview-release-notes">
-                      Keep release notes pinned
+                    <FieldLabel
+                      for="preview-release-notes"
+                      data-create-preview-text="form.releaseNotes"
+                    >
+                      {copy["form.releaseNotes"]}
                     </FieldLabel>
-                    <FieldDescription>
-                      Highlight important changes for the workspace after
-                      deploys.
+                    <FieldDescription
+                      data-create-preview-text="form.releaseNotesDescription"
+                    >
+                      {copy["form.releaseNotesDescription"]}
                     </FieldDescription>
                   </FieldContent>
                 </Field>
@@ -232,15 +282,33 @@ const {
               <AvatarBadge />
             </Avatar>
             <div class="text-sm">
-              <p class="font-medium">Design System Team</p>
-              <p class="text-muted-foreground">3 reviewers online</p>
+              <p class="font-medium" data-create-preview-text="team.name">
+                {copy["team.name"]}
+              </p>
+              <p
+                class="text-muted-foreground"
+                data-create-preview-text="team.reviewers"
+              >
+                {copy["team.reviewers"]}
+              </p>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <Button variant="outline">Preview docs</Button>
+            <Button
+              variant="outline"
+              data-create-preview-text="actions.previewDocs"
+            >
+              {copy["actions.previewDocs"]}
+            </Button>
             <Button>
-              <SemanticIcon library={iconLibrary} name="sparkles" class="size-4" />
-              Create project
+              <SemanticIcon
+                library={iconLibrary}
+                name="sparkles"
+                class="size-4"
+              />
+              <span data-create-preview-text="actions.createProject">
+                {copy["actions.createProject"]}
+              </span>
             </Button>
           </div>
         </CardFooter>
@@ -248,10 +316,12 @@ const {
 
       <Card>
         <CardHeader>
-          <CardTitle>Quick actions</CardTitle>
-          <CardDescription
-            >Check the shape of compact interactive components.</CardDescription
-          >
+          <CardTitle data-create-preview-text="quickActions.title">
+            {copy["quickActions.title"]}
+          </CardTitle>
+          <CardDescription data-create-preview-text="quickActions.description">
+            {copy["quickActions.description"]}
+          </CardDescription>
         </CardHeader>
         <CardContent class="space-y-4">
           <ToggleGroup variant="outline" defaultValue="bold">
@@ -259,17 +329,35 @@ const {
               <SemanticIcon library={iconLibrary} name="bold" class="size-4" />
             </ToggleGroupItem>
             <ToggleGroupItem value="italic" aria-label="Italic">
-              <SemanticIcon library={iconLibrary} name="italic" class="size-4" />
+              <SemanticIcon
+                library={iconLibrary}
+                name="italic"
+                class="size-4"
+              />
             </ToggleGroupItem>
             <ToggleGroupItem value="underline" aria-label="Underline">
-              <SemanticIcon library={iconLibrary} name="underline" class="size-4" />
+              <SemanticIcon
+                library={iconLibrary}
+                name="underline"
+                class="size-4"
+              />
             </ToggleGroupItem>
           </ToggleGroup>
 
           <Tabs defaultValue="overview">
             <TabsList variant="indicator">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="activity">Activity</TabsTrigger>
+              <TabsTrigger
+                value="overview"
+                data-create-preview-text="quickActions.tabOverview"
+              >
+                {copy["quickActions.tabOverview"]}
+              </TabsTrigger>
+              <TabsTrigger
+                value="activity"
+                data-create-preview-text="quickActions.tabActivity"
+              >
+                {copy["quickActions.tabActivity"]}
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="overview" class="pt-3">
               <Item variant="outline">
@@ -281,14 +369,24 @@ const {
                   />
                 </ItemMedia>
                 <ItemContent>
-                  <ItemTitle>Notifications enabled</ItemTitle>
-                  <ItemDescription
-                    >Product updates and component releases.</ItemDescription
+                  <ItemTitle
+                    data-create-preview-text="quickActions.notificationsEnabled"
                   >
+                    {copy["quickActions.notificationsEnabled"]}
+                  </ItemTitle>
+                  <ItemDescription
+                    data-create-preview-text="quickActions.notificationsDescription"
+                  >
+                    {copy["quickActions.notificationsDescription"]}
+                  </ItemDescription>
                 </ItemContent>
                 <ItemActions>
                   <Button variant="ghost" size="icon" aria-label="More">
-                    <SemanticIcon library={iconLibrary} name="ellipsis" class="size-4" />
+                    <SemanticIcon
+                      library={iconLibrary}
+                      name="ellipsis"
+                      class="size-4"
+                    />
                   </Button>
                 </ItemActions>
               </Item>
@@ -304,8 +402,16 @@ const {
                     />
                   </ItemMedia>
                   <ItemContent>
-                    <ItemTitle>Weekly review</ItemTitle>
-                    <ItemDescription>Thursday at 13:00 CET</ItemDescription>
+                    <ItemTitle
+                      data-create-preview-text="quickActions.weeklyReview"
+                    >
+                      {copy["quickActions.weeklyReview"]}
+                    </ItemTitle>
+                    <ItemDescription
+                      data-create-preview-text="quickActions.weeklyReviewTime"
+                    >
+                      {copy["quickActions.weeklyReviewTime"]}
+                    </ItemDescription>
                   </ItemContent>
                 </Item>
                 <ItemSeparator />
@@ -318,10 +424,16 @@ const {
                     />
                   </ItemMedia>
                   <ItemContent>
-                    <ItemTitle>Registry synced</ItemTitle>
-                    <ItemDescription
-                      >Styles and docs are in sync.</ItemDescription
+                    <ItemTitle
+                      data-create-preview-text="quickActions.registrySynced"
                     >
+                      {copy["quickActions.registrySynced"]}
+                    </ItemTitle>
+                    <ItemDescription
+                      data-create-preview-text="quickActions.registrySyncedDescription"
+                    >
+                      {copy["quickActions.registrySyncedDescription"]}
+                    </ItemDescription>
                   </ItemContent>
                 </Item>
               </ItemGroup>
@@ -331,9 +443,17 @@ const {
           <div class="grid gap-3 rounded-xl border border-border p-4">
             <div class="flex items-center justify-between gap-3">
               <div>
-                <p class="text-sm font-medium">Menu surface</p>
-                <p class="text-sm text-muted-foreground">
-                  Accent and inversion should be obvious here.
+                <p
+                  class="text-sm font-medium"
+                  data-create-preview-text="quickActions.menuSurface"
+                >
+                  {copy["quickActions.menuSurface"]}
+                </p>
+                <p
+                  class="text-sm text-muted-foreground"
+                  data-create-preview-text="quickActions.menuSurfaceDescription"
+                >
+                  {copy["quickActions.menuSurfaceDescription"]}
                 </p>
               </div>
               <Badge variant="outline" data-create-menu-color-label
@@ -349,14 +469,21 @@ const {
             >
               <div
                 class="rounded-[calc(var(--radius)-2px)] bg-accent px-3 py-2 text-sm text-accent-foreground"
+                data-create-preview-text="quickActions.activeMenuItem"
               >
-                Active menu item
+                {copy["quickActions.activeMenuItem"]}
               </div>
-              <div class="px-3 py-2 text-sm text-muted-foreground">
-                Secondary action
+              <div
+                class="px-3 py-2 text-sm text-muted-foreground"
+                data-create-preview-text="quickActions.secondaryAction"
+              >
+                {copy["quickActions.secondaryAction"]}
               </div>
-              <div class="mt-1 border-t border-border px-3 py-2 text-sm">
-                Open billing portal
+              <div
+                class="mt-1 border-t border-border px-3 py-2 text-sm"
+                data-create-preview-text="quickActions.billingPortal"
+              >
+                {copy["quickActions.billingPortal"]}
               </div>
             </div>
           </div>
@@ -367,43 +494,69 @@ const {
     <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
       <Card>
         <CardHeader>
-          <CardTitle>Structured content</CardTitle>
-          <CardDescription
-            >Accordion, popovers, and grouped items should all pick up the same
-            style language.</CardDescription
-          >
+          <CardTitle data-create-preview-text="structured.title">
+            {copy["structured.title"]}
+          </CardTitle>
+          <CardDescription data-create-preview-text="structured.description">
+            {copy["structured.description"]}
+          </CardDescription>
         </CardHeader>
         <CardContent class="grid gap-4">
           <Accordion collapsible class="w-full">
             <AccordionItem value="item-1">
-              <AccordionTrigger
-                >How does the preset affect the install flow?</AccordionTrigger
-              >
+              <AccordionTrigger>
+                <span
+                  data-create-preview-text="structured.accordionInstallQuestion"
+                >
+                  {copy["structured.accordionInstallQuestion"]}
+                </span>
+              </AccordionTrigger>
               <AccordionContent>
-                The init command writes style, base color, RTL, and component
-                defaults into the generated project.
+                <span
+                  data-create-preview-text="structured.accordionInstallAnswer"
+                >
+                  {copy["structured.accordionInstallAnswer"]}
+                </span>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
-              <AccordionTrigger
-                >Can I still add components later?</AccordionTrigger
-              >
+              <AccordionTrigger>
+                <span
+                  data-create-preview-text="structured.accordionComponentsQuestion"
+                >
+                  {copy["structured.accordionComponentsQuestion"]}
+                </span>
+              </AccordionTrigger>
               <AccordionContent>
-                Yes. The registry stays style-aware, so later installs keep
-                matching the preset.
+                <span
+                  data-create-preview-text="structured.accordionComponentsAnswer"
+                >
+                  {copy["structured.accordionComponentsAnswer"]}
+                </span>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
 
           <div class="flex flex-wrap gap-3">
             <Popover>
-              <PopoverTrigger variant="outline">Billing summary</PopoverTrigger>
+              <PopoverTrigger
+                variant="outline"
+                data-create-preview-text="structured.billingSummary"
+              >
+                {copy["structured.billingSummary"]}
+              </PopoverTrigger>
               <PopoverContent align="start">
                 <PopoverHeader>
-                  <PopoverTitle>Current plan</PopoverTitle>
-                  <PopoverDescription
-                    >Starter workspace, 3 seats, monthly billing.</PopoverDescription
+                  <PopoverTitle
+                    data-create-preview-text="structured.currentPlan"
                   >
+                    {copy["structured.currentPlan"]}
+                  </PopoverTitle>
+                  <PopoverDescription
+                    data-create-preview-text="structured.currentPlanDescription"
+                  >
+                    {copy["structured.currentPlanDescription"]}
+                  </PopoverDescription>
                 </PopoverHeader>
               </PopoverContent>
             </Popover>
@@ -416,11 +569,15 @@ const {
                     name="credit-card"
                     class="size-4"
                   />
-                  Card required
+                  <span data-create-preview-text="structured.cardRequired">
+                    {copy["structured.cardRequired"]}
+                  </span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>
-                Connect billing before enabling production usage.
+              <TooltipContent
+                data-create-preview-text="structured.cardRequiredTooltip"
+              >
+                {copy["structured.cardRequiredTooltip"]}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -429,10 +586,12 @@ const {
 
       <Card>
         <CardHeader>
-          <CardTitle>People</CardTitle>
-          <CardDescription
-            >Avatar, badge, and item density all stay consistent.</CardDescription
-          >
+          <CardTitle data-create-preview-text="people.title">
+            {copy["people.title"]}
+          </CardTitle>
+          <CardDescription data-create-preview-text="people.description">
+            {copy["people.description"]}
+          </CardDescription>
         </CardHeader>
         <CardContent class="space-y-4">
           <div class="flex items-center gap-3">
@@ -441,10 +600,22 @@ const {
               <AvatarFallback>AS</AvatarFallback>
             </Avatar>
             <div>
-              <p class="font-medium">Astro Platform Team</p>
-              <p class="text-sm text-muted-foreground">Registry maintainers</p>
+              <p class="font-medium" data-create-preview-text="people.teamName">
+                {copy["people.teamName"]}
+              </p>
+              <p
+                class="text-sm text-muted-foreground"
+                data-create-preview-text="people.teamRole"
+              >
+                {copy["people.teamRole"]}
+              </p>
             </div>
-            <Badge variant="secondary">Core</Badge>
+            <Badge
+              variant="secondary"
+              data-create-preview-text="people.coreBadge"
+            >
+              {copy["people.coreBadge"]}
+            </Badge>
           </div>
 
           <ItemGroup class="rounded-xl border border-border">
@@ -455,9 +626,14 @@ const {
                 </Avatar>
               </ItemMedia>
               <ItemContent>
-                <ItemTitle>Release manager</ItemTitle>
-                <ItemDescription>Last published 18 minutes ago.</ItemDescription
+                <ItemTitle data-create-preview-text="people.releaseManager">
+                  {copy["people.releaseManager"]}
+                </ItemTitle>
+                <ItemDescription
+                  data-create-preview-text="people.releaseManagerDescription"
                 >
+                  {copy["people.releaseManagerDescription"]}
+                </ItemDescription>
               </ItemContent>
             </Item>
             <ItemSeparator />
@@ -468,10 +644,16 @@ const {
                 </Avatar>
               </ItemMedia>
               <ItemContent>
-                <ItemTitle>Developer experience</ItemTitle>
-                <ItemDescription
-                  >Owns the CLI and docs pipeline.</ItemDescription
+                <ItemTitle
+                  data-create-preview-text="people.developerExperience"
                 >
+                  {copy["people.developerExperience"]}
+                </ItemTitle>
+                <ItemDescription
+                  data-create-preview-text="people.developerExperienceDescription"
+                >
+                  {copy["people.developerExperienceDescription"]}
+                </ItemDescription>
               </ItemContent>
             </Item>
           </ItemGroup>

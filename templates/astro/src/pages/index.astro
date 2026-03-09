@@ -1,6 +1,10 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { appUi } from "@/i18n/ui";
 import { Button } from "@/ui/button";
+
+const [welcomePrefix, welcomeSuffix = ""] =
+  appUi.welcomeMessage.split("{project}");
 ---
 
 <Layout>
@@ -11,19 +15,21 @@ import { Button } from "@/ui/button";
       <img src="/bejamas.svg" alt="bejamas/ui" class="w-8 dark:invert" />
       <div class="space-y-2">
         <p class="font-mono text-sm">
-          Welcome to <code
+          {welcomePrefix}<code
             class="font-mono font-bold relative bg-muted rounded p-1"
             >@bejamas/ui</code
-          > Astro project.
+          >{welcomeSuffix}
         </p>
         <p class="font-mono text-sm">
-          Get started by editing src/pages/index.astro.
+          {appUi.getStartedMessage}
         </p>
       </div>
       <div class="flex gap-2">
-        <Button as="a" href="https://ui.bejamas.com/docs">Read docs</Button>
+        <Button as="a" href="https://ui.bejamas.com/docs"
+          >{appUi.readDocs}</Button
+        >
         <Button as="a" href="https://bejamas.com/get-in-touch" variant="outline"
-          >Get custom demo</Button
+          >{appUi.getCustomDemo}</Button
         >
       </div>
     </div>

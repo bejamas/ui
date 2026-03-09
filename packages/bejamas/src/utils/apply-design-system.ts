@@ -3,6 +3,8 @@ import fs from "fs-extra";
 import fg from "fast-glob";
 import {
   buildThemeCss,
+  getDocumentDirection,
+  getDocumentLanguage,
   getFontPackageName,
   getGlobalStyleCss,
   getStyleId,
@@ -26,7 +28,10 @@ function replaceCreateBlock(source: string, nextBlock: string) {
   return `${source.trimEnd()}\n\n${block}\n`;
 }
 
-async function patchComponentsJson(filepath: string, config: DesignSystemConfig) {
+async function patchComponentsJson(
+  filepath: string,
+  config: DesignSystemConfig,
+) {
   const current = await fs.readJson(filepath);
   const next = {
     ...current,
@@ -59,7 +64,10 @@ async function patchCssFileWithTheme(
   await fs.writeFile(filepath, next, "utf8");
 }
 
-async function patchPackageJsonDependency(filepath: string, config: DesignSystemConfig) {
+async function patchPackageJsonDependency(
+  filepath: string,
+  config: DesignSystemConfig,
+) {
   if (!(await fs.pathExists(filepath))) {
     return;
   }
@@ -80,20 +88,45 @@ async function patchPackageJsonDependency(filepath: string, config: DesignSystem
   await fs.writeJson(filepath, next, { spaces: 2 });
 }
 
+async function patchTemplateI18nFile(
+  filepath: string,
+  config: DesignSystemConfig,
+) {
+  if (!(await fs.pathExists(filepath))) {
+    return;
+  }
+
+  const current = await fs.readFile(filepath, "utf8");
+  const nextLanguage = getDocumentLanguage(config);
+  const next = current.replace(
+    /export const CURRENT_LANGUAGE: TemplateLanguage = "[^"]+";/,
+    `export const CURRENT_LANGUAGE: TemplateLanguage = "${nextLanguage}";`,
+  );
+
+  if (next !== current) {
+    await fs.writeFile(filepath, next, "utf8");
+  }
+}
+
 async function patchLayoutFile(filepath: string, config: DesignSystemConfig) {
   if (!(await fs.pathExists(filepath))) {
     return;
   }
 
   const current = await fs.readFile(filepath, "utf8");
-  let next = current.replace(
-    /<html([^>]*?)dir="[^"]*"([^>]*)>/,
-    "<html$1$2>",
-  );
+  if (current.includes('from "@/i18n/ui"')) {
+    return;
+  }
+
+  const nextLanguage = getDocumentLanguage(config);
+  const nextDirection = getDocumentDirection(config);
+  let next = current
+    .replace(/<html([^>]*?)lang="[^"]*"([^>]*)>/, "<html$1$2>")
+    .replace(/<html([^>]*?)dir="[^"]*"([^>]*)>/, "<html$1$2>");
 
   next = next.replace(
     /<html([^>]*)>/,
-    `<html$1${config.rtl ? ' dir="rtl"' : ""}>`,
+    `<html$1 lang="${nextLanguage}"${config.rtl ? ` dir="${nextDirection}"` : ""}>`,
   );
 
   if (next !== current) {
@@ -152,6 +185,12 @@ export async function applyDesignSystemToProject(
     Array.from(packageJsonFiles).map((filepath) =>
       patchPackageJsonDependency(filepath, config),
     ),
+  );
+  await Promise.all(
+    [
+      path.resolve(projectPath, "src/i18n/ui.ts"),
+      path.resolve(projectPath, "apps/web/src/i18n/ui.ts"),
+    ].map((filepath) => patchTemplateI18nFile(filepath, config)),
   );
 
   await Promise.all(

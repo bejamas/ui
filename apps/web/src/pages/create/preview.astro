@@ -1,16 +1,18 @@
 ---
 import {
   catalogs,
+  DEFAULT_LANGUAGE,
+  getDocumentDirection,
+  getDocumentLanguage,
   getCompiledStyleCss,
 } from "@bejamas/create-config/server";
 import CreatePreviewSurface from "@/components/create/CreatePreviewSurface.astro";
 import createPreviewScript from "@/scripts/create-preview.ts?url";
-import {
-  buildDesignSystemThemeCss,
-} from "@/utils/themes/design-system-adapter";
+import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
 import { buildIframeThemeSyncInlineScript } from "@/utils/themes/iframe-theme-sync";
 import { parseCreateSearchParams, resolveCreateThemeRef } from "@/utils/create";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
+import { getCreatePreviewCopy } from "@/utils/create-preview-i18n";
 import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
 import themeFontsStylesheet from "@/styles/theme-fonts.css?url";
 
@@ -22,21 +24,33 @@ const currentConfig = config ?? undefined;
 const themeCss = currentConfig
   ? buildDesignSystemThemeCss(currentConfig, themeOverrides)
   : "";
-const compiledStyleCss = currentConfig ? await getCompiledStyleCss(currentConfig.style) : "";
+const compiledStyleCss = currentConfig
+  ? await getCompiledStyleCss(currentConfig.style)
+  : "";
 const iframeThemeSyncScript = buildIframeThemeSyncInlineScript();
 const currentRadiusLabel = currentConfig
-  ? getCreatePickerSelectedOption("radius", currentConfig)?.label ?? currentConfig.radius
+  ? (getCreatePickerSelectedOption("radius", currentConfig)?.label ??
+    currentConfig.radius)
   : undefined;
+const currentLanguage = currentConfig
+  ? getDocumentLanguage(currentConfig)
+  : DEFAULT_LANGUAGE;
+const currentDirection = currentConfig
+  ? getDocumentDirection(currentConfig)
+  : "ltr";
+const previewCopy = getCreatePreviewCopy(currentLanguage);
 ---
 
 <!doctype html>
-<html lang="en" dir={currentConfig?.rtl ? "rtl" : "ltr"}>
+<html lang={currentLanguage} dir={currentDirection}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script is:inline set:html={iframeThemeSyncScript}></script>
+    <script is:inline set:html={iframeThemeSyncScript} />
     <link rel="stylesheet" href={themeFontsStylesheet} />
-    <style is:global>@import "@bejamas/ui/styles/globals.css";</style>
+    <style is:global>
+      @import "@bejamas/ui/styles/globals.css";
+    </style>
     <style id="create-theme-css" set:html={themeCss}></style>
     <style id="create-style-css" set:html={compiledStyleCss}></style>
   </head>
@@ -51,17 +65,19 @@ const currentRadiusLabel = currentConfig
             )?.label ?? currentConfig.iconLibrary
           }
           styleLabel={
-            catalogs.styles.find((style) => style.name === currentConfig.style)?.title ??
-            currentConfig.style
+            catalogs.styles.find((style) => style.name === currentConfig.style)
+              ?.title ?? currentConfig.style
           }
           fontLabel={
-            catalogs.fonts.find((font) => font.name === `font-${currentConfig.font}`)?.title ??
-            currentConfig.font
+            catalogs.fonts.find(
+              (font) => font.name === `font-${currentConfig.font}`,
+            )?.title ?? currentConfig.font
           }
           templateLabel={currentConfig.template}
           radiusLabel={currentRadiusLabel}
           menuColorLabel={currentConfig.menuColor}
           menuInverted={currentConfig.menuColor === "inverted"}
+          copy={previewCopy}
         />
       ) : (
         <div class="grid min-h-screen place-items-center bg-background text-foreground">
@@ -81,7 +97,12 @@ const currentRadiusLabel = currentConfig
         ),
         initialThemeOverrides: themeOverrides,
       }}
-    >window.__BEJAMAS_CREATE_PREVIEW__ = { styleCssByStyle, initialThemeOverrides };</script>
+    >
+      window.__BEJAMAS_CREATE_PREVIEW__ = {
+        styleCssByStyle,
+        initialThemeOverrides,
+      };
+    </script>
     <script type="module" src={createPreviewScript}></script>
   </body>
 </html>

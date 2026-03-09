@@ -69,12 +69,21 @@ const PICKER_NAMES = [
   "menuColor",
   "menuAccent",
   "template",
+  "rtlLanguage",
 ] satisfies CreatePickerName[];
 
-const form = document.querySelector("[data-create-form]") as HTMLFormElement | null;
-const iframe = document.querySelector("[data-preview-frame]") as HTMLIFrameElement | null;
-const presetNode = document.querySelector("[data-preset-code]") as HTMLElement | null;
-const commandNode = document.querySelector("[data-command]") as HTMLElement | null;
+const form = document.querySelector(
+  "[data-create-form]",
+) as HTMLFormElement | null;
+const iframe = document.querySelector(
+  "[data-preview-frame]",
+) as HTMLIFrameElement | null;
+const presetNode = document.querySelector(
+  "[data-preset-code]",
+) as HTMLElement | null;
+const commandNode = document.querySelector(
+  "[data-command]",
+) as HTMLElement | null;
 const presetButton = document.querySelector(
   "[data-create-copy-preset]",
 ) as HTMLButtonElement | null;
@@ -129,6 +138,9 @@ const themeImportTextarea = document.getElementById(
 const themeRefHiddenInput = document.querySelector(
   "[data-create-theme-ref-input]",
 ) as HTMLInputElement | null;
+const rtlLanguagePicker = document.querySelector(
+  "[data-create-rtl-language]",
+) as HTMLElement | null;
 
 if (!form || !iframe || !presetNode || !commandNode) {
   throw new Error("Create page is missing required form elements.");
@@ -171,12 +183,19 @@ function collectConfig(): CreateConfig {
     baseColor: String(formData.get("baseColor")) as CreateConfig["baseColor"],
     theme: String(formData.get("theme")) as CreateConfig["theme"],
     font: String(formData.get("font")) as CreateConfig["font"],
-    iconLibrary: String(formData.get("iconLibrary")) as CreateConfig["iconLibrary"],
+    iconLibrary: String(
+      formData.get("iconLibrary"),
+    ) as CreateConfig["iconLibrary"],
     radius: String(formData.get("radius")) as CreateConfig["radius"],
-    menuAccent: String(formData.get("menuAccent")) as CreateConfig["menuAccent"],
+    menuAccent: String(
+      formData.get("menuAccent"),
+    ) as CreateConfig["menuAccent"],
     menuColor: String(formData.get("menuColor")) as CreateConfig["menuColor"],
     template: String(formData.get("template")) as CreateConfig["template"],
     rtl: formData.get("rtl") === "on",
+    rtlLanguage: String(
+      formData.get("rtlLanguage") ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
+    ) as CreateConfig["rtlLanguage"],
   };
 }
 
@@ -228,8 +247,10 @@ function renderMarkerHtml(
   }
 
   if (kind === "menu-color") {
-    const startClass = option.value === "inverted" ? "bg-neutral-950" : "bg-neutral-100";
-    const endClass = option.value === "inverted" ? "bg-neutral-100" : "bg-neutral-950";
+    const startClass =
+      option.value === "inverted" ? "bg-neutral-950" : "bg-neutral-100";
+    const endClass =
+      option.value === "inverted" ? "bg-neutral-100" : "bg-neutral-950";
     return `<span data-create-picker-marker aria-hidden="true" class="inline-flex h-4 w-5 shrink-0 overflow-hidden rounded-[6px] border border-white/18 bg-white/5"><span class="block h-full w-1/2 ${startClass}"></span><span class="block h-full w-1/2 ${endClass}"></span></span>`;
   }
 
@@ -237,6 +258,10 @@ function renderMarkerHtml(
     const innerClass =
       option.value === "bold" ? "w-full bg-white/90" : "w-2 bg-white/55";
     return `<span data-create-picker-marker aria-hidden="true" class="inline-flex h-4 w-5 shrink-0 items-center rounded-full border border-white/18 px-0.5"><span class="block h-2.5 rounded-full transition-all ${innerClass}"></span></span>`;
+  }
+
+  if (kind === "language") {
+    return `<span data-create-picker-marker aria-hidden="true" class="inline-flex min-w-5 shrink-0 items-center justify-center rounded-full border border-white/18 bg-white/4 px-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-white/80">${escapeHtml(option.value.slice(0, 2))}</span>`;
   }
 
   return `<span data-create-picker-marker aria-hidden="true" class="inline-flex h-4 w-5 shrink-0 items-center justify-between rounded-[6px] border border-white/18 bg-white/4 p-0.5"><span class="h-full w-[34%] rounded-[4px] bg-white/55"></span><span class="flex h-full w-[56%] flex-col justify-between"><span class="h-[38%] rounded-[3px] bg-white/28"></span><span class="h-[38%] rounded-[3px] bg-white/18"></span></span></span>`;
@@ -341,11 +366,19 @@ function syncRadiusPicker(config: CreateConfig) {
   });
 
   if (itemsContainer) {
-    itemsContainer.innerHTML = renderPickerItems("radius", radiusOptions, config.radius);
+    itemsContainer.innerHTML = renderPickerItems(
+      "radius",
+      radiusOptions,
+      config.radius,
+    );
   }
 }
 
-function syncPickerUi(name: CreatePickerName, value: string, config: CreateConfig) {
+function syncPickerUi(
+  name: CreatePickerName,
+  value: string,
+  config: CreateConfig,
+) {
   const picker = getPicker(name);
   if (!picker) {
     return;
@@ -407,11 +440,13 @@ function syncThemeTrigger(config: CreateConfig) {
   const markerNode = document.querySelector(
     "[data-create-theme-current-marker]",
   ) as HTMLElement | null;
-  const selectedTheme = getCreatePickerSelectedOption("theme", config);
+  const selectedTheme = getCreatePickerSelectedOption("theme", config) as
+    | CreatePickerOption
+    | undefined;
   const mergedStyles = getMergedThemeStyles(config);
   const label = hasThemeOverrides(themeOverrides)
     ? "Custom"
-    : selectedTheme?.label ?? config.theme;
+    : (selectedTheme?.label ?? config.theme);
 
   if (labelNode) {
     labelNode.textContent = label;
@@ -422,9 +457,7 @@ function syncThemeTrigger(config: CreateConfig) {
       value: config.theme,
       label,
       color:
-        mergedStyles.light.primary ??
-        selectedTheme?.color ??
-        "oklch(0.72 0 0)",
+        mergedStyles.light.primary ?? selectedTheme?.color ?? "oklch(0.72 0 0)",
     });
   }
 }
@@ -475,15 +508,17 @@ function syncThemeTabs() {
 function syncThemeInputs(config: CreateConfig) {
   const styles = getMergedThemeStyles(config);
 
-  document.querySelectorAll<ColorInputElement>("[data-create-theme-input]").forEach((node) => {
-    const mode = node.dataset.createThemeMode;
-    const token = node.dataset.token as keyof typeof styles.light | undefined;
-    if (!mode || !token) {
-      return;
-    }
+  document
+    .querySelectorAll<ColorInputElement>("[data-create-theme-input]")
+    .forEach((node) => {
+      const mode = node.dataset.createThemeMode;
+      const token = node.dataset.token as keyof typeof styles.light | undefined;
+      if (!mode || !token) {
+        return;
+      }
 
-    node.setColor?.(styles[mode][token] ?? "");
-  });
+      node.setColor?.(styles[mode][token] ?? "");
+    });
 }
 
 function setThemePanelOpen(open: boolean) {
@@ -521,7 +556,8 @@ function setThemeTokenValue(
 ) {
   const baseline = getBaselineThemeStyles(config);
   const overrides = normalizeThemeOverrides(themeOverrides);
-  const baselineValue = baseline[mode][token as keyof typeof baseline.light] ?? "";
+  const baselineValue =
+    baseline[mode][token as keyof typeof baseline.light] ?? "";
 
   if (!value || value === baselineValue) {
     delete overrides[mode][token as keyof typeof overrides.light];
@@ -674,6 +710,7 @@ function applyConfig(
 
 function updateUi() {
   const config = collectConfig();
+  rtlLanguagePicker?.classList.toggle("hidden", !config.rtl);
   config.theme = syncThemeSelection(config) as CreateConfig["theme"];
   syncRadiusPicker(config);
   syncThemeTabs();
@@ -684,7 +721,7 @@ function updateUi() {
     syncPickerUi(name, config[name], config);
   }
 
-  const { template, rtl, ...presetConfig } = config;
+  const { template, rtl, rtlLanguage, ...presetConfig } = config;
   const preset = encodePreset(
     presetConfig as Parameters<typeof encodePreset>[0],
   );
@@ -695,6 +732,7 @@ function updateUi() {
 
   if (rtl) {
     params.set("rtl", "true");
+    params.set("lang", rtlLanguage);
   }
 
   if (themeRef) {
@@ -707,6 +745,7 @@ function updateUi() {
     `--preset ${preset}`,
     themeRef ? `--theme-ref ${themeRef}` : "",
     rtl ? "--rtl" : "",
+    rtl ? `--lang ${rtlLanguage}` : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -730,7 +769,10 @@ function updateUi() {
   window.history.replaceState({}, "", `/create?${params.toString()}`);
 
   if (themeStyleNode) {
-    themeStyleNode.textContent = buildDesignSystemThemeCss(config, themeOverrides);
+    themeStyleNode.textContent = buildDesignSystemThemeCss(
+      config,
+      themeOverrides,
+    );
   }
 
   if (styleStyleNode) {
@@ -897,7 +939,8 @@ themeEditorPanel?.addEventListener("color-change", (event) => {
     return;
   }
 
-  const detail = (event as CustomEvent<{ token: string; value: string }>).detail;
+  const detail = (event as CustomEvent<{ token: string; value: string }>)
+    .detail;
   const mode = target.dataset.createThemeMode;
   if (!mode || !detail?.token) {
     return;

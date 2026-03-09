@@ -48,3 +48,11 @@ test("shows help with --help", async () => {
   expect(stdout).toContain("bejamas");
   expect(stdout).toMatch(/Usage|Commands/i);
 });
+
+test("shows RTL language support in init help", async () => {
+  const { stdout, stderr, exitCode } = await runCli(["init", "--help"]);
+
+  expect(exitCode).toBe(0);
+  expect(stderr).toBe("");
+  expect(stdout).toContain("--lang");
+});

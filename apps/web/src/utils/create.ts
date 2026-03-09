@@ -3,6 +3,7 @@ import {
   decodePreset,
   designSystemConfigSchema,
   isPresetCode,
+  RTL_LANGUAGE_VALUES,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import { getThemeRefFromSearchParams } from "./themes/create-theme";
@@ -17,12 +18,32 @@ function omitUndefined<T extends Record<string, unknown>>(value: T) {
   ) as Partial<T>;
 }
 
+function getRtlLanguageValue(
+  searchParams: URLSearchParams,
+  rtl: boolean,
+): DesignSystemConfig["rtlLanguage"] | undefined {
+  if (!rtl) {
+    return undefined;
+  }
+
+  const value = searchParams.get("lang");
+  if (
+    !value ||
+    !RTL_LANGUAGE_VALUES.includes(value as DesignSystemConfig["rtlLanguage"])
+  ) {
+    return undefined;
+  }
+
+  return value as DesignSystemConfig["rtlLanguage"];
+}
+
 export function parseCreateSearchParams(
   searchParams: URLSearchParams,
   options: ParseCreateSearchParamsOptions = {},
 ) {
   let input: Partial<DesignSystemConfig> = {};
   const preset = searchParams.get("preset");
+  const rtl = searchParams.get("rtl") === "true";
 
   if (preset) {
     if (!isPresetCode(preset)) {
@@ -39,7 +60,8 @@ export function parseCreateSearchParams(
       template: (searchParams.get("template") ?? undefined) as
         | DesignSystemConfig["template"]
         | undefined,
-      rtl: searchParams.get("rtl") === "true",
+      rtl,
+      rtlLanguage: getRtlLanguageValue(searchParams, rtl),
     });
   } else if (options.fallbackPreset && isPresetCode(options.fallbackPreset)) {
     const decoded = decodePreset(options.fallbackPreset);
@@ -49,7 +71,8 @@ export function parseCreateSearchParams(
         template: (searchParams.get("template") ?? undefined) as
           | DesignSystemConfig["template"]
           | undefined,
-        rtl: searchParams.get("rtl") === "true",
+        rtl,
+        rtlLanguage: getRtlLanguageValue(searchParams, rtl),
       });
     }
   } else {
@@ -81,7 +104,8 @@ export function parseCreateSearchParams(
       template: (searchParams.get("template") ?? undefined) as
         | DesignSystemConfig["template"]
         | undefined,
-      rtl: searchParams.get("rtl") === "true",
+      rtl,
+      rtlLanguage: getRtlLanguageValue(searchParams, rtl),
     });
   }
 

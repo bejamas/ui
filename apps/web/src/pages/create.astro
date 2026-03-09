@@ -1,6 +1,7 @@
 ---
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
+  getDocumentLanguage,
   STYLES,
   encodePreset,
   getCompiledStyleCss,
@@ -39,6 +40,7 @@ const previewParams = new URLSearchParams({
 
 if (config.rtl) {
   previewParams.set("rtl", "true");
+  previewParams.set("lang", getDocumentLanguage(config));
 }
 
 if (themeRef) {
@@ -54,7 +56,9 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
   @import "@bejamas/ui/styles/globals.css";
 </style>
 <script is:inline set:html={docsRootInitScript} />
-<style id="create-page-theme-css" set:html={buildDesignSystemThemeCss(config, themeOverrides)}
+<style
+  id="create-page-theme-css"
+  set:html={buildDesignSystemThemeCss(config, themeOverrides)}
 ></style>
 <style id="create-page-style-css" set:html={compiledStyleCss}></style>
 

@@ -40,7 +40,7 @@ const {
 } = Astro.props as Props;
 const pickerOptions = getCreatePickerOptions(config);
 const themeOption = getCreatePickerSelectedOption("theme", config);
-const themeLabel = themeRef ? "Custom" : themeOption?.label ?? config.theme;
+const themeLabel = themeRef ? "Custom" : (themeOption?.label ?? config.theme);
 const themeSwatchColor =
   themeOverrides?.light?.primary ?? themeOption?.color ?? "oklch(0.72 0 0)";
 
@@ -131,8 +131,18 @@ const secondaryPickers = ["template"] as const;
       class="mt-2.5 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col xl:overflow-hidden"
       data-create-form
     >
-      <input type="hidden" name="theme" value={config.theme} data-create-theme-input-hidden />
-      <input type="hidden" name="themeRef" value={themeRef ?? ""} data-create-theme-ref-input />
+      <input
+        type="hidden"
+        name="theme"
+        value={config.theme}
+        data-create-theme-input-hidden
+      />
+      <input
+        type="hidden"
+        name="themeRef"
+        value={themeRef ?? ""}
+        data-create-theme-ref-input
+      />
 
       <div
         class="space-y-2 overflow-y-auto pr-0.5 xl:min-h-0 xl:flex-1"
@@ -157,7 +167,9 @@ const secondaryPickers = ["template"] as const;
           data-create-theme-trigger
         >
           <span class="min-w-0 space-y-1">
-            <span class="block text-[10px] font-medium uppercase tracking-[0.12em] text-white/38">
+            <span
+              class="block text-[10px] font-medium uppercase tracking-[0.12em] text-white/38"
+            >
               Theme
             </span>
             <span
@@ -169,7 +181,10 @@ const secondaryPickers = ["template"] as const;
           </span>
 
           <span class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65">
-            <span class="inline-flex items-center justify-center" data-create-theme-current-marker>
+            <span
+              class="inline-flex items-center justify-center"
+              data-create-theme-current-marker
+            >
               <CreatePickerMarker
                 kind="swatch"
                 value={config.theme}
@@ -215,6 +230,20 @@ const secondaryPickers = ["template"] as const;
             data-create-rtl
           />
         </label>
+
+        <div class:list={[!config.rtl && "hidden"]} data-create-rtl-language>
+          <CreatePicker
+            name="rtlLanguage"
+            label={CREATE_PICKER_LABELS.rtlLanguage}
+            value={config.rtlLanguage}
+            options={pickerOptions.rtlLanguage}
+            selectedOption={getCreatePickerSelectedOption(
+              "rtlLanguage",
+              config,
+            )}
+            markerKind={CREATE_PICKER_MARKERS.rtlLanguage}
+          />
+        </div>
       </div>
 
       <CreateThemePanel

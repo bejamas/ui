@@ -1,5 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { TEMPLATE_VALUES, designSystemConfigSchema } from "@bejamas/create-config/browser";
+import {
+  TEMPLATE_VALUES,
+  designSystemConfigSchema,
+} from "@bejamas/create-config/browser";
 import {
   CREATE_PICKER_LABELS,
   CREATE_PICKER_GROUP_LABELS,
@@ -13,6 +16,7 @@ describe("create sidebar helpers", () => {
     expect(CREATE_PICKER_LABELS.style).toBe("Style");
     expect(CREATE_PICKER_LABELS.baseColor).toBe("Base Color");
     expect(CREATE_PICKER_LABELS.template).toBe("Template");
+    expect(CREATE_PICKER_LABELS.rtlLanguage).toBe("Language");
   });
 
   it("derives theme options from the active base color", () => {
@@ -25,8 +29,12 @@ describe("create sidebar helpers", () => {
       style: "juno",
     });
 
-    expect(neutralOptions.theme.some((option) => option.value === "olive")).toBe(false);
-    expect(oliveOptions.theme.some((option) => option.value === "olive")).toBe(true);
+    expect(
+      neutralOptions.theme.some((option) => option.value === "olive"),
+    ).toBe(false);
+    expect(oliveOptions.theme.some((option) => option.value === "olive")).toBe(
+      true,
+    );
   });
 
   it("keeps template options aligned with the supported template values", () => {
@@ -35,7 +43,22 @@ describe("create sidebar helpers", () => {
       style: "juno",
     });
 
-    expect(options.template.map((option) => option.value)).toEqual(TEMPLATE_VALUES);
+    expect(options.template.map((option) => option.value)).toEqual(
+      TEMPLATE_VALUES,
+    );
+  });
+
+  it("exposes the supported RTL language options", () => {
+    const options = getCreatePickerOptions({
+      baseColor: "neutral",
+      style: "juno",
+    });
+
+    expect(options.rtlLanguage).toEqual([
+      { value: "ar", label: "Arabic", markerValue: "ar" },
+      { value: "fa", label: "Persian", markerValue: "fa" },
+      { value: "he", label: "Hebrew", markerValue: "he" },
+    ]);
   });
 
   it("uses a style-linked default marker for the radius picker", () => {
@@ -77,7 +100,9 @@ describe("create sidebar helpers", () => {
     expect(
       options.style.filter((option) => option.group === "shadcn").length,
     ).toBeGreaterThan(0);
-    expect(options.style.every((option) => Boolean(option.description))).toBe(true);
+    expect(options.style.every((option) => Boolean(option.description))).toBe(
+      true,
+    );
   });
 
   it("shows the effective synced radius while default mode is active", () => {
@@ -133,9 +158,11 @@ describe("create sidebar helpers", () => {
     const config = createRandomDesignSystemConfig({
       template: "astro-with-component-docs-monorepo",
       rtl: true,
+      rtlLanguage: "he",
     });
 
     expect(config.template).toBe("astro-with-component-docs-monorepo");
     expect(config.rtl).toBe(true);
+    expect(config.rtlLanguage).toBe("he");
   });
 });

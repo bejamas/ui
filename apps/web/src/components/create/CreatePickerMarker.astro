@@ -31,9 +31,8 @@ const iconLibraryAbbreviations: Record<string, string> = {
 
 const styleInitial = label.slice(0, 1).toUpperCase();
 const iconLibraryLabel = iconLibraryAbbreviations[value] ?? label.slice(0, 2);
-const radius = getRadiusValue(
-  value as Parameters<typeof getRadiusValue>[0],
-);
+const languageLabel = value.slice(0, 2).toUpperCase();
+const radius = getRadiusValue(value as Parameters<typeof getRadiusValue>[0]);
 ---
 
 {
@@ -46,7 +45,7 @@ const radius = getRadiusValue(
       data-create-picker-marker
       aria-hidden="true"
       style={color ? `background:${color};` : undefined}
-    ></span>
+    />
   )
 }
 
@@ -107,7 +106,7 @@ const radius = getRadiusValue(
       aria-hidden="true"
       style={`border-radius:${radius};`}
     >
-      <span class="size-1.5 rounded-full bg-white/55"></span>
+      <span class="size-1.5 rounded-full bg-white/55" />
     </span>
   )
 }
@@ -127,13 +126,13 @@ const radius = getRadiusValue(
           "block h-full w-1/2",
           value === "inverted" ? "bg-neutral-950" : "bg-neutral-100",
         ]}
-      ></span>
+      />
       <span
         class:list={[
           "block h-full w-1/2",
           value === "inverted" ? "bg-neutral-100" : "bg-neutral-950",
         ]}
-      ></span>
+      />
     </span>
   )
 }
@@ -151,11 +150,9 @@ const radius = getRadiusValue(
       <span
         class:list={[
           "block h-2.5 rounded-full transition-all",
-          value === "bold"
-            ? "w-full bg-white/90"
-            : "w-2 bg-white/55",
+          value === "bold" ? "w-full bg-white/90" : "w-2 bg-white/55",
         ]}
-      ></span>
+      />
     </span>
   )
 }
@@ -170,11 +167,26 @@ const radius = getRadiusValue(
       data-create-picker-marker
       aria-hidden="true"
     >
-      <span class="h-full w-[34%] rounded-[4px] bg-white/55"></span>
+      <span class="h-full w-[34%] rounded-[4px] bg-white/55" />
       <span class="flex h-full w-[56%] flex-col justify-between">
-        <span class="h-[38%] rounded-[3px] bg-white/28"></span>
-        <span class="h-[38%] rounded-[3px] bg-white/18"></span>
+        <span class="h-[38%] rounded-[3px] bg-white/28" />
+        <span class="h-[38%] rounded-[3px] bg-white/18" />
       </span>
+    </span>
+  )
+}
+
+{
+  kind === "language" && (
+    <span
+      class={cn(
+        "inline-flex min-w-5 shrink-0 items-center justify-center rounded-full border border-white/18 bg-white/4 px-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-white/80",
+        className,
+      )}
+      data-create-picker-marker
+      aria-hidden="true"
+    >
+      {languageLabel}
     </span>
   )
 }

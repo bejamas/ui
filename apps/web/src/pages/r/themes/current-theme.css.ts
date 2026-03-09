@@ -44,13 +44,19 @@ export async function GET({ cookies }: { cookies: AstroCookies }) {
   }
 }
 
-async function resolveThemeCss(themeId: string | null, themeRef: string | null) {
+async function resolveThemeCss(
+  themeId: string | null,
+  themeRef: string | null,
+) {
   if (themeId && isPresetCode(themeId)) {
     const decoded = decodePreset(themeId);
     if (decoded) {
       const themeOverrides = await getThemeOverridesByRef(themeRef);
       return [
-        buildDesignSystemThemeCss(toDesignSystemConfig(decoded), themeOverrides),
+        buildDesignSystemThemeCss(
+          toDesignSystemConfig(decoded),
+          themeOverrides,
+        ),
         await getCompiledGlobalStyleCss(decoded.style),
       ].join("\n\n");
     }
@@ -70,5 +76,6 @@ function toDesignSystemConfig(preset: PresetConfig) {
     ...preset,
     template: "astro" as const,
     rtl: false,
+    rtlLanguage: "ar" as const,
   };
 }

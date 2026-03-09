@@ -16,6 +16,7 @@ const baseConfig = {
   menuColor: "default",
   template: "astro",
   rtl: false,
+  rtlLanguage: "ar",
 } as const;
 
 describe("resolveDesignSystemTheme", () => {
