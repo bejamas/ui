@@ -4,7 +4,6 @@ import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
 import starlightThemeBejamas from "starlight-theme-bejamas";
-import starlightPageActions from "starlight-page-actions";
 
 import vercel from "@astrojs/vercel";
 import sitemap from "@astrojs/sitemap";
@@ -28,7 +27,11 @@ export default defineConfig({
   },
   env: {
     schema: {
-      OPENAI_API_KEY: envField.string({ context: "server", access: "secret" }),
+      OPENAI_API_KEY: envField.string({
+        context: "server",
+        access: "secret",
+        optional: true,
+      }),
       UPSTASH_REDIS_REST_URL: envField.string({
         context: "server",
         access: "secret",
@@ -65,7 +68,6 @@ export default defineConfig({
             PageTitle: "./src/components/PageTitle.astro",
           },
         }),
-        starlightPageActions(),
       ],
       components: {
         Header: "./src/components/starlight/Header.astro",
