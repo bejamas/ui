@@ -25,15 +25,11 @@ export async function getStaticPaths() {
 >
   <BlocksNav />
 
-  {
-    block.data.items.map((item) => (
-      <section class="text-left not-content space-y-20">
-        {block.data.items.map((item) => (
-          <BlockPreview item={item} />
-        ))}
-      </section>
-    ))
-  }
+  <section class="text-left not-content space-y-20">
+    {block.data.items.map((item) => (
+      <BlockPreview item={item} />
+    ))}
+  </section>
 </StarlightPage>
 
 <style is:global>
