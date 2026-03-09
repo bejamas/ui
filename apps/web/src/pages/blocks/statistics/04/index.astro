@@ -1,0 +1,19 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import StatItem from "./components/stat-item.astro";
+---
+
+<BlockExampleLayout>
+  <div class="max-w-400 py-20 md:py-40 mx-auto px-8 @container text-foreground">
+    <h2 class="mb-20 lg:mb-30 font-medium text-[3rem] lg:text-[4rem] tracking-tight leading-[1.1] text-balance">
+      Looking for more?<br/>
+      Those years speak for themselves
+    </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-22">
+      <StatItem value="200" suffix="%" description="Approximate earning in year 2025" />
+      <StatItem value="$80" suffix="" description="Companies growing with VIRA" />
+      <StatItem value="$2" suffix="B+" description="Total revenue generated in year 2025" />
+      <StatItem value="95" suffix="" description="A proven record of customer satisfaction" />
+    </div>
+  </div>
+</BlockExampleLayout>

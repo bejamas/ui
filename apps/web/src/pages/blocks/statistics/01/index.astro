@@ -1,0 +1,23 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import StatItem from "./components/stat-item.astro";
+---
+
+<BlockExampleLayout>
+  <div class="max-w-400 py-20 md:py-40 mx-auto px-8 @container text-foreground">
+    <div class="flex flex-col lg:flex-row lg:justify-between gap-10 lg:gap-[10%]">
+      <div class="w-full lg:max-w-120">
+        <h2 class="mb-10 lg:mb-20 font-medium text-[3rem] lg:text-[4rem] tracking-tight leading-[1.1] text-balance">Our capabilites in numbers</h2>
+        <div class="flex flex-col sm:flex-row lg:flex-col py-1 gap-4">
+          <img class="rounded-sm w-full object-cover aspect-ratio-square h-48" src="https://pbs.twimg.com/media/G0x-gj6bAAAJkHH?format=jpg&name=large">
+          <img class="rounded-sm w-full object-cover aspect-ratio-square h-48" src="https://pbs.twimg.com/media/G0x-gkSbcAAaH3Z?format=jpg&name=large">
+        </div>
+      </div>
+      <div class="w-full lg:max-w-190 flex flex-col gap-10 lg:gap-20">
+        <StatItem value="200" suffix="%" description="Approximate earning in year 2025"/>
+        <StatItem value="$80" suffix="" description="Locking duration in days quickly"/>
+        <StatItem value="$2" suffix="B+" description="Total revenue generated in year 2025"/>
+      </div>
+    </div>
+  </div>
+</BlockExampleLayout>

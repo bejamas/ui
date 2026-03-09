@@ -1,0 +1,15 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import StatItem from "./components/stat-item.astro";
+---
+
+<BlockExampleLayout>
+  <div class="max-w-400 py-20 md:py-40 mx-auto px-8 @container text-foreground">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <StatItem index={0} value="$3" suffix="B" description="Grew our network with exciting new collaborators" />
+      <StatItem index={1} value="27" description="Connected with innovative new collaborators." />
+      <StatItem index={2} value="98" suffix="%" description="A proven record of customer satisfaction" />
+      <StatItem index={3} value="14" description="Locking duration in days quickly" />
+    </div>
+  </div>
+</BlockExampleLayout>

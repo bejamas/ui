@@ -1,0 +1,25 @@
+---
+interface Props {
+  value: string;
+  suffix?: string;
+  description: string;
+}
+
+const { value, suffix, description } = Astro.props;
+---
+
+<div class="border-l border-border pl-6">
+  <p class="text-muted-foreground text-base lg:mb-48 md: md:mb-32 mb-8">
+    {description}
+  </p>
+  <div class="flex gap-2 text-foreground font-medium">
+    <span class="text-[5rem] lg:text-[7.5rem] leading-none tracking-[-0.03em]">
+      {value}
+    </span>
+    {suffix && (
+      <span class="text-[2rem] lg:text-[3rem] leading-[1.2] tracking-tight">
+        {suffix}
+      </span>
+    )}
+  </div>
+</div>

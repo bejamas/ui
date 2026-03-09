@@ -28,7 +28,7 @@ export default defineConfig({
   },
   env: {
     schema: {
-      OPENAI_API_KEY: envField.string({ context: "server", access: "secret" }),
+      OPENAI_API_KEY: envField.string({ context: "server", access: "secret", optional: true }),
       UPSTASH_REDIS_REST_URL: envField.string({
         context: "server",
         access: "secret",
