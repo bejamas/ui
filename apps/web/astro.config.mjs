@@ -30,6 +30,7 @@ export default defineConfig({
       OPENAI_API_KEY: envField.string({
         context: "server",
         access: "secret",
+        optional: true,
       }),
       UPSTASH_REDIS_REST_URL: envField.string({
         context: "server",
