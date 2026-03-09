@@ -7,11 +7,13 @@ import {
 } from "@bejamas/create-config/server";
 import { buildCreateDocsRootInitScript } from "@/utils/create-docs-shell";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
-import { parseCreateSearchParams } from "@/utils/create";
+import { parseCreateSearchParams, resolveCreateThemeRef } from "@/utils/create";
 import {
   parseThemeCookie,
   PRESET_COOKIE_NAME,
+  THEME_REF_COOKIE_NAME,
 } from "@/utils/themes/theme-cookie";
+import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
 import createPageScript from "@/scripts/create-page.ts?url";
 import CreateCustomizer from "@/components/create/CreateCustomizer.astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
@@ -23,8 +25,27 @@ const result = parseCreateSearchParams(Astro.url.searchParams, {
   fallbackPreset: cookieThemeId,
 });
 const config = result.success ? result.data : DEFAULT_DESIGN_SYSTEM_CONFIG;
+const cookieThemeRef = Astro.cookies.get(THEME_REF_COOKIE_NAME)?.value ?? null;
+const requestedThemeRef = resolveCreateThemeRef(Astro.url.searchParams, {
+  fallbackThemeRef: cookieThemeRef,
+});
+const themeOverrides = await getThemeOverridesByRef(requestedThemeRef);
+const themeRef = themeOverrides ? requestedThemeRef : null;
 const preset = encodePreset(config);
-const previewUrl = `/create/preview?preset=${preset}&template=${config.template}${config.rtl ? "&rtl=true" : ""}`;
+const previewParams = new URLSearchParams({
+  preset,
+  template: config.template,
+});
+
+if (config.rtl) {
+  previewParams.set("rtl", "true");
+}
+
+if (themeRef) {
+  previewParams.set("themeRef", themeRef);
+}
+
+const previewUrl = `/create/preview?${previewParams.toString()}`;
 const compiledStyleCss = await getCompiledStyleCss(config.style);
 const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
 ---
@@ -33,7 +54,7 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
   @import "@bejamas/ui/styles/globals.css";
 </style>
 <script is:inline set:html={docsRootInitScript} />
-<style id="create-page-theme-css" set:html={buildDesignSystemThemeCss(config)}
+<style id="create-page-theme-css" set:html={buildDesignSystemThemeCss(config, themeOverrides)}
 ></style>
 <style id="create-page-style-css" set:html={compiledStyleCss}></style>
 
@@ -52,7 +73,12 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
       <div
         class="grid gap-6 xl:min-h-[var(--create-preview-height)] xl:grid-cols-[320px_minmax(0,1fr)] xl:items-stretch"
       >
-        <CreateCustomizer config={config} preset={preset} />
+        <CreateCustomizer
+          config={config}
+          preset={preset}
+          themeRef={themeRef}
+          themeOverrides={themeOverrides}
+        />
 
         <iframe
           src={previewUrl}
@@ -74,9 +100,15 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
         ]),
       ),
     ),
+    initialThemeRef: themeRef,
+    initialThemeOverrides: themeOverrides,
   }}
 >
-  window.__BEJAMAS_CREATE__ = { styleCssByStyle };
+  window.__BEJAMAS_CREATE__ = {
+    styleCssByStyle,
+    initialThemeRef,
+    initialThemeOverrides,
+  };
 </script>
 <script type="module" src={createPageScript}></script>
 

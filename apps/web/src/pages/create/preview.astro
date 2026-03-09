@@ -9,14 +9,19 @@ import {
   buildDesignSystemThemeCss,
 } from "@/utils/themes/design-system-adapter";
 import { buildIframeThemeSyncInlineScript } from "@/utils/themes/iframe-theme-sync";
-import { parseCreateSearchParams } from "@/utils/create";
+import { parseCreateSearchParams, resolveCreateThemeRef } from "@/utils/create";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
+import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
 import themeFontsStylesheet from "@/styles/theme-fonts.css?url";
 
 const result = parseCreateSearchParams(Astro.url.searchParams);
 const config = result.success ? result.data : undefined;
+const requestedThemeRef = resolveCreateThemeRef(Astro.url.searchParams);
+const themeOverrides = await getThemeOverridesByRef(requestedThemeRef);
 const currentConfig = config ?? undefined;
-const themeCss = currentConfig ? buildDesignSystemThemeCss(currentConfig) : "";
+const themeCss = currentConfig
+  ? buildDesignSystemThemeCss(currentConfig, themeOverrides)
+  : "";
 const compiledStyleCss = currentConfig ? await getCompiledStyleCss(currentConfig.style) : "";
 const iframeThemeSyncScript = buildIframeThemeSyncInlineScript();
 const currentRadiusLabel = currentConfig
@@ -74,8 +79,9 @@ const currentRadiusLabel = currentConfig
             ]),
           ),
         ),
+        initialThemeOverrides: themeOverrides,
       }}
-    >window.__BEJAMAS_CREATE_PREVIEW__ = { styleCssByStyle };</script>
+    >window.__BEJAMAS_CREATE_PREVIEW__ = { styleCssByStyle, initialThemeOverrides };</script>
     <script type="module" src={createPreviewScript}></script>
   </body>
 </html>

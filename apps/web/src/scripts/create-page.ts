@@ -8,8 +8,22 @@ import {
   applyCreateDocsRootState,
   cleanupCreateDocsRootState,
 } from "@/utils/create-docs-shell";
-import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
+import {
+  buildDesignSystemThemeCss,
+  resolveDesignSystemTheme,
+} from "@/utils/themes/design-system-adapter";
 import { setStoredPreset } from "@/utils/themes/preset-store";
+import {
+  createCustomThemeRef,
+  createThemeName,
+  emptyThemeOverrides,
+  getCreateThemeSeedOptions,
+  hasThemeOverrides,
+  normalizeThemeOverrides,
+  type ThemeMode,
+  type ThemeOverrides,
+} from "@/utils/themes/create-theme";
+import { parseCssVariables } from "@/components/theme-editor/utils/themeEditorUtils";
 import {
   CREATE_PICKER_MARKERS,
   createRandomDesignSystemConfig,
@@ -21,11 +35,27 @@ import {
 } from "@/utils/create-sidebar";
 
 type CreateConfig = DesignSystemConfig;
+type PreviewMessage = {
+  type: "bejamas:create-preview";
+  config: CreateConfig;
+  themeRef: string | null;
+  themeOverrides: ThemeOverrides;
+};
+
+type ColorInputElement = HTMLElement & {
+  dataset: DOMStringMap & {
+    createThemeMode?: ThemeMode;
+    token?: string;
+  };
+  setColor?: (value: string) => void;
+};
 
 declare global {
   interface Window {
     __BEJAMAS_CREATE__?: {
       styleCssByStyle: Record<string, string>;
+      initialThemeRef?: string | null;
+      initialThemeOverrides?: Partial<ThemeOverrides> | null;
     };
   }
 }
@@ -33,7 +63,6 @@ declare global {
 const PICKER_NAMES = [
   "style",
   "baseColor",
-  "theme",
   "iconLibrary",
   "font",
   "radius",
@@ -46,15 +75,60 @@ const form = document.querySelector("[data-create-form]") as HTMLFormElement | n
 const iframe = document.querySelector("[data-preview-frame]") as HTMLIFrameElement | null;
 const presetNode = document.querySelector("[data-preset-code]") as HTMLElement | null;
 const commandNode = document.querySelector("[data-command]") as HTMLElement | null;
-const presetButton = document.querySelector("[data-create-copy-preset]") as HTMLButtonElement | null;
-const commandButton = document.querySelector("[data-create-copy-command]") as HTMLButtonElement | null;
+const presetButton = document.querySelector(
+  "[data-create-copy-preset]",
+) as HTMLButtonElement | null;
+const commandButton = document.querySelector(
+  "[data-create-copy-command]",
+) as HTMLButtonElement | null;
 const randomizeButtons = Array.from(
   document.querySelectorAll("[data-create-randomize]"),
 ) as HTMLButtonElement[];
-const mainMenu = document.querySelector("[data-create-main-menu]") as HTMLElement | null;
+const mainMenu = document.querySelector(
+  "[data-create-main-menu]",
+) as HTMLElement | null;
 const themeStyleNode = document.getElementById("create-page-theme-css");
 const styleStyleNode = document.getElementById("create-page-style-css");
 const docsRoot = document.documentElement;
+const themeMainPanel = document.querySelector(
+  "[data-create-form-main]",
+) as HTMLElement | null;
+const themeEditorPanel = document.querySelector(
+  "[data-create-theme-panel]",
+) as HTMLElement | null;
+const themeTrigger = document.querySelector(
+  "[data-create-theme-trigger]",
+) as HTMLButtonElement | null;
+const themeBackButton = document.querySelector(
+  "[data-create-theme-back]",
+) as HTMLButtonElement | null;
+const themeStatusNode = document.querySelector(
+  "[data-create-theme-status]",
+) as HTMLElement | null;
+const themeSeedContainer = document.querySelector(
+  "[data-create-theme-seeds]",
+) as HTMLElement | null;
+const themeTabButtons = Array.from(
+  document.querySelectorAll("[data-create-theme-tab]"),
+) as HTMLButtonElement[];
+const themeModePanels = Array.from(
+  document.querySelectorAll("[data-create-theme-mode-panel]"),
+) as HTMLElement[];
+const themeImportButton = document.querySelector(
+  "[data-create-theme-import]",
+) as HTMLButtonElement | null;
+const themeImportDialogTrigger = document.getElementById(
+  "import-dialog-trigger",
+) as HTMLButtonElement | null;
+const themeImportConfirmButton = document.getElementById(
+  "import-confirm-btn",
+) as HTMLButtonElement | null;
+const themeImportTextarea = document.getElementById(
+  "import-css-textarea",
+) as HTMLTextAreaElement | null;
+const themeRefHiddenInput = document.querySelector(
+  "[data-create-theme-ref-input]",
+) as HTMLInputElement | null;
 
 if (!form || !iframe || !presetNode || !commandNode) {
   throw new Error("Create page is missing required form elements.");
@@ -64,6 +138,14 @@ const createForm = form;
 const previewFrame = iframe;
 const presetCodeNode = presetNode;
 const commandCodeNode = commandNode;
+
+let activeThemeMode: ThemeMode = "light";
+let themeRef = window.__BEJAMAS_CREATE__?.initialThemeRef ?? null;
+let themeOverrides = normalizeThemeOverrides(
+  window.__BEJAMAS_CREATE__?.initialThemeOverrides,
+);
+let themeSyncTimer = 0;
+let themeStatusMessage = "";
 
 function getField(name: string) {
   return createForm.elements.namedItem(name) as HTMLInputElement | null;
@@ -220,10 +302,21 @@ function setInputValue(name: string, value: string, shouldDispatch = true) {
   }
 }
 
-function syncThemePicker(config: CreateConfig) {
-  const itemsContainer = getPickerContent("theme")?.querySelector(
-    "[data-create-picker-items]",
-  ) as HTMLElement | null;
+function setThemeRefValue(value: string | null) {
+  if (themeRefHiddenInput) {
+    themeRefHiddenInput.value = value ?? "";
+  }
+}
+
+function getMergedThemeStyles(config: CreateConfig) {
+  return resolveDesignSystemTheme(config, themeOverrides).styles;
+}
+
+function getBaselineThemeStyles(config: CreateConfig) {
+  return resolveDesignSystemTheme(config).styles;
+}
+
+function syncThemeSelection(config: CreateConfig) {
   const themeOptions = getCreatePickerOptionsByName("theme", {
     baseColor: config.baseColor,
     style: config.style,
@@ -233,11 +326,8 @@ function syncThemePicker(config: CreateConfig) {
     themeOptions[0]?.value ??
     config.theme;
 
-  if (itemsContainer) {
-    itemsContainer.innerHTML = renderPickerItems("theme", themeOptions, nextTheme);
-  }
-
   setInputValue("theme", nextTheme, false);
+  syncThemeSeedButtons(config.baseColor, nextTheme);
   return nextTheme;
 }
 
@@ -295,11 +385,7 @@ function syncPickerUi(name: CreatePickerName, value: string, config: CreateConfi
   ) as HTMLElement | null;
 
   if (labelNode) {
-    if (selectedOption) {
-      labelNode.textContent = selectedOption.label;
-    } else {
-      labelNode.textContent = value;
-    }
+    labelNode.textContent = selectedOption?.label ?? value;
   }
 
   if (markerNode) {
@@ -312,6 +398,198 @@ function syncPickerUi(name: CreatePickerName, value: string, config: CreateConfi
       );
     }
   }
+}
+
+function syncThemeTrigger(config: CreateConfig) {
+  const labelNode = document.querySelector(
+    "[data-create-theme-current-label]",
+  ) as HTMLElement | null;
+  const markerNode = document.querySelector(
+    "[data-create-theme-current-marker]",
+  ) as HTMLElement | null;
+  const selectedTheme = getCreatePickerSelectedOption("theme", config);
+  const mergedStyles = getMergedThemeStyles(config);
+  const label = hasThemeOverrides(themeOverrides)
+    ? "Custom"
+    : selectedTheme?.label ?? config.theme;
+
+  if (labelNode) {
+    labelNode.textContent = label;
+  }
+
+  if (markerNode) {
+    markerNode.innerHTML = renderMarkerHtml("swatch", {
+      value: config.theme,
+      label,
+      color:
+        mergedStyles.light.primary ??
+        selectedTheme?.color ??
+        "oklch(0.72 0 0)",
+    });
+  }
+}
+
+function syncThemeSeedButtons(
+  baseColor: CreateConfig["baseColor"],
+  selectedTheme: CreateConfig["theme"],
+) {
+  if (!themeSeedContainer) {
+    return;
+  }
+
+  const options = getCreateThemeSeedOptions(baseColor);
+  themeSeedContainer.innerHTML = options
+    .map((option) => {
+      const selected = option.value === selectedTheme;
+
+      return `
+        <button
+          type="button"
+          class="flex items-center gap-2 rounded-[12px] border px-2.5 py-2 text-left transition-colors ${selected ? "border-white/16 bg-white/[0.08] text-white" : "border-white/0 bg-white/[0.02] text-white/78 hover:bg-white/[0.05]"}"
+          data-create-theme-option
+          data-value="${escapeHtml(option.value)}"
+          ${selected ? 'data-selected=""' : ""}
+        >
+          <span class="inline-flex size-4 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]" style="background:${escapeHtml(option.color)};"></span>
+          <span class="truncate text-[13px] font-medium tracking-[-0.01em]">${escapeHtml(option.label)}</span>
+        </button>
+      `;
+    })
+    .join("");
+}
+
+function syncThemeTabs() {
+  themeTabButtons.forEach((button) => {
+    const selected = button.dataset.value === activeThemeMode;
+    button.toggleAttribute("data-selected", selected);
+    button.classList.toggle("bg-white/[0.09]", selected);
+    button.classList.toggle("text-white", selected);
+    button.classList.toggle("text-white/62", !selected);
+  });
+
+  themeModePanels.forEach((panel) => {
+    panel.classList.toggle("hidden", panel.dataset.mode !== activeThemeMode);
+  });
+}
+
+function syncThemeInputs(config: CreateConfig) {
+  const styles = getMergedThemeStyles(config);
+
+  document.querySelectorAll<ColorInputElement>("[data-create-theme-input]").forEach((node) => {
+    const mode = node.dataset.createThemeMode;
+    const token = node.dataset.token as keyof typeof styles.light | undefined;
+    if (!mode || !token) {
+      return;
+    }
+
+    node.setColor?.(styles[mode][token] ?? "");
+  });
+}
+
+function setThemePanelOpen(open: boolean) {
+  themeMainPanel?.classList.toggle("hidden", open);
+  themeEditorPanel?.classList.toggle("hidden", !open);
+  themeEditorPanel?.classList.toggle("xl:flex", open);
+}
+
+function setThemeStatus(message: string) {
+  themeStatusMessage = message;
+  if (themeStatusNode) {
+    themeStatusNode.textContent = message;
+  }
+}
+
+function clearThemeOverrides(options?: { message?: string }) {
+  themeOverrides = emptyThemeOverrides();
+  themeRef = null;
+  setThemeRefValue(null);
+  setThemeStatus(
+    options?.message ??
+      "Pick a seed theme, then adjust tokens in light and dark modes.",
+  );
+}
+
+function getThemeModeOverrides(mode: ThemeMode) {
+  return themeOverrides[mode] ?? {};
+}
+
+function setThemeTokenValue(
+  config: CreateConfig,
+  mode: ThemeMode,
+  token: string,
+  value: string,
+) {
+  const baseline = getBaselineThemeStyles(config);
+  const overrides = normalizeThemeOverrides(themeOverrides);
+  const baselineValue = baseline[mode][token as keyof typeof baseline.light] ?? "";
+
+  if (!value || value === baselineValue) {
+    delete overrides[mode][token as keyof typeof overrides.light];
+  } else {
+    overrides[mode][token as keyof typeof overrides.light] = value;
+  }
+
+  themeOverrides = overrides;
+  if (!hasThemeOverrides(themeOverrides)) {
+    themeRef = null;
+    setThemeRefValue(null);
+    setThemeStatus("Theme matches the selected seed.");
+  } else {
+    setThemeStatus("Saving custom theme...");
+  }
+}
+
+async function syncThemeRef(config: CreateConfig) {
+  window.clearTimeout(themeSyncTimer);
+
+  if (!hasThemeOverrides(themeOverrides)) {
+    themeRef = null;
+    setThemeRefValue(null);
+    updateUi();
+    return;
+  }
+
+  const nextThemeRef = themeRef ?? createCustomThemeRef();
+  const now = new Date().toISOString();
+  const response = await fetch("/api/themes/sync", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      action: "save",
+      theme: {
+        id: nextThemeRef,
+        name: createThemeName(config),
+        styles: {
+          light: getThemeModeOverrides("light"),
+          dark: getThemeModeOverrides("dark"),
+        },
+        createdAt: now,
+        modifiedAt: now,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    themeRef = null;
+    setThemeRefValue(null);
+    setThemeStatus("Theme saved locally only. Server sync is unavailable.");
+    updateUi();
+    return;
+  }
+
+  themeRef = nextThemeRef;
+  setThemeRefValue(themeRef);
+  setThemeStatus("Custom theme saved.");
+  updateUi();
+}
+
+function scheduleThemeSync(config: CreateConfig) {
+  window.clearTimeout(themeSyncTimer);
+  themeSyncTimer = window.setTimeout(() => {
+    void syncThemeRef(config);
+  }, 280);
 }
 
 async function copyText(text: string) {
@@ -372,14 +650,23 @@ async function handleCopyCommand() {
   }
 }
 
-function applyConfig(config: CreateConfig) {
+function applyConfig(
+  config: CreateConfig,
+  options: { clearCustomTheme?: boolean } = {},
+) {
   for (const name of PICKER_NAMES) {
     setInputValue(name, config[name], false);
   }
 
+  setInputValue("theme", config.theme, false);
+
   const rtlField = getField("rtl");
   if (rtlField) {
     rtlField.checked = config.rtl;
+  }
+
+  if (options.clearCustomTheme) {
+    clearThemeOverrides();
   }
 
   updateUi();
@@ -387,8 +674,11 @@ function applyConfig(config: CreateConfig) {
 
 function updateUi() {
   const config = collectConfig();
-  config.theme = syncThemePicker(config) as CreateConfig["theme"];
+  config.theme = syncThemeSelection(config) as CreateConfig["theme"];
   syncRadiusPicker(config);
+  syncThemeTabs();
+  syncThemeInputs(config);
+  syncThemeTrigger(config);
 
   for (const name of PICKER_NAMES) {
     syncPickerUi(name, config[name], config);
@@ -407,10 +697,15 @@ function updateUi() {
     params.set("rtl", "true");
   }
 
+  if (themeRef) {
+    params.set("themeRef", themeRef);
+  }
+
   const command = [
     "bunx bejamas init",
     `--template ${template}`,
     `--preset ${preset}`,
+    themeRef ? `--theme-ref ${themeRef}` : "",
     rtl ? "--rtl" : "",
   ]
     .filter(Boolean)
@@ -430,12 +725,12 @@ function updateUi() {
     commandButton.title = command;
   }
 
-  setStoredPreset(preset);
+  setStoredPreset(preset, undefined, undefined, themeRef);
 
   window.history.replaceState({}, "", `/create?${params.toString()}`);
 
   if (themeStyleNode) {
-    themeStyleNode.textContent = buildDesignSystemThemeCss(config);
+    themeStyleNode.textContent = buildDesignSystemThemeCss(config, themeOverrides);
   }
 
   if (styleStyleNode) {
@@ -445,19 +740,84 @@ function updateUi() {
 
   applyCreateDocsRootState(docsRoot, config.style);
 
-  previewFrame.contentWindow?.postMessage(
-    {
-      type: "bejamas:create-preview",
-      config,
-    },
-    window.location.origin,
-  );
+  const message: PreviewMessage = {
+    type: "bejamas:create-preview",
+    config,
+    themeRef,
+    themeOverrides,
+  };
+
+  previewFrame.contentWindow?.postMessage(message, window.location.origin);
+}
+
+function handleThemeImport() {
+  themeImportDialogTrigger?.click();
+}
+
+function handleThemeImportConfirm(event?: Event) {
+  event?.preventDefault();
+  event?.stopPropagation();
+
+  const config = collectConfig();
+  const css = themeImportTextarea?.value?.trim() ?? "";
+  if (!css) {
+    setThemeStatus("Paste CSS variables to import a custom theme.");
+    return;
+  }
+
+  const parsed = parseCssVariables(css);
+  const baseline = getBaselineThemeStyles(config);
+  const overrides = normalizeThemeOverrides(themeOverrides);
+
+  (["light", "dark"] as const).forEach((mode) => {
+    Object.entries(parsed[mode]).forEach(([token, value]) => {
+      const baselineValue =
+        baseline[mode][token as keyof typeof baseline.light] ?? "";
+      if (!value || value === baselineValue) {
+        delete overrides[mode][token as keyof typeof overrides.light];
+      } else {
+        overrides[mode][token as keyof typeof overrides.light] = value;
+      }
+    });
+  });
+
+  themeOverrides = overrides;
+  if (!hasThemeOverrides(themeOverrides)) {
+    themeRef = null;
+    setThemeRefValue(null);
+    setThemeStatus("Imported theme matches the selected seed.");
+  } else {
+    setThemeStatus("Imported theme. Saving custom theme...");
+  }
+
+  const closeButton = document.querySelector(
+    "#import-dialog [data-slot='dialog-close']",
+  ) as HTMLElement | null;
+  closeButton?.click();
+
+  updateUi();
+  scheduleThemeSync(config);
+}
+
+function handleThemeSeedSelect(value: string) {
+  setInputValue("theme", value, false);
+  clearThemeOverrides({
+    message: "Seed theme selected. Edit tokens below to customize it.",
+  });
+  updateUi();
 }
 
 for (const name of PICKER_NAMES) {
   const picker = getPicker(name);
   picker?.addEventListener("dropdown-menu:select", (event) => {
     const value = (event as CustomEvent<{ value: string }>).detail.value;
+
+    if (name === "baseColor") {
+      clearThemeOverrides({
+        message: "Base color changed. Pick a seed theme or edit tokens below.",
+      });
+    }
+
     setInputValue(name, value);
   });
 }
@@ -467,12 +827,16 @@ mainMenu?.addEventListener("dropdown-menu:select", (event) => {
   const currentConfig = collectConfig();
 
   if (value === "shuffle") {
-    applyConfig(createRandomDesignSystemConfig(currentConfig));
+    applyConfig(createRandomDesignSystemConfig(currentConfig), {
+      clearCustomTheme: true,
+    });
     return;
   }
 
   if (value === "reset") {
-    applyConfig(DEFAULT_DESIGN_SYSTEM_CONFIG);
+    applyConfig(DEFAULT_DESIGN_SYSTEM_CONFIG, {
+      clearCustomTheme: true,
+    });
     return;
   }
 
@@ -491,10 +855,63 @@ commandButton?.addEventListener("click", () => {
 
 randomizeButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    applyConfig(createRandomDesignSystemConfig(collectConfig()));
+    applyConfig(createRandomDesignSystemConfig(collectConfig()), {
+      clearCustomTheme: true,
+    });
   });
 });
 
+themeTrigger?.addEventListener("click", () => {
+  setThemePanelOpen(true);
+});
+
+themeBackButton?.addEventListener("click", () => {
+  setThemePanelOpen(false);
+});
+
+themeTabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    activeThemeMode = (button.dataset.value as ThemeMode) ?? "light";
+    syncThemeTabs();
+  });
+});
+
+themeSeedContainer?.addEventListener("click", (event) => {
+  const button = (event.target as HTMLElement).closest(
+    "[data-create-theme-option]",
+  ) as HTMLButtonElement | null;
+
+  if (!button?.dataset.value) {
+    return;
+  }
+
+  handleThemeSeedSelect(button.dataset.value);
+});
+
+themeImportButton?.addEventListener("click", handleThemeImport);
+themeImportConfirmButton?.addEventListener("click", handleThemeImportConfirm);
+
+themeEditorPanel?.addEventListener("color-change", (event) => {
+  const target = event.target as ColorInputElement | null;
+  if (!target) {
+    return;
+  }
+
+  const detail = (event as CustomEvent<{ token: string; value: string }>).detail;
+  const mode = target.dataset.createThemeMode;
+  if (!mode || !detail?.token) {
+    return;
+  }
+
+  const config = collectConfig();
+  setThemeTokenValue(config, mode, detail.token, detail.value);
+  updateUi();
+  scheduleThemeSync(config);
+});
+
+createForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+});
 createForm.addEventListener("change", updateUi);
 previewFrame.addEventListener("load", updateUi);
 window.addEventListener("pagehide", () => {
@@ -503,4 +920,15 @@ window.addEventListener("pagehide", () => {
 document.addEventListener("astro:before-swap", () => {
   cleanupCreateDocsRootState(docsRoot);
 });
+
+if (!themeStatusMessage) {
+  setThemeStatus(
+    themeRef
+      ? "Custom theme loaded. Edit tokens or import CSS to update it."
+      : "Pick a seed theme, then adjust tokens in light and dark modes.",
+  );
+}
+
+syncThemeTabs();
+setThemePanelOpen(false);
 updateUi();

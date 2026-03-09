@@ -5,6 +5,7 @@ import {
   isPresetCode,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
+import { getThemeRefFromSearchParams } from "./themes/create-theme";
 
 interface ParseCreateSearchParamsOptions {
   fallbackPreset?: string | null;
@@ -100,4 +101,15 @@ export function parseCreateSearchParams(
     success: true as const,
     data: result.data,
   };
+}
+
+interface ResolveCreateThemeRefOptions {
+  fallbackThemeRef?: string | null;
+}
+
+export function resolveCreateThemeRef(
+  searchParams: URLSearchParams,
+  options: ResolveCreateThemeRefOptions = {},
+) {
+  return getThemeRefFromSearchParams(searchParams, options.fallbackThemeRef);
 }

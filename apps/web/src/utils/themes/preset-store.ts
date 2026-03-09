@@ -2,8 +2,10 @@ import { decodePreset, isPresetCode } from "@bejamas/create-config/browser";
 import {
   encodeThemeCookie,
   getThemeCookieAttributes,
+  getThemeRefCookieAttributes,
   parseThemeCookie,
   PRESET_COOKIE_NAME,
+  THEME_REF_COOKIE_NAME,
   type ParsedThemeCookie,
   type ThemeSwatches,
 } from "./theme-cookie";
@@ -66,12 +68,18 @@ export function getStoredPresetWithSwatches(): ParsedThemeCookie | null {
  * Store the preset key in cookie and localStorage, then dispatch sync event
  * Optionally includes swatches and name for initial render
  */
-export function setStoredPreset(key: string, swatches?: ThemeSwatches, name?: string): void {
+export function setStoredPreset(
+  key: string,
+  swatches?: ThemeSwatches,
+  name?: string,
+  themeRef?: string | null,
+): void {
   if (typeof document === "undefined") return;
 
   const cookieValue = encodeThemeCookie(key, swatches, name);
   const designSystemPreset = isPresetCode(key) ? decodePreset(key) : null;
   document.cookie = `${PRESET_COOKIE_NAME}=${encodeURIComponent(cookieValue)}; ${getThemeCookieAttributes()};`;
+  document.cookie = `${THEME_REF_COOKIE_NAME}=${encodeURIComponent(themeRef ?? "")}; ${getThemeRefCookieAttributes()};`;
   try {
     localStorage.setItem(PRESET_STORAGE_KEY, key);
   } catch {}
@@ -83,6 +91,7 @@ export function setStoredPreset(key: string, swatches?: ThemeSwatches, name?: st
         name,
         preset: designSystemPreset ?? undefined,
         iconLibrary: designSystemPreset?.iconLibrary,
+        themeRef: themeRef ?? null,
       },
     })
   );

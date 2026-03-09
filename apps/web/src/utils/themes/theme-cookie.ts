@@ -1,4 +1,5 @@
 export const PRESET_COOKIE_NAME = "theme";
+export const THEME_REF_COOKIE_NAME = "theme-ref";
 const PRESET_COOKIE_DOMAIN = ".bejamas.com";
 
 export interface ThemeSwatches {
@@ -64,4 +65,8 @@ export function getThemeCookieAttributes() {
   }
 
   return attributes.join("; ");
+}
+
+export function getThemeRefCookieAttributes() {
+  return getThemeCookieAttributes();
 }

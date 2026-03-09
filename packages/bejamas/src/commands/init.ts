@@ -26,6 +26,7 @@ import {
   isPresetCode,
   type DesignSystemConfig,
 } from "@bejamas/create-config/server";
+import type { RegistryItem } from "shadcn/schema";
 
 // process.on("exit", (code) => {
 //   const filePath = path.resolve(process.cwd(), "components.json")
@@ -74,7 +75,7 @@ function resolveDesignSystemConfig(
   });
 }
 
-function buildInitUrl(config: DesignSystemConfig) {
+function buildInitUrl(config: DesignSystemConfig, themeRef?: string) {
   const params = new URLSearchParams({
     preset: encodePreset(config),
     template: config.template,
@@ -84,7 +85,48 @@ function buildInitUrl(config: DesignSystemConfig) {
     params.set("rtl", "true");
   }
 
+  if (themeRef) {
+    params.set("themeRef", themeRef);
+  }
+
   return `https://ui.bejamas.com/init?${params.toString()}`;
+}
+
+function buildThemeCssFromRegistryItem(item: RegistryItem | null) {
+  const cssVars = item?.cssVars;
+  if (!cssVars) {
+    return null;
+  }
+
+  const themeVars = Object.entries(cssVars.theme ?? {}).map(
+    ([key, value]) => `  --${key}: ${value};`,
+  );
+  const lightVars = Object.entries(cssVars.light ?? {}).map(
+    ([key, value]) => `  --${key}: ${value};`,
+  );
+  const darkVars = Object.entries(cssVars.dark ?? {}).map(
+    ([key, value]) => `  --${key}: ${value};`,
+  );
+
+  return [
+    ":root {",
+    ...themeVars,
+    ...lightVars,
+    "}",
+    '.dark, [data-theme="dark"] {',
+    ...darkVars,
+    "}",
+  ].join("\n");
+}
+
+async function fetchInitThemeCss(initUrl: string) {
+  const response = await fetch(initUrl);
+  if (!response.ok) {
+    return null;
+  }
+
+  const item = (await response.json()) as RegistryItem;
+  return buildThemeCssFromRegistryItem(item);
 }
 
 export const initOptionsSchema = z.object({
@@ -132,6 +174,7 @@ export const initOptionsSchema = z.object({
     ),
   baseStyle: z.boolean(),
   rtl: z.boolean().default(false),
+  themeRef: z.string().optional(),
 });
 
 export const init = new Command()
@@ -148,6 +191,7 @@ export const init = new Command()
     undefined,
   )
   .option("-p, --preset <preset>", "the encoded create preset to use")
+  .option("--theme-ref <theme-ref>", "the custom theme ref to use")
   .option("-y, --yes", "skip confirmation prompt.", true)
   .option("-d, --defaults,", "use default configuration.", false)
   .option("-f, --force", "force overwrite of existing configuration.", false)
@@ -215,6 +259,16 @@ export async function runInit(
     await applyDesignSystemToProject(options.cwd, {
       ...designConfig,
       template: newProjectTemplate,
+    }, {
+      themeCss: options.themeRef
+        ? await fetchInitThemeCss(buildInitUrl(
+            {
+              ...designConfig,
+              template: newProjectTemplate,
+            },
+            options.themeRef,
+          ))
+        : undefined,
     });
 
     options.cwd = path.resolve(options.cwd, projectPath[newProjectTemplate]);
@@ -243,7 +297,7 @@ export async function runInit(
       ...process.env,
       REGISTRY_URL: process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL,
     };
-    const initUrl = buildInitUrl(designConfig);
+    const initUrl = buildInitUrl(designConfig, options.themeRef);
     if (await fsExtra.pathExists(localShadcnPath)) {
       await execa(localShadcnPath, ["init", initUrl], {
         stdio: "inherit",

@@ -10,7 +10,9 @@ import { defaultPresets } from "../../../utils/themes/presets";
 import {
   parseThemeCookie,
   PRESET_COOKIE_NAME,
+  THEME_REF_COOKIE_NAME,
 } from "../../../utils/themes/theme-cookie";
+import { getThemeOverridesByRef } from "../../../utils/themes/create-theme.server";
 
 export const prerender = false;
 
@@ -18,7 +20,8 @@ export async function GET({ cookies }: { cookies: AstroCookies }) {
   try {
     const cookieValue = cookies.get(PRESET_COOKIE_NAME)?.value;
     const themeId = cookieValue ? parseThemeCookie(cookieValue).id : null;
-    const generated = await resolveThemeCss(themeId);
+    const themeRef = cookies.get(THEME_REF_COOKIE_NAME)?.value ?? null;
+    const generated = await resolveThemeCss(themeId, themeRef);
 
     return new Response(
       `/* current theme */\n/* dynamically generated at ${new Date().toISOString()} */\n${generated}`,
@@ -41,12 +44,13 @@ export async function GET({ cookies }: { cookies: AstroCookies }) {
   }
 }
 
-async function resolveThemeCss(themeId: string | null) {
+async function resolveThemeCss(themeId: string | null, themeRef: string | null) {
   if (themeId && isPresetCode(themeId)) {
     const decoded = decodePreset(themeId);
     if (decoded) {
+      const themeOverrides = await getThemeOverridesByRef(themeRef);
       return [
-        buildDesignSystemThemeCss(toDesignSystemConfig(decoded)),
+        buildDesignSystemThemeCss(toDesignSystemConfig(decoded), themeOverrides),
         await getCompiledGlobalStyleCss(decoded.style),
       ].join("\n\n");
     }

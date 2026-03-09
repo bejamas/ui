@@ -21,19 +21,32 @@ import {
   getCreatePickerSelectedOption,
 } from "@/utils/create-sidebar";
 import CreatePicker from "./CreatePicker.astro";
+import CreatePickerMarker from "./CreatePickerMarker.astro";
+import CreateThemePanel from "./CreateThemePanel.astro";
+import type { ThemeOverrides } from "@/utils/themes/create-theme";
 
 interface Props {
   config: DesignSystemConfig;
   preset: string;
+  themeRef?: string | null;
+  themeOverrides?: ThemeOverrides | null;
 }
 
-const { config, preset } = Astro.props as Props;
+const {
+  config,
+  preset,
+  themeRef = null,
+  themeOverrides = null,
+} = Astro.props as Props;
 const pickerOptions = getCreatePickerOptions(config);
+const themeOption = getCreatePickerSelectedOption("theme", config);
+const themeLabel = themeRef ? "Custom" : themeOption?.label ?? config.theme;
+const themeSwatchColor =
+  themeOverrides?.light?.primary ?? themeOption?.color ?? "oklch(0.72 0 0)";
 
 const primaryPickers = [
   "style",
   "baseColor",
-  "theme",
   "iconLibrary",
   "font",
   "radius",
@@ -115,10 +128,16 @@ const secondaryPickers = ["template"] as const;
     </div>
 
     <form
-      class="mt-2.5 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col"
+      class="mt-2.5 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col xl:overflow-hidden"
       data-create-form
     >
-      <div class="space-y-2 overflow-y-auto pr-0.5 xl:min-h-0 xl:flex-1">
+      <input type="hidden" name="theme" value={config.theme} data-create-theme-input-hidden />
+      <input type="hidden" name="themeRef" value={themeRef ?? ""} data-create-theme-ref-input />
+
+      <div
+        class="space-y-2 overflow-y-auto pr-0.5 xl:min-h-0 xl:flex-1"
+        data-create-form-main
+      >
         {
           primaryPickers.map((picker) => (
             <CreatePicker
@@ -131,6 +150,35 @@ const secondaryPickers = ["template"] as const;
             />
           ))
         }
+
+        <button
+          type="button"
+          class="flex w-full items-center justify-between rounded-[16px] border border-white/8 bg-white/[0.02] px-3 py-2.75 text-left text-white transition-colors hover:bg-white/[0.04]"
+          data-create-theme-trigger
+        >
+          <span class="min-w-0 space-y-1">
+            <span class="block text-[10px] font-medium uppercase tracking-[0.12em] text-white/38">
+              Theme
+            </span>
+            <span
+              class="block truncate text-[14px] font-medium tracking-[-0.01em] text-white/90"
+              data-create-theme-current-label
+            >
+              {themeLabel}
+            </span>
+          </span>
+
+          <span class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65">
+            <span class="inline-flex items-center justify-center" data-create-theme-current-marker>
+              <CreatePickerMarker
+                kind="swatch"
+                value={config.theme}
+                label={themeLabel}
+                color={themeSwatchColor}
+              />
+            </span>
+          </span>
+        </button>
 
         <Separator class="!my-2.5 !bg-white/8" />
 
@@ -168,6 +216,12 @@ const secondaryPickers = ["template"] as const;
           />
         </label>
       </div>
+
+      <CreateThemePanel
+        config={config}
+        themeRef={themeRef}
+        themeOverrides={themeOverrides}
+      />
     </form>
 
     <Separator class="!my-2.5 !bg-white/8" />

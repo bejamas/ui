@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { encodePreset } from "@bejamas/create-config/server";
-import { parseCreateSearchParams } from "./create";
+import { parseCreateSearchParams, resolveCreateThemeRef } from "./create";
 
 describe("parseCreateSearchParams", () => {
   test("uses the default config when neither URL nor fallback preset is provided", () => {
@@ -122,5 +122,30 @@ describe("parseCreateSearchParams", () => {
       success: false,
       error: "Invalid preset code.",
     });
+  });
+
+  test("restores themeRef from the URL before the cookie fallback", () => {
+    expect(
+      resolveCreateThemeRef(
+        new URLSearchParams({ themeRef: "custom-url-123" }),
+        { fallbackThemeRef: "custom-cookie-456" },
+      ),
+    ).toBe("custom-url-123");
+  });
+
+  test("restores themeRef from the fallback cookie when the URL is empty", () => {
+    expect(
+      resolveCreateThemeRef(new URLSearchParams(), {
+        fallbackThemeRef: "custom-cookie-456",
+      }),
+    ).toBe("custom-cookie-456");
+  });
+
+  test("ignores invalid themeRef values", () => {
+    expect(
+      resolveCreateThemeRef(new URLSearchParams({ themeRef: "rome" }), {
+        fallbackThemeRef: "default",
+      }),
+    ).toBeNull();
   });
 });

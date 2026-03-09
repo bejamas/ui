@@ -44,9 +44,17 @@ async function patchComponentsJson(filepath: string, config: DesignSystemConfig)
 }
 
 async function patchCssFile(filepath: string, config: DesignSystemConfig) {
+  return patchCssFileWithTheme(filepath, config);
+}
+
+async function patchCssFileWithTheme(
+  filepath: string,
+  config: DesignSystemConfig,
+  themeCss = buildThemeCss(config),
+) {
   const current = await fs.readFile(filepath, "utf8");
   const fontImport = `@import "${getFontPackageName(config.font)}";`;
-  const nextBlock = `${fontImport}\n\n${buildThemeCss(config)}\n\n${getGlobalStyleCss(config.style)}`;
+  const nextBlock = `${fontImport}\n\n${themeCss}\n\n${getGlobalStyleCss(config.style)}`;
   const next = replaceCreateBlock(current, nextBlock);
   await fs.writeFile(filepath, next, "utf8");
 }
@@ -96,6 +104,9 @@ async function patchLayoutFile(filepath: string, config: DesignSystemConfig) {
 export async function applyDesignSystemToProject(
   projectPath: string,
   config: DesignSystemConfig,
+  options: {
+    themeCss?: string;
+  } = {},
 ) {
   const componentJsonFiles = await fg("**/components.json", {
     cwd: projectPath,
@@ -132,7 +143,11 @@ export async function applyDesignSystemToProject(
     }
   }
 
-  await Promise.all(Array.from(cssFiles).map((filepath) => patchCssFile(filepath, config)));
+  await Promise.all(
+    Array.from(cssFiles).map((filepath) =>
+      patchCssFileWithTheme(filepath, config, options.themeCss),
+    ),
+  );
   await Promise.all(
     Array.from(packageJsonFiles).map((filepath) =>
       patchPackageJsonDependency(filepath, config),

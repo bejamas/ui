@@ -5,16 +5,20 @@ import {
 import { syncSemanticIconsInRoot } from "@bejamas/semantic-icons/browser";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
+import { normalizeThemeOverrides, type ThemeOverrides } from "@/utils/themes/create-theme";
 
 type PreviewMessage = {
   type: "bejamas:create-preview";
   config: DesignSystemConfig;
+  themeRef: string | null;
+  themeOverrides: ThemeOverrides;
 };
 
 declare global {
   interface Window {
     __BEJAMAS_CREATE_PREVIEW__?: {
       styleCssByStyle: Record<string, string>;
+      initialThemeOverrides?: Partial<ThemeOverrides> | null;
     };
   }
 }
@@ -33,7 +37,10 @@ window.addEventListener("message", (event: MessageEvent<PreviewMessage>) => {
   const styleTag = document.getElementById("create-style-css");
 
   if (themeTag) {
-    themeTag.textContent = buildDesignSystemThemeCss(config);
+    themeTag.textContent = buildDesignSystemThemeCss(
+      config,
+      normalizeThemeOverrides(event.data.themeOverrides),
+    );
   }
 
   if (styleTag) {

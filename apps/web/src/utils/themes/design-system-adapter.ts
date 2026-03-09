@@ -5,6 +5,11 @@ import {
 } from "@bejamas/create-config/browser";
 import type { ThemeStyles } from "../types/theme";
 import { applyThemeToCss } from "./apply-theme";
+import {
+  mergeThemeStyles,
+  normalizeThemeOverrides,
+  type ThemeOverrides,
+} from "./create-theme";
 import { defaultPresets } from "./presets";
 
 type ThemeMode = "light" | "dark";
@@ -21,15 +26,15 @@ export interface ResolvedDesignSystemTheme {
 
 export function resolveDesignSystemTheme(
   config: DesignSystemConfig,
+  overrides?: Partial<ThemeOverrides> | null,
 ): ResolvedDesignSystemTheme {
   const registryTheme = buildRegistryTheme(config);
   const selectedFont = getFontValue(config.font);
   const lightStyles = resolveThemeModeStyles("light", registryTheme.cssVars.light);
   const darkStyles = resolveThemeModeStyles("dark", registryTheme.cssVars.dark);
   const sharedFontStyles = resolveSharedFontStyles(config);
-
-  return {
-    styles: {
+  const styles = mergeThemeStyles(
+    {
       light: {
         ...lightStyles,
         ...sharedFontStyles,
@@ -39,20 +44,48 @@ export function resolveDesignSystemTheme(
         ...sharedFontStyles,
       },
     } as ThemeStyles,
+    overrides,
+  );
+
+  return {
+    styles,
     font: {
       family: selectedFont?.font.family ?? null,
     },
   };
 }
 
-export function buildDesignSystemThemeCss(config: DesignSystemConfig) {
+export function buildDesignSystemThemeCss(
+  config: DesignSystemConfig,
+  overrides?: Partial<ThemeOverrides> | null,
+) {
   return applyThemeToCss({
     currentMode: "light",
-    styles: resolveDesignSystemTheme(config).styles,
+    styles: resolveDesignSystemTheme(config, overrides).styles,
   }).replace(
     "html[data-theme=\"dark\"], html.dark {",
     "html[data-theme=\"dark\"], html.dark, .cn-menu-target.dark {",
   );
+}
+
+export function buildDesignSystemThemeCssVars(
+  config: DesignSystemConfig,
+  overrides?: Partial<ThemeOverrides> | null,
+) {
+  const baseTheme = buildRegistryTheme(config);
+  const normalized = normalizeThemeOverrides(overrides);
+
+  return {
+    theme: baseTheme.cssVars.theme,
+    light: {
+      ...(baseTheme.cssVars.light ?? {}),
+      ...normalized.light,
+    },
+    dark: {
+      ...(baseTheme.cssVars.dark ?? {}),
+      ...normalized.dark,
+    },
+  };
 }
 
 function resolveThemeModeStyles(

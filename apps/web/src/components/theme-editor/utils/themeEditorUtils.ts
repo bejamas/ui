@@ -33,6 +33,11 @@ const validTokens = new Set([
   "sidebar-accent-foreground",
   "sidebar-border",
   "sidebar-ring",
+  "footer",
+  "footer-foreground",
+  "footer-primary",
+  "footer-primary-foreground",
+  "footer-border",
 ]);
 
 export type ThemeStyleValues = {
