@@ -20,7 +20,7 @@ export function updateImportAliases(
   if (isRemote && specifier.startsWith("@/")) {
     specifier = specifier.replace(
       /^@\//,
-      `@/registry/${config.style || "bejamas-bejamas"}/`,
+      `@/registry/${config.style || "bejamas-juno"}/`,
     );
   }
 

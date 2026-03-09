@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { TEMPLATE_VALUES, designSystemConfigSchema } from "@bejamas/create-config/browser";
 import {
   CREATE_PICKER_LABELS,
+  CREATE_PICKER_GROUP_LABELS,
   createRandomDesignSystemConfig,
   getCreatePickerOptions,
   getCreatePickerSelectedOption,
@@ -17,11 +18,11 @@ describe("create sidebar helpers", () => {
   it("derives theme options from the active base color", () => {
     const neutralOptions = getCreatePickerOptions({
       baseColor: "neutral",
-      style: "bejamas",
+      style: "juno",
     });
     const oliveOptions = getCreatePickerOptions({
       baseColor: "olive",
-      style: "bejamas",
+      style: "juno",
     });
 
     expect(neutralOptions.theme.some((option) => option.value === "olive")).toBe(false);
@@ -31,7 +32,7 @@ describe("create sidebar helpers", () => {
   it("keeps template options aligned with the supported template values", () => {
     const options = getCreatePickerOptions({
       baseColor: "neutral",
-      style: "bejamas",
+      style: "juno",
     });
 
     expect(options.template.map((option) => option.value)).toEqual(TEMPLATE_VALUES);
@@ -57,6 +58,26 @@ describe("create sidebar helpers", () => {
       label: "Style default",
       markerValue: "large",
     });
+  });
+
+  it("exposes grouped style options with descriptions", () => {
+    const options = getCreatePickerOptions({
+      baseColor: "neutral",
+      style: "juno",
+    });
+
+    expect(CREATE_PICKER_GROUP_LABELS.bejamas).toBe("Bejamas");
+    expect(CREATE_PICKER_GROUP_LABELS.shadcn).toBe("shadcn");
+    expect(options.style[0]).toMatchObject({
+      value: "juno",
+      label: "Juno",
+      group: "bejamas",
+      description: "Balanced and versatile baseline for Bejamas interfaces.",
+    });
+    expect(
+      options.style.filter((option) => option.group === "shadcn").length,
+    ).toBeGreaterThan(0);
+    expect(options.style.every((option) => Boolean(option.description))).toBe(true);
   });
 
   it("shows the effective synced radius while default mode is active", () => {

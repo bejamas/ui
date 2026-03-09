@@ -72,10 +72,10 @@ describe("create docs shell helpers", () => {
   });
 
   it("builds an init script that tags the route root with the selected style", () => {
-    const script = buildCreateDocsRootInitScript("bejamas");
+    const script = buildCreateDocsRootInitScript("juno");
 
     expect(script).toContain(CREATE_DOCS_ROOT_ATTRIBUTE);
     expect(script).toContain(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE);
-    expect(script).toContain(getCreateStyleClass("bejamas"));
+    expect(script).toContain(getCreateStyleClass("juno"));
   });
 });

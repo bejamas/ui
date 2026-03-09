@@ -521,7 +521,7 @@ export const add = new Command()
       );
     }
 
-    const activeStyle = uiConfig?.style || config?.style || "bejamas-bejamas";
+    const activeStyle = uiConfig?.style || config?.style || "bejamas-juno";
 
     // Process components ONE AT A TIME to avoid index.ts conflicts
     // When shadcn runs with multiple components, files with same name overwrite each other

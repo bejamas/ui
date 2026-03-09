@@ -2,7 +2,7 @@ export const PRESET_STYLES = [
   "nova",
   "vega",
   "lyra",
-  "bejamas",
+  "juno",
   "maia",
   "mira",
 ] as const;
@@ -108,7 +108,7 @@ export type PresetConfig = {
 };
 
 export const DEFAULT_PRESET_CONFIG: PresetConfig = {
-  style: "bejamas",
+  style: "juno",
   baseColor: "neutral",
   theme: "neutral",
   iconLibrary: "lucide",

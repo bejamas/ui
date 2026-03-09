@@ -4,14 +4,19 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@bejamas/ui/components/dropdown-menu";
 import type {
+  CreatePickerGroup,
   CreatePickerMarkerKind,
   CreatePickerOption,
   CreatePickerName,
 } from "@/utils/create-sidebar";
+import { CREATE_PICKER_GROUP_LABELS } from "@/utils/create-sidebar";
 import CreatePickerMarker from "./CreatePickerMarker.astro";
 
 interface Props {
@@ -34,6 +39,16 @@ const {
 const selectedOption =
   providedSelectedOption ??
   options.find((option) => option.value === value) ?? options[0];
+const styleGroups =
+  name === "style"
+    ? (Object.entries(CREATE_PICKER_GROUP_LABELS)
+        .map(([group, groupLabel]) => ({
+          group,
+          label: groupLabel,
+          options: options.filter((option) => option.group === group),
+        }))
+        .filter((group) => group.options.length > 0) as CreatePickerGroup[])
+    : [];
 ---
 
 <DropdownMenu data-create-picker={name} class="block w-full">
@@ -80,42 +95,101 @@ const selectedOption =
     sideOffset={10}
     class="create-picker-content !min-w-[10.5rem] !rounded-[18px] !border-white/8 !bg-[#353331]/96 !p-1.25 !text-white !shadow-[0_20px_50px_rgba(0,0,0,0.32)] !ring-0 backdrop-blur-xl"
   >
-    <div data-create-picker-items>
-      {
-        options.map((option) => {
-          const isSelected = option.value === selectedOption?.value;
+    {
+      name === "style" ? (
+        styleGroups.map((group, index) => (
+          <>
+            {index > 0 && <DropdownMenuSeparator class="!my-1.5 !bg-white/8" />}
+            <DropdownMenuLabel class="!px-3 !pb-1 !pt-1.5 !text-[10px] !font-semibold !uppercase !tracking-[0.12em] !text-white/40">
+              {group.label}
+            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              {
+                group.options.map((option) => {
+                  const isSelected = option.value === selectedOption?.value;
 
-          return (
-            <DropdownMenuItem
-              class="create-picker-item !gap-2.5 !rounded-[12px] !px-3 !py-2 !text-[14px] !font-medium !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
-              data-create-picker-item
-              data-value={option.value}
-              data-selected={isSelected ? "" : undefined}
-            >
-              <span class="truncate" data-create-picker-item-label>{option.label}</span>
-              <span class="ml-auto flex shrink-0 items-center gap-2">
-                <span data-create-picker-item-marker>
-                    <CreatePickerMarker
-                      kind={markerKind}
-                      value={option.markerValue ?? option.value}
-                      label={option.label}
-                      color={option.color}
-                      family={option.family}
-                  />
-                </span>
-                <CheckIcon
-                  class:list={[
-                    "size-4 text-white/78 transition-opacity",
-                    isSelected ? "opacity-100" : "opacity-0",
-                  ]}
-                  data-create-picker-item-check
-                  aria-hidden="true"
-                />
-              </span>
-            </DropdownMenuItem>
-          );
-        })
-      }
-    </div>
+                  return (
+                    <DropdownMenuItem
+                      class="create-picker-item !items-start !gap-2.5 !rounded-[12px] !px-3 !py-2.5 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
+                      data-create-picker-item
+                      data-value={option.value}
+                      data-selected={isSelected ? "" : undefined}
+                    >
+                      <span class="min-w-0 flex-1">
+                        <span class="block truncate text-[14px] font-medium tracking-[-0.01em]" data-create-picker-item-label>
+                          {option.label}
+                        </span>
+                        {option.description && (
+                          <span class="mt-0.5 block text-[12px] leading-4 text-white/52">
+                            {option.description}
+                          </span>
+                        )}
+                      </span>
+                      <span class="ml-auto flex shrink-0 items-center gap-2 pt-0.5">
+                        <span data-create-picker-item-marker>
+                          <CreatePickerMarker
+                            kind={markerKind}
+                            value={option.markerValue ?? option.value}
+                            label={option.label}
+                            color={option.color}
+                            family={option.family}
+                          />
+                        </span>
+                        <CheckIcon
+                          class:list={[
+                            "size-4 text-white/78 transition-opacity",
+                            isSelected ? "opacity-100" : "opacity-0",
+                          ]}
+                          data-create-picker-item-check
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </DropdownMenuItem>
+                  );
+                })
+              }
+            </DropdownMenuGroup>
+          </>
+        ))
+      ) : (
+        <div data-create-picker-items>
+          {
+            options.map((option) => {
+              const isSelected = option.value === selectedOption?.value;
+
+              return (
+                <DropdownMenuItem
+                  class="create-picker-item !gap-2.5 !rounded-[12px] !px-3 !py-2 !text-[14px] !font-medium !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
+                  data-create-picker-item
+                  data-value={option.value}
+                  data-selected={isSelected ? "" : undefined}
+                >
+                  <span class="truncate" data-create-picker-item-label>{option.label}</span>
+                  <span class="ml-auto flex shrink-0 items-center gap-2">
+                    <span data-create-picker-item-marker>
+                      <CreatePickerMarker
+                        kind={markerKind}
+                        value={option.markerValue ?? option.value}
+                        label={option.label}
+                        color={option.color}
+                        family={option.family}
+                      />
+                    </span>
+                    <CheckIcon
+                      class:list={[
+                        "size-4 text-white/78 transition-opacity",
+                        isSelected ? "opacity-100" : "opacity-0",
+                      ]}
+                      data-create-picker-item-check
+                      aria-hidden="true"
+                    />
+                  </span>
+                </DropdownMenuItem>
+              );
+            })
+          }
+        </div>
+      )
+    }
   </DropdownMenuContent>
 </DropdownMenu>

@@ -1,9 +1,9 @@
 export const STYLES = [
   {
-    name: "bejamas",
-    id: "bejamas-bejamas",
-    title: "Bejamas",
-    description: "The current bejamas/ui baseline.",
+    name: "juno",
+    id: "bejamas-juno",
+    title: "Juno",
+    description: "Balanced and versatile baseline for Bejamas interfaces.",
   },
   {
     name: "vega",

@@ -71,7 +71,7 @@ const RADIUS_VALUES = {
 } as const satisfies Record<DesignSystemConfig["radius"], string>;
 
 const STYLE_DEFAULT_RADII = {
-  bejamas: "default",
+  juno: "default",
   vega: "default",
   nova: "default",
   lyra: "none",

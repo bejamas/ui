@@ -1,26 +1,28 @@
 import { describe, expect, it } from "bun:test";
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
+  PRESET_STYLES,
   STYLES,
   getCompiledGlobalStyleCss,
   getCompiledStyleCss,
 } from "../src/server";
 
 describe("style catalog defaults", () => {
-  it("exposes bejamas as a public style", () => {
-    expect(STYLES.map((style) => style.name)).toContain("bejamas");
+  it("exposes juno as a public style", () => {
+    expect(STYLES.map((style) => style.name)).toContain("juno");
     expect(STYLES.map((style) => style.name)).toContain("maia");
     expect(STYLES.map((style) => style.name)).toContain("mira");
-    expect(DEFAULT_DESIGN_SYSTEM_CONFIG.style).toBe("bejamas");
+    expect(DEFAULT_DESIGN_SYSTEM_CONFIG.style).toBe("juno");
+    expect(PRESET_STYLES.indexOf("juno")).toBe(3);
   });
 
-  it("compiles the bejamas baseline style", async () => {
-    const css = await getCompiledStyleCss("bejamas");
-    const globalCss = await getCompiledGlobalStyleCss("bejamas");
+  it("compiles the juno baseline style", async () => {
+    const css = await getCompiledStyleCss("juno");
+    const globalCss = await getCompiledGlobalStyleCss("juno");
 
-    expect(css).toContain(".style-bejamas");
+    expect(css).toContain(".style-juno");
     expect(css).toContain(".cn-card");
-    expect(globalCss).not.toContain(".style-bejamas");
+    expect(globalCss).not.toContain(".style-juno");
     expect(globalCss).toContain(".cn-card");
   });
 

@@ -4,7 +4,7 @@ import { z } from "zod";
 export const REGISTRY_URL =
   process.env.REGISTRY_URL ?? "https://ui.bejamas.com/r";
 
-export const FALLBACK_STYLE = "bejamas-bejamas";
+export const FALLBACK_STYLE = "bejamas-juno";
 
 export const BASE_COLORS = [
   {

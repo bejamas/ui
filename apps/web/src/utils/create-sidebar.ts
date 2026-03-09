@@ -32,10 +32,23 @@ export type CreatePickerMarkerKind =
 export type CreatePickerOption = {
   value: string;
   label: string;
+  description?: string;
+  group?: "bejamas" | "shadcn";
   color?: string;
   family?: string;
   markerValue?: string;
 };
+
+export type CreatePickerGroup = {
+  group: keyof typeof CREATE_PICKER_GROUP_LABELS;
+  label: (typeof CREATE_PICKER_GROUP_LABELS)[keyof typeof CREATE_PICKER_GROUP_LABELS];
+  options: CreatePickerOption[];
+};
+
+export const CREATE_PICKER_GROUP_LABELS = {
+  bejamas: "Bejamas",
+  shadcn: "shadcn",
+} as const;
 
 const RADIUS_OPTIONS = [
   { value: "default", label: "Style default" },
@@ -105,6 +118,8 @@ export function getCreatePickerOptions(
     style: STYLES.map((style) => ({
       value: style.name,
       label: style.title,
+      description: style.description,
+      group: style.name === "juno" ? "bejamas" : "shadcn",
     })),
     baseColor: catalogs.baseColors.map((baseColor) => ({
       value: baseColor.name,

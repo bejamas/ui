@@ -6,7 +6,7 @@ import {
 
 describe("style-linked radius defaults", () => {
   it("maps styles to the expected default radius", () => {
-    expect(getStyleDefaultRadius("bejamas")).toBe("default");
+    expect(getStyleDefaultRadius("juno")).toBe("default");
     expect(getStyleDefaultRadius("vega")).toBe("default");
     expect(getStyleDefaultRadius("nova")).toBe("default");
     expect(getStyleDefaultRadius("lyra")).toBe("none");

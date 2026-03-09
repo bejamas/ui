@@ -237,7 +237,7 @@ export async function getProjectConfig(
 
   const config: z.infer<typeof rawConfigSchema> = {
     $schema: "https://ui.shadcn.com/schema.json",
-    style: "bejamas-bejamas",
+    style: "bejamas-juno",
     tailwind: {
       config: projectInfo.tailwindConfigFile ?? "",
       baseColor: "zinc",

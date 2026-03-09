@@ -12,7 +12,7 @@ describe("parseCreateSearchParams", () => {
     }
 
     expect(result.data).toMatchObject({
-      style: "bejamas",
+      style: "juno",
       baseColor: "neutral",
       theme: "neutral",
       font: "geist",
@@ -75,7 +75,7 @@ describe("parseCreateSearchParams", () => {
     }
 
     expect(result.data).toMatchObject({
-      style: "bejamas",
+      style: "juno",
       baseColor: "neutral",
       theme: "neutral",
       font: "geist",

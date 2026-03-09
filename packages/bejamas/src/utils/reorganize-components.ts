@@ -27,7 +27,7 @@ export type PathRewriteMap = Map<string, string>;
 export async function fetchRegistryItem(
   componentName: string,
   registryUrl: string,
-  style = "bejamas-bejamas",
+  style = "bejamas-juno",
 ): Promise<RegistryItem | null> {
   const url = `${registryUrl}/styles/${style}/${componentName}.json`;
 
@@ -111,7 +111,7 @@ export async function buildPathRewriteMap(
   components: string[],
   uiDir: string,
   registryUrl: string,
-  style = "bejamas-bejamas",
+  style = "bejamas-juno",
 ): Promise<PathRewriteMap> {
   const rewrites: PathRewriteMap = new Map();
 
@@ -184,7 +184,7 @@ export async function reorganizeComponents(
   uiDir: string,
   registryUrl: string,
   verbose: boolean,
-  style = "bejamas-bejamas",
+  style = "bejamas-juno",
 ): Promise<ReorganizeResult> {
   const result: ReorganizeResult = { totalMoved: 0, movedFiles: [], skippedFiles: [] };
 

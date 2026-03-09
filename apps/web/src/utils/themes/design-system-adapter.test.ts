@@ -6,7 +6,7 @@ import {
 } from "./design-system-adapter";
 
 const baseConfig = {
-  style: "bejamas",
+  style: "juno",
   baseColor: "neutral",
   theme: "neutral",
   font: "geist",
