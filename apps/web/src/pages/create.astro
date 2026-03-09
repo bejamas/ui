@@ -52,7 +52,7 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
 ---
 
 <style is:global>
-  @import "@bejamas/ui/styles/globals.css";
+  @import "../styles/globals.css";
 </style>
 <script is:inline set:html={docsRootInitScript} />
 <style
@@ -170,6 +170,18 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
 
   :root[data-create-docs-themed] [data-create-customizer-stable] .cn-switch {
     @apply !h-5 !w-8 !rounded-full !border-transparent !bg-white/15 !shadow-none;
+  }
+
+  [data-create-form-main] {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing) * 2);
+  }
+
+  .create-customizer-actions {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing) * 1.5);
   }
 
   :root[data-create-docs-themed]

@@ -2,6 +2,7 @@
 
 @import "@astrojs/starlight-tailwind";
 @import "@bejamas/ui/styles/globals.css";
+@source "../**/*.{ts,tsx,astro,mdx,md}";
 
 .site-title img {
   max-width: calc(var(--spacing) * 12);
