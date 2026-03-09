@@ -15,7 +15,6 @@ import {
   THEME_REF_COOKIE_NAME,
 } from "@/utils/themes/theme-cookie";
 import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
-import createPageScript from "@/scripts/create-page.ts?url";
 import CreateCustomizer from "@/components/create/CreateCustomizer.astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
@@ -114,7 +113,9 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
     initialThemeOverrides,
   };
 </script>
-<script type="module" src={createPageScript}></script>
+<script>
+  import "@/scripts/create-page.ts";
+</script>
 
 <style is:global>
   @reference "tailwindcss";

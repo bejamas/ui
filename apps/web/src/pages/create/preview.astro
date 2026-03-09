@@ -7,7 +7,6 @@ import {
   getCompiledStyleCss,
 } from "@bejamas/create-config/server";
 import CreatePreviewSurface from "@/components/create/CreatePreviewSurface.astro";
-import createPreviewScript from "@/scripts/create-preview.ts?url";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
 import { buildIframeThemeSyncInlineScript } from "@/utils/themes/iframe-theme-sync";
 import { parseCreateSearchParams, resolveCreateThemeRef } from "@/utils/create";
@@ -103,6 +102,8 @@ const previewCopy = getCreatePreviewCopy(currentLanguage);
         initialThemeOverrides,
       };
     </script>
-    <script type="module" src={createPreviewScript}></script>
+    <script>
+      import "@/scripts/create-preview.ts";
+    </script>
   </body>
 </html>
