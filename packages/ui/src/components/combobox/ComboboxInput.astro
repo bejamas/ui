@@ -7,8 +7,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
 } from "../input-group";
-import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
-import XIcon from "@lucide/astro/icons/x";
+import SemanticIcon from "../icon/SemanticIcon.astro";
 
 interface Props extends Omit<HTMLAttributes<"input">, "size"> {
   class?: string;
@@ -49,7 +48,7 @@ const {
             class="cn-combobox-clear hidden [[data-value]_&]:inline-flex"
             aria-label="Clear selection"
           >
-            <XIcon class="size-3.5 group-data-[size=sm]/input-group:size-3" />
+            <SemanticIcon name="x" class="size-3.5 group-data-[size=sm]/input-group:size-3" />
           </InputGroupButton>
         )}
         {showTrigger && (
@@ -65,7 +64,8 @@ const {
             )}
             aria-label="Toggle menu"
           >
-            <ChevronDownIcon
+            <SemanticIcon
+              name="chevron-down"
               data-slot="combobox-icon"
               class="cn-combobox-icon size-4 group-data-[size=sm]/input-group:size-3.5"
             />

@@ -137,6 +137,7 @@
 </script>
 
 <script>
+  import { syncSemanticIconsInRoot } from "@bejamas/semantic-icons/browser";
   import {
     buildCurrentThemeStylesheetHref,
     CURRENT_THEME_STYLESHEET_SELECTOR,
@@ -146,6 +147,20 @@
   const SETUP_KEY = "__bejamasCurrentThemeStylesheetSync";
   let reloadFrame = 0;
   let reloadVersion = 0;
+  let pendingIconLibrary = null;
+
+  function syncDocumentIconLibrary() {
+    const renderedIcon = document.querySelector("[data-icon-library]");
+    const iconLibrary =
+      renderedIcon instanceof SVGElement
+        ? renderedIcon.dataset.iconLibrary
+        : document.documentElement.dataset.iconLibrary;
+
+    if (iconLibrary) {
+      document.documentElement.dataset.iconLibrary = iconLibrary;
+      syncSemanticIconsInRoot(document, iconLibrary);
+    }
+  }
 
   function refreshCurrentThemeStylesheet() {
     const links = Array.from(
@@ -174,6 +189,11 @@
             link.remove();
           }
         });
+        if (pendingIconLibrary) {
+          document.documentElement.dataset.iconLibrary = pendingIconLibrary;
+          syncSemanticIconsInRoot(document, pendingIconLibrary);
+          pendingIconLibrary = null;
+        }
         window.StarlightThemeProvider?.refreshThemeColors?.();
       },
       { once: true },
@@ -183,6 +203,11 @@
       "error",
       () => {
         replacement.remove();
+        if (pendingIconLibrary) {
+          document.documentElement.dataset.iconLibrary = pendingIconLibrary;
+          syncSemanticIconsInRoot(document, pendingIconLibrary);
+          pendingIconLibrary = null;
+        }
         window.StarlightThemeProvider?.refreshThemeColors?.();
       },
       { once: true },
@@ -204,13 +229,22 @@
 
   if (!(SETUP_KEY in window)) {
     window[SETUP_KEY] = true;
+    syncDocumentIconLibrary();
 
-    window.addEventListener(
-      PRESET_CHANGE_EVENT,
-      scheduleCurrentThemeStylesheetRefresh,
-    );
+    window.addEventListener(PRESET_CHANGE_EVENT, (event) => {
+      const presetChange = event;
+
+      pendingIconLibrary =
+        presetChange instanceof CustomEvent &&
+        typeof presetChange.detail?.iconLibrary === "string"
+          ? presetChange.detail.iconLibrary
+          : null;
+
+      scheduleCurrentThemeStylesheetRefresh();
+    });
     document.addEventListener("astro:after-swap", () => {
       window.StarlightThemeProvider?.refreshThemeColors?.();
+      syncDocumentIconLibrary();
     });
   }
 </script>

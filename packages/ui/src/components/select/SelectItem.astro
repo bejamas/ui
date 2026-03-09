@@ -1,7 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
-import CheckIcon from "@lucide/astro/icons/check";
+import SemanticIcon from "../icon/SemanticIcon.astro";
 
 interface Props extends HTMLAttributes<"div"> {
   value: string;
@@ -45,7 +45,7 @@ const {
     class="cn-select-item-indicator pointer-events-none absolute right-2 flex size-4 items-center justify-center"
   >
     <span class="hidden items-center justify-center group-data-[selected]/item:inline-flex">
-      <CheckIcon class="size-4" />
+      <SemanticIcon name="check" class="size-4" />
     </span>
   </span>
 </div>

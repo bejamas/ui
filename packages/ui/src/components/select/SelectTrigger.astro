@@ -1,7 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
-import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
+import SemanticIcon from "../icon/SemanticIcon.astro";
 
 interface Props extends HTMLAttributes<"button"> {
   class?: string;
@@ -35,7 +35,8 @@ const {
   )}
 >
   <slot />
-  <ChevronDownIcon
+  <SemanticIcon
+    name="chevron-down"
     class="cn-select-icon cn-select-trigger-icon size-4 text-muted-foreground -mr-0.75"
     data-slot="select-icon"
   />

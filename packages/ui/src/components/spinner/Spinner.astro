@@ -123,12 +123,13 @@
  */
 
 import { cn } from "@bejamas/ui/lib/utils";
-import { LoaderCircle as Loader2Icon } from "@lucide/astro";
+import SemanticIcon from "../icon/SemanticIcon.astro";
 
 const { class: className = "", ...props } = Astro.props;
 ---
 
-<Loader2Icon
+<SemanticIcon
+  name="loader-circle"
   data-slot="spinner"
   role="status"
   aria-label="Loading"

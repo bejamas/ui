@@ -1,8 +1,8 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { cva } from "class-variance-authority";
-import { ChevronDown } from "@lucide/astro";
 import { cn } from "@bejamas/ui/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
 
 interface Props extends HTMLAttributes<"button"> {
   class?: string;
@@ -26,7 +26,8 @@ const {
   class={cn("cn-navigation-menu-trigger", navigationMenuTriggerStyle(), "group", className)}
 >
   <slot />
-  <ChevronDown
+  <SemanticIcon
+    name="chevron-down"
     class="text-muted-foreground size-3 transition-transform duration-200 ease group-data-[state=open]:rotate-180"
     aria-hidden="true"
   />

@@ -2,8 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import { cva } from "class-variance-authority";
-import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
-import ChevronUpIcon from "@lucide/astro/icons/chevron-up";
+import SemanticIcon from "../icon/SemanticIcon.astro";
 
 interface Props extends HTMLAttributes<"div"> {
   class?: string;
@@ -77,7 +76,7 @@ const contentVariants = cva(
     class="cn-select-scroll-up-button"
     hidden
   >
-    <slot name="scroll-up"><ChevronUpIcon class="size-4" /></slot>
+    <slot name="scroll-up"><SemanticIcon name="chevron-up" class="size-4" /></slot>
   </div>
   <div
     data-slot="select-viewport"
@@ -91,6 +90,6 @@ const contentVariants = cva(
     class="cn-select-scroll-down-button"
     hidden
   >
-    <slot name="scroll-down"><ChevronDownIcon class="size-4" /></slot>
+    <slot name="scroll-down"><SemanticIcon name="chevron-down" class="size-4" /></slot>
   </div>
 </div>

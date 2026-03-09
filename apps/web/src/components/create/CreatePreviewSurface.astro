@@ -81,19 +81,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@bejamas/ui/components/tooltip";
-import {
-  BellIcon,
-  BoldIcon,
-  CalendarIcon,
-  CreditCardIcon,
-  EllipsisIcon,
-  GlobeIcon,
-  ItalicIcon,
-  SparklesIcon,
-  UnderlineIcon,
-} from "@lucide/astro";
+import SemanticIcon from "@/components/icons/SemanticIcon.astro";
+import type { IconLibraryName } from "@bejamas/create-config/server";
 
 interface Props {
+  iconLibrary?: IconLibraryName;
   iconLibraryLabel?: string;
   styleLabel?: string;
   fontLabel?: string;
@@ -104,6 +96,7 @@ interface Props {
 }
 
 const {
+  iconLibrary = "lucide",
   iconLibraryLabel = "Lucide",
   styleLabel = "Nova",
   fontLabel = "Geist",
@@ -229,8 +222,9 @@ const {
             </div>
           </FieldGroup>
         </CardContent>
-        <Separator />
-        <CardFooter class="flex flex-wrap items-center justify-between gap-3">
+        <CardFooter
+          class="flex flex-wrap items-center justify-between gap-3 mt-auto"
+        >
           <div class="flex items-center gap-2">
             <Avatar>
               <AvatarImage src="https://github.com/thomkrupa.png" alt="Thom" />
@@ -245,7 +239,7 @@ const {
           <div class="flex items-center gap-2">
             <Button variant="outline">Preview docs</Button>
             <Button>
-              <SparklesIcon class="size-4" />
+              <SemanticIcon library={iconLibrary} name="sparkles" class="size-4" />
               Create project
             </Button>
           </div>
@@ -262,13 +256,13 @@ const {
         <CardContent class="space-y-4">
           <ToggleGroup variant="outline" defaultValue="bold">
             <ToggleGroupItem value="bold" aria-label="Bold">
-              <BoldIcon />
+              <SemanticIcon library={iconLibrary} name="bold" class="size-4" />
             </ToggleGroupItem>
             <ToggleGroupItem value="italic" aria-label="Italic">
-              <ItalicIcon />
+              <SemanticIcon library={iconLibrary} name="italic" class="size-4" />
             </ToggleGroupItem>
             <ToggleGroupItem value="underline" aria-label="Underline">
-              <UnderlineIcon />
+              <SemanticIcon library={iconLibrary} name="underline" class="size-4" />
             </ToggleGroupItem>
           </ToggleGroup>
 
@@ -280,7 +274,11 @@ const {
             <TabsContent value="overview" class="pt-3">
               <Item variant="outline">
                 <ItemMedia>
-                  <BellIcon class="size-4 text-muted-foreground" />
+                  <SemanticIcon
+                    library={iconLibrary}
+                    name="bell"
+                    class="size-4 text-muted-foreground"
+                  />
                 </ItemMedia>
                 <ItemContent>
                   <ItemTitle>Notifications enabled</ItemTitle>
@@ -290,7 +288,7 @@ const {
                 </ItemContent>
                 <ItemActions>
                   <Button variant="ghost" size="icon" aria-label="More">
-                    <EllipsisIcon class="size-4" />
+                    <SemanticIcon library={iconLibrary} name="ellipsis" class="size-4" />
                   </Button>
                 </ItemActions>
               </Item>
@@ -299,7 +297,11 @@ const {
               <ItemGroup class="rounded-xl border border-border">
                 <Item>
                   <ItemMedia>
-                    <CalendarIcon class="size-4 text-muted-foreground" />
+                    <SemanticIcon
+                      library={iconLibrary}
+                      name="calendar"
+                      class="size-4 text-muted-foreground"
+                    />
                   </ItemMedia>
                   <ItemContent>
                     <ItemTitle>Weekly review</ItemTitle>
@@ -309,7 +311,11 @@ const {
                 <ItemSeparator />
                 <Item>
                   <ItemMedia>
-                    <GlobeIcon class="size-4 text-muted-foreground" />
+                    <SemanticIcon
+                      library={iconLibrary}
+                      name="globe"
+                      class="size-4 text-muted-foreground"
+                    />
                   </ItemMedia>
                   <ItemContent>
                     <ItemTitle>Registry synced</ItemTitle>
@@ -405,7 +411,11 @@ const {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline">
-                  <CreditCardIcon class="size-4" />
+                  <SemanticIcon
+                    library={iconLibrary}
+                    name="credit-card"
+                    class="size-4"
+                  />
                   Card required
                 </Button>
               </TooltipTrigger>

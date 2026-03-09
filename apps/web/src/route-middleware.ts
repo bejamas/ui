@@ -1,8 +1,15 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
+import { PRESET_COOKIE_NAME } from "@/utils/themes/theme-cookie";
+import { resolveActiveIconLibrary } from "@/utils/themes/active-icon-library";
 
 export const onRequest = defineRouteMiddleware((context) => {
   const { entry, siteTitle, head } = context.locals.starlightRoute;
   const pathname = context.url.pathname;
+  const themeCookie = context.cookies.get(PRESET_COOKIE_NAME)?.value;
+
+  context.locals.bejamasTheme = {
+    iconLibrary: resolveActiveIconLibrary(context.url.searchParams, themeCookie),
+  };
 
   const baseOgOrigin = "https://og.ui.bejamas.com";
   const entryTitle = entry?.data?.title ?? siteTitle ?? "bejamas/ui";

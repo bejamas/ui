@@ -1,5 +1,4 @@
-export const PRESET_STORAGE_KEY = "theme-preset";
-export const PRESET_CHANGE_EVENT = "bejamas:preset-change";
+import { decodePreset, isPresetCode } from "@bejamas/create-config/browser";
 import {
   encodeThemeCookie,
   getThemeCookieAttributes,
@@ -8,6 +7,9 @@ import {
   type ParsedThemeCookie,
   type ThemeSwatches,
 } from "./theme-cookie";
+
+export const PRESET_STORAGE_KEY = "theme-preset";
+export const PRESET_CHANGE_EVENT = "bejamas:preset-change";
 
 export {
   encodeThemeCookie,
@@ -68,12 +70,21 @@ export function setStoredPreset(key: string, swatches?: ThemeSwatches, name?: st
   if (typeof document === "undefined") return;
 
   const cookieValue = encodeThemeCookie(key, swatches, name);
+  const designSystemPreset = isPresetCode(key) ? decodePreset(key) : null;
   document.cookie = `${PRESET_COOKIE_NAME}=${encodeURIComponent(cookieValue)}; ${getThemeCookieAttributes()};`;
   try {
     localStorage.setItem(PRESET_STORAGE_KEY, key);
   } catch {}
   window.dispatchEvent(
-    new CustomEvent(PRESET_CHANGE_EVENT, { detail: { key, swatches, name } })
+    new CustomEvent(PRESET_CHANGE_EVENT, {
+      detail: {
+        key,
+        swatches,
+        name,
+        preset: designSystemPreset ?? undefined,
+        iconLibrary: designSystemPreset?.iconLibrary,
+      },
+    })
   );
 }
 

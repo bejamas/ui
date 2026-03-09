@@ -2,6 +2,7 @@ import {
   catalogs,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
+import { syncSemanticIconsInRoot } from "@bejamas/semantic-icons/browser";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
 
@@ -54,6 +55,7 @@ window.addEventListener("message", (event: MessageEvent<PreviewMessage>) => {
     catalogs.iconLibraries.find((library) => library.name === config.iconLibrary)?.label ??
       config.iconLibrary,
   );
+  syncSemanticIconsInRoot(document, config.iconLibrary);
   setText(
     "[data-create-style-label]",
     catalogs.styles.find((style) => style.name === config.style)?.title ?? config.style,

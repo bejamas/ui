@@ -3,6 +3,11 @@ import { BASE_COLORS } from "./catalog/base-colors";
 import { STYLES } from "./catalog/styles";
 import { THEMES } from "./catalog/themes";
 import {
+  ICON_LIBRARY_COLLECTIONS,
+  ICON_LIBRARY_PACKAGE_NAMES,
+  type IconLibraryName,
+} from "@bejamas/semantic-icons";
+import {
   getBaseColor,
   getFontValue,
   getRadiusValue,
@@ -13,12 +18,42 @@ import {
 } from "./config";
 
 export const ICON_LIBRARIES = [
-  { name: "lucide", packageName: "@lucide/astro", label: "Lucide" },
-  { name: "hugeicons", packageName: "@iconify-json/hugeicons", label: "Hugeicons" },
-  { name: "tabler", packageName: "@iconify-json/tabler", label: "Tabler" },
-  { name: "phosphor", packageName: "@iconify-json/ph", label: "Phosphor" },
-  { name: "remixicon", packageName: "@iconify-json/ri", label: "Remix Icon" },
-] as const;
+  {
+    name: "lucide",
+    packageName: ICON_LIBRARY_PACKAGE_NAMES.lucide,
+    collection: ICON_LIBRARY_COLLECTIONS.lucide,
+    label: "Lucide",
+  },
+  {
+    name: "hugeicons",
+    packageName: ICON_LIBRARY_PACKAGE_NAMES.hugeicons,
+    collection: ICON_LIBRARY_COLLECTIONS.hugeicons,
+    label: "Hugeicons",
+  },
+  {
+    name: "tabler",
+    packageName: ICON_LIBRARY_PACKAGE_NAMES.tabler,
+    collection: ICON_LIBRARY_COLLECTIONS.tabler,
+    label: "Tabler",
+  },
+  {
+    name: "phosphor",
+    packageName: ICON_LIBRARY_PACKAGE_NAMES.phosphor,
+    collection: ICON_LIBRARY_COLLECTIONS.phosphor,
+    label: "Phosphor",
+  },
+  {
+    name: "remixicon",
+    packageName: ICON_LIBRARY_PACKAGE_NAMES.remixicon,
+    collection: ICON_LIBRARY_COLLECTIONS.remixicon,
+    label: "Remix Icon",
+  },
+] as const satisfies ReadonlyArray<{
+  name: IconLibraryName;
+  packageName: string;
+  collection: string;
+  label: string;
+}>;
 
 export function buildRegistryTheme(config: DesignSystemConfig) {
   const baseColor = getBaseColor(config.baseColor);

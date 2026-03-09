@@ -39,6 +39,7 @@ const currentRadiusLabel = currentConfig
     {
       currentConfig ? (
         <CreatePreviewSurface
+          iconLibrary={currentConfig.iconLibrary}
           iconLibraryLabel={
             catalogs.iconLibraries.find(
               (library) => library.name === currentConfig.iconLibrary,

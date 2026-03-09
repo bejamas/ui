@@ -111,7 +111,7 @@ export function getStyleId(style: DesignSystemConfig["style"]) {
 }
 
 export function getStyleDefaultRadius(style: DesignSystemConfig["style"]) {
-  return STYLE_DEFAULT_RADII[style];
+  return STYLE_DEFAULT_RADII[style as keyof typeof STYLE_DEFAULT_RADII];
 }
 
 export function resolveEffectiveRadius(
