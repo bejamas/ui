@@ -1,40 +1,22 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { compile } from "@tailwindcss/node";
 import postcss, { type AtRule, type ChildNode, type Declaration, type Rule } from "postcss";
 import { STYLES } from "./catalog/styles";
 import type { DesignSystemConfig } from "./config";
+import {
+  compiledGlobalStyleCssByStyle,
+  compiledStyleCssByStyle,
+} from "./generated/compiled-style-css.js";
+import { getGlobalStyleCss } from "./style-css-source";
+export {
+  getGlobalStyleCss,
+  getScopedStyleCss,
+  getStyleCss,
+} from "./style-css-source";
 
 export interface RegistryCssObject {
   [key: string]: string | RegistryCssObject;
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const globalsCssPath = path.resolve(__dirname, "../../ui/src/styles/globals.css");
-
-const styleCssCache = new Map<string, string>();
-const compiledStyleCssCache = new Map<string, string>();
-const compiledGlobalStyleCssCache = new Map<string, string>();
 const registryCssCache = new Map<string, RegistryCssObject>();
-
-function getStyleFilepath(style: DesignSystemConfig["style"]) {
-  return path.resolve(__dirname, "styles", `style-${style}.css`);
-}
-
-function unwrapScopedCss(cssText: string, style: DesignSystemConfig["style"]) {
-  const scope = `.style-${style}`;
-  const start = cssText.indexOf(scope);
-  const braceStart = cssText.indexOf("{", start);
-  const braceEnd = cssText.lastIndexOf("}");
-
-  if (start === -1 || braceStart === -1 || braceEnd === -1) {
-    return cssText.trim();
-  }
-
-  return cssText.slice(braceStart + 1, braceEnd).trim();
-}
 
 function nodeToObject(node: ChildNode): [string, string | RegistryCssObject] | null {
   if (node.type === "rule") {
@@ -78,89 +60,14 @@ function nodeToObject(node: ChildNode): [string, string | RegistryCssObject] | n
   return null;
 }
 
-export function getStyleCss(style: DesignSystemConfig["style"]) {
-  const existing = styleCssCache.get(style);
-  if (existing) {
-    return existing;
-  }
-
-  const css = readFileSync(getStyleFilepath(style), "utf8");
-  styleCssCache.set(style, css);
-  return css;
-}
-
-export function getScopedStyleCss(
-  style: DesignSystemConfig["style"],
-  scopeClass = `.style-${style}`,
-) {
-  const raw = getStyleCss(style);
-  return raw.replace(`.style-${style}`, scopeClass).trim();
-}
-
-export function getGlobalStyleCss(style: DesignSystemConfig["style"]) {
-  return unwrapScopedCss(getStyleCss(style), style);
-}
-
 export async function getCompiledStyleCss(style: DesignSystemConfig["style"]) {
-  const cached = compiledStyleCssCache.get(style);
-  if (cached) {
-    return cached;
-  }
-
-  const rawCss = getStyleCss(style);
-  const compiler = await compile(
-    [
-      `@reference "${globalsCssPath.replace(/\\/g, "/")}";`,
-      "@utility no-scrollbar {",
-      "  scrollbar-width: none;",
-      "  &::-webkit-scrollbar {",
-      "    display: none;",
-      "  }",
-      "}",
-      rawCss,
-    ].join("\n"),
-    {
-      base: process.cwd(),
-      from: getStyleFilepath(style),
-      onDependency() {},
-    },
-  );
-  const compiledCss = compiler.build([]);
-
-  compiledStyleCssCache.set(style, compiledCss);
-  return compiledCss;
+  return compiledStyleCssByStyle[style];
 }
 
 export async function getCompiledGlobalStyleCss(
   style: DesignSystemConfig["style"],
 ) {
-  const cached = compiledGlobalStyleCssCache.get(style);
-  if (cached) {
-    return cached;
-  }
-
-  const rawCss = getGlobalStyleCss(style);
-  const compiler = await compile(
-    [
-      `@reference "${globalsCssPath.replace(/\\/g, "/")}";`,
-      "@utility no-scrollbar {",
-      "  scrollbar-width: none;",
-      "  &::-webkit-scrollbar {",
-      "    display: none;",
-      "  }",
-      "}",
-      rawCss,
-    ].join("\n"),
-    {
-      base: process.cwd(),
-      from: getStyleFilepath(style),
-      onDependency() {},
-    },
-  );
-  const compiledCss = compiler.build([]);
-
-  compiledGlobalStyleCssCache.set(style, compiledCss);
-  return compiledCss;
+  return compiledGlobalStyleCssByStyle[style];
 }
 
 export function getRegistryStyleCss(style: DesignSystemConfig["style"]) {

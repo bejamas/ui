@@ -6,6 +6,10 @@ import {
   getCompiledGlobalStyleCss,
   getCompiledStyleCss,
 } from "../src/server";
+import {
+  compileGlobalStyleCss,
+  compileStyleCss,
+} from "../src/style-css-compiler";
 
 describe("style catalog defaults", () => {
   it("exposes juno as a public style", () => {
@@ -37,5 +41,14 @@ describe("style catalog defaults", () => {
     expect(miraCss).toContain(".cn-card");
     expect(maiaGlobalCss).not.toContain(".style-maia");
     expect(maiaGlobalCss).toContain(".cn-card");
+  });
+
+  it("keeps generated compiled style artifacts in sync with source styles", async () => {
+    for (const style of STYLES.map((entry) => entry.name)) {
+      expect(await getCompiledStyleCss(style)).toBe(await compileStyleCss(style));
+      expect(await getCompiledGlobalStyleCss(style)).toBe(
+        await compileGlobalStyleCss(style),
+      );
+    }
   });
 });
