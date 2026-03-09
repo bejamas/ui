@@ -1,4 +1,5 @@
 import {
+  decodeEscapedScriptTags,
   parseFenceInfo,
   prepareExampleContent,
   type ParsedExampleSection,
@@ -371,6 +372,7 @@ export function buildMdx(params: {
 
   type PreviewRenderOptions = {
     enableConsolePanel?: boolean;
+    consoleScripts?: string[];
   };
 
   type MarkdownPreviewConfig = {
@@ -398,8 +400,14 @@ export function buildMdx(params: {
     options: PreviewRenderOptions = {},
   ): { markup: string; scripts: string[] } => {
     if (!snippet) return { markup: "", scripts: [] };
-    const { enableConsolePanel = false } = options;
+    const { enableConsolePanel = false, consoleScripts = [] } = options;
     const extracted = extractInlineScripts(snippet);
+    const resolvedConsoleScripts =
+      enableConsolePanel && consoleScripts.length
+        ? consoleScripts
+        : enableConsolePanel
+          ? extracted.scripts
+          : [];
     const withoutScripts = extracted.markup;
     // Convert HTML comments to MDX comment blocks for preview sections
     const withoutComments = withoutScripts.replace(
@@ -413,14 +421,14 @@ export function buildMdx(params: {
     if (/<p[\s>]/i.test(withConvertedParagraphs)) {
       return {
         markup: normalizeInlineWhitespace(withConvertedParagraphs),
-        scripts: enableConsolePanel ? extracted.scripts : [],
+        scripts: resolvedConsoleScripts,
       };
     }
     // Normalize whitespace to prevent MDX from splitting inline text into paragraphs
     const normalized = normalizeInlineWhitespace(withConvertedParagraphs);
     return {
       markup: wrapTextNodes(normalized),
-      scripts: enableConsolePanel ? extracted.scripts : [],
+      scripts: resolvedConsoleScripts,
     };
   };
 
@@ -514,6 +522,63 @@ export function buildMdx(params: {
       .join("\n");
   };
 
+  const renderCompanionSourceMD = (sourceMD: string): string => {
+    if (!sourceMD || !sourceMD.trim().length) return "";
+    const normalizedSourceMD = sourceMD.trim();
+    const match = normalizedSourceMD.match(/^```(\S*)([^\n]*)\n([\s\S]*?)\n```$/);
+    if (!match) return sourceMD;
+
+    const [, langRaw = "", flagsRaw = "", body = ""] = match;
+    const lang = langRaw.trim().toLowerCase();
+    if (!["js", "ts", "javascript", "typescript"].includes(lang)) {
+      return sourceMD;
+    }
+
+    const astroInfo = ["astro", flagsRaw.trim()].filter(Boolean).join(" ");
+    const scriptBody = body.replace(/\s+$/, "");
+    return [
+      `\`\`\`${astroInfo}`,
+      "<script>",
+      scriptBody,
+      "</script>",
+      "```",
+    ].join("\n");
+  };
+
+  const extractCompanionScriptBody = (sourceMD: string): string => {
+    if (!sourceMD || !sourceMD.trim().length) return "";
+    const normalizedSourceMD = sourceMD.trim();
+    const match = normalizedSourceMD.match(/^```(\S*)([^\n]*)\n([\s\S]*?)\n```$/);
+    if (!match) return "";
+
+    const [, langRaw = "", , body = ""] = match;
+    const lang = langRaw.trim().toLowerCase();
+    if (!["js", "ts", "javascript", "typescript"].includes(lang)) {
+      return "";
+    }
+
+    return body.replace(/\s+$/, "");
+  };
+
+  const renderMergedAstroSourceMD = (
+    fenceOpen: string,
+    sourceBody: string,
+    companionSourceMD: string,
+  ): string => {
+    const scriptBody = extractCompanionScriptBody(companionSourceMD);
+    if (!scriptBody.length) {
+      return [fenceOpen, sourceBody, "```"].filter(Boolean).join("\n");
+    }
+
+    const normalizedSourceBody = sourceBody.replace(/\s+$/, "");
+    const parts = [fenceOpen];
+    if (normalizedSourceBody.length) {
+      parts.push(normalizedSourceBody, "");
+    }
+    parts.push("<script>", scriptBody, "</script>", "```");
+    return parts.join("\n");
+  };
+
   const renderPreviewBlock = (
     snippet: string,
     options: PreviewRenderOptions = {},
@@ -564,7 +629,38 @@ ${preparedPreview.markup}
     let currentFenceFlags = new Set<string>();
     const fenceBody: string[] = [];
 
-    for (const line of lines) {
+    const findCompanionConsoleFence = (
+      startIndex: number,
+    ): { start: number; end: number } | null => {
+      let index = startIndex;
+      while (index < lines.length) {
+        const currentLine = lines[index];
+        const trimmedLine = currentLine.trim();
+        if (!trimmedLine.length || !trimmedLine.startsWith("```")) {
+          index += 1;
+          continue;
+        }
+
+        const parsed = parseFenceInfo(trimmedLine.slice(3).trim());
+        if (!["js", "ts", "javascript", "typescript"].includes(parsed.lang)) {
+          return null;
+        }
+
+        let end = index + 1;
+        while (end < lines.length) {
+          if (lines[end].trim().startsWith("```")) {
+            return { start: index, end };
+          }
+          end += 1;
+        }
+
+        return null;
+      }
+      return null;
+    };
+
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex += 1) {
+      const line = lines[lineIndex];
       const trimmed = line.trim();
       if (trimmed.startsWith("```")) {
         if (!inFence) {
@@ -578,9 +674,17 @@ ${preparedPreview.markup}
         }
 
         if (currentFenceLang === "astro") {
-          const sourceCode = fenceBody.join("\n").trim();
+          const sourceCode = decodeEscapedScriptTags(fenceBody.join("\n").trim());
+          const companionConsoleFence = currentFenceFlags.has("console")
+            ? findCompanionConsoleFence(lineIndex + 1)
+            : null;
+          const companionMarkdown = companionConsoleFence
+            ? lines.slice(lineIndex + 1, companionConsoleFence.end + 1).join("\n")
+            : "";
           const prepared = prepareExampleContent(
-            `${fenceOpen}\n${sourceCode}\n${line}`,
+            companionMarkdown.length
+              ? `${fenceOpen}\n${sourceCode}\n${line}\n${companionMarkdown}`
+              : `${fenceOpen}\n${sourceCode}\n${line}`,
           );
           const hasForcedPreviewFlag =
             currentFenceFlags.has("preview") || currentFenceFlags.has("console");
@@ -593,6 +697,7 @@ ${preparedPreview.markup}
           ) {
             const previewBlock = renderPreviewBlock(prepared.snippet, {
               enableConsolePanel: prepared.enableConsolePanel,
+              consoleScripts: prepared.consoleScripts,
             });
             if (previewBlock.length) {
               out.push(previewBlock);
@@ -601,9 +706,68 @@ ${preparedPreview.markup}
           }
         }
 
-        out.push(fenceOpen);
-        if (fenceBody.length) out.push(...fenceBody);
-        out.push(line);
+        if (currentFenceLang === "astro") {
+          const normalizedFenceBody = decodeEscapedScriptTags(
+            fenceBody.join("\n"),
+          );
+          const companionConsoleFence = currentFenceFlags.has("console")
+            ? findCompanionConsoleFence(lineIndex + 1)
+            : null;
+          const companionMarkdown = companionConsoleFence
+            ? lines
+                .slice(lineIndex + 1, companionConsoleFence.end + 1)
+                .join("\n")
+            : "";
+          const prepared = companionMarkdown.length
+            ? prepareExampleContent(
+                `${fenceOpen}\n${normalizedFenceBody}\n${line}\n${companionMarkdown}`,
+              )
+            : null;
+
+          if (
+            prepared?.companionSourceMD &&
+            prepared.companionSourceMD.length &&
+            prepared.mergeCompanionWithSource
+          ) {
+            out.push(
+              renderMergedAstroSourceMD(
+                fenceOpen,
+                normalizedFenceBody,
+                prepared.companionSourceMD,
+              ),
+            );
+            if (companionConsoleFence) {
+              lineIndex = companionConsoleFence.end;
+            }
+          } else {
+            out.push(fenceOpen);
+            if (normalizedFenceBody.length) {
+              out.push(...normalizedFenceBody.split("\n"));
+            }
+            out.push(line);
+
+            if (
+              prepared?.companionSourceMD &&
+              prepared.companionSourceMD.length &&
+              companionConsoleFence
+            ) {
+              const companionIntro = lines
+                .slice(lineIndex + 1, companionConsoleFence.start)
+                .join("\n");
+              if (companionIntro.length) {
+                out.push(companionIntro);
+              }
+              out.push(renderCompanionSourceMD(prepared.companionSourceMD));
+              lineIndex = companionConsoleFence.end;
+            }
+          }
+        } else {
+          out.push(fenceOpen);
+          if (fenceBody.length) {
+            out.push(...fenceBody);
+          }
+          out.push(line);
+        }
 
         inFence = false;
         fenceOpen = "";
@@ -623,7 +787,16 @@ ${preparedPreview.markup}
 
     if (inFence) {
       out.push(fenceOpen);
-      if (fenceBody.length) out.push(...fenceBody);
+      if (currentFenceLang === "astro") {
+        const normalizedFenceBody = decodeEscapedScriptTags(
+          fenceBody.join("\n"),
+        );
+        if (normalizedFenceBody.length) {
+          out.push(...normalizedFenceBody.split("\n"));
+        }
+      } else if (fenceBody.length) {
+        out.push(...fenceBody);
+      }
     }
 
     return out.join("\n").trim();
@@ -671,6 +844,7 @@ ${(() => {
       blocks.push(
         renderPreviewBlock(prepared.snippet, {
           enableConsolePanel: prepared.enableConsolePanel,
+          consoleScripts: prepared.consoleScripts,
         }),
       );
     }
@@ -682,9 +856,36 @@ ${(() => {
             const lines = buildSnippetImportLines(prepared.sourceCode);
             return lines.length ? `---\n${lines.join("\n")}\n---\n\n` : "";
           })()}${prepared.sourceCode}`;
-      blocks.push(`\`\`\`astro
+      if (
+        prepared.companionSourceMD &&
+        prepared.companionSourceMD.length &&
+        prepared.mergeCompanionWithSource
+      ) {
+        blocks.push(
+          renderMergedAstroSourceMD("```astro", sourceBlock, prepared.companionSourceMD),
+        );
+      } else {
+        blocks.push(`\`\`\`astro
 ${sourceBlock}
 \`\`\``);
+      }
+      if (
+        prepared.companionIntroMD &&
+        prepared.companionIntroMD.length &&
+        !prepared.mergeCompanionWithSource
+      ) {
+        blocks.push(prepared.companionIntroMD);
+      }
+      if (
+        prepared.companionSourceMD &&
+        prepared.companionSourceMD.length &&
+        !prepared.mergeCompanionWithSource
+      ) {
+        blocks.push(renderCompanionSourceMD(prepared.companionSourceMD));
+      }
+      if (prepared.trailingDescriptionMD && prepared.trailingDescriptionMD.length) {
+        blocks.push(prepared.trailingDescriptionMD);
+      }
     }
 
     return blocks.join("\n\n");
