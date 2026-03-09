@@ -3,6 +3,10 @@
     @apply shadow-xs;
   }
 
+  .cn-button-variant-ghost {
+    @apply shadow-none;
+  }
+
   .cn-card {
     @apply rounded-xl border border-border bg-card text-card-foreground shadow-xs;
   }

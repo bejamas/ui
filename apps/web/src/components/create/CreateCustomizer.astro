@@ -3,6 +3,7 @@ import CopyIcon from "@lucide/astro/icons/copy";
 import MenuIcon from "@lucide/astro/icons/menu";
 import RotateCcwIcon from "@lucide/astro/icons/rotate-ccw";
 import ShuffleIcon from "@lucide/astro/icons/shuffle";
+import { Button } from "@bejamas/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,19 +44,29 @@ const primaryPickers = [
 const secondaryPickers = ["template"] as const;
 ---
 
-<aside class="xl:sticky xl:top-6" data-create-customizer-stable>
-  <div class="create-customizer rounded-[26px] border border-white/8 bg-[#2a2927]/92 p-2.5 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] backdrop-blur-xl">
-    <div class="create-customizer-toolbar flex items-center justify-between gap-2.5 rounded-[18px] border border-white/7 bg-white/[0.025] px-3 py-2">
+<aside
+  class="xl:sticky xl:top-[var(--create-page-inset)] xl:h-[var(--create-sidebar-height)]"
+  data-create-customizer-stable
+>
+  <div
+    class="create-customizer rounded-[26px] border border-white/8 bg-[#2a2927]/92 p-2.5 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] backdrop-blur-xl xl:flex xl:h-full xl:flex-col"
+  >
+    <div
+      class="create-customizer-toolbar flex items-center justify-between gap-2.5 rounded-[18px] border border-white/7 bg-white/[0.025] px-3 py-2"
+    >
       <DropdownMenu data-create-main-menu class="block">
-        <DropdownMenuTrigger
-          variant="ghost"
-          type="button"
-          class="!h-auto !rounded-[14px] !bg-transparent !px-0 !py-0 !text-white !shadow-none hover:!bg-transparent focus-visible:!ring-white/20"
-        >
-          <span class="flex items-center gap-2 text-sm font-medium tracking-[-0.01em]">
-            <MenuIcon class="size-4 text-white/70" />
-            Menu
-          </span>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            class="!h-auto !rounded-[14px] !bg-transparent !px-0 !py-0 !text-white !shadow-none hover:!bg-transparent focus-visible:!ring-white/20"
+          >
+            <span
+              class="flex items-center gap-2 text-sm font-medium tracking-[-0.01em]"
+            >
+              <MenuIcon class="size-4 text-white/70" />
+              Menu
+            </span>
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           data-create-main-menu-content
@@ -92,13 +103,22 @@ const secondaryPickers = ["template"] as const;
       </DropdownMenu>
 
       <div class="text-right">
-        <p class="text-[11px] font-medium uppercase tracking-[0.16em] text-white/30">Customizer</p>
-        <p class="text-[13px] font-medium tracking-[-0.02em] text-white/72">Astro only</p>
+        <p
+          class="text-[11px] font-medium uppercase tracking-[0.16em] text-white/30"
+        >
+          Customizer
+        </p>
+        <p class="text-[13px] font-medium tracking-[-0.02em] text-white/72">
+          Astro only
+        </p>
       </div>
     </div>
 
-    <form class="mt-2.5 space-y-2" data-create-form>
-      <div class="max-h-[min(58vh,640px)] space-y-2 overflow-y-auto pr-0.5">
+    <form
+      class="mt-2.5 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col"
+      data-create-form
+    >
+      <div class="space-y-2 overflow-y-auto pr-0.5 xl:min-h-0 xl:flex-1">
         {
           primaryPickers.map((picker) => (
             <CreatePicker
@@ -127,10 +147,18 @@ const secondaryPickers = ["template"] as const;
           ))
         }
 
-        <label class="flex items-center justify-between rounded-[16px] border border-white/8 bg-white/[0.02] px-3 py-2.5 text-white">
+        <label
+          class="flex items-center justify-between rounded-[16px] border border-white/8 bg-white/[0.02] px-3 py-2.5 text-white"
+        >
           <span class="space-y-1">
-            <span class="block text-[10px] font-medium uppercase tracking-[0.12em] text-white/38">Direction</span>
-            <span class="block text-[14px] font-medium tracking-[-0.01em] text-white/90">RTL output</span>
+            <span
+              class="block text-[10px] font-medium uppercase tracking-[0.12em] text-white/38"
+              >Direction</span
+            >
+            <span
+              class="block text-[14px] font-medium tracking-[-0.01em] text-white/90"
+              >RTL output</span
+            >
           </span>
           <Switch
             name="rtl"
@@ -144,7 +172,7 @@ const secondaryPickers = ["template"] as const;
 
     <Separator class="!my-2.5 !bg-white/8" />
 
-    <div class="space-y-1.5">
+    <div class="space-y-1.5 xl:shrink-0">
       <button
         type="button"
         class="create-customizer-action flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"

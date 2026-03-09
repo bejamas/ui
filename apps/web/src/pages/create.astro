@@ -32,7 +32,7 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
 <style is:global>
   @import "@bejamas/ui/styles/globals.css";
 </style>
-<script is:inline set:html={docsRootInitScript}></script>
+<script is:inline set:html={docsRootInitScript} />
 <style id="create-page-theme-css" set:html={buildDesignSystemThemeCss(config)}
 ></style>
 <style id="create-page-style-css" set:html={compiledStyleCss}></style>
@@ -47,20 +47,17 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
     tableOfContents: false,
   }}
 >
-  <div
-    class:list={["not-content create-page-root"]}
-    data-create-page
-  >
-    <main
-      class="mx-auto flex min-h-[calc(100vh-10rem)] max-w-full flex-col gap-6 px-0"
-    >
-      <div class="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)] xl:items-start">
+  <div class:list={["not-content create-page-root"]} data-create-page>
+    <main class="mx-auto flex max-w-full flex-col gap-6 px-0">
+      <div
+        class="grid gap-6 xl:min-h-[var(--create-preview-height)] xl:grid-cols-[320px_minmax(0,1fr)] xl:items-stretch"
+      >
         <CreateCustomizer config={config} preset={preset} />
 
         <iframe
           src={previewUrl}
           title="Create preview"
-          class="h-[calc(100vh-12rem)] min-h-[780px] w-full rounded-[24px] border border-border bg-background"
+          class="min-h-[780px] w-full rounded-[24px] border border-border bg-background xl:h-[var(--create-preview-height)] xl:min-h-0"
           data-preview-frame></iframe>
       </div>
     </main>
@@ -86,12 +83,25 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
 <style is:global>
   @reference "tailwindcss";
 
+  .create-page-root {
+    --create-page-inset: var(--sl-content-pad-x);
+    --create-preview-height: calc(
+      100dvh - var(--sl-nav-height) - var(--create-page-inset)
+    );
+    --create-sidebar-height: var(--create-preview-height);
+  }
+
   .content-panel {
     @apply border-0 pt-0 pb-0 first-of-type:hidden;
   }
 
   .content-panel h1 {
     @apply text-5xl font-medium text-left;
+  }
+
+  .main-frame-splash::before,
+  .kudos {
+    display: none;
   }
 
   .sl-container {

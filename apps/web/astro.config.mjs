@@ -41,10 +41,10 @@ export default defineConfig({
       }),
     },
   },
-  prefetch: {
-    defaultStrategy: "viewport",
-    prefetchAll: true,
-  },
+  // prefetch: {
+  //   defaultStrategy: "viewport",
+  //   prefetchAll: true,
+  // },
   integrations: [
     starlight({
       favicon: "/favicon.ico",

@@ -49,17 +49,16 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
     <div class="header-mobile-stars">
       <GitHubStarsButton />
     </div>
-    {shouldRenderSearch && (
-      <div class="header-desktop-search">
-        <Search />
-      </div>
-    )}
+    {
+      shouldRenderSearch && (
+        <div class="header-desktop-search">
+          <Search />
+        </div>
+      )
+    }
   </div>
   <div class="header-desktop-right print:hidden right-group">
     <GitHubStarsButton />
-    <div class="sl-flex social-icons">
-      <SocialIcons />
-    </div>
     <ThemeSelect />
     <LanguageSelect />
   </div>
