@@ -1,0 +1,58 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"button"> {
+  class?: string;
+  /** Radix-like: render wrapper so the child can be the interactive element */
+  asChild?: boolean;
+}
+
+const { class: className = "", asChild = false, type = "button", ...rest } = Astro.props as Props;
+
+const triggerVariants = cva(
+  "w-full flex flex-1 items-start justify-between outline-none transition-all disabled:pointer-events-none disabled:opacity-50 [&[aria-expanded=true]>svg]:rotate-180",
+);
+---
+
+{
+  asChild ? (
+    <div
+      data-slot="accordion-trigger"
+      data-as-child
+      class={cn("cn-accordion-trigger", triggerVariants(), className)}
+    >
+      <slot />
+    </div>
+  ) : (
+    <button
+      {...rest}
+      type={type}
+      data-slot="accordion-trigger"
+      class={cn("cn-accordion-trigger", triggerVariants(), className)}
+    >
+      <span class="flex-1">
+        <slot />
+      </span>
+      {
+        Astro.slots.has("icon") ? (
+          <span
+            data-slot="accordion-trigger-icon"
+            class="cn-accordion-trigger-icon inline-flex items-center justify-center transition-transform duration-200 group-open/accordion:rotate-180"
+          >
+            <slot name="icon" />
+          </span>
+        ) : (
+          <SemanticIcon
+            name="chevron-down"
+            data-slot="accordion-trigger-icon"
+            class="cn-accordion-trigger-icon shrink-0 transition-transform duration-200 group-open/accordion:rotate-180"
+            aria-hidden="true"
+          />
+        )
+      }
+    </button>
+  )
+}

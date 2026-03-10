@@ -1,0 +1,43 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"div"> {
+  value: string;
+  label?: string;
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  value,
+  label,
+  disabled = false,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="combobox-item"
+  data-value={value}
+  data-label={label}
+  data-disabled={disabled ? "" : undefined}
+  class={cn(
+    "cn-combobox-item relative flex w-full cursor-default items-center outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+    className,
+  )}
+>
+  <span
+    data-slot="combobox-item-indicator"
+    class="cn-combobox-item-indicator"
+  >
+    <SemanticIcon
+      name="check"
+      class="cn-combobox-item-indicator-icon pointer-events-none"
+    />
+  </span>
+  <span data-slot="combobox-item-text" class="cn-combobox-item-text"><slot /></span>
+</div>

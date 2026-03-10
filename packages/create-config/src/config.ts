@@ -133,6 +133,23 @@ export function getRadiusValue(radius: DesignSystemConfig["radius"]) {
   return RADIUS_VALUES[radius];
 }
 
+export function isInvertedMenuColor(
+  menuColor: DesignSystemConfig["menuColor"],
+) {
+  return (
+    menuColor === "inverted" || menuColor === "inverted-translucent"
+  );
+}
+
+export function isTranslucentMenuColor(
+  menuColor: DesignSystemConfig["menuColor"],
+) {
+  return (
+    menuColor === "default-translucent" ||
+    menuColor === "inverted-translucent"
+  );
+}
+
 export function getFontValue(name: DesignSystemConfig["font"]) {
   return fonts.find((font) => font.name === `font-${name}`);
 }

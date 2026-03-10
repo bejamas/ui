@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"li"> {
+  class?: string;
+  value?: string;
+}
+
+const { class: className = "", value, ...rest } = Astro.props as Props;
+---
+
+<li
+  {...rest}
+  data-slot="navigation-menu-item"
+  data-value={value}
+  class={cn("cn-navigation-menu-item", "static", className)}
+>
+  <slot />
+</li>

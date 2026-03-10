@@ -1,6 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { encodePreset } from "@bejamas/create-config/server";
-import { parseCreateSearchParams, resolveCreateThemeRef } from "./create";
+import {
+  buildCreatePreviewUrl,
+  parseCreateSearchParams,
+  resolveCreatePreviewTarget,
+  resolveCreateThemeRef,
+} from "./create";
 
 describe("parseCreateSearchParams", () => {
   test("uses the default config when neither URL nor fallback preset is provided", () => {
@@ -167,5 +172,94 @@ describe("parseCreateSearchParams", () => {
         fallbackThemeRef: "default",
       }),
     ).toBeNull();
+  });
+
+  test("resolves a valid kitchen-sink preview target from the URL", () => {
+    expect(
+      resolveCreatePreviewTarget(
+        new URLSearchParams({ item: "button-example" }),
+      ),
+    ).toBe("button");
+  });
+
+  test("still accepts unsuffixed preview targets for compatibility", () => {
+    expect(
+      resolveCreatePreviewTarget(
+        new URLSearchParams({ item: "button" }),
+      ),
+    ).toBe("button");
+  });
+
+  test("falls back to the default create preview for invalid preview targets", () => {
+    expect(
+      resolveCreatePreviewTarget(
+        new URLSearchParams({ item: "not-real" }),
+      ),
+    ).toBeNull();
+  });
+
+  test("builds the default create preview iframe URL when no preview target is set", () => {
+    const preset = encodePreset({
+      style: "juno",
+      baseColor: "neutral",
+      theme: "neutral",
+    });
+
+    expect(
+      buildCreatePreviewUrl(
+        {
+          style: "juno",
+          baseColor: "neutral",
+          theme: "neutral",
+          iconLibrary: "lucide",
+          font: "geist",
+          radius: "default",
+          menuAccent: "subtle",
+          menuColor: "default",
+          template: "astro",
+          rtl: false,
+          rtlLanguage: "ar",
+        },
+        preset,
+      ),
+    ).toBe(`/create/preview?preset=${preset}&template=astro`);
+  });
+
+  test("builds an embed-mode kitchen-sink URL when a preview target is set", () => {
+    const preset = encodePreset({
+      style: "lyra",
+      baseColor: "olive",
+      theme: "orange",
+      font: "geist",
+      radius: "default",
+      iconLibrary: "lucide",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+
+    expect(
+      buildCreatePreviewUrl(
+        {
+          style: "lyra",
+          baseColor: "olive",
+          theme: "orange",
+          iconLibrary: "lucide",
+          font: "geist",
+          radius: "default",
+          menuAccent: "subtle",
+          menuColor: "default",
+          template: "astro",
+          rtl: true,
+          rtlLanguage: "he",
+        },
+        preset,
+        {
+          previewTarget: "select",
+          themeRef: "custom-theme-123",
+        },
+      ),
+    ).toBe(
+      `/kitchen-sink/select?preset=${preset}&rtl=true&lang=he&themeRef=custom-theme-123&embed=create`,
+    );
   });
 });

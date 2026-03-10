@@ -1,20 +1,25 @@
 ---
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
-  getDocumentLanguage,
   STYLES,
   encodePreset,
   getCompiledStyleCss,
 } from "@bejamas/create-config/server";
 import { buildCreateDocsRootInitScript } from "@/utils/create-docs-shell";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
-import { parseCreateSearchParams, resolveCreateThemeRef } from "@/utils/create";
+import {
+  buildCreatePreviewUrl,
+  parseCreateSearchParams,
+  resolveCreatePreviewTarget,
+  resolveCreateThemeRef,
+} from "@/utils/create";
 import {
   parseThemeCookie,
   PRESET_COOKIE_NAME,
   THEME_REF_COOKIE_NAME,
 } from "@/utils/themes/theme-cookie";
 import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
+import { buildWindowAssignmentInlineScript } from "@/utils/inline-script";
 import CreateCustomizer from "@/components/create/CreateCustomizer.astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
@@ -32,23 +37,29 @@ const requestedThemeRef = resolveCreateThemeRef(Astro.url.searchParams, {
 const themeOverrides = await getThemeOverridesByRef(requestedThemeRef);
 const themeRef = themeOverrides ? requestedThemeRef : null;
 const preset = encodePreset(config);
-const previewParams = new URLSearchParams({
-  preset,
-  template: config.template,
+const previewTarget = resolveCreatePreviewTarget(Astro.url.searchParams);
+const previewUrl = buildCreatePreviewUrl(config, preset, {
+  previewTarget,
+  themeRef,
 });
-
-if (config.rtl) {
-  previewParams.set("rtl", "true");
-  previewParams.set("lang", getDocumentLanguage(config));
-}
-
-if (themeRef) {
-  previewParams.set("themeRef", themeRef);
-}
-
-const previewUrl = `/create/preview?${previewParams.toString()}`;
 const compiledStyleCss = await getCompiledStyleCss(config.style);
 const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
+const styleCssByStyle = Object.fromEntries(
+  await Promise.all(
+    STYLES.map(async (style) => [
+      style.name,
+      await getCompiledStyleCss(style.name),
+    ]),
+  ),
+);
+const createPayloadScript = buildWindowAssignmentInlineScript(
+  "__BEJAMAS_CREATE__",
+  {
+    styleCssByStyle,
+    initialThemeRef: themeRef,
+    initialThemeOverrides: themeOverrides,
+  },
+);
 ---
 
 <style is:global>
@@ -93,26 +104,7 @@ const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
   </div>
 </StarlightPage>
 
-<script
-  define:vars={{
-    styleCssByStyle: Object.fromEntries(
-      await Promise.all(
-        STYLES.map(async (style) => [
-          style.name,
-          await getCompiledStyleCss(style.name),
-        ]),
-      ),
-    ),
-    initialThemeRef: themeRef,
-    initialThemeOverrides: themeOverrides,
-  }}
->
-  window.__BEJAMAS_CREATE__ = {
-    styleCssByStyle,
-    initialThemeRef,
-    initialThemeOverrides,
-  };
-</script>
+<script is:inline set:html={createPayloadScript} />
 <script>
   import "@/scripts/create-page.ts";
 </script>

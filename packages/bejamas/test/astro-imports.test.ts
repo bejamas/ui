@@ -15,6 +15,7 @@ function makeConfig(partial: Partial<Config>): Config {
       baseColor: "neutral",
       cssVariables: true,
     },
+    menuColor: "default",
     iconLibrary: "lucide",
     aliases: {
       components: "@/components",
@@ -170,4 +171,33 @@ import SemanticIcon from "../icon/SemanticIcon.astro";
   expect(result).toContain("<svg");
   expect(result).toContain('class="size-4 text-muted-foreground"');
   expect(result).toContain('data-slot="select-icon"');
+});
+
+test("rewrites menu placeholders for translucent menu output", () => {
+  const config = makeConfig({
+    menuColor: "default-translucent",
+  });
+
+  const raw = `<div class="cn-dropdown-menu-content cn-menu-target rounded-lg shadow-md"></div>`;
+
+  const result = rewriteAstroImports(raw, config);
+
+  expect(result).not.toContain("cn-menu-target");
+  expect(result).toContain("bg-popover/70");
+  expect(result).toContain("before:backdrop-blur-2xl");
+  expect(result).toContain('class="cn-dropdown-menu-content');
+});
+
+test("rewrites menu placeholders for inverted translucent menu output", () => {
+  const config = makeConfig({
+    menuColor: "inverted-translucent",
+  });
+
+  const raw = `<div class="cn-dropdown-menu-content cn-menu-target rounded-lg shadow-md"></div>`;
+
+  const result = rewriteAstroImports(raw, config);
+
+  expect(result).toContain("dark");
+  expect(result).toContain("bg-popover/70");
+  expect(result).not.toContain("cn-menu-target");
 });

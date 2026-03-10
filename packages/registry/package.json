@@ -1,0 +1,42 @@
+{
+  "name": "@bejamas/registry",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:web-registry": "bun run ./scripts/build-web-style-registry.ts"
+  },
+  "dependencies": {
+    "@bejamas/semantic-icons": "workspace:*",
+    "@data-slot/accordion": "^0.2.125",
+    "@data-slot/collapsible": "^0.2.125",
+    "@data-slot/combobox": "^0.2.125",
+    "@data-slot/dialog": "^0.2.125",
+    "@data-slot/dropdown-menu": "^0.2.125",
+    "@data-slot/hover-card": "^0.2.125",
+    "@data-slot/navigation-menu": "^0.2.125",
+    "@data-slot/popover": "^0.2.125",
+    "@data-slot/select": "^0.2.125",
+    "@data-slot/slider": "^0.2.125",
+    "@data-slot/tabs": "^0.2.125",
+    "@data-slot/toggle": "^0.2.125",
+    "@data-slot/toggle-group": "^0.2.125",
+    "@data-slot/tooltip": "^0.2.125",
+    "@lucide/astro": "^0.540.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "postcss": "^8.5.8",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.15",
+    "typescript": "^5.9.3"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./catalog/*": "./src/catalog/*.ts",
+    "./lib/*": "./src/lib/*.ts",
+    "./style-source": "./src/style-source.ts",
+    "./ui/*": "./src/ui/*/index.ts"
+  }
+}

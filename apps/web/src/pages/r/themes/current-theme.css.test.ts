@@ -41,8 +41,31 @@ describe("current-theme.css", () => {
 
     expect(css).toContain("Playfair Display Variable");
     expect(css).toContain("--radius: 0.875rem;");
+    expect(css).toContain(
+      "@layer base, starlight.reset, starlight, bejamas, theme, components, utilities;",
+    );
+    expect(css).toContain("@layer components");
     expect(css).toContain(".cn-card");
     expect(css).not.toContain(".style-lyra");
+  });
+
+  test("uses upstream-compatible a-codes when decoding create preset cookies", async () => {
+    const response = await GET({
+      cookies: {
+        get(name: string) {
+          if (name !== "theme") {
+            return undefined;
+          }
+
+          return { value: "abVJxYW" };
+        },
+      } as AstroCookies,
+    });
+    const css = await response.text();
+
+    expect(css).toContain(".cn-card");
+    expect(css).toContain("--radius: 0.875rem;");
+    expect(css).not.toContain(".style-maia");
   });
 
   test("uses the style-linked default radius for create presets", async () => {

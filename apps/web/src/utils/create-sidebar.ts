@@ -64,6 +64,8 @@ const RADIUS_OPTIONS = [
 const MENU_COLOR_OPTIONS = [
   { value: "default", label: "Default" },
   { value: "inverted", label: "Inverted" },
+  { value: "default-translucent", label: "Default Translucent" },
+  { value: "inverted-translucent", label: "Inverted Translucent" },
 ] as const satisfies readonly CreatePickerOption[];
 
 const MENU_ACCENT_OPTIONS = [

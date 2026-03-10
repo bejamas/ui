@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert",
+  "type": "registry:ui",
+  "files": [
+    {
+      "path": "ui/alert/Alert.astro",
+      "type": "registry:ui",
+      "content": "---\n/**\n * @component Alert\n * @title Alert\n * @description A prominent message that draws user attention to important information.\n * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/BejamasUI---Design-System?node-id=2536-3189&t=YFStJ3V8fXEO8QD8-4\n *\n * @preview\n *\n * <div class=\"grid w-full max-w-xl items-start gap-4\">\n *   <Alert>\n *     <CircleCheckIcon size={32} />\n *     <AlertTitle>Success! Your changes have been saved</AlertTitle>\n *     <AlertDescription>This is an alert with title and description.</AlertDescription>\n *   </Alert>\n *\n *   <Alert>\n *     <AlertTitle>This Alert has a title and an icon. No description.</AlertTitle>\n *   </Alert>\n *\n *   <Alert variant=\"destructive\">\n *     <AlertTitle>Unable to process your payment.</AlertTitle>\n *     <AlertDescription>\n *       <p>Please verify your billing information and try again.</p>\n *       <ul class=\"list-inside list-disc text-sm\">\n *         <li>Check your card details</li>\n *         <li>Ensure sufficient funds</li>\n *         <li>Verify billing address</li>\n *       </ul>\n *     </AlertDescription>\n *   </Alert>\n * </div>\n *\n * @usage\n *\n * ```astro nocollapse\n * ---\n * import { Alert, AlertTitle, AlertDescription } from '@bejamas/ui/components/alert';\n * ---\n * <Alert variant=\"default\">\n *   <CircleCheckIcon size={32} />\n *   <AlertTitle>Heads up!</AlertTitle>\n *   <AlertDescription>Something happened successfully.</AlertDescription>\n * </Alert>\n * ```\n */\nimport { cva } from \"class-variance-authority\";\nimport { cn } from \"@/registry/bejamas-vega/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ntype AlertVariant = \"default\" | \"destructive\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  variant?: AlertVariant;\n  class?: string;\n}\n\nconst {\n  class: className = \"\",\n  variant = \"default\",\n  ...rest\n} = Astro.props as Props;\n\nconst alertVariants = cva(\n  \"cn-alert group/alert relative w-full\",\n  {\n    variants: {\n      variant: {\n        default: \"cn-alert-variant-default\",\n        destructive: \"cn-alert-variant-destructive\",\n      },\n    },\n    defaultVariants: {\n      variant: \"default\",\n    },\n  },\n);\n---\n\n<div\n  {...rest}\n  data-slot=\"alert\"\n  role=\"alert\"\n  class={cn(alertVariants({ variant }), className)}\n>\n  <slot />\n</div>\n"
+    },
+    {
+      "path": "ui/alert/AlertDescription.astro",
+      "type": "registry:ui",
+      "content": "---\nimport { cn } from \"@/registry/bejamas-vega/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst {\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<div\n  {...rest}\n  data-slot=\"alert-description\"\n  class={cn(\n    \"cn-alert-description [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground\",\n    className,\n  )}\n>\n  <slot />\n</div>\n"
+    },
+    {
+      "path": "ui/alert/AlertTitle.astro",
+      "type": "registry:ui",
+      "content": "---\nimport { cn } from \"@/registry/bejamas-vega/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst {\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<div\n  {...rest}\n  data-slot=\"alert-title\"\n  class={cn(\n    \"cn-alert-title [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground\",\n    className,\n  )}\n>\n  <slot />\n</div>\n"
+    },
+    {
+      "path": "ui/alert/index.ts",
+      "type": "registry:ui",
+      "content": "export { default as Alert } from \"./Alert.astro\";\nexport { default as AlertTitle } from \"./AlertTitle.astro\";\nexport { default as AlertDescription } from \"./AlertDescription.astro\";\n\n"
+    }
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "index",
+    "utils"
+  ]
+}

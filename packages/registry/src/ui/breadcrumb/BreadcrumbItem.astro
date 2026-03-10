@@ -1,0 +1,25 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"li"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const itemVariants = cva("inline-flex items-center gap-1.5");
+---
+
+<li
+  {...rest}
+  data-slot="breadcrumb-item"
+  class={cn("cn-breadcrumb-item", itemVariants(), className)}
+>
+  <slot />
+</li>
+

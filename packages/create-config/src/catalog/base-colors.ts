@@ -1,9 +1,1 @@
-import { THEMES } from "./themes";
-
-export const BASE_COLORS = THEMES.filter((theme) =>
-  ["neutral", "stone", "zinc", "gray", "mauve", "olive", "mist", "taupe"].includes(
-    theme.name,
-  ),
-);
-
-export type BaseColor = (typeof BASE_COLORS)[number];
+export * from "@bejamas/registry/catalog/base-colors";

@@ -4,15 +4,15 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@bejamas/ui/components/accordion";
+} from "@bejamas/registry/ui/accordion";
 import {
   Avatar,
   AvatarBadge,
   AvatarFallback,
   AvatarImage,
-} from "@bejamas/ui/components/avatar";
-import { Badge } from "@bejamas/ui/components/badge";
-import { Button } from "@bejamas/ui/components/button";
+} from "@bejamas/registry/ui/avatar";
+import { Badge } from "@bejamas/registry/ui/badge";
+import { Button } from "@bejamas/registry/ui/button";
 import {
   Card,
   CardContent,
@@ -20,24 +20,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@bejamas/ui/components/card";
-import { Checkbox } from "@bejamas/ui/components/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@bejamas/ui/components/dropdown-menu";
+} from "@bejamas/registry/ui/card";
+import { Checkbox } from "@bejamas/registry/ui/checkbox";
 import {
   Field,
   FieldContent,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@bejamas/ui/components/field";
-import { Input } from "@bejamas/ui/components/input";
+} from "@bejamas/registry/ui/field";
+import { Input } from "@bejamas/registry/ui/input";
 import {
   Item,
   ItemActions,
@@ -47,7 +39,7 @@ import {
   ItemMedia,
   ItemSeparator,
   ItemTitle,
-} from "@bejamas/ui/components/item";
+} from "@bejamas/registry/ui/item";
 import {
   Popover,
   PopoverContent,
@@ -55,32 +47,32 @@ import {
   PopoverTitle,
   PopoverDescription,
   PopoverTrigger,
-} from "@bejamas/ui/components/popover";
+} from "@bejamas/registry/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectGroup,
   SelectValue,
-} from "@bejamas/ui/components/select";
-import { Separator } from "@bejamas/ui/components/separator";
-import { Switch } from "@bejamas/ui/components/switch";
+} from "@bejamas/registry/ui/select";
+import { Switch } from "@bejamas/registry/ui/switch";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@bejamas/ui/components/tabs";
-import { Textarea } from "@bejamas/ui/components/textarea";
+} from "@bejamas/registry/ui/tabs";
+import { Textarea } from "@bejamas/registry/ui/textarea";
 import {
   ToggleGroup,
   ToggleGroupItem,
-} from "@bejamas/ui/components/toggle-group";
+} from "@bejamas/registry/ui/toggle-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@bejamas/ui/components/tooltip";
+} from "@bejamas/registry/ui/tooltip";
 import SemanticIcon from "@/components/icons/SemanticIcon.astro";
 import type { IconLibraryName } from "@bejamas/create-config/server";
 import {
@@ -97,18 +89,15 @@ interface Props {
   radiusLabel?: string;
   menuColorLabel?: string;
   menuInverted?: boolean;
+  menuTranslucent?: boolean;
   copy?: CreatePreviewCopy;
 }
 
 const {
   iconLibrary = "lucide",
-  iconLibraryLabel = "Lucide",
-  styleLabel = "Nova",
-  fontLabel = "Geist",
-  templateLabel = "astro",
-  radiusLabel = "default",
   menuColorLabel = "default",
   menuInverted = false,
+  menuTranslucent = false,
   copy = CREATE_PREVIEW_TRANSLATIONS.en,
 } = Astro.props as Props;
 ---
@@ -208,24 +197,26 @@ const {
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem
-                    value="eu"
-                    data-create-preview-text="form.regionEu"
-                  >
-                    {copy["form.regionEu"]}
-                  </SelectItem>
-                  <SelectItem
-                    value="us"
-                    data-create-preview-text="form.regionUs"
-                  >
-                    {copy["form.regionUs"]}
-                  </SelectItem>
-                  <SelectItem
-                    value="apac"
-                    data-create-preview-text="form.regionApac"
-                  >
-                    {copy["form.regionApac"]}
-                  </SelectItem>
+                  <SelectGroup>
+                    <SelectItem
+                      value="eu"
+                      data-create-preview-text="form.regionEu"
+                    >
+                      {copy["form.regionEu"]}
+                    </SelectItem>
+                    <SelectItem
+                      value="us"
+                      data-create-preview-text="form.regionUs"
+                    >
+                      {copy["form.regionUs"]}
+                    </SelectItem>
+                    <SelectItem
+                      value="apac"
+                      data-create-preview-text="form.regionApac"
+                    >
+                      {copy["form.regionApac"]}
+                    </SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
               <FieldDescription
@@ -465,6 +456,7 @@ const {
               class:list={[
                 "cn-menu-target rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-md",
                 menuInverted && "dark",
+                menuTranslucent && "cn-menu-translucent",
               ]}
             >
               <div

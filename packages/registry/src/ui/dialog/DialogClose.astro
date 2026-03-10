@@ -1,0 +1,20 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"button"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<button
+  {...rest}
+  data-slot="dialog-close"
+  data-dialog-close
+  class={cn("cn-dialog-close inline-flex items-center gap-2", className)}
+>
+  <slot />
+  {!Astro.slots.has("default") && <span class="sr-only">Close</span>}
+</button>

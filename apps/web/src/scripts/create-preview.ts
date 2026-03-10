@@ -2,6 +2,8 @@ import {
   catalogs,
   getDocumentDirection,
   getDocumentLanguage,
+  isInvertedMenuColor,
+  isTranslucentMenuColor,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import { syncSemanticIconsInRoot } from "@bejamas/semantic-icons/browser";
@@ -25,6 +27,7 @@ declare global {
     __BEJAMAS_CREATE_PREVIEW__?: {
       styleCssByStyle: Record<string, string>;
       initialThemeOverrides?: Partial<ThemeOverrides> | null;
+      initialConfig?: DesignSystemConfig | null;
     };
   }
 }
@@ -38,15 +41,31 @@ window.addEventListener("message", (event: MessageEvent<PreviewMessage>) => {
     return;
   }
 
-  const { config } = event.data;
+  applyPreviewConfig(
+    event.data.config,
+    normalizeThemeOverrides(event.data.themeOverrides),
+  );
+});
+
+const initialConfig = window.__BEJAMAS_CREATE_PREVIEW__?.initialConfig;
+if (initialConfig) {
+  applyPreviewConfig(
+    initialConfig,
+    normalizeThemeOverrides(
+      window.__BEJAMAS_CREATE_PREVIEW__?.initialThemeOverrides,
+    ),
+  );
+}
+
+function applyPreviewConfig(
+  config: DesignSystemConfig,
+  themeOverrides: ThemeOverrides,
+) {
   const themeTag = document.getElementById("create-theme-css");
   const styleTag = document.getElementById("create-style-css");
 
   if (themeTag) {
-    themeTag.textContent = buildDesignSystemThemeCss(
-      config,
-      normalizeThemeOverrides(event.data.themeOverrides),
-    );
+    themeTag.textContent = buildDesignSystemThemeCss(config, themeOverrides);
   }
 
   if (styleTag) {
@@ -88,7 +107,11 @@ window.addEventListener("message", (event: MessageEvent<PreviewMessage>) => {
     "[data-create-radius-label]",
     getCreatePickerSelectedOption("radius", config)?.label ?? config.radius,
   );
-  setText("[data-create-menu-color-label]", config.menuColor);
+  setText(
+    "[data-create-menu-color-label]",
+    getCreatePickerSelectedOption("menuColor", config)?.label ??
+      config.menuColor,
+  );
   setLocalizedText(copy);
   setLocalizedPlaceholders(copy);
 
@@ -97,9 +120,13 @@ window.addEventListener("message", (event: MessageEvent<PreviewMessage>) => {
       "[data-create-menu-preview], .cn-menu-target",
     )
     .forEach((node) => {
-      node.classList.toggle("dark", config.menuColor === "inverted");
+      node.classList.toggle("dark", isInvertedMenuColor(config.menuColor));
+      node.classList.toggle(
+        "cn-menu-translucent",
+        isTranslucentMenuColor(config.menuColor),
+      );
     });
-});
+}
 
 function setText(selector: string, value: string) {
   document.querySelectorAll<HTMLElement>(selector).forEach((node) => {

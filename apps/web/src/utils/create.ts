@@ -2,11 +2,13 @@ import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
   decodePreset,
   designSystemConfigSchema,
+  getDocumentLanguage,
   isPresetCode,
   RTL_LANGUAGE_VALUES,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import { getThemeRefFromSearchParams } from "./themes/create-theme";
+import { getKitchenSinkPreviewHref, resolveCreatePreviewItem } from "./kitchen-sink";
 
 interface ParseCreateSearchParamsOptions {
   fallbackPreset?: string | null;
@@ -136,4 +138,39 @@ export function resolveCreateThemeRef(
   options: ResolveCreateThemeRefOptions = {},
 ) {
   return getThemeRefFromSearchParams(searchParams, options.fallbackThemeRef);
+}
+
+export function resolveCreatePreviewTarget(searchParams: URLSearchParams) {
+  return resolveCreatePreviewItem(searchParams.get("item"));
+}
+
+export function buildCreatePreviewUrl(
+  config: DesignSystemConfig,
+  preset: string,
+  options: {
+    previewTarget?: string | null;
+    themeRef?: string | null;
+  } = {},
+) {
+  const params = new URLSearchParams({ preset });
+
+  if (config.rtl) {
+    params.set("rtl", "true");
+    params.set("lang", getDocumentLanguage(config));
+  }
+
+  if (options.themeRef) {
+    params.set("themeRef", options.themeRef);
+  }
+
+  if (options.previewTarget) {
+    params.set("embed", "create");
+    const previewHref = getKitchenSinkPreviewHref(options.previewTarget);
+    if (previewHref) {
+      return `${previewHref}?${params.toString()}`;
+    }
+  }
+
+  params.set("template", config.template);
+  return `/create/preview?${params.toString()}`;
 }

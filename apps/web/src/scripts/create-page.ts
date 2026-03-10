@@ -2,8 +2,16 @@ import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
   encodePreset,
   getRadiusValue,
+  isInvertedMenuColor,
+  isTranslucentMenuColor,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
+import {
+  buildCreatePreviewUrl,
+  parseCreateSearchParams,
+  resolveCreatePreviewTarget,
+} from "@/utils/create";
+import { getKitchenSinkCreateItemId } from "@/utils/kitchen-sink";
 import {
   applyCreateDocsRootState,
   cleanupCreateDocsRootState,
@@ -43,6 +51,7 @@ import {
 } from "@/utils/create-project-dialog";
 
 type CreateConfig = DesignSystemConfig;
+type HistoryMode = "push" | "replace";
 type PreviewMessage = {
   type: "bejamas:create-preview";
   config: CreateConfig;
@@ -100,6 +109,21 @@ const mainMenu = document.querySelector(
 ) as HTMLElement | null;
 const createProjectDialog = document.querySelector(
   "[data-create-project-dialog]",
+) as HTMLElement | null;
+const navigateDialog = document.querySelector(
+  "[data-create-navigate-dialog]",
+) as HTMLElement | null;
+const navigateInput = document.querySelector(
+  "[data-create-navigate-input]",
+) as HTMLInputElement | null;
+const navigateList = document.querySelector(
+  "[data-create-navigate-list]",
+) as HTMLElement | null;
+const navigateEmpty = document.querySelector(
+  "[data-create-navigate-empty]",
+) as HTMLElement | null;
+const navigateSeparator = document.querySelector(
+  "[data-create-navigate-separator]",
 ) as HTMLElement | null;
 const createProjectPackageTabs = document.querySelector(
   "[data-create-project-package-tabs]",
@@ -200,6 +224,17 @@ let themeOverrides = normalizeThemeOverrides(
 );
 let themeSyncTimer = 0;
 let themeStatusMessage = "";
+let currentPreviewTarget = resolveCreatePreviewTarget(
+  new URLSearchParams(window.location.search),
+);
+let activeNavigateIndex = -1;
+
+const CREATE_PREVIEW_SENTINEL = "__create-preview__";
+const CREATE_PREVIEW_DEFAULT_KEY = "__create-preview__";
+
+previewFrame.dataset.previewKey =
+  previewFrame.dataset.previewKey ??
+  (currentPreviewTarget ?? CREATE_PREVIEW_DEFAULT_KEY);
 
 function getField(name: string) {
   return createForm.elements.namedItem(name) as HTMLInputElement | null;
@@ -239,6 +274,18 @@ function collectConfig(): CreateConfig {
       formData.get("rtlLanguage") ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
     ) as CreateConfig["rtlLanguage"],
   };
+}
+
+function isEditableTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return Boolean(
+    target.closest(
+      'input, textarea, select, [contenteditable="true"], [contenteditable=""], [data-slot="combobox-input"]',
+    ),
+  );
 }
 
 function escapeHtml(value: string) {
@@ -289,11 +336,17 @@ function renderMarkerHtml(
   }
 
   if (kind === "menu-color") {
+    const isInverted = isInvertedMenuColor(
+      option.value as CreateConfig["menuColor"],
+    );
+    const isTranslucent = isTranslucentMenuColor(
+      option.value as CreateConfig["menuColor"],
+    );
     const startClass =
-      option.value === "inverted" ? "bg-neutral-950" : "bg-neutral-100";
+      isInverted ? "bg-neutral-950" : "bg-neutral-100";
     const endClass =
-      option.value === "inverted" ? "bg-neutral-100" : "bg-neutral-950";
-    return `<span data-create-picker-marker aria-hidden="true" class="inline-flex h-4 w-5 shrink-0 overflow-hidden rounded-[6px] border border-white/18 bg-white/5"><span class="block h-full w-1/2 ${startClass}"></span><span class="block h-full w-1/2 ${endClass}"></span></span>`;
+      isInverted ? "bg-neutral-100" : "bg-neutral-950";
+    return `<span data-create-picker-marker aria-hidden="true" class="relative inline-flex h-4 w-5 shrink-0 overflow-hidden rounded-[6px] border border-white/18 bg-white/5"><span class="block h-full w-1/2 ${startClass}"></span><span class="block h-full w-1/2 ${endClass}"></span>${isTranslucent ? '<span class="absolute inset-x-0 top-0 h-[1px] bg-white/30"></span><span class="absolute inset-y-0 left-1/2 w-[1px] -translate-x-1/2 bg-white/15"></span>' : ""}</span>`;
   }
 
   if (kind === "menu-accent") {
@@ -416,6 +469,108 @@ function getCurrentPreset(config: CreateConfig) {
     config;
 
   return encodePreset(presetConfig as Parameters<typeof encodePreset>[0]);
+}
+
+function getNavigateItems() {
+  return Array.from(
+    document.querySelectorAll("[data-create-navigate-item]"),
+  ) as HTMLButtonElement[];
+}
+
+function getNavigateVisibleItems() {
+  return getNavigateItems().filter((item) => !item.hidden);
+}
+
+function getNavigateItemTarget(item: HTMLElement) {
+  const value = item.dataset.createPreviewTarget ?? item.dataset.previewItem;
+  return value ? value : null;
+}
+
+function syncNavigateGroups() {
+  const groups = Array.from(
+    document.querySelectorAll("[data-create-navigate-group]"),
+  ) as HTMLElement[];
+
+  for (const group of groups) {
+    const items = Array.from(
+      group.querySelectorAll("[data-create-navigate-item]"),
+    ) as HTMLElement[];
+    group.hidden = items.every((item) => item.hidden);
+  }
+
+  if (navigateSeparator && groups.length >= 2) {
+    navigateSeparator.hidden = groups[0]?.hidden || groups[1]?.hidden;
+  }
+}
+
+function setActiveNavigateIndex(index: number) {
+  const visibleItems = getNavigateVisibleItems();
+  activeNavigateIndex =
+    visibleItems.length === 0 ? -1 : Math.max(0, Math.min(index, visibleItems.length - 1));
+
+  getNavigateItems().forEach((item) => {
+    const isActive = visibleItems[activeNavigateIndex] === item;
+    item.dataset.active = isActive ? "true" : "false";
+    item.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  const activeItem = visibleItems[activeNavigateIndex];
+  activeItem?.scrollIntoView({ block: "nearest" });
+}
+
+function syncNavigateDialogFilter(query = navigateInput?.value ?? "") {
+  const normalizedQuery = query.trim().toLowerCase();
+  const selectedTarget = currentPreviewTarget ?? CREATE_PREVIEW_SENTINEL;
+
+  getNavigateItems().forEach((item) => {
+    const searchText = (item.dataset.createSearchText ?? "").toLowerCase();
+    item.hidden = normalizedQuery.length > 0 && !searchText.includes(normalizedQuery);
+
+    const itemTarget = getNavigateItemTarget(item) ?? CREATE_PREVIEW_SENTINEL;
+    item.dataset.selected = itemTarget === selectedTarget ? "true" : "false";
+  });
+
+  syncNavigateGroups();
+
+  const visibleItems = getNavigateVisibleItems();
+  navigateEmpty?.classList.toggle("hidden", visibleItems.length > 0);
+
+  const selectedIndex = visibleItems.findIndex((item) => {
+    const itemTarget = getNavigateItemTarget(item) ?? CREATE_PREVIEW_SENTINEL;
+    return itemTarget === selectedTarget;
+  });
+  setActiveNavigateIndex(selectedIndex >= 0 ? selectedIndex : 0);
+}
+
+function syncNavigateDialogSelection() {
+  if (navigateInput) {
+    navigateInput.value = "";
+  }
+  syncNavigateDialogFilter("");
+}
+
+function setNavigateDialogOpen(open: boolean) {
+  navigateDialog?.dispatchEvent(
+    new CustomEvent("dialog:set", {
+      detail: {
+        open,
+      },
+    }),
+  );
+}
+
+function selectNavigatePreviewTarget(nextPreviewTarget: string | null) {
+  setNavigateDialogOpen(false);
+
+  if (nextPreviewTarget === currentPreviewTarget) {
+    return;
+  }
+
+  updateUi({
+    history: "push",
+    previewTarget: nextPreviewTarget,
+    forceIframeReload: true,
+  });
 }
 
 function syncRadiusPicker(config: CreateConfig) {
@@ -915,7 +1070,17 @@ function applyConfig(
   updateUi();
 }
 
-function updateUi() {
+function updateUi(
+  options: {
+    history?: HistoryMode;
+    previewTarget?: string | null;
+    forceIframeReload?: boolean;
+  } = {},
+) {
+  if (options.previewTarget !== undefined) {
+    currentPreviewTarget = options.previewTarget;
+  }
+
   const config = collectConfig();
   rtlLanguagePicker?.classList.toggle("hidden", !config.rtl);
   config.theme = syncThemeSelection(config) as CreateConfig["theme"];
@@ -945,6 +1110,13 @@ function updateUi() {
     params.set("themeRef", themeRef);
   }
 
+  if (currentPreviewTarget) {
+    const currentPreviewItem = getKitchenSinkCreateItemId(currentPreviewTarget);
+    if (currentPreviewItem) {
+      params.set("item", currentPreviewItem);
+    }
+  }
+
   presetCodeNode.textContent = `--preset ${preset}`;
 
   if (presetButton) {
@@ -956,7 +1128,11 @@ function updateUi() {
 
   setStoredPreset(preset, undefined, undefined, themeRef);
 
-  window.history.replaceState({}, "", `/create?${params.toString()}`);
+  window.history[options.history === "push" ? "pushState" : "replaceState"](
+    {},
+    "",
+    `/create?${params.toString()}`,
+  );
 
   if (themeStyleNode) {
     themeStyleNode.textContent = buildDesignSystemThemeCss(
@@ -972,6 +1148,22 @@ function updateUi() {
 
   applyCreateDocsRootState(docsRoot, config.style);
 
+  const nextPreviewUrl = buildCreatePreviewUrl(config, preset, {
+    previewTarget: currentPreviewTarget,
+    themeRef,
+  });
+  const nextPreviewKey = currentPreviewTarget ?? CREATE_PREVIEW_DEFAULT_KEY;
+  const shouldReloadIframe =
+    options.forceIframeReload ||
+    previewFrame.dataset.previewKey !== nextPreviewKey;
+
+  if (shouldReloadIframe) {
+    previewFrame.dataset.previewKey = nextPreviewKey;
+    previewFrame.setAttribute("src", nextPreviewUrl);
+    syncNavigateDialogSelection();
+    return;
+  }
+
   const message: PreviewMessage = {
     type: "bejamas:create-preview",
     config,
@@ -980,6 +1172,7 @@ function updateUi() {
   };
 
   previewFrame.contentWindow?.postMessage(message, window.location.origin);
+  syncNavigateDialogSelection();
 }
 
 function handleThemeImport() {
@@ -1058,6 +1251,11 @@ mainMenu?.addEventListener("dropdown-menu:select", (event) => {
   const value = (event as CustomEvent<{ value: string }>).detail.value;
   const currentConfig = collectConfig();
 
+  if (value === "navigate") {
+    setNavigateDialogOpen(true);
+    return;
+  }
+
   if (value === "shuffle") {
     applyConfig(createRandomDesignSystemConfig(currentConfig), {
       clearCustomTheme: true,
@@ -1080,6 +1278,96 @@ mainMenu?.addEventListener("dropdown-menu:select", (event) => {
         },
       }),
     );
+  }
+});
+
+navigateDialog?.addEventListener("dialog:change", (event) => {
+  const open = (event as CustomEvent<{ open: boolean }>).detail.open;
+
+  if (open) {
+    syncNavigateDialogSelection();
+    window.requestAnimationFrame(() => {
+      navigateInput?.focus();
+      navigateInput?.select();
+    });
+    return;
+  }
+
+  if (navigateInput) {
+    navigateInput.value = "";
+  }
+  syncNavigateDialogFilter("");
+});
+
+navigateInput?.addEventListener("input", () => {
+  syncNavigateDialogFilter(navigateInput.value);
+});
+
+navigateInput?.addEventListener("keydown", (event) => {
+  const visibleItems = getNavigateVisibleItems();
+
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    if (visibleItems.length > 0) {
+      setActiveNavigateIndex(activeNavigateIndex + 1);
+    }
+    return;
+  }
+
+  if (event.key === "ArrowUp") {
+    event.preventDefault();
+    if (visibleItems.length > 0) {
+      setActiveNavigateIndex(activeNavigateIndex - 1);
+    }
+    return;
+  }
+
+  if (event.key === "Enter") {
+    const activeItem = visibleItems[activeNavigateIndex];
+    if (!activeItem) {
+      return;
+    }
+
+    event.preventDefault();
+    selectNavigatePreviewTarget(
+    resolveCreatePreviewTarget(
+      new URLSearchParams({
+        item: getNavigateItemTarget(activeItem) ?? "",
+      }),
+    ),
+  );
+  }
+});
+
+navigateList?.addEventListener("click", (event) => {
+  const item = (event.target as HTMLElement).closest(
+    "[data-create-navigate-item]",
+  ) as HTMLButtonElement | null;
+  if (!item) {
+    return;
+  }
+
+  selectNavigatePreviewTarget(
+    resolveCreatePreviewTarget(
+      new URLSearchParams({
+        item: getNavigateItemTarget(item) ?? "",
+      }),
+    ),
+  );
+});
+
+navigateList?.addEventListener("pointermove", (event) => {
+  const item = (event.target as HTMLElement).closest(
+    "[data-create-navigate-item]",
+  ) as HTMLButtonElement | null;
+  if (!item || item.hidden) {
+    return;
+  }
+
+  const visibleItems = getNavigateVisibleItems();
+  const nextIndex = visibleItems.indexOf(item);
+  if (nextIndex >= 0) {
+    setActiveNavigateIndex(nextIndex);
   }
 });
 
@@ -1246,6 +1534,33 @@ createForm.addEventListener("submit", (event) => {
 });
 createForm.addEventListener("change", updateUi);
 previewFrame.addEventListener("load", updateUi);
+window.addEventListener("keydown", (event) => {
+  if (
+    event.defaultPrevented ||
+    event.altKey ||
+    event.shiftKey ||
+    !(event.metaKey || event.ctrlKey) ||
+    event.key.toLowerCase() !== "p" ||
+    isEditableTarget(event.target)
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+  setNavigateDialogOpen(true);
+});
+window.addEventListener("popstate", () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  currentPreviewTarget = resolveCreatePreviewTarget(searchParams);
+
+  const result = parseCreateSearchParams(searchParams);
+  if (result.success) {
+    updateUi({
+      previewTarget: currentPreviewTarget,
+      forceIframeReload: true,
+    });
+  }
+});
 window.addEventListener("pagehide", () => {
   cleanupCreateDocsRootState(docsRoot);
 });

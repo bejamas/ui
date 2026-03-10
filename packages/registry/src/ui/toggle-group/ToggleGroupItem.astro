@@ -1,0 +1,48 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+import {
+  toggleVariants,
+  type ToggleVariantProps,
+} from "@bejamas/registry/lib/toggle-shared";
+
+interface Props extends ToggleVariantProps, Omit<HTMLAttributes<"button">, "class"> {
+  value: string;
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  value,
+  variant,
+  size,
+  disabled,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<button
+  type="button"
+  data-slot="toggle-group-item"
+  data-size={size ?? undefined}
+  data-value={value}
+  data-variant={variant ?? undefined}
+  disabled={disabled}
+  class={cn(
+    "cn-toggle-group-item",
+    toggleVariants({
+      variant: variant ?? "default",
+      size: size ?? "default",
+    }),
+    "shrink-0 focus:z-10 focus-visible:z-10",
+    "group-data-horizontal/toggle-group:group-data-[spacing=0]/toggle-group:group-data-[variant=outline]/toggle-group:border-s-0",
+    "group-data-vertical/toggle-group:group-data-[spacing=0]/toggle-group:group-data-[variant=outline]/toggle-group:border-t-0",
+    "group-data-horizontal/toggle-group:group-data-[spacing=0]/toggle-group:group-data-[variant=outline]/toggle-group:first:border-s",
+    "group-data-vertical/toggle-group:group-data-[spacing=0]/toggle-group:group-data-[variant=outline]/toggle-group:first:border-t",
+    className
+  )}
+  {...rest}
+>
+  <slot />
+</button>

@@ -1,0 +1,25 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"span"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<span
+  {...rest}
+  data-slot="avatar-badge"
+  class={cn(
+    "cn-avatar-badge",
+    "absolute right-0 bottom-0 z-10 inline-flex items-center justify-center select-none",
+    className,
+  )}
+>
+  <slot />
+</span>

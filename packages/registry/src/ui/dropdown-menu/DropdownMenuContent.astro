@@ -1,0 +1,41 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "bottom" | "left" | "right";
+  sideOffset?: number;
+  class?: string;
+}
+
+const {
+  align = "start",
+  alignOffset = 0,
+  side = "bottom",
+  sideOffset = 4,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div data-slot="dropdown-menu-portal">
+  <div data-slot="dropdown-menu-positioner" class="isolate z-50 outline-none">
+    <div
+      {...rest}
+      hidden
+      data-slot="dropdown-menu-content"
+      data-align={align}
+      data-align-offset={alignOffset}
+      data-side={side}
+      data-side-offset={sideOffset}
+      class={cn(
+        "cn-dropdown-menu-content cn-dropdown-menu-content-logical cn-menu-target z-50 max-h-[var(--available-height)] w-[var(--anchor-width)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto outline-none data-[state=closed]:overflow-hidden",
+        className,
+      )}
+    >
+      <slot />
+    </div>
+  </div>
+</div>

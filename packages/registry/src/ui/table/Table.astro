@@ -1,0 +1,250 @@
+---
+/**
+ * @component Table
+ * @title Table
+ * @description A responsive table component with compound parts for header, body, footer, and caption.
+ *
+ * @preview
+ *
+ * <Table>
+ *   <TableCaption>A list of your recent invoices.</TableCaption>
+ *   <TableHeader>
+ *     <TableRow>
+ *       <TableHead class="w-[100px]">Invoice</TableHead>
+ *       <TableHead>Status</TableHead>
+ *       <TableHead>Method</TableHead>
+ *       <TableHead class="text-right">Amount</TableHead>
+ *     </TableRow>
+ *   </TableHeader>
+ *   <TableBody>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV001</TableCell>
+ *       <TableCell>Paid</TableCell>
+ *       <TableCell>Credit Card</TableCell>
+ *       <TableCell class="text-right">$250.00</TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV002</TableCell>
+ *       <TableCell>Pending</TableCell>
+ *       <TableCell>PayPal</TableCell>
+ *       <TableCell class="text-right">$150.00</TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV003</TableCell>
+ *       <TableCell>Unpaid</TableCell>
+ *       <TableCell>Bank Transfer</TableCell>
+ *       <TableCell class="text-right">$350.00</TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV004</TableCell>
+ *       <TableCell>Paid</TableCell>
+ *       <TableCell>Credit Card</TableCell>
+ *       <TableCell class="text-right">$450.00</TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV005</TableCell>
+ *       <TableCell>Paid</TableCell>
+ *       <TableCell>PayPal</TableCell>
+ *       <TableCell class="text-right">$550.00</TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV006</TableCell>
+ *       <TableCell>Pending</TableCell>
+ *       <TableCell>Bank Transfer</TableCell>
+ *       <TableCell class="text-right">$200.00</TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV007</TableCell>
+ *       <TableCell>Unpaid</TableCell>
+ *       <TableCell>Credit Card</TableCell>
+ *       <TableCell class="text-right">$300.00</TableCell>
+ *     </TableRow>
+ *   </TableBody>
+ *   <TableFooter>
+ *     <TableRow>
+ *       <TableCell colspan={3}>Total</TableCell>
+ *       <TableCell class="text-right">$2,500.00</TableCell>
+ *     </TableRow>
+ *   </TableFooter>
+ * </Table>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import {
+ *   Table,
+ *   TableBody,
+ *   TableCaption,
+ *   TableCell,
+ *   TableFooter,
+ *   TableHead,
+ *   TableHeader,
+ *   TableRow,
+ * } from '@bejamas/ui/components/table';
+ *
+ * const invoices = [
+ *   { invoice: "INV001", paymentStatus: "Paid", totalAmount: "$250.00", paymentMethod: "Credit Card" },
+ *   { invoice: "INV002", paymentStatus: "Pending", totalAmount: "$150.00", paymentMethod: "PayPal" },
+ *   { invoice: "INV003", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
+ *   { invoice: "INV004", paymentStatus: "Paid", totalAmount: "$450.00", paymentMethod: "Credit Card" },
+ *   { invoice: "INV005", paymentStatus: "Paid", totalAmount: "$550.00", paymentMethod: "PayPal" },
+ *   { invoice: "INV006", paymentStatus: "Pending", totalAmount: "$200.00", paymentMethod: "Bank Transfer" },
+ *   { invoice: "INV007", paymentStatus: "Unpaid", totalAmount: "$300.00", paymentMethod: "Credit Card" },
+ * ];
+ * ---
+ *
+ * <Table>
+ *   <TableCaption>A list of your recent invoices.</TableCaption>
+ *   <TableHeader>
+ *     <TableRow>
+ *       <TableHead class="w-[100px]">Invoice</TableHead>
+ *       <TableHead>Status</TableHead>
+ *       <TableHead>Method</TableHead>
+ *       <TableHead class="text-right">Amount</TableHead>
+ *     </TableRow>
+ *   </TableHeader>
+ *   <TableBody>
+ *     {invoices.map((invoice) => (
+ *       <TableRow>
+ *         <TableCell class="font-medium">{invoice.invoice}</TableCell>
+ *         <TableCell>{invoice.paymentStatus}</TableCell>
+ *         <TableCell>{invoice.paymentMethod}</TableCell>
+ *         <TableCell class="text-right">{invoice.totalAmount}</TableCell>
+ *       </TableRow>
+ *     ))}
+ *   </TableBody>
+ *   <TableFooter>
+ *     <TableRow>
+ *       <TableCell colspan={3}>Total</TableCell>
+ *       <TableCell class="text-right">$2,500.00</TableCell>
+ *     </TableRow>
+ *   </TableFooter>
+ * </Table>
+ * ```
+ *
+ * @examples
+ *
+ * ### Footer
+ *
+ * Use the `<TableFooter />` component to add a footer to the table.
+ *
+ * <Table>
+ *   <TableCaption>A list of your recent invoices.</TableCaption>
+ *   <TableHeader>
+ *     <TableRow>
+ *       <TableHead class="w-[100px]">Invoice</TableHead>
+ *       <TableHead>Status</TableHead>
+ *       <TableHead>Method</TableHead>
+ *       <TableHead class="text-right">Amount</TableHead>
+ *     </TableRow>
+ *   </TableHeader>
+ *   <TableBody>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV001</TableCell>
+ *       <TableCell>Paid</TableCell>
+ *       <TableCell>Credit Card</TableCell>
+ *       <TableCell class="text-right">$250.00</TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV002</TableCell>
+ *       <TableCell>Pending</TableCell>
+ *       <TableCell>PayPal</TableCell>
+ *       <TableCell class="text-right">$150.00</TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">INV003</TableCell>
+ *       <TableCell>Unpaid</TableCell>
+ *       <TableCell>Bank Transfer</TableCell>
+ *       <TableCell class="text-right">$350.00</TableCell>
+ *     </TableRow>
+ *   </TableBody>
+ *   <TableFooter>
+ *     <TableRow>
+ *       <TableCell colspan={3}>Total</TableCell>
+ *       <TableCell class="text-right">$2,500.00</TableCell>
+ *     </TableRow>
+ *   </TableFooter>
+ * </Table>
+ *
+ * ### Actions
+ *
+ * A table showing actions for each row using a `<DropdownMenu />` component.
+ *
+ * <Table>
+ *   <TableHeader>
+ *     <TableRow>
+ *       <TableHead>Product</TableHead>
+ *       <TableHead>Price</TableHead>
+ *       <TableHead class="text-right">Actions</TableHead>
+ *     </TableRow>
+ *   </TableHeader>
+ *   <TableBody>
+ *     <TableRow>
+ *       <TableCell class="font-medium">Wireless Mouse</TableCell>
+ *       <TableCell>$29.99</TableCell>
+ *       <TableCell class="text-right">
+ *         <DropdownMenu>
+ *           <DropdownMenuTrigger variant="ghost" size="icon" class="size-8"><EllipsisIcon /><span class="sr-only">Open menu</span></DropdownMenuTrigger>
+ *           <DropdownMenuContent align="end">
+ *             <DropdownMenuItem>Edit</DropdownMenuItem>
+ *             <DropdownMenuItem>Duplicate</DropdownMenuItem>
+ *             <DropdownMenuSeparator />
+ *             <DropdownMenuItem class="text-destructive">Delete</DropdownMenuItem>
+ *           </DropdownMenuContent>
+ *         </DropdownMenu>
+ *       </TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">Mechanical Keyboard</TableCell>
+ *       <TableCell>$129.99</TableCell>
+ *       <TableCell class="text-right">
+ *         <DropdownMenu>
+ *           <DropdownMenuTrigger variant="ghost" size="icon" class="size-8"><EllipsisIcon /><span class="sr-only">Open menu</span></DropdownMenuTrigger>
+ *           <DropdownMenuContent align="end">
+ *             <DropdownMenuItem>Edit</DropdownMenuItem>
+ *             <DropdownMenuItem>Duplicate</DropdownMenuItem>
+ *             <DropdownMenuSeparator />
+ *             <DropdownMenuItem class="text-destructive">Delete</DropdownMenuItem>
+ *           </DropdownMenuContent>
+ *         </DropdownMenu>
+ *       </TableCell>
+ *     </TableRow>
+ *     <TableRow>
+ *       <TableCell class="font-medium">USB-C Hub</TableCell>
+ *       <TableCell>$49.99</TableCell>
+ *       <TableCell class="text-right">
+ *         <DropdownMenu>
+ *           <DropdownMenuTrigger variant="ghost" size="icon" class="size-8"><EllipsisIcon /><span class="sr-only">Open menu</span></DropdownMenuTrigger>
+ *           <DropdownMenuContent align="end">
+ *             <DropdownMenuItem>Edit</DropdownMenuItem>
+ *             <DropdownMenuItem>Duplicate</DropdownMenuItem>
+ *             <DropdownMenuSeparator />
+ *             <DropdownMenuItem class="text-destructive">Delete</DropdownMenuItem>
+ *           </DropdownMenuContent>
+ *         </DropdownMenu>
+ *       </TableCell>
+ *     </TableRow>
+ *   </TableBody>
+ * </Table>
+ */
+
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"table"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div data-slot="table-container" class="cn-table-container relative w-full overflow-x-auto">
+  <table
+    data-slot="table"
+    class={cn("cn-table", "w-full caption-bottom text-sm", className)}
+    {...rest}
+  >
+    <slot />
+  </table>
+</div>

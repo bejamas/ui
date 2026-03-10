@@ -4,6 +4,7 @@ import fg from "fast-glob";
 import { logger } from "@/src/utils/logger";
 import { Config, getConfig } from "@/src/utils/get-config";
 import { rewriteAstroIcons } from "@/src/utils/icon-transform";
+import { rewriteAstroMenus } from "@/src/utils/menu-transform";
 
 export function updateImportAliases(
   moduleSpecifier: string,
@@ -102,6 +103,8 @@ export function rewriteAstroImports(content: string, config: Config) {
     if (next === specifier) return full;
     return full.replace(specifier, next);
   });
+
+  updated = rewriteAstroMenus(updated, config.menuColor);
 
   return rewriteAstroIcons(updated, config.iconLibrary);
 }

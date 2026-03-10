@@ -12,6 +12,7 @@
     "./server": "./src/server.ts"
   },
   "dependencies": {
+    "@bejamas/registry": "workspace:*",
     "@bejamas/semantic-icons": "workspace:*",
     "postcss": "^8.5.6",
     "shadcn": "^4.0.1",

@@ -18,6 +18,12 @@ const isVercel = process.env.VERCEL === "1";
 export default defineConfig({
   trailingSlash: "never",
   output: "server",
+  experimental: {
+    rustCompiler: true,
+    queuedRendering: {
+      enabled: true,
+    },
+  },
   site: "https://ui.bejamas.com",
   redirects: {
     "/docs": "/docs/introduction",

@@ -1,13 +1,9 @@
 ---
 import { Icon } from "@astrojs/starlight/components";
 import project from "virtual:starlight/project-context";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-} from "@bejamas/ui/components/input-group";
-import { Button } from "@bejamas/ui/components/button";
-import { KbdGroup, Kbd } from "@bejamas/ui/components/kbd";
+
+import { Button } from "@bejamas/registry/ui/button";
+import { KbdGroup, Kbd } from "@bejamas/registry/ui/kbd";
 
 const pagefindTranslations = {
   placeholder: Astro.locals.t("search.label"),
@@ -39,9 +35,9 @@ if (project.trailingSlash === "never") {
   >
     <Icon name="magnifier" />
 
-    <span aria-hidden="true">{Astro.locals.t("search.label")}</span>
+    <!-- <span aria-hidden="true">{Astro.locals.t("search.label")}</span> -->
 
-    <KbdGroup data-search-shortcut class="ml-2">
+    <KbdGroup data-search-shortcut>
       <Kbd>{Astro.locals.t("search.ctrlKey")} + K</Kbd>
     </KbdGroup>
   </Button>

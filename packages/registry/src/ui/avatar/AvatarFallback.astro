@@ -1,0 +1,25 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="avatar-fallback"
+  class={cn(
+    "cn-avatar-fallback",
+    "absolute inset-0 flex size-full items-center justify-center",
+    className,
+  )}
+>
+  <slot />
+</div>

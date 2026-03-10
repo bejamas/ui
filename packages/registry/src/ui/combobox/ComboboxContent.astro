@@ -1,0 +1,37 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+  side?: "top" | "bottom";
+  align?: "start" | "center" | "end";
+  sideOffset?: number;
+  alignOffset?: number;
+}
+
+const {
+  class: className = "",
+  side = "bottom",
+  align = "center",
+  sideOffset = 6,
+  alignOffset = 0,
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="combobox-content"
+  data-side={side}
+  data-align={align}
+  data-side-offset={sideOffset}
+  data-align-offset={alignOffset}
+  hidden
+  class={cn(
+    "cn-combobox-content cn-combobox-content-logical cn-menu-target group/combobox-content relative w-[var(--anchor-width)] max-h-[var(--available-height)] max-w-[var(--available-width)] min-w-[max(8rem,var(--anchor-width))] origin-(--transform-origin)",
+    className,
+  )}
+>
+  <slot />
+</div>

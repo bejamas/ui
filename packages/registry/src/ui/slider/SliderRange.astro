@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="slider-range"
+  class={cn("cn-slider-range", 
+    "bg-primary absolute rounded-full",
+    "h-full group-data-[orientation=vertical]/slider:h-auto group-data-[orientation=vertical]/slider:w-full",
+    className,
+  )}
+>
+  <slot />
+</div>

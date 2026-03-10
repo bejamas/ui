@@ -1,0 +1,46 @@
+---
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"img"> {
+  class?: string;
+  src?: string;
+  alt?: string;
+}
+
+const {
+  class: className = "",
+  src,
+  alt = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+{
+  src ? (
+    <img
+      {...rest}
+      data-slot="avatar-image"
+      src={src}
+      alt={alt}
+      class={cn(
+        "cn-avatar-image",
+        "relative z-10 aspect-square size-full object-cover",
+        className,
+      )}
+    />
+  ) : (
+    <div
+      {...rest}
+      data-slot="avatar-image"
+      class={cn(
+        "cn-avatar-image",
+        "relative z-10 aspect-square size-full overflow-hidden",
+        "[&_img]:size-full [&_img]:object-cover",
+        className,
+      )}
+    >
+      <slot />
+    </div>
+  )
+}

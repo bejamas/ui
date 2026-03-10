@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icon",
+  "type": "registry:ui",
+  "files": [
+    {
+      "path": "ui/icon/SemanticIcon.astro",
+      "type": "registry:ui",
+      "content": "---\nimport {\n  renderSemanticIconSvg,\n  type IconLibraryName,\n  type SemanticIconName,\n} from \"@bejamas/semantic-icons\";\nimport { resolveActiveIconLibrary } from \"@/registry/bejamas-lyra/lib/icons\";\nimport { cn } from \"@/registry/bejamas-lyra/lib/utils\";\n\ntype Props = {\n  name: SemanticIconName;\n  library?: IconLibraryName;\n  class?: string;\n  \"aria-hidden\"?: \"true\" | \"false\";\n} & Record<string, string | number | boolean | undefined>;\n\nconst {\n  name,\n  library: providedLibrary,\n  class: className = \"\",\n  \"aria-hidden\": ariaHidden = \"true\",\n  ...rest\n} = Astro.props as Props;\n\nconst library = resolveActiveIconLibrary(Astro, providedLibrary);\nconst markup = renderSemanticIconSvg(library, name, {\n  class: cn(\"cn-semantic-icon\", className),\n  \"aria-hidden\": ariaHidden,\n  \"data-semantic-icon\": name,\n  \"data-icon-library\": library,\n  ...rest,\n});\n---\n\n<Fragment set:html={markup} />\n"
+    },
+    {
+      "path": "ui/icon/index.ts",
+      "type": "registry:ui",
+      "content": "export { default as SemanticIcon } from \"./SemanticIcon.astro\";\n"
+    }
+  ],
+  "dependencies": [
+    "@bejamas/semantic-icons"
+  ],
+  "registryDependencies": [
+    "icons",
+    "index",
+    "utils"
+  ]
+}

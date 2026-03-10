@@ -1,10 +1,20 @@
+// Preset encoding/decoding utilities.
+// Bit-packs design system params into a single integer,
+// then encodes as base62 with a version prefix character.
+//
+// Rules for backward compat:
+//   1. Never reorder existing values inside a given version.
+//   2. New fields must have their default at index 0.
+//   3. Only append new fields to the end of PRESET_FIELDS.
+//   4. Stay under 53 bits total (JS safe integer limit).
+
 export const PRESET_STYLES = [
   "nova",
   "vega",
-  "lyra",
-  "juno",
   "maia",
+  "lyra",
   "mira",
+  "juno",
 ] as const;
 
 export const PRESET_BASE_COLORS = [
@@ -83,9 +93,50 @@ export const PRESET_RADII = [
 ] as const;
 
 export const PRESET_MENU_ACCENTS = ["subtle", "bold"] as const;
-export const PRESET_MENU_COLORS = ["default", "inverted"] as const;
+export const PRESET_MENU_COLORS = [
+  "default",
+  "inverted",
+  "default-translucent",
+  "inverted-translucent",
+] as const;
 
-const PRESET_FIELDS = [
+type PresetFieldKey =
+  | "style"
+  | "baseColor"
+  | "theme"
+  | "iconLibrary"
+  | "font"
+  | "radius"
+  | "menuAccent"
+  | "menuColor";
+
+type PresetFieldDefinition = {
+  key: PresetFieldKey;
+  values: readonly string[];
+  bits: number;
+};
+
+type PresetVersionDefinition = {
+  version: "a" | "b";
+  fields: readonly PresetFieldDefinition[];
+};
+
+const PRESET_FIELDS_A = [
+  { key: "menuColor", values: PRESET_MENU_COLORS, bits: 3 },
+  { key: "menuAccent", values: PRESET_MENU_ACCENTS, bits: 3 },
+  { key: "radius", values: PRESET_RADII, bits: 4 },
+  { key: "font", values: PRESET_FONTS, bits: 6 },
+  { key: "iconLibrary", values: PRESET_ICON_LIBRARIES, bits: 6 },
+  { key: "theme", values: PRESET_THEMES, bits: 6 },
+  { key: "baseColor", values: PRESET_BASE_COLORS, bits: 6 },
+  {
+    key: "style",
+    values: ["nova", "vega", "maia", "lyra", "mira"] as const,
+    bits: 6,
+  },
+] as const satisfies readonly PresetFieldDefinition[];
+
+const PRESET_FIELDS_B = [
   { key: "menuColor", values: PRESET_MENU_COLORS, bits: 3 },
   { key: "menuAccent", values: PRESET_MENU_ACCENTS, bits: 3 },
   { key: "radius", values: PRESET_RADII, bits: 4 },
@@ -94,7 +145,22 @@ const PRESET_FIELDS = [
   { key: "theme", values: PRESET_THEMES, bits: 6 },
   { key: "baseColor", values: PRESET_BASE_COLORS, bits: 6 },
   { key: "style", values: PRESET_STYLES, bits: 6 },
-] as const;
+] as const satisfies readonly PresetFieldDefinition[];
+
+const PRESET_VERSIONS = [
+  {
+    version: "a",
+    fields: PRESET_FIELDS_A,
+  },
+  {
+    version: "b",
+    fields: PRESET_FIELDS_B,
+  },
+] as const satisfies readonly PresetVersionDefinition[];
+
+const PRESET_VERSION_MAP = new Map(
+  PRESET_VERSIONS.map((version) => [version.version, version]),
+);
 
 export type PresetConfig = {
   style: (typeof PRESET_STYLES)[number];
@@ -119,7 +185,6 @@ export const DEFAULT_PRESET_CONFIG: PresetConfig = {
 };
 
 const BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-const VERSION_CHAR = "a";
 
 export function toBase62(num: number) {
   if (num === 0) {
@@ -152,28 +217,35 @@ export function fromBase62(value: string) {
   return result;
 }
 
-export function encodePreset(config: Partial<PresetConfig>) {
-  const merged = { ...DEFAULT_PRESET_CONFIG, ...config };
+function canEncodeWithVersion(
+  config: PresetConfig,
+  version: PresetVersionDefinition,
+) {
+  return version.fields.every((field) =>
+    field.values.includes(config[field.key]),
+  );
+}
+
+function encodePresetWithVersion(
+  config: PresetConfig,
+  version: PresetVersionDefinition,
+) {
   let bits = 0;
   let offset = 0;
 
-  for (const field of PRESET_FIELDS) {
-    const index = (field.values as readonly string[]).indexOf(
-      merged[field.key as keyof PresetConfig],
-    );
-
+  for (const field of version.fields) {
+    const index = field.values.indexOf(config[field.key]);
     bits += (index === -1 ? 0 : index) * 2 ** offset;
     offset += field.bits;
   }
 
-  return VERSION_CHAR + toBase62(bits);
+  return version.version + toBase62(bits);
 }
 
-export function decodePreset(code: string): PresetConfig | null {
-  if (!code || code.length < 2 || code[0] !== VERSION_CHAR) {
-    return null;
-  }
-
+function decodePresetWithVersion(
+  code: string,
+  version: PresetVersionDefinition,
+): PresetConfig | null {
   const bits = fromBase62(code.slice(1));
   if (bits < 0) {
     return null;
@@ -182,7 +254,7 @@ export function decodePreset(code: string): PresetConfig | null {
   const result = {} as Record<string, string>;
   let offset = 0;
 
-  for (const field of PRESET_FIELDS) {
+  for (const field of version.fields) {
     const index = Math.floor(bits / 2 ** offset) % 2 ** field.bits;
     result[field.key] =
       index < field.values.length ? field.values[index] : field.values[0];
@@ -192,8 +264,40 @@ export function decodePreset(code: string): PresetConfig | null {
   return result as PresetConfig;
 }
 
+export function encodePreset(config: Partial<PresetConfig>) {
+  const merged = { ...DEFAULT_PRESET_CONFIG, ...config };
+
+  for (const version of PRESET_VERSIONS) {
+    if (canEncodeWithVersion(merged, version)) {
+      return encodePresetWithVersion(merged, version);
+    }
+  }
+
+  return encodePresetWithVersion(
+    merged,
+    PRESET_VERSIONS[PRESET_VERSIONS.length - 1],
+  );
+}
+
+export function decodePreset(code: string): PresetConfig | null {
+  if (!code || code.length < 2) {
+    return null;
+  }
+
+  const version = PRESET_VERSION_MAP.get(code[0] as "a" | "b");
+  if (!version) {
+    return null;
+  }
+
+  return decodePresetWithVersion(code, version);
+}
+
 export function isPresetCode(value: string) {
-  if (!value || value.length < 2 || value.length > 10 || value[0] !== VERSION_CHAR) {
+  if (!value || value.length < 2 || value.length > 10) {
+    return false;
+  }
+
+  if (!PRESET_VERSION_MAP.has(value[0] as "a" | "b")) {
     return false;
   }
 

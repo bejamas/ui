@@ -1,0 +1,14 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"optgroup"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<optgroup data-slot="native-select-optgroup" class={cn("cn-native-select-optgroup", className)} {...rest}>
+  <slot />
+</optgroup>

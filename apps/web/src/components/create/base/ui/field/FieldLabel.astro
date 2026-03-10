@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import { Label } from "../label";
+
+interface Props extends HTMLAttributes<"label"> {}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<Label
+  data-slot="field-label"
+  class={cn(
+    "cn-field-label",
+    "group/field-label peer/field-label flex w-fit",
+    "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col",
+    className,
+  )}
+  {...rest}
+>
+  <slot />
+</Label>

@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="combobox-list"
+  class={cn(
+    "cn-combobox-list no-scrollbar max-h-[min(18rem,calc(var(--available-height)-var(--anchor-height)))] overflow-y-auto overscroll-contain scroll-py-1 p-1 data-empty:p-0",
+    className,
+  )}
+>
+  <slot />
+</div>

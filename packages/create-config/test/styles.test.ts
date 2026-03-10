@@ -9,6 +9,7 @@ import {
 import {
   compileGlobalStyleCss,
   compileStyleCss,
+  STYLE_LAYER_ORDER_DECLARATION,
 } from "../src/style-css-compiler";
 import { getStyleCss } from "../src/style-css-source";
 
@@ -24,17 +25,23 @@ describe("style catalog defaults", () => {
     expect(STYLES.map((style) => style.name)).toContain("maia");
     expect(STYLES.map((style) => style.name)).toContain("mira");
     expect(DEFAULT_DESIGN_SYSTEM_CONFIG.style).toBe("juno");
-    expect(PRESET_STYLES.indexOf("juno")).toBe(3);
+    expect(PRESET_STYLES.indexOf("juno")).toBe(5);
   });
 
   it("compiles the juno baseline style", async () => {
     const css = await getCompiledStyleCss("juno");
     const globalCss = await getCompiledGlobalStyleCss("juno");
 
+    expect(css).toContain(STYLE_LAYER_ORDER_DECLARATION);
+    expect(css).toContain("@layer components");
     expect(css).toContain(".style-juno");
     expect(css).toContain(".cn-card");
+    expect(css).toContain(".cn-menu-translucent");
+    expect(globalCss).toContain(STYLE_LAYER_ORDER_DECLARATION);
+    expect(globalCss).toContain("@layer components");
     expect(globalCss).not.toContain(".style-juno");
     expect(globalCss).toContain(".cn-card");
+    expect(globalCss).toContain(".cn-menu-translucent");
   });
 
   it("compiles the vendored shadcn maia and mira styles", async () => {
@@ -42,17 +49,23 @@ describe("style catalog defaults", () => {
     const miraCss = await getCompiledStyleCss("mira");
     const maiaGlobalCss = await getCompiledGlobalStyleCss("maia");
 
+    expect(maiaCss).toContain("@layer components");
     expect(maiaCss).toContain(".style-maia");
     expect(maiaCss).toContain(".cn-card");
+    expect(maiaCss).toContain(".cn-menu-translucent");
+    expect(miraCss).toContain("@layer components");
     expect(miraCss).toContain(".style-mira");
     expect(miraCss).toContain(".cn-card");
+    expect(maiaGlobalCss).toContain("@layer components");
     expect(maiaGlobalCss).not.toContain(".style-maia");
     expect(maiaGlobalCss).toContain(".cn-card");
   });
 
   it("keeps generated compiled style artifacts in sync with source styles", async () => {
     for (const style of STYLES.map((entry) => entry.name)) {
-      expect(await getCompiledStyleCss(style)).toBe(await compileStyleCss(style));
+      expect(await getCompiledStyleCss(style)).toBe(
+        await compileStyleCss(style),
+      );
       expect(await getCompiledGlobalStyleCss(style)).toBe(
         await compileGlobalStyleCss(style),
       );
@@ -69,9 +82,40 @@ describe("style catalog defaults", () => {
       expect(selectContentBlock).not.toContain("data-closed:fade-out-0");
       expect(selectContentBlock).not.toContain("data-open:zoom-in-95");
       expect(selectContentBlock).not.toContain("data-closed:zoom-out-95");
-      expect(selectContentBlock).not.toContain("data-[side=bottom]:slide-in-from-top-2");
+      expect(selectContentBlock).not.toContain(
+        "data-[side=bottom]:slide-in-from-top-2",
+      );
       expect(selectContentBlock).not.toContain("duration-100");
       expect(getStyleCss(style)).not.toContain(".cn-select-content-logical");
+    }
+  });
+
+  it("keeps Juno dialog styling in a single style-layer definition", () => {
+    const junoCss = getStyleCss("juno");
+
+    expect(junoCss).not.toContain(
+      ".cn-dropdown-menu-content,\n  .cn-popover-content,\n  .cn-tooltip-content,\n  .cn-select-content,\n  .cn-combobox-content,\n  .cn-dialog-content,",
+    );
+    expect(junoCss).not.toContain(
+      "@apply bg-background/30 duration-300 supports-backdrop-filter:backdrop-blur-sm;",
+    );
+    expect(junoCss).not.toContain(
+      "@apply grid max-w-[calc(100%-2rem)] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-250 ease-out [--tw-animation-fill-mode:both] sm:max-w-lg;",
+    );
+  });
+
+  it("exposes explicit tabs list variant and size selectors in every style", () => {
+    for (const style of STYLES.map((entry) => entry.name)) {
+      const css = getStyleCss(style);
+
+      expect(css).toContain(".cn-tabs-list-variant-indicator");
+      expect(css).toContain(".cn-tabs-list-variant-default");
+      expect(css).toContain(".cn-tabs-list-variant-line");
+      expect(css).toContain(".cn-tabs-list-variant-line-animated");
+      expect(css).toContain(".cn-tabs-list-size-default");
+      expect(css).toContain(".cn-tabs-list-size-sm");
+      expect(css).toContain(".cn-tabs-list-size-lg");
+      expect(css).toContain("--tabs-indicator-radius");
     }
   });
 });

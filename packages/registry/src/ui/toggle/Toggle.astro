@@ -1,0 +1,138 @@
+---
+/**
+ * @component Toggle
+ * @title Toggle
+ * @description A two-state button that can be either on or off.
+ *
+ * @preview
+ *
+ * <Toggle aria-label="Toggle bookmark" variant="outline">
+ *   <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />
+ *   Bookmark
+ * </Toggle>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Toggle } from '@bejamas/ui/components/toggle';
+ * import { BoldIcon } from '@lucide/astro';
+ * ---
+ *
+ * <Toggle aria-label="Toggle bold">
+ *   <BoldIcon />
+ * </Toggle>
+ * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `toggle:change` | `{ pressed: boolean }` | Fired when the toggle state changes |
+ *
+ * ### Programmatic Control
+ *
+ * ```js nocollapse
+ * // Set toggle state programmatically
+ * element.dispatchEvent(new CustomEvent('toggle:set', { detail: { value: true } }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | toggle | Current state: `on` or `off` |
+ * | `data-disabled` | toggle | Present when toggle is disabled |
+ *
+ * @examples
+ *
+ * ### Outline
+ *
+ * <div class="flex items-center gap-2">
+ *   <Toggle variant="outline" aria-label="Toggle bold">
+ *     <BoldIcon />
+ *     Bold
+ *   </Toggle>
+ *   <Toggle variant="outline" aria-label="Toggle italic">
+ *     <ItalicIcon />
+ *     Italic
+ *   </Toggle>
+ * </div>
+ *
+ * ### With Text
+ *
+ * <Toggle variant="outline" aria-label="Toggle italic">
+ *   <ItalicIcon />
+ *   Italic
+ * </Toggle>
+ *
+ * ### Sizes
+ *
+ * <div class="flex items-center gap-2">
+ *   <Toggle size="sm" variant="outline" aria-label="Toggle small">
+ *     Small
+ *   </Toggle>
+ *   <Toggle size="default" variant="outline" aria-label="Toggle default">
+ *     Default
+ *   </Toggle>
+ *   <Toggle size="lg" variant="outline" aria-label="Toggle large">
+ *     Large
+ *   </Toggle>
+ * </div>
+ *
+ * ### Disabled
+ *
+ * <div class="flex items-center gap-2">
+ *   <Toggle disabled aria-label="Toggle bold">
+ *     Disabled
+ *   </Toggle>
+ *   <Toggle disabled variant="outline" aria-label="Toggle italic">
+ *     Disabled
+ *   </Toggle>
+ * </div>
+ *
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+import {
+  toggleVariants,
+  type ToggleVariantProps,
+} from "@bejamas/registry/lib/toggle-shared";
+
+interface Props extends ToggleVariantProps, Omit<HTMLAttributes<"button">, "class"> {
+  defaultPressed?: boolean;
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  variant = "default",
+  size = "default",
+  defaultPressed,
+  disabled,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<button
+  type="button"
+  data-slot="toggle"
+  data-default-pressed={defaultPressed ? "" : undefined}
+  data-disabled={disabled ? "true" : undefined}
+  disabled={disabled}
+  class={cn(toggleVariants({ variant, size }), className)}
+  {...rest}
+>
+  <slot />
+</button>
+
+<script>
+  import { createToggle } from "@data-slot/toggle";
+  document
+    .querySelectorAll<HTMLElement>('[data-slot="toggle"]')
+    .forEach((el) => createToggle(el));
+</script>

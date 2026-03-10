@@ -1,0 +1,77 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "../input-group";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends Omit<HTMLAttributes<"input">, "size"> {
+  class?: string;
+  size?: "sm" | "default" | "lg";
+  placeholder?: string;
+  disabled?: boolean;
+  showTrigger?: boolean;
+  showClear?: boolean;
+}
+
+const {
+  class: className = "",
+  size = "default",
+  placeholder,
+  disabled = false,
+  showTrigger = true,
+  showClear = false,
+  ...rest
+} = Astro.props as Props;
+---
+
+<InputGroup size={size} class={cn("w-auto", className)}>
+  <InputGroupInput
+    data-slot="combobox-input"
+    placeholder={placeholder}
+    disabled={disabled}
+    autocomplete="off"
+    {...rest}
+   class="cn-combobox-input" />
+  {
+    (showTrigger || showClear) && (
+      <InputGroupAddon align="inline-end">
+        {showClear && (
+          <InputGroupButton
+            data-slot="combobox-clear"
+            type="button"
+            size="icon-xs"
+            class="cn-combobox-clear hidden [[data-value]_&]:inline-flex"
+            aria-label="Clear selection"
+          >
+            <SemanticIcon name="x" class="size-3.5 group-data-[size=sm]/input-group:size-3" />
+          </InputGroupButton>
+        )}
+        {showTrigger && (
+          <InputGroupButton
+            data-slot="combobox-trigger"
+            type="button"
+            size="icon-xs"
+            tabindex={-1}
+            disabled={disabled}
+            class={cn("cn-combobox-trigger", 
+              "text-muted-foreground",
+              showClear && "[[data-value]_&]:hidden",
+            )}
+            aria-label="Toggle menu"
+          >
+            <SemanticIcon
+              name="chevron-down"
+              data-slot="combobox-icon"
+              class="cn-combobox-icon size-4 group-data-[size=sm]/input-group:size-3.5"
+            />
+          </InputGroupButton>
+        )}
+      </InputGroupAddon>
+    )
+  }
+</InputGroup>

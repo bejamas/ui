@@ -33,6 +33,10 @@ const styleInitial = label.slice(0, 1).toUpperCase();
 const iconLibraryLabel = iconLibraryAbbreviations[value] ?? label.slice(0, 2);
 const languageLabel = value.slice(0, 2).toUpperCase();
 const radius = getRadiusValue(value as Parameters<typeof getRadiusValue>[0]);
+const isMenuInverted =
+  value === "inverted" || value === "inverted-translucent";
+const isMenuTranslucent =
+  value === "default-translucent" || value === "inverted-translucent";
 ---
 
 {
@@ -115,7 +119,7 @@ const radius = getRadiusValue(value as Parameters<typeof getRadiusValue>[0]);
   kind === "menu-color" && (
     <span
       class={cn(
-        "inline-flex h-4 w-5 shrink-0 overflow-hidden rounded-[6px] border border-white/18 bg-white/5",
+        "relative inline-flex h-4 w-5 shrink-0 overflow-hidden rounded-[6px] border border-white/18 bg-white/5",
         className,
       )}
       data-create-picker-marker
@@ -124,15 +128,23 @@ const radius = getRadiusValue(value as Parameters<typeof getRadiusValue>[0]);
       <span
         class:list={[
           "block h-full w-1/2",
-          value === "inverted" ? "bg-neutral-950" : "bg-neutral-100",
+          isMenuInverted ? "bg-neutral-950" : "bg-neutral-100",
         ]}
       />
       <span
         class:list={[
           "block h-full w-1/2",
-          value === "inverted" ? "bg-neutral-100" : "bg-neutral-950",
+          isMenuInverted ? "bg-neutral-100" : "bg-neutral-950",
         ]}
       />
+      {
+        isMenuTranslucent && (
+          <>
+            <span class="absolute inset-x-0 top-0 h-[1px] bg-white/30" />
+            <span class="absolute inset-y-0 left-1/2 w-[1px] -translate-x-1/2 bg-white/15" />
+          </>
+        )
+      }
     </span>
   )
 }

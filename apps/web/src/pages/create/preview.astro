@@ -5,6 +5,8 @@ import {
   getDocumentDirection,
   getDocumentLanguage,
   getCompiledStyleCss,
+  isInvertedMenuColor,
+  isTranslucentMenuColor,
 } from "@bejamas/create-config/server";
 import CreatePreviewSurface from "@/components/create/CreatePreviewSurface.astro";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
@@ -13,6 +15,7 @@ import { parseCreateSearchParams, resolveCreateThemeRef } from "@/utils/create";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
 import { getCreatePreviewCopy } from "@/utils/create-preview-i18n";
 import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
+import { buildWindowAssignmentInlineScript } from "@/utils/inline-script";
 import themeFontsStylesheet from "@/styles/theme-fonts.css?url";
 
 const result = parseCreateSearchParams(Astro.url.searchParams);
@@ -38,6 +41,22 @@ const currentDirection = currentConfig
   ? getDocumentDirection(currentConfig)
   : "ltr";
 const previewCopy = getCreatePreviewCopy(currentLanguage);
+const styleCssByStyle = Object.fromEntries(
+  await Promise.all(
+    catalogs.styles.map(async (style) => [
+      style.name,
+      await getCompiledStyleCss(style.name),
+    ]),
+  ),
+);
+const previewPayloadScript = buildWindowAssignmentInlineScript(
+  "__BEJAMAS_CREATE_PREVIEW__",
+  {
+    styleCssByStyle,
+    initialThemeOverrides: themeOverrides,
+    initialConfig: currentConfig,
+  },
+);
 ---
 
 <!doctype html>
@@ -74,8 +93,12 @@ const previewCopy = getCreatePreviewCopy(currentLanguage);
           }
           templateLabel={currentConfig.template}
           radiusLabel={currentRadiusLabel}
-          menuColorLabel={currentConfig.menuColor}
-          menuInverted={currentConfig.menuColor === "inverted"}
+          menuColorLabel={
+            getCreatePickerSelectedOption("menuColor", currentConfig)?.label ??
+            currentConfig.menuColor
+          }
+          menuInverted={isInvertedMenuColor(currentConfig.menuColor)}
+          menuTranslucent={isTranslucentMenuColor(currentConfig.menuColor)}
           copy={previewCopy}
         />
       ) : (
@@ -84,24 +107,7 @@ const previewCopy = getCreatePreviewCopy(currentLanguage);
         </div>
       )
     }
-    <script
-      define:vars={{
-        styleCssByStyle: Object.fromEntries(
-          await Promise.all(
-            catalogs.styles.map(async (style) => [
-              style.name,
-              await getCompiledStyleCss(style.name),
-            ]),
-          ),
-        ),
-        initialThemeOverrides: themeOverrides,
-      }}
-    >
-      window.__BEJAMAS_CREATE_PREVIEW__ = {
-        styleCssByStyle,
-        initialThemeOverrides,
-      };
-    </script>
+    <script is:inline set:html={previewPayloadScript} />
     <script>
       import "@/scripts/create-preview.ts";
     </script>

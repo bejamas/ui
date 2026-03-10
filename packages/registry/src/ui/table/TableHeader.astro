@@ -1,0 +1,17 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"thead"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<thead data-slot="table-header" class={cn("cn-table-header", className)} {...rest}>
+  <slot />
+</thead>

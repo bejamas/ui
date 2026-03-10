@@ -22,6 +22,7 @@ import {
 } from "@/utils/create-sidebar";
 import CreatePicker from "./CreatePicker.astro";
 import CreatePickerMarker from "./CreatePickerMarker.astro";
+import CreateNavigateDialog from "./CreateNavigateDialog.astro";
 import CreateProjectDialog from "./CreateProjectDialog.astro";
 import CreateThemePanel from "./CreateThemePanel.astro";
 import type { ThemeOverrides } from "@/utils/themes/create-theme";
@@ -87,6 +88,14 @@ const primaryPickers = [
       >
         <DropdownMenuItem
           class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
+          data-value="navigate"
+        >
+          <MenuIcon class="size-4 text-white/65" />
+          Navigate...
+          <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
           data-value="shuffle"
         >
           <ShuffleIcon class="size-4 text-white/65" />
@@ -107,7 +116,6 @@ const primaryPickers = [
         >
           <FolderPlusIcon class="size-4 text-white/65" />
           Create project
-          <DropdownMenuShortcut>P</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -228,6 +236,8 @@ const primaryPickers = [
     <Separator class="!my-2.5 !bg-white/8" />
 
     <div class="create-customizer-actions space-y-1.5 xl:shrink-0">
+      <CreateNavigateDialog />
+
       <button
         type="button"
         class="create-customizer-action flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"

@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  inset?: boolean;
+  class?: string;
+}
+
+const { inset = false, class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="dropdown-menu-label"
+  data-inset={inset ? "" : undefined}
+  class={cn("cn-dropdown-menu-label", className)}
+>
+  <slot />
+</div>

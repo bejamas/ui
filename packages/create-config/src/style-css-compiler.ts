@@ -12,16 +12,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const globalsCssPath = path.resolve(__dirname, "../../ui/src/styles/globals.css");
 
+export const STYLE_LAYER_ORDER_DECLARATION =
+  "@layer base, starlight.reset, starlight, bejamas, theme, components, utilities;";
+
 function buildCompilerInput(css: string) {
   return [
     `@reference "${globalsCssPath.replace(/\\/g, "/")}";`,
+    STYLE_LAYER_ORDER_DECLARATION,
     "@utility no-scrollbar {",
     "  scrollbar-width: none;",
     "  &::-webkit-scrollbar {",
     "    display: none;",
     "  }",
     "}",
+    "@layer components {",
     css,
+    "}",
   ].join("\n");
 }
 

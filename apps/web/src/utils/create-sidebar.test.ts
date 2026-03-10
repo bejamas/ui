@@ -144,6 +144,20 @@ describe("create sidebar helpers", () => {
     });
   });
 
+  it("exposes all four menu color options", () => {
+    const options = getCreatePickerOptions({
+      baseColor: "neutral",
+      style: "juno",
+    });
+
+    expect(options.menuColor.map((option) => option.value)).toEqual([
+      "default",
+      "inverted",
+      "default-translucent",
+      "inverted-translucent",
+    ]);
+  });
+
   it("builds random configs that satisfy the schema", () => {
     for (let index = 0; index < 25; index += 1) {
       const result = designSystemConfigSchema.safeParse(

@@ -1,0 +1,34 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/ui/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"button"> {
+  class?: string;
+}
+
+export const navigationMenuTriggerStyle = cva(
+  "navigation-menu-trigger-surface px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 rounded-sm hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground",
+);
+
+const {
+  class: className = "",
+  type = "button",
+  ...rest
+} = Astro.props as Props;
+---
+
+<button
+  {...rest}
+  data-slot="navigation-menu-trigger"
+  type={type}
+  class={cn("cn-navigation-menu-trigger", navigationMenuTriggerStyle(), "group", className)}
+>
+  <slot />
+  <SemanticIcon
+    name="chevron-down"
+    class="text-muted-foreground size-3 transition-transform duration-200 ease group-data-[state=open]:rotate-180"
+    aria-hidden="true"
+  />
+</button>

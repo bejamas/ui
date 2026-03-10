@@ -1,6 +1,8 @@
 import { STYLES } from "@bejamas/create-config/browser";
-import { buildStyleIndexItem } from "@bejamas/create-config/server";
-import { jsonResponse } from "@/utils/create-registry";
+import {
+  jsonResponse,
+  readStaticStyleRegistryIndex,
+} from "@/utils/create-registry";
 
 export const prerender = false;
 
@@ -11,5 +13,12 @@ export async function GET({ params }: { params: { style: string } }) {
     return jsonResponse({ error: "Style not found." }, { status: 404 });
   }
 
-  return jsonResponse(buildStyleIndexItem(style.name));
+  try {
+    return jsonResponse(await readStaticStyleRegistryIndex(style.id));
+  } catch {
+    return jsonResponse(
+      { error: "Registry style not found." },
+      { status: 404 },
+    );
+  }
 }

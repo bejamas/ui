@@ -1,0 +1,9 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"option"> {}
+
+const { ...rest } = Astro.props as Props;
+---
+
+<option data-slot="native-select-option" {...rest} class="cn-native-select-option"><slot /></option>
