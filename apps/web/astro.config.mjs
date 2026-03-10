@@ -19,7 +19,6 @@ export default defineConfig({
   trailingSlash: "never",
   output: "server",
   experimental: {
-    rustCompiler: true,
     queuedRendering: {
       enabled: true,
     },
