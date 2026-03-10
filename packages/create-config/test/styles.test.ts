@@ -10,6 +10,13 @@ import {
   compileGlobalStyleCss,
   compileStyleCss,
 } from "../src/style-css-compiler";
+import { getStyleCss } from "../src/style-css-source";
+
+function getSelectContentBlock(css: string) {
+  const match = css.match(/\.cn-select-content\s*\{([\s\S]*?)\n  \}/);
+
+  return match?.[1] ?? "";
+}
 
 describe("style catalog defaults", () => {
   it("exposes juno as a public style", () => {
@@ -49,6 +56,22 @@ describe("style catalog defaults", () => {
       expect(await getCompiledGlobalStyleCss(style)).toBe(
         await compileGlobalStyleCss(style),
       );
+    }
+  });
+
+  it("keeps select popup motion in the shared component instead of theme overrides", () => {
+    for (const style of ["vega", "nova", "maia", "lyra", "mira"] as const) {
+      const selectContentBlock = getSelectContentBlock(getStyleCss(style));
+
+      expect(selectContentBlock).not.toContain("data-open:animate-in");
+      expect(selectContentBlock).not.toContain("data-closed:animate-out");
+      expect(selectContentBlock).not.toContain("data-open:fade-in-0");
+      expect(selectContentBlock).not.toContain("data-closed:fade-out-0");
+      expect(selectContentBlock).not.toContain("data-open:zoom-in-95");
+      expect(selectContentBlock).not.toContain("data-closed:zoom-out-95");
+      expect(selectContentBlock).not.toContain("data-[side=bottom]:slide-in-from-top-2");
+      expect(selectContentBlock).not.toContain("duration-100");
+      expect(getStyleCss(style)).not.toContain(".cn-select-content-logical");
     }
   });
 });

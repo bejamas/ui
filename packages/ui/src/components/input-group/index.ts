@@ -4,4 +4,3 @@ export { default as InputGroupButton } from "./InputGroupButton.astro";
 export { default as InputGroupText } from "./InputGroupText.astro";
 export { default as InputGroupInput } from "./InputGroupInput.astro";
 export { default as InputGroupTextarea } from "./InputGroupTextarea.astro";
-

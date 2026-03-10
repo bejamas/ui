@@ -33,6 +33,14 @@ import {
   type CreatePickerName,
   type CreatePickerOption,
 } from "@/utils/create-sidebar";
+import {
+  buildCreateProjectCommand,
+  CREATE_PROJECT_PACKAGE_MANAGERS,
+  CREATE_PROJECT_PACKAGE_MANAGER_STORAGE_KEY,
+  getCreateProjectDialogState,
+  getCreateProjectTemplateValue,
+  type CreateProjectPackageManager,
+} from "@/utils/create-project-dialog";
 
 type CreateConfig = DesignSystemConfig;
 type PreviewMessage = {
@@ -81,20 +89,55 @@ const iframe = document.querySelector(
 const presetNode = document.querySelector(
   "[data-preset-code]",
 ) as HTMLElement | null;
-const commandNode = document.querySelector(
-  "[data-command]",
-) as HTMLElement | null;
 const presetButton = document.querySelector(
   "[data-create-copy-preset]",
-) as HTMLButtonElement | null;
-const commandButton = document.querySelector(
-  "[data-create-copy-command]",
 ) as HTMLButtonElement | null;
 const randomizeButtons = Array.from(
   document.querySelectorAll("[data-create-randomize]"),
 ) as HTMLButtonElement[];
 const mainMenu = document.querySelector(
   "[data-create-main-menu]",
+) as HTMLElement | null;
+const createProjectDialog = document.querySelector(
+  "[data-create-project-dialog]",
+) as HTMLElement | null;
+const createProjectPackageTabs = document.querySelector(
+  "[data-create-project-package-tabs]",
+) as HTMLElement | null;
+const createProjectPackageManagerInput = document.querySelector(
+  "[data-create-project-package-manager]",
+) as HTMLInputElement | null;
+const createProjectCommandNodes = Object.fromEntries(
+  CREATE_PROJECT_PACKAGE_MANAGERS.map((packageManager) => [
+    packageManager,
+    document.querySelector(
+      `[data-create-project-command="${packageManager}"]`,
+    ) as HTMLElement | null,
+  ]),
+) as Record<CreateProjectPackageManager, HTMLElement | null>;
+const createProjectCopyCommandButton = document.querySelector(
+  "[data-create-project-copy-command]",
+) as HTMLButtonElement | null;
+const createProjectCopyCommandLabel = document.querySelector(
+  "[data-create-project-copy-command-label]",
+) as HTMLElement | null;
+const createProjectMonorepoField = document.querySelector(
+  "[data-create-project-monorepo]",
+) as HTMLInputElement | null;
+const createProjectDocsField = document.querySelector(
+  "[data-create-project-docs]",
+) as HTMLInputElement | null;
+const createProjectRtlField = document.querySelector(
+  "[data-create-project-rtl]",
+) as HTMLInputElement | null;
+const createProjectRtlLanguageRow = document.querySelector(
+  "[data-create-project-rtl-language-row]",
+) as HTMLElement | null;
+const createProjectRtlLanguageSeparator = document.querySelector(
+  "[data-create-project-rtl-language-separator]",
+) as HTMLElement | null;
+const createProjectRtlLanguageSelect = document.querySelector(
+  "[data-create-project-rtl-language-select]",
 ) as HTMLElement | null;
 const themeStyleNode = document.getElementById("create-page-theme-css");
 const styleStyleNode = document.getElementById("create-page-style-css");
@@ -142,14 +185,13 @@ const rtlLanguagePicker = document.querySelector(
   "[data-create-rtl-language]",
 ) as HTMLElement | null;
 
-if (!form || !iframe || !presetNode || !commandNode) {
+if (!form || !iframe || !presetNode) {
   throw new Error("Create page is missing required form elements.");
 }
 
 const createForm = form;
 const previewFrame = iframe;
 const presetCodeNode = presetNode;
-const commandCodeNode = commandNode;
 
 let activeThemeMode: ThemeMode = "light";
 let themeRef = window.__BEJAMAS_CREATE__?.initialThemeRef ?? null;
@@ -327,6 +369,19 @@ function setInputValue(name: string, value: string, shouldDispatch = true) {
   }
 }
 
+function setCheckboxValue(name: string, checked: boolean, shouldDispatch = true) {
+  const field = getField(name);
+  if (!field || field.checked === checked) {
+    return;
+  }
+
+  field.checked = checked;
+
+  if (shouldDispatch) {
+    field.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+}
+
 function setThemeRefValue(value: string | null) {
   if (themeRefHiddenInput) {
     themeRefHiddenInput.value = value ?? "";
@@ -354,6 +409,13 @@ function syncThemeSelection(config: CreateConfig) {
   setInputValue("theme", nextTheme, false);
   syncThemeSeedButtons(config.baseColor, nextTheme);
   return nextTheme;
+}
+
+function getCurrentPreset(config: CreateConfig) {
+  const { template: _template, rtl: _rtl, rtlLanguage: _rtlLanguage, ...presetConfig } =
+    config;
+
+  return encodePreset(presetConfig as Parameters<typeof encodePreset>[0]);
 }
 
 function syncRadiusPicker(config: CreateConfig) {
@@ -654,6 +716,151 @@ function flashButtonLabel(
   }, 1400);
 }
 
+function getStoredCreateProjectPackageManager(): CreateProjectPackageManager {
+  try {
+    const value = window.localStorage.getItem(
+      CREATE_PROJECT_PACKAGE_MANAGER_STORAGE_KEY,
+    );
+
+    if (
+      value &&
+      CREATE_PROJECT_PACKAGE_MANAGERS.includes(
+        value as CreateProjectPackageManager,
+      )
+    ) {
+      return value as CreateProjectPackageManager;
+    }
+  } catch {
+    // Ignore storage access failures.
+  }
+
+  return "bun";
+}
+
+function setStoredCreateProjectPackageManager(
+  packageManager: CreateProjectPackageManager,
+) {
+  try {
+    window.localStorage.setItem(
+      CREATE_PROJECT_PACKAGE_MANAGER_STORAGE_KEY,
+      packageManager,
+    );
+  } catch {
+    // Ignore storage access failures.
+  }
+}
+
+function getSelectedCreateProjectPackageManager(): CreateProjectPackageManager {
+  const value = createProjectPackageManagerInput?.value;
+
+  if (
+    value &&
+    CREATE_PROJECT_PACKAGE_MANAGERS.includes(value as CreateProjectPackageManager)
+  ) {
+    return value as CreateProjectPackageManager;
+  }
+
+  return "bun";
+}
+
+function setSelectedCreateProjectPackageManager(
+  packageManager: CreateProjectPackageManager,
+  options: { persist?: boolean; syncTabs?: boolean } = {},
+) {
+  if (createProjectPackageManagerInput) {
+    createProjectPackageManagerInput.value = packageManager;
+  }
+
+  if (options.syncTabs ?? true) {
+    createProjectPackageTabs?.dispatchEvent(
+      new CustomEvent("tabs:set", {
+        detail: {
+          value: packageManager,
+        },
+      }),
+    );
+  }
+
+  if (options.persist ?? true) {
+    setStoredCreateProjectPackageManager(packageManager);
+  }
+}
+
+function syncCreateProjectTemplateControls(config: CreateConfig) {
+  const state = getCreateProjectDialogState(config.template);
+
+  if (createProjectMonorepoField) {
+    createProjectMonorepoField.checked = state.monorepo;
+  }
+
+  if (createProjectDocsField) {
+    createProjectDocsField.checked = state.withDocs;
+  }
+}
+
+function getCreateProjectDialogRtlSettings() {
+  return {
+    rtl: createProjectRtlField?.checked ?? false,
+    rtlLanguage:
+      (createProjectRtlLanguageSelect?.dataset.value as
+        | CreateConfig["rtlLanguage"]
+        | undefined) ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
+  };
+}
+
+function syncCreateProjectRtlControls(options: {
+  rtl: boolean;
+  rtlLanguage: CreateConfig["rtlLanguage"];
+}) {
+  if (createProjectRtlField) {
+    createProjectRtlField.checked = options.rtl;
+  }
+
+  createProjectRtlLanguageRow?.classList.toggle("hidden", !options.rtl);
+  createProjectRtlLanguageSeparator?.classList.toggle("hidden", !options.rtl);
+
+  if (createProjectRtlLanguageSelect?.dataset.value !== options.rtlLanguage) {
+    createProjectRtlLanguageSelect?.dispatchEvent(
+      new CustomEvent("select:set", {
+        detail: {
+          value: options.rtlLanguage,
+        },
+      }),
+    );
+  }
+}
+
+function syncCreateProjectCommands(config: CreateConfig, preset: string) {
+  const dialogRtlSettings = getCreateProjectDialogRtlSettings();
+
+  for (const packageManager of CREATE_PROJECT_PACKAGE_MANAGERS) {
+    const command = buildCreateProjectCommand({
+      packageManager,
+      template: config.template,
+      preset,
+      themeRef,
+      rtl: dialogRtlSettings.rtl,
+      rtlLanguage: dialogRtlSettings.rtlLanguage,
+    });
+
+    const node = createProjectCommandNodes[packageManager];
+    if (node) {
+      node.textContent = command;
+    }
+  }
+
+  if (createProjectCopyCommandButton) {
+    const activePackageManager = getSelectedCreateProjectPackageManager();
+    createProjectCopyCommandButton.dataset.copyText =
+      createProjectCommandNodes[activePackageManager]?.textContent ?? "";
+    createProjectCopyCommandButton.dataset.idleLabel = "Copy Command";
+  }
+
+  if (createProjectCopyCommandLabel) {
+    createProjectCopyCommandLabel.textContent = "Copy Command";
+  }
+}
+
 async function handleCopyPreset() {
   if (!presetButton) {
     return;
@@ -670,19 +877,23 @@ async function handleCopyPreset() {
   }
 }
 
-async function handleCopyCommand() {
-  if (!commandButton) {
+async function handleCopyCreateProjectCommand() {
+  if (!createProjectCopyCommandButton) {
     return;
   }
 
-  const text = commandButton.dataset.copyText ?? "";
+  const text = createProjectCopyCommandButton.dataset.copyText ?? "";
   if (!text) {
     return;
   }
 
   const didCopy = await copyText(text);
   if (didCopy) {
-    flashButtonLabel(commandButton, commandCodeNode, "Copied");
+    flashButtonLabel(
+      createProjectCopyCommandButton,
+      createProjectCopyCommandLabel,
+      "Copied",
+    );
   }
 }
 
@@ -695,11 +906,7 @@ function applyConfig(
   }
 
   setInputValue("theme", config.theme, false);
-
-  const rtlField = getField("rtl");
-  if (rtlField) {
-    rtlField.checked = config.rtl;
-  }
+  setCheckboxValue("rtl", config.rtl, false);
 
   if (options.clearCustomTheme) {
     clearThemeOverrides();
@@ -716,15 +923,14 @@ function updateUi() {
   syncThemeTabs();
   syncThemeInputs(config);
   syncThemeTrigger(config);
+  syncCreateProjectTemplateControls(config);
 
   for (const name of PICKER_NAMES) {
     syncPickerUi(name, config[name], config);
   }
 
-  const { template, rtl, rtlLanguage, ...presetConfig } = config;
-  const preset = encodePreset(
-    presetConfig as Parameters<typeof encodePreset>[0],
-  );
+  const { template, rtl, rtlLanguage } = config;
+  const preset = getCurrentPreset(config);
   const params = new URLSearchParams({
     preset,
     template,
@@ -739,30 +945,14 @@ function updateUi() {
     params.set("themeRef", themeRef);
   }
 
-  const command = [
-    "bunx bejamas init",
-    `--template ${template}`,
-    `--preset ${preset}`,
-    themeRef ? `--theme-ref ${themeRef}` : "",
-    rtl ? "--rtl" : "",
-    rtl ? `--lang ${rtlLanguage}` : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   presetCodeNode.textContent = `--preset ${preset}`;
-  commandCodeNode.textContent = "Copy command";
 
   if (presetButton) {
     presetButton.dataset.copyText = `--preset ${preset}`;
     presetButton.dataset.idleLabel = `--preset ${preset}`;
   }
 
-  if (commandButton) {
-    commandButton.dataset.copyText = command;
-    commandButton.dataset.idleLabel = "Copy command";
-    commandButton.title = command;
-  }
+  syncCreateProjectCommands(config, preset);
 
   setStoredPreset(preset, undefined, undefined, themeRef);
 
@@ -882,17 +1072,33 @@ mainMenu?.addEventListener("dropdown-menu:select", (event) => {
     return;
   }
 
-  if (value === "copy-command") {
-    void handleCopyCommand();
+  if (value === "create-project") {
+    createProjectDialog?.dispatchEvent(
+      new CustomEvent("dialog:set", {
+        detail: {
+          open: true,
+        },
+      }),
+    );
   }
+});
+
+createProjectDialog?.addEventListener("dialog:change", (event) => {
+  const open = (event as CustomEvent<{ open: boolean }>).detail.open;
+  if (!open) {
+    return;
+  }
+
+  const config = collectConfig();
+  syncCreateProjectRtlControls({
+    rtl: config.rtl,
+    rtlLanguage: config.rtlLanguage,
+  });
+  syncCreateProjectCommands(config, getCurrentPreset(config));
 });
 
 presetButton?.addEventListener("click", () => {
   void handleCopyPreset();
-});
-
-commandButton?.addEventListener("click", () => {
-  void handleCopyCommand();
 });
 
 randomizeButtons.forEach((button) => {
@@ -933,6 +1139,89 @@ themeSeedContainer?.addEventListener("click", (event) => {
 themeImportButton?.addEventListener("click", handleThemeImport);
 themeImportConfirmButton?.addEventListener("click", handleThemeImportConfirm);
 
+createProjectPackageTabs?.addEventListener("tabs:change", (event) => {
+  const value = (event as CustomEvent<{ value: string }>).detail.value;
+
+  if (
+    !CREATE_PROJECT_PACKAGE_MANAGERS.includes(
+      value as CreateProjectPackageManager,
+    )
+  ) {
+    return;
+  }
+
+  setSelectedCreateProjectPackageManager(
+    value as CreateProjectPackageManager,
+    {
+      persist: true,
+      syncTabs: false,
+    },
+  );
+
+  const config = collectConfig();
+  syncCreateProjectCommands(config, getCurrentPreset(config));
+});
+
+createProjectMonorepoField?.addEventListener("change", () => {
+  const monorepo = createProjectMonorepoField.checked;
+  const withDocs = monorepo && (createProjectDocsField?.checked ?? false);
+
+  if (!monorepo && createProjectDocsField) {
+    createProjectDocsField.checked = false;
+  }
+
+  setInputValue(
+    "template",
+    getCreateProjectTemplateValue({
+      monorepo,
+      withDocs,
+    }),
+  );
+});
+
+createProjectDocsField?.addEventListener("change", () => {
+  const withDocs = createProjectDocsField.checked;
+
+  if (withDocs && createProjectMonorepoField) {
+    createProjectMonorepoField.checked = true;
+  }
+
+  setInputValue(
+    "template",
+    getCreateProjectTemplateValue({
+      monorepo: createProjectMonorepoField?.checked ?? withDocs,
+      withDocs,
+    }),
+  );
+});
+
+createProjectRtlField?.addEventListener("change", () => {
+  syncCreateProjectRtlControls({
+    rtl: createProjectRtlField.checked,
+    rtlLanguage: getCreateProjectDialogRtlSettings().rtlLanguage,
+  });
+  const config = collectConfig();
+  syncCreateProjectCommands(config, getCurrentPreset(config));
+});
+
+createProjectRtlLanguageSelect?.addEventListener("select:change", (event) => {
+  const value = (event as CustomEvent<{ value: string }>).detail.value;
+  if (!value) {
+    return;
+  }
+
+  syncCreateProjectRtlControls({
+    rtl: createProjectRtlField?.checked ?? false,
+    rtlLanguage: value as CreateConfig["rtlLanguage"],
+  });
+  const config = collectConfig();
+  syncCreateProjectCommands(config, getCurrentPreset(config));
+});
+
+createProjectCopyCommandButton?.addEventListener("click", () => {
+  void handleCopyCreateProjectCommand();
+});
+
 themeEditorPanel?.addEventListener("color-change", (event) => {
   const target = event.target as ColorInputElement | null;
   if (!target) {
@@ -972,6 +1261,9 @@ if (!themeStatusMessage) {
   );
 }
 
+setSelectedCreateProjectPackageManager(getStoredCreateProjectPackageManager(), {
+  persist: false,
+});
 syncThemeTabs();
 setThemePanelOpen(false);
 updateUi();

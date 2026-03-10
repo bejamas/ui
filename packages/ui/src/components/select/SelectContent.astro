@@ -31,8 +31,8 @@ const contentVariants = cva(
     "bg-popover text-popover-foreground min-w-24 overflow-hidden rounded-lg shadow-md ring-1 ring-foreground/10",
     "origin-(--transform-origin) duration-100",
     "data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95",
-    "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2",
-    "data-[align-trigger=true]:animate-none",
+    "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+    "data-[align-trigger=true]:animate-none data-[align-trigger=true]:transition-none",
   ],
   {
     variants: {
@@ -66,7 +66,7 @@ const contentVariants = cva(
   data-side={side}
   data-side-offset={sideOffset}
   class={cn(
-    "cn-select-content cn-select-content-logical",
+    "cn-select-content",
     contentVariants({ position, side }),
     className,
   )}
@@ -76,7 +76,9 @@ const contentVariants = cva(
     class="cn-select-scroll-up-button"
     hidden
   >
-    <slot name="scroll-up"><SemanticIcon name="chevron-up" class="size-4" /></slot>
+    <slot name="scroll-up"
+      ><SemanticIcon name="chevron-up" class="size-4" /></slot
+    >
   </div>
   <div
     data-slot="select-viewport"
@@ -90,6 +92,8 @@ const contentVariants = cva(
     class="cn-select-scroll-down-button"
     hidden
   >
-    <slot name="scroll-down"><SemanticIcon name="chevron-down" class="size-4" /></slot>
+    <slot name="scroll-down"
+      ><SemanticIcon name="chevron-down" class="size-4" /></slot
+    >
   </div>
 </div>

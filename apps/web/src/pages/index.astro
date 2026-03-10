@@ -72,13 +72,13 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     </div>
     <UiDemo />
   </div> -->
-    <div
+    <!-- <div
       class="page-bg hidden md:block left-1 right-1 h-[calc(100%+var(--hero-height))] -mt-(--hero-height) pt-(--hero-height) absolute z-0 scroll-fade-out top-0 border border-b-0 rounded-t-3xl"
       style={{
         "--hero-height": "365.5px",
       }}
     >
-    </div>
+    </div> -->
   </div>
 
   <style is:global>
@@ -169,6 +169,13 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
     footer.sl-flex {
       @apply hidden;
+    }
+
+    @media (min-width: 48rem) {
+      .main-frame-splash {
+        --sl-splash-frame-top: calc(var(--spacing) * 18);
+        --sl-splash-frame-inline: calc(var(--spacing) * 6);
+      }
     }
   </style>
 </StarlightPage>

@@ -1,5 +1,5 @@
 ---
-import CopyIcon from "@lucide/astro/icons/copy";
+import FolderPlusIcon from "@lucide/astro/icons/folder-plus";
 import MenuIcon from "@lucide/astro/icons/menu";
 import RotateCcwIcon from "@lucide/astro/icons/rotate-ccw";
 import ShuffleIcon from "@lucide/astro/icons/shuffle";
@@ -22,6 +22,7 @@ import {
 } from "@/utils/create-sidebar";
 import CreatePicker from "./CreatePicker.astro";
 import CreatePickerMarker from "./CreatePickerMarker.astro";
+import CreateProjectDialog from "./CreateProjectDialog.astro";
 import CreateThemePanel from "./CreateThemePanel.astro";
 import type { ThemeOverrides } from "@/utils/themes/create-theme";
 
@@ -54,78 +55,62 @@ const primaryPickers = [
   "menuAccent",
 ] as const;
 
-const secondaryPickers = ["template"] as const;
 ---
 
 <aside
-  class="xl:sticky xl:top-[var(--create-page-inset)] xl:h-[var(--create-sidebar-height)]"
+  class="xl:sticky xl:top-[var(--create-page-inset)] xl:h-[var(--create-sidebar-height)] dark"
   data-create-customizer-stable
 >
   <div
-    class="create-customizer rounded-[26px] border border-white/8 bg-[#2a2927]/92 p-2.5 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] backdrop-blur-xl xl:flex xl:h-full xl:flex-col"
+    class="create-customizer rounded-[22px] border bg-secondary/90 p-2.5 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] backdrop-blur-xl xl:flex xl:h-full xl:flex-col"
   >
-    <div
-      class="create-customizer-toolbar flex items-center justify-between gap-2.5 rounded-[18px] border border-white/7 bg-white/[0.025] px-3 py-2"
-    >
-      <DropdownMenu data-create-main-menu class="block">
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            class="!h-auto !rounded-[14px] !bg-transparent !px-0 !py-0 !text-white !shadow-none hover:!bg-transparent focus-visible:!ring-white/20"
-          >
-            <span
-              class="flex items-center gap-2 text-sm font-medium tracking-[-0.01em]"
-            >
-              <MenuIcon class="size-4 text-white/70" />
-              Menu
-            </span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          data-create-main-menu-content
-          side="right"
-          align="start"
-          sideOffset={10}
-          class="!min-w-48 !rounded-[18px] !border-white/8 !bg-[#353331]/96 !p-1.25 !text-white !shadow-[0_18px_46px_rgba(0,0,0,0.3)] !ring-0 backdrop-blur-xl"
+    <DropdownMenu data-create-main-menu class="flex items-center w-full">
+      <DropdownMenuTrigger asChild class="w-full">
+        <Button
+          variant="outline"
+          class="create-customizer-toolbar w-full flex items-center justify-between gap-2.5 rounded-[12px]! px-3 py-2"
         >
-          <DropdownMenuItem
-            class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
-            data-value="shuffle"
+          <span
+            class="flex items-center gap-2 text-sm font-medium tracking-[-0.01em]"
           >
-            <ShuffleIcon class="size-4 text-white/65" />
-            Shuffle
-            <DropdownMenuShortcut>R</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
-            data-value="reset"
-          >
-            <RotateCcwIcon class="size-4 text-white/65" />
-            Reset to defaults
-            <DropdownMenuShortcut>D</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
-            data-value="copy-command"
-          >
-            <CopyIcon class="size-4 text-white/65" />
-            Copy command
-            <DropdownMenuShortcut>C</DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <div class="text-right">
-        <p
-          class="text-[11px] font-medium uppercase tracking-[0.16em] text-white/30"
+            <MenuIcon class="size-4 text-white/70" />
+            Menu
+          </span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        data-create-main-menu-content
+        side="right"
+        align="start"
+        sideOffset={20}
+        class="!min-w-48 !rounded-[18px] !border-white/8 !bg-[#353331]/96 !p-1.25 !text-white !shadow-[0_18px_46px_rgba(0,0,0,0.3)] !ring-0 backdrop-blur-xl"
+      >
+        <DropdownMenuItem
+          class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
+          data-value="shuffle"
         >
-          Customizer
-        </p>
-        <p class="text-[13px] font-medium tracking-[-0.02em] text-white/72">
-          Astro only
-        </p>
-      </div>
-    </div>
+          <ShuffleIcon class="size-4 text-white/65" />
+          Shuffle
+          <DropdownMenuShortcut>R</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
+          data-value="reset"
+        >
+          <RotateCcwIcon class="size-4 text-white/65" />
+          Reset to defaults
+          <DropdownMenuShortcut>D</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
+          data-value="create-project"
+        >
+          <FolderPlusIcon class="size-4 text-white/65" />
+          Create project
+          <DropdownMenuShortcut>P</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
 
     <form
       class="mt-2.5 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col xl:overflow-hidden"
@@ -143,9 +128,10 @@ const secondaryPickers = ["template"] as const;
         value={themeRef ?? ""}
         data-create-theme-ref-input
       />
+      <input type="hidden" name="template" value={config.template} />
 
       <div
-        class="space-y-2 overflow-y-auto pr-0.5 xl:min-h-0 xl:flex-1"
+        class="overflow-y-auto pr-0.5 xl:min-h-0 xl:flex-1 [scrollbar-width:none] gap-y-1"
         data-create-form-main
       >
         {
@@ -196,20 +182,6 @@ const secondaryPickers = ["template"] as const;
         </button>
 
         <Separator class="!my-2.5 !bg-white/8" />
-
-        {
-          secondaryPickers.map((picker) => (
-            <CreatePicker
-              name={picker}
-              label={CREATE_PICKER_LABELS[picker]}
-              value={config[picker]}
-              options={pickerOptions[picker]}
-              selectedOption={getCreatePickerSelectedOption(picker, config)}
-              markerKind={CREATE_PICKER_MARKERS[picker]}
-            />
-          ))
-        }
-
         <label
           class="flex items-center justify-between rounded-[16px] border border-white/8 bg-white/[0.02] px-3 py-2.5 text-white"
         >
@@ -264,21 +236,17 @@ const secondaryPickers = ["template"] as const;
         <span data-preset-code>{`--preset ${preset}`}</span>
       </button>
 
-      <button
-        type="button"
-        class="create-customizer-action flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
-        data-create-copy-command
-      >
-        <span data-command>Copy command</span>
-      </button>
+      <div class="grid grid-cols-2 gap-1.5">
+        <CreateProjectDialog config={config} preset={preset} themeRef={themeRef} />
 
-      <button
-        type="button"
-        class="create-customizer-action flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
-        data-create-randomize
-      >
-        <span>Shuffle</span>
-      </button>
+        <button
+          type="button"
+          class="create-customizer-action flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
+          data-create-randomize
+        >
+          <span>Shuffle</span>
+        </button>
+      </div>
     </div>
   </div>
 </aside>
