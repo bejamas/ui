@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { encodePreset } from "@bejamas/create-config/server";
-import { GET } from "./current-theme.css";
+import { GET } from "../../../../pages/r/themes/current-theme.css";
 
 describe("current-theme.css", () => {
   test("falls back to the default legacy preset without a cookie", async () => {

@@ -2,23 +2,29 @@ import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import path from "node:path";
 
-const astroConfigFile = path.resolve(import.meta.dir, "../../astro.config.mjs");
-const createPageFile = path.resolve(import.meta.dir, "./create.astro");
+const astroConfigFile = path.resolve(
+  import.meta.dir,
+  "../../../astro.config.mjs",
+);
+const createPageFile = path.resolve(
+  import.meta.dir,
+  "../../pages/create.astro",
+);
 const createPreviewFile = path.resolve(
   import.meta.dir,
-  "./create/preview.astro",
+  "../../pages/create/preview.astro",
 );
 const registryItemRouteFile = path.resolve(
   import.meta.dir,
-  "./r/[name].json.ts",
+  "../../pages/r/[name].json.ts",
 );
 const styleRegistryItemRouteFile = path.resolve(
   import.meta.dir,
-  "./r/styles/[style]/[name].json.ts",
+  "../../pages/r/styles/[style]/[name].json.ts",
 );
 const routeMiddlewareFile = path.resolve(
   import.meta.dir,
-  "../route-middleware.ts",
+  "../../route-middleware.ts",
 );
 
 describe("static rendering boundary", () => {
