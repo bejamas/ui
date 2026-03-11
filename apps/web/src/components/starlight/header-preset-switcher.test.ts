@@ -49,14 +49,14 @@ describe("header preset switcher", () => {
       'window.addEventListener("storage", this.onStorage)',
     );
     expect(scriptSource).toContain(
-      'window.addEventListener("theme-toggle-changed", this.onThemeToggle)',
-    );
-    expect(scriptSource).toContain(
       "window.addEventListener(PRESET_CHANGE_EVENT, this.onPresetChange)",
     );
     expect(scriptSource).toContain(
       'document.addEventListener("astro:after-swap", this.onAfterSwap)',
     );
-    expect(scriptSource).toContain("this.applyPresetToDocument(preset)");
+    expect(scriptSource).toContain(
+      'import { applyDocsPreset } from "@/utils/themes/apply-docs-preset";',
+    );
+    expect(scriptSource).toContain("applyDocsPreset({");
   });
 });

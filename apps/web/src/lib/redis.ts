@@ -27,6 +27,7 @@ export function getRedis(): Redis | null {
 
 // Theme key prefix
 export const THEME_KEY_PREFIX = "theme:";
+export const SHUFFLE_COUNT_KEY = "stats:shuffles";
 
 // Default TTL: 30 days in seconds
 export const DEFAULT_THEME_TTL = 30 * 24 * 60 * 60;
@@ -188,5 +189,32 @@ export async function deleteCustomThemeFromRedis(
   } catch (error) {
     console.error("Failed to delete custom theme:", error);
     return false;
+  }
+}
+
+export async function getShuffleCount(): Promise<number> {
+  const redis = getRedis();
+  if (!redis) return 0;
+
+  try {
+    const count = await redis.get<number | string>(SHUFFLE_COUNT_KEY);
+    return typeof count === "number"
+      ? count
+      : Number.parseInt(count ?? "0", 10) || 0;
+  } catch (error) {
+    console.error("Failed to get shuffle count:", error);
+    return 0;
+  }
+}
+
+export async function incrementShuffleCount(): Promise<number | null> {
+  const redis = getRedis();
+  if (!redis) return null;
+
+  try {
+    return await redis.incr(SHUFFLE_COUNT_KEY);
+  } catch (error) {
+    console.error("Failed to increment shuffle count:", error);
+    return null;
   }
 }

@@ -67,6 +67,7 @@ export default defineConfig({
             button: "@bejamas/ui/components/button",
             select: "@bejamas/ui/components/select",
             Header: "./src/components/starlight/Header.astro",
+            Hero: "./src/components/starlight/Hero.astro",
             Search: "./src/components/starlight/Search.astro",
             ThemeSelect: "./src/components/ThemeSwitcher.astro",
             PageTitle: "./src/components/PageTitle.astro",
@@ -76,6 +77,7 @@ export default defineConfig({
       ],
       components: {
         Header: "./src/components/starlight/Header.astro",
+        Hero: "./src/components/starlight/Hero.astro",
         Search: "./src/components/starlight/Search.astro",
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
         PageTitle: "./src/components/PageTitle.astro",

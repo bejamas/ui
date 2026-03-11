@@ -5,13 +5,11 @@ import {
   catalogs,
 } from "@bejamas/create-config/browser";
 import type { ThemeStyles } from "@/types/theme";
-import { applyThemeToElement } from "@/utils/themes/apply-theme";
+import { applyDocsPreset } from "@/utils/themes/apply-docs-preset";
 import { resolveDesignSystemTheme } from "@/utils/themes/design-system-adapter";
 import {
   PRESET_CHANGE_EVENT,
-  getCurrentMode,
   getStoredPresetWithSwatches,
-  setStoredPreset,
 } from "@/utils/themes/preset-store";
 import { THEME_REF_COOKIE_NAME } from "@/utils/themes/theme-cookie";
 
@@ -91,39 +89,6 @@ class HeaderPresetSwitcherElement extends HTMLElement {
     this.syncFromStoredState();
   };
 
-  onThemeToggle = () => {
-    const stored = getStoredPresetWithSwatches();
-    if (!stored) {
-      return;
-    }
-
-    const preset = this.presets.get(stored.id);
-    if (!preset) {
-      return;
-    }
-
-    this.applyPresetToDocument(preset);
-    this.renderCurrent({
-      id: preset.id,
-      label: preset.label,
-      swatches: preset.swatches,
-      createHref: preset.createHref,
-      themeRef: null,
-    });
-    this.renderSelectedPreset(preset.id);
-  };
-
-  applyPresetToDocument(preset: PresetOption) {
-    applyThemeToElement(
-      {
-        styles: preset.styles,
-        currentMode: getCurrentMode(),
-      },
-      document.documentElement,
-      { skipModeClass: true },
-    );
-  }
-
   onSelect = (event: Event) => {
     const presetId = (event as CustomEvent<{ value: string }>).detail?.value;
     if (!presetId) {
@@ -135,19 +100,17 @@ class HeaderPresetSwitcherElement extends HTMLElement {
       return;
     }
 
-    this.applyPresetToDocument(preset);
-
-    setStoredPreset(
-      preset.id,
-      {
+    applyDocsPreset({
+      id: preset.id,
+      label: preset.label,
+      swatches: {
         primaryLight: preset.swatches.light.primary,
         accentLight: preset.swatches.light.accent,
         primaryDark: preset.swatches.dark.primary,
         accentDark: preset.swatches.dark.accent,
       },
-      preset.label,
-      null,
-    );
+      themeRef: null,
+    });
 
     this.renderCurrent({
       id: preset.id,
@@ -167,7 +130,6 @@ class HeaderPresetSwitcherElement extends HTMLElement {
     this.addEventListener("dropdown-menu:select", this.onSelect);
     window.addEventListener(PRESET_CHANGE_EVENT, this.onPresetChange);
     window.addEventListener("storage", this.onStorage);
-    window.addEventListener("theme-toggle-changed", this.onThemeToggle);
     document.addEventListener("astro:after-swap", this.onAfterSwap);
     this.syncFromStoredState();
   }
@@ -176,7 +138,6 @@ class HeaderPresetSwitcherElement extends HTMLElement {
     this.removeEventListener("dropdown-menu:select", this.onSelect);
     window.removeEventListener(PRESET_CHANGE_EVENT, this.onPresetChange);
     window.removeEventListener("storage", this.onStorage);
-    window.removeEventListener("theme-toggle-changed", this.onThemeToggle);
     document.removeEventListener("astro:after-swap", this.onAfterSwap);
   }
 

@@ -53,6 +53,7 @@ import {
   type CreatePickerName,
   type CreatePickerOption,
 } from "@/utils/create-sidebar";
+import { incrementShuffleCountRequest } from "@/utils/shuffles";
 import {
   buildCreateProjectCommand,
   CREATE_PROJECT_PACKAGE_MANAGERS,
@@ -1382,6 +1383,8 @@ function handleRandomize() {
       clearCustomTheme: !preserveCustomTheme,
     },
   );
+
+  void incrementShuffleCountRequest();
 }
 
 for (const name of PICKER_NAMES) {
