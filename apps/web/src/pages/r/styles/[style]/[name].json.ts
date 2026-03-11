@@ -1,10 +1,33 @@
+import { readdir } from "node:fs/promises";
+import path from "node:path";
 import { STYLES } from "@bejamas/create-config/browser";
 import {
   jsonResponse,
   readStaticStyleRegistryItem,
 } from "@/utils/create-registry";
 
-export const prerender = false;
+const staticStylesRoot = path.resolve(process.cwd(), "public/r/styles");
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    STYLES.map(async (style) => {
+      const filenames = await readdir(path.join(staticStylesRoot, style.id));
+
+      return filenames
+        .filter(
+          (filename) => filename.endsWith(".json") && filename !== "index.json",
+        )
+        .map((filename) => ({
+          params: {
+            style: style.id,
+            name: filename.slice(0, -".json".length),
+          },
+        }));
+    }),
+  );
+
+  return paths.flat();
+}
 
 export async function GET({
   params,

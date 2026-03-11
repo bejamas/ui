@@ -1,7 +1,11 @@
 import { BASE_COLORS } from "@bejamas/create-config/browser";
 import { jsonResponse } from "@/utils/create-registry";
 
-export const prerender = false;
+export function getStaticPaths() {
+  return BASE_COLORS.map((color) => ({
+    params: { name: color.name },
+  }));
+}
 
 export async function GET({ params }: { params: { name: string } }) {
   const color = BASE_COLORS.find((entry) => entry.name === params.name);

@@ -3,8 +3,6 @@ import {
   readStaticStyleRegistryStyles,
 } from "@/utils/create-registry";
 
-export const prerender = false;
-
 export async function GET() {
   try {
     return jsonResponse(await readStaticStyleRegistryStyles());

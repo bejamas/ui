@@ -13,25 +13,29 @@ const scriptFile = path.resolve(
 );
 
 describe("header preset switcher", () => {
-  test("renders beside Search as a deferred server component", () => {
+  test("renders beside Search without a deferred server island", () => {
     const source = fs.readFileSync(headerFile, "utf8");
 
     expect(source).toContain(
       'import HeaderPresetSwitcher from "@/components/starlight/HeaderPresetSwitcher.astro";',
     );
     expect(source).toContain("<Search />");
-    expect(source).toContain("<HeaderPresetSwitcher server:defer>");
-    expect(source).toContain('slot="fallback"');
+    expect(source).toContain("<HeaderPresetSwitcher />");
+    expect(source).not.toContain("server:defer");
     expect(source).toContain('import "@/scripts/header-preset-switcher.ts";');
-    expect(source).toContain(
-      'class="h-10 max-w-[11.75rem] min-w-0 justify-between gap-2 px-2.5 text-sm text-muted-foreground"',
-    );
   });
 
-  test("uses the curated dropdown contract and create CTA", () => {
+  test("uses the curated dropdown contract and static fallback state", () => {
     const source = fs.readFileSync(switcherFile, "utf8");
     const scriptSource = fs.readFileSync(scriptFile, "utf8");
 
+    expect(source).toContain(
+      'import { buildHeaderPresetSwitcherState } from "@/utils/themes/header-preset-switcher";',
+    );
+    expect(source).toContain(
+      "const state = buildHeaderPresetSwitcherState({});",
+    );
+    expect(source).not.toContain("Astro.cookies");
     expect(source).toContain("data-header-preset-switcher");
     expect(source).toContain("data-current={JSON.stringify(state.current)}");
     expect(source).toContain("data-presets={JSON.stringify(state.presets)}");

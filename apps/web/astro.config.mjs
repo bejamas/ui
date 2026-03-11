@@ -17,7 +17,7 @@ const isVercel = process.env.VERCEL === "1";
 
 export default defineConfig({
   trailingSlash: "never",
-  output: "server",
+  output: "static",
   experimental: {
     queuedRendering: {
       enabled: true,

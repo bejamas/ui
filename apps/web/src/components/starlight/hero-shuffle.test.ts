@@ -17,15 +17,16 @@ describe("homepage hero shuffle", () => {
     const source = fs.readFileSync(astroConfigFile, "utf8");
 
     expect(source).toContain('Hero: "./src/components/starlight/Hero.astro"');
+    expect(source).toContain('output: "static"');
   });
 
-  test("renders the Shuffle CTA and server-rendered count hooks", () => {
+  test("renders the Shuffle CTA with a static count fallback", () => {
     const source = fs.readFileSync(heroFile, "utf8");
 
-    expect(source).toContain('import { getShuffleCount } from "@/lib/redis";');
     expect(source).toContain(
       'import { formatShuffleCount } from "@/utils/shuffles";',
     );
+    expect(source).not.toContain("getShuffleCount(");
     expect(source).toContain("data-hero-shuffle");
     expect(source).toContain("data-hero-shuffle-button");
     expect(source).toContain("data-hero-shuffle-count");
@@ -40,6 +41,7 @@ describe("homepage hero shuffle", () => {
       "createRandomDesignSystemConfig(getCurrentConfig())",
     );
     expect(source).toContain("applyDocsPreset({");
+    expect(source).toContain("getShuffleCountRequest()");
     expect(source).toContain("this.renderCount(this.getCount() + 1)");
     expect(source).toContain("incrementShuffleCountRequest()");
     expect(source).toContain("this.renderCount(nextCount)");

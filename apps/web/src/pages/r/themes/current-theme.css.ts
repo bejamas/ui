@@ -30,7 +30,7 @@ export async function GET({ cookies }: { cookies: AstroCookies }) {
         status: 200,
         headers: {
           "Access-Control-Allow-Origin": "*",
-          "Cache-Control": "private, no-store",
+          "Cache-Control": "private, max-age=60, stale-while-revalidate=300",
           "Content-Type": "text/css",
           Vary: "Cookie",
         },

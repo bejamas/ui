@@ -37,9 +37,16 @@ describe("shuffle utilities", () => {
     const source = fs.readFileSync(apiRouteFile, "utf8");
 
     expect(source).toContain(
-      'import { incrementShuffleCount } from "../../lib/redis";',
+      'import { getShuffleCount, incrementShuffleCount } from "../../lib/redis";',
     );
+    expect(source).toContain("export const GET: APIRoute = async () => {");
+    expect(source).toContain("const count = await getShuffleCount();");
+    expect(source).toContain(
+      '"Cache-Control": "private, max-age=60, stale-while-revalidate=300"',
+    );
+    expect(source).toContain("export const POST: APIRoute = async () => {");
     expect(source).toContain("const count = await incrementShuffleCount();");
+    expect(source).toContain('"Cache-Control": "no-store"');
     expect(source).toContain("JSON.stringify({ count })");
   });
 });

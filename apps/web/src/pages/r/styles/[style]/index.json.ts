@@ -4,7 +4,11 @@ import {
   readStaticStyleRegistryIndex,
 } from "@/utils/create-registry";
 
-export const prerender = false;
+export function getStaticPaths() {
+  return STYLES.map((style) => ({
+    params: { style: style.id },
+  }));
+}
 
 export async function GET({ params }: { params: { style: string } }) {
   const style = STYLES.find((entry) => entry.id === params.style);

@@ -2,7 +2,6 @@
 import { Image } from "astro:assets";
 import { ShuffleIcon } from "@lucide/astro";
 import { Button } from "virtual:starlight-theme-bejamas/components/button";
-import { getShuffleCount } from "@/lib/redis";
 import { formatShuffleCount } from "@/utils/shuffles";
 
 const { data } = Astro.locals.starlightRoute.entry;
@@ -38,7 +37,7 @@ const starlightVariantToBejamasVariant = {
   minimal: "outline",
 };
 
-const shuffleCount = await getShuffleCount();
+const shuffleCount = 0;
 const formattedShuffleCount = formatShuffleCount(shuffleCount);
 ---
 

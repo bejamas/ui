@@ -7,6 +7,7 @@ import {
 } from "@bejamas/create-config/browser";
 import { createRandomDesignSystemConfig } from "@/utils/create-sidebar";
 import {
+  getShuffleCountRequest,
   incrementShuffleCountRequest,
   formatShuffleCount,
 } from "@/utils/shuffles";
@@ -44,6 +45,13 @@ class HeroShuffleControlElement extends HTMLElement {
   private button: HTMLButtonElement | null = null;
   private countLabel: HTMLElement | null = null;
   private busy = false;
+
+  private syncCount = async () => {
+    const nextCount = await getShuffleCountRequest();
+    if (typeof nextCount === "number" && nextCount >= this.getCount()) {
+      this.renderCount(nextCount);
+    }
+  };
 
   private getCount() {
     return Number.parseInt(this.dataset.count ?? "0", 10) || 0;
@@ -100,6 +108,7 @@ class HeroShuffleControlElement extends HTMLElement {
       "[data-hero-shuffle-count]",
     );
     this.button?.addEventListener("click", this.onClick);
+    void this.syncCount();
   }
 
   disconnectedCallback() {

@@ -9,18 +9,9 @@ import {
 } from "@bejamas/registry/ui/dropdown-menu";
 import { Button } from "@bejamas/registry/ui/button";
 import { ChevronDownIcon } from "@lucide/astro";
-import { getHeaderPresetSwitcherState } from "@/utils/themes/header-preset-switcher";
-import {
-  PRESET_COOKIE_NAME,
-  THEME_REF_COOKIE_NAME,
-} from "@/utils/themes/theme-cookie";
+import { buildHeaderPresetSwitcherState } from "@/utils/themes/header-preset-switcher";
 
-export const prerender = false;
-
-const state = await getHeaderPresetSwitcherState({
-  themeCookieValue: Astro.cookies.get(PRESET_COOKIE_NAME)?.value ?? null,
-  themeRef: Astro.cookies.get(THEME_REF_COOKIE_NAME)?.value ?? null,
-});
+const state = buildHeaderPresetSwitcherState({});
 ---
 
 <header-preset-switcher
