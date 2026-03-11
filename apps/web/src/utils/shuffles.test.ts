@@ -30,6 +30,14 @@ describe("shuffle utilities", () => {
     expect(source).toContain(
       'url.searchParams.set("v", Date.now().toString())',
     );
+    expect(source).toContain("data-pending-current-theme-stylesheet");
+    expect(source).toContain(
+      'insertAdjacentElement("afterend", nextStylesheet)',
+    );
+    expect(source).toContain('nextStylesheet.addEventListener("load", onLoad');
+    expect(source).toContain(
+      'nextStylesheet.addEventListener("error", onError',
+    );
     expect(source).toContain("setStoredPreset(");
   });
 

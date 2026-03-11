@@ -17,7 +17,7 @@ describe("homepage hero shuffle", () => {
     const source = fs.readFileSync(astroConfigFile, "utf8");
 
     expect(source).toContain('Hero: "./src/components/starlight/Hero.astro"');
-    expect(source).toContain('output: "static"');
+    expect(source).toContain('output: "server"');
   });
 
   test("renders the Shuffle CTA with a static count fallback", () => {

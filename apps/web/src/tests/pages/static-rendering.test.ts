@@ -28,10 +28,13 @@ const routeMiddlewareFile = path.resolve(
 );
 
 describe("static rendering boundary", () => {
-  test("uses static output for the app", () => {
+  test("uses server output with static-first route defaults", () => {
     const source = fs.readFileSync(astroConfigFile, "utf8");
 
-    expect(source).toContain('output: "static"');
+    expect(source).toContain('output: "server"');
+    expect(source).toContain('name: "static-first-routes"');
+    expect(source).toContain('"astro:route:setup"({ route }) {');
+    expect(source).toContain("route.prerender = true;");
   });
 
   test("keeps request-driven create pages explicitly dynamic", () => {

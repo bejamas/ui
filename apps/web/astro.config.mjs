@@ -14,10 +14,20 @@ import { posthog } from "./src/utils/posthog";
 import alpinejs from "@astrojs/alpinejs";
 
 const isVercel = process.env.VERCEL === "1";
+const staticFirstRoutes = {
+  name: "static-first-routes",
+  hooks: {
+    "astro:route:setup"({ route }) {
+      if (typeof route.prerender === "undefined") {
+        route.prerender = true;
+      }
+    },
+  },
+};
 
 export default defineConfig({
   trailingSlash: "never",
-  output: "static",
+  output: "server",
   experimental: {
     queuedRendering: {
       enabled: true,
@@ -246,6 +256,7 @@ export default defineConfig({
       ],
     }),
     alpinejs(),
+    staticFirstRoutes,
   ],
   vite: {
     plugins: [tailwindcss()],
