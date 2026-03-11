@@ -14,7 +14,10 @@ describe("current-theme.css", () => {
     const css = await response.text();
 
     expect(response.headers.get("Cache-Control")).toBe(
-      "private, max-age=60, stale-while-revalidate=300",
+      "public, max-age=0, must-revalidate",
+    );
+    expect(response.headers.get("Vercel-CDN-Cache-Control")).toBe(
+      "public, s-maxage=60, stale-while-revalidate=300",
     );
     expect(response.headers.get("Vary")).toBe("Cookie");
     expect(css).toContain("--font-sans: Inter");

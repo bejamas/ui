@@ -30,8 +30,10 @@ export async function GET({ cookies }: { cookies: AstroCookies }) {
         status: 200,
         headers: {
           "Access-Control-Allow-Origin": "*",
-          "Cache-Control": "private, max-age=60, stale-while-revalidate=300",
+          "Cache-Control": "public, max-age=0, must-revalidate",
           "Content-Type": "text/css",
+          "Vercel-CDN-Cache-Control":
+            "public, s-maxage=60, stale-while-revalidate=300",
           Vary: "Cookie",
         },
       },
