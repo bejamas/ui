@@ -5,12 +5,14 @@ import { cn } from "@bejamas/registry/lib/utils";
 interface Props extends HTMLAttributes<"div"> {
   disabled?: boolean;
   inset?: boolean;
+  value?: string;
   class?: string;
 }
 
 const {
   disabled = false,
   inset = false,
+  value,
   class: className = "",
   ...rest
 } = Astro.props as Props;
@@ -21,6 +23,7 @@ const {
   role="menuitem"
   tabindex={disabled ? -1 : 0}
   data-slot="dropdown-menu-item"
+  data-value={value}
   data-disabled={disabled ? "" : undefined}
   data-inset={inset ? "" : undefined}
   class={cn(

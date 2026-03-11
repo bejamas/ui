@@ -118,6 +118,9 @@ describe("create preview base layer", () => {
     const dropdownItem = read(
       "packages/registry/src/ui/dropdown-menu/DropdownMenuItem.astro",
     );
+    const createBaseDropdownItem = read(
+      "apps/web/src/components/create/base/ui/dropdown-menu/DropdownMenuItem.astro",
+    );
     const dropdownLabel = read(
       "packages/registry/src/ui/dropdown-menu/DropdownMenuLabel.astro",
     );
@@ -129,8 +132,12 @@ describe("create preview base layer", () => {
 
     expect(dropdownContent).toContain("cn-dropdown-menu-content");
     expect(dropdownContent).not.toContain("min-w-32 overflow-hidden");
+    expect(dropdownItem).toContain("value?: string");
+    expect(dropdownItem).toContain("data-value={value}");
     expect(dropdownItem).toContain('data-inset={inset ? "" : undefined}');
     expect(dropdownItem).not.toContain('inset && "pl-8"');
+    expect(createBaseDropdownItem).toContain("value?: string");
+    expect(createBaseDropdownItem).toContain("data-value={value}");
     expect(dropdownLabel).toContain('data-inset={inset ? "" : undefined}');
     expect(dropdownLabel).not.toContain("px-2 py-1.5 text-sm font-medium");
   });

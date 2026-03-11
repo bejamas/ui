@@ -1,0 +1,121 @@
+---
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@bejamas/registry/ui/dropdown-menu";
+import { Button } from "@bejamas/registry/ui/button";
+import { ChevronDownIcon } from "@lucide/astro";
+import { getHeaderPresetSwitcherState } from "@/utils/themes/header-preset-switcher";
+import {
+  PRESET_COOKIE_NAME,
+  THEME_REF_COOKIE_NAME,
+} from "@/utils/themes/theme-cookie";
+
+export const prerender = false;
+
+const state = await getHeaderPresetSwitcherState({
+  themeCookieValue: Astro.cookies.get(PRESET_COOKIE_NAME)?.value ?? null,
+  themeRef: Astro.cookies.get(THEME_REF_COOKIE_NAME)?.value ?? null,
+});
+---
+
+<header-preset-switcher
+  class="header-preset-switcher"
+  data-header-preset-switcher
+  data-current={JSON.stringify(state.current)}
+  data-presets={JSON.stringify(state.presets)}
+  data-selected-preset-id={state.selectedPresetId ?? ""}
+>
+  <DropdownMenu>
+    <DropdownMenuTrigger
+      variant="outline"
+      class="header-preset-switcher-trigger max-w-[11.75rem] min-w-0 justify-between gap-2 px-2.5 text-sm"
+      data-header-preset-trigger
+    >
+      <span class="flex min-w-0 items-center gap-2">
+        <span class="flex shrink-0 -space-x-1 items-center">
+          <span
+            class="size-3 rounded-full border border-background/80 dark:hidden"
+            data-current-swatch="light-primary"
+            style={`background:${state.current.swatches.light.primary}`}></span>
+          <span
+            class="size-3 rounded-full border border-background/80 dark:hidden"
+            data-current-swatch="light-accent"
+            style={`background:${state.current.swatches.light.accent}`}></span>
+          <span
+            class="hidden size-3 rounded-full border border-border dark:block"
+            data-current-swatch="dark-primary"
+            style={`background:${state.current.swatches.dark.primary}`}></span>
+          <span
+            class="hidden size-3 rounded-full border border-border dark:block"
+            data-current-swatch="dark-accent"
+            style={`background:${state.current.swatches.dark.accent}`}></span>
+        </span>
+        <span class="truncate text-left" data-current-label>
+          {state.current.label}
+        </span>
+      </span>
+      <ChevronDownIcon class="size-4 shrink-0 opacity-60" />
+    </DropdownMenuTrigger>
+
+    <DropdownMenuContent
+      align="end"
+      class="w-[17rem] p-0"
+      data-header-preset-content
+    >
+      <div class="p-1">
+        <DropdownMenuLabel>Presets</DropdownMenuLabel>
+        {
+          state.presets.map((preset) => (
+            <DropdownMenuItem
+              class="cursor-pointer gap-3 rounded-md px-3 py-2"
+              value={preset.id}
+              data-header-preset-id={preset.id}
+              data-selected={
+                state.selectedPresetId === preset.id ? "" : undefined
+              }
+            >
+              <span class="flex shrink-0 -space-x-1 items-center">
+                <span
+                  class="size-3 rounded-full border border-background/80 dark:hidden"
+                  style={`background:${preset.swatches.light.primary}`}
+                />
+                <span
+                  class="size-3 rounded-full border border-background/80 dark:hidden"
+                  style={`background:${preset.swatches.light.accent}`}
+                />
+                <span
+                  class="hidden size-3 rounded-full border border-border dark:block"
+                  style={`background:${preset.swatches.dark.primary}`}
+                />
+                <span
+                  class="hidden size-3 rounded-full border border-border dark:block"
+                  style={`background:${preset.swatches.dark.accent}`}
+                />
+              </span>
+              <span class="truncate">{preset.label}</span>
+            </DropdownMenuItem>
+          ))
+        }
+      </div>
+
+      <DropdownMenuSeparator />
+
+      <div class="p-1">
+        <Button
+          as="a"
+          href={state.current.createHref}
+          variant="ghost"
+          class="w-full justify-center"
+          data-create-your-own
+        >
+          Create your own
+        </Button>
+      </div>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</header-preset-switcher>

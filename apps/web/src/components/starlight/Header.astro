@@ -11,6 +11,7 @@ import options from "virtual:starlight-theme-bejamas/user-config";
 
 import { Button } from "virtual:starlight-theme-bejamas/components/button";
 import GitHubStarsButton from "@/components/GitHubStarsButton.astro";
+import HeaderPresetSwitcher from "@/components/starlight/HeaderPresetSwitcher.astro";
 
 /**
  * Render the `Search` component if Pagefind is enabled or the default search component has been overridden.
@@ -59,10 +60,30 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
   </div>
   <div class="header-desktop-right print:hidden right-group">
     <GitHubStarsButton />
+    <HeaderPresetSwitcher server:defer>
+      <Button
+        slot="fallback"
+        variant="outline"
+        class="h-10 max-w-[11.75rem] min-w-0 justify-between gap-2 px-2.5 text-sm text-muted-foreground"
+        disabled
+      >
+        <span class="flex min-w-0 items-center gap-2">
+          <span class="flex shrink-0 -space-x-1 items-center">
+            <span class="size-3 rounded-full bg-muted"></span>
+            <span class="size-3 rounded-full bg-muted/70"></span>
+          </span>
+          <span class="truncate">Juno - Inter</span>
+        </span>
+      </Button>
+    </HeaderPresetSwitcher>
     <ThemeSelect />
     <LanguageSelect />
   </div>
 </div>
+
+<script>
+  import "@/scripts/header-preset-switcher.ts";
+</script>
 
 <style>
   @layer bejamas {
@@ -99,6 +120,11 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
     .header-desktop-search,
     .header-desktop-right {
       display: none;
+    }
+
+    .header-desktop-search {
+      align-items: center;
+      gap: 0.5rem;
     }
 
     @media (min-width: 64rem) {
