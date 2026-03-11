@@ -16,6 +16,9 @@ describe("current-theme.css", () => {
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
     expect(response.headers.get("Vary")).toBe("Cookie");
     expect(css).toContain("--font-sans: Inter");
+    expect(css).toContain("@layer components");
+    expect(css).toContain(".cn-card");
+    expect(css).not.toContain(".style-juno");
   });
 
   test("decodes a create preset code from the theme cookie", async () => {
@@ -106,6 +109,8 @@ describe("current-theme.css", () => {
     const css = await response.text();
 
     expect(css).toContain("--radius: 1.5rem;");
-    expect(css).not.toContain(".cn-card");
+    expect(css).toContain("@layer components");
+    expect(css).toContain(".cn-card");
+    expect(css).not.toContain(".style-juno");
   });
 });

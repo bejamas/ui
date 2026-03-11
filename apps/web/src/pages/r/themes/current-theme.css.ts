@@ -1,4 +1,5 @@
 import {
+  DEFAULT_DESIGN_SYSTEM_CONFIG,
   decodePreset,
   getCompiledGlobalStyleCss,
   isPresetCode,
@@ -65,10 +66,13 @@ async function resolveThemeCss(
   const fallbackPreset =
     (themeId && defaultPresets[themeId]) || defaultPresets["default"];
 
-  return applyThemeToCss({
-    currentMode: "light",
-    styles: fallbackPreset.styles,
-  });
+  return [
+    applyThemeToCss({
+      currentMode: "light",
+      styles: fallbackPreset.styles,
+    }),
+    await getCompiledGlobalStyleCss(DEFAULT_DESIGN_SYSTEM_CONFIG.style),
+  ].join("\n\n");
 }
 
 function toDesignSystemConfig(preset: PresetConfig) {
