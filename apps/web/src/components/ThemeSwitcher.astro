@@ -35,56 +35,27 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
 </script>
 
 <script>
-  type Theme = "auto" | "dark" | "light";
-  const storageKey = "starlight-theme";
+  import {
+    loadStoredThemeChoice,
+    parseStoredThemeChoice,
+    setGlobalThemeChoice,
+    type ThemeChoice,
+  } from "@/utils/themes/iframe-theme-sync";
 
-  const parseTheme = (theme: unknown): Theme =>
-    theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
+  const loadTheme = (): ThemeChoice => loadStoredThemeChoice(localStorage);
 
-  const loadTheme = (): Theme =>
-    parseTheme(
-      typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
-    );
-
-  function storeTheme(theme: Theme): void {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem(
-        storageKey,
-        theme === "light" || theme === "dark" ? theme : "",
-      );
-    }
-  }
-
-  const getPreferredColorScheme = (): Theme =>
-    matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-
-  function syncThemeTabs(theme: Theme): void {
-    document
-      .querySelectorAll<HTMLDivElement>(
-        'starlight-theme-select [data-slot="tabs"]',
-      )
-      .forEach((tabsEl) => {
-        tabsEl.dataset.defaultValue = theme;
-        tabsEl.dataset.value = theme;
-        tabsEl.dispatchEvent(
-          new CustomEvent("tabs:set", { detail: { value: theme } }),
+  function onThemeChange(theme: ThemeChoice): void {
+    setGlobalThemeChoice(theme, {
+      syncPickers: (themeChoice) =>
+        window.StarlightThemeProvider?.updatePickers?.(themeChoice),
+      dispatchChange: (effectiveTheme, themeChoice) => {
+        window.dispatchEvent(
+          new CustomEvent("theme-toggle-changed", {
+            detail: { theme: effectiveTheme, themeChoice },
+          }),
         );
-      });
-  }
-
-  function onThemeChange(theme: Theme): void {
-    const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
-    if (typeof StarlightThemeProvider !== "undefined") {
-      StarlightThemeProvider.updatePickers(theme);
-    }
-    document.documentElement.dataset.theme = resolved;
-    document.documentElement.dataset.themeChoice = theme;
-    document.documentElement.classList.toggle("dark", resolved === "dark");
-    storeTheme(theme);
-    window.dispatchEvent(
-      new CustomEvent("theme-toggle-changed", { detail: { theme: resolved } }),
-    );
-    syncThemeTabs(theme);
+      },
+    });
   }
 
   matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
@@ -98,8 +69,8 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
       const value = (event as CustomEvent<{ value?: unknown }>).detail?.value;
       if (typeof value !== "string") return;
 
-      const nextTheme = parseTheme(value);
-      const currentTheme = parseTheme(
+      const nextTheme = parseStoredThemeChoice(value);
+      const currentTheme = parseStoredThemeChoice(
         document.documentElement.dataset.themeChoice,
       );
       if (nextTheme === currentTheme) return;

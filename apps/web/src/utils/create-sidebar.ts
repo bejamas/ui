@@ -5,6 +5,7 @@ import {
   TEMPLATE_VALUES,
   catalogs,
   getThemesForBaseColor,
+  isTranslucentMenuColor,
   resolveEffectiveRadius,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
@@ -21,6 +22,28 @@ export type CreatePickerName =
   | "template"
   | "rtlLanguage";
 
+export type CreateLockableParam = Exclude<
+  CreatePickerName,
+  "template" | "rtlLanguage"
+>;
+
+export const CREATE_LOCKABLE_PARAMS = [
+  "style",
+  "baseColor",
+  "theme",
+  "iconLibrary",
+  "font",
+  "radius",
+  "menuColor",
+  "menuAccent",
+] as const satisfies readonly CreateLockableParam[];
+
+export function hasCreateLockableParam(
+  value: string,
+): value is CreateLockableParam {
+  return CREATE_LOCKABLE_PARAMS.includes(value as CreateLockableParam);
+}
+
 export type CreatePickerMarkerKind =
   | "style"
   | "swatch"
@@ -36,7 +59,7 @@ export type CreatePickerOption = {
   value: string;
   label: string;
   description?: string;
-  group?: "bejamas" | "shadcn";
+  group?: keyof typeof CREATE_PICKER_GROUP_LABELS;
   color?: string;
   family?: string;
   markerValue?: string;
@@ -48,9 +71,16 @@ export type CreatePickerGroup = {
   options: CreatePickerOption[];
 };
 
+export type CreateFontGroup = "sans" | "serif" | "mono";
+
+export const CREATE_FONT_GROUPS = ["sans", "serif", "mono"] as const satisfies readonly CreateFontGroup[];
+
 export const CREATE_PICKER_GROUP_LABELS = {
   bejamas: "Bejamas",
   shadcn: "shadcn",
+  sans: "Sans Serif",
+  serif: "Serif",
+  mono: "Monospace",
 } as const;
 
 const RADIUS_OPTIONS = [
@@ -122,6 +152,38 @@ function getThemeColor(theme: (typeof catalogs.themes)[number]) {
   return lightVars.primary ?? lightVars.ring ?? "oklch(0.72 0 0)";
 }
 
+function getFontPickerGroup(
+  font: (typeof catalogs.fonts)[number],
+): "sans" | "serif" | "mono" {
+  if (font.font.variable === "--font-serif") {
+    return "serif";
+  }
+
+  if (font.font.variable === "--font-mono") {
+    return "mono";
+  }
+
+  return "sans";
+}
+
+export function isCreateFontGroup(value: string): value is CreateFontGroup {
+  return CREATE_FONT_GROUPS.includes(value as CreateFontGroup);
+}
+
+export function getFontGroupForFontValue(
+  value: string,
+): CreateFontGroup | null {
+  const font = catalogs.fonts.find((item) => item.name.replace("font-", "") === value);
+
+  return font ? getFontPickerGroup(font) : null;
+}
+
+export function getFontValuesForGroup(group: CreateFontGroup) {
+  return catalogs.fonts
+    .filter((font) => getFontPickerGroup(font) === group)
+    .map((font) => font.name.replace("font-", ""));
+}
+
 export function getCreatePickerOptions(
   config: Pick<DesignSystemConfig, "baseColor" | "style">,
 ) {
@@ -148,11 +210,23 @@ export function getCreatePickerOptions(
       value: iconLibrary.name,
       label: iconLibrary.label,
     })),
-    font: catalogs.fonts.map((font) => ({
-      value: font.name.replace("font-", ""),
-      label: font.title,
-      family: font.font.family,
-    })),
+    font: catalogs.fonts
+      .map((font) => ({
+        value: font.name.replace("font-", ""),
+        label: font.title,
+        family: font.font.family,
+        group: getFontPickerGroup(font),
+      }))
+      .sort((left, right) => {
+        const groupOrder = { sans: 0, serif: 1, mono: 2 } as const;
+        const groupDiff =
+          groupOrder[left.group as keyof typeof groupOrder] -
+          groupOrder[right.group as keyof typeof groupOrder];
+
+        return groupDiff !== 0
+          ? groupDiff
+          : left.label.localeCompare(right.label);
+      }),
     radius: RADIUS_OPTIONS.map((option) =>
       option.value === "default"
         ? {
@@ -232,38 +306,75 @@ function chooseRandom<T>(values: readonly T[]) {
 
 export function createRandomDesignSystemConfig(
   current: Pick<DesignSystemConfig, "template" | "rtl"> &
-    Partial<
-      Pick<DesignSystemConfig, "rtlLanguage">
-    > = DEFAULT_DESIGN_SYSTEM_CONFIG,
+    Partial<DesignSystemConfig> = DEFAULT_DESIGN_SYSTEM_CONFIG,
+  options: {
+    locked?: Iterable<CreateLockableParam>;
+    hasCustomTheme?: boolean;
+    lockedFontGroup?: CreateFontGroup | null;
+  } = {},
 ): DesignSystemConfig {
-  const baseColor = chooseRandom(catalogs.baseColors)?.name ?? "neutral";
-  const theme =
-    chooseRandom(getThemesForBaseColor(baseColor))?.name ?? baseColor;
+  const locked = new Set(options.locked ?? []);
+  const style = locked.has("style")
+    ? current.style ?? DEFAULT_DESIGN_SYSTEM_CONFIG.style
+    : (chooseRandom(STYLES.map((style) => style.name)) ??
+      DEFAULT_DESIGN_SYSTEM_CONFIG.style);
+
+  const preserveBaseColorForLockedTheme =
+    locked.has("theme") &&
+    (Boolean(options.hasCustomTheme) ||
+      current.theme === current.baseColor ||
+      current.theme === undefined);
+
+  const baseColor =
+    locked.has("baseColor") || preserveBaseColorForLockedTheme
+      ? (current.baseColor ?? DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor)
+      : (chooseRandom(catalogs.baseColors)?.name ??
+        DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor);
+  const themeOptions = getThemesForBaseColor(baseColor);
+  const theme = locked.has("theme")
+    ? (current.theme ?? themeOptions[0]?.name ?? baseColor)
+    : (chooseRandom(themeOptions)?.name ?? themeOptions[0]?.name ?? baseColor);
+
+  const menuColorOptions =
+    locked.has("menuAccent") &&
+    (current.menuAccent ?? DEFAULT_DESIGN_SYSTEM_CONFIG.menuAccent) === "bold"
+      ? MENU_COLOR_OPTIONS.filter(
+          (option) => !isTranslucentMenuColor(option.value),
+        )
+      : MENU_COLOR_OPTIONS;
+  const menuColor = locked.has("menuColor")
+    ? (current.menuColor ?? DEFAULT_DESIGN_SYSTEM_CONFIG.menuColor)
+    : (chooseRandom(menuColorOptions.map((option) => option.value)) ??
+      DEFAULT_DESIGN_SYSTEM_CONFIG.menuColor);
+  const menuAccent = locked.has("menuAccent")
+    ? (current.menuAccent ?? DEFAULT_DESIGN_SYSTEM_CONFIG.menuAccent)
+    : isTranslucentMenuColor(menuColor)
+      ? "subtle"
+      : (chooseRandom(MENU_ACCENT_OPTIONS.map((option) => option.value)) ??
+        DEFAULT_DESIGN_SYSTEM_CONFIG.menuAccent);
+  const fontOptions = options.lockedFontGroup
+    ? getFontValuesForGroup(options.lockedFontGroup)
+    : catalogs.fonts.map((font) => font.name.replace("font-", ""));
 
   return {
-    style:
-      chooseRandom(STYLES.map((style) => style.name)) ??
-      DEFAULT_DESIGN_SYSTEM_CONFIG.style,
+    style,
     baseColor,
     theme,
-    iconLibrary:
-      chooseRandom(catalogs.iconLibraries.map((item) => item.name)) ??
-      DEFAULT_DESIGN_SYSTEM_CONFIG.iconLibrary,
-    font:
-      chooseRandom(
-        catalogs.fonts.map((font) => font.name.replace("font-", "")),
-      ) ?? DEFAULT_DESIGN_SYSTEM_CONFIG.font,
-    radius:
-      chooseRandom(RADIUS_OPTIONS.map((option) => option.value)) ??
-      DEFAULT_DESIGN_SYSTEM_CONFIG.radius,
-    menuColor:
-      chooseRandom(MENU_COLOR_OPTIONS.map((option) => option.value)) ??
-      DEFAULT_DESIGN_SYSTEM_CONFIG.menuColor,
-    menuAccent:
-      chooseRandom(MENU_ACCENT_OPTIONS.map((option) => option.value)) ??
-      DEFAULT_DESIGN_SYSTEM_CONFIG.menuAccent,
-    template: current.template,
-    rtl: current.rtl,
+    iconLibrary: locked.has("iconLibrary")
+      ? (current.iconLibrary ?? DEFAULT_DESIGN_SYSTEM_CONFIG.iconLibrary)
+      : (chooseRandom(catalogs.iconLibraries.map((item) => item.name)) ??
+        DEFAULT_DESIGN_SYSTEM_CONFIG.iconLibrary),
+    font: locked.has("font")
+      ? (current.font ?? DEFAULT_DESIGN_SYSTEM_CONFIG.font)
+      : (chooseRandom(fontOptions) ?? DEFAULT_DESIGN_SYSTEM_CONFIG.font),
+    radius: locked.has("radius")
+      ? (current.radius ?? DEFAULT_DESIGN_SYSTEM_CONFIG.radius)
+      : (chooseRandom(RADIUS_OPTIONS.map((option) => option.value)) ??
+        DEFAULT_DESIGN_SYSTEM_CONFIG.radius),
+    menuColor,
+    menuAccent,
+    template: current.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
+    rtl: current.rtl ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtl,
     rtlLanguage:
       current.rtlLanguage ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
   };

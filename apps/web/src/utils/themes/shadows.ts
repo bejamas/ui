@@ -1,7 +1,39 @@
-import { colorFormatter } from "./color-converter";
+import { colorFormatter, formatNumber } from "./color-converter";
 import { applyStyleToElement } from "./apply-style-to-element";
 import type { ThemeEditorState } from "../types/editor";
 import { defaultThemeState } from "./config";
+
+const OKLCH_COMPONENT_RE =
+  /oklch\(\s*([+-]?(?:\d+|\d*\.\d+))\s+([+-]?(?:\d+|\d*\.\d+))\s+([+-]?(?:\d+|\d*\.\d+))(?:\s*\/\s*[^\s)]+)?\s*\)/i;
+
+function parseOklchComponents(value: string) {
+  const match = colorFormatter(value, "oklch").match(OKLCH_COMPONENT_RE);
+
+  if (!match) {
+    return [0, 0, 0] as const;
+  }
+
+  return [
+    Number.parseFloat(match[1]),
+    Number.parseFloat(match[2]),
+    Number.parseFloat(match[3]),
+  ] as const;
+}
+
+function mixOklch(from: string, to: string, amount: number) {
+  const [l1, c1, h1] = parseOklchComponents(from);
+  const [l2, c2, h2] = parseOklchComponents(to);
+  const lerp = (start: number, end: number) => start + (end - start) * amount;
+
+  return `oklch(${formatNumber(lerp(l1, l2))} ${formatNumber(lerp(c1, c2))} ${formatNumber(lerp(h1, h2))})`;
+}
+
+function withOklchAlpha(color: string, alpha: number) {
+  const [l, c, h] = parseOklchComponents(color);
+  const boundedAlpha = Math.max(0, Math.min(1, alpha));
+
+  return `oklch(${formatNumber(l)} ${formatNumber(c)} ${formatNumber(h)} / ${formatNumber(boundedAlpha * 100)}%)`;
+}
 
 export const legacy_getShadowMap = (themeEditorState: ThemeEditorState) => {
   const mode = themeEditorState.currentMode;
@@ -13,18 +45,11 @@ export const legacy_getShadowMap = (themeEditorState: ThemeEditorState) => {
   const shadowColor = styles["shadow-color"];
   const borderColor = styles["border"] || shadowColor;
   const surfaceColor = styles["card"] || styles["background"] || shadowColor;
-
-  // Helper: parse oklch() string → [l, c, h]
-  const parseOklch = (s: string) => {
-    const m = colorFormatter(s, "oklch").match(/oklch\(([^)]+)\)/);
-    if (!m) return [0, 0, 0];
-    return m[1].split(/\s+/).map((x) => parseFloat(x));
-  };
   // Compute automatic tint factor from border vs surface
   const computeAutoTint = (shadow: string, border: string, surface: string) => {
-    const [ls, cs] = parseOklch(shadow);
-    const [lb, cb, hb] = parseOklch(border);
-    const [lf] = parseOklch(surface);
+    const [ls] = parseOklchComponents(shadow);
+    const [lb, cb] = parseOklchComponents(border);
+    const [lf] = parseOklchComponents(surface);
     const deltaL = Math.abs(lb - lf);
     const chroma = cb;
     const base = Math.max(0, (chroma - 0.04) * 2.2); // grows with chroma
@@ -38,35 +63,15 @@ export const legacy_getShadowMap = (themeEditorState: ThemeEditorState) => {
   const borderTint = computeAutoTint(shadowColor, borderColor, surfaceColor);
   const blendedColor =
     borderTint > 0
-      ? colorFormatter(
-          (() => {
-            const from = colorFormatter(shadowColor, "oklch");
-            const to = colorFormatter(borderColor, "oklch");
-            const parse = (s: string) => {
-              const m = s.match(/oklch\(([^)]+)\)/);
-              if (!m) return [0, 0, 0];
-              return m[1].split(/\s+/).map((x) => parseFloat(x));
-            };
-            const [l1, c1, h1] = parse(from);
-            const [l2, c2, h2] = parse(to);
-            const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-            const l = lerp(l1, l2, borderTint);
-            const c = lerp(c1, c2, borderTint);
-            const h = lerp(h1, h2, borderTint);
-            return `oklch(${l} ${c} ${h})`;
-          })(),
-          "hsl",
-          "3"
-        )
-      : colorFormatter(shadowColor, "hsl", "3");
-  const hsl = blendedColor;
+      ? mixOklch(shadowColor, borderColor, borderTint)
+      : colorFormatter(shadowColor, "oklch");
   const offsetX = styles["shadow-offset-x"];
   const offsetY = styles["shadow-offset-y"];
   const blur = styles["shadow-blur"];
   const spread = styles["shadow-spread"];
   const opacity = parseFloat(styles["shadow-opacity"]);
   const color = (opacityMultiplier: number) =>
-    `hsl(${hsl} / ${(opacity * opacityMultiplier).toFixed(2)})`;
+    withOklchAlpha(blendedColor, opacity * opacityMultiplier);
 
   const secondLayer = (fixedOffsetY: string, fixedBlur: string): string => {
     // Use the same offsetX as the first layer
@@ -93,20 +98,20 @@ export const legacy_getShadowMap = (themeEditorState: ThemeEditorState) => {
 
     // Two layer shadows - use base vars for layer 1, mix fixed/calculated for layer 2
     "shadow-sm": `${offsetX} ${offsetY} ${blur} ${spread} ${color(
-      1.0
+      1.0,
     )}, ${secondLayer("1px", "2px")}`,
     shadow: `${offsetX} ${offsetY} ${blur} ${spread} ${color(1.0)}, ${secondLayer("1px", "2px")}`, // Alias for the 'shadow:' example line
 
     "shadow-md": `${offsetX} ${offsetY} ${blur} ${spread} ${color(
-      1.0
+      1.0,
     )}, ${secondLayer("2px", "4px")}`,
 
     "shadow-lg": `${offsetX} ${offsetY} ${blur} ${spread} ${color(
-      1.0
+      1.0,
     )}, ${secondLayer("4px", "6px")}`,
 
     "shadow-xl": `${offsetX} ${offsetY} ${blur} ${spread} ${color(
-      1.0
+      1.0,
     )}, ${secondLayer("8px", "10px")}`,
   };
 
@@ -117,9 +122,9 @@ export const legacy_getShadowMap = (themeEditorState: ThemeEditorState) => {
 // Keeps 2xs/xs minimal (single-layer), and scales blur/offset while reducing opacity
 export const getShadowMap = (
   themeEditorState: ThemeEditorState,
-  options?: {
+  _options?: {
     includeThirdLayer?: boolean; // reserved for future use
-  }
+  },
 ) => {
   const mode = themeEditorState.currentMode;
   const styles = {
@@ -130,15 +135,10 @@ export const getShadowMap = (
   const shadowColor = styles["shadow-color"];
   const borderColor = styles["border"] || shadowColor;
   const surfaceColor = styles["card"] || styles["background"] || shadowColor;
-  const parseOklch = (s: string) => {
-    const m = colorFormatter(s, "oklch").match(/oklch\(([^)]+)\)/);
-    if (!m) return [0, 0, 0];
-    return m[1].split(/\s+/).map((x) => parseFloat(x));
-  };
   const computeAutoTint = (shadow: string, border: string, surface: string) => {
-    const [ls, cs] = parseOklch(shadow);
-    const [lb, cb] = parseOklch(border);
-    const [lf] = parseOklch(surface);
+    const [ls] = parseOklchComponents(shadow);
+    const [lb, cb] = parseOklchComponents(border);
+    const [lf] = parseOklchComponents(surface);
     const deltaL = Math.abs(lb - lf);
     const chroma = cb;
     const base = Math.max(0, (chroma - 0.04) * 2.2);
@@ -151,51 +151,31 @@ export const getShadowMap = (
   const borderTint = computeAutoTint(shadowColor, borderColor, surfaceColor);
   const blendedColor =
     borderTint > 0
-      ? colorFormatter(
-          (() => {
-            const from = colorFormatter(shadowColor, "oklch");
-            const to = colorFormatter(borderColor, "oklch");
-            const parse = (s: string) => {
-              const m = s.match(/oklch\(([^)]+)\)/);
-              if (!m) return [0, 0, 0];
-              return m[1].split(/\s+/).map((x) => parseFloat(x));
-            };
-            const [l1, c1, h1] = parse(from);
-            const [l2, c2, h2] = parse(to);
-            const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-            const l = lerp(l1, l2, borderTint);
-            const c = lerp(c1, c2, borderTint);
-            const h = lerp(h1, h2, borderTint);
-            return `oklch(${l} ${c} ${h})`;
-          })(),
-          "hsl",
-          "3"
-        )
-      : colorFormatter(shadowColor, "hsl", "3");
-  const hsl = blendedColor;
+      ? mixOklch(shadowColor, borderColor, borderTint)
+      : colorFormatter(shadowColor, "oklch");
   const baseOffsetX = parseFloat(
-    (styles["shadow-offset-x"] || "0").replace("px", "")
+    (styles["shadow-offset-x"] || "0").replace("px", ""),
   );
   const baseOffsetY = parseFloat(
-    (styles["shadow-offset-y"] || "1px").replace("px", "")
+    (styles["shadow-offset-y"] || "1px").replace("px", ""),
   );
   const baseBlur = parseFloat(
-    (styles["shadow-blur"] || "2px").replace("px", "")
+    (styles["shadow-blur"] || "2px").replace("px", ""),
   );
   const baseSpread = parseFloat(
-    (styles["shadow-spread"] || "0px").replace("px", "")
+    (styles["shadow-spread"] || "0px").replace("px", ""),
   );
   const baseOpacity = parseFloat(styles["shadow-opacity"]) || 0.15;
   // Dark-surface boost: if the surface is dark (low L), increase opacity and reduce blur
-  const [surfaceL] = parseOklch(surfaceColor);
+  const [surfaceL] = parseOklchComponents(surfaceColor);
   const darkFactor = Math.max(0, Math.min(1, (0.5 - surfaceL) * 2));
   const effectiveBaseOpacity = Math.min(
     0.65,
-    baseOpacity * (1 + 1.4 * darkFactor) + 0.05 * darkFactor
+    baseOpacity * (1 + 1.4 * darkFactor) + 0.05 * darkFactor,
   );
 
   const color = (multiplier: number) =>
-    `hsl(${hsl} / ${(effectiveBaseOpacity * multiplier).toFixed(2)})`;
+    withOklchAlpha(blendedColor, effectiveBaseOpacity * multiplier);
 
   const toPx = (n: number) => `${Number(n.toFixed(1))}px`;
 

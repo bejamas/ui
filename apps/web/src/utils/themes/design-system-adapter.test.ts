@@ -61,6 +61,8 @@ describe("resolveDesignSystemTheme", () => {
     expect(css).toContain("--radius:");
     expect(css).toContain("--font-sans:");
     expect(css).toContain(".cn-menu-target.dark");
+    expect(css).toContain("oklch(");
+    expect(css).not.toContain("hsl(");
   });
 
   it("treats default radius as style-linked for lyra and maia", () => {

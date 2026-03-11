@@ -56,14 +56,14 @@ const initialCommands = Object.fromEntries(
 ---
 
 <Dialog id="create-project-dialog" data-create-project-dialog>
-  <DialogTrigger asChild>
-    <button
+  <DialogTrigger asChild class="w-full">
+    <Button
       type="button"
-      class="create-customizer-action flex w-full items-center justify-center rounded-[14px] bg-primary px-3 py-2 text-[13px] font-medium text-primary-foreground transition-colors hover:opacity-95"
+      class="rounded-[14px] w-full"
       data-create-open-project-dialog
     >
-      <span>Create project</span>
-    </button>
+      <span>Create</span>
+    </Button>
   </DialogTrigger>
 
   <DialogContent

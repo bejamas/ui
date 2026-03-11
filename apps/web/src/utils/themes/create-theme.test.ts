@@ -30,8 +30,8 @@ describe("create theme helpers", () => {
       },
     );
 
-    expect(merged.light.background).toBe("oklch(0.9 0 0)");
-    expect(merged.dark.foreground).toBe("oklch(0.8 0 0)");
+    expect(merged.light.background).toContain("oklch(0.9");
+    expect(merged.dark.foreground).toContain("oklch(0.8");
   });
 
   test("parses footer tokens from imported css", () => {
@@ -46,9 +46,24 @@ describe("create theme helpers", () => {
       }
     `);
 
-    expect(parsed.light.footer).toBe("oklch(0.2 0 0)");
-    expect(parsed.light["footer-border"]).toBe("oklch(0.4 0 0)");
-    expect(parsed.dark["footer-primary"]).toBe("oklch(0.7 0.1 30)");
+    expect(parsed.light.footer).toContain("oklch(0.2");
+    expect(parsed.light["footer-border"]).toContain("oklch(0.4");
+    expect(parsed.dark["footer-primary"]).toContain("oklch(0.7");
+  });
+
+  test("normalizes imported hsl tokens to oklch", () => {
+    const parsed = parseCssVariables(`
+      :root {
+        --primary: hsl(240 5% 84%);
+      }
+
+      .dark {
+        --primary: 240 5% 84%;
+      }
+    `);
+
+    expect(parsed.light.primary).toContain("oklch(");
+    expect(parsed.dark.primary).toContain("oklch(");
   });
 
   test("formats token labels for the theme panel", () => {

@@ -22,7 +22,6 @@ describe("parseCreateSearchParams", () => {
       theme: "neutral",
       font: "geist",
       radius: "default",
-      template: "astro",
       rtl: false,
       rtlLanguage: "ar",
     });
@@ -86,13 +85,12 @@ describe("parseCreateSearchParams", () => {
       theme: "neutral",
       font: "geist",
       radius: "default",
-      template: "astro",
       rtl: false,
       rtlLanguage: "ar",
     });
   });
 
-  test("still takes template, rtl, and lang from the URL when restoring from the fallback preset", () => {
+  test("ignores template in the URL but still takes rtl and lang when restoring from the fallback preset", () => {
     const fallbackPreset = encodePreset({
       font: "playfair-display",
       radius: "large",
@@ -113,7 +111,7 @@ describe("parseCreateSearchParams", () => {
 
     expect(result.data.font).toBe("playfair-display");
     expect(result.data.radius).toBe("large");
-    expect(result.data.template).toBe("astro-monorepo");
+    expect(result.data.template).toBe("astro");
     expect(result.data.rtl).toBe(true);
     expect(result.data.rtlLanguage).toBe("he");
   });
@@ -222,7 +220,7 @@ describe("parseCreateSearchParams", () => {
         },
         preset,
       ),
-    ).toBe(`/create/preview?preset=${preset}&template=astro`);
+    ).toBe(`/create/preview?preset=${preset}`);
   });
 
   test("builds an embed-mode kitchen-sink URL when a preview target is set", () => {

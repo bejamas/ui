@@ -104,6 +104,16 @@ describe("style catalog defaults", () => {
     );
   });
 
+  it("keeps sidebar outline styles compatible with direct color variables", () => {
+    for (const style of STYLES.map((entry) => entry.name)) {
+      const css = getStyleCss(style);
+
+      expect(css).not.toContain("hsl(var(--sidebar-border))");
+      expect(css).not.toContain("hsl(var(--sidebar-accent))");
+      expect(css).toContain("box-shadow: 0 0 0 1px var(--sidebar-border);");
+    }
+  });
+
   it("exposes explicit tabs list variant and size selectors in every style", () => {
     for (const style of STYLES.map((entry) => entry.name)) {
       const css = getStyleCss(style);

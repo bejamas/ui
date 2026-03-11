@@ -1,25 +1,14 @@
 // import { ThemeEditorState } from "@/types/editor";
 import type { ThemeStyleProps, ThemeStyles } from "../types/theme";
 import type { ThemeEditorState } from "../types/editor";
-import { colorFormatter } from "./color-converter";
 import { setShadowVariables, getShadowMap } from "./shadows";
 import { applyStyleToElement } from "./apply-style-to-element";
+import {
+  COMMON_NON_COLOR_KEYS,
+  normalizeThemeTokenValue,
+} from "./theme-tokens";
 
 type Theme = "dark" | "light";
-
-const COMMON_NON_COLOR_KEYS = [
-  "font-sans",
-  "font-serif",
-  "font-mono",
-  "radius",
-  "shadow-opacity",
-  "shadow-blur",
-  "shadow-spread",
-  "shadow-offset-x",
-  "shadow-offset-y",
-  "letter-spacing",
-  "spacing",
-];
 
 // Helper functions (not exported, used internally by applyThemeToElement)
 const updateThemeClass = (root: HTMLElement, mode: Theme) => {
@@ -56,8 +45,7 @@ const applyThemeColors = (
         key as (typeof COMMON_NON_COLOR_KEYS)[number],
       )
     ) {
-      const hslValue = colorFormatter(value, "hsl", "4");
-      applyStyleToElement(root, key, hslValue);
+      applyStyleToElement(root, key, normalizeThemeTokenValue(key, value));
     }
   });
 };
@@ -111,7 +99,7 @@ export function applyThemeToCss(themeState: ThemeEditorState): string {
       );
       if (isCommon) return;
       if (typeof value === "string") {
-        out[`${key}`] = colorFormatter(value, "hsl", "4");
+        out[`${key}`] = normalizeThemeTokenValue(key, value);
       }
     });
     return out;
@@ -125,7 +113,7 @@ export function applyThemeToCss(themeState: ThemeEditorState): string {
     );
     if (!isCommon) return;
     if (typeof value === "string") {
-      commonVars[key] = value;
+      commonVars[key] = value.trim();
     }
   });
 

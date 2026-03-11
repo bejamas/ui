@@ -1,8 +1,15 @@
 import type { APIRoute } from "astro";
 import { customAlphabet } from "nanoid";
-import { saveSharedTheme, themeExists, type SharedTheme } from "../../../lib/redis";
+import {
+  saveSharedTheme,
+  themeExists,
+  type SharedTheme,
+} from "../../../lib/redis";
+import { normalizeThemeOverrides } from "../../../utils/themes/create-theme";
 
-const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+const nanoid = customAlphabet(
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+);
 
 export const prerender = false;
 
@@ -25,7 +32,13 @@ async function generateUniqueId(): Promise<string> {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { name, styles, id, createdAt, shareId: existingShareId } = body as {
+    const {
+      name,
+      styles,
+      id,
+      createdAt,
+      shareId: existingShareId,
+    } = body as {
       name?: string;
       styles?: {
         light: Record<string, string>;
@@ -50,18 +63,18 @@ export const POST: APIRoute = async ({ request }) => {
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
     // Reuse existing share ID if provided, otherwise generate a new one
-    const shortId = existingShareId || await generateUniqueId();
+    const shortId = existingShareId || (await generateUniqueId());
 
     // Prepare theme data
     const themeData: Omit<SharedTheme, "sharedAt" | "views"> = {
       id: id || `shared-${shortId}`,
       name,
-      styles,
+      styles: normalizeThemeOverrides(styles),
       createdAt: createdAt || new Date().toISOString(),
     };
 
@@ -76,7 +89,7 @@ export const POST: APIRoute = async ({ request }) => {
         {
           status: 503,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -93,7 +106,7 @@ export const POST: APIRoute = async ({ request }) => {
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error) {
     console.error("Theme share error:", error);

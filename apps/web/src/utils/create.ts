@@ -8,7 +8,10 @@ import {
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import { getThemeRefFromSearchParams } from "./themes/create-theme";
-import { getKitchenSinkPreviewHref, resolveCreatePreviewItem } from "./kitchen-sink";
+import {
+  getKitchenSinkPreviewHref,
+  resolveCreatePreviewItem,
+} from "./kitchen-sink";
 
 interface ParseCreateSearchParamsOptions {
   fallbackPreset?: string | null;
@@ -59,9 +62,6 @@ export function parseCreateSearchParams(
 
     input = omitUndefined({
       ...decoded,
-      template: (searchParams.get("template") ?? undefined) as
-        | DesignSystemConfig["template"]
-        | undefined,
       rtl,
       rtlLanguage: getRtlLanguageValue(searchParams, rtl),
     });
@@ -70,9 +70,6 @@ export function parseCreateSearchParams(
     if (decoded) {
       input = omitUndefined({
         ...decoded,
-        template: (searchParams.get("template") ?? undefined) as
-          | DesignSystemConfig["template"]
-          | undefined,
         rtl,
         rtlLanguage: getRtlLanguageValue(searchParams, rtl),
       });
@@ -102,9 +99,6 @@ export function parseCreateSearchParams(
         | undefined,
       menuColor: (searchParams.get("menuColor") ?? undefined) as
         | DesignSystemConfig["menuColor"]
-        | undefined,
-      template: (searchParams.get("template") ?? undefined) as
-        | DesignSystemConfig["template"]
         | undefined,
       rtl,
       rtlLanguage: getRtlLanguageValue(searchParams, rtl),
@@ -140,6 +134,8 @@ export function resolveCreateThemeRef(
   return getThemeRefFromSearchParams(searchParams, options.fallbackThemeRef);
 }
 
+export const CREATE_PREVIEW_COMMAND_VALUE = "__create-preview__";
+
 export function resolveCreatePreviewTarget(searchParams: URLSearchParams) {
   return resolveCreatePreviewItem(searchParams.get("item"));
 }
@@ -171,6 +167,5 @@ export function buildCreatePreviewUrl(
     }
   }
 
-  params.set("template", config.template);
   return `/create/preview?${params.toString()}`;
 }

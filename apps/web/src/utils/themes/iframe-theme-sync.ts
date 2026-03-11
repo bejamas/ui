@@ -11,6 +11,14 @@ export interface ThemeRoot {
   };
 }
 
+type ThemeClassList = ThemeRoot["classList"] & {
+  contains?: (token: string) => boolean;
+};
+
+type ThemeRootElement = ThemeRoot & {
+  classList: ThemeClassList;
+};
+
 export function parseStoredThemeChoice(value: unknown): ThemeChoice {
   return value === "auto" || value === "dark" || value === "light"
     ? value
@@ -49,6 +57,85 @@ export function applyThemeModeToRoot(
   root.dataset.themeChoice = themeChoice;
   root.classList.remove("light", "dark");
   root.classList.add(themeMode);
+}
+
+export function storeThemeChoice(
+  storage: Pick<Storage, "setItem"> | null | undefined,
+  themeChoice: ThemeChoice,
+): void {
+  try {
+    storage?.setItem(
+      STARLIGHT_THEME_STORAGE_KEY,
+      themeChoice === "light" || themeChoice === "dark" ? themeChoice : "",
+    );
+  } catch {}
+}
+
+export function getThemeChoiceFromRoot(
+  root: Pick<ThemeRoot, "dataset">,
+): ThemeChoice {
+  return parseStoredThemeChoice(root.dataset.themeChoice);
+}
+
+export function getThemeModeFromRoot(
+  root: ThemeRootElement,
+  fallbackMode: ThemeMode,
+): ThemeMode {
+  if (root.dataset.theme === "light" || root.dataset.theme === "dark") {
+    return root.dataset.theme;
+  }
+
+  if (root.classList.contains?.("dark")) {
+    return "dark";
+  }
+
+  if (root.classList.contains?.("light")) {
+    return "light";
+  }
+
+  return fallbackMode;
+}
+
+export function syncThemeChoiceTabs(
+  themeChoice: ThemeChoice,
+  root: ParentNode = document,
+): void {
+  root
+    .querySelectorAll<HTMLDivElement>('starlight-theme-select [data-slot="tabs"]')
+    .forEach((tabsEl) => {
+      tabsEl.dataset.defaultValue = themeChoice;
+      tabsEl.dataset.value = themeChoice;
+      tabsEl.dispatchEvent(
+        new CustomEvent("tabs:set", { detail: { value: themeChoice } }),
+      );
+    });
+}
+
+export function setGlobalThemeChoice(
+  themeChoice: ThemeChoice,
+  options: {
+    storage?: Pick<Storage, "setItem"> | null | undefined;
+    root?: ThemeRootElement;
+    prefersLight?: boolean;
+    syncPickers?: (themeChoice: ThemeChoice) => void;
+    dispatchChange?: (effectiveTheme: ThemeMode, themeChoice: ThemeChoice) => void;
+    tabsRoot?: ParentNode;
+  } = {},
+): ThemeMode {
+  const root = options.root ?? (document.documentElement as HTMLElement);
+  const effectiveTheme = resolveThemeMode(
+    themeChoice,
+    options.prefersLight ??
+      window.matchMedia("(prefers-color-scheme: light)").matches,
+  );
+
+  applyThemeModeToRoot(root, themeChoice, effectiveTheme);
+  storeThemeChoice(options.storage ?? localStorage, themeChoice);
+  options.syncPickers?.(themeChoice);
+  syncThemeChoiceTabs(themeChoice, options.tabsRoot ?? document);
+  options.dispatchChange?.(effectiveTheme, themeChoice);
+
+  return effectiveTheme;
 }
 
 export function buildIframeThemeSyncInlineScript(): string {

@@ -1,5 +1,9 @@
-import { getThemesForBaseColor, type DesignSystemConfig } from "@bejamas/create-config/browser";
+import {
+  getThemesForBaseColor,
+  type DesignSystemConfig,
+} from "@bejamas/create-config/browser";
 import type { ThemeStyleProps, ThemeStyles } from "../types/theme";
+import { normalizeThemeTokenMap } from "./theme-tokens";
 
 export type ThemeMode = "light" | "dark";
 
@@ -88,14 +92,12 @@ export function normalizeThemeOverrides(
   overrides?: Partial<ThemeOverrides> | null,
 ): ThemeOverrides {
   return {
-    light: { ...(overrides?.light ?? {}) },
-    dark: { ...(overrides?.dark ?? {}) },
+    light: normalizeThemeTokenMap<ThemeStyleProps>(overrides?.light),
+    dark: normalizeThemeTokenMap<ThemeStyleProps>(overrides?.dark),
   };
 }
 
-export function hasThemeOverrides(
-  overrides?: Partial<ThemeOverrides> | null,
-) {
+export function hasThemeOverrides(overrides?: Partial<ThemeOverrides> | null) {
   if (!overrides) {
     return false;
   }
@@ -141,7 +143,9 @@ export function getThemeRefFromSearchParams(
   return null;
 }
 
-export function isCustomThemeRef(value: string | null | undefined): value is string {
+export function isCustomThemeRef(
+  value: string | null | undefined,
+): value is string {
   return Boolean(value && /^custom-[a-z0-9-]+$/i.test(value));
 }
 

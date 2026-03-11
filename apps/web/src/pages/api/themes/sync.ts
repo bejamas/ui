@@ -1,12 +1,17 @@
 import type { APIRoute } from "astro";
-import { saveCustomThemeToRedis, deleteCustomThemeFromRedis, type CustomTheme } from "../../../lib/redis";
+import {
+  saveCustomThemeToRedis,
+  deleteCustomThemeFromRedis,
+  type CustomTheme,
+} from "../../../lib/redis";
+import { normalizeThemeOverrides } from "../../../utils/themes/create-theme";
 
 export const prerender = false;
 
 /**
  * POST /api/themes/sync
  * Syncs a custom theme to Redis for server-side CSS generation
- * 
+ *
  * Body: { action: "save" | "delete", theme?: CustomTheme, id?: string }
  */
 export const POST: APIRoute = async ({ request }) => {
@@ -19,7 +24,7 @@ export const POST: APIRoute = async ({ request }) => {
       if (!theme.id || !theme.name || !theme.styles) {
         return new Response(
           JSON.stringify({ error: "Invalid theme structure" }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
+          { status: 400, headers: { "Content-Type": "application/json" } },
         );
       }
 
@@ -27,14 +32,14 @@ export const POST: APIRoute = async ({ request }) => {
       if (!theme.id.startsWith("custom-")) {
         return new Response(
           JSON.stringify({ error: "Only custom themes can be synced" }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
+          { status: 400, headers: { "Content-Type": "application/json" } },
         );
       }
 
       const customTheme: CustomTheme = {
         id: theme.id,
         name: theme.name,
-        styles: theme.styles,
+        styles: normalizeThemeOverrides(theme.styles),
         createdAt: theme.createdAt || new Date().toISOString(),
         modifiedAt: theme.modifiedAt || new Date().toISOString(),
       };
@@ -43,15 +48,17 @@ export const POST: APIRoute = async ({ request }) => {
 
       if (!success) {
         return new Response(
-          JSON.stringify({ error: "Failed to sync theme (Redis not configured)" }),
-          { status: 503, headers: { "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Failed to sync theme (Redis not configured)",
+          }),
+          { status: 503, headers: { "Content-Type": "application/json" } },
         );
       }
 
-      return new Response(
-        JSON.stringify({ success: true, id: theme.id }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ success: true, id: theme.id }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     if (action === "delete" && id) {
@@ -59,7 +66,7 @@ export const POST: APIRoute = async ({ request }) => {
       if (!id.startsWith("custom-")) {
         return new Response(
           JSON.stringify({ error: "Only custom themes can be deleted" }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
+          { status: 400, headers: { "Content-Type": "application/json" } },
         );
       }
 
@@ -67,26 +74,28 @@ export const POST: APIRoute = async ({ request }) => {
 
       if (!success) {
         return new Response(
-          JSON.stringify({ error: "Failed to delete theme (Redis not configured)" }),
-          { status: 503, headers: { "Content-Type": "application/json" } }
+          JSON.stringify({
+            error: "Failed to delete theme (Redis not configured)",
+          }),
+          { status: 503, headers: { "Content-Type": "application/json" } },
         );
       }
 
-      return new Response(
-        JSON.stringify({ success: true }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    return new Response(
-      JSON.stringify({ error: "Invalid action" }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Invalid action" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.error("Theme sync error:", error);
-    return new Response(
-      JSON.stringify({ error: "Internal server error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };

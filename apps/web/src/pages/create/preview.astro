@@ -91,7 +91,6 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
               (font) => font.name === `font-${currentConfig.font}`,
             )?.title ?? currentConfig.font
           }
-          templateLabel={currentConfig.template}
           radiusLabel={currentRadiusLabel}
           menuColorLabel={
             getCreatePickerSelectedOption("menuColor", currentConfig)?.label ??

@@ -9,6 +9,7 @@ import {
 import {
   buildCreatePreviewUrl,
   parseCreateSearchParams,
+  CREATE_PREVIEW_COMMAND_VALUE,
   resolveCreatePreviewTarget,
 } from "@/utils/create";
 import { getKitchenSinkCreateItemId } from "@/utils/kitchen-sink";
@@ -20,6 +21,13 @@ import {
   buildDesignSystemThemeCss,
   resolveDesignSystemTheme,
 } from "@/utils/themes/design-system-adapter";
+import {
+  getThemeChoiceFromRoot,
+  getThemeModeFromRoot,
+  resolveThemeMode as resolveGlobalThemeMode,
+  setGlobalThemeChoice,
+} from "@/utils/themes/iframe-theme-sync";
+import { normalizeThemeTokenValue } from "@/utils/themes/theme-tokens";
 import { setStoredPreset } from "@/utils/themes/preset-store";
 import {
   createCustomThemeRef,
@@ -34,9 +42,13 @@ import {
 import { parseCssVariables } from "@/components/theme-editor/utils/themeEditorUtils";
 import {
   CREATE_PICKER_MARKERS,
+  type CreateFontGroup,
+  type CreateLockableParam,
   createRandomDesignSystemConfig,
   getCreatePickerOptionsByName,
   getCreatePickerSelectedOption,
+  hasCreateLockableParam,
+  isCreateFontGroup,
   type CreatePickerMarkerKind,
   type CreatePickerName,
   type CreatePickerOption,
@@ -45,7 +57,6 @@ import {
   buildCreateProjectCommand,
   CREATE_PROJECT_PACKAGE_MANAGERS,
   CREATE_PROJECT_PACKAGE_MANAGER_STORAGE_KEY,
-  getCreateProjectDialogState,
   getCreateProjectTemplateValue,
   type CreateProjectPackageManager,
 } from "@/utils/create-project-dialog";
@@ -57,6 +68,10 @@ type PreviewMessage = {
   config: CreateConfig;
   themeRef: string | null;
   themeOverrides: ThemeOverrides;
+};
+
+type PreviewShortcutMessage = {
+  type: "bejamas:create-navigate-open";
 };
 
 type ColorInputElement = HTMLElement & {
@@ -85,7 +100,6 @@ const PICKER_NAMES = [
   "radius",
   "menuColor",
   "menuAccent",
-  "template",
   "rtlLanguage",
 ] satisfies CreatePickerName[];
 
@@ -113,18 +127,12 @@ const createProjectDialog = document.querySelector(
 const navigateDialog = document.querySelector(
   "[data-create-navigate-dialog]",
 ) as HTMLElement | null;
+const navigateCommand = document.querySelector(
+  "[data-create-navigate-command]",
+) as HTMLElement | null;
 const navigateInput = document.querySelector(
   "[data-create-navigate-input]",
 ) as HTMLInputElement | null;
-const navigateList = document.querySelector(
-  "[data-create-navigate-list]",
-) as HTMLElement | null;
-const navigateEmpty = document.querySelector(
-  "[data-create-navigate-empty]",
-) as HTMLElement | null;
-const navigateSeparator = document.querySelector(
-  "[data-create-navigate-separator]",
-) as HTMLElement | null;
 const createProjectPackageTabs = document.querySelector(
   "[data-create-project-package-tabs]",
 ) as HTMLElement | null;
@@ -217,7 +225,13 @@ const createForm = form;
 const previewFrame = iframe;
 const presetCodeNode = presetNode;
 
-let activeThemeMode: ThemeMode = "light";
+let activeThemeMode: ThemeMode = getThemeModeFromRoot(
+  docsRoot,
+  resolveGlobalThemeMode(
+    getThemeChoiceFromRoot(docsRoot),
+    window.matchMedia("(prefers-color-scheme: light)").matches,
+  ),
+);
 let themeRef = window.__BEJAMAS_CREATE__?.initialThemeRef ?? null;
 let themeOverrides = normalizeThemeOverrides(
   window.__BEJAMAS_CREATE__?.initialThemeOverrides,
@@ -227,17 +241,78 @@ let themeStatusMessage = "";
 let currentPreviewTarget = resolveCreatePreviewTarget(
   new URLSearchParams(window.location.search),
 );
-let activeNavigateIndex = -1;
+let themePanelOpen = false;
+let themePanelTransitionToken = 0;
+const lockedParams = new Set<CreateLockableParam>();
+let lockedFontGroup: CreateFontGroup | null = null;
 
-const CREATE_PREVIEW_SENTINEL = "__create-preview__";
-const CREATE_PREVIEW_DEFAULT_KEY = "__create-preview__";
+const CREATE_PREVIEW_DEFAULT_KEY = CREATE_PREVIEW_COMMAND_VALUE;
+const THEME_PANEL_EXIT_DURATION = 80;
+const THEME_PANEL_ENTER_DURATION = 100;
 
 previewFrame.dataset.previewKey =
   previewFrame.dataset.previewKey ??
-  (currentPreviewTarget ?? CREATE_PREVIEW_DEFAULT_KEY);
+  currentPreviewTarget ??
+  CREATE_PREVIEW_DEFAULT_KEY;
 
 function getField(name: string) {
   return createForm.elements.namedItem(name) as HTMLInputElement | null;
+}
+
+function isParamLocked(param: CreateLockableParam) {
+  return lockedParams.has(param);
+}
+
+function syncLockButtons(param?: CreateLockableParam) {
+  const selector = param
+    ? `[data-create-lock-param="${param}"]`
+    : "[data-create-lock-button]";
+
+  document.querySelectorAll<HTMLButtonElement>(selector).forEach((button) => {
+    const buttonParam = button.dataset.createLockParam;
+    if (!buttonParam || !hasCreateLockableParam(buttonParam)) {
+      return;
+    }
+
+    const locked = isParamLocked(buttonParam);
+    button.dataset.locked = String(locked);
+    button.title = locked ? "Unlock" : "Lock";
+    button.setAttribute("aria-label", locked ? "Unlock" : "Lock");
+  });
+}
+
+function toggleLockedParam(param: CreateLockableParam) {
+  if (lockedParams.has(param)) {
+    lockedParams.delete(param);
+  } else {
+    lockedParams.add(param);
+  }
+
+  syncLockButtons(param);
+}
+
+function syncFontGroupLockButtons() {
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-create-font-group-lock-button]")
+    .forEach((button) => {
+      const group = button.dataset.createFontGroup;
+      if (!group || !isCreateFontGroup(group)) {
+        return;
+      }
+
+      const locked = lockedFontGroup === group;
+      button.dataset.locked = String(locked);
+      button.title = locked ? "Unlock font group" : "Lock font group";
+      button.setAttribute(
+        "aria-label",
+        locked ? "Unlock font group" : "Lock font group",
+      );
+    });
+}
+
+function toggleLockedFontGroup(group: CreateFontGroup) {
+  lockedFontGroup = lockedFontGroup === group ? null : group;
+  syncFontGroupLockButtons();
 }
 
 function getPicker(name: CreatePickerName) {
@@ -268,7 +343,7 @@ function collectConfig(): CreateConfig {
       formData.get("menuAccent"),
     ) as CreateConfig["menuAccent"],
     menuColor: String(formData.get("menuColor")) as CreateConfig["menuColor"],
-    template: String(formData.get("template")) as CreateConfig["template"],
+    template: DEFAULT_DESIGN_SYSTEM_CONFIG.template,
     rtl: formData.get("rtl") === "on",
     rtlLanguage: String(
       formData.get("rtlLanguage") ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
@@ -342,10 +417,8 @@ function renderMarkerHtml(
     const isTranslucent = isTranslucentMenuColor(
       option.value as CreateConfig["menuColor"],
     );
-    const startClass =
-      isInverted ? "bg-neutral-950" : "bg-neutral-100";
-    const endClass =
-      isInverted ? "bg-neutral-100" : "bg-neutral-950";
+    const startClass = isInverted ? "bg-neutral-950" : "bg-neutral-100";
+    const endClass = isInverted ? "bg-neutral-100" : "bg-neutral-950";
     return `<span data-create-picker-marker aria-hidden="true" class="relative inline-flex h-4 w-5 shrink-0 overflow-hidden rounded-[6px] border border-white/18 bg-white/5"><span class="block h-full w-1/2 ${startClass}"></span><span class="block h-full w-1/2 ${endClass}"></span>${isTranslucent ? '<span class="absolute inset-x-0 top-0 h-[1px] bg-white/30"></span><span class="absolute inset-y-0 left-1/2 w-[1px] -translate-x-1/2 bg-white/15"></span>' : ""}</span>`;
   }
 
@@ -422,7 +495,11 @@ function setInputValue(name: string, value: string, shouldDispatch = true) {
   }
 }
 
-function setCheckboxValue(name: string, checked: boolean, shouldDispatch = true) {
+function setCheckboxValue(
+  name: string,
+  checked: boolean,
+  shouldDispatch = true,
+) {
   const field = getField(name);
   if (!field || field.checked === checked) {
     return;
@@ -465,88 +542,25 @@ function syncThemeSelection(config: CreateConfig) {
 }
 
 function getCurrentPreset(config: CreateConfig) {
-  const { template: _template, rtl: _rtl, rtlLanguage: _rtlLanguage, ...presetConfig } =
-    config;
+  const {
+    template: _template,
+    rtl: _rtl,
+    rtlLanguage: _rtlLanguage,
+    ...presetConfig
+  } = config;
 
   return encodePreset(presetConfig as Parameters<typeof encodePreset>[0]);
 }
 
-function getNavigateItems() {
-  return Array.from(
-    document.querySelectorAll("[data-create-navigate-item]"),
-  ) as HTMLButtonElement[];
-}
-
-function getNavigateVisibleItems() {
-  return getNavigateItems().filter((item) => !item.hidden);
-}
-
-function getNavigateItemTarget(item: HTMLElement) {
-  const value = item.dataset.createPreviewTarget ?? item.dataset.previewItem;
-  return value ? value : null;
-}
-
-function syncNavigateGroups() {
-  const groups = Array.from(
-    document.querySelectorAll("[data-create-navigate-group]"),
-  ) as HTMLElement[];
-
-  for (const group of groups) {
-    const items = Array.from(
-      group.querySelectorAll("[data-create-navigate-item]"),
-    ) as HTMLElement[];
-    group.hidden = items.every((item) => item.hidden);
-  }
-
-  if (navigateSeparator && groups.length >= 2) {
-    navigateSeparator.hidden = groups[0]?.hidden || groups[1]?.hidden;
-  }
-}
-
-function setActiveNavigateIndex(index: number) {
-  const visibleItems = getNavigateVisibleItems();
-  activeNavigateIndex =
-    visibleItems.length === 0 ? -1 : Math.max(0, Math.min(index, visibleItems.length - 1));
-
-  getNavigateItems().forEach((item) => {
-    const isActive = visibleItems[activeNavigateIndex] === item;
-    item.dataset.active = isActive ? "true" : "false";
-    item.setAttribute("aria-selected", isActive ? "true" : "false");
-  });
-
-  const activeItem = visibleItems[activeNavigateIndex];
-  activeItem?.scrollIntoView({ block: "nearest" });
-}
-
-function syncNavigateDialogFilter(query = navigateInput?.value ?? "") {
-  const normalizedQuery = query.trim().toLowerCase();
-  const selectedTarget = currentPreviewTarget ?? CREATE_PREVIEW_SENTINEL;
-
-  getNavigateItems().forEach((item) => {
-    const searchText = (item.dataset.createSearchText ?? "").toLowerCase();
-    item.hidden = normalizedQuery.length > 0 && !searchText.includes(normalizedQuery);
-
-    const itemTarget = getNavigateItemTarget(item) ?? CREATE_PREVIEW_SENTINEL;
-    item.dataset.selected = itemTarget === selectedTarget ? "true" : "false";
-  });
-
-  syncNavigateGroups();
-
-  const visibleItems = getNavigateVisibleItems();
-  navigateEmpty?.classList.toggle("hidden", visibleItems.length > 0);
-
-  const selectedIndex = visibleItems.findIndex((item) => {
-    const itemTarget = getNavigateItemTarget(item) ?? CREATE_PREVIEW_SENTINEL;
-    return itemTarget === selectedTarget;
-  });
-  setActiveNavigateIndex(selectedIndex >= 0 ? selectedIndex : 0);
-}
-
 function syncNavigateDialogSelection() {
-  if (navigateInput) {
-    navigateInput.value = "";
-  }
-  syncNavigateDialogFilter("");
+  navigateCommand?.dispatchEvent(
+    new CustomEvent("command:set", {
+      detail: {
+        search: "",
+        value: currentPreviewTarget ?? CREATE_PREVIEW_COMMAND_VALUE,
+      },
+    }),
+  );
 }
 
 function setNavigateDialogOpen(open: boolean) {
@@ -722,6 +736,17 @@ function syncThemeTabs() {
   });
 }
 
+function syncActiveThemeMode() {
+  activeThemeMode = getThemeModeFromRoot(
+    docsRoot,
+    resolveGlobalThemeMode(
+      getThemeChoiceFromRoot(docsRoot),
+      window.matchMedia("(prefers-color-scheme: light)").matches,
+    ),
+  );
+  syncThemeTabs();
+}
+
 function syncThemeInputs(config: CreateConfig) {
   const styles = getMergedThemeStyles(config);
 
@@ -738,10 +763,120 @@ function syncThemeInputs(config: CreateConfig) {
     });
 }
 
-function setThemePanelOpen(open: boolean) {
-  themeMainPanel?.classList.toggle("hidden", open);
-  themeEditorPanel?.classList.toggle("hidden", !open);
-  themeEditorPanel?.classList.toggle("xl:flex", open);
+type ThemePanelVisualState = "active" | "entering" | "exiting" | "inactive";
+
+function prefersReducedThemePanelMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function waitForThemePanelTransition(duration: number) {
+  return new Promise<void>((resolve) => {
+    window.setTimeout(resolve, duration);
+  });
+}
+
+function waitForThemePanelFrame() {
+  return new Promise<void>((resolve) => {
+    window.requestAnimationFrame(() => resolve());
+  });
+}
+
+function setThemePanelElementState(
+  element: HTMLElement | null,
+  state: ThemePanelVisualState,
+  hidden: boolean,
+) {
+  if (!element) {
+    return;
+  }
+
+  element.dataset.panelState = state;
+  element.hidden = hidden;
+}
+
+function applyThemePanelStateImmediately(open: boolean) {
+  themePanelOpen = open;
+  setThemePanelElementState(themeMainPanel, open ? "inactive" : "active", open);
+  setThemePanelElementState(
+    themeEditorPanel,
+    open ? "active" : "inactive",
+    !open,
+  );
+}
+
+async function setThemePanelOpen(open: boolean) {
+  if (!themeMainPanel || !themeEditorPanel) {
+    themePanelOpen = open;
+    return;
+  }
+
+  if (themePanelOpen === open && themePanelTransitionToken === 0) {
+    return;
+  }
+
+  const transitionToken = ++themePanelTransitionToken;
+
+  if (prefersReducedThemePanelMotion()) {
+    applyThemePanelStateImmediately(open);
+    themePanelTransitionToken = 0;
+    if (open) {
+      themeBackButton?.focus();
+    } else {
+      themeTrigger?.focus();
+    }
+    return;
+  }
+
+  if (open) {
+    themePanelOpen = true;
+    setThemePanelElementState(themeEditorPanel, "inactive", true);
+    setThemePanelElementState(themeMainPanel, "exiting", false);
+    await waitForThemePanelTransition(THEME_PANEL_EXIT_DURATION);
+    if (transitionToken !== themePanelTransitionToken) {
+      return;
+    }
+
+    setThemePanelElementState(themeMainPanel, "inactive", true);
+    setThemePanelElementState(themeEditorPanel, "entering", false);
+    await waitForThemePanelFrame();
+    if (transitionToken !== themePanelTransitionToken) {
+      return;
+    }
+
+    setThemePanelElementState(themeEditorPanel, "active", false);
+    await waitForThemePanelTransition(THEME_PANEL_ENTER_DURATION);
+    if (transitionToken !== themePanelTransitionToken) {
+      return;
+    }
+
+    themeBackButton?.focus();
+    themePanelTransitionToken = 0;
+    return;
+  }
+
+  themePanelOpen = false;
+  setThemePanelElementState(themeMainPanel, "inactive", true);
+  setThemePanelElementState(themeEditorPanel, "exiting", false);
+  await waitForThemePanelTransition(THEME_PANEL_EXIT_DURATION);
+  if (transitionToken !== themePanelTransitionToken) {
+    return;
+  }
+
+  setThemePanelElementState(themeEditorPanel, "inactive", true);
+  setThemePanelElementState(themeMainPanel, "entering", false);
+  await waitForThemePanelFrame();
+  if (transitionToken !== themePanelTransitionToken) {
+    return;
+  }
+
+  setThemePanelElementState(themeMainPanel, "active", false);
+  await waitForThemePanelTransition(THEME_PANEL_ENTER_DURATION);
+  if (transitionToken !== themePanelTransitionToken) {
+    return;
+  }
+
+  themeTrigger?.focus();
+  themePanelTransitionToken = 0;
 }
 
 function setThemeStatus(message: string) {
@@ -773,13 +908,16 @@ function setThemeTokenValue(
 ) {
   const baseline = getBaselineThemeStyles(config);
   const overrides = normalizeThemeOverrides(themeOverrides);
-  const baselineValue =
-    baseline[mode][token as keyof typeof baseline.light] ?? "";
+  const nextValue = normalizeThemeTokenValue(token, value);
+  const baselineValue = normalizeThemeTokenValue(
+    token,
+    baseline[mode][token as keyof typeof baseline.light] ?? "",
+  );
 
-  if (!value || value === baselineValue) {
+  if (!nextValue || nextValue === baselineValue) {
     delete overrides[mode][token as keyof typeof overrides.light];
   } else {
-    overrides[mode][token as keyof typeof overrides.light] = value;
+    overrides[mode][token as keyof typeof overrides.light] = nextValue;
   }
 
   themeOverrides = overrides;
@@ -910,7 +1048,9 @@ function getSelectedCreateProjectPackageManager(): CreateProjectPackageManager {
 
   if (
     value &&
-    CREATE_PROJECT_PACKAGE_MANAGERS.includes(value as CreateProjectPackageManager)
+    CREATE_PROJECT_PACKAGE_MANAGERS.includes(
+      value as CreateProjectPackageManager,
+    )
   ) {
     return value as CreateProjectPackageManager;
   }
@@ -941,16 +1081,11 @@ function setSelectedCreateProjectPackageManager(
   }
 }
 
-function syncCreateProjectTemplateControls(config: CreateConfig) {
-  const state = getCreateProjectDialogState(config.template);
-
-  if (createProjectMonorepoField) {
-    createProjectMonorepoField.checked = state.monorepo;
-  }
-
-  if (createProjectDocsField) {
-    createProjectDocsField.checked = state.withDocs;
-  }
+function getCreateProjectTemplate() {
+  return getCreateProjectTemplateValue({
+    monorepo: createProjectMonorepoField?.checked ?? false,
+    withDocs: createProjectDocsField?.checked ?? false,
+  });
 }
 
 function getCreateProjectDialogRtlSettings() {
@@ -987,11 +1122,12 @@ function syncCreateProjectRtlControls(options: {
 
 function syncCreateProjectCommands(config: CreateConfig, preset: string) {
   const dialogRtlSettings = getCreateProjectDialogRtlSettings();
+  const template = getCreateProjectTemplate();
 
   for (const packageManager of CREATE_PROJECT_PACKAGE_MANAGERS) {
     const command = buildCreateProjectCommand({
       packageManager,
-      template: config.template,
+      template,
       preset,
       themeRef,
       rtl: dialogRtlSettings.rtl,
@@ -1088,17 +1224,15 @@ function updateUi(
   syncThemeTabs();
   syncThemeInputs(config);
   syncThemeTrigger(config);
-  syncCreateProjectTemplateControls(config);
 
   for (const name of PICKER_NAMES) {
     syncPickerUi(name, config[name], config);
   }
 
-  const { template, rtl, rtlLanguage } = config;
+  const { rtl, rtlLanguage } = config;
   const preset = getCurrentPreset(config);
   const params = new URLSearchParams({
     preset,
-    template,
   });
 
   if (rtl) {
@@ -1232,6 +1366,24 @@ function handleThemeSeedSelect(value: string) {
   updateUi();
 }
 
+function handleRandomize() {
+  const currentConfig = collectConfig();
+  const preserveCustomTheme = isParamLocked("theme");
+
+  applyConfig(
+    createRandomDesignSystemConfig(currentConfig, {
+      locked: lockedParams,
+      lockedFontGroup: isParamLocked("font") ? null : lockedFontGroup,
+      hasCustomTheme:
+        preserveCustomTheme &&
+        (themeRef !== null || hasThemeOverrides(themeOverrides)),
+    }),
+    {
+      clearCustomTheme: !preserveCustomTheme,
+    },
+  );
+}
+
 for (const name of PICKER_NAMES) {
   const picker = getPicker(name);
   picker?.addEventListener("dropdown-menu:select", (event) => {
@@ -1257,9 +1409,7 @@ mainMenu?.addEventListener("dropdown-menu:select", (event) => {
   }
 
   if (value === "shuffle") {
-    applyConfig(createRandomDesignSystemConfig(currentConfig), {
-      clearCustomTheme: true,
-    });
+    handleRandomize();
     return;
   }
 
@@ -1293,82 +1443,25 @@ navigateDialog?.addEventListener("dialog:change", (event) => {
     return;
   }
 
-  if (navigateInput) {
-    navigateInput.value = "";
-  }
-  syncNavigateDialogFilter("");
+  syncNavigateDialogSelection();
 });
 
-navigateInput?.addEventListener("input", () => {
-  syncNavigateDialogFilter(navigateInput.value);
-});
+navigateCommand?.addEventListener("command:select", (event) => {
+  const value = (event as CustomEvent<{ value: string }>).detail.value;
 
-navigateInput?.addEventListener("keydown", (event) => {
-  const visibleItems = getNavigateVisibleItems();
-
-  if (event.key === "ArrowDown") {
-    event.preventDefault();
-    if (visibleItems.length > 0) {
-      setActiveNavigateIndex(activeNavigateIndex + 1);
-    }
+  if (value === CREATE_PREVIEW_COMMAND_VALUE) {
+    selectNavigatePreviewTarget(null);
     return;
   }
 
-  if (event.key === "ArrowUp") {
-    event.preventDefault();
-    if (visibleItems.length > 0) {
-      setActiveNavigateIndex(activeNavigateIndex - 1);
-    }
-    return;
-  }
-
-  if (event.key === "Enter") {
-    const activeItem = visibleItems[activeNavigateIndex];
-    if (!activeItem) {
-      return;
-    }
-
-    event.preventDefault();
-    selectNavigatePreviewTarget(
-    resolveCreatePreviewTarget(
-      new URLSearchParams({
-        item: getNavigateItemTarget(activeItem) ?? "",
-      }),
-    ),
+  const previewTarget = resolveCreatePreviewTarget(
+    new URLSearchParams({ item: value }),
   );
-  }
-});
-
-navigateList?.addEventListener("click", (event) => {
-  const item = (event.target as HTMLElement).closest(
-    "[data-create-navigate-item]",
-  ) as HTMLButtonElement | null;
-  if (!item) {
+  if (!previewTarget) {
     return;
   }
 
-  selectNavigatePreviewTarget(
-    resolveCreatePreviewTarget(
-      new URLSearchParams({
-        item: getNavigateItemTarget(item) ?? "",
-      }),
-    ),
-  );
-});
-
-navigateList?.addEventListener("pointermove", (event) => {
-  const item = (event.target as HTMLElement).closest(
-    "[data-create-navigate-item]",
-  ) as HTMLButtonElement | null;
-  if (!item || item.hidden) {
-    return;
-  }
-
-  const visibleItems = getNavigateVisibleItems();
-  const nextIndex = visibleItems.indexOf(item);
-  if (nextIndex >= 0) {
-    setActiveNavigateIndex(nextIndex);
-  }
+  selectNavigatePreviewTarget(previewTarget);
 });
 
 createProjectDialog?.addEventListener("dialog:change", (event) => {
@@ -1391,11 +1484,41 @@ presetButton?.addEventListener("click", () => {
 
 randomizeButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    applyConfig(createRandomDesignSystemConfig(collectConfig()), {
-      clearCustomTheme: true,
-    });
+    handleRandomize();
   });
 });
+
+document
+  .querySelectorAll<HTMLButtonElement>("[data-create-lock-button]")
+  .forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const param = button.dataset.createLockParam;
+      if (!param || !hasCreateLockableParam(param)) {
+        return;
+      }
+
+      toggleLockedParam(param);
+    });
+  });
+
+document
+  .querySelectorAll<HTMLButtonElement>("[data-create-font-group-lock-button]")
+  .forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const group = button.dataset.createFontGroup;
+      if (!group || !isCreateFontGroup(group)) {
+        return;
+      }
+
+      toggleLockedFontGroup(group);
+    });
+  });
 
 themeTrigger?.addEventListener("click", () => {
   setThemePanelOpen(true);
@@ -1407,8 +1530,19 @@ themeBackButton?.addEventListener("click", () => {
 
 themeTabButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    activeThemeMode = (button.dataset.value as ThemeMode) ?? "light";
-    syncThemeTabs();
+    const nextMode = (button.dataset.value as ThemeMode) ?? "light";
+    setGlobalThemeChoice(nextMode, {
+      root: docsRoot,
+      syncPickers: (themeChoice) =>
+        window.StarlightThemeProvider?.updatePickers?.(themeChoice),
+      dispatchChange: (effectiveTheme, themeChoice) => {
+        window.dispatchEvent(
+          new CustomEvent("theme-toggle-changed", {
+            detail: { theme: effectiveTheme, themeChoice },
+          }),
+        );
+      },
+    });
   });
 });
 
@@ -1438,13 +1572,10 @@ createProjectPackageTabs?.addEventListener("tabs:change", (event) => {
     return;
   }
 
-  setSelectedCreateProjectPackageManager(
-    value as CreateProjectPackageManager,
-    {
-      persist: true,
-      syncTabs: false,
-    },
-  );
+  setSelectedCreateProjectPackageManager(value as CreateProjectPackageManager, {
+    persist: true,
+    syncTabs: false,
+  });
 
   const config = collectConfig();
   syncCreateProjectCommands(config, getCurrentPreset(config));
@@ -1458,13 +1589,8 @@ createProjectMonorepoField?.addEventListener("change", () => {
     createProjectDocsField.checked = false;
   }
 
-  setInputValue(
-    "template",
-    getCreateProjectTemplateValue({
-      monorepo,
-      withDocs,
-    }),
-  );
+  const config = collectConfig();
+  syncCreateProjectCommands(config, getCurrentPreset(config));
 });
 
 createProjectDocsField?.addEventListener("change", () => {
@@ -1474,13 +1600,8 @@ createProjectDocsField?.addEventListener("change", () => {
     createProjectMonorepoField.checked = true;
   }
 
-  setInputValue(
-    "template",
-    getCreateProjectTemplateValue({
-      monorepo: createProjectMonorepoField?.checked ?? withDocs,
-      withDocs,
-    }),
-  );
+  const config = collectConfig();
+  syncCreateProjectCommands(config, getCurrentPreset(config));
 });
 
 createProjectRtlField?.addEventListener("change", () => {
@@ -1549,6 +1670,20 @@ window.addEventListener("keydown", (event) => {
   event.preventDefault();
   setNavigateDialogOpen(true);
 });
+window.addEventListener(
+  "message",
+  (event: MessageEvent<PreviewShortcutMessage>) => {
+    if (
+      event.origin !== window.location.origin ||
+      event.source !== previewFrame.contentWindow ||
+      event.data?.type !== "bejamas:create-navigate-open"
+    ) {
+      return;
+    }
+
+    setNavigateDialogOpen(true);
+  },
+);
 window.addEventListener("popstate", () => {
   const searchParams = new URLSearchParams(window.location.search);
   currentPreviewTarget = resolveCreatePreviewTarget(searchParams);
@@ -1563,6 +1698,9 @@ window.addEventListener("popstate", () => {
 });
 window.addEventListener("pagehide", () => {
   cleanupCreateDocsRootState(docsRoot);
+});
+window.addEventListener("theme-toggle-changed", () => {
+  syncActiveThemeMode();
 });
 document.addEventListener("astro:before-swap", () => {
   cleanupCreateDocsRootState(docsRoot);
@@ -1579,6 +1717,8 @@ if (!themeStatusMessage) {
 setSelectedCreateProjectPackageManager(getStoredCreateProjectPackageManager(), {
   persist: false,
 });
-syncThemeTabs();
+syncLockButtons();
+syncFontGroupLockButtons();
+syncActiveThemeMode();
 setThemePanelOpen(false);
 updateUi();

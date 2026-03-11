@@ -20,6 +20,7 @@ import {
   getCreatePickerOptions,
   getCreatePickerSelectedOption,
 } from "@/utils/create-sidebar";
+import CreateLockButton from "./CreateLockButton.astro";
 import CreatePicker from "./CreatePicker.astro";
 import CreatePickerMarker from "./CreatePickerMarker.astro";
 import CreateNavigateDialog from "./CreateNavigateDialog.astro";
@@ -55,7 +56,6 @@ const primaryPickers = [
   "menuColor",
   "menuAccent",
 ] as const;
-
 ---
 
 <aside
@@ -63,9 +63,9 @@ const primaryPickers = [
   data-create-customizer-stable
 >
   <div
-    class="create-customizer rounded-[22px] border bg-secondary/90 p-2.5 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] backdrop-blur-xl xl:flex xl:h-full xl:flex-col"
+    class="create-customizer rounded-[22px] border bg-secondary/90 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] backdrop-blur-xl xl:flex xl:h-full xl:flex-col"
   >
-    <DropdownMenu data-create-main-menu class="flex items-center w-full">
+    <DropdownMenu data-create-main-menu class="flex items-center w-full p-2.5">
       <DropdownMenuTrigger asChild class="w-full">
         <Button
           variant="outline"
@@ -120,8 +120,10 @@ const primaryPickers = [
       </DropdownMenuContent>
     </DropdownMenu>
 
+    <Separator class="!bg-white/8" />
+
     <form
-      class="mt-2.5 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col xl:overflow-hidden"
+      class="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col xl:overflow-hidden"
       data-create-form
     >
       <input
@@ -136,93 +138,110 @@ const primaryPickers = [
         value={themeRef ?? ""}
         data-create-theme-ref-input
       />
-      <input type="hidden" name="template" value={config.template} />
 
       <div
-        class="overflow-y-auto pr-0.5 xl:min-h-0 xl:flex-1 [scrollbar-width:none] gap-y-1"
+        class="overflow-y-auto xl:min-h-0 xl:flex-1 [scrollbar-width:none] gap-y-1 will-change-[opacity,filter] transition-[opacity,filter] duration-80 ease-out motion-reduce:transition-none data-[panel-state=entering]:opacity-0 data-[panel-state=entering]:blur-sm data-[panel-state=entering]:pointer-events-none data-[panel-state=exiting]:opacity-0 data-[panel-state=exiting]:blur-sm data-[panel-state=exiting]:pointer-events-none data-[panel-state=inactive]:opacity-0 data-[panel-state=inactive]:blur-sm data-[panel-state=inactive]:pointer-events-none"
         data-create-form-main
+        data-panel-state="active"
       >
-        {
-          primaryPickers.map((picker) => (
-            <CreatePicker
-              name={picker}
-              label={CREATE_PICKER_LABELS[picker]}
-              value={config[picker]}
-              options={pickerOptions[picker]}
-              selectedOption={getCreatePickerSelectedOption(picker, config)}
-              markerKind={CREATE_PICKER_MARKERS[picker]}
-            />
-          ))
-        }
-
-        <button
-          type="button"
-          class="flex w-full items-center justify-between rounded-[16px] border border-white/8 bg-white/[0.02] px-3 py-2.75 text-left text-white transition-colors hover:bg-white/[0.04]"
-          data-create-theme-trigger
-        >
-          <span class="min-w-0 space-y-1">
-            <span
-              class="block text-[10px] font-medium uppercase tracking-[0.12em] text-white/38"
-            >
-              Theme
-            </span>
-            <span
-              class="block truncate text-[14px] font-medium tracking-[-0.01em] text-white/90"
-              data-create-theme-current-label
-            >
-              {themeLabel}
-            </span>
-          </span>
-
-          <span class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65">
-            <span
-              class="inline-flex items-center justify-center"
-              data-create-theme-current-marker
-            >
-              <CreatePickerMarker
-                kind="swatch"
-                value={config.theme}
-                label={themeLabel}
-                color={themeSwatchColor}
+        <div class="p-2.5 gap-2 flex flex-col">
+          {
+            primaryPickers.map((picker) => (
+              <CreatePicker
+                name={picker}
+                label={CREATE_PICKER_LABELS[picker]}
+                value={config[picker]}
+                options={pickerOptions[picker]}
+                selectedOption={getCreatePickerSelectedOption(picker, config)}
+                markerKind={CREATE_PICKER_MARKERS[picker]}
+                lockable
+                lockParam={picker}
               />
+            ))
+          }
+
+          <div class="group/picker relative">
+            <Button
+              type="button"
+              variant="outline"
+              class="create-picker-trigger bg-transparent! hover:bg-muted! border-border/70! flex w-full justify-between text-left h-auto! rounded-[12px]! px-3! py-2!"
+              data-create-theme-trigger
+            >
+              <span class="min-w-0">
+                <span
+                  class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38"
+                >
+                  Theme
+                </span>
+                <span
+                  class="block truncate text-sm font-medium tracking-[-0.01em] text-white/90"
+                  data-create-theme-current-label
+                >
+                  {themeLabel}
+                </span>
+              </span>
+
+              <span
+                class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65"
+              >
+                <span
+                  class="inline-flex items-center justify-center"
+                  data-create-theme-current-marker
+                >
+                  <CreatePickerMarker
+                    kind="swatch"
+                    value={config.theme}
+                    label={themeLabel}
+                    color={themeSwatchColor}
+                  />
+                </span>
+              </span>
+            </Button>
+
+            <CreateLockButton
+              param="theme"
+              class="absolute top-1/2 right-8 -translate-y-1/2"
+            />
+          </div>
+        </div>
+
+        <Separator class="!bg-white/8" />
+
+        <div class="p-2.5 flex flex-col gap-2">
+          <label
+            class="border border-border flex w-full justify-between text-left h-auto! rounded-[12px]! px-3! py-2!"
+          >
+            <span>
+              <span
+                class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38"
+                >Direction</span
+              >
+              <span
+                class="block text-[14px] font-medium tracking-[-0.01em] text-white/90"
+                >RTL</span
+              >
             </span>
-          </span>
-        </button>
+            <Switch
+              name="rtl"
+              checked={config.rtl}
+              class="!bg-white/15 peer-checked:!bg-white"
+              data-create-rtl
+            />
+          </label>
 
-        <Separator class="!my-2.5 !bg-white/8" />
-        <label
-          class="flex items-center justify-between rounded-[16px] border border-white/8 bg-white/[0.02] px-3 py-2.5 text-white"
-        >
-          <span class="space-y-1">
-            <span
-              class="block text-[10px] font-medium uppercase tracking-[0.12em] text-white/38"
-              >Direction</span
-            >
-            <span
-              class="block text-[14px] font-medium tracking-[-0.01em] text-white/90"
-              >RTL output</span
-            >
-          </span>
-          <Switch
-            name="rtl"
-            checked={config.rtl}
-            class="!bg-white/15 peer-checked:!bg-white"
-            data-create-rtl
-          />
-        </label>
-
-        <div class:list={[!config.rtl && "hidden"]} data-create-rtl-language>
-          <CreatePicker
-            name="rtlLanguage"
-            label={CREATE_PICKER_LABELS.rtlLanguage}
-            value={config.rtlLanguage}
-            options={pickerOptions.rtlLanguage}
-            selectedOption={getCreatePickerSelectedOption(
-              "rtlLanguage",
-              config,
-            )}
-            markerKind={CREATE_PICKER_MARKERS.rtlLanguage}
-          />
+          <div class:list={[!config.rtl && "hidden"]} data-create-rtl-language>
+            <CreatePicker
+              name="rtlLanguage"
+              label={CREATE_PICKER_LABELS.rtlLanguage}
+              value={config.rtlLanguage}
+              options={pickerOptions.rtlLanguage}
+              selectedOption={getCreatePickerSelectedOption(
+                "rtlLanguage",
+                config,
+              )}
+              markerKind={CREATE_PICKER_MARKERS.rtlLanguage}
+            />
+          </div>
         </div>
       </div>
 
@@ -233,29 +252,34 @@ const primaryPickers = [
       />
     </form>
 
-    <Separator class="!my-2.5 !bg-white/8" />
+    <Separator class="!bg-white/8" />
 
-    <div class="create-customizer-actions space-y-1.5 xl:shrink-0">
+    <div class="create-customizer-actions p-2.5 xl:shrink-0">
       <CreateNavigateDialog />
 
       <button
         type="button"
-        class="create-customizer-action flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
+        class="create-customizer-action hidden w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
         data-create-copy-preset
       >
         <span data-preset-code>{`--preset ${preset}`}</span>
       </button>
 
-      <div class="grid grid-cols-2 gap-1.5">
-        <CreateProjectDialog config={config} preset={preset} themeRef={themeRef} />
+      <div class="grid grid-cols-2 gap-2">
+        <CreateProjectDialog
+          config={config}
+          preset={preset}
+          themeRef={themeRef}
+        />
 
-        <button
+        <Button
           type="button"
+          variant="outline"
           class="create-customizer-action flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
           data-create-randomize
         >
           <span>Shuffle</span>
-        </button>
+        </Button>
       </div>
     </div>
   </div>

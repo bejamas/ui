@@ -1,6 +1,7 @@
 ---
 import ArrowLeftIcon from "@lucide/astro/icons/arrow-left";
 import DownloadIcon from "@lucide/astro/icons/download";
+import CreateLockButton from "./CreateLockButton.astro";
 import { resolveDesignSystemTheme } from "@/utils/themes/design-system-adapter";
 import {
   CREATE_THEME_TOKEN_SECTIONS,
@@ -24,18 +25,26 @@ const resolvedTheme = resolveDesignSystemTheme(config, themeOverrides).styles;
 ---
 
 <section
-  class="hidden space-y-3.5 xl:min-h-0 xl:flex-1 xl:flex-col xl:overflow-hidden"
+  hidden
+  class="space-y-3.5 xl:min-h-0 xl:flex xl:flex-1 xl:flex-col xl:overflow-hidden will-change-[opacity,filter] transition-[opacity,filter] duration-100 ease-out motion-reduce:transition-none data-[panel-state=entering]:opacity-0 data-[panel-state=entering]:blur-sm data-[panel-state=entering]:pointer-events-none data-[panel-state=exiting]:opacity-0 data-[panel-state=exiting]:blur-sm data-[panel-state=exiting]:pointer-events-none data-[panel-state=inactive]:opacity-0 data-[panel-state=inactive]:blur-sm data-[panel-state=inactive]:pointer-events-none"
   data-create-theme-panel
+  data-panel-state="inactive"
 >
   <div class="flex items-center justify-between gap-2">
-    <button
-      type="button"
-      class="flex items-center gap-2 rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-sm font-medium tracking-[-0.01em] text-white/92 transition-colors hover:bg-white/[0.05]"
-      data-create-theme-back
-    >
-      <ArrowLeftIcon class="size-4 text-white/70" />
-      Theme
-    </button>
+    <div class="group/picker relative">
+      <button
+        type="button"
+        class="flex items-center gap-2 rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 pr-9 text-sm font-medium tracking-[-0.01em] text-white/92 transition-colors hover:bg-white/[0.05]"
+        data-create-theme-back
+      >
+        <ArrowLeftIcon class="size-4 text-white/70" />
+        Theme
+      </button>
+      <CreateLockButton
+        param="theme"
+        class="absolute top-1/2 right-3 -translate-y-1/2"
+      />
+    </div>
 
     <button
       type="button"
@@ -43,13 +52,13 @@ const resolvedTheme = resolveDesignSystemTheme(config, themeOverrides).styles;
       data-create-theme-import
     >
       <DownloadIcon class="size-4 text-white/65" />
-      Import Theme
+      Import
     </button>
   </div>
 
-  <div class="overflow-auto">
+  <div class="overflow-auto gap-3 flex flex-col">
     <p
-      class="min-h-5 text-[11px] leading-4 text-white/48"
+      class="min-h-5 text-[11px] leading-4 text-white/48 mb-3 text-balance"
       data-create-theme-status
     >
       {

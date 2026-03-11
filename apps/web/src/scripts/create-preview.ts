@@ -22,6 +22,10 @@ type PreviewMessage = {
   themeOverrides: ThemeOverrides;
 };
 
+type PreviewShortcutMessage = {
+  type: "bejamas:create-navigate-open";
+};
+
 declare global {
   interface Window {
     __BEJAMAS_CREATE_PREVIEW__?: {
@@ -56,6 +60,33 @@ if (initialConfig) {
     ),
   );
 }
+
+window.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.defaultPrevented ||
+      event.altKey ||
+      event.shiftKey ||
+      !(event.metaKey || event.ctrlKey) ||
+      event.key.toLowerCase() !== "p" ||
+      isEditableTarget(event.target)
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    if (window.parent !== window) {
+      window.parent.postMessage(
+        {
+          type: "bejamas:create-navigate-open",
+        } satisfies PreviewShortcutMessage,
+        window.location.origin,
+      );
+    }
+  },
+  { capture: true },
+);
 
 function applyPreviewConfig(
   config: DesignSystemConfig,
@@ -102,7 +133,6 @@ function applyPreviewConfig(
     catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ??
       config.font,
   );
-  setText("[data-create-template-label]", config.template);
   setText(
     "[data-create-radius-label]",
     getCreatePickerSelectedOption("radius", config)?.label ?? config.radius,
@@ -168,4 +198,22 @@ function setLocalizedPlaceholders(copy: Record<string, string>) {
       node.textContent = value;
       node.setAttribute("data-placeholder", value);
     });
+}
+
+function isEditableTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return Boolean(
+    target.closest(
+      [
+        'input:not([type="checkbox"]):not([type="radio"])',
+        "textarea",
+        "select",
+        '[contenteditable=""]',
+        '[contenteditable="true"]',
+      ].join(","),
+    ),
+  );
 }

@@ -47,6 +47,8 @@ describe("current-theme.css", () => {
     expect(css).toContain("@layer components");
     expect(css).toContain(".cn-card");
     expect(css).not.toContain(".style-lyra");
+    expect(css).toContain("oklch(");
+    expect(css).not.toContain("hsl(");
   });
 
   test("uses upstream-compatible a-codes when decoding create preset cookies", async () => {

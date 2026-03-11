@@ -2,7 +2,7 @@ import {
   defaultDarkThemeStyles,
   defaultLightThemeStyles,
 } from "../themes/config";
-import type{ ThemeStyleProps, ThemeStyles } from "../types/theme";
+import type { ThemeStyleProps, ThemeStyles } from "../types/theme";
 import { colorFormatter } from "../themes/color-converter";
 import { getShadowMap } from "../themes/shadows";
 import { getPresetThemeStyles } from "../themes/theme-preset-helper";
@@ -16,7 +16,7 @@ const convertToRegistryColor = (color: string): string => {
 const getThemeValue = (
   dark: ThemeStyleProps,
   light: ThemeStyleProps,
-  key: keyof ThemeStyleProps
+  key: keyof ThemeStyleProps,
 ): string => {
   return dark[key] || light[key] || "";
 };
@@ -26,7 +26,7 @@ const convertThemeStyles = (styles: ThemeStyles) => {
   const { light, dark } = styles;
 
   const convertTheme = (theme: ThemeStyleProps): ThemeStyleProps => {
-    const result: ThemeStyleProps = theme;
+    const result = { ...theme } as ThemeStyleProps;
     const convertColor = (color?: string) =>
       convertToRegistryColor(color || "");
 
@@ -41,7 +41,7 @@ const convertThemeStyles = (styles: ThemeStyles) => {
     result["primary-foreground"] = convertColor(theme["primary-foreground"]);
     result.secondary = convertColor(theme.secondary);
     result["secondary-foreground"] = convertColor(
-      theme["secondary-foreground"]
+      theme["secondary-foreground"],
     );
     result.muted = convertColor(theme.muted);
     result["muted-foreground"] = convertColor(theme["muted-foreground"]);
@@ -49,7 +49,7 @@ const convertThemeStyles = (styles: ThemeStyles) => {
     result["accent-foreground"] = convertColor(theme["accent-foreground"]);
     result.destructive = convertColor(theme.destructive);
     result["destructive-foreground"] = convertColor(
-      theme["destructive-foreground"]
+      theme["destructive-foreground"],
     );
     result.border = convertColor(theme.border);
     result.input = convertColor(theme.input);
@@ -63,11 +63,11 @@ const convertThemeStyles = (styles: ThemeStyles) => {
     result["sidebar-foreground"] = convertColor(theme["sidebar-foreground"]);
     result["sidebar-primary"] = convertColor(theme["sidebar-primary"]);
     result["sidebar-primary-foreground"] = convertColor(
-      theme["sidebar-primary-foreground"]
+      theme["sidebar-primary-foreground"],
     );
     result["sidebar-accent"] = convertColor(theme["sidebar-accent"]);
     result["sidebar-accent-foreground"] = convertColor(
-      theme["sidebar-accent-foreground"]
+      theme["sidebar-accent-foreground"],
     );
     result["sidebar-border"] = convertColor(theme["sidebar-border"]);
     result["sidebar-ring"] = convertColor(theme["sidebar-ring"]);
@@ -90,7 +90,7 @@ export const generateThemeRegistryFromPreset = async (name: string) => {
 
 export const generateThemeRegistryItemFromStyles = (
   name: string,
-  themeStyles: ThemeStyles
+  themeStyles: ThemeStyles,
 ) => {
   const { light, dark } = convertThemeStyles(themeStyles);
 

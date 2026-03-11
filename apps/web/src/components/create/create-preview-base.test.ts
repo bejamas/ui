@@ -16,6 +16,19 @@ describe("create preview base layer", () => {
     expect(previewSurface).not.toContain("@bejamas/ui/components/");
   });
 
+  it("keeps placeholder styling scoped to the create preview surface", () => {
+    const previewSurface = read(
+      "apps/web/src/components/create/CreatePreviewSurface.astro",
+    );
+
+    expect(previewSurface).toContain("data-create-preview-surface");
+    expect(previewSurface).toContain(
+      "[data-create-preview-placeholder]::placeholder",
+    );
+    expect(previewSurface).toContain("color: var(--muted-foreground);");
+    expect(previewSurface).toContain("opacity: 1;");
+  });
+
   it("keeps button visuals in the style layer", () => {
     const button = read("packages/registry/src/ui/button/Button.astro");
 

@@ -1,112 +1,92 @@
 ---
-import SearchIcon from "@lucide/astro/icons/search";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@bejamas/ui/components/dialog";
-import { Input } from "@bejamas/ui/components/input";
-import { Badge } from "@bejamas/ui/components/badge";
-import { CREATE_PREVIEW_FALLBACK_LABEL, KITCHEN_SINK_PAGES } from "@/utils/kitchen-sink";
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@bejamas/ui/components/command";
+import { CREATE_PREVIEW_COMMAND_VALUE } from "@/utils/create";
+import {
+  CREATE_PREVIEW_FALLBACK_LABEL,
+  KITCHEN_SINK_PAGES,
+} from "@/utils/kitchen-sink";
+
+const createPreviewKeywords = [
+  "create",
+  "preview",
+  "curated",
+  "overview",
+  "surface",
+];
 ---
 
-<Dialog id="create-navigate-dialog" data-create-navigate-dialog>
-  <DialogContent
-    class="w-[min(94vw,40rem)] rounded-[22px] border border-border/70 bg-background p-0 shadow-2xl max-w-2xl!"
-  >
-    <DialogHeader class="px-5 pt-5 pb-0">
-      <DialogTitle>Navigate</DialogTitle>
-      <DialogDescription>
-        Jump the preview iframe to a kitchen-sink page without leaving `/create`.
-      </DialogDescription>
-    </DialogHeader>
+<CommandDialog
+  id="create-navigate-dialog"
+  data-create-navigate-dialog
+  title="Navigate"
+  description="Jump the preview iframe to a component example without leaving `/create`."
+  class="p-3"
+>
+  <Command data-create-navigate-command label="Navigate preview targets">
+    <CommandInput
+      autofocus
+      placeholder="Search component examples..."
+      data-create-navigate-input
+    />
 
-    <div class="px-5 pt-4 pb-5">
-      <div class="relative">
-        <SearchIcon class="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          autofocus
-          placeholder="Search kitchen sink pages..."
-          class="pl-10"
-          data-create-navigate-input
-        />
-      </div>
+    <CommandList class="max-h-[28rem]">
+      <CommandEmpty>No matching pages.</CommandEmpty>
 
-      <div class="mt-3 overflow-hidden rounded-[18px] border border-border bg-muted/20" data-create-navigate-panel>
-        <div
-          class="max-h-[28rem] overflow-y-auto p-2 [scrollbar-width:none]"
-          data-create-navigate-list
-          role="listbox"
-          aria-label="Navigate preview targets"
+      <CommandGroup heading="Preview">
+        <CommandItem
+          value={CREATE_PREVIEW_COMMAND_VALUE}
+          label={CREATE_PREVIEW_FALLBACK_LABEL}
+          keywords={createPreviewKeywords}
+          data-create-preview-default
+          class="items-start px-3 py-3"
         >
-          <div data-create-navigate-group="preview">
-            <div class="px-2 py-1.5">
-              <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                Preview
-              </p>
-            </div>
+          <span class="min-w-0 flex-1">
+            <span class="block text-sm font-medium leading-5">
+              {CREATE_PREVIEW_FALLBACK_LABEL}
+            </span>
+            <span class="mt-0.5 block text-sm leading-5 text-muted-foreground">
+              Return to the curated create overview surface.
+            </span>
+          </span>
+        </CommandItem>
+      </CommandGroup>
 
-            <button
-              type="button"
-              class="create-navigate-item flex w-full items-start gap-3 rounded-[14px] px-3 py-3 text-left transition-colors outline-none data-[active=true]:bg-accent data-[active=true]:text-accent-foreground hover:bg-accent/70"
-              data-create-navigate-item
-              data-create-preview-default
-              data-create-search-text={`${CREATE_PREVIEW_FALLBACK_LABEL} curated create overview surface preview`}
-              data-preview-item=""
-              role="option"
+      <CommandSeparator />
+
+      <CommandGroup heading="Component Examples">
+        {
+          KITCHEN_SINK_PAGES.map((page) => (
+            <CommandItem
+              value={page.id}
+              label={page.label}
+              keywords={[
+                page.description,
+                ...(page.js ? ["js", "javascript"] : []),
+              ]}
+              class="items-start px-3 py-3"
             >
               <span class="min-w-0 flex-1">
                 <span class="block text-sm font-medium leading-5">
-                  {CREATE_PREVIEW_FALLBACK_LABEL}
+                  {page.label}
                 </span>
-                <span class="mt-0.5 block text-sm leading-5 text-muted-foreground create-navigate-item-description">
-                  Return to the curated create overview surface.
+                <span class="mt-0.5 block text-sm leading-5 text-muted-foreground">
+                  {page.description}
                 </span>
               </span>
-            </button>
-          </div>
-
-          <div class="mx-2 my-2 h-px bg-border" data-create-navigate-separator></div>
-
-          <div data-create-navigate-group="kitchen-sink">
-            <div class="px-2 py-1.5">
-              <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                Kitchen Sink
-              </p>
-            </div>
-
-            {
-              KITCHEN_SINK_PAGES.map((page) => (
-                <button
-                  type="button"
-                  class="create-navigate-item flex w-full items-start gap-3 rounded-[14px] px-3 py-3 text-left transition-colors outline-none data-[active=true]:bg-accent data-[active=true]:text-accent-foreground hover:bg-accent/70"
-                  data-create-navigate-item
-                  data-create-preview-target={page.id}
-                  data-create-search-text={`${page.label} ${page.description}`}
-                  role="option"
-                >
-                  <span class="min-w-0 flex-1">
-                    <span class="block text-sm font-medium leading-5">
-                      {page.label}
-                    </span>
-                    <span class="mt-0.5 block text-sm leading-5 text-muted-foreground create-navigate-item-description">
-                      {page.description}
-                    </span>
-                  </span>
-                  {page.js && (
-                    <Badge variant="outline" class="mt-0.5 shrink-0">
-                      JS
-                    </Badge>
-                  )}
-                </button>
-              ))
-            }
-          </div>
-
-          <div
-            class="hidden px-3 py-6 text-center text-sm text-muted-foreground"
-            data-create-navigate-empty
-          >
-            No matching pages.
-          </div>
-        </div>
-      </div>
-    </div>
-  </DialogContent>
-</Dialog>
+            </CommandItem>
+          ))
+        }
+      </CommandGroup>
+    </CommandList>
+  </Command>
+</CommandDialog>

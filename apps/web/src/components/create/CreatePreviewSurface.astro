@@ -85,7 +85,6 @@ interface Props {
   iconLibraryLabel?: string;
   styleLabel?: string;
   fontLabel?: string;
-  templateLabel?: string;
   radiusLabel?: string;
   menuColorLabel?: string;
   menuInverted?: boolean;
@@ -102,7 +101,10 @@ const {
 } = Astro.props as Props;
 ---
 
-<div class="min-h-screen bg-background text-foreground">
+<div
+  data-create-preview-surface
+  class="min-h-screen bg-background text-foreground"
+>
   <div class="mx-auto flex max-w-6xl flex-col gap-8 p-6 md:p-8">
     <div class="grid gap-3 md:grid-cols-[1.4fr_0.9fr]">
       <Card>
@@ -654,3 +656,11 @@ const {
     </div>
   </div>
 </div>
+
+<style is:global>
+  [data-create-preview-surface]
+    :is(input, textarea)[data-create-preview-placeholder]::placeholder {
+    color: var(--muted-foreground);
+    opacity: 1;
+  }
+</style>
