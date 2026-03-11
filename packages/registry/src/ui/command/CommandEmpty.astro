@@ -1,0 +1,24 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  hidden?: boolean;
+  class?: string;
+}
+
+const {
+  hidden = true,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  hidden={hidden}
+  data-slot="command-empty"
+  class={cn("cn-command-empty", className)}
+>
+  <slot />
+</div>

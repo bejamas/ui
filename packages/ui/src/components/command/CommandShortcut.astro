@@ -1,0 +1,18 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"span"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<span
+  {...rest}
+  data-slot="command-shortcut"
+  class={cn("cn-command-shortcut", className)}
+>
+  <slot />
+</span>

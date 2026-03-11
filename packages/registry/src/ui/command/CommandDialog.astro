@@ -1,0 +1,56 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../dialog";
+
+interface Props extends HTMLAttributes<"div"> {
+  defaultOpen?: boolean;
+  closeOnClickOutside?: boolean;
+  closeOnEscape?: boolean;
+  lockScroll?: boolean;
+  title?: string;
+  description?: string;
+  showCloseButton?: boolean;
+  class?: string;
+}
+
+const {
+  title = "Command Palette",
+  description = "Search for a command to run...",
+  showCloseButton = false,
+  class: className = "",
+  defaultOpen = false,
+  closeOnClickOutside = true,
+  closeOnEscape = true,
+  lockScroll = true,
+  ...rest
+} = Astro.props as Props;
+---
+
+<Dialog
+  defaultOpen={defaultOpen}
+  closeOnClickOutside={closeOnClickOutside}
+  closeOnEscape={closeOnEscape}
+  lockScroll={lockScroll}
+  {...rest}
+>
+  <DialogContent
+    showCloseButton={showCloseButton}
+    class={cn(
+      "cn-command-dialog top-1/3 translate-y-0 overflow-hidden p-0",
+      className,
+    )}
+  >
+    <DialogHeader class="sr-only">
+      <DialogTitle>{title}</DialogTitle>
+      <DialogDescription>{description}</DialogDescription>
+    </DialogHeader>
+    <slot />
+  </DialogContent>
+</Dialog>

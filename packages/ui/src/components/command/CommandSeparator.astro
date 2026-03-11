@@ -1,0 +1,23 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  alwaysRender?: boolean;
+  class?: string;
+}
+
+const {
+  alwaysRender = false,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  role="separator"
+  data-slot="command-separator"
+  data-always-render={alwaysRender ? "true" : undefined}
+  class={cn("cn-command-separator", className)}
+/>

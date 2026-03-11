@@ -1,0 +1,41 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  value?: string;
+  label?: string;
+  keywords?: string | string[];
+  disabled?: boolean;
+  forceMount?: boolean;
+  class?: string;
+}
+
+const {
+  value,
+  label,
+  keywords,
+  disabled = false,
+  forceMount = false,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const keywordValue = Array.isArray(keywords) ? keywords.join(", ") : keywords;
+---
+
+<div
+  {...rest}
+  data-slot="command-item"
+  data-value={value}
+  data-label={label}
+  data-keywords={keywordValue}
+  data-disabled={disabled ? "true" : undefined}
+  data-force-mount={forceMount ? "true" : undefined}
+  class={cn(
+    "cn-command-item group/command-item relative flex cursor-default items-center gap-2 outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    className,
+  )}
+>
+  <slot />
+</div>

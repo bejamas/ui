@@ -1,0 +1,40 @@
+---
+import { SearchIcon } from "@lucide/astro";
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import { InputGroup, InputGroupAddon } from "../input-group";
+import { inputGroupControlClasses } from "../input-group/controlClasses";
+
+interface Props extends HTMLAttributes<"input"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div data-slot="command-input-wrapper" class="cn-command-input-wrapper p-1 pb-0">
+  <InputGroup
+    size="sm"
+    class="cn-command-input-group bg-input/30 border-input/30 h-8! rounded-lg! shadow-none! *:data-[slot=input-group-addon]:pl-2!"
+  >
+    <input
+      data-input-group-control
+      data-slot="command-input"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+      class={cn(
+        "cn-input-group-control cn-input-group-input cn-command-input w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+        inputGroupControlClasses,
+        className,
+      )}
+      {...rest}
+    />
+    <InputGroupAddon align="inline-end">
+      <SearchIcon
+        data-slot="command-input-icon"
+        class="cn-command-input-icon size-4 shrink-0 opacity-50 pointer-events-none"
+      />
+    </InputGroupAddon>
+  </InputGroup>
+</div>
