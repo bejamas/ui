@@ -1,0 +1,16 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import StatItem from "./components/stat-item.astro";
+---
+
+<BlockExampleLayout>
+  <section class="bg-muted text-foreground @container">
+    <div class="max-w-400 mx-auto px-4 md:px-8 pt-4 pb-12 lg:pt-12 lg:pb-20">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <StatItem value="98" suffix="%" description="A proven record of customer satisfaction" />
+        <StatItem value="14" description="Locking duration in days quickly" />
+        <StatItem value="$27" suffix="B+" description="Connected with innovative new collaborators." />
+      </div>
+    </div>
+  </section>
+</BlockExampleLayout>

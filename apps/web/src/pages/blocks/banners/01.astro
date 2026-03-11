@@ -1,0 +1,31 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+---
+
+<BlockExampleLayout>
+  <section class="flex flex-col gap-20 py-20 text-foreground @container">
+    <div class="max-w-360 mx-auto w-full px-4 md:px-8 flex flex-col md:flex-row md:justify-between gap-6">
+      <p class="text-lg font-medium tracking-tight md:w-1/5">Banners</p>
+      <h2 class="text-[clamp(2.5rem,6vw,4rem)] font-semibold leading-[1.1] tracking-tight w-full md:w-195 md:max-w-full">
+        Our reputation speaks through our customers
+      </h2>
+    </div>
+
+    <img
+      src="https://gradient.bejamas.com/api/gradient.png?color=7c5cff&funkiness=15&contrast=0&noise=0&w=800&h=600&seed=9zqtablo&shape=ellipse"
+      class="w-full h-[50vh] md:h-[80vh] md:max-h-160 object-cover"
+      alt=""
+    />
+
+    <div class="max-w-360 mx-auto w-full px-4 md:px-8 flex flex-col md:flex-row md:justify-between gap-6">
+      <div class="hidden md:block md:w-1/5"></div>
+      <div class="w-full md:w-195 md:max-w-full">
+        <p class="text-lg md:text-xl font-medium leading-normal tracking-tight max-w-155">
+          We believe that happy customers are the heart of every great business.
+          That's why we let their experiences tell our story. Each review reminds
+          us that genuine care and great results go hand in hand.
+        </p>
+      </div>
+    </div>
+  </section>
+</BlockExampleLayout>

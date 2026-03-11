@@ -1,0 +1,32 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import StatItem from "./components/stat-item.astro";
+---
+
+<BlockExampleLayout>
+  <section class="flex flex-col pt-20 text-foreground @container">
+    <div class="max-w-360 mx-auto w-full px-4 md:px-8 mb-20 flex flex-col-reverse md:flex-row md:justify-between gap-6">
+      <h2 class="text-[clamp(2.5rem,6vw,4rem)] font-semibold leading-[1.1] tracking-tight w-full md:w-3/5">
+        Our reputation speaks through our customers
+      </h2>
+      <p class="text-lg font-medium tracking-tight md:text-right">Banners</p>
+    </div>
+
+    <div class="max-w-360 mx-auto w-full px-4 md:px-8 mb-10">
+      <div class="border-t border-border pt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
+        <StatItem value="$22M" description="To achieve annual goals" />
+        <StatItem value="50%" description="Flexible teams" />
+        <StatItem value="724" description="Flexible teams" />
+        <StatItem value="$6B" description="Streamline design workflow" />
+        <StatItem value="24 : 7" description="Live reporting" />
+        <StatItem value="3 months" description="To achieve annual goals" />
+      </div>
+    </div>
+
+    <img
+      src="https://gradient.bejamas.com/api/gradient.png?color=7c5cff&funkiness=15&contrast=0&noise=0&w=800&h=600&seed=9zqtablo&shape=ellipse"
+      class="w-full h-[50vh] md:h-[80vh] md:max-h-160 object-cover"
+      alt=""
+    />
+  </section>
+</BlockExampleLayout>
