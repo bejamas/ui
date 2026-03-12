@@ -18,9 +18,25 @@ const registryItemRouteFile = path.resolve(
   import.meta.dir,
   "../../pages/r/[name].json.ts",
 );
+const colorRegistryRouteFile = path.resolve(
+  import.meta.dir,
+  "../../pages/r/colors/[name].json.ts",
+);
+const styleRegistryIndexRouteFile = path.resolve(
+  import.meta.dir,
+  "../../pages/r/styles/[style]/index.json.ts",
+);
 const styleRegistryItemRouteFile = path.resolve(
   import.meta.dir,
   "../../pages/r/styles/[style]/[name].json.ts",
+);
+const themeStylesheetRouteFile = path.resolve(
+  import.meta.dir,
+  "../../pages/r/themes/[slug].css.ts",
+);
+const blockRouteFile = path.resolve(
+  import.meta.dir,
+  "../../pages/blocks/[slug].astro",
 );
 const routeMiddlewareFile = path.resolve(
   import.meta.dir,
@@ -56,16 +72,34 @@ describe("static rendering boundary", () => {
 
   test("roots static registry scans at the app cwd for prerender builds", () => {
     const registrySource = fs.readFileSync(registryItemRouteFile, "utf8");
+    const colorRegistrySource = fs.readFileSync(colorRegistryRouteFile, "utf8");
+    const styleRegistryIndexSource = fs.readFileSync(
+      styleRegistryIndexRouteFile,
+      "utf8",
+    );
     const styleRegistrySource = fs.readFileSync(
       styleRegistryItemRouteFile,
       "utf8",
     );
+    const themeStylesheetSource = fs.readFileSync(
+      themeStylesheetRouteFile,
+      "utf8",
+    );
+    const blockRouteSource = fs.readFileSync(blockRouteFile, "utf8");
 
     expect(registrySource).toContain('path.resolve(process.cwd(), "public/r")');
+    expect(registrySource).toContain("export const prerender = true;");
     expect(registrySource).not.toContain("fileURLToPath");
+    expect(colorRegistrySource).toContain("export const prerender = true;");
+    expect(styleRegistryIndexSource).toContain(
+      "export const prerender = true;",
+    );
     expect(styleRegistrySource).toContain(
       'path.resolve(process.cwd(), "public/r/styles")',
     );
+    expect(styleRegistrySource).toContain("export const prerender = true;");
     expect(styleRegistrySource).not.toContain("fileURLToPath");
+    expect(themeStylesheetSource).toContain("export const prerender = true;");
+    expect(blockRouteSource).toContain("export const prerender = true;");
   });
 });

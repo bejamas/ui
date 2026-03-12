@@ -1,6 +1,8 @@
 import { getCollection, getEntry } from "astro:content";
 import { applyThemeToCss } from "@/utils/themes/apply-theme";
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const entries = await getCollection("themes");
 

@@ -4,6 +4,8 @@ import {
   readStaticStyleRegistryIndex,
 } from "@/utils/create-registry";
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return STYLES.map((style) => ({
     params: { style: style.id },

@@ -7,6 +7,8 @@ import {
 } from "@bejamas/create-config/server";
 import { jsonResponse, readStaticRegistryItem } from "@/utils/create-registry";
 
+export const prerender = true;
+
 const staticRegistryRoot = path.resolve(process.cwd(), "public/r");
 
 export async function getStaticPaths() {

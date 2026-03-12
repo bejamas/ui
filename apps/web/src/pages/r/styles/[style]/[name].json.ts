@@ -6,6 +6,8 @@ import {
   readStaticStyleRegistryItem,
 } from "@/utils/create-registry";
 
+export const prerender = true;
+
 const staticStylesRoot = path.resolve(process.cwd(), "public/r/styles");
 
 export async function getStaticPaths() {

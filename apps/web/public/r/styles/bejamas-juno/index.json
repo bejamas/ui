@@ -130,7 +130,7 @@
       "@apply ease-out duration-150 rounded-lg border-transparent font-medium active:scale-98": {}
     },
     ".cn-button-variant-default": {
-      "@apply shadow-xs hover:bg-primary/90": {}
+      "@apply shadow-none hover:bg-primary/90": {}
     },
     ".cn-button-variant-outline": {
       "@apply border border-border bg-background hover:bg-muted hover:text-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 aria-expanded:bg-muted aria-expanded:text-foreground shadow-none": {}
@@ -196,7 +196,7 @@
       "@apply h-8 pr-1 pl-2": {}
     },
     ".cn-card": {
-      "@apply rounded-xl border border-border bg-card text-card-foreground shadow-xs": {}
+      "@apply rounded-xl border border-border bg-card text-card-foreground shadow-lg": {}
     },
     ".cn-card-header": {
       "@apply gap-1.5 px-6": {}

@@ -1,6 +1,8 @@
 import { BASE_COLORS } from "@bejamas/create-config/browser";
 import { jsonResponse } from "@/utils/create-registry";
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return BASE_COLORS.map((color) => ({
     params: { name: color.name },

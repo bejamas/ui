@@ -9,13 +9,25 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
   <starlight-theme-select>
     <Tabs defaultValue="auto" class="theme-tabs">
       <TabsList>
-        <TabsTrigger value="light" class="theme-tab" title="Light theme">
-          <SunIcon class="size-4" />
+        <TabsTrigger
+          value="light"
+          class="theme-tab p-0 aspect-square"
+          title="Light theme"
+        >
+          <SunIcon class="size-4 block" />
         </TabsTrigger>
-        <TabsTrigger value="dark" class="theme-tab" title="Dark theme">
+        <TabsTrigger
+          value="dark"
+          class="theme-tab p-0 aspect-square"
+          title="Dark theme"
+        >
           <MoonIcon class="size-4" />
         </TabsTrigger>
-        <TabsTrigger value="auto" class="theme-tab" title="Auto (system)">
+        <TabsTrigger
+          value="auto"
+          class="theme-tab p-0 aspect-square"
+          title="Auto (system)"
+        >
           <LaptopIcon class="size-4" />
         </TabsTrigger>
       </TabsList>

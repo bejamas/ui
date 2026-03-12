@@ -8,8 +8,7 @@ export const tabsListVariants = cva(
   {
     variants: {
       variant: {
-        indicator:
-          "cn-tabs-list-variant-indicator border border-input bg-muted [--tabs-indicator-radius:calc(var(--radius)-2px)]",
+        indicator: "cn-tabs-list-variant-indicator bg-muted",
         default: "cn-tabs-list-variant-default bg-muted",
         line: "cn-tabs-list-variant-line rounded-none gap-1 bg-transparent p-0",
         "line-animated":
@@ -53,7 +52,7 @@ const {
       <div
         aria-hidden="true"
         data-slot="tabs-indicator"
-        class="cn-tabs-indicator pointer-events-none absolute top-[calc(var(--active-tab-top)+1px)] left-[calc(var(--active-tab-left)+1px)] z-0 h-[calc(var(--active-tab-height)-2px)] w-[calc(var(--active-tab-width)-2px)] rounded-[var(--tabs-indicator-radius)] bg-background shadow-sm transition-all duration-150 ease dark:border-input dark:bg-input/30"
+        class="cn-tabs-trigger pointer-events-none absolute top-(--active-tab-top) left-(--active-tab-left) z-0 h-(--active-tab-height) w-(--active-tab-width) bg-background shadow-sm transition-all duration-150 ease dark:border-input dark:bg-input/30"
       />
     )
   }
