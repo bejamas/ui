@@ -23,8 +23,13 @@ describe("semantic icon mapping", () => {
 
   it("resolves lucide exports and paths to semantic names", () => {
     expect(getSemanticIconNameFromLucideExport("ChevronDown")).toBe("chevron-down");
+    expect(getSemanticIconNameFromLucideExport("ChevronRight")).toBe("chevron-right");
     expect(getSemanticIconNameFromLucideExport("Loader2")).toBe("loader-circle");
+    expect(getSemanticIconNameFromLucideExport("SearchIcon")).toBe("search");
+    expect(getSemanticIconNameFromLucideExport("Trash")).toBe("trash");
     expect(getSemanticIconNameFromLucidePath("check")).toBe("check");
+    expect(getSemanticIconNameFromLucidePath("circle-alert")).toBe("alert-circle");
+    expect(getSemanticIconNameFromLucidePath("shopping-bag")).toBe("shopping-bag");
     expect(getSemanticIconNameFromLucidePath("chevron-up")).toBe("chevron-up");
   });
 

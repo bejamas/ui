@@ -1,0 +1,36 @@
+---
+import { Avatar, AvatarFallback } from "@bejamas/registry/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+
+const contributors = [
+  ["Ava Patel", "12 merged PRs"],
+  ["Nico Reyes", "9 reviewed changes"],
+  ["Mina Holm", "7 published docs"],
+] as const;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>Contributors</CardTitle>
+  </CardHeader>
+  <CardContent class="space-y-4">
+    {
+      contributors.map(([name, meta]) => (
+        <div class="flex items-center gap-3">
+          <Avatar size="sm">
+            <AvatarFallback>{name.split(" ").map((part) => part[0]).join("")}</AvatarFallback>
+          </Avatar>
+          <div class="min-w-0">
+            <p class="truncate font-medium">{name}</p>
+            <p class="text-sm text-muted-foreground">{meta}</p>
+          </div>
+        </div>
+      ))
+    }
+  </CardContent>
+</Card>

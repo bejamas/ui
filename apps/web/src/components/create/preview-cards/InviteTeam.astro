@@ -1,0 +1,78 @@
+---
+import { Avatar, AvatarFallback } from "@bejamas/registry/ui/avatar";
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@bejamas/registry/ui/field";
+import { Input } from "@bejamas/registry/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+} from "@bejamas/registry/ui/select";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@bejamas/registry/ui/native-select";
+import SemanticIcon from "@/components/icons/SemanticIcon.astro";
+import type { IconLibraryName } from "@bejamas/create-config/server";
+
+interface Props {
+  iconLibrary: IconLibraryName;
+}
+
+const { iconLibrary } = Astro.props as Props;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>Invite Team</CardTitle>
+    <CardDescription>Add members to your workspace</CardDescription>
+  </CardHeader>
+  <CardContent class="space-y-4">
+    <FieldGroup>
+      <Field>
+        <FieldLabel for="invite-email">Email</FieldLabel>
+        <Input id="invite-email" value="alex@example.com" />
+      </Field>
+      <Field>
+        <FieldLabel for="invite-role">Role</FieldLabel>
+        <Select id="invite-role">
+          <SelectTrigger>
+            <SelectValue placeholder="Select a role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="editor">Editor</SelectItem>
+              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="viewer">Viewer</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
+    </FieldGroup>
+
+    <div class="flex items-center gap-3">
+      <Avatar size="sm"><AvatarFallback>AL</AvatarFallback></Avatar>
+      <Avatar size="sm"><AvatarFallback>RM</AvatarFallback></Avatar>
+      <Avatar size="sm"><AvatarFallback>DX</AvatarFallback></Avatar>
+      <span class="text-sm text-muted-foreground">3 pending invites</span>
+    </div>
+  </CardContent>
+  <CardFooter class="gap-2">
+    <Button variant="outline" class="flex-1">Cancel</Button>
+    <Button class="flex-1">
+      <SemanticIcon library={iconLibrary} name="plus" class="size-4" />
+      Send invite
+    </Button>
+  </CardFooter>
+</Card>

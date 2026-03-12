@@ -1,0 +1,30 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@bejamas/registry/ui/card";
+import SemanticIcon from "@/components/icons/SemanticIcon.astro";
+import type { IconLibraryName } from "@bejamas/create-config/server";
+
+interface Props {
+  iconLibrary: IconLibraryName;
+}
+
+const { iconLibrary } = Astro.props as Props;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>No team members</CardTitle>
+  </CardHeader>
+  <CardContent class="space-y-4 text-center">
+    <div class="mx-auto flex size-14 items-center justify-center rounded-full border border-dashed border-border">
+      <SemanticIcon library={iconLibrary} name="menu" class="size-5 text-muted-foreground" />
+    </div>
+    <div class="space-y-2">
+      <p class="font-medium">Your workspace is ready for collaborators</p>
+      <p class="text-sm text-muted-foreground">
+        Invite teammates to review presets, component decisions, and docs changes.
+      </p>
+    </div>
+    <Button class="w-full">Invite first teammate</Button>
+  </CardContent>
+</Card>

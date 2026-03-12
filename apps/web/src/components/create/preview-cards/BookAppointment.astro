@@ -1,0 +1,44 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import SemanticIcon from "@/components/icons/SemanticIcon.astro";
+import type { IconLibraryName } from "@bejamas/create-config/server";
+
+interface Props {
+  iconLibrary: IconLibraryName;
+}
+
+const { iconLibrary } = Astro.props as Props;
+const times = ["9:30 AM", "10:15 AM", "1:00 PM", "2:45 PM"] as const;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>Book Appointment</CardTitle>
+    <CardDescription>Dr. Sarah Chen · Cardiology</CardDescription>
+  </CardHeader>
+  <CardContent class="space-y-4">
+    <div class="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm">
+      <SemanticIcon library={iconLibrary} name="calendar" class="size-4 text-muted-foreground" />
+      Tuesday, April 9 · Downtown clinic
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      {times.map((time, index) => (
+        <Button variant={index === 1 ? "default" : "outline"} size="sm">
+          {time}
+        </Button>
+      ))}
+    </div>
+  </CardContent>
+  <CardFooter class="gap-2">
+    <Button variant="outline" class="flex-1">Reschedule</Button>
+    <Button class="flex-1">Confirm visit</Button>
+  </CardFooter>
+</Card>

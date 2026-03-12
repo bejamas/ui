@@ -5,22 +5,19 @@ import { readFileSync } from "node:fs";
 const read = (path: string) => readFileSync(path, "utf8");
 
 describe("create preview base layer", () => {
-  it("renders the preview surface from the registry source package", () => {
+  it("renders the preview as a seven-column shadcn-style board", () => {
     const previewSurface = read(
       "apps/web/src/components/create/CreatePreviewSurface.astro",
     );
-    const columnStackMatches = previewSurface.match(
-      /<div class="flex flex-col gap-6 \[\&\>\*\]:w-full">/g,
+    const columnMatches = previewSurface.match(
+      /<div class="flex flex-col gap-4 md:gap-6">/g,
     );
 
-    expect(previewSurface).toContain("@bejamas/registry/ui/button");
-    expect(previewSurface).toContain("@bejamas/registry/ui/select");
-    expect(previewSurface).toContain("@bejamas/registry/ui/tabs");
-    expect(previewSurface).toContain("lg:grid-cols-2");
-    expect(previewSurface).toContain('[&>*]:w-full');
-    expect(previewSurface).not.toContain("xl:grid-cols-3");
-    expect(previewSurface).not.toContain('class="self-start"');
-    expect(columnStackMatches?.length).toBe(2);
+    expect(previewSurface).toContain('data-slot="capture-target"');
+    expect(previewSurface).toContain("grid-cols-7");
+    expect(previewSurface).toContain('w-[2400px]');
+    expect(previewSurface).toContain('md:w-[3000px]');
+    expect(columnMatches?.length).toBe(7);
     expect(previewSurface).not.toContain("@bejamas/ui/components/");
   });
 
@@ -37,23 +34,66 @@ describe("create preview base layer", () => {
     expect(previewSurface).toContain("opacity: 1;");
   });
 
-  it("adds the overview and icon demo sections without chart tokens", () => {
+  it("includes the exact non-chart preview card set and excludes chart cards", () => {
     const previewSurface = read(
       "apps/web/src/components/create/CreatePreviewSurface.astro",
     );
+    const styleOverview = read(
+      "apps/web/src/components/create/preview-cards/StyleOverview.astro",
+    );
+    const iconGrid = read(
+      "apps/web/src/components/create/preview-cards/IconPreviewGrid.astro",
+    );
     const previewScript = read("apps/web/src/scripts/create-preview.ts");
 
-    expect(previewSurface).toContain("data-create-style-font-summary");
-    expect(previewSurface).toContain(
-      'data-create-preview-text="icons.title"',
-    );
-    expect(previewSurface).toContain('"--background"');
-    expect(previewSurface).toContain('"--ring"');
-    expect(previewSurface).not.toContain('"--chart-1"');
-    expect(previewSurface).not.toContain('"--chart-5"');
-    expect(previewSurface).toContain("<SemanticIcon");
-    expect(previewSurface).toContain('"loader-circle"');
-    expect(previewSurface).not.toContain("IconPlaceholder");
+    expect(previewSurface).toContain('import StyleOverview');
+    expect(previewSurface).toContain('import CodespacesCard');
+    expect(previewSurface).toContain('import Invoice');
+    expect(previewSurface).toContain('import IconPreviewGrid');
+    expect(previewSurface).toContain('import UIElements');
+    expect(previewSurface).toContain('import ObservabilityCard');
+    expect(previewSurface).toContain('import Shortcuts');
+    expect(previewSurface).toContain('import EnvironmentVariables');
+    expect(previewSurface).toContain('import InviteTeam');
+    expect(previewSurface).toContain('import ActivateAgentDialog');
+    expect(previewSurface).toContain('import SkeletonLoading');
+    expect(previewSurface).toContain('import NoTeamMembers');
+    expect(previewSurface).toContain('import ReportBug');
+    expect(previewSurface).toContain('import Contributors');
+    expect(previewSurface).toContain('import FeedbackForm');
+    expect(previewSurface).toContain('import BookAppointment');
+    expect(previewSurface).toContain('import GithubProfile');
+    expect(previewSurface).toContain('import AssignIssue');
+    expect(previewSurface).toContain('import WeeklyFitnessSummary');
+    expect(previewSurface).toContain('import FileUpload');
+    expect(previewSurface).toContain('import UsageCard');
+    expect(previewSurface).toContain('import ContributionsActivity');
+    expect(previewSurface).toContain('import AnomalyAlert');
+    expect(previewSurface).toContain('import ShippingAddress');
+    expect(previewSurface).toContain('import NotFound');
+
+    expect(previewSurface).not.toContain("AnalyticsCard");
+    expect(previewSurface).not.toContain("BarChartCard");
+    expect(previewSurface).not.toContain("PieChartCard");
+    expect(previewSurface).not.toContain("SleepReport");
+    expect(previewSurface).not.toContain("Visitors");
+    expect(previewSurface).not.toContain("BarVisualizer");
+    expect(previewSurface).not.toContain("LiveWaveform");
+    expect(previewSurface).not.toContain("quickActions.title");
+    expect(previewSurface).not.toContain("structured.title");
+    expect(previewSurface).not.toContain("people.title");
+    expect(previewSurface).not.toContain("hero.title");
+
+    expect(styleOverview).toContain("data-create-style-font-summary");
+    expect(styleOverview).toContain('"--background"');
+    expect(styleOverview).toContain('"--ring"');
+    expect(styleOverview).not.toContain('"--chart-1"');
+    expect(styleOverview).not.toContain('"--chart-5"');
+    expect(iconGrid).toContain("<SemanticIcon");
+    expect(iconGrid).toContain('"alert-circle"');
+    expect(iconGrid).toContain('"shopping-bag"');
+    expect(iconGrid).toContain('"settings"');
+    expect(iconGrid).not.toContain("IconPlaceholder");
     expect(previewScript).toContain("[data-create-style-font-summary]");
     expect(previewScript).toContain('].join(" - ")');
   });

@@ -1,0 +1,55 @@
+---
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+
+const days = [
+  ["Mon", 56],
+  ["Tue", 72],
+  ["Wed", 43],
+  ["Thu", 81],
+  ["Fri", 65],
+  ["Sat", 38],
+  ["Sun", 59],
+] as const;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>Weekly Fitness Summary</CardTitle>
+    <CardDescription>Calories and workout load by day</CardDescription>
+  </CardHeader>
+  <CardContent class="space-y-4">
+    <div class="flex h-36 items-end gap-2">
+      {
+        days.map(([day, value]) => (
+          <div class="flex flex-1 flex-col items-center gap-2">
+            <div
+              class="w-full rounded-t-md bg-primary/75"
+              style={`height:${value}%`}
+            />
+            <span class="text-xs text-muted-foreground">{day}</span>
+          </div>
+        ))
+      }
+    </div>
+    <div class="grid grid-cols-3 gap-3 text-sm">
+      <div class="rounded-lg border border-border px-3 py-2">
+        <p class="text-muted-foreground">Workouts</p>
+        <p class="font-medium tabular-nums">5</p>
+      </div>
+      <div class="rounded-lg border border-border px-3 py-2">
+        <p class="text-muted-foreground">Calories</p>
+        <p class="font-medium tabular-nums">4,820</p>
+      </div>
+      <div class="rounded-lg border border-border px-3 py-2">
+        <p class="text-muted-foreground">Recovery</p>
+        <p class="font-medium tabular-nums">84%</p>
+      </div>
+    </div>
+  </CardContent>
+</Card>

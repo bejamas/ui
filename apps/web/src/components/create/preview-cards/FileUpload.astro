@@ -1,0 +1,36 @@
+---
+import { Badge } from "@bejamas/registry/ui/badge";
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>File Upload</CardTitle>
+    <CardDescription>Drag and drop or browse</CardDescription>
+  </CardHeader>
+  <CardContent class="space-y-4">
+    <div class="rounded-xl border border-dashed border-border px-6 py-8 text-center">
+      <p class="font-medium">Drop release assets here</p>
+      <p class="mt-2 text-sm text-muted-foreground">PNG, SVG, ZIP up to 25 MB</p>
+      <Button variant="outline" class="mt-4">Browse files</Button>
+    </div>
+    <div class="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2">
+      <div>
+        <p class="font-medium">release-notes.zip</p>
+        <p class="text-sm text-muted-foreground">18.4 MB · ready to upload</p>
+      </div>
+      <Badge variant="secondary">Queued</Badge>
+    </div>
+  </CardContent>
+  <CardFooter>
+    <Button class="w-full">Upload now</Button>
+  </CardFooter>
+</Card>

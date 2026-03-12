@@ -1,0 +1,55 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@bejamas/registry/ui/field";
+import { Input } from "@bejamas/registry/ui/input";
+import { NativeSelect, NativeSelectOption } from "@bejamas/registry/ui/native-select";
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>Shipping Address</CardTitle>
+    <CardDescription>Where should we deliver?</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <FieldGroup class="gap-4">
+      <Field>
+        <FieldLabel for="ship-name">Full name</FieldLabel>
+        <Input id="ship-name" value="Morgan Lee" />
+      </Field>
+      <Field>
+        <FieldLabel for="ship-line1">Address</FieldLabel>
+        <Input id="ship-line1" value="21 Riverwalk Ave" />
+      </Field>
+      <div class="grid grid-cols-2 gap-4">
+        <Field>
+          <FieldLabel for="ship-city">City</FieldLabel>
+          <Input id="ship-city" value="Austin" />
+        </Field>
+        <Field>
+          <FieldLabel for="ship-postal">Postal code</FieldLabel>
+          <Input id="ship-postal" value="78701" />
+        </Field>
+      </div>
+      <Field>
+        <FieldLabel for="ship-country">Country</FieldLabel>
+        <NativeSelect id="ship-country">
+          <NativeSelectOption selected>United States</NativeSelectOption>
+          <NativeSelectOption>Canada</NativeSelectOption>
+          <NativeSelectOption>Germany</NativeSelectOption>
+        </NativeSelect>
+      </Field>
+    </FieldGroup>
+  </CardContent>
+  <CardFooter class="gap-2">
+    <Button variant="outline" class="flex-1">Use billing</Button>
+    <Button class="flex-1">Save address</Button>
+  </CardFooter>
+</Card>

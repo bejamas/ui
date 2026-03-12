@@ -1,0 +1,42 @@
+---
+import { Avatar, AvatarFallback } from "@bejamas/registry/ui/avatar";
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@bejamas/registry/ui/field";
+import { Input } from "@bejamas/registry/ui/input";
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <div class="flex items-center gap-3">
+      <Avatar size="lg"><AvatarFallback>GH</AvatarFallback></Avatar>
+      <div>
+        <CardTitle>Profile</CardTitle>
+        <CardDescription>Manage your profile information.</CardDescription>
+      </div>
+    </div>
+  </CardHeader>
+  <CardContent>
+    <FieldGroup class="gap-4">
+      <Field>
+        <FieldLabel for="profile-name">Display name</FieldLabel>
+        <Input id="profile-name" value="bejamas-ui" />
+      </Field>
+      <Field>
+        <FieldLabel for="profile-url">Profile URL</FieldLabel>
+        <Input id="profile-url" value="github.com/bejamas/ui" />
+      </Field>
+    </FieldGroup>
+  </CardContent>
+  <CardFooter class="gap-2">
+    <Button variant="outline" class="flex-1">Cancel</Button>
+    <Button class="flex-1">Save profile</Button>
+  </CardFooter>
+</Card>

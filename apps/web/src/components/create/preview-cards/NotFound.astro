@@ -1,0 +1,33 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@bejamas/registry/ui/card";
+import SemanticIcon from "@/components/icons/SemanticIcon.astro";
+import type { IconLibraryName } from "@bejamas/create-config/server";
+
+interface Props {
+  iconLibrary: IconLibraryName;
+}
+
+const { iconLibrary } = Astro.props as Props;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>404</CardTitle>
+  </CardHeader>
+  <CardContent class="space-y-4">
+    <div class="mx-auto flex size-16 items-center justify-center rounded-full border border-border">
+      <SemanticIcon library={iconLibrary} name="search" class="size-6 text-muted-foreground" />
+    </div>
+    <div class="space-y-2 text-center">
+      <p class="font-medium">Page not found</p>
+      <p class="text-sm text-muted-foreground">
+        We couldn&apos;t find the page you were looking for. Try another entry point.
+      </p>
+    </div>
+  </CardContent>
+  <CardFooter class="flex-col gap-2">
+    <Button class="w-full">Back to dashboard</Button>
+    <Button variant="outline" class="w-full">Search docs</Button>
+  </CardFooter>
+</Card>

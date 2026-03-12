@@ -1,0 +1,55 @@
+---
+import { Card, CardContent, CardFooter } from "@bejamas/registry/ui/card";
+import SemanticIcon from "@/components/icons/SemanticIcon.astro";
+import type { IconLibraryName } from "@bejamas/create-config/server";
+
+interface Props {
+  iconLibrary: IconLibraryName;
+  iconLibraryLabel?: string;
+}
+
+const { iconLibrary, iconLibraryLabel = "Lucide" } = Astro.props as Props;
+
+const previewIcons = [
+  "copy",
+  "alert-circle",
+  "trash",
+  "share",
+  "shopping-bag",
+  "ellipsis",
+  "loader-circle",
+  "plus",
+  "minus",
+  "arrow-left",
+  "arrow-right",
+  "check",
+  "chevron-down",
+  "chevron-right",
+  "search",
+  "settings",
+] as const;
+---
+
+<Card class="w-full">
+  <CardContent>
+    <div class="grid grid-cols-4 gap-3 sm:grid-cols-6 xl:grid-cols-8">
+      {
+        previewIcons.map((iconName) => (
+          <Card class="flex size-8 items-center justify-center rounded-md p-0 ring ring-border *:[svg]:size-4">
+            <SemanticIcon
+              library={iconLibrary}
+              name={iconName}
+              class="size-4 text-foreground/80"
+            />
+          </Card>
+        ))
+      }
+    </div>
+  </CardContent>
+  <CardFooter class="text-sm text-muted-foreground justify-center">
+    Using <span
+      class="mx-1 font-medium text-foreground"
+      data-create-icon-library-label>{iconLibraryLabel}</span
+    > icons.
+  </CardFooter>
+</Card>

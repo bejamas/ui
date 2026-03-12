@@ -1,0 +1,48 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@bejamas/registry/ui/field";
+import { Input } from "@bejamas/registry/ui/input";
+import { Textarea } from "@bejamas/registry/ui/textarea";
+import SemanticIcon from "@/components/icons/SemanticIcon.astro";
+import type { IconLibraryName } from "@bejamas/create-config/server";
+
+interface Props {
+  iconLibrary: IconLibraryName;
+}
+
+const { iconLibrary } = Astro.props as Props;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>Report Bug</CardTitle>
+    <CardDescription>Help us fix issues faster.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <FieldGroup class="gap-4">
+      <Field>
+        <FieldLabel for="bug-title">Title</FieldLabel>
+        <Input id="bug-title" placeholder="Brief description of the issue" />
+      </Field>
+      <Field>
+        <FieldLabel for="bug-details">Details</FieldLabel>
+        <Textarea id="bug-details" rows={4} placeholder="Tell us how to reproduce the issue." class="resize-none" />
+      </Field>
+    </FieldGroup>
+  </CardContent>
+  <CardFooter class="gap-2">
+    <Button variant="outline" class="flex-1">Save draft</Button>
+    <Button class="flex-1">
+      <SemanticIcon library={iconLibrary} name="alert-circle" class="size-4" />
+      Submit bug
+    </Button>
+  </CardFooter>
+</Card>

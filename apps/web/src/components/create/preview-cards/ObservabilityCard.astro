@@ -1,0 +1,28 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+---
+
+<Card class="w-full overflow-hidden">
+  <div class="aspect-[4/3] w-full bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.28),transparent_26%),radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.18),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.18),rgba(255,255,255,0.02))]" />
+  <CardHeader>
+    <CardTitle>Observability Plus is replacing Monitoring</CardTitle>
+    <CardDescription>
+      Query traces, logs, and incidents from the same workflow instead of hopping between dashboards.
+    </CardDescription>
+  </CardHeader>
+  <CardContent class="text-sm text-muted-foreground">
+    Includes trace drilldowns, issue grouping, and release-aware deploy markers.
+  </CardContent>
+  <CardFooter class="gap-2">
+    <Button variant="outline" class="flex-1">Read update</Button>
+    <Button class="flex-1">Enable beta</Button>
+  </CardFooter>
+</Card>

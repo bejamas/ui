@@ -1,84 +1,30 @@
 ---
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@bejamas/registry/ui/accordion";
-import {
-  Avatar,
-  AvatarBadge,
-  AvatarFallback,
-  AvatarImage,
-} from "@bejamas/registry/ui/avatar";
-import { Badge } from "@bejamas/registry/ui/badge";
-import { Button } from "@bejamas/registry/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@bejamas/registry/ui/card";
-import { Checkbox } from "@bejamas/registry/ui/checkbox";
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@bejamas/registry/ui/field";
-import { Input } from "@bejamas/registry/ui/input";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemSeparator,
-  ItemTitle,
-} from "@bejamas/registry/ui/item";
-import {
-  Popover,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverDescription,
-  PopoverTrigger,
-} from "@bejamas/registry/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectGroup,
-  SelectValue,
-} from "@bejamas/registry/ui/select";
-import { Switch } from "@bejamas/registry/ui/switch";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@bejamas/registry/ui/tabs";
-import { Textarea } from "@bejamas/registry/ui/textarea";
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@bejamas/registry/ui/toggle-group";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@bejamas/registry/ui/tooltip";
-import SemanticIcon from "@/components/icons/SemanticIcon.astro";
 import type { IconLibraryName } from "@bejamas/create-config/server";
-import {
-  CREATE_PREVIEW_TRANSLATIONS,
-  type CreatePreviewCopy,
-} from "@/utils/create-preview-i18n";
+import ActivateAgentDialog from "@/components/create/preview-cards/ActivateAgentDialog.astro";
+import AnomalyAlert from "@/components/create/preview-cards/AnomalyAlert.astro";
+import AssignIssue from "@/components/create/preview-cards/AssignIssue.astro";
+import BookAppointment from "@/components/create/preview-cards/BookAppointment.astro";
+import CodespacesCard from "@/components/create/preview-cards/CodespacesCard.astro";
+import ContributionsActivity from "@/components/create/preview-cards/ContributionsActivity.astro";
+import Contributors from "@/components/create/preview-cards/Contributors.astro";
+import EnvironmentVariables from "@/components/create/preview-cards/EnvironmentVariables.astro";
+import FeedbackForm from "@/components/create/preview-cards/FeedbackForm.astro";
+import FileUpload from "@/components/create/preview-cards/FileUpload.astro";
+import GithubProfile from "@/components/create/preview-cards/GithubProfile.astro";
+import IconPreviewGrid from "@/components/create/preview-cards/IconPreviewGrid.astro";
+import InviteTeam from "@/components/create/preview-cards/InviteTeam.astro";
+import Invoice from "@/components/create/preview-cards/Invoice.astro";
+import NoTeamMembers from "@/components/create/preview-cards/NoTeamMembers.astro";
+import NotFound from "@/components/create/preview-cards/NotFound.astro";
+import ObservabilityCard from "@/components/create/preview-cards/ObservabilityCard.astro";
+import ReportBug from "@/components/create/preview-cards/ReportBug.astro";
+import ShippingAddress from "@/components/create/preview-cards/ShippingAddress.astro";
+import Shortcuts from "@/components/create/preview-cards/Shortcuts.astro";
+import SkeletonLoading from "@/components/create/preview-cards/SkeletonLoading.astro";
+import StyleOverview from "@/components/create/preview-cards/StyleOverview.astro";
+import UIElements from "@/components/create/preview-cards/UIElements.astro";
+import UsageCard from "@/components/create/preview-cards/UsageCard.astro";
+import WeeklyFitnessSummary from "@/components/create/preview-cards/WeeklyFitnessSummary.astro";
 
 interface Props {
   iconLibrary?: IconLibraryName;
@@ -89,662 +35,86 @@ interface Props {
   menuColorLabel?: string;
   menuInverted?: boolean;
   menuTranslucent?: boolean;
-  copy?: CreatePreviewCopy;
 }
 
 const {
   iconLibrary = "lucide",
+  iconLibraryLabel,
   styleLabel,
   fontLabel,
+  radiusLabel,
   menuColorLabel = "default",
   menuInverted = false,
   menuTranslucent = false,
-  copy = CREATE_PREVIEW_TRANSLATIONS.en,
 } = Astro.props as Props;
-
-const previewOverviewTokens = [
-  "--background",
-  "--foreground",
-  "--card",
-  "--popover",
-  "--primary",
-  "--secondary",
-  "--muted",
-  "--accent",
-  "--destructive",
-  "--border",
-  "--input",
-  "--ring",
-] as const;
-
-const previewIconNames = [
-  "copy",
-  "shuffle",
-  "sparkles",
-  "bold",
-  "italic",
-  "underline",
-  "bell",
-  "ellipsis",
-  "calendar",
-  "globe",
-  "credit-card",
-  "loader-circle",
-  "check",
-  "chevron-down",
-  "chevron-up",
-  "menu",
-] as const;
-
-const previewStyleFontSummary =
-  [styleLabel, fontLabel].filter(Boolean).join(" - ") || copy["overview.title"];
 ---
 
 <div
   data-create-preview-surface
   class="min-h-screen bg-background text-foreground antialiased"
 >
-  <div
-    class="mx-auto grid max-w-7xl items-start gap-6 p-6 md:p-8 lg:grid-cols-2"
-  >
-    <div class="flex flex-col gap-6 [&>*]:w-full">
-      <Card>
-        <CardHeader>
-          <CardTitle
-            class="text-2xl font-medium"
-            data-create-style-font-summary
-          >
-            {previewStyleFontSummary}
-          </CardTitle>
-          <CardDescription data-create-preview-text="overview.description">
-            {copy["overview.description"]}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div class="grid grid-cols-3 gap-3 sm:grid-cols-4 xl:grid-cols-6">
-            {
-              previewOverviewTokens.map((token) => (
-                <div class="flex flex-col items-center gap-2">
-                  <div
-                    class="relative aspect-square w-full rounded-lg bg-(--color) after:absolute after:inset-0 after:rounded-lg after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten"
-                    style={{ "--color": `var(${token})` }}
-                  />
-                  <span class="max-w-full truncate font-mono text-[0.625rem] text-muted-foreground">
-                    {token}
-                  </span>
-                </div>
-              ))
-            }
-          </div>
-        </CardContent>
-      </Card>
+  <div class="overflow-x-auto overflow-y-hidden contain-[paint]">
+    <div
+      class="grid w-[2400px] grid-cols-7 items-start gap-4 bg-muted p-4 md:w-[3000px] md:gap-6 md:p-6 dark:bg-background"
+      data-slot="capture-target"
+    >
+      <div class="flex flex-col gap-4 md:gap-6">
+        <StyleOverview
+          styleLabel={styleLabel}
+          fontLabel={fontLabel}
+          radiusLabel={radiusLabel}
+        />
+        <CodespacesCard
+          iconLibrary={iconLibrary}
+          menuColorLabel={menuColorLabel}
+          menuInverted={menuInverted}
+          menuTranslucent={menuTranslucent}
+        />
+        <Invoice />
+      </div>
 
-      <Card>
-        <CardContent>
-          <div
-            class="grid grid-cols-4 gap-3 sm:grid-cols-6 xl:grid-cols-8 place-items-center"
-          >
-            {
-              previewIconNames.map((iconName) => (
-                <Card class="flex size-10 items-center justify-center p-0 shadow-none">
-                  <SemanticIcon
-                    library={iconLibrary}
-                    name={iconName}
-                    class="size-4 text-foreground/80"
-                  />
-                </Card>
-              ))
-            }
-          </div>
-        </CardContent>
-      </Card>
+      <div class="flex flex-col gap-4 md:gap-6">
+        <IconPreviewGrid
+          iconLibrary={iconLibrary}
+          iconLibraryLabel={iconLibraryLabel}
+        />
+        <UIElements iconLibrary={iconLibrary} />
+        <ObservabilityCard />
+        <Shortcuts />
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle data-create-preview-text="quickActions.title">
-            {copy["quickActions.title"]}
-          </CardTitle>
-          <CardDescription data-create-preview-text="quickActions.description">
-            {copy["quickActions.description"]}
-          </CardDescription>
-        </CardHeader>
-        <CardContent class="space-y-4">
-          <ToggleGroup variant="outline" defaultValue="bold">
-            <ToggleGroupItem value="bold" aria-label="Bold">
-              <SemanticIcon library={iconLibrary} name="bold" class="size-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem value="italic" aria-label="Italic">
-              <SemanticIcon
-                library={iconLibrary}
-                name="italic"
-                class="size-4"
-              />
-            </ToggleGroupItem>
-            <ToggleGroupItem value="underline" aria-label="Underline">
-              <SemanticIcon
-                library={iconLibrary}
-                name="underline"
-                class="size-4"
-              />
-            </ToggleGroupItem>
-          </ToggleGroup>
+      <div class="flex flex-col gap-4 md:gap-6">
+        <EnvironmentVariables />
+        <InviteTeam iconLibrary={iconLibrary} />
+        <ActivateAgentDialog iconLibrary={iconLibrary} />
+      </div>
 
-          <Tabs defaultValue="overview">
-            <TabsList variant="indicator">
-              <TabsTrigger
-                value="overview"
-                data-create-preview-text="quickActions.tabOverview"
-              >
-                {copy["quickActions.tabOverview"]}
-              </TabsTrigger>
-              <TabsTrigger
-                value="activity"
-                data-create-preview-text="quickActions.tabActivity"
-              >
-                {copy["quickActions.tabActivity"]}
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="overview" class="pt-3">
-              <Item variant="outline">
-                <ItemMedia>
-                  <SemanticIcon
-                    library={iconLibrary}
-                    name="bell"
-                    class="size-4 text-muted-foreground"
-                  />
-                </ItemMedia>
-                <ItemContent>
-                  <ItemTitle
-                    data-create-preview-text="quickActions.notificationsEnabled"
-                  >
-                    {copy["quickActions.notificationsEnabled"]}
-                  </ItemTitle>
-                  <ItemDescription
-                    data-create-preview-text="quickActions.notificationsDescription"
-                  >
-                    {copy["quickActions.notificationsDescription"]}
-                  </ItemDescription>
-                </ItemContent>
-                <ItemActions>
-                  <Button variant="ghost" size="icon" aria-label="More">
-                    <SemanticIcon
-                      library={iconLibrary}
-                      name="ellipsis"
-                      class="size-4"
-                    />
-                  </Button>
-                </ItemActions>
-              </Item>
-            </TabsContent>
-            <TabsContent value="activity" class="pt-3">
-              <ItemGroup class="rounded-xl border border-border">
-                <Item>
-                  <ItemMedia>
-                    <SemanticIcon
-                      library={iconLibrary}
-                      name="calendar"
-                      class="size-4 text-muted-foreground"
-                    />
-                  </ItemMedia>
-                  <ItemContent>
-                    <ItemTitle
-                      data-create-preview-text="quickActions.weeklyReview"
-                    >
-                      {copy["quickActions.weeklyReview"]}
-                    </ItemTitle>
-                    <ItemDescription
-                      data-create-preview-text="quickActions.weeklyReviewTime"
-                    >
-                      {copy["quickActions.weeklyReviewTime"]}
-                    </ItemDescription>
-                  </ItemContent>
-                </Item>
-                <ItemSeparator />
-                <Item>
-                  <ItemMedia>
-                    <SemanticIcon
-                      library={iconLibrary}
-                      name="globe"
-                      class="size-4 text-muted-foreground"
-                    />
-                  </ItemMedia>
-                  <ItemContent>
-                    <ItemTitle
-                      data-create-preview-text="quickActions.registrySynced"
-                    >
-                      {copy["quickActions.registrySynced"]}
-                    </ItemTitle>
-                    <ItemDescription
-                      data-create-preview-text="quickActions.registrySyncedDescription"
-                    >
-                      {copy["quickActions.registrySyncedDescription"]}
-                    </ItemDescription>
-                  </ItemContent>
-                </Item>
-              </ItemGroup>
-            </TabsContent>
-          </Tabs>
+      <div class="flex flex-col gap-4 md:gap-6">
+        <SkeletonLoading />
+        <NoTeamMembers iconLibrary={iconLibrary} />
+        <ReportBug iconLibrary={iconLibrary} />
+        <Contributors />
+      </div>
 
-          <div class="grid gap-3 rounded-xl border border-border p-4">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <p
-                  class="text-sm font-medium"
-                  data-create-preview-text="quickActions.menuSurface"
-                >
-                  {copy["quickActions.menuSurface"]}
-                </p>
-                <p
-                  class="text-sm text-muted-foreground"
-                  data-create-preview-text="quickActions.menuSurfaceDescription"
-                >
-                  {copy["quickActions.menuSurfaceDescription"]}
-                </p>
-              </div>
-              <Badge variant="outline" data-create-menu-color-label
-                >{menuColorLabel}</Badge
-              >
-            </div>
-            <div
-              data-create-menu-preview
-              class:list={[
-                "cn-menu-target rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-md",
-                menuInverted && "dark",
-                menuTranslucent && "cn-menu-translucent",
-              ]}
-            >
-              <div
-                class="rounded-[calc(var(--radius)-2px)] bg-accent px-3 py-2 text-sm text-accent-foreground"
-                data-create-preview-text="quickActions.activeMenuItem"
-              >
-                {copy["quickActions.activeMenuItem"]}
-              </div>
-              <div
-                class="px-3 py-2 text-sm text-muted-foreground"
-                data-create-preview-text="quickActions.secondaryAction"
-              >
-                {copy["quickActions.secondaryAction"]}
-              </div>
-              <div
-                class="mt-1 border-t border-border px-3 py-2 text-sm"
-                data-create-preview-text="quickActions.billingPortal"
-              >
-                {copy["quickActions.billingPortal"]}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+      <div class="flex flex-col gap-4 md:gap-6">
+        <FeedbackForm />
+        <BookAppointment iconLibrary={iconLibrary} />
+        <GithubProfile />
+      </div>
 
-    <div class="flex flex-col gap-6 [&>*]:w-full">
-      <Card>
-        <CardHeader>
-          <!-- <div class="flex flex-wrap items-start justify-between gap-3">
-            <div class="space-y-2">
-              <div class="flex flex-wrap items-center gap-2">
-                <Badge>bejamas/ui</Badge>
-                <Badge variant="outline" data-create-icon-library-label
-                  >{iconLibraryLabel}</Badge
-                >
-              </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <Badge variant="secondary" data-create-style-label
-                  >{styleLabel}</Badge
-                >
-                <Badge variant="outline" data-create-font-label
-                  >{fontLabel}</Badge
-                >
-                <Badge variant="outline" data-create-template-label
-                  >{templateLabel}</Badge
-                >
-                <Badge variant="outline" data-create-radius-label
-                  >{radiusLabel}</Badge
-                >
-              </div>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm"> Workspace </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  Billing
-                  <DropdownMenuShortcut>G B</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  Team settings
-                  <DropdownMenuShortcut>G T</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div> -->
-          <CardTitle data-create-preview-text="hero.title"
-            >{copy["hero.title"]}</CardTitle
-          >
-          <CardDescription data-create-preview-text="hero.description">
-            {copy["hero.description"]}
-          </CardDescription>
-        </CardHeader>
-        <CardContent class="grid gap-4 xl:grid-cols-2">
-          <FieldGroup class="gap-4">
-            <Field>
-              <FieldLabel
-                for="preview-project-name"
-                data-create-preview-text="form.projectName"
-              >
-                {copy["form.projectName"]}
-              </FieldLabel>
-              <Input id="preview-project-name" value="bejamas-site" />
-            </Field>
-            <Field>
-              <FieldLabel
-                for="preview-feedback"
-                data-create-preview-text="form.feedback"
-              >
-                {copy["form.feedback"]}
-              </FieldLabel>
-              <Textarea
-                id="preview-feedback"
-                rows={4}
-                placeholder={copy["form.feedbackPlaceholder"]}
-                data-create-preview-placeholder="form.feedbackPlaceholder"
-              />
-            </Field>
-          </FieldGroup>
-          <FieldGroup class="gap-4">
-            <Field>
-              <FieldLabel
-                for="preview-region"
-                data-create-preview-text="form.region"
-              >
-                {copy["form.region"]}
-              </FieldLabel>
-              <Select class="w-full" defaultValue="eu">
-                <SelectTrigger id="preview-region">
-                  <SelectValue
-                    placeholder={copy["form.regionPlaceholder"]}
-                    data-create-preview-placeholder="form.regionPlaceholder"
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem
-                      value="eu"
-                      data-create-preview-text="form.regionEu"
-                    >
-                      {copy["form.regionEu"]}
-                    </SelectItem>
-                    <SelectItem
-                      value="us"
-                      data-create-preview-text="form.regionUs"
-                    >
-                      {copy["form.regionUs"]}
-                    </SelectItem>
-                    <SelectItem
-                      value="apac"
-                      data-create-preview-text="form.regionApac"
-                    >
-                      {copy["form.regionApac"]}
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FieldDescription
-                data-create-preview-text="form.regionDescription"
-              >
-                {copy["form.regionDescription"]}
-              </FieldDescription>
-            </Field>
-            <div class="rounded-xl border border-border p-4">
-              <FieldGroup data-slot="checkbox-group">
-                <Field orientation="horizontal">
-                  <Switch id="preview-email-digests" checked />
-                  <FieldContent>
-                    <FieldLabel
-                      for="preview-email-digests"
-                      data-create-preview-text="form.emailDigests"
-                    >
-                      {copy["form.emailDigests"]}
-                    </FieldLabel>
-                    <FieldDescription
-                      data-create-preview-text="form.emailDigestsDescription"
-                    >
-                      {copy["form.emailDigestsDescription"]}
-                    </FieldDescription>
-                  </FieldContent>
-                </Field>
-                <Field orientation="horizontal">
-                  <Checkbox id="preview-release-notes" checked />
-                  <FieldContent>
-                    <FieldLabel
-                      for="preview-release-notes"
-                      data-create-preview-text="form.releaseNotes"
-                    >
-                      {copy["form.releaseNotes"]}
-                    </FieldLabel>
-                    <FieldDescription
-                      data-create-preview-text="form.releaseNotesDescription"
-                    >
-                      {copy["form.releaseNotesDescription"]}
-                    </FieldDescription>
-                  </FieldContent>
-                </Field>
-              </FieldGroup>
-            </div>
-          </FieldGroup>
-        </CardContent>
-        <CardFooter
-          class="flex flex-wrap items-center justify-between gap-3 mt-auto"
-        >
-          <div class="flex items-center gap-2">
-            <Avatar>
-              <AvatarImage src="https://github.com/thomkrupa.png" alt="Thom" />
-              <AvatarFallback>TK</AvatarFallback>
-              <AvatarBadge />
-            </Avatar>
-            <div class="text-sm">
-              <p class="font-medium" data-create-preview-text="team.name">
-                {copy["team.name"]}
-              </p>
-              <p
-                class="text-muted-foreground"
-                data-create-preview-text="team.reviewers"
-              >
-                {copy["team.reviewers"]}
-              </p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <Button
-              variant="outline"
-              data-create-preview-text="actions.previewDocs"
-            >
-              {copy["actions.previewDocs"]}
-            </Button>
-            <Button>
-              <SemanticIcon
-                library={iconLibrary}
-                name="sparkles"
-                class="size-4"
-              />
-              <span data-create-preview-text="actions.createProject">
-                {copy["actions.createProject"]}
-              </span>
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
+      <div class="flex flex-col gap-4 md:gap-6">
+        <AssignIssue />
+        <WeeklyFitnessSummary />
+        <FileUpload />
+        <UsageCard />
+        <ContributionsActivity />
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle data-create-preview-text="structured.title">
-            {copy["structured.title"]}
-          </CardTitle>
-          <CardDescription data-create-preview-text="structured.description">
-            {copy["structured.description"]}
-          </CardDescription>
-        </CardHeader>
-        <CardContent class="grid gap-4">
-          <Accordion collapsible class="w-full">
-            <AccordionItem value="item-1">
-              <AccordionTrigger>
-                <span
-                  data-create-preview-text="structured.accordionInstallQuestion"
-                >
-                  {copy["structured.accordionInstallQuestion"]}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent>
-                <span
-                  data-create-preview-text="structured.accordionInstallAnswer"
-                >
-                  {copy["structured.accordionInstallAnswer"]}
-                </span>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="item-2">
-              <AccordionTrigger>
-                <span
-                  data-create-preview-text="structured.accordionComponentsQuestion"
-                >
-                  {copy["structured.accordionComponentsQuestion"]}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent>
-                <span
-                  data-create-preview-text="structured.accordionComponentsAnswer"
-                >
-                  {copy["structured.accordionComponentsAnswer"]}
-                </span>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-
-          <div class="flex flex-wrap gap-3">
-            <Popover>
-              <PopoverTrigger
-                variant="outline"
-                data-create-preview-text="structured.billingSummary"
-              >
-                {copy["structured.billingSummary"]}
-              </PopoverTrigger>
-              <PopoverContent align="start">
-                <PopoverHeader>
-                  <PopoverTitle
-                    data-create-preview-text="structured.currentPlan"
-                  >
-                    {copy["structured.currentPlan"]}
-                  </PopoverTitle>
-                  <PopoverDescription
-                    data-create-preview-text="structured.currentPlanDescription"
-                  >
-                    {copy["structured.currentPlanDescription"]}
-                  </PopoverDescription>
-                </PopoverHeader>
-              </PopoverContent>
-            </Popover>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline">
-                  <SemanticIcon
-                    library={iconLibrary}
-                    name="credit-card"
-                    class="size-4"
-                  />
-                  <span data-create-preview-text="structured.cardRequired">
-                    {copy["structured.cardRequired"]}
-                  </span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent
-                data-create-preview-text="structured.cardRequiredTooltip"
-              >
-                {copy["structured.cardRequiredTooltip"]}
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle data-create-preview-text="people.title">
-            {copy["people.title"]}
-          </CardTitle>
-          <CardDescription data-create-preview-text="people.description">
-            {copy["people.description"]}
-          </CardDescription>
-        </CardHeader>
-        <CardContent class="space-y-4">
-          <div class="flex items-center gap-3">
-            <Avatar size="lg">
-              <AvatarImage src="https://github.com/withastro.png" alt="Astro" />
-              <AvatarFallback>AS</AvatarFallback>
-            </Avatar>
-            <div>
-              <p class="font-medium" data-create-preview-text="people.teamName">
-                {copy["people.teamName"]}
-              </p>
-              <p
-                class="text-sm text-muted-foreground"
-                data-create-preview-text="people.teamRole"
-              >
-                {copy["people.teamRole"]}
-              </p>
-            </div>
-            <Badge
-              variant="secondary"
-              data-create-preview-text="people.coreBadge"
-            >
-              {copy["people.coreBadge"]}
-            </Badge>
-          </div>
-
-          <ItemGroup class="rounded-xl border border-border">
-            <Item>
-              <ItemMedia>
-                <Avatar size="sm">
-                  <AvatarFallback>RM</AvatarFallback>
-                </Avatar>
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle data-create-preview-text="people.releaseManager">
-                  {copy["people.releaseManager"]}
-                </ItemTitle>
-                <ItemDescription
-                  data-create-preview-text="people.releaseManagerDescription"
-                >
-                  {copy["people.releaseManagerDescription"]}
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-            <ItemSeparator />
-            <Item>
-              <ItemMedia>
-                <Avatar size="sm">
-                  <AvatarFallback>DX</AvatarFallback>
-                </Avatar>
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle
-                  data-create-preview-text="people.developerExperience"
-                >
-                  {copy["people.developerExperience"]}
-                </ItemTitle>
-                <ItemDescription
-                  data-create-preview-text="people.developerExperienceDescription"
-                >
-                  {copy["people.developerExperienceDescription"]}
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-          </ItemGroup>
-        </CardContent>
-      </Card>
+      <div class="flex flex-col gap-4 md:gap-6">
+        <AnomalyAlert iconLibrary={iconLibrary} />
+        <ShippingAddress />
+        <NotFound iconLibrary={iconLibrary} />
+      </div>
     </div>
   </div>
 </div>
