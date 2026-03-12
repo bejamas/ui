@@ -8,6 +8,12 @@ export const CREATE_PREVIEW_TRANSLATIONS = {
       "Ship an Astro design system without hand-tuning every token.",
     "hero.description":
       "Preview a style preset, confirm the form controls, and copy the init command.",
+    "overview.title": "Style overview",
+    "overview.description":
+      "Preview the core theme tokens without relying on chart-only variables.",
+    "icons.title": "Card with icons",
+    "icons.description":
+      "The active icon library should stay consistent across compact surfaces.",
     "form.projectName": "Project name",
     "form.feedback": "Feedback",
     "form.feedbackPlaceholder": "A compact create flow with sane defaults.",
@@ -79,6 +85,12 @@ export const CREATE_PREVIEW_TRANSLATIONS = {
     "hero.title": "أنشئ نظام تصميم Astro من دون ضبط يدوي لكل رمز تصميم.",
     "hero.description":
       "عاين النمط، وتحقق من عناصر النموذج، ثم انسخ أمر التهيئة.",
+    "overview.title": "نظرة عامة على النمط",
+    "overview.description":
+      "عاين رموز المظهر الأساسية من دون الاعتماد على متغيرات المخططات.",
+    "icons.title": "بطاقة مع أيقونات",
+    "icons.description":
+      "يجب أن تبقى مكتبة الأيقونات النشطة متسقة عبر الأسطح المدمجة.",
     "form.projectName": "اسم المشروع",
     "form.feedback": "ملاحظات",
     "form.feedbackPlaceholder": "واجهة إنشاء مختصرة بإعدادات افتراضية مناسبة.",
@@ -147,6 +159,12 @@ export const CREATE_PREVIEW_TRANSLATIONS = {
       "یک سیستم طراحی Astro را بدون تنظیم دستی تک‌تک توکن‌ها منتشر کنید.",
     "hero.description":
       "یک استایل آماده را پیش‌نمایش کنید، فرم‌ها را بررسی کنید و دستور راه‌اندازی را کپی کنید.",
+    "overview.title": "نمای کلی استایل",
+    "overview.description":
+      "توکن‌های اصلی تم را بدون تکیه بر متغیرهای مربوط به نمودارها بررسی کنید.",
+    "icons.title": "کارت با آیکون‌ها",
+    "icons.description":
+      "کتابخانه آیکون فعال باید در سطوح فشرده یکدست باقی بماند.",
     "form.projectName": "نام پروژه",
     "form.feedback": "بازخورد",
     "form.feedbackPlaceholder": "جریان ساخت جمع‌وجور با پیش‌فرض‌های منطقی.",
@@ -218,6 +236,12 @@ export const CREATE_PREVIEW_TRANSLATIONS = {
     "hero.title": "השיקו מערכת עיצוב ל-Astro בלי לכוון ידנית כל טוקן.",
     "hero.description":
       "תצוגה מקדימה של סטייל מוכן, בדיקת טפסים והעתקת פקודת ההתקנה.",
+    "overview.title": "סקירת סטייל",
+    "overview.description":
+      "תצוגה של טוקני העיצוב המרכזיים בלי להסתמך על משתני גרפים.",
+    "icons.title": "כרטיס עם אייקונים",
+    "icons.description":
+      "ספריית האייקונים הפעילה צריכה להישאר עקבית בכל המשטחים הקומפקטיים.",
     "form.projectName": "שם הפרויקט",
     "form.feedback": "משוב",
     "form.feedbackPlaceholder": "זרימת יצירה קומפקטית עם ברירות מחדל הגיוניות.",

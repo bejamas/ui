@@ -9,10 +9,18 @@ describe("create preview base layer", () => {
     const previewSurface = read(
       "apps/web/src/components/create/CreatePreviewSurface.astro",
     );
+    const columnStackMatches = previewSurface.match(
+      /<div class="flex flex-col gap-6 \[\&\>\*\]:w-full">/g,
+    );
 
     expect(previewSurface).toContain("@bejamas/registry/ui/button");
     expect(previewSurface).toContain("@bejamas/registry/ui/select");
     expect(previewSurface).toContain("@bejamas/registry/ui/tabs");
+    expect(previewSurface).toContain("lg:grid-cols-2");
+    expect(previewSurface).toContain('[&>*]:w-full');
+    expect(previewSurface).not.toContain("xl:grid-cols-3");
+    expect(previewSurface).not.toContain('class="self-start"');
+    expect(columnStackMatches?.length).toBe(2);
     expect(previewSurface).not.toContain("@bejamas/ui/components/");
   });
 
@@ -27,6 +35,27 @@ describe("create preview base layer", () => {
     );
     expect(previewSurface).toContain("color: var(--muted-foreground);");
     expect(previewSurface).toContain("opacity: 1;");
+  });
+
+  it("adds the overview and icon demo sections without chart tokens", () => {
+    const previewSurface = read(
+      "apps/web/src/components/create/CreatePreviewSurface.astro",
+    );
+    const previewScript = read("apps/web/src/scripts/create-preview.ts");
+
+    expect(previewSurface).toContain("data-create-style-font-summary");
+    expect(previewSurface).toContain(
+      'data-create-preview-text="icons.title"',
+    );
+    expect(previewSurface).toContain('"--background"');
+    expect(previewSurface).toContain('"--ring"');
+    expect(previewSurface).not.toContain('"--chart-1"');
+    expect(previewSurface).not.toContain('"--chart-5"');
+    expect(previewSurface).toContain("<SemanticIcon");
+    expect(previewSurface).toContain('"loader-circle"');
+    expect(previewSurface).not.toContain("IconPlaceholder");
+    expect(previewScript).toContain("[data-create-style-font-summary]");
+    expect(previewScript).toContain('].join(" - ")');
   });
 
   it("keeps button visuals in the style layer", () => {

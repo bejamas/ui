@@ -134,6 +134,15 @@ function applyPreviewConfig(
       config.font,
   );
   setText(
+    "[data-create-style-font-summary]",
+    [
+      catalogs.styles.find((style) => style.name === config.style)?.title ??
+        config.style,
+      catalogs.fonts.find((font) => font.name === `font-${config.font}`)
+        ?.title ?? config.font,
+    ].join(" - "),
+  );
+  setText(
     "[data-create-radius-label]",
     getCreatePickerSelectedOption("radius", config)?.label ?? config.radius,
   );

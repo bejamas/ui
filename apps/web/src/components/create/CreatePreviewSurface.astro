@@ -94,217 +94,109 @@ interface Props {
 
 const {
   iconLibrary = "lucide",
+  styleLabel,
+  fontLabel,
   menuColorLabel = "default",
   menuInverted = false,
   menuTranslucent = false,
   copy = CREATE_PREVIEW_TRANSLATIONS.en,
 } = Astro.props as Props;
+
+const previewOverviewTokens = [
+  "--background",
+  "--foreground",
+  "--card",
+  "--popover",
+  "--primary",
+  "--secondary",
+  "--muted",
+  "--accent",
+  "--destructive",
+  "--border",
+  "--input",
+  "--ring",
+] as const;
+
+const previewIconNames = [
+  "copy",
+  "shuffle",
+  "sparkles",
+  "bold",
+  "italic",
+  "underline",
+  "bell",
+  "ellipsis",
+  "calendar",
+  "globe",
+  "credit-card",
+  "loader-circle",
+  "check",
+  "chevron-down",
+  "chevron-up",
+  "menu",
+] as const;
+
+const previewStyleFontSummary =
+  [styleLabel, fontLabel].filter(Boolean).join(" - ") || copy["overview.title"];
 ---
 
 <div
   data-create-preview-surface
-  class="min-h-screen bg-background text-foreground"
+  class="min-h-screen bg-background text-foreground antialiased"
 >
-  <div class="mx-auto flex max-w-6xl flex-col gap-8 p-6 md:p-8">
-    <div class="grid gap-6 md:grid-cols-[1.4fr_0.9fr]">
+  <div
+    class="mx-auto grid max-w-7xl items-start gap-6 p-6 md:p-8 lg:grid-cols-2"
+  >
+    <div class="flex flex-col gap-6 [&>*]:w-full">
       <Card>
         <CardHeader>
-          <!-- <div class="flex flex-wrap items-start justify-between gap-3">
-            <div class="space-y-2">
-              <div class="flex flex-wrap items-center gap-2">
-                <Badge>bejamas/ui</Badge>
-                <Badge variant="outline" data-create-icon-library-label
-                  >{iconLibraryLabel}</Badge
-                >
-              </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <Badge variant="secondary" data-create-style-label
-                  >{styleLabel}</Badge
-                >
-                <Badge variant="outline" data-create-font-label
-                  >{fontLabel}</Badge
-                >
-                <Badge variant="outline" data-create-template-label
-                  >{templateLabel}</Badge
-                >
-                <Badge variant="outline" data-create-radius-label
-                  >{radiusLabel}</Badge
-                >
-              </div>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm"> Workspace </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  Billing
-                  <DropdownMenuShortcut>G B</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  Team settings
-                  <DropdownMenuShortcut>G T</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div> -->
-          <CardTitle data-create-preview-text="hero.title"
-            >{copy["hero.title"]}</CardTitle
+          <CardTitle
+            class="text-2xl font-medium"
+            data-create-style-font-summary
           >
-          <CardDescription data-create-preview-text="hero.description">
-            {copy["hero.description"]}
+            {previewStyleFontSummary}
+          </CardTitle>
+          <CardDescription data-create-preview-text="overview.description">
+            {copy["overview.description"]}
           </CardDescription>
         </CardHeader>
-        <CardContent class="grid gap-4 md:grid-cols-2">
-          <FieldGroup class="gap-4">
-            <Field>
-              <FieldLabel
-                for="preview-project-name"
-                data-create-preview-text="form.projectName"
-              >
-                {copy["form.projectName"]}
-              </FieldLabel>
-              <Input id="preview-project-name" value="bejamas-site" />
-            </Field>
-            <Field>
-              <FieldLabel
-                for="preview-feedback"
-                data-create-preview-text="form.feedback"
-              >
-                {copy["form.feedback"]}
-              </FieldLabel>
-              <Textarea
-                id="preview-feedback"
-                rows={4}
-                placeholder={copy["form.feedbackPlaceholder"]}
-                data-create-preview-placeholder="form.feedbackPlaceholder"
-              />
-            </Field>
-          </FieldGroup>
-          <FieldGroup class="gap-4">
-            <Field>
-              <FieldLabel
-                for="preview-region"
-                data-create-preview-text="form.region"
-              >
-                {copy["form.region"]}
-              </FieldLabel>
-              <Select class="w-full" defaultValue="eu">
-                <SelectTrigger id="preview-region">
-                  <SelectValue
-                    placeholder={copy["form.regionPlaceholder"]}
-                    data-create-preview-placeholder="form.regionPlaceholder"
+        <CardContent>
+          <div class="grid grid-cols-3 gap-3 sm:grid-cols-4 xl:grid-cols-6">
+            {
+              previewOverviewTokens.map((token) => (
+                <div class="flex flex-col items-center gap-2">
+                  <div
+                    class="relative aspect-square w-full rounded-lg bg-(--color) after:absolute after:inset-0 after:rounded-lg after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten"
+                    style={{ "--color": `var(${token})` }}
                   />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem
-                      value="eu"
-                      data-create-preview-text="form.regionEu"
-                    >
-                      {copy["form.regionEu"]}
-                    </SelectItem>
-                    <SelectItem
-                      value="us"
-                      data-create-preview-text="form.regionUs"
-                    >
-                      {copy["form.regionUs"]}
-                    </SelectItem>
-                    <SelectItem
-                      value="apac"
-                      data-create-preview-text="form.regionApac"
-                    >
-                      {copy["form.regionApac"]}
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FieldDescription
-                data-create-preview-text="form.regionDescription"
-              >
-                {copy["form.regionDescription"]}
-              </FieldDescription>
-            </Field>
-            <div class="rounded-xl border border-border p-4">
-              <FieldGroup data-slot="checkbox-group">
-                <Field orientation="horizontal">
-                  <Switch id="preview-email-digests" checked />
-                  <FieldContent>
-                    <FieldLabel
-                      for="preview-email-digests"
-                      data-create-preview-text="form.emailDigests"
-                    >
-                      {copy["form.emailDigests"]}
-                    </FieldLabel>
-                    <FieldDescription
-                      data-create-preview-text="form.emailDigestsDescription"
-                    >
-                      {copy["form.emailDigestsDescription"]}
-                    </FieldDescription>
-                  </FieldContent>
-                </Field>
-                <Field orientation="horizontal">
-                  <Checkbox id="preview-release-notes" checked />
-                  <FieldContent>
-                    <FieldLabel
-                      for="preview-release-notes"
-                      data-create-preview-text="form.releaseNotes"
-                    >
-                      {copy["form.releaseNotes"]}
-                    </FieldLabel>
-                    <FieldDescription
-                      data-create-preview-text="form.releaseNotesDescription"
-                    >
-                      {copy["form.releaseNotesDescription"]}
-                    </FieldDescription>
-                  </FieldContent>
-                </Field>
-              </FieldGroup>
-            </div>
-          </FieldGroup>
+                  <span class="max-w-full truncate font-mono text-[0.625rem] text-muted-foreground">
+                    {token}
+                  </span>
+                </div>
+              ))
+            }
+          </div>
         </CardContent>
-        <CardFooter
-          class="flex flex-wrap items-center justify-between gap-3 mt-auto"
-        >
-          <div class="flex items-center gap-2">
-            <Avatar>
-              <AvatarImage src="https://github.com/thomkrupa.png" alt="Thom" />
-              <AvatarFallback>TK</AvatarFallback>
-              <AvatarBadge />
-            </Avatar>
-            <div class="text-sm">
-              <p class="font-medium" data-create-preview-text="team.name">
-                {copy["team.name"]}
-              </p>
-              <p
-                class="text-muted-foreground"
-                data-create-preview-text="team.reviewers"
-              >
-                {copy["team.reviewers"]}
-              </p>
-            </div>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <div
+            class="grid grid-cols-4 gap-3 sm:grid-cols-6 xl:grid-cols-8 place-items-center"
+          >
+            {
+              previewIconNames.map((iconName) => (
+                <Card class="flex size-10 items-center justify-center p-0 shadow-none">
+                  <SemanticIcon
+                    library={iconLibrary}
+                    name={iconName}
+                    class="size-4 text-foreground/80"
+                  />
+                </Card>
+              ))
+            }
           </div>
-          <div class="flex items-center gap-2">
-            <Button
-              variant="outline"
-              data-create-preview-text="actions.previewDocs"
-            >
-              {copy["actions.previewDocs"]}
-            </Button>
-            <Button>
-              <SemanticIcon
-                library={iconLibrary}
-                name="sparkles"
-                class="size-4"
-              />
-              <span data-create-preview-text="actions.createProject">
-                {copy["actions.createProject"]}
-              </span>
-            </Button>
-          </div>
-        </CardFooter>
+        </CardContent>
       </Card>
 
       <Card>
@@ -485,7 +377,207 @@ const {
       </Card>
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+    <div class="flex flex-col gap-6 [&>*]:w-full">
+      <Card>
+        <CardHeader>
+          <!-- <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <Badge>bejamas/ui</Badge>
+                <Badge variant="outline" data-create-icon-library-label
+                  >{iconLibraryLabel}</Badge
+                >
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary" data-create-style-label
+                  >{styleLabel}</Badge
+                >
+                <Badge variant="outline" data-create-font-label
+                  >{fontLabel}</Badge
+                >
+                <Badge variant="outline" data-create-template-label
+                  >{templateLabel}</Badge
+                >
+                <Badge variant="outline" data-create-radius-label
+                  >{radiusLabel}</Badge
+                >
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm"> Workspace </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  Billing
+                  <DropdownMenuShortcut>G B</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Team settings
+                  <DropdownMenuShortcut>G T</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Sign out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div> -->
+          <CardTitle data-create-preview-text="hero.title"
+            >{copy["hero.title"]}</CardTitle
+          >
+          <CardDescription data-create-preview-text="hero.description">
+            {copy["hero.description"]}
+          </CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-4 xl:grid-cols-2">
+          <FieldGroup class="gap-4">
+            <Field>
+              <FieldLabel
+                for="preview-project-name"
+                data-create-preview-text="form.projectName"
+              >
+                {copy["form.projectName"]}
+              </FieldLabel>
+              <Input id="preview-project-name" value="bejamas-site" />
+            </Field>
+            <Field>
+              <FieldLabel
+                for="preview-feedback"
+                data-create-preview-text="form.feedback"
+              >
+                {copy["form.feedback"]}
+              </FieldLabel>
+              <Textarea
+                id="preview-feedback"
+                rows={4}
+                placeholder={copy["form.feedbackPlaceholder"]}
+                data-create-preview-placeholder="form.feedbackPlaceholder"
+              />
+            </Field>
+          </FieldGroup>
+          <FieldGroup class="gap-4">
+            <Field>
+              <FieldLabel
+                for="preview-region"
+                data-create-preview-text="form.region"
+              >
+                {copy["form.region"]}
+              </FieldLabel>
+              <Select class="w-full" defaultValue="eu">
+                <SelectTrigger id="preview-region">
+                  <SelectValue
+                    placeholder={copy["form.regionPlaceholder"]}
+                    data-create-preview-placeholder="form.regionPlaceholder"
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      value="eu"
+                      data-create-preview-text="form.regionEu"
+                    >
+                      {copy["form.regionEu"]}
+                    </SelectItem>
+                    <SelectItem
+                      value="us"
+                      data-create-preview-text="form.regionUs"
+                    >
+                      {copy["form.regionUs"]}
+                    </SelectItem>
+                    <SelectItem
+                      value="apac"
+                      data-create-preview-text="form.regionApac"
+                    >
+                      {copy["form.regionApac"]}
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FieldDescription
+                data-create-preview-text="form.regionDescription"
+              >
+                {copy["form.regionDescription"]}
+              </FieldDescription>
+            </Field>
+            <div class="rounded-xl border border-border p-4">
+              <FieldGroup data-slot="checkbox-group">
+                <Field orientation="horizontal">
+                  <Switch id="preview-email-digests" checked />
+                  <FieldContent>
+                    <FieldLabel
+                      for="preview-email-digests"
+                      data-create-preview-text="form.emailDigests"
+                    >
+                      {copy["form.emailDigests"]}
+                    </FieldLabel>
+                    <FieldDescription
+                      data-create-preview-text="form.emailDigestsDescription"
+                    >
+                      {copy["form.emailDigestsDescription"]}
+                    </FieldDescription>
+                  </FieldContent>
+                </Field>
+                <Field orientation="horizontal">
+                  <Checkbox id="preview-release-notes" checked />
+                  <FieldContent>
+                    <FieldLabel
+                      for="preview-release-notes"
+                      data-create-preview-text="form.releaseNotes"
+                    >
+                      {copy["form.releaseNotes"]}
+                    </FieldLabel>
+                    <FieldDescription
+                      data-create-preview-text="form.releaseNotesDescription"
+                    >
+                      {copy["form.releaseNotesDescription"]}
+                    </FieldDescription>
+                  </FieldContent>
+                </Field>
+              </FieldGroup>
+            </div>
+          </FieldGroup>
+        </CardContent>
+        <CardFooter
+          class="flex flex-wrap items-center justify-between gap-3 mt-auto"
+        >
+          <div class="flex items-center gap-2">
+            <Avatar>
+              <AvatarImage src="https://github.com/thomkrupa.png" alt="Thom" />
+              <AvatarFallback>TK</AvatarFallback>
+              <AvatarBadge />
+            </Avatar>
+            <div class="text-sm">
+              <p class="font-medium" data-create-preview-text="team.name">
+                {copy["team.name"]}
+              </p>
+              <p
+                class="text-muted-foreground"
+                data-create-preview-text="team.reviewers"
+              >
+                {copy["team.reviewers"]}
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <Button
+              variant="outline"
+              data-create-preview-text="actions.previewDocs"
+            >
+              {copy["actions.previewDocs"]}
+            </Button>
+            <Button>
+              <SemanticIcon
+                library={iconLibrary}
+                name="sparkles"
+                class="size-4"
+              />
+              <span data-create-preview-text="actions.createProject">
+                {copy["actions.createProject"]}
+              </span>
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle data-create-preview-text="structured.title">
