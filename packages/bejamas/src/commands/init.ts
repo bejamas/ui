@@ -2,6 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { preFlightInit } from "@/src/preflights/preflight-init";
 import { applyDesignSystemToProject } from "@/src/utils/apply-design-system";
+import { fixAstroImports } from "@/src/utils/astro-imports";
 
 import { BASE_COLORS, BUILTIN_REGISTRIES } from "@/src/registry/constants";
 import { clearRegistryContext } from "@/src/registry/context";
@@ -9,14 +10,15 @@ import { clearRegistryContext } from "@/src/registry/context";
 import { TEMPLATES, createProject } from "@/src/utils/create-project";
 import * as ERRORS from "@/src/utils/errors";
 import { getConfig, createConfig, type Config } from "@/src/utils/get-config";
-import { getProjectConfig, getProjectInfo } from "@/src/utils/get-project-info";
-import { getPackageRunner } from "@/src/utils/get-package-manager";
+import { getProjectInfo } from "@/src/utils/get-project-info";
 import { handleError } from "@/src/utils/handle-error";
 import { highlighter } from "@/src/utils/highlighter";
+import { getInstalledUiComponents } from "@/src/utils/installed-ui-components";
 import { logger } from "@/src/utils/logger";
+import { reorganizeComponents } from "@/src/utils/reorganize-components";
 import { buildUiUrl, resolveRegistryUrl } from "@/src/utils/ui-base-url";
+import { runShadcnCommand } from "@/src/utils/shadcn-command";
 import { Command } from "commander";
-import { execa } from "execa";
 import fsExtra from "fs-extra";
 import { z } from "zod";
 import {
@@ -121,6 +123,7 @@ export const initOptionsSchema = z.object({
   cwd: z.string(),
   components: z.array(z.string()).optional(),
   yes: z.boolean(),
+  reinstall: z.boolean().optional(),
   defaults: z.boolean(),
   force: z.boolean(),
   silent: z.boolean(),
@@ -166,6 +169,84 @@ export const initOptionsSchema = z.object({
   themeRef: z.string().optional(),
 });
 
+export function extractOptionsForShadcnInit(
+  rawArgv: string[],
+  cmd: Command,
+): string[] {
+  if (typeof cmd.getOptionValueSource === "function") {
+    const opts = cmd.optsWithGlobals() as Record<string, unknown>;
+    const forwarded: string[] = [];
+    const getSource = (key: string) => cmd.getOptionValueSource(key);
+
+    const addBoolean = (key: string, flag: string, negateFlag?: string) => {
+      if (getSource(key) !== "cli") return;
+      const value = opts[key];
+      if (typeof value !== "boolean") return;
+      if (value) {
+        forwarded.push(flag);
+      } else if (negateFlag) {
+        forwarded.push(negateFlag);
+      }
+    };
+
+    addBoolean("yes", "--yes");
+    addBoolean("force", "--force");
+    addBoolean("silent", "--silent");
+    addBoolean("reinstall", "--reinstall", "--no-reinstall");
+
+    const initIndex = rawArgv.findIndex((arg) => arg === "init");
+    if (initIndex !== -1) {
+      const rest = rawArgv.slice(initIndex + 1);
+      const doubleDashIndex = rest.indexOf("--");
+      if (doubleDashIndex !== -1) {
+        forwarded.push(...rest.slice(doubleDashIndex));
+      }
+    }
+
+    return forwarded;
+  }
+
+  const initIndex = rawArgv.findIndex((arg) => arg === "init");
+  if (initIndex === -1) return [];
+  const rest = rawArgv.slice(initIndex + 1);
+  const forwarded: string[] = [];
+  const filteredFlags = new Set([
+    "-v",
+    "--verbose",
+    "-t",
+    "--template",
+    "-b",
+    "--base-color",
+    "-p",
+    "--preset",
+    "--theme-ref",
+    "-c",
+    "--cwd",
+    "-d",
+    "--defaults",
+    "--src-dir",
+    "--no-src-dir",
+    "--css-variables",
+    "--no-css-variables",
+    "--no-base-style",
+    "--rtl",
+    "--lang",
+  ]);
+
+  for (let index = 0; index < rest.length; index += 1) {
+    const token = rest[index];
+    if (token === "--") {
+      forwarded.push("--", ...rest.slice(index + 1));
+      break;
+    }
+    if (!token.startsWith("-")) continue;
+    if (filteredFlags.has(token)) continue;
+    forwarded.push(token);
+  }
+
+  return forwarded;
+}
+
 export const init = new Command()
   .name("init")
   .description("initialize your project and install dependencies")
@@ -181,7 +262,7 @@ export const init = new Command()
   )
   .option("-p, --preset <preset>", "the encoded create preset to use")
   .option("--theme-ref <theme-ref>", "the custom theme ref to use")
-  .option("-y, --yes", "skip confirmation prompt.", true)
+  .option("-y, --yes", "skip confirmation prompt.", false)
   .option("-d, --defaults,", "use default configuration.", false)
   .option("-f, --force", "force overwrite of existing configuration.", false)
   .option(
@@ -204,9 +285,14 @@ export const init = new Command()
   .option("--no-base-style", "do not install the base shadcn style.")
   .option("--rtl", "enable right-to-left output", false)
   .option("--lang <lang>", "set the RTL language. (ar, fa, he)")
-  .action(async (_components, opts) => {
+  .option("--reinstall", "re-install existing UI components.")
+  .option("--no-reinstall", "do not re-install existing UI components.")
+  .action(async (_components, opts, cmd) => {
     try {
-      await runInit(opts);
+      await runInit({
+        ...opts,
+        forwardedOptions: extractOptionsForShadcnInit(process.argv.slice(2), cmd),
+      });
     } catch (error) {
       logger.break();
       handleError(error);
@@ -218,6 +304,7 @@ export const init = new Command()
 export async function runInit(
   options: z.infer<typeof initOptionsSchema> & {
     skipPreflight?: boolean;
+    forwardedOptions?: string[];
   },
 ) {
   const designConfig = resolveDesignSystemConfig(options);
@@ -278,35 +365,43 @@ export async function runInit(
     return await getConfig(options.cwd);
   }
 
-  // const projectConfig = await getProjectConfig(options.cwd, projectInfo);
-
-  const shadcnBin = process.platform === "win32" ? "shadcn.cmd" : "shadcn";
-  const localShadcnPath = path.resolve(
-    options.cwd,
-    "node_modules",
-    ".bin",
-    shadcnBin,
-  );
-
   try {
     const env = {
       ...process.env,
       REGISTRY_URL: resolveRegistryUrl(),
     };
     const initUrl = buildInitUrl(designConfig, options.themeRef);
-    if (await fsExtra.pathExists(localShadcnPath)) {
-      await execa(localShadcnPath, ["init", initUrl], {
-        stdio: "inherit",
-        cwd: options.cwd,
-        env,
-      });
-    } else {
-      // Follow user's runner preference (npx, bunx, pnpm dlx)
-      await execa("npx", ["-y", "shadcn@latest", "init", initUrl], {
-        stdio: "inherit",
-        cwd: options.cwd,
-        env,
-      });
+    const reinstallComponents = options.reinstall
+      ? await getInstalledUiComponents(options.cwd)
+      : [];
+    await runShadcnCommand({
+      cwd: options.cwd,
+      args: [
+        "init",
+        initUrl,
+        ...reinstallComponents,
+        ...(options.forwardedOptions ?? []),
+      ],
+      env,
+    });
+
+    if (reinstallComponents.length > 0) {
+      const config = await getConfig(options.cwd);
+      const uiDir = config?.resolvedPaths.ui ?? "";
+      const activeStyle = config?.style ?? "bejamas-juno";
+
+      if (uiDir) {
+        await reorganizeComponents(
+          reinstallComponents,
+          uiDir,
+          resolveRegistryUrl(),
+          false,
+          activeStyle,
+          true,
+        );
+      }
+
+      await fixAstroImports(options.cwd, false);
     }
   } catch (err) {
     // shadcn already printed the detailed error to stdio, avoid double-reporting

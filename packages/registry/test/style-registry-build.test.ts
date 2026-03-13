@@ -1,9 +1,12 @@
 import { describe, expect, it } from "bun:test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { fonts } from "../src/catalog/fonts";
 import {
   buildBaseStyleCssObject,
+  buildStyleItem,
   buildStyleTokenMap,
+  buildFontItem,
   transformRegistrySource,
 } from "../scripts/build-web-style-registry";
 
@@ -31,6 +34,20 @@ describe("style registry build", () => {
     });
     expect(JSON.stringify(css)).not.toContain(".cn-card");
     expect(JSON.stringify(css)).not.toContain(".cn-button");
+  });
+
+  it("emits standalone font registry items for each style bundle", async () => {
+    const styleItem = await buildStyleItem({ id: "bejamas-juno", name: "juno", title: "Juno" });
+    const fontItem = buildFontItem(fonts.find((font) => font.name === "font-inter")!);
+
+    expect(styleItem.files).toEqual([]);
+    expect(styleItem.css).toEqual(buildBaseStyleCssObject());
+    expect(fontItem).toMatchObject({
+      $schema: "https://ui.shadcn.com/schema/registry-item.json",
+      name: "font-inter",
+      type: "registry:font",
+    });
+    expect(fontItem).toHaveProperty("font.import", "Inter");
   });
 
   it("expands style hooks in representative component sources", () => {

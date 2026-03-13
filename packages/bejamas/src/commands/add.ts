@@ -13,6 +13,7 @@ import {
   reorganizeComponents,
   fetchRegistryItem,
   getSubfolderFromPaths,
+  shouldReorganizeRegistryUiFiles,
 } from "@/src/utils/reorganize-components";
 
 interface ParsedOutput {
@@ -22,7 +23,10 @@ interface ParsedOutput {
 }
 
 // Derive only the user-provided flags for shadcn to avoid losing options
-function extractOptionsForShadcn(rawArgv: string[], cmd: Command): string[] {
+export function extractOptionsForShadcn(
+  rawArgv: string[],
+  cmd: Command,
+): string[] {
   // Prefer commander metadata when available so we only forward options that
   // were explicitly set (avoids defaults and keeps aliases consistent).
   if (typeof cmd.getOptionValueSource === "function") {
@@ -49,13 +53,28 @@ function extractOptionsForShadcn(rawArgv: string[], cmd: Command): string[] {
       }
     };
 
+    const addOptionalString = (key: string, flag: string) => {
+      if (getSource(key) !== "cli") return;
+      const value = opts[key];
+      if (value === true) {
+        forwarded.push(flag);
+        return;
+      }
+      if (typeof value === "string") {
+        forwarded.push(flag, value);
+      }
+    };
+
     addBoolean("yes", "--yes");
     addBoolean("overwrite", "--overwrite");
+    addBoolean("dryRun", "--dry-run");
     addString("cwd", "--cwd");
     addBoolean("all", "--all");
     addString("path", "--path");
     addBoolean("silent", "--silent");
     addBoolean("srcDir", "--src-dir", "--no-src-dir");
+    addOptionalString("diff", "--diff");
+    addOptionalString("view", "--view");
 
     // Preserve any explicit passthrough after "--" for shadcn.
     const addIndex = rawArgv.findIndex((arg) => arg === "add");
@@ -75,7 +94,14 @@ function extractOptionsForShadcn(rawArgv: string[], cmd: Command): string[] {
   if (addIndex === -1) return [];
   const rest = rawArgv.slice(addIndex + 1);
   const forwarded: string[] = [];
-  const optionsWithValues = new Set(["-c", "--cwd", "-p", "--path"]);
+  const optionsWithValues = new Set([
+    "-c",
+    "--cwd",
+    "-p",
+    "--path",
+    "--diff",
+    "--view",
+  ]);
   const filteredFlags = new Set(["-v", "--verbose"]);
 
   for (let i = 0; i < rest.length; i += 1) {
@@ -101,42 +127,59 @@ function extractOptionsForShadcn(rawArgv: string[], cmd: Command): string[] {
   return forwarded;
 }
 
-interface ComponentFileInfo {
-  subfolder: string;
-  files: string[]; // All filenames for this component
+export function hasInspectionFlags(forwardedOptions: string[]) {
+  return (
+    forwardedOptions.includes("--dry-run") ||
+    forwardedOptions.includes("--diff") ||
+    forwardedOptions.includes("--view")
+  );
+}
+
+export function formatSkippedFilesHeading(
+  count: number,
+  overwriteUsed: boolean,
+) {
+  const noun = `file${count === 1 ? "" : "s"}`;
+  if (overwriteUsed) {
+    return `Skipped ${count} ${noun}: (files might be identical)`;
+  }
+
+  return `Skipped ${count} ${noun}: (files might be identical, use --overwrite to overwrite)`;
 }
 
 interface SubfolderMapResult {
   // Maps unique filename -> subfolder/filename
   uniqueMap: Map<string, string>;
-  // Maps component subfolder -> all its files (for grouping)
-  componentInfo: Map<string, ComponentFileInfo>;
   // Set of shared filenames (like index.ts) that appear in multiple components
   sharedFilenames: Set<string>;
+  requiresReorganization: boolean;
 }
 
 /** Build maps for path rewriting, handling filename collisions */
 async function buildSubfolderMap(
   components: string[],
+  uiDir: string,
   registryUrl: string,
   style: string,
 ): Promise<SubfolderMapResult> {
   const filenameToSubfolders = new Map<string, string[]>();
-  const componentInfo = new Map<string, ComponentFileInfo>();
+  let requiresReorganization = false;
 
   // First pass: collect all filename -> subfolder mappings
   for (const componentName of components) {
     const registryItem = await fetchRegistryItem(componentName, registryUrl, style);
     if (!registryItem) continue;
 
+    if (shouldReorganizeRegistryUiFiles(registryItem.files, uiDir)) {
+      requiresReorganization = true;
+    }
+
     const subfolder = getSubfolderFromPaths(registryItem.files);
     if (!subfolder) continue;
 
-    const files: string[] = [];
     for (const file of registryItem.files) {
       if (file.type === "registry:ui") {
         const filename = path.basename(file.path);
-        files.push(filename);
 
         // Track which subfolders each filename appears in
         const subfolders = filenameToSubfolders.get(filename) || [];
@@ -144,8 +187,6 @@ async function buildSubfolderMap(
         filenameToSubfolders.set(filename, subfolders);
       }
     }
-
-    componentInfo.set(subfolder, { subfolder, files });
   }
 
   // Build the unique map (only filenames that appear once)
@@ -162,7 +203,7 @@ async function buildSubfolderMap(
     }
   });
 
-  return { uniqueMap, componentInfo, sharedFilenames };
+  return { uniqueMap, sharedFilenames, requiresReorganization };
 }
 
 /**
@@ -173,7 +214,7 @@ function rewritePaths(
   paths: string[],
   mapResult: SubfolderMapResult,
 ): string[] {
-  const { uniqueMap, componentInfo, sharedFilenames } = mapResult;
+  const { uniqueMap, sharedFilenames } = mapResult;
   let currentSubfolder: string | null = null;
 
   return paths.map((filePath) => {
@@ -333,7 +374,7 @@ async function addComponents(
   forwardedOptions: string[],
   isVerbose: boolean,
   isSilent: boolean,
-  subfolderMapResult: SubfolderMapResult,
+  inspectionMode: boolean,
 ): Promise<ParsedOutput> {
   const runner = await getPackageRunner(process.cwd());
   const env = {
@@ -403,7 +444,18 @@ async function addComponents(
       logger.info(`[bejamas-ui] Raw stderr: ${stderr}`);
     }
 
-    const parsed = parseShadcnOutput(stdout, stderr);
+    if (inspectionMode) {
+      if (stdout) {
+        process.stdout.write(stdout.endsWith("\n") ? stdout : `${stdout}\n`);
+      }
+      if (stderr) {
+        process.stderr.write(stderr.endsWith("\n") ? stderr : `${stderr}\n`);
+      }
+    }
+
+    const parsed = inspectionMode
+      ? { created: [], updated: [], skipped: [] }
+      : parseShadcnOutput(stdout, stderr);
 
     // Return parsed data - display is handled by caller after reorganization
     // This allows accurate reporting (shadcn says "created" but we may skip)
@@ -438,6 +490,9 @@ export const add = new Command()
   .option("-a, --all", "add all available components", false)
   .option("-p, --path <path>", "the path to add the component to.")
   .option("-s, --silent", "mute output.", false)
+  .option("--dry-run", "preview changes without writing files.", false)
+  .option("--diff [path]", "show diff for a file.")
+  .option("--view [path]", "show file contents.")
   .option(
     "--src-dir",
     "use the src directory when creating a new project.",
@@ -458,6 +513,9 @@ export const add = new Command()
       typeof cmd.optsWithGlobals === "function"
         ? cmd.optsWithGlobals()
         : (cmd.opts?.() ?? {});
+    const inspectionMode = hasInspectionFlags(forwardedOptions);
+    const overwriteUsed =
+      forwardedOptions.includes("--overwrite") || forwardedOptions.includes("-o");
     const cwd = opts.cwd || process.cwd();
 
     let componentsToAdd = packages || [];
@@ -538,11 +596,13 @@ export const add = new Command()
       }
 
       // Build subfolder map for this single component
-      const subfolderMapResult = await buildSubfolderMap(
-        [component],
-        registryUrl,
-        activeStyle,
-      );
+      const subfolderMapResult = inspectionMode
+        ? {
+            uniqueMap: new Map<string, string>(),
+            sharedFilenames: new Set<string>(),
+            requiresReorganization: false,
+          }
+        : await buildSubfolderMap([component], uiDir, registryUrl, activeStyle);
 
       // Run shadcn for just this component
       const parsed = await addComponents(
@@ -550,12 +610,13 @@ export const add = new Command()
         forwardedOptions,
         verbose,
         isSilent,
-        subfolderMapResult,
+        inspectionMode,
       );
 
-      // Immediately reorganize this component's files before the next one
+      // Keep the compatibility reorganization only for workspace targets where
+      // upstream shadcn still flattens nested registry paths.
       let skippedCount = 0;
-      if (uiDir) {
+      if (!inspectionMode && uiDir && subfolderMapResult.requiresReorganization) {
         const reorgResult = await reorganizeComponents(
           [component],
           uiDir,
@@ -567,7 +628,7 @@ export const add = new Command()
       }
 
       // Display accurate results (accounting for files we skipped after shadcn "created" them)
-      if (!isSilent) {
+      if (!isSilent && !inspectionMode) {
         const relativeUiDir = uiDir ? path.relative(cwd, uiDir) : "";
 
         // Files that were actually created (shadcn created minus our skipped)
@@ -611,9 +672,7 @@ export const add = new Command()
         // Files shadcn skipped (different from our reorganization skip)
         if (parsed.skipped.length > 0) {
           const skippedPaths = rewritePaths(parsed.skipped, subfolderMapResult);
-          logger.info(
-            `Skipped ${skippedPaths.length} file${skippedPaths.length > 1 ? "s" : ""}: (use --overwrite)`,
-          );
+          logger.info(formatSkippedFilesHeading(skippedPaths.length, overwriteUsed));
           for (const file of skippedPaths) {
             logger.log(`  ${highlighter.info("-")} ${file}`);
           }
@@ -632,5 +691,7 @@ export const add = new Command()
     }
 
     // Fix aliases inside Astro files until upstream adds .astro support.
-    await fixAstroImports(cwd, verbose);
+    if (!inspectionMode) {
+      await fixAstroImports(cwd, verbose);
+    }
   });

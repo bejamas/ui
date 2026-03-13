@@ -18,6 +18,10 @@ function buildBaseCss(css: RegistryCssObject): RegistryCssObject {
   };
 }
 
+export function buildRegistryBaseCss(): RegistryCssObject {
+  return buildBaseCss({});
+}
+
 export function buildUtilsRegistryItem() {
   return {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",

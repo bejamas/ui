@@ -8,7 +8,7 @@ import {
   ICON_LIBRARIES,
   buildRegistryTheme,
 } from "./design";
-import { buildRegistryStyleCss } from "./registry";
+import { buildRegistryBaseCss, buildRegistryStyleCss } from "./registry";
 
 export function buildStyleIndexItem(style: DesignSystemConfig["style"]): RegistryItem {
   const styleId = getStyleId(style);
@@ -61,7 +61,7 @@ export function buildRegistryBaseItem(config: DesignSystemConfig): RegistryItem 
     ],
     devDependencies: ["shadcn", "tw-animate-css"],
     registryDependencies,
-    css: buildRegistryStyleCss(config.style),
+    css: buildRegistryBaseCss(),
     cssVars: buildRegistryTheme(config).cssVars,
     ...(font
       ? {

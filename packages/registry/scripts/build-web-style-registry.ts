@@ -4,6 +4,7 @@ import postcss, { type AtRule, type Declaration, type Rule } from "postcss";
 import { fileURLToPath } from "node:url";
 import { getGlobalStyleCss } from "../src/style-source";
 import { STYLES, type Style } from "../src/catalog/styles";
+import { fonts } from "../src/catalog/fonts";
 
 type RegistryFile = {
   path: string;
@@ -421,7 +422,7 @@ async function readSourceFile(filepath: string) {
   return content;
 }
 
-async function buildStyleItem(style: Style) {
+export async function buildStyleItem(style: Style) {
   const template = await readTemplateItem("index");
 
   return {
@@ -432,6 +433,13 @@ async function buildStyleItem(style: Style) {
     files: [],
     cssVars: {},
     css: buildBaseStyleCssObject(),
+  } satisfies RegistryItem;
+}
+
+export function buildFontItem(font: (typeof fonts)[number]) {
+  return {
+    ...font,
+    $schema: schemaUrl,
   } satisfies RegistryItem;
 }
 
@@ -474,7 +482,12 @@ async function removeStaleJsonFiles(styleDir: string, nextFiles: Set<string>) {
 async function writeStyleRegistry(style: Style, itemNames: string[]) {
   const tokenMap = buildStyleTokenMap(style.name);
   const styleDir = path.resolve(stylesRoot, style.id);
-  const nextFiles = new Set<string>(["index.json", ...itemNames.map((name) => `${name}.json`)]);
+  const fontNames = fonts.map((font) => font.name);
+  const nextFiles = new Set<string>([
+    "index.json",
+    ...itemNames.map((name) => `${name}.json`),
+    ...fontNames.map((name) => `${name}.json`),
+  ]);
 
   await ensureDir(styleDir);
   await removeStaleJsonFiles(styleDir, nextFiles);
@@ -491,6 +504,14 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
     await fs.writeFile(
       path.resolve(styleDir, `${name}.json`),
       `${JSON.stringify(item, null, 2)}\n`,
+      "utf8",
+    );
+  }
+
+  for (const font of fonts) {
+    await fs.writeFile(
+      path.resolve(styleDir, `${font.name}.json`),
+      `${JSON.stringify(buildFontItem(font), null, 2)}\n`,
       "utf8",
     );
   }

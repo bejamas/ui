@@ -47,6 +47,9 @@ test("shows help with --help", async () => {
   expect(stderr).toBe("");
   expect(stdout).toContain("bejamas");
   expect(stdout).toMatch(/Usage|Commands/i);
+  expect(stdout).toContain("info");
+  expect(stdout).toContain("docs");
+  expect(stdout).toContain("docs:build");
 });
 
 test("shows RTL language support in init help", async () => {
@@ -55,6 +58,44 @@ test("shows RTL language support in init help", async () => {
   expect(exitCode).toBe(0);
   expect(stderr).toBe("");
   expect(stdout).toContain("--lang");
+  expect(stdout).toContain("--reinstall");
+});
+
+test("shows inspection flags in add help", async () => {
+  const { stdout, stderr, exitCode } = await runCli(["add", "--help"]);
+
+  expect(exitCode).toBe(0);
+  expect(stderr).toBe("");
+  expect(stdout).toContain("--dry-run");
+  expect(stdout).toContain("--diff");
+  expect(stdout).toContain("--view");
+});
+
+test("shows wrapper flags in docs help", async () => {
+  const { stdout, stderr, exitCode } = await runCli(["docs", "--help"]);
+
+  expect(exitCode).toBe(0);
+  expect(stderr).toBe("");
+  expect(stdout).toContain("--base");
+  expect(stdout).toContain("--json");
+});
+
+test("shows wrapper flags in info help", async () => {
+  const { stdout, stderr, exitCode } = await runCli(["info", "--help"]);
+
+  expect(exitCode).toBe(0);
+  expect(stderr).toBe("");
+  expect(stdout).toContain("--cwd");
+  expect(stdout).toContain("--json");
+});
+
+test("keeps docs generation on docs:build", async () => {
+  const { stdout, stderr, exitCode } = await runCli(["docs:build", "--help"]);
+
+  expect(exitCode).toBe(0);
+  expect(stderr).toBe("");
+  expect(stdout).toContain("generate docs from @bejamas/ui components");
+  expect(stdout).not.toContain("proxy to shadcn docs");
 });
 
 test("exposes the local smoke runner script", async () => {

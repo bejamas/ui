@@ -1,6 +1,6 @@
 ---
 title: CLI
-description: Astro-first wrapper around shadcn for init/add and docs generation.
+description: Astro-first wrapper around shadcn for init/add, project info, docs lookup, and docs generation.
 sidebar:
   order: 7
 ---
@@ -9,6 +9,8 @@ The `bejamas` CLI is a thin Astro-first wrapper over shadcn. Use it for:
 
 - **`init`**: scaffold Astro (single app or monorepo).
 - **`add`**: install from registries with short names.
+- **`info`**: show the current project and config summary from shadcn.
+- **`docs`**: fetch docs, examples, and API links for components.
 - **`docs:build`**: generate MDX docs from `.astro` comments.
 - **`docs:check`**: validate documentation completeness for components.
 
@@ -28,10 +30,13 @@ npx bejamas@latest --help
 
 Create an Astro app or monorepo, wire Tailwind v4, tokens, base styles, and components.json.
 
+You can also switch an existing app to a different preset by rerunning `init --preset`. Use `--reinstall` to reconfigure already installed UI components to the new preset.
+
 #### Usage
 
 ```bash
 npx bejamas init [--mode astro|monorepo|monorepo+docs] [--dir .] [--pm pnpm|npm|yarn] [-y]
+npx bejamas init --preset <encoded-preset> --reinstall --yes
 ```
 
 Sets up Astro project(s) + optional docs workspace (monorepo+docs)
@@ -60,9 +65,33 @@ Namespaced form `@namespace/name` targets a specific registry.
 
 --dry-run shows what would be written.
 
+### info
+
+Proxy to `shadcn info` so you can inspect the current project, installed components, and config.
+
+#### Usage
+
+```bash
+npx bejamas info
+npx bejamas info --json
+```
+
+### docs <component>
+
+Proxy to `shadcn docs` for component docs, examples, and API links.
+
+#### Usage
+
+```bash
+npx bejamas docs combobox
+npx bejamas docs combobox --json
+```
+
 ### docs:build
 
 Generate MDX docs from comments in .astro files (props/slots/usage).
+
+Use `docs:build` explicitly for generation. The plain `docs` command is reserved for the shadcn docs lookup wrapper.
 
 **Usage**
 

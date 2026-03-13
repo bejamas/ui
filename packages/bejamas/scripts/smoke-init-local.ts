@@ -94,6 +94,21 @@ async function run(command: string, args: string[], cwd: string, env: NodeJS.Pro
   });
 }
 
+async function runCapture(
+  command: string,
+  args: string[],
+  cwd: string,
+  env: NodeJS.ProcessEnv,
+) {
+  return execa(command, args, {
+    cwd,
+    env,
+    stdout: "pipe",
+    stderr: "pipe",
+    reject: false,
+  });
+}
+
 async function assertInitEndpoint(baseUrl: string, preset: string, template: string) {
   const url = `${baseUrl}/init?preset=${encodeURIComponent(preset)}&template=${encodeURIComponent(template)}`;
   const response = await fetch(url);
@@ -188,7 +203,8 @@ async function assertProjectState(
   const fontDependency = getFontPackageName(expectedConfig.font);
 
   assert(
-    packageJson.dependencies?.[fontDependency] === "latest",
+    typeof packageJson.dependencies?.[fontDependency] === "string" &&
+      packageJson.dependencies[fontDependency].length > 0,
     `Expected ${packageJsonPath} to include ${fontDependency} in dependencies`,
   );
 }
@@ -218,6 +234,33 @@ async function assertFilesMissing(projectRoot: string, relativePaths: string[]) 
       `Expected ${absolutePath} to be absent before the smoke step`,
     );
   }
+}
+
+async function readProjectFile(projectRoot: string, relativePath: string) {
+  return fs.readFile(path.resolve(projectRoot, relativePath), "utf8");
+}
+
+async function assertShadcnDryRunFlattensMonorepoTabs(
+  monorepoWebRoot: string,
+  env: NodeJS.ProcessEnv,
+) {
+  const result = await runCapture(
+    "bunx",
+    ["shadcn@latest", "add", "tabs", "--yes", "--dry-run"],
+    monorepoWebRoot,
+    env,
+  );
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+
+  assert(result.exitCode === 0, `Expected shadcn dry-run to succeed, received ${result.exitCode}`);
+  assert(
+    output.includes("packages/ui/src/components/Tabs.astro"),
+    "Expected upstream shadcn dry-run to flatten the monorepo tabs path",
+  );
+  assert(
+    !output.includes("packages/ui/src/components/tabs/Tabs.astro"),
+    "Expected upstream shadcn dry-run to miss the nested tabs subfolder",
+  );
 }
 
 async function main() {
@@ -263,6 +306,34 @@ async function main() {
   };
   const astroPreset = encodePreset(astroConfig);
   const monorepoPreset = encodePreset(monorepoConfig);
+  const astroSwitchConfig: DesignSystemConfig = {
+    style: "juno",
+    baseColor: "neutral",
+    theme: "indigo",
+    iconLibrary: "lucide",
+    font: "inter",
+    radius: "default",
+    menuColor: "default",
+    menuAccent: "subtle",
+    template: "astro",
+    rtl: false,
+    rtlLanguage: "ar",
+  };
+  const monorepoSwitchConfig: DesignSystemConfig = {
+    style: "nova",
+    baseColor: "stone",
+    theme: "blue",
+    iconLibrary: "tabler",
+    font: "geist-mono",
+    radius: "default",
+    menuColor: "default",
+    menuAccent: "subtle",
+    template: "astro-monorepo",
+    rtl: false,
+    rtlLanguage: "ar",
+  };
+  const astroSwitchPreset = encodePreset(astroSwitchConfig);
+  const monorepoSwitchPreset = encodePreset(monorepoSwitchConfig);
 
   await fs.mkdir(astroCaseRoot, { recursive: true });
   await fs.mkdir(monorepoCaseRoot, { recursive: true });
@@ -331,6 +402,10 @@ async function main() {
   await assertFilesMissing(monorepoProjectRoot, [
     "packages/ui/src/components/tabs/Tabs.astro",
   ]);
+  await assertShadcnDryRunFlattensMonorepoTabs(
+    path.resolve(monorepoProjectRoot, "apps/web"),
+    childEnv,
+  );
 
   console.log("[smoke] Adding tabs to astro project");
   await run(
@@ -368,13 +443,95 @@ async function main() {
   );
   await assertFileDoesNotContain(
     astroProjectRoot,
-    "src/ui/tabs/Tabs.astro",
+    "src/ui/tabs/TabsList.astro",
     "cn-tabs-",
   );
   await assertFileDoesNotContain(
     monorepoProjectRoot,
-    "packages/ui/src/components/tabs/Tabs.astro",
+    "packages/ui/src/components/tabs/TabsList.astro",
     "cn-tabs-",
+  );
+
+  const astroTabsBeforeSwitch = await readProjectFile(
+    astroProjectRoot,
+    "src/ui/tabs/TabsList.astro",
+  );
+  const monorepoTabsBeforeSwitch = await readProjectFile(
+    monorepoProjectRoot,
+    "packages/ui/src/components/tabs/TabsList.astro",
+  );
+
+  console.log("[smoke] Switching astro project to a new preset");
+  await run(
+    "bun",
+    [
+      cliEntry,
+      "init",
+      "--force",
+      "--yes",
+      "--reinstall",
+      "--preset",
+      astroSwitchPreset,
+      "--cwd",
+      astroProjectRoot,
+    ],
+    packageRoot,
+    childEnv,
+  );
+
+  console.log("[smoke] Switching astro-monorepo project to a new preset");
+  await run(
+    "bun",
+    [
+      cliEntry,
+      "init",
+      "--force",
+      "--yes",
+      "--reinstall",
+      "--preset",
+      monorepoSwitchPreset,
+      "--cwd",
+      path.resolve(monorepoProjectRoot, "apps/web"),
+    ],
+    packageRoot,
+    childEnv,
+  );
+
+  await assertProjectState(
+    astroProjectRoot,
+    path.resolve(astroProjectRoot, "components.json"),
+    astroSwitchConfig,
+  );
+  await assertProjectState(
+    monorepoProjectRoot,
+    path.resolve(monorepoProjectRoot, "apps/web/components.json"),
+    monorepoSwitchConfig,
+  );
+
+  const astroTabsAfterSwitch = await readProjectFile(
+    astroProjectRoot,
+    "src/ui/tabs/TabsList.astro",
+  );
+  const monorepoTabsAfterSwitch = await readProjectFile(
+    monorepoProjectRoot,
+    "packages/ui/src/components/tabs/TabsList.astro",
+  );
+
+  await assertFilesMissing(monorepoProjectRoot, [
+    "packages/ui/src/components/Tabs.astro",
+    "packages/ui/src/components/TabsContent.astro",
+    "packages/ui/src/components/TabsList.astro",
+    "packages/ui/src/components/TabsTrigger.astro",
+    "packages/ui/src/components/index.ts",
+  ]);
+
+  assert(
+    astroTabsAfterSwitch !== astroTabsBeforeSwitch,
+    "Expected astro tabs component source to change after preset reinstall",
+  );
+  assert(
+    monorepoTabsAfterSwitch !== monorepoTabsBeforeSwitch,
+    "Expected monorepo tabs component source to change after preset reinstall",
   );
 
   console.log("[smoke] Complete");
