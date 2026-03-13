@@ -21,7 +21,23 @@ export const TEMPLATES = {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const LOCAL_TEMPLATES_DIR = path.resolve(__dirname, "../../../../templates");
+
+function resolveLocalTemplatesDir() {
+  for (const relativePath of [
+    "../../../../templates",
+    "../../../templates",
+    "../../templates",
+  ]) {
+    const candidate = path.resolve(__dirname, relativePath);
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return path.resolve(__dirname, "../../../../templates");
+}
+
+const LOCAL_TEMPLATES_DIR = resolveLocalTemplatesDir();
 
 export async function createProject(
   options: Pick<

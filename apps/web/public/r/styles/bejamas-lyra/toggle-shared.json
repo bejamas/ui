@@ -6,10 +6,13 @@
     {
       "path": "lib/toggle-shared.ts",
       "type": "registry:lib",
-      "content": "import { cva, type VariantProps } from \"class-variance-authority\";\n\nexport const TOGGLE_VARIANTS = [\"default\", \"outline\"] as const;\nexport const TOGGLE_SIZES = [\"default\", \"sm\", \"lg\"] as const;\n\nexport type ToggleVariant = (typeof TOGGLE_VARIANTS)[number];\nexport type ToggleSize = (typeof TOGGLE_SIZES)[number];\n\nexport const toggleVariants = cva(\n  \"cn-toggle group/toggle inline-flex items-center justify-center whitespace-nowrap outline-none hover:bg-muted focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0\",\n  {\n    variants: {\n      variant: {\n        default: \"cn-toggle-variant-default\",\n        outline: \"cn-toggle-variant-outline\",\n      },\n      size: {\n        default: \"cn-toggle-size-default\",\n        sm: \"cn-toggle-size-sm\",\n        lg: \"cn-toggle-size-lg\",\n      },\n    },\n  },\n);\n\nexport type ToggleVariantProps = VariantProps<typeof toggleVariants>;\n"
+      "content": "import { cva, type VariantProps } from \"class-variance-authority\";\n\nexport const TOGGLE_VARIANTS = [\"default\", \"outline\"] as const;\nexport const TOGGLE_SIZES = [\"default\", \"sm\", \"lg\"] as const;\n\nexport type ToggleVariant = (typeof TOGGLE_VARIANTS)[number];\nexport type ToggleSize = (typeof TOGGLE_SIZES)[number];\n\nexport const toggleVariants = cva(\n  \"hover:text-foreground aria-pressed:bg-muted focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[state=on]:bg-muted gap-1 rounded-none text-xs font-medium transition-all [&_svg:not([class*='size-'])]:size-4 group/toggle inline-flex items-center justify-center whitespace-nowrap outline-none hover:bg-muted focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0\",\n  {\n    variants: {\n      variant: {\n        default: \"bg-transparent\",\n        outline: \"border-input hover:bg-muted border bg-transparent\",\n      },\n      size: {\n        default: \"h-8 min-w-8 px-2\",\n        sm: \"h-7 min-w-7 rounded-none px-1.5\",\n        lg: \"h-9 min-w-9 px-2.5\",\n      },\n    },\n  },\n);\n\nexport type ToggleVariantProps = VariantProps<typeof toggleVariants>;\n"
     }
   ],
   "dependencies": [
     "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "index"
   ]
 }

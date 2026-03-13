@@ -2,11 +2,11 @@ import path from "node:path";
 import fs from "fs-extra";
 import fg from "fast-glob";
 import {
-  buildThemeCss,
+  buildRegistryTheme,
   getDocumentDirection,
   getDocumentLanguage,
   getFontPackageName,
-  getGlobalStyleCss,
+  getFontValue,
   getStyleId,
   type DesignSystemConfig,
 } from "@bejamas/create-config/server";
@@ -14,18 +14,181 @@ import {
 const CREATE_BLOCK_START = "/* bejamas:create:start */";
 const CREATE_BLOCK_END = "/* bejamas:create:end */";
 
-function replaceCreateBlock(source: string, nextBlock: string) {
-  const block = `${CREATE_BLOCK_START}\n${nextBlock.trim()}\n${CREATE_BLOCK_END}`;
+type ThemeVars = ReturnType<typeof buildRegistryTheme>["cssVars"];
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function compactCss(source: string) {
+  return source.replace(/\n{3,}/g, "\n\n").trimEnd() + "\n";
+}
+
+function stripLegacyCreateBlock(source: string) {
+  const fullBlockPattern = new RegExp(
+    `\\n*${escapeRegExp(CREATE_BLOCK_START)}[\\s\\S]*?${escapeRegExp(CREATE_BLOCK_END)}\\n*`,
+    "m",
+  );
+  const danglingBlockPattern = new RegExp(
+    `\\n*${escapeRegExp(CREATE_BLOCK_START)}[\\s\\S]*$`,
+    "m",
+  );
+
+  return compactCss(
+    source.replace(fullBlockPattern, "\n\n").replace(danglingBlockPattern, "\n\n"),
+  );
+}
+
+function buildCssVarBlock(selector: string, vars: Record<string, string>) {
+  return [
+    `${selector} {`,
+    ...Object.entries(vars).map(([key, value]) => `  --${key}: ${value};`),
+    "}",
+  ].join("\n");
+}
+
+function replaceTopLevelBlock(source: string, selector: string, nextBlock: string) {
   const pattern = new RegExp(
-    `${CREATE_BLOCK_START}[\\s\\S]*?${CREATE_BLOCK_END}`,
+    `^${escapeRegExp(selector)}\\s*\\{[\\s\\S]*?^\\}`,
     "m",
   );
 
   if (pattern.test(source)) {
-    return source.replace(pattern, block);
+    return source.replace(pattern, nextBlock);
   }
 
-  return `${source.trimEnd()}\n\n${block}\n`;
+  const layerIndex = source.indexOf("@layer base");
+  if (layerIndex !== -1) {
+    return `${source.slice(0, layerIndex).trimEnd()}\n\n${nextBlock}\n\n${source
+      .slice(layerIndex)
+      .trimStart()}`;
+  }
+
+  return `${source.trimEnd()}\n\n${nextBlock}\n`;
+}
+
+function upsertImports(source: string, imports: string[]) {
+  const lines = source.split("\n");
+  const cleanedLines = lines.filter((line) => {
+    const trimmed = line.trim();
+    if (trimmed === '@import "shadcn/tailwind.css";') {
+      return false;
+    }
+
+    return !trimmed.startsWith('@import "@fontsource-variable/');
+  });
+
+  let insertAt = -1;
+  for (let index = 0; index < cleanedLines.length; index += 1) {
+    if (cleanedLines[index].trim().startsWith("@import ")) {
+      insertAt = index;
+      continue;
+    }
+
+    if (insertAt !== -1 && cleanedLines[index].trim() !== "") {
+      break;
+    }
+  }
+
+  const uniqueImports = imports.filter(
+    (line, index) => imports.indexOf(line) === index,
+  );
+
+  if (insertAt === -1) {
+    return compactCss([...uniqueImports, "", ...cleanedLines].join("\n"));
+  }
+
+  cleanedLines.splice(insertAt + 1, 0, ...uniqueImports);
+  return compactCss(cleanedLines.join("\n"));
+}
+
+function upsertThemeInlineFont(
+  source: string,
+  fontVariable: string,
+  fontFamily: string,
+) {
+  const fontDeclaration = `  ${fontVariable}: ${fontFamily};`;
+  const pattern = /@theme inline\s*\{[\s\S]*?\n\}/m;
+
+  if (!pattern.test(source)) {
+    const block = `@theme inline {\n${fontDeclaration}\n}`;
+    const customVariantIndex = source.indexOf("@custom-variant");
+
+    if (customVariantIndex !== -1) {
+      const nextLineIndex = source.indexOf("\n", customVariantIndex);
+      return `${source.slice(0, nextLineIndex + 1).trimEnd()}\n\n${block}\n\n${source
+        .slice(nextLineIndex + 1)
+        .trimStart()}`;
+    }
+
+    return `${block}\n\n${source.trimStart()}`;
+  }
+
+  return source.replace(pattern, (block) => {
+    const withoutManagedFonts = block
+      .replace(/\n\s*--font-(sans|serif|mono):[^\n]+/g, "")
+      .replace(/@theme inline\s*\{\n?/, "@theme inline {\n");
+
+    return withoutManagedFonts.replace(
+      "@theme inline {\n",
+      `@theme inline {\n${fontDeclaration}\n`,
+    );
+  });
+}
+
+function upsertBaseLayerHtmlFont(source: string, fontClass: string) {
+  const pattern = /@layer base\s*\{[\s\S]*?\n\}/m;
+
+  if (!pattern.test(source)) {
+    return `${source.trimEnd()}\n\n@layer base {\n  html {\n    @apply ${fontClass};\n  }\n}\n`;
+  }
+
+  return source.replace(pattern, (block) => {
+    const htmlRulePattern = /\n\s*html\s*\{[\s\S]*?\n\s*\}/m;
+    const cleanedBlock = block.replace(htmlRulePattern, "");
+    return cleanedBlock.replace(
+      /\n\}$/,
+      `\n  html {\n    @apply ${fontClass};\n  }\n}`,
+    );
+  });
+}
+
+export function transformDesignSystemCss(
+  source: string,
+  config: DesignSystemConfig,
+  themeVars?: ThemeVars,
+) {
+  const effectiveThemeVars = themeVars ?? buildRegistryTheme(config).cssVars;
+  const rootVars = {
+    ...Object.fromEntries(
+      Object.entries(effectiveThemeVars.theme ?? {}).filter(
+        ([key]) => key !== "bejamas-font-family",
+      ),
+    ),
+    ...(effectiveThemeVars.light ?? {}),
+  };
+  const darkVars = {
+    ...(effectiveThemeVars.dark ?? {}),
+  };
+  const font = getFontValue(config.font);
+  let next = stripLegacyCreateBlock(source);
+
+  next = upsertImports(next, [
+    '@import "shadcn/tailwind.css";',
+    `@import "${getFontPackageName(config.font)}";`,
+  ]);
+  next = replaceTopLevelBlock(next, ":root", buildCssVarBlock(":root", rootVars));
+  next = replaceTopLevelBlock(next, ".dark", buildCssVarBlock(".dark", darkVars));
+
+  if (font) {
+    next = upsertThemeInlineFont(next, font.font.variable, font.font.family);
+    next = upsertBaseLayerHtmlFont(
+      next,
+      font.font.variable.replace("--", ""),
+    );
+  }
+
+  return compactCss(next);
 }
 
 async function patchComponentsJson(
@@ -48,19 +211,13 @@ async function patchComponentsJson(
   await fs.writeJson(filepath, next, { spaces: 2 });
 }
 
-async function patchCssFile(filepath: string, config: DesignSystemConfig) {
-  return patchCssFileWithTheme(filepath, config);
-}
-
 async function patchCssFileWithTheme(
   filepath: string,
   config: DesignSystemConfig,
-  themeCss = buildThemeCss(config),
+  themeVars?: ThemeVars,
 ) {
   const current = await fs.readFile(filepath, "utf8");
-  const fontImport = `@import "${getFontPackageName(config.font)}";`;
-  const nextBlock = `${fontImport}\n\n${themeCss}\n\n${getGlobalStyleCss(config.style)}`;
-  const next = replaceCreateBlock(current, nextBlock);
+  const next = transformDesignSystemCss(current, config, themeVars);
   await fs.writeFile(filepath, next, "utf8");
 }
 
@@ -138,7 +295,7 @@ export async function applyDesignSystemToProject(
   projectPath: string,
   config: DesignSystemConfig,
   options: {
-    themeCss?: string;
+    themeVars?: ThemeVars;
   } = {},
 ) {
   const componentJsonFiles = await fg("**/components.json", {
@@ -178,7 +335,7 @@ export async function applyDesignSystemToProject(
 
   await Promise.all(
     Array.from(cssFiles).map((filepath) =>
-      patchCssFileWithTheme(filepath, config, options.themeCss),
+      patchCssFileWithTheme(filepath, config, options.themeVars),
     ),
   );
   await Promise.all(

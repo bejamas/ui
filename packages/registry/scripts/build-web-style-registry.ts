@@ -1,100 +1,363 @@
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  readdirSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
+import fs from "node:fs/promises";
 import path from "node:path";
-import postcss, {
-  type AtRule,
-  type ChildNode,
-  type Declaration,
-  type Rule,
-} from "postcss";
+import postcss, { type AtRule, type Declaration, type Rule } from "postcss";
 import { fileURLToPath } from "node:url";
-import { STYLES } from "../src/catalog/styles";
 import { getGlobalStyleCss } from "../src/style-source";
-
-type RegistryCssObject = {
-  [key: string]: string | RegistryCssObject;
-};
+import { STYLES, type Style } from "../src/catalog/styles";
 
 type RegistryFile = {
   path: string;
-  type: "registry:ui" | "registry:lib";
-  content: string;
+  type: string;
+  content?: string;
+  target?: string;
 };
 
 type RegistryItem = {
-  $schema: string;
+  $schema?: string;
   name: string;
   type: string;
-  files: RegistryFile[];
+  files?: RegistryFile[];
   dependencies?: string[];
   devDependencies?: string[];
   registryDependencies?: string[];
-  css?: RegistryCssObject;
+  css?: Record<string, unknown>;
   cssVars?: Record<string, unknown>;
   meta?: Record<string, unknown>;
 };
 
+type TokenMap = Map<string, string[]>;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const sourceRoot = path.resolve(__dirname, "../src");
-const uiRoot = path.join(sourceRoot, "ui");
-const libRoot = path.join(sourceRoot, "lib");
-const outputRoot = path.resolve(__dirname, "../../../apps/web/public/r/styles");
+const repoRoot = path.resolve(__dirname, "..", "..", "..");
+const webRoot = path.resolve(repoRoot, "apps/web");
+const stylesRoot = path.resolve(webRoot, "public/r/styles");
+const templateStyleDir = path.resolve(stylesRoot, STYLES[0].id);
+const registrySourceRoot = path.resolve(__dirname, "..", "src");
 const schemaUrl = "https://ui.shadcn.com/schema/registry-item.json";
+const preservedTokens = new Set(["cn-menu-target", "cn-menu-translucent"]);
+const templateCache = new Map<string, RegistryItem>();
+const fileContentCache = new Map<string, string>();
 
-function nodeToObject(
-  node: ChildNode,
-): [string, string | RegistryCssObject] | null {
-  if (node.type === "rule") {
-    const rule = node as Rule;
-    const value: RegistryCssObject = {};
+function splitSelectors(selector: string) {
+  const parts: string[] = [];
+  let current = "";
+  let bracketDepth = 0;
+  let parenDepth = 0;
 
-    rule.nodes?.forEach((child) => {
-      const entry = nodeToObject(child);
-      if (entry) {
-        value[entry[0]] = entry[1];
+  for (const char of selector) {
+    if (char === "[" ) bracketDepth += 1;
+    if (char === "]" ) bracketDepth = Math.max(0, bracketDepth - 1);
+    if (char === "(" ) parenDepth += 1;
+    if (char === ")" ) parenDepth = Math.max(0, parenDepth - 1);
+
+    if (char === "," && bracketDepth === 0 && parenDepth === 0) {
+      if (current.trim()) {
+        parts.push(current.trim());
       }
-    });
-
-    return [rule.selector, value];
-  }
-
-  if (node.type === "atrule") {
-    const atRule = node as AtRule;
-    const key = `@${atRule.name}${atRule.params ? ` ${atRule.params}` : ""}`;
-
-    if (!atRule.nodes?.length) {
-      return [key, {}];
+      current = "";
+      continue;
     }
 
-    const value: RegistryCssObject = {};
-    atRule.nodes.forEach((child) => {
-      const entry = nodeToObject(child);
-      if (entry) {
-        value[entry[0]] = entry[1];
-      }
-    });
-
-    return [key, value];
+    current += char;
   }
 
-  if (node.type === "decl") {
-    const declaration = node as Declaration;
-    return [declaration.prop, declaration.value];
+  if (current.trim()) {
+    parts.push(current.trim());
   }
 
-  return null;
+  return parts;
 }
 
-function buildRegistryStyleCss(style: (typeof STYLES)[number]["name"]) {
-  const root = postcss.parse(getGlobalStyleCss(style));
-  const result: RegistryCssObject = {
+export function splitUtilityTokens(value: string) {
+  const tokens: string[] = [];
+  let current = "";
+  let bracketDepth = 0;
+  let parenDepth = 0;
+  let braceDepth = 0;
+  let quote: "'" | '"' | "" = "";
+
+  for (const char of value.trim()) {
+    if (quote) {
+      current += char;
+      if (char === quote) {
+        quote = "";
+      }
+      continue;
+    }
+
+    if (char === "'" || char === '"') {
+      quote = char;
+      current += char;
+      continue;
+    }
+
+    if (char === "[") bracketDepth += 1;
+    if (char === "]") bracketDepth = Math.max(0, bracketDepth - 1);
+    if (char === "(") parenDepth += 1;
+    if (char === ")") parenDepth = Math.max(0, parenDepth - 1);
+    if (char === "{") braceDepth += 1;
+    if (char === "}") braceDepth = Math.max(0, braceDepth - 1);
+
+    if (
+      /\s/.test(char) &&
+      bracketDepth === 0 &&
+      parenDepth === 0 &&
+      braceDepth === 0
+    ) {
+      if (current) {
+        tokens.push(current);
+        current = "";
+      }
+      continue;
+    }
+
+    current += char;
+  }
+
+  if (current) {
+    tokens.push(current);
+  }
+
+  return tokens;
+}
+
+function sanitizeArbitraryValue(value: string) {
+  return value
+    .trim()
+    .replace(/\s*,\s*/g, ",")
+    .replace(/\s+/g, "_");
+}
+
+function declarationToUtility(declaration: Declaration) {
+  return `[${declaration.prop}:${sanitizeArbitraryValue(declaration.value)}]`;
+}
+
+function applyPrefixes(prefixes: string[], tokens: string[]) {
+  if (!prefixes.length) {
+    return tokens;
+  }
+
+  return tokens.map((token) => `${prefixes.join("")}${token}`);
+}
+
+function attrToPrefix(attributeSource: string) {
+  const attribute = attributeSource.trim();
+  const equalsIndex = attribute.indexOf("=");
+
+  if (equalsIndex === -1) {
+    if (attribute.startsWith("data-")) {
+      return `${attribute}:`;
+    }
+    return `[${attribute}]:`;
+  }
+
+  const rawName = attribute.slice(0, equalsIndex).trim();
+  const rawValue = attribute
+    .slice(equalsIndex + 1)
+    .trim()
+    .replace(/^['"]|['"]$/g, "");
+
+  if (rawName.startsWith("data-")) {
+    return `data-[${rawName.slice(5)}=${rawValue}]:`;
+  }
+
+  return `[${rawName}=${rawValue}]:`;
+}
+
+function parseClassSelector(selector: string) {
+  const match = selector.match(/^\.([A-Za-z0-9_-]+)(.*)$/);
+
+  if (!match) {
+    return null;
+  }
+
+  const token = match[1];
+  const rest = match[2].trim();
+
+  if (!rest) {
+    return { token, prefixes: [] as string[] };
+  }
+
+  const prefixes: string[] = [];
+  const attrs = rest.match(/\[[^\]]+\]/g);
+
+  if (!attrs || attrs.join("") !== rest) {
+    return null;
+  }
+
+  for (const attr of attrs) {
+    prefixes.push(attrToPrefix(attr.slice(1, -1)));
+  }
+
+  return { token, prefixes };
+}
+
+function parseNestedPrefixes(selector: string) {
+  const trimmed = selector.trim();
+
+  if (trimmed === "&:hover") return ["hover:"];
+  if (trimmed === "&:focus") return ["focus:"];
+  if (trimmed === "&:focus-visible") return ["focus-visible:"];
+  if (trimmed === "&:active") return ["active:"];
+  if (trimmed === "&:disabled") return ["disabled:"];
+
+  if (trimmed.startsWith("&[")) {
+    const attrs = trimmed.slice(1).match(/\[[^\]]+\]/g);
+    if (attrs && attrs.join("") === trimmed.slice(1)) {
+      return attrs.map((attr) => attrToPrefix(attr.slice(1, -1)));
+    }
+  }
+
+  return [];
+}
+
+function pushUnique(target: string[], values: string[]) {
+  for (const value of values) {
+    if (!value || target.includes(value)) {
+      continue;
+    }
+    target.push(value);
+  }
+}
+
+function addUtilities(tokenMap: TokenMap, token: string, utilities: string[]) {
+  const existing = tokenMap.get(token) ?? [];
+  pushUnique(existing, utilities);
+  tokenMap.set(token, existing);
+}
+
+function extractRuleUtilities(rule: Rule, prefixes: string[], tokenMap: TokenMap) {
+  const selectors = splitSelectors(rule.selector)
+    .map(parseClassSelector)
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+
+  if (!selectors.length) {
+    return;
+  }
+
+  const directUtilities: string[] = [];
+
+  for (const node of rule.nodes ?? []) {
+    if (node.type === "atrule" && node.name === "apply") {
+      directUtilities.push(...splitUtilityTokens((node as AtRule).params));
+      continue;
+    }
+
+    if (node.type === "decl") {
+      directUtilities.push(declarationToUtility(node as Declaration));
+      continue;
+    }
+
+    if (node.type === "rule") {
+      const nestedPrefixes = parseNestedPrefixes((node as Rule).selector);
+      if (!nestedPrefixes.length) {
+        continue;
+      }
+
+      const nestedUtilities: string[] = [];
+
+      for (const child of (node as Rule).nodes ?? []) {
+        if (child.type === "atrule" && child.name === "apply") {
+          nestedUtilities.push(...splitUtilityTokens((child as AtRule).params));
+          continue;
+        }
+
+        if (child.type === "decl") {
+          nestedUtilities.push(declarationToUtility(child as Declaration));
+        }
+      }
+
+      for (const selector of selectors) {
+        addUtilities(
+          tokenMap,
+          selector.token,
+          applyPrefixes(
+            [...prefixes, ...selector.prefixes, ...nestedPrefixes],
+            nestedUtilities,
+          ),
+        );
+      }
+    }
+  }
+
+  for (const selector of selectors) {
+    addUtilities(
+      tokenMap,
+      selector.token,
+      applyPrefixes([...prefixes, ...selector.prefixes], directUtilities),
+    );
+  }
+}
+
+export function buildStyleTokenMap(styleName: Style["name"]) {
+  const root = postcss.parse(getGlobalStyleCss(styleName));
+  const tokenMap: TokenMap = new Map();
+
+  for (const node of root.nodes) {
+    if (node.type !== "rule") {
+      continue;
+    }
+
+    extractRuleUtilities(node as Rule, [], tokenMap);
+  }
+
+  return tokenMap;
+}
+
+function expandCnTokens(value: string, tokenMap: TokenMap) {
+  if (!value.includes("cn-")) {
+    return value;
+  }
+
+  const tokens = splitUtilityTokens(value);
+  const expanded: string[] = [];
+  let changed = false;
+
+  for (const token of tokens) {
+    if (!token.startsWith("cn-") || preservedTokens.has(token)) {
+      pushUnique(expanded, [token]);
+      continue;
+    }
+
+    const utilities = tokenMap.get(token);
+    if (!utilities?.length) {
+      changed = true;
+      continue;
+    }
+
+    changed = true;
+    pushUnique(expanded, utilities);
+  }
+
+  return changed ? expanded.join(" ") : value;
+}
+
+export function transformRegistrySource(content: string, tokenMap: TokenMap) {
+  const normalizedImports = content.replace(
+    /@bejamas\/registry\/lib\//g,
+    "@/lib/",
+  );
+
+  return normalizedImports.replace(
+    /(["'`])((?:\\.|(?!\1)[\s\S])*?)\1/g,
+    (match, quote, value) => {
+      if (typeof value !== "string" || !value.includes("cn-")) {
+        return match;
+      }
+
+      const next = expandCnTokens(value, tokenMap);
+      if (next === value) {
+        return match;
+      }
+
+      return `${quote}${next}${quote}`;
+    },
+  );
+}
+
+export function buildBaseStyleCssObject() {
+  return {
     '@import "tw-animate-css"': {},
     '@import "shadcn/tailwind.css"': {},
     "@layer base": {
@@ -106,243 +369,164 @@ function buildRegistryStyleCss(style: (typeof STYLES)[number]["name"]) {
       },
     },
   };
-
-  root.nodes.forEach((node) => {
-    const entry = nodeToObject(node);
-    if (entry) {
-      result[entry[0]] = entry[1];
-    }
-  });
-
-  return result;
 }
 
-function writeJson(filepath: string, value: unknown) {
-  mkdirSync(path.dirname(filepath), { recursive: true });
-  writeFileSync(filepath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+async function readJson<T>(filepath: string) {
+  return JSON.parse(await fs.readFile(filepath, "utf8")) as T;
 }
 
-function getUiComponentNames() {
-  return readdirSync(uiRoot, { withFileTypes: true })
-    .filter(
-      (entry) =>
-        entry.isDirectory() &&
-        existsSync(path.join(uiRoot, entry.name, "index.ts")),
-    )
-    .map((entry) => entry.name)
-    .sort();
+async function ensureDir(filepath: string) {
+  await fs.mkdir(filepath, { recursive: true });
 }
 
-function getLibItemNames() {
-  return readdirSync(libRoot, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".ts"))
-    .map((entry) => entry.name.replace(/\.ts$/, ""))
-    .sort();
+async function listJsonFiles(filepath: string) {
+  const entries = await fs.readdir(filepath, { withFileTypes: true });
+
+  return entries
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
+    .map((entry) => entry.name);
 }
 
-function readImportSpecifiers(content: string) {
-  const matches = new Set<string>();
-  const importFromRe =
-    /(?:^|\n)\s*import(?:\s+type)?[\s\S]*?\s+from\s+["']([^"']+)["']/g;
-  const bareImportRe = /(?:^|\n)\s*import\s+["']([^"']+)["']/g;
-
-  for (const regex of [importFromRe, bareImportRe]) {
-    let match: RegExpExecArray | null = regex.exec(content);
-    while (match) {
-      matches.add(match[1]);
-      match = regex.exec(content);
-    }
+async function readTemplateItem(name: string) {
+  const cached = templateCache.get(name);
+  if (cached) {
+    return cached;
   }
 
-  return [...matches];
+  const item = await readJson<RegistryItem>(path.resolve(templateStyleDir, `${name}.json`));
+  templateCache.set(name, item);
+  return item;
 }
 
-function resolveImportFile(fromFile: string, specifier: string) {
-  const base = path.resolve(path.dirname(fromFile), specifier);
-  const candidates = [
-    base,
-    `${base}.ts`,
-    `${base}.astro`,
-    path.join(base, "index.ts"),
-    path.join(base, "index.astro"),
-  ];
-
-  return candidates.find((candidate) => existsSync(candidate)) ?? null;
-}
-
-function sortStrings(values: Iterable<string>) {
-  return [...new Set(values)].sort((left, right) => left.localeCompare(right));
-}
-
-function rewriteRegistryImports(content: string, styleId: string) {
-  return content
-    .replaceAll("@bejamas/registry/lib/", `@/registry/${styleId}/lib/`)
-    .replaceAll("@bejamas/registry/ui/", `@/registry/${styleId}/ui/`);
-}
-
-function buildUiItem(name: string, styleId: string): RegistryItem {
-  const componentRoot = path.join(uiRoot, name);
-  const files = readdirSync(componentRoot)
-    .filter((entry) => entry.endsWith(".astro") || entry.endsWith(".ts"))
-    .sort()
-    .map((entry) => path.join(componentRoot, entry));
-  const dependencies = new Set<string>();
-  const registryDependencies = new Set<string>(["index", "utils"]);
-
-  const registryFiles = files.map((filePath) => {
-    const content = readFileSync(filePath, "utf8");
-
-    for (const specifier of readImportSpecifiers(content)) {
-      if (specifier.startsWith("@bejamas/registry/lib/")) {
-        registryDependencies.add(specifier.split("/").at(-1)!);
-        continue;
-      }
-
-      if (specifier.startsWith("@bejamas/registry/ui/")) {
-        registryDependencies.add(specifier.split("/")[3]!);
-        continue;
-      }
-
-      if (specifier.startsWith(".")) {
-        const resolved = resolveImportFile(filePath, specifier);
-
-        if (!resolved) {
-          continue;
-        }
-
-        if (resolved.startsWith(uiRoot)) {
-          const dependencyName = path
-            .relative(uiRoot, resolved)
-            .split(path.sep)[0];
-          if (dependencyName && dependencyName !== name) {
-            registryDependencies.add(dependencyName);
-          }
-          continue;
-        }
-
-        if (resolved.startsWith(libRoot)) {
-          registryDependencies.add(
-            path.basename(resolved, path.extname(resolved)),
-          );
-          continue;
-        }
-
-        continue;
-      }
-
-      if (specifier.startsWith("astro")) {
-        continue;
-      }
-
-      dependencies.add(specifier);
-    }
-
-    return {
-      path: path
-        .join("ui", name, path.basename(filePath))
-        .replaceAll(path.sep, "/"),
-      type: "registry:ui" as const,
-      content: rewriteRegistryImports(content, styleId),
-    };
-  });
-
-  return {
-    $schema: schemaUrl,
-    name,
-    type: "registry:ui",
-    files: registryFiles,
-    dependencies: sortStrings(dependencies),
-    registryDependencies: sortStrings(registryDependencies),
-  };
-}
-
-function buildLibItem(name: string, styleId: string): RegistryItem {
-  const filePath = path.join(libRoot, `${name}.ts`);
-  const content = readFileSync(filePath, "utf8");
-  const dependencies = new Set<string>();
-
-  for (const specifier of readImportSpecifiers(content)) {
-    if (
-      specifier.startsWith("@bejamas/registry/") ||
-      specifier.startsWith("astro")
-    ) {
-      continue;
-    }
-
-    if (!specifier.startsWith(".")) {
-      dependencies.add(specifier);
-    }
+function resolveSourceFile(templatePath: string) {
+  if (templatePath.startsWith("ui/")) {
+    return path.resolve(registrySourceRoot, templatePath.replace(/^ui\//, "ui/"));
   }
 
-  return {
-    $schema: schemaUrl,
-    name,
-    type: "registry:lib",
-    files: [
-      {
-        path: path.join("lib", `${name}.ts`).replaceAll(path.sep, "/"),
-        type: "registry:lib",
-        content: rewriteRegistryImports(content, styleId),
-      },
-    ],
-    dependencies: sortStrings(dependencies),
-  };
+  if (templatePath.startsWith("lib/")) {
+    return path.resolve(registrySourceRoot, templatePath.replace(/^lib\//, "lib/"));
+  }
+
+  throw new Error(`Unsupported registry source path: ${templatePath}`);
 }
 
-function buildStyleIndexItem(style: (typeof STYLES)[number]) {
+async function readSourceFile(filepath: string) {
+  const cached = fileContentCache.get(filepath);
+  if (cached) {
+    return cached;
+  }
+
+  const content = await fs.readFile(filepath, "utf8");
+  fileContentCache.set(filepath, content);
+  return content;
+}
+
+async function buildStyleItem(style: Style) {
+  const template = await readTemplateItem("index");
+
   return {
+    ...template,
     $schema: schemaUrl,
     name: "index",
     type: "registry:style",
-    dependencies: ["class-variance-authority", "@lucide/astro"],
-    devDependencies: ["shadcn", "tw-animate-css"],
-    registryDependencies: ["utils"],
-    css: buildRegistryStyleCss(style.name),
-    cssVars: {},
     files: [],
-    meta: {
-      styleId: style.id,
-    },
-  };
+    cssVars: {},
+    css: buildBaseStyleCssObject(),
+  } satisfies RegistryItem;
 }
 
-function main() {
-  const uiNames = getUiComponentNames();
-  const libNames = getLibItemNames();
+async function buildRegistryItem(name: string, style: Style, tokenMap: TokenMap) {
+  const template = await readTemplateItem(name);
 
-  rmSync(outputRoot, { recursive: true, force: true });
-  mkdirSync(outputRoot, { recursive: true });
+  const files = await Promise.all(
+    (template.files ?? []).map(async (file) => {
+      const sourcePath = resolveSourceFile(file.path);
+      const source = await readSourceFile(sourcePath);
 
-  writeJson(
-    path.join(outputRoot, "index.json"),
-    STYLES.map((style) => ({
-      name: style.id,
-      label: style.title,
-    })),
+      return {
+        ...file,
+        content: transformRegistrySource(source, tokenMap),
+      };
+    }),
   );
 
-  for (const style of STYLES) {
-    const styleOutputRoot = path.join(outputRoot, style.id);
+  return {
+    ...template,
+    $schema: schemaUrl,
+    files,
+    registryDependencies:
+      name === "index"
+        ? template.registryDependencies
+        : Array.from(new Set(["index", ...(template.registryDependencies ?? [])])),
+  } satisfies RegistryItem;
+}
 
-    writeJson(
-      path.join(styleOutputRoot, "index.json"),
-      buildStyleIndexItem(style),
+async function removeStaleJsonFiles(styleDir: string, nextFiles: Set<string>) {
+  const existing = await listJsonFiles(styleDir);
+
+  await Promise.all(
+    existing
+      .filter((filename) => !nextFiles.has(filename))
+      .map((filename) => fs.unlink(path.resolve(styleDir, filename))),
+  );
+}
+
+async function writeStyleRegistry(style: Style, itemNames: string[]) {
+  const tokenMap = buildStyleTokenMap(style.name);
+  const styleDir = path.resolve(stylesRoot, style.id);
+  const nextFiles = new Set<string>(["index.json", ...itemNames.map((name) => `${name}.json`)]);
+
+  await ensureDir(styleDir);
+  await removeStaleJsonFiles(styleDir, nextFiles);
+
+  const styleItem = await buildStyleItem(style);
+  await fs.writeFile(
+    path.resolve(styleDir, "index.json"),
+    `${JSON.stringify(styleItem, null, 2)}\n`,
+    "utf8",
+  );
+
+  for (const name of itemNames) {
+    const item = await buildRegistryItem(name, style, tokenMap);
+    await fs.writeFile(
+      path.resolve(styleDir, `${name}.json`),
+      `${JSON.stringify(item, null, 2)}\n`,
+      "utf8",
     );
-
-    for (const name of libNames) {
-      writeJson(
-        path.join(styleOutputRoot, `${name}.json`),
-        buildLibItem(name, style.id),
-      );
-    }
-
-    for (const name of uiNames) {
-      writeJson(
-        path.join(styleOutputRoot, `${name}.json`),
-        buildUiItem(name, style.id),
-      );
-    }
   }
 }
 
-main();
+async function getTemplateItemNames() {
+  return (await listJsonFiles(templateStyleDir))
+    .filter((filename) => filename !== "index.json")
+    .map((filename) => filename.replace(/\.json$/, ""))
+    .sort();
+}
+
+async function buildStylesIndex() {
+  const styles = STYLES.map((style) => ({
+    name: style.id,
+    label: style.title,
+  }));
+
+  await fs.writeFile(
+    path.resolve(stylesRoot, "index.json"),
+    `${JSON.stringify(styles, null, 2)}\n`,
+    "utf8",
+  );
+}
+
+export async function buildWebStyleRegistry() {
+  await ensureDir(stylesRoot);
+  const itemNames = await getTemplateItemNames();
+
+  for (const style of STYLES) {
+    await writeStyleRegistry(style, itemNames);
+  }
+
+  await buildStylesIndex();
+}
+
+if (import.meta.main) {
+  await buildWebStyleRegistry();
+}

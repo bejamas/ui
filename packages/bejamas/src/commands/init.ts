@@ -14,6 +14,7 @@ import { getPackageRunner } from "@/src/utils/get-package-manager";
 import { handleError } from "@/src/utils/handle-error";
 import { highlighter } from "@/src/utils/highlighter";
 import { logger } from "@/src/utils/logger";
+import { buildUiUrl, resolveRegistryUrl } from "@/src/utils/ui-base-url";
 import { Command } from "commander";
 import { execa } from "execa";
 import fsExtra from "fs-extra";
@@ -40,9 +41,6 @@ import type { RegistryItem } from "shadcn/schema";
 //   // Restore backup if error.
 //   return restoreFileBackup(filePath)
 // })
-
-// Default fallback registry endpoint for shadcn (expects /r)
-const DEFAULT_REGISTRY_URL = "https://ui.bejamas.com/r";
 
 export function resolveDesignSystemConfig(
   options: Pick<
@@ -83,7 +81,11 @@ export function resolveDesignSystemConfig(
   });
 }
 
-export function buildInitUrl(config: DesignSystemConfig, themeRef?: string) {
+export function buildInitUrl(
+  config: DesignSystemConfig,
+  themeRef?: string,
+  env: NodeJS.ProcessEnv = process.env,
+) {
   const params = new URLSearchParams({
     preset: encodePreset(config),
     template: config.template,
@@ -98,44 +100,21 @@ export function buildInitUrl(config: DesignSystemConfig, themeRef?: string) {
     params.set("themeRef", themeRef);
   }
 
-  return `https://ui.bejamas.com/init?${params.toString()}`;
+  return `${buildUiUrl("/init", env)}?${params.toString()}`;
 }
 
-function buildThemeCssFromRegistryItem(item: RegistryItem | null) {
-  const cssVars = item?.cssVars;
-  if (!cssVars) {
-    return null;
-  }
-
-  const themeVars = Object.entries(cssVars.theme ?? {}).map(
-    ([key, value]) => `  --${key}: ${value};`,
-  );
-  const lightVars = Object.entries(cssVars.light ?? {}).map(
-    ([key, value]) => `  --${key}: ${value};`,
-  );
-  const darkVars = Object.entries(cssVars.dark ?? {}).map(
-    ([key, value]) => `  --${key}: ${value};`,
-  );
-
-  return [
-    ":root {",
-    ...themeVars,
-    ...lightVars,
-    "}",
-    '.dark, [data-theme="dark"] {',
-    ...darkVars,
-    "}",
-  ].join("\n");
+function buildThemeVarsFromRegistryItem(item: RegistryItem | null) {
+  return item?.cssVars ?? null;
 }
 
-async function fetchInitThemeCss(initUrl: string) {
+async function fetchInitThemeVars(initUrl: string) {
   const response = await fetch(initUrl);
   if (!response.ok) {
     return null;
   }
 
   const item = (await response.json()) as RegistryItem;
-  return buildThemeCssFromRegistryItem(item);
+  return buildThemeVarsFromRegistryItem(item);
 }
 
 export const initOptionsSchema = z.object({
@@ -274,8 +253,8 @@ export async function runInit(
         template: newProjectTemplate,
       },
       {
-        themeCss: options.themeRef
-          ? ((await fetchInitThemeCss(
+        themeVars: options.themeRef
+          ? ((await fetchInitThemeVars(
               buildInitUrl(
                 {
                   ...designConfig,
@@ -312,7 +291,7 @@ export async function runInit(
   try {
     const env = {
       ...process.env,
-      REGISTRY_URL: process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL,
+      REGISTRY_URL: resolveRegistryUrl(),
     };
     const initUrl = buildInitUrl(designConfig, options.themeRef);
     if (await fsExtra.pathExists(localShadcnPath)) {

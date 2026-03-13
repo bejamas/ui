@@ -1,5 +1,5 @@
 import path from "path";
-import { rawConfigSchema } from "shadcn/schema";
+import { rawConfigSchema } from "@/src/schema";
 import { Config, getConfig, resolveConfigPaths } from "@/src/utils/get-config";
 import { getPackageInfo } from "@/src/utils/get-package-info";
 import fg from "fast-glob";

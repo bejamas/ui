@@ -56,3 +56,14 @@ test("shows RTL language support in init help", async () => {
   expect(stderr).toBe("");
   expect(stdout).toContain("--lang");
 });
+
+test("exposes the local smoke runner script", async () => {
+  const pkgJsonPath = path.resolve(packageDir, "package.json");
+  const pkg = (await Bun.file(pkgJsonPath).json()) as {
+    scripts?: Record<string, string>;
+  };
+
+  expect(pkg.scripts?.["smoke:init:local"]).toBe(
+    "bun run scripts/smoke-init-local.ts",
+  );
+});

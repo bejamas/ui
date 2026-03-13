@@ -60,4 +60,54 @@ describe("init RTL language support", () => {
     expect(rtlUrl).toContain("lang=fa");
     expect(ltrUrl).not.toContain("lang=");
   });
+
+  test("uses the configured UI base URL for localhost init flows", () => {
+    const url = buildInitUrl(
+      {
+        style: "juno",
+        baseColor: "neutral",
+        theme: "neutral",
+        iconLibrary: "lucide",
+        font: "geist",
+        radius: "default",
+        menuAccent: "subtle",
+        menuColor: "default",
+        template: "astro",
+        rtl: false,
+        rtlLanguage: "ar",
+      },
+      undefined,
+      {
+        ...process.env,
+        BEJAMAS_UI_URL: "http://localhost:4322/",
+      },
+    );
+
+    expect(url.startsWith("http://localhost:4322/init?")).toBe(true);
+  });
+
+  test("derives the init URL from REGISTRY_URL when only local /r is provided", () => {
+    const url = buildInitUrl(
+      {
+        style: "juno",
+        baseColor: "neutral",
+        theme: "neutral",
+        iconLibrary: "lucide",
+        font: "geist",
+        radius: "default",
+        menuAccent: "subtle",
+        menuColor: "default",
+        template: "astro",
+        rtl: false,
+        rtlLanguage: "ar",
+      },
+      undefined,
+      {
+        ...process.env,
+        REGISTRY_URL: "http://localhost:4322/r",
+      },
+    );
+
+    expect(url.startsWith("http://localhost:4322/init?")).toBe(true);
+  });
 });

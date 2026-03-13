@@ -1,8 +1,8 @@
-import { registryConfigSchema } from "shadcn/schema";
+import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
+import { registryConfigSchema } from "@/src/schema";
 import { z } from "zod";
 
-export const REGISTRY_URL =
-  process.env.REGISTRY_URL ?? "https://ui.bejamas.com/r";
+export const REGISTRY_URL = resolveRegistryUrl();
 
 export const FALLBACK_STYLE = "bejamas-juno";
 

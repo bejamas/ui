@@ -4,7 +4,7 @@ import {
   configSchema,
   rawConfigSchema,
   workspaceConfigSchema,
-} from "shadcn/schema";
+} from "@/src/schema";
 import { getProjectInfo } from "@/src/utils/get-project-info";
 import { highlighter } from "@/src/utils/highlighter";
 import { resolveImport } from "@/src/utils/resolve-import";

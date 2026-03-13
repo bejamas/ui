@@ -5,6 +5,7 @@ import prompts from "prompts";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
 import { highlighter } from "@/src/utils/highlighter";
+import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
 import { getPackageRunner } from "@/src/utils/get-package-manager";
 import { fixAstroImports } from "@/src/utils/astro-imports";
 import { getConfig, getWorkspaceConfig } from "@/src/utils/get-config";
@@ -19,9 +20,6 @@ interface ParsedOutput {
   updated: string[];
   skipped: string[];
 }
-
-// Default fallback registry endpoint for shadcn (expects /r)
-const DEFAULT_REGISTRY_URL = "https://ui.bejamas.com/r";
 
 // Derive only the user-provided flags for shadcn to avoid losing options
 function extractOptionsForShadcn(rawArgv: string[], cmd: Command): string[] {
@@ -340,7 +338,7 @@ async function addComponents(
   const runner = await getPackageRunner(process.cwd());
   const env = {
     ...process.env,
-    REGISTRY_URL: process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL,
+    REGISTRY_URL: resolveRegistryUrl(),
   };
   // Always pass --yes for non-interactive mode (skips "Add components?" confirmation)
   // Note: we don't pass --overwrite by default to respect user customizations
@@ -465,7 +463,7 @@ export const add = new Command()
     let componentsToAdd = packages || [];
     const wantsAll = Boolean(opts.all);
     const isSilent = opts.silent || false;
-    const registryUrl = process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL;
+    const registryUrl = resolveRegistryUrl();
 
     // Handle --all flag: fetch all available components
     if (wantsAll && componentsToAdd.length === 0) {
