@@ -5,9 +5,17 @@ import prompts from "prompts";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
 import { highlighter } from "@/src/utils/highlighter";
+import { syncAstroManagedFontCss } from "@/src/utils/apply-design-system";
 import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
 import { getPackageRunner } from "@/src/utils/get-package-manager";
 import { fixAstroImports } from "@/src/utils/astro-imports";
+import {
+  cleanupAstroFontPackages,
+  mergeManagedAstroFonts,
+  readManagedAstroFontsFromProject,
+  syncAstroFontsInProject,
+  toManagedAstroFont,
+} from "@/src/utils/astro-fonts";
 import { getConfig, getWorkspaceConfig } from "@/src/utils/get-config";
 import {
   reorganizeComponents,
@@ -167,7 +175,11 @@ async function buildSubfolderMap(
 
   // First pass: collect all filename -> subfolder mappings
   for (const componentName of components) {
-    const registryItem = await fetchRegistryItem(componentName, registryUrl, style);
+    const registryItem = await fetchRegistryItem(
+      componentName,
+      registryUrl,
+      style,
+    );
     if (!registryItem) continue;
 
     if (shouldReorganizeRegistryUiFiles(registryItem.files, uiDir)) {
@@ -515,7 +527,8 @@ export const add = new Command()
         : (cmd.opts?.() ?? {});
     const inspectionMode = hasInspectionFlags(forwardedOptions);
     const overwriteUsed =
-      forwardedOptions.includes("--overwrite") || forwardedOptions.includes("-o");
+      forwardedOptions.includes("--overwrite") ||
+      forwardedOptions.includes("-o");
     const cwd = opts.cwd || process.cwd();
 
     let componentsToAdd = packages || [];
@@ -613,10 +626,40 @@ export const add = new Command()
         inspectionMode,
       );
 
+      if (!inspectionMode) {
+        const registryItem = await fetchRegistryItem(
+          component,
+          registryUrl,
+          activeStyle,
+        );
+
+        if (registryItem?.type === "registry:font") {
+          const nextFont = toManagedAstroFont(
+            registryItem.name.replace(/^font-/, "") as never,
+          );
+
+          if (nextFont) {
+            const currentFonts = await readManagedAstroFontsFromProject(cwd);
+            const nextFonts = mergeManagedAstroFonts(currentFonts, nextFont);
+            await syncAstroFontsInProject(
+              cwd,
+              nextFonts,
+              nextFont.cssVariable,
+            );
+            await syncAstroManagedFontCss(cwd, nextFont.cssVariable);
+            await cleanupAstroFontPackages(cwd);
+          }
+        }
+      }
+
       // Keep the compatibility reorganization only for workspace targets where
       // upstream shadcn still flattens nested registry paths.
       let skippedCount = 0;
-      if (!inspectionMode && uiDir && subfolderMapResult.requiresReorganization) {
+      if (
+        !inspectionMode &&
+        uiDir &&
+        subfolderMapResult.requiresReorganization
+      ) {
         const reorgResult = await reorganizeComponents(
           [component],
           uiDir,
@@ -672,7 +715,9 @@ export const add = new Command()
         // Files shadcn skipped (different from our reorganization skip)
         if (parsed.skipped.length > 0) {
           const skippedPaths = rewritePaths(parsed.skipped, subfolderMapResult);
-          logger.info(formatSkippedFilesHeading(skippedPaths.length, overwriteUsed));
+          logger.info(
+            formatSkippedFilesHeading(skippedPaths.length, overwriteUsed),
+          );
           for (const file of skippedPaths) {
             logger.log(`  ${highlighter.info("-")} ${file}`);
           }

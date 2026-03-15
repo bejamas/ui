@@ -12,7 +12,7 @@ export interface RegistryFile {
 export interface RegistryItem {
   name: string;
   type: string;
-  files: RegistryFile[];
+  files?: RegistryFile[];
   dependencies?: string[];
   devDependencies?: string[];
   registryDependencies?: string[];
@@ -41,7 +41,11 @@ export async function fetchRegistryItem(
   }
 }
 
-export function getSubfolderFromPaths(files: RegistryFile[]): string | null {
+export function getSubfolderFromPaths(files?: RegistryFile[]): string | null {
+  if (!files || files.length === 0) {
+    return null;
+  }
+
   const uiFiles = files.filter((file) => file.type === "registry:ui");
   if (uiFiles.length < 2) {
     return null;
@@ -107,7 +111,7 @@ function resolveShadcnUiRelativePath(filePath: string, uiDir: string) {
  * We keep reorganization only for that compatibility case.
  */
 export function shouldReorganizeRegistryUiFiles(
-  files: RegistryFile[],
+  files: RegistryFile[] | undefined,
   uiDir: string,
 ) {
   if (!uiDir) {
@@ -138,7 +142,7 @@ export interface ReorganizeResult {
  * expected subfolder. This is the filesystem-level compatibility shim.
  */
 export async function reorganizeRegistryUiFiles(
-  files: RegistryFile[],
+  files: RegistryFile[] | undefined,
   uiDir: string,
   verbose: boolean,
   overwriteExisting = false,
@@ -149,7 +153,7 @@ export async function reorganizeRegistryUiFiles(
     skippedFiles: [],
   };
 
-  if (!uiDir || files.length === 0) {
+  if (!uiDir || !files || files.length === 0) {
     return result;
   }
 
@@ -233,7 +237,11 @@ export async function reorganizeComponents(
 
   for (const componentName of components) {
     try {
-      const registryItem = await fetchRegistryItem(componentName, registryUrl, style);
+      const registryItem = await fetchRegistryItem(
+        componentName,
+        registryUrl,
+        style,
+      );
       if (!registryItem) {
         if (verbose) {
           logger.info(

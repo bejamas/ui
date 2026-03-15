@@ -30,13 +30,13 @@ npx bejamas@latest --help
 
 Create an Astro app or monorepo, wire Tailwind v4, tokens, base styles, and components.json.
 
-You can also switch an existing app to a different preset by rerunning `init --preset`. Use `--reinstall` to reconfigure already installed UI components to the new preset.
+You can also switch an existing app to a different preset by rerunning `init --preset`. Installed UI components are reconfigured to the new preset automatically; use `--no-reinstall` to opt out.
 
 #### Usage
 
 ```bash
 npx bejamas init [--mode astro|monorepo|monorepo+docs] [--dir .] [--pm pnpm|npm|yarn] [-y]
-npx bejamas init --preset <encoded-preset> --reinstall --yes
+npx bejamas init --preset <encoded-preset> --yes
 ```
 
 Sets up Astro project(s) + optional docs workspace (monorepo+docs)

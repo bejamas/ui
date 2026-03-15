@@ -1,11 +1,15 @@
 ---
 import "@/styles/globals.css";
+import { Font } from "astro:assets";
 import { appUi } from "@/i18n/ui";
 ---
 
 <!doctype html>
 <html lang={appUi.lang} dir={appUi.dir}>
   <head>
+    <!-- bejamas:astro-fonts:start -->
+    <Font cssVariable="--font-sans" />
+    <!-- bejamas:astro-fonts:end -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

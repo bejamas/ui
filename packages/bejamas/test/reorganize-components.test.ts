@@ -12,7 +12,9 @@ const createdDirs: string[] = [];
 
 afterEach(async () => {
   await Promise.all(
-    createdDirs.splice(0).map((dir) => fs.rm(dir, { recursive: true, force: true })),
+    createdDirs
+      .splice(0)
+      .map((dir) => fs.rm(dir, { recursive: true, force: true })),
   );
 });
 
@@ -46,11 +48,21 @@ describe("reorganize-components", () => {
   it("only requires reorganization for workspace ui targets that would flatten paths", () => {
     const files = createTabsFiles();
 
-    expect(shouldReorganizeRegistryUiFiles(files, "/repo/app/src/ui")).toBe(false);
+    expect(shouldReorganizeRegistryUiFiles(files, "/repo/app/src/ui")).toBe(
+      false,
+    );
     expect(
-      shouldReorganizeRegistryUiFiles(files, "/repo/packages/ui/src/components"),
+      shouldReorganizeRegistryUiFiles(
+        files,
+        "/repo/packages/ui/src/components",
+      ),
     ).toBe(true);
-    expect(shouldReorganizeRegistryUiFiles(files, "/repo/packages/ui/src/components/ui")).toBe(false);
+    expect(
+      shouldReorganizeRegistryUiFiles(
+        files,
+        "/repo/packages/ui/src/components/ui",
+      ),
+    ).toBe(false);
     expect(
       shouldReorganizeRegistryUiFiles(
         [
@@ -60,6 +72,12 @@ describe("reorganize-components", () => {
             content: "---\n---\n",
           },
         ],
+        "/repo/packages/ui/src/components",
+      ),
+    ).toBe(false);
+    expect(
+      shouldReorganizeRegistryUiFiles(
+        undefined,
         "/repo/packages/ui/src/components",
       ),
     ).toBe(false);
@@ -82,9 +100,15 @@ describe("reorganize-components", () => {
       "tabs/index.ts",
     ]);
     expect(await Bun.file(path.join(uiDir, "Tabs.astro")).exists()).toBe(false);
-    expect(await Bun.file(path.join(uiDir, "tabs", "Tabs.astro")).exists()).toBe(true);
-    expect(await Bun.file(path.join(uiDir, "tabs", "TabsList.astro")).exists()).toBe(true);
-    expect(await Bun.file(path.join(uiDir, "tabs", "index.ts")).exists()).toBe(true);
+    expect(
+      await Bun.file(path.join(uiDir, "tabs", "Tabs.astro")).exists(),
+    ).toBe(true);
+    expect(
+      await Bun.file(path.join(uiDir, "tabs", "TabsList.astro")).exists(),
+    ).toBe(true);
+    expect(await Bun.file(path.join(uiDir, "tabs", "index.ts")).exists()).toBe(
+      true,
+    );
   });
 
   it("removes flat duplicates when the nested target already exists", async () => {
@@ -100,7 +124,9 @@ describe("reorganize-components", () => {
     expect(result.totalMoved).toBe(0);
     expect(result.skippedFiles).toContain("tabs/Tabs.astro");
     expect(await Bun.file(path.join(uiDir, "Tabs.astro")).exists()).toBe(false);
-    expect(await Bun.file(path.join(uiDir, "tabs", "Tabs.astro")).exists()).toBe(true);
+    expect(
+      await Bun.file(path.join(uiDir, "tabs", "Tabs.astro")).exists(),
+    ).toBe(true);
   });
 
   it("overwrites nested targets during preset reinstall reorganization", async () => {
@@ -116,8 +142,8 @@ describe("reorganize-components", () => {
     expect(result.totalMoved).toBe(1);
     expect(result.movedFiles).toContain("tabs/Tabs.astro");
     expect(await Bun.file(path.join(uiDir, "Tabs.astro")).exists()).toBe(false);
-    expect(await fs.readFile(path.join(uiDir, "tabs", "Tabs.astro"), "utf8")).toBe(
-      "reinstalled",
-    );
+    expect(
+      await fs.readFile(path.join(uiDir, "tabs", "Tabs.astro"), "utf8"),
+    ).toBe("reinstalled");
   });
 });

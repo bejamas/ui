@@ -5,11 +5,16 @@ import {
   buildRegistryTheme,
   getDocumentDirection,
   getDocumentLanguage,
-  getFontPackageName,
   getFontValue,
   getStyleId,
   type DesignSystemConfig,
 } from "@bejamas/create-config/server";
+import {
+  cleanupAstroFontPackages,
+  fontClassFromCssVariable,
+  syncAstroFontsInProject,
+  toManagedAstroFont,
+} from "@/src/utils/astro-fonts";
 
 const CREATE_BLOCK_START = "/* bejamas:create:start */";
 const CREATE_BLOCK_END = "/* bejamas:create:end */";
@@ -35,7 +40,9 @@ function stripLegacyCreateBlock(source: string) {
   );
 
   return compactCss(
-    source.replace(fullBlockPattern, "\n\n").replace(danglingBlockPattern, "\n\n"),
+    source
+      .replace(fullBlockPattern, "\n\n")
+      .replace(danglingBlockPattern, "\n\n"),
   );
 }
 
@@ -47,7 +54,11 @@ function buildCssVarBlock(selector: string, vars: Record<string, string>) {
   ].join("\n");
 }
 
-function replaceTopLevelBlock(source: string, selector: string, nextBlock: string) {
+function replaceTopLevelBlock(
+  source: string,
+  selector: string,
+  nextBlock: string,
+) {
   const pattern = new RegExp(
     `^${escapeRegExp(selector)}\\s*\\{[\\s\\S]*?^\\}`,
     "m",
@@ -104,14 +115,16 @@ function upsertImports(source: string, imports: string[]) {
 
 function upsertThemeInlineFont(
   source: string,
-  fontVariable: string,
-  fontFamily: string,
+  fontVariable?: string,
+  fontFamily?: string,
 ) {
-  const fontDeclaration = `  ${fontVariable}: ${fontFamily};`;
   const pattern = /@theme inline\s*\{[\s\S]*?\n\}/m;
 
   if (!pattern.test(source)) {
-    const block = `@theme inline {\n${fontDeclaration}\n}`;
+    const block =
+      fontVariable && fontFamily
+        ? `@theme inline {\n  ${fontVariable}: ${fontFamily};\n}`
+        : "@theme inline {\n}";
     const customVariantIndex = source.indexOf("@custom-variant");
 
     if (customVariantIndex !== -1) {
@@ -127,11 +140,16 @@ function upsertThemeInlineFont(
   return source.replace(pattern, (block) => {
     const withoutManagedFonts = block
       .replace(/\n\s*--font-(sans|serif|mono):[^\n]+/g, "")
+      .replace(/\n\s*--bejamas-font-family:[^\n]+/g, "")
       .replace(/@theme inline\s*\{\n?/, "@theme inline {\n");
+
+    if (!fontVariable || !fontFamily) {
+      return withoutManagedFonts;
+    }
 
     return withoutManagedFonts.replace(
       "@theme inline {\n",
-      `@theme inline {\n${fontDeclaration}\n`,
+      `@theme inline {\n  ${fontVariable}: ${fontFamily};\n`,
     );
   });
 }
@@ -173,18 +191,42 @@ export function transformDesignSystemCss(
   const font = getFontValue(config.font);
   let next = stripLegacyCreateBlock(source);
 
-  next = upsertImports(next, [
-    '@import "shadcn/tailwind.css";',
-    `@import "${getFontPackageName(config.font)}";`,
-  ]);
-  next = replaceTopLevelBlock(next, ":root", buildCssVarBlock(":root", rootVars));
-  next = replaceTopLevelBlock(next, ".dark", buildCssVarBlock(".dark", darkVars));
+  next = upsertImports(next, ['@import "shadcn/tailwind.css";']);
+  next = replaceTopLevelBlock(
+    next,
+    ":root",
+    buildCssVarBlock(":root", rootVars),
+  );
+  next = replaceTopLevelBlock(
+    next,
+    ".dark",
+    buildCssVarBlock(".dark", darkVars),
+  );
+  next = upsertThemeInlineFont(next);
 
   if (font) {
-    next = upsertThemeInlineFont(next, font.font.variable, font.font.family);
     next = upsertBaseLayerHtmlFont(
       next,
-      font.font.variable.replace("--", ""),
+      fontClassFromCssVariable(font.font.variable),
+    );
+  }
+
+  return compactCss(next);
+}
+
+export function transformAstroManagedFontCss(
+  source: string,
+  fontVariable?: string,
+) {
+  let next = stripLegacyCreateBlock(source);
+
+  next = upsertImports(next, ['@import "shadcn/tailwind.css";']);
+  next = upsertThemeInlineFont(next);
+
+  if (fontVariable) {
+    next = upsertBaseLayerHtmlFont(
+      next,
+      fontClassFromCssVariable(fontVariable),
     );
   }
 
@@ -221,28 +263,40 @@ async function patchCssFileWithTheme(
   await fs.writeFile(filepath, next, "utf8");
 }
 
-async function patchPackageJsonDependency(
+async function patchCssFileWithAstroFont(
   filepath: string,
-  config: DesignSystemConfig,
+  fontVariable?: string,
 ) {
-  if (!(await fs.pathExists(filepath))) {
-    return;
+  const current = await fs.readFile(filepath, "utf8");
+  const next = transformAstroManagedFontCss(current, fontVariable);
+  await fs.writeFile(filepath, next, "utf8");
+}
+
+export async function syncAstroManagedFontCss(
+  projectPath: string,
+  fontVariable?: string,
+) {
+  const componentJsonFiles = await fg("**/components.json", {
+    cwd: projectPath,
+    ignore: ["**/node_modules/**", "**/dist/**", "**/.astro/**"],
+  });
+
+  const cssFiles = new Set<string>();
+
+  for (const relativePath of componentJsonFiles) {
+    const absolutePath = path.resolve(projectPath, relativePath);
+    const json = await fs.readJson(absolutePath);
+    const cssPath = json?.tailwind?.css;
+    if (typeof cssPath === "string" && cssPath.length > 0) {
+      cssFiles.add(path.resolve(path.dirname(absolutePath), cssPath));
+    }
   }
 
-  const current = await fs.readJson(filepath);
-  const dependencyName = getFontPackageName(config.font);
-  const next = {
-    ...current,
-    dependencies: {
-      ...(current.dependencies ?? {}),
-      [dependencyName]:
-        current.dependencies?.[dependencyName] ??
-        current.devDependencies?.[dependencyName] ??
-        "latest",
-    },
-  };
-
-  await fs.writeJson(filepath, next, { spaces: 2 });
+  await Promise.all(
+    Array.from(cssFiles).map((filepath) =>
+      patchCssFileWithAstroFont(filepath, fontVariable),
+    ),
+  );
 }
 
 async function patchTemplateI18nFile(
@@ -304,7 +358,6 @@ export async function applyDesignSystemToProject(
   });
 
   const cssFiles = new Set<string>();
-  const packageJsonFiles = new Set<string>();
 
   for (const relativePath of componentJsonFiles) {
     const absolutePath = path.resolve(projectPath, relativePath);
@@ -315,32 +368,12 @@ export async function applyDesignSystemToProject(
     if (typeof cssPath === "string" && cssPath.length > 0) {
       const absoluteCssPath = path.resolve(path.dirname(absolutePath), cssPath);
       cssFiles.add(absoluteCssPath);
-
-      let currentDir = path.dirname(absoluteCssPath);
-      while (currentDir.startsWith(projectPath)) {
-        const packageJsonPath = path.resolve(currentDir, "package.json");
-        if (await fs.pathExists(packageJsonPath)) {
-          packageJsonFiles.add(packageJsonPath);
-          break;
-        }
-
-        const parentDir = path.dirname(currentDir);
-        if (parentDir === currentDir) {
-          break;
-        }
-        currentDir = parentDir;
-      }
     }
   }
 
   await Promise.all(
     Array.from(cssFiles).map((filepath) =>
       patchCssFileWithTheme(filepath, config, options.themeVars),
-    ),
-  );
-  await Promise.all(
-    Array.from(packageJsonFiles).map((filepath) =>
-      patchPackageJsonDependency(filepath, config),
     ),
   );
   await Promise.all(
@@ -354,7 +387,16 @@ export async function applyDesignSystemToProject(
     [
       path.resolve(projectPath, "src/layouts/Layout.astro"),
       path.resolve(projectPath, "apps/web/src/layouts/Layout.astro"),
-      path.resolve(projectPath, "apps/docs/src/layouts/Layout.astro"),
     ].map((filepath) => patchLayoutFile(filepath, config)),
   );
+
+  const managedFont = toManagedAstroFont(config.font);
+  if (managedFont) {
+    await syncAstroFontsInProject(
+      projectPath,
+      [managedFont],
+      managedFont.cssVariable,
+    );
+    await cleanupAstroFontPackages(projectPath);
+  }
 }

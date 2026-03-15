@@ -9,6 +9,7 @@ import {
   getStyleId,
   type DesignSystemConfig,
 } from "@bejamas/create-config/server";
+import { toManagedAstroFont } from "../src/utils/astro-fonts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -86,7 +87,12 @@ async function findCreatedProjectRoot(caseRoot: string) {
   return projectDirs[0];
 }
 
-async function run(command: string, args: string[], cwd: string, env: NodeJS.ProcessEnv) {
+async function run(
+  command: string,
+  args: string[],
+  cwd: string,
+  env: NodeJS.ProcessEnv,
+) {
   await execa(command, args, {
     cwd,
     env,
@@ -109,7 +115,11 @@ async function runCapture(
   });
 }
 
-async function assertInitEndpoint(baseUrl: string, preset: string, template: string) {
+async function assertInitEndpoint(
+  baseUrl: string,
+  preset: string,
+  template: string,
+) {
   const url = `${baseUrl}/init?preset=${encodeURIComponent(preset)}&template=${encodeURIComponent(template)}`;
   const response = await fetch(url);
 
@@ -126,8 +136,14 @@ async function assertInitEndpoint(baseUrl: string, preset: string, template: str
     css?: Record<string, unknown>;
   };
 
-  assert(typeof item.name === "string" && item.name.length > 0, `Init endpoint at ${url} returned no name`);
-  assert(item.type === "registry:base", `Init endpoint at ${url} returned unexpected type ${item.type}`);
+  assert(
+    typeof item.name === "string" && item.name.length > 0,
+    `Init endpoint at ${url} returned no name`,
+  );
+  assert(
+    item.type === "registry:base",
+    `Init endpoint at ${url} returned unexpected type ${item.type}`,
+  );
   assert(
     typeof item.config?.style === "string" && item.config.style.length > 0,
     `Init endpoint at ${url} returned no style config`,
@@ -165,18 +181,21 @@ async function assertProjectState(
   );
 
   const cssRelativePath = componentsJson.tailwind?.css;
-  assert(typeof cssRelativePath === "string", `Missing tailwind.css in ${configPath}`);
+  assert(
+    typeof cssRelativePath === "string",
+    `Missing tailwind.css in ${configPath}`,
+  );
   const cssPath = path.resolve(path.dirname(configPath), cssRelativePath);
   const cssSource = await fs.readFile(cssPath, "utf8");
   const font = getFontValue(expectedConfig.font);
   const fontClass = font?.font.variable.replace("--", "");
   assert(
-    cssSource.includes(`@import "${getFontPackageName(expectedConfig.font)}";`),
-    `Expected ${cssPath} to import ${getFontPackageName(expectedConfig.font)}`,
-  );
-  assert(
     cssSource.includes('@import "shadcn/tailwind.css";'),
     `Expected ${cssPath} to import shadcn/tailwind.css`,
+  );
+  assert(
+    !cssSource.includes("@fontsource-variable/"),
+    `Expected ${cssPath} to avoid fontsource imports`,
   );
   assert(
     cssSource.includes(":root {") && cssSource.includes(".dark {"),
@@ -203,10 +222,80 @@ async function assertProjectState(
   const fontDependency = getFontPackageName(expectedConfig.font);
 
   assert(
-    typeof packageJson.dependencies?.[fontDependency] === "string" &&
-      packageJson.dependencies[fontDependency].length > 0,
-    `Expected ${packageJsonPath} to include ${fontDependency} in dependencies`,
+    !packageJson.dependencies?.[fontDependency] &&
+      !packageJson.devDependencies?.[fontDependency],
+    `Expected ${packageJsonPath} to avoid ${fontDependency} after Astro font reconciliation`,
   );
+
+  const isMonorepoApp = configPath.includes(
+    `${path.sep}apps${path.sep}web${path.sep}`,
+  );
+  const astroConfigPath = path.resolve(
+    projectRoot,
+    isMonorepoApp ? "apps/web/astro.config.mjs" : "astro.config.mjs",
+  );
+  const layoutPath = path.resolve(
+    projectRoot,
+    isMonorepoApp
+      ? "apps/web/src/layouts/Layout.astro"
+      : "src/layouts/Layout.astro",
+  );
+  const astroConfigSource = await fs.readFile(astroConfigPath, "utf8");
+  const layoutSource = await fs.readFile(layoutPath, "utf8");
+  const managedFont = toManagedAstroFont(expectedConfig.font);
+
+  assert(
+    astroConfigSource.includes("fontProviders"),
+    `Expected ${astroConfigPath} to import fontProviders`,
+  );
+  assert(
+    astroConfigSource.includes(
+      '@type {NonNullable<import("astro/config").AstroUserConfig["fonts"]>}',
+    ),
+    `Expected ${astroConfigPath} to type the managed Astro fonts block`,
+  );
+  assert(
+    astroConfigSource.includes("fonts: BEJAMAS_ASTRO_FONTS"),
+    `Expected ${astroConfigPath} to configure Astro fonts`,
+  );
+  assert(
+    !astroConfigSource.includes("experimental: { fonts: BEJAMAS_ASTRO_FONTS }"),
+    `Expected ${astroConfigPath} to avoid experimental Astro fonts`,
+  );
+  assert(
+    astroConfigSource.includes(
+      `provider: fontProviders.${managedFont?.provider ?? ""}()`,
+    ),
+    `Expected ${astroConfigPath} to use the ${managedFont?.provider ?? "unknown"} Astro font provider`,
+  );
+  assert(
+    astroConfigSource.includes(`name: "${font?.title ?? ""}"`) &&
+      astroConfigSource.includes(`cssVariable: "${font?.font.variable ?? ""}"`),
+    `Expected ${astroConfigPath} to register the active Astro font`,
+  );
+  assert(
+    layoutSource.includes('import { Font } from "astro:assets";') &&
+      layoutSource.includes(
+        `<Font cssVariable="${font?.font.variable ?? ""}" />`,
+      ),
+    `Expected ${layoutPath} to render the active Astro font`,
+  );
+
+  const expectedBodyClass =
+    font?.font.variable === "--font-mono"
+      ? "font-mono"
+      : font?.font.variable === "--font-serif"
+        ? "font-serif"
+        : null;
+
+  if (expectedBodyClass) {
+    assert(
+      layoutSource.includes(`class="${expectedBodyClass}"`) ||
+        layoutSource.includes(`class="min-h-screen ${expectedBodyClass}"`) ||
+        layoutSource.includes(`class="${expectedBodyClass} min-h-screen"`),
+      `Expected ${layoutPath} to apply ${expectedBodyClass} on the body when it is the default font slot`,
+    );
+  }
 }
 
 async function assertFilesExist(projectRoot: string, relativePaths: string[]) {
@@ -216,7 +305,11 @@ async function assertFilesExist(projectRoot: string, relativePaths: string[]) {
   }
 }
 
-async function assertFileDoesNotContain(projectRoot: string, relativePath: string, snippet: string) {
+async function assertFileDoesNotContain(
+  projectRoot: string,
+  relativePath: string,
+  snippet: string,
+) {
   const absolutePath = path.resolve(projectRoot, relativePath);
   const content = await fs.readFile(absolutePath, "utf8");
 
@@ -226,7 +319,10 @@ async function assertFileDoesNotContain(projectRoot: string, relativePath: strin
   );
 }
 
-async function assertFilesMissing(projectRoot: string, relativePaths: string[]) {
+async function assertFilesMissing(
+  projectRoot: string,
+  relativePaths: string[],
+) {
   for (const relativePath of relativePaths) {
     const absolutePath = path.resolve(projectRoot, relativePath);
     assert(
@@ -238,6 +334,172 @@ async function assertFilesMissing(projectRoot: string, relativePaths: string[]) 
 
 async function readProjectFile(projectRoot: string, relativePath: string) {
   return fs.readFile(path.resolve(projectRoot, relativePath), "utf8");
+}
+
+async function getRegistryItemSource(
+  style: DesignSystemConfig["style"],
+  itemName: string,
+  filePath: string,
+) {
+  const styleId = getStyleId(style);
+  const item = await readJson<{
+    files?: Array<{ path: string; content: string }>;
+  }>(
+    path.resolve(repoRoot, "apps/web/public/r/styles", styleId, `${itemName}.json`),
+  );
+  const file = item.files?.find((entry) => entry.path === filePath);
+  assert(
+    file,
+    `Expected ${itemName}.json for ${styleId} to include ${filePath}`,
+  );
+  return file.content;
+}
+
+function extractRequiredSnippet(source: string, pattern: RegExp, label: string) {
+  const match = source.match(pattern)?.[0];
+  assert(match, `Expected source to include ${label}`);
+  return match;
+}
+
+async function assertTabsSourceMatchesStyle(
+  tabsListPath: string,
+  tabsTriggerPath: string,
+  style: DesignSystemConfig["style"],
+) {
+  const installedListSource = await fs.readFile(tabsListPath, "utf8");
+  const installedTriggerSource = await fs.readFile(tabsTriggerPath, "utf8");
+  const registryListSource = await getRegistryItemSource(
+    style,
+    "tabs",
+    "ui/tabs/TabsList.astro",
+  );
+  const registryTriggerSource = await getRegistryItemSource(
+    style,
+    "tabs",
+    "ui/tabs/TabsTrigger.astro",
+  );
+
+  const requiredListSnippets = [
+    extractRequiredSnippet(
+      registryListSource,
+      /indicator: "[^"]+"/,
+      "tabs list indicator variant",
+    ),
+    extractRequiredSnippet(
+      registryListSource,
+      /default: "group-data-horizontal\/tabs:h-[^"]+"/,
+      "tabs list default size variant",
+    ),
+  ];
+  const requiredTriggerSnippet = extractRequiredSnippet(
+    registryTriggerSource,
+    /"gap-1\.5[^"]*px-[^"]*py-[^"]*text-(xs|sm)[^"]*"/,
+    "tabs trigger sizing classes",
+  );
+
+  for (const snippet of [...requiredListSnippets, requiredTriggerSnippet]) {
+    const installedSource = requiredListSnippets.includes(snippet)
+      ? installedListSource
+      : installedTriggerSource;
+    const filepath = requiredListSnippets.includes(snippet)
+      ? tabsListPath
+      : tabsTriggerPath;
+    assert(
+      installedSource.includes(snippet),
+      `Expected ${filepath} to include target style snippet: ${snippet}`,
+    );
+  }
+}
+
+async function readStreamText(
+  stream: NodeJS.ReadableStream | null | undefined,
+) {
+  if (!stream) {
+    return "";
+  }
+
+  let output = "";
+  for await (const chunk of stream) {
+    output += chunk.toString();
+  }
+  return output;
+}
+
+async function waitForChildExit(
+  child: ReturnType<typeof execa>,
+  timeoutMs: number,
+) {
+  return Promise.race([
+    child.catch(() => undefined),
+    new Promise<undefined>((resolve) => setTimeout(resolve, timeoutMs)),
+  ]);
+}
+
+async function assertAstroProjectBootsWithoutFontErrors(
+  projectRoot: string,
+  port: number,
+) {
+  const child = execa(
+    "bun",
+    ["run", "dev", "--host", "127.0.0.1", "--port", String(port)],
+    {
+      cwd: projectRoot,
+      env: {
+        ...process.env,
+        CI: "1",
+      },
+      reject: false,
+      stdout: "pipe",
+      stderr: "pipe",
+    },
+  );
+
+  try {
+    const url = `http://127.0.0.1:${port}/`;
+    let response: Response | null = null;
+
+    for (let attempt = 0; attempt < 30; attempt += 1) {
+      if (child.exitCode !== undefined) {
+        break;
+      }
+
+      try {
+        response = await fetch(url, {
+          signal: AbortSignal.timeout(1_000),
+        });
+        if (response.ok) {
+          break;
+        }
+      } catch {
+        // Server is still starting.
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+
+    if (!response?.ok) {
+      const [stdout, stderr] = await Promise.all([
+        readStreamText(child.stdout),
+        readStreamText(child.stderr),
+      ]);
+      throw new Error(
+        `Expected Astro dev server at ${url} to respond with 200.\nstdout:\n${stdout}\nstderr:\n${stderr}`,
+      );
+    }
+
+    const html = await response.text();
+    assert(
+      !html.includes("FontFamilyNotFound"),
+      `Expected ${url} to render without FontFamilyNotFound`,
+    );
+  } finally {
+    child.kill("SIGTERM");
+    const exited = await waitForChildExit(child, 2_000);
+    if (exited === undefined && child.exitCode === undefined) {
+      child.kill("SIGKILL");
+      await waitForChildExit(child, 2_000);
+    }
+  }
 }
 
 async function assertShadcnDryRunFlattensMonorepoTabs(
@@ -252,7 +514,10 @@ async function assertShadcnDryRunFlattensMonorepoTabs(
   );
   const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
 
-  assert(result.exitCode === 0, `Expected shadcn dry-run to succeed, received ${result.exitCode}`);
+  assert(
+    result.exitCode === 0,
+    `Expected shadcn dry-run to succeed, received ${result.exitCode}`,
+  );
   assert(
     output.includes("packages/ui/src/components/Tabs.astro"),
     "Expected upstream shadcn dry-run to flatten the monorepo tabs path",
@@ -341,7 +606,10 @@ async function main() {
   console.log(`[smoke] Building CLI in ${packageRoot}`);
   await run("bun", ["run", "build"], packageRoot, childEnv);
 
-  assert(await pathExists(cliEntry), `Expected CLI build output at ${cliEntry}`);
+  assert(
+    await pathExists(cliEntry),
+    `Expected CLI build output at ${cliEntry}`,
+  );
 
   console.log(`[smoke] Probing local init endpoint at ${baseUrl}`);
   await assertInitEndpoint(baseUrl, astroPreset, astroConfig.template);
@@ -469,7 +737,6 @@ async function main() {
       "init",
       "--force",
       "--yes",
-      "--reinstall",
       "--preset",
       astroSwitchPreset,
       "--cwd",
@@ -487,7 +754,6 @@ async function main() {
       "init",
       "--force",
       "--yes",
-      "--reinstall",
       "--preset",
       monorepoSwitchPreset,
       "--cwd",
@@ -507,6 +773,49 @@ async function main() {
     path.resolve(monorepoProjectRoot, "apps/web/components.json"),
     monorepoSwitchConfig,
   );
+
+  console.log("[smoke] Adding font-geist-mono to astro project");
+  await run(
+    "bun",
+    [cliEntry, "add", "font-geist-mono", "--yes"],
+    astroProjectRoot,
+    childEnv,
+  );
+
+  const astroFontConfigSource = await readProjectFile(
+    astroProjectRoot,
+    "astro.config.mjs",
+  );
+  const astroFontLayoutSource = await readProjectFile(
+    astroProjectRoot,
+    "src/layouts/Layout.astro",
+  );
+  const astroFontCssSource = await readProjectFile(
+    astroProjectRoot,
+    "src/styles/globals.css",
+  );
+
+  assert(
+    astroFontConfigSource.includes("provider: fontProviders.google()") &&
+      astroFontConfigSource.includes("provider: fontProviders.fontsource()"),
+    "Expected astro.config.mjs to keep the Google sans font and add the Fontsource mono font",
+  );
+  assert(
+    astroFontLayoutSource.includes('<Font cssVariable="--font-sans" />') &&
+      astroFontLayoutSource.includes('<Font cssVariable="--font-mono" />'),
+    "Expected the Astro layout to render both managed font slots after adding font-geist-mono",
+  );
+  assert(
+    astroFontLayoutSource.includes('<body class="font-mono">'),
+    "Expected the Astro layout body to switch to font-mono after adding font-geist-mono",
+  );
+  assert(
+    astroFontCssSource.includes("@apply font-mono;"),
+    "Expected globals.css to switch the default HTML font to the mono slot after adding font-geist-mono",
+  );
+
+  console.log("[smoke] Booting astro project after font install");
+  await assertAstroProjectBootsWithoutFontErrors(astroProjectRoot, 5199);
 
   const astroTabsAfterSwitch = await readProjectFile(
     astroProjectRoot,
@@ -533,6 +842,22 @@ async function main() {
     monorepoTabsAfterSwitch !== monorepoTabsBeforeSwitch,
     "Expected monorepo tabs component source to change after preset reinstall",
   );
+  await assertTabsSourceMatchesStyle(
+    path.resolve(astroProjectRoot, "src/ui/tabs/TabsList.astro"),
+    path.resolve(astroProjectRoot, "src/ui/tabs/TabsTrigger.astro"),
+    astroSwitchConfig.style,
+  );
+  await assertTabsSourceMatchesStyle(
+    path.resolve(
+      monorepoProjectRoot,
+      "packages/ui/src/components/tabs/TabsList.astro",
+    ),
+    path.resolve(
+      monorepoProjectRoot,
+      "packages/ui/src/components/tabs/TabsTrigger.astro",
+    ),
+    monorepoSwitchConfig.style,
+  );
 
   console.log("[smoke] Complete");
   console.log(`[smoke] Astro project: ${astroProjectRoot}`);
@@ -540,6 +865,8 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(`[smoke] ${error instanceof Error ? error.message : String(error)}`);
+  console.error(
+    `[smoke] ${error instanceof Error ? error.message : String(error)}`,
+  );
   process.exit(1);
 });

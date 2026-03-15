@@ -2,6 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { preFlightInit } from "@/src/preflights/preflight-init";
 import { applyDesignSystemToProject } from "@/src/utils/apply-design-system";
+import { syncAstroManagedFontCss } from "@/src/utils/apply-design-system";
 import { fixAstroImports } from "@/src/utils/astro-imports";
 
 import { BASE_COLORS, BUILTIN_REGISTRIES } from "@/src/registry/constants";
@@ -16,6 +17,11 @@ import { highlighter } from "@/src/utils/highlighter";
 import { getInstalledUiComponents } from "@/src/utils/installed-ui-components";
 import { logger } from "@/src/utils/logger";
 import { reorganizeComponents } from "@/src/utils/reorganize-components";
+import {
+  cleanupAstroFontPackages,
+  syncAstroFontsInProject,
+  toManagedAstroFont,
+} from "@/src/utils/astro-fonts";
 import { buildUiUrl, resolveRegistryUrl } from "@/src/utils/ui-base-url";
 import { runShadcnCommand } from "@/src/utils/shadcn-command";
 import { Command } from "commander";
@@ -169,6 +175,27 @@ export const initOptionsSchema = z.object({
   themeRef: z.string().optional(),
 });
 
+export function shouldReinstallExistingComponents(
+  options: Pick<z.infer<typeof initOptionsSchema>, "preset" | "reinstall">,
+) {
+  return options.reinstall ?? Boolean(options.preset);
+}
+
+export function ensureShadcnReinstallFlag(
+  forwardedOptions: string[],
+  shouldReinstall: boolean,
+) {
+  if (
+    !shouldReinstall ||
+    forwardedOptions.includes("--reinstall") ||
+    forwardedOptions.includes("--no-reinstall")
+  ) {
+    return forwardedOptions;
+  }
+
+  return [...forwardedOptions, "--reinstall"];
+}
+
 export function extractOptionsForShadcnInit(
   rawArgv: string[],
   cmd: Command,
@@ -285,13 +312,22 @@ export const init = new Command()
   .option("--no-base-style", "do not install the base shadcn style.")
   .option("--rtl", "enable right-to-left output", false)
   .option("--lang <lang>", "set the RTL language. (ar, fa, he)")
-  .option("--reinstall", "re-install existing UI components.")
-  .option("--no-reinstall", "do not re-install existing UI components.")
+  .option(
+    "--reinstall",
+    "re-install existing UI components. Enabled by default for preset switching.",
+  )
+  .option(
+    "--no-reinstall",
+    "do not re-install existing UI components during preset switching.",
+  )
   .action(async (_components, opts, cmd) => {
     try {
       await runInit({
         ...opts,
-        forwardedOptions: extractOptionsForShadcnInit(process.argv.slice(2), cmd),
+        forwardedOptions: extractOptionsForShadcnInit(
+          process.argv.slice(2),
+          cmd,
+        ),
       });
     } catch (error) {
       logger.break();
@@ -371,19 +407,35 @@ export async function runInit(
       REGISTRY_URL: resolveRegistryUrl(),
     };
     const initUrl = buildInitUrl(designConfig, options.themeRef);
-    const reinstallComponents = options.reinstall
+    const shouldReinstall = shouldReinstallExistingComponents(options);
+    const reinstallComponents = shouldReinstall
       ? await getInstalledUiComponents(options.cwd)
       : [];
+    const forwardedOptions = ensureShadcnReinstallFlag(
+      options.forwardedOptions ?? [],
+      shouldReinstall,
+    );
     await runShadcnCommand({
       cwd: options.cwd,
       args: [
         "init",
         initUrl,
         ...reinstallComponents,
-        ...(options.forwardedOptions ?? []),
+        ...forwardedOptions,
       ],
       env,
     });
+
+    const managedFont = toManagedAstroFont(designConfig.font);
+    if (managedFont) {
+      await syncAstroFontsInProject(
+        options.cwd,
+        [managedFont],
+        managedFont.cssVariable,
+      );
+      await syncAstroManagedFontCss(options.cwd, managedFont.cssVariable);
+      await cleanupAstroFontPackages(options.cwd);
+    }
 
     if (reinstallComponents.length > 0) {
       const config = await getConfig(options.cwd);

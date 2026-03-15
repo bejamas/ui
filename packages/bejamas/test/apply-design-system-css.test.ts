@@ -12,6 +12,21 @@ const astroGlobalsCss = readFileSync(
   path.resolve(repoRoot, "templates/astro/src/styles/globals.css"),
   "utf8",
 );
+const astroIndexPage = readFileSync(
+  path.resolve(repoRoot, "templates/astro/src/pages/index.astro"),
+  "utf8",
+);
+const monorepoIndexPage = readFileSync(
+  path.resolve(repoRoot, "templates/monorepo-astro/apps/web/src/pages/index.astro"),
+  "utf8",
+);
+const docsMonorepoIndexPage = readFileSync(
+  path.resolve(
+    repoRoot,
+    "templates/monorepo-astro-with-docs/apps/web/src/pages/index.astro",
+  ),
+  "utf8",
+);
 
 const lyraMonoConfig: DesignSystemConfig = {
   style: "lyra",
@@ -32,8 +47,8 @@ describe("transformDesignSystemCss", () => {
     const result = transformDesignSystemCss(astroGlobalsCss, lyraMonoConfig);
 
     expect(result).toContain('@import "shadcn/tailwind.css";');
-    expect(result).toContain('@import "@fontsource-variable/geist-mono";');
-    expect(result).toContain("--font-mono: 'Geist Mono Variable', monospace;");
+    expect(result).not.toContain("@fontsource-variable/geist-mono");
+    expect(result).not.toContain("--font-mono:");
     expect(result).toContain("@apply font-mono;");
     expect(result).toContain("--primary: oklch(0.52 0.105 223.128);");
     expect(result).not.toContain("/* bejamas:create:start */");
@@ -62,10 +77,20 @@ describe("transformDesignSystemCss", () => {
 
     expect(twice).toBe(once);
     expect(twice.match(/@import "shadcn\/tailwind\.css";/g)?.length).toBe(1);
-    expect(
-      twice.match(/@import "@fontsource-variable\/geist-mono";/g)?.length,
-    ).toBe(1);
+    expect(twice).not.toContain("@fontsource-variable/geist-mono");
     expect(twice.match(/^:root \{/gm)?.length).toBe(1);
     expect(twice.match(/^\.dark \{/gm)?.length).toBe(1);
+  });
+
+  test("starter landing pages do not hardcode font-sans", () => {
+    expect(astroIndexPage).not.toContain('class="font-sans ');
+    expect(monorepoIndexPage).not.toContain('class="font-sans ');
+    expect(docsMonorepoIndexPage).not.toContain('class="font-sans ');
+  });
+
+  test("starter landing pages do not hardcode font-mono", () => {
+    expect(astroIndexPage).not.toContain("font-mono");
+    expect(monorepoIndexPage).not.toContain("font-mono");
+    expect(docsMonorepoIndexPage).not.toContain("font-mono");
   });
 });

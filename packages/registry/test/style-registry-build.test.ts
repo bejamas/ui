@@ -39,6 +39,9 @@ describe("style registry build", () => {
   it("emits standalone font registry items for each style bundle", async () => {
     const styleItem = await buildStyleItem({ id: "bejamas-juno", name: "juno", title: "Juno" });
     const fontItem = buildFontItem(fonts.find((font) => font.name === "font-inter")!);
+    const geistMonoItem = buildFontItem(
+      fonts.find((font) => font.name === "font-geist-mono")!,
+    );
 
     expect(styleItem.files).toEqual([]);
     expect(styleItem.css).toEqual(buildBaseStyleCssObject());
@@ -48,6 +51,8 @@ describe("style registry build", () => {
       type: "registry:font",
     });
     expect(fontItem).toHaveProperty("font.import", "Inter");
+    expect(fontItem).toHaveProperty("font.provider", "google");
+    expect(geistMonoItem).toHaveProperty("font.provider", "google");
   });
 
   it("expands style hooks in representative component sources", () => {

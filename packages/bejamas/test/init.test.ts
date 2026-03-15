@@ -2,8 +2,10 @@ import { describe, expect, test } from "bun:test";
 import { Command } from "commander";
 import {
   buildInitUrl,
+  ensureShadcnReinstallFlag,
   extractOptionsForShadcnInit,
   resolveDesignSystemConfig,
+  shouldReinstallExistingComponents,
 } from "../src/commands/init";
 
 function createInitLikeCommand() {
@@ -172,6 +174,50 @@ describe("init RTL language support", () => {
     );
 
     expect(forwarded).toEqual(["--no-reinstall"]);
+  });
+
+  test("defaults to reinstalling existing components during preset switching", () => {
+    expect(
+      shouldReinstallExistingComponents({
+        preset: "ad3qkJ7",
+        reinstall: undefined,
+      }),
+    ).toBe(true);
+  });
+
+  test("allows --no-reinstall to disable preset-switch component reinstall", () => {
+    expect(
+      shouldReinstallExistingComponents({
+        preset: "ad3qkJ7",
+        reinstall: false,
+      }),
+    ).toBe(false);
+  });
+
+  test("does not reinstall existing components by default outside preset switching", () => {
+    expect(
+      shouldReinstallExistingComponents({
+        preset: undefined,
+        reinstall: undefined,
+      }),
+    ).toBe(false);
+  });
+
+  test("adds --reinstall for shadcn when preset switching defaults to reinstall", () => {
+    expect(ensureShadcnReinstallFlag(["--yes"], true)).toEqual([
+      "--yes",
+      "--reinstall",
+    ]);
+  });
+
+  test("preserves explicit shadcn reinstall flags", () => {
+    expect(ensureShadcnReinstallFlag(["--yes", "--reinstall"], true)).toEqual([
+      "--yes",
+      "--reinstall",
+    ]);
+    expect(
+      ensureShadcnReinstallFlag(["--yes", "--no-reinstall"], true),
+    ).toEqual(["--yes", "--no-reinstall"]);
   });
 
   test("preserves passthrough init flags after --", () => {
