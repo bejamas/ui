@@ -26,7 +26,10 @@ import CreatePickerMarker from "./CreatePickerMarker.astro";
 import CreateNavigateDialog from "./CreateNavigateDialog.astro";
 import CreateProjectDialog from "./CreateProjectDialog.astro";
 import CreateThemePanel from "./CreateThemePanel.astro";
-import type { ThemeOverrides } from "@/utils/themes/create-theme";
+import {
+  getCreateThemeSeedOption,
+  type ThemeOverrides,
+} from "@/utils/themes/create-theme";
 
 interface Props {
   config: DesignSystemConfig;
@@ -42,7 +45,7 @@ const {
   themeOverrides = null,
 } = Astro.props as Props;
 const pickerOptions = getCreatePickerOptions(config);
-const themeOption = getCreatePickerSelectedOption("theme", config);
+const themeOption = getCreateThemeSeedOption(config.baseColor, config.theme);
 const themeLabel = themeRef ? "Custom" : (themeOption?.label ?? config.theme);
 const themeSwatchColor =
   themeOverrides?.light?.primary ?? themeOption?.color ?? "oklch(0.72 0 0)";

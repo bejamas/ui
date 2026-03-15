@@ -6,7 +6,7 @@ import { resolveDesignSystemTheme } from "@/utils/themes/design-system-adapter";
 import {
   CREATE_THEME_TOKEN_SECTIONS,
   formatThemeTokenLabel,
-  getCreateThemeSeedOptions,
+  getCreateThemeSeedGroups,
   type ThemeOverrides,
 } from "@/utils/themes/create-theme";
 import ColorInput from "@/components/theme-editor/ColorInput.astro";
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const { config, themeRef = null, themeOverrides = null } = Astro.props as Props;
-const themeOptions = getCreateThemeSeedOptions(config.baseColor);
+const themeSeedGroups = getCreateThemeSeedGroups(config.baseColor);
 const resolvedTheme = resolveDesignSystemTheme(config, themeOverrides).styles;
 ---
 
@@ -68,32 +68,38 @@ const resolvedTheme = resolveDesignSystemTheme(config, themeOverrides).styles;
       }
     </p>
 
-    <div
-      class="grid grid-cols-2 gap-2 rounded-[18px] border border-white/8 bg-white/[0.02] p-2"
-      data-create-theme-seeds
-    >
+    <div class="space-y-2" data-create-theme-seeds>
       {
-        themeOptions.map((option) => (
-          <button
-            type="button"
-            class:list={[
-              "flex items-center gap-2 rounded-[12px] border px-2.5 py-2 text-left transition-colors",
-              option.value === config.theme
-                ? "border-white/16 bg-white/[0.08] text-white"
-                : "border-white/0 bg-white/[0.02] text-white/78 hover:bg-white/[0.05]",
-            ]}
-            data-create-theme-option
-            data-value={option.value}
-            data-selected={option.value === config.theme ? "" : undefined}
-          >
-            <span
-              class="inline-flex size-4 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]"
-              style={`background:${option.color};`}
-            />
-            <span class="truncate text-[13px] font-medium tracking-[-0.01em]">
-              {option.label}
-            </span>
-          </button>
+        themeSeedGroups.map((group) => (
+          <section class="space-y-2" data-create-theme-group={group.group}>
+            <header class="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/38">
+              {group.label}
+            </header>
+            <div class="grid grid-cols-2 gap-2 rounded-[18px] border border-white/8 bg-white/[0.02] p-2">
+              {group.options.map((option) => (
+                <button
+                  type="button"
+                  class:list={[
+                    "flex items-center gap-2 rounded-[12px] border px-2.5 py-2 text-left transition-colors",
+                    option.value === config.theme
+                      ? "border-white/16 bg-white/[0.08] text-white"
+                      : "border-white/0 bg-white/[0.02] text-white/78 hover:bg-white/[0.05]",
+                  ]}
+                  data-create-theme-option
+                  data-value={option.value}
+                  data-selected={option.value === config.theme ? "" : undefined}
+                >
+                  <span
+                    class="inline-flex size-4 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]"
+                    style={`background:${option.color};`}
+                  />
+                  <span class="truncate text-[13px] font-medium tracking-[-0.01em]">
+                    {option.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
         ))
       }
     </div>

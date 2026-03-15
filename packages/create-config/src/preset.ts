@@ -54,6 +54,8 @@ export const PRESET_THEMES = [
   "olive",
   "mist",
   "taupe",
+  "bejamas-blue",
+  "bejamas-neon-yellow",
 ] as const;
 
 export const PRESET_ICON_LIBRARIES = [
@@ -176,9 +178,9 @@ export type PresetConfig = {
 export const DEFAULT_PRESET_CONFIG: PresetConfig = {
   style: "juno",
   baseColor: "neutral",
-  theme: "neutral",
+  theme: "bejamas-blue",
   iconLibrary: "lucide",
-  font: "geist",
+  font: "inter",
   radius: "default",
   menuAccent: "subtle",
   menuColor: "default",

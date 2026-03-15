@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
   SelectContent,
+  SelectGroup,
   SelectItem,
 } from "@bejamas/registry/ui/select";
 import {
@@ -437,15 +438,17 @@ const countries = [
         Industry <span class="text-muted-foreground">Optional</span>
       </FieldLabel>
       <Select>
-        <SelectTrigger id="industry">
+        <SelectTrigger id="industry" class="w-full">
           <SelectValue placeholder="Select one" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="technology">Technology</SelectItem>
-          <SelectItem value="design">Design</SelectItem>
-          <SelectItem value="marketing">Marketing</SelectItem>
-          <SelectItem value="finance">Finance</SelectItem>
-          <SelectItem value="healthcare">Healthcare</SelectItem>
+          <SelectGroup>
+            <SelectItem value="technology">Technology</SelectItem>
+            <SelectItem value="design">Design</SelectItem>
+            <SelectItem value="marketing">Marketing</SelectItem>
+            <SelectItem value="finance">Finance</SelectItem>
+            <SelectItem value="healthcare">Healthcare</SelectItem>
+          </SelectGroup>
         </SelectContent>
       </Select>
       <FieldDescription>

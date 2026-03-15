@@ -49,9 +49,25 @@ describe("create sidebar helpers", () => {
     expect(
       neutralOptions.theme.some((option) => option.value === "olive"),
     ).toBe(false);
+    expect(
+      neutralOptions.theme.some((option) => option.value === "bejamas-blue"),
+    ).toBe(true);
+    expect(
+      neutralOptions.theme.some(
+        (option) => option.value === "bejamas-neon-yellow",
+      ),
+    ).toBe(true);
     expect(oliveOptions.theme.some((option) => option.value === "olive")).toBe(
       true,
     );
+    expect(
+      oliveOptions.theme.some((option) => option.value === "bejamas-blue"),
+    ).toBe(true);
+    expect(
+      oliveOptions.theme.some(
+        (option) => option.value === "bejamas-neon-yellow",
+      ),
+    ).toBe(true);
   });
 
   it("keeps template options aligned with the supported template values", () => {
@@ -132,7 +148,9 @@ describe("create sidebar helpers", () => {
     expect(CREATE_PICKER_GROUP_LABELS.serif).toBe("Serif");
     expect(CREATE_PICKER_GROUP_LABELS.mono).toBe("Monospace");
 
-    expect(options.font.find((option) => option.value === "inter")).toMatchObject({
+    expect(
+      options.font.find((option) => option.value === "inter"),
+    ).toMatchObject({
       group: "sans",
     });
     expect(

@@ -1,8 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { parseCssVariables } from "@/components/theme-editor/utils/themeEditorUtils";
 import {
+  CREATE_THEME_GROUP_LABELS,
   emptyThemeOverrides,
   formatThemeTokenLabel,
+  getCreateThemeSeedGroups,
+  getCreateThemeSeedOption,
   hasThemeOverrides,
   mergeThemeStyles,
 } from "./create-theme";
@@ -71,5 +74,38 @@ describe("create theme helpers", () => {
       "Primary Foreground",
     );
     expect(formatThemeTokenLabel("chart-4")).toBe("Chart 4");
+  });
+
+  test("groups curated theme seeds ahead of tailwind seeds", () => {
+    const groups = getCreateThemeSeedGroups("neutral");
+
+    expect(CREATE_THEME_GROUP_LABELS.bejamas).toBe("Bejamas");
+    expect(CREATE_THEME_GROUP_LABELS.tailwind).toBe("Tailwind");
+    expect(groups.map((group) => group.group)).toEqual(["bejamas", "tailwind"]);
+    expect(groups[0]?.options.map((option) => option.value)).toEqual([
+      "bejamas-blue",
+      "bejamas-neon-yellow",
+    ]);
+    expect(groups[1]?.options.some((option) => option.value === "blue")).toBe(
+      true,
+    );
+  });
+
+  test("resolves the curated blue seed option", () => {
+    expect(getCreateThemeSeedOption("neutral", "bejamas-blue")).toMatchObject({
+      value: "bejamas-blue",
+      label: "Blue",
+      color: "oklch(0.56 0.15 248.21)",
+      group: "bejamas",
+    });
+
+    expect(
+      getCreateThemeSeedOption("neutral", "bejamas-neon-yellow"),
+    ).toMatchObject({
+      value: "bejamas-neon-yellow",
+      label: "Neon Yellow",
+      color: "oklch(91.98% 0.1905 128.5)",
+      group: "bejamas",
+    });
   });
 });

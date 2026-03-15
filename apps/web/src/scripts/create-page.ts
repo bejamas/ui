@@ -33,9 +33,11 @@ import {
   createCustomThemeRef,
   createThemeName,
   emptyThemeOverrides,
-  getCreateThemeSeedOptions,
+  getCreateThemeSeedGroups,
+  getCreateThemeSeedOption,
   hasThemeOverrides,
   normalizeThemeOverrides,
+  type CreateThemeSeedOption,
   type ThemeMode,
   type ThemeOverrides,
 } from "@/utils/themes/create-theme";
@@ -672,9 +674,10 @@ function syncThemeTrigger(config: CreateConfig) {
   const markerNode = document.querySelector(
     "[data-create-theme-current-marker]",
   ) as HTMLElement | null;
-  const selectedTheme = getCreatePickerSelectedOption("theme", config) as
-    | CreatePickerOption
-    | undefined;
+  const selectedTheme = getCreateThemeSeedOption(
+    config.baseColor,
+    config.theme,
+  );
   const mergedStyles = getMergedThemeStyles(config);
   const label = hasThemeOverrides(themeOverrides)
     ? "Custom"
@@ -702,25 +705,39 @@ function syncThemeSeedButtons(
     return;
   }
 
-  const options = getCreateThemeSeedOptions(baseColor);
-  themeSeedContainer.innerHTML = options
+  const groups = getCreateThemeSeedGroups(baseColor);
+  themeSeedContainer.innerHTML = groups
     .map((option) => {
-      const selected = option.value === selectedTheme;
-
       return `
-        <button
-          type="button"
-          class="flex items-center gap-2 rounded-[12px] border px-2.5 py-2 text-left transition-colors ${selected ? "border-white/16 bg-white/[0.08] text-white" : "border-white/0 bg-white/[0.02] text-white/78 hover:bg-white/[0.05]"}"
-          data-create-theme-option
-          data-value="${escapeHtml(option.value)}"
-          ${selected ? 'data-selected=""' : ""}
-        >
-          <span class="inline-flex size-4 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]" style="background:${escapeHtml(option.color)};"></span>
-          <span class="truncate text-[13px] font-medium tracking-[-0.01em]">${escapeHtml(option.label)}</span>
-        </button>
+        <section class="space-y-2" data-create-theme-group="${escapeHtml(option.group)}">
+          <header class="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/38">${escapeHtml(option.label)}</header>
+          <div class="grid grid-cols-2 gap-2 rounded-[18px] border border-white/8 bg-white/[0.02] p-2">
+            ${option.options.map((seedOption) => renderThemeSeedButton(seedOption, selectedTheme)).join("")}
+          </div>
+        </section>
       `;
     })
     .join("");
+}
+
+function renderThemeSeedButton(
+  option: CreateThemeSeedOption,
+  selectedTheme: CreateConfig["theme"],
+) {
+  const selected = option.value === selectedTheme;
+
+  return `
+    <button
+      type="button"
+      class="flex items-center gap-2 rounded-[12px] border px-2.5 py-2 text-left transition-colors ${selected ? "border-white/16 bg-white/[0.08] text-white" : "border-white/0 bg-white/[0.02] text-white/78 hover:bg-white/[0.05]"}"
+      data-create-theme-option
+      data-value="${escapeHtml(option.value)}"
+      ${selected ? 'data-selected=""' : ""}
+    >
+      <span class="inline-flex size-4 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]" style="background:${escapeHtml(option.color)};"></span>
+      <span class="truncate text-[13px] font-medium tracking-[-0.01em]">${escapeHtml(option.label)}</span>
+    </button>
+  `;
 }
 
 function syncThemeTabs() {

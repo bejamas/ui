@@ -17,6 +17,31 @@ export type ThemeTokenSection = {
   tokens: Array<keyof ThemeStyleProps>;
 };
 
+export const CREATE_THEME_GROUP_LABELS = {
+  bejamas: "Bejamas",
+  tailwind: "Tailwind",
+} as const;
+
+export type CreateThemeSeedGroup = "bejamas" | "tailwind";
+
+export type CreateThemeSeedOption = {
+  value: DesignSystemConfig["theme"];
+  label: string;
+  color: string;
+  group: CreateThemeSeedGroup;
+};
+
+export type CreateThemeSeedOptionGroup = {
+  group: CreateThemeSeedGroup;
+  label: (typeof CREATE_THEME_GROUP_LABELS)[CreateThemeSeedGroup];
+  options: CreateThemeSeedOption[];
+};
+
+const CURATED_THEME_VALUES = [
+  "bejamas-blue",
+  "bejamas-neon-yellow",
+] as const satisfies readonly DesignSystemConfig["theme"][];
+
 export const CREATE_THEME_TOKEN_SECTIONS: ThemeTokenSection[] = [
   {
     title: "Core",
@@ -156,16 +181,47 @@ export function createCustomThemeRef() {
 
 export function getCreateThemeSeedOptions(
   baseColor: DesignSystemConfig["baseColor"],
-) {
+): CreateThemeSeedOption[] {
   return getThemesForBaseColor(baseColor).map((theme) => {
     const lightVars = (theme.cssVars?.light ?? {}) as Record<string, string>;
 
     return {
-      value: theme.name,
+      value: theme.name as DesignSystemConfig["theme"],
       label: theme.title ?? theme.name,
       color: lightVars.primary ?? lightVars.ring ?? "oklch(0.72 0 0)",
+      group: getCreateThemeSeedGroup(theme.name as DesignSystemConfig["theme"]),
     };
   });
+}
+
+export function getCreateThemeSeedGroups(
+  baseColor: DesignSystemConfig["baseColor"],
+): CreateThemeSeedOptionGroup[] {
+  const options = getCreateThemeSeedOptions(baseColor);
+
+  return (
+    Object.entries(CREATE_THEME_GROUP_LABELS) as Array<
+      [
+        CreateThemeSeedGroup,
+        (typeof CREATE_THEME_GROUP_LABELS)[CreateThemeSeedGroup],
+      ]
+    >
+  )
+    .map(([group, label]) => ({
+      group,
+      label,
+      options: options.filter((option) => option.group === group),
+    }))
+    .filter((group) => group.options.length > 0);
+}
+
+export function getCreateThemeSeedOption(
+  baseColor: DesignSystemConfig["baseColor"],
+  theme: DesignSystemConfig["theme"],
+) {
+  return getCreateThemeSeedOptions(baseColor).find(
+    (option) => option.value === theme,
+  );
 }
 
 export function formatThemeTokenLabel(token: keyof ThemeStyleProps) {
@@ -181,4 +237,10 @@ export function formatThemeTokenLabel(token: keyof ThemeStyleProps) {
 
 export function createThemeName(config: DesignSystemConfig) {
   return `Custom ${config.baseColor} ${config.theme}`;
+}
+
+function getCreateThemeSeedGroup(
+  theme: DesignSystemConfig["theme"],
+): CreateThemeSeedGroup {
+  return CURATED_THEME_VALUES.includes(theme) ? "bejamas" : "tailwind";
 }

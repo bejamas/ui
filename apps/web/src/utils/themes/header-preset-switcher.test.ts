@@ -6,7 +6,7 @@ describe("header preset switcher state", () => {
   test("builds the curated presets with Style - Font labels", () => {
     const state = buildHeaderPresetSwitcherState({});
 
-    expect(state.current.label).toBe("Juno - Geist");
+    expect(state.current.label).toBe("Juno - Inter");
     expect(state.presets.map((preset) => preset.label)).toEqual([
       "Juno - Inter",
       "Vega - Playfair Display",

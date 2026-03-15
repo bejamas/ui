@@ -46,7 +46,7 @@
     {
       "path": "ui/card/CardTitle.astro",
       "type": "registry:ui",
-      "content": "---\nimport { cva } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst { class: className = \"\", ...rest } = Astro.props as Props;\n\nconst titleVariants = cva(\"text-balance\");\n---\n\n<div\n  {...rest}\n  data-slot=\"card-title\"\n  class={cn(\"text-lg leading-normal font-medium group-data-[size=sm]/card:text-sm\", titleVariants(), className)}\n>\n  <slot />\n</div>\n"
+      "content": "---\nimport { cva } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst { class: className = \"\", ...rest } = Astro.props as Props;\n\nconst titleVariants = cva(\"text-balance\");\n---\n\n<div\n  {...rest}\n  data-slot=\"card-title\"\n  class={cn(\"text-lg md:text-xl leading-normal font-medium group-data-[size=sm]/card:text-sm\", titleVariants(), className)}\n>\n  <slot />\n</div>\n"
     },
     {
       "path": "ui/card/index.ts",

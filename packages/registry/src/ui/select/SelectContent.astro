@@ -27,18 +27,14 @@ const {
 
 const contentVariants = cva(
   [
-    "group/select-content cn-menu-target focus-visible:outline-none z-50 relative overflow-hidden",
-    "origin-(--transform-origin) duration-100",
-    "data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95",
-    "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-    "data-[align-trigger=true]:animate-none data-[align-trigger=true]:transition-none",
+    "group/select-content cn-select-content-logical cn-menu-target cn-menu-translucent relative isolate z-50",
+    "origin-(--transform-origin) overflow-x-hidden overflow-y-auto data-[align-trigger=true]:animate-none",
   ],
   {
     variants: {
       position: {
         "item-aligned": "",
-        popper:
-          "data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1",
+        popper: "",
       },
       side: {
         top: "",
@@ -67,12 +63,13 @@ const contentVariants = cva(
   class={cn(
     "cn-select-content",
     contentVariants({ position, side }),
+    "max-h-(--available-height) w-(--anchor-width)",
     className,
   )}
 >
   <div
     data-slot="select-scroll-up-button"
-    class="cn-select-scroll-up-button"
+    class="cn-select-scroll-up-button top-0 w-full"
     hidden
   >
     <slot name="scroll-up"
@@ -88,7 +85,7 @@ const contentVariants = cva(
   </div>
   <div
     data-slot="select-scroll-down-button"
-    class="cn-select-scroll-down-button"
+    class="cn-select-scroll-down-button bottom-0 w-full"
     hidden
   >
     <slot name="scroll-down"

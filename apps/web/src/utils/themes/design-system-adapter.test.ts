@@ -38,6 +38,50 @@ describe("resolveDesignSystemTheme", () => {
     );
   });
 
+  it("applies curated bejamas blue tokens on top of the neutral base", () => {
+    const curatedConfig = {
+      ...baseConfig,
+      theme: "bejamas-blue",
+    } as const;
+    const resolved = resolveDesignSystemTheme(curatedConfig);
+    const registryTheme = buildRegistryTheme(curatedConfig);
+
+    expect(registryTheme.cssVars.light?.primary).toBe(
+      "oklch(0.56 0.15 248.21)",
+    );
+    expect(registryTheme.cssVars.dark?.primary).toBe("oklch(0.56 0.15 248.21)");
+    expect(resolved.styles.light["chart-4"]).toBe("oklch(0.56 0.15 248.21)");
+    expect(resolved.styles.dark["sidebar-primary"]).toBe(
+      "oklch(0.56 0.15 248.21)",
+    );
+  });
+
+  it("applies curated neon yellow tokens on top of the neutral base", () => {
+    const curatedConfig = {
+      ...baseConfig,
+      theme: "bejamas-neon-yellow",
+    } as const;
+    const resolved = resolveDesignSystemTheme(curatedConfig);
+    const registryTheme = buildRegistryTheme(curatedConfig);
+
+    expect(registryTheme.cssVars.light?.primary).toBe(
+      "oklch(91.98% 0.1905 128.5)",
+    );
+    expect(registryTheme.cssVars.dark?.primary).toBe(
+      "oklch(91.98% 0.1905 128.5)",
+    );
+    expect(registryTheme.cssVars.light?.["primary-foreground"]).toBe(
+      "oklch(0 0 0)",
+    );
+    expect(registryTheme.cssVars.dark?.["primary-foreground"]).toBe(
+      "oklch(0 0 0)",
+    );
+    expect(resolved.styles.light["chart-4"]).toBe("oklch(91.98% 0.1905 128.5)");
+    expect(resolved.styles.dark["sidebar-primary"]).toBe(
+      "oklch(91.98% 0.1905 128.5)",
+    );
+  });
+
   it("always surfaces the selected font through font-sans for preview parity", () => {
     const resolved = resolveDesignSystemTheme({
       ...baseConfig,

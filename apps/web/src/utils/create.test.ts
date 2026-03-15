@@ -19,8 +19,8 @@ describe("parseCreateSearchParams", () => {
     expect(result.data).toMatchObject({
       style: "juno",
       baseColor: "neutral",
-      theme: "neutral",
-      font: "geist",
+      theme: "bejamas-blue",
+      font: "inter",
       radius: "default",
       rtl: false,
       rtlLanguage: "ar",
@@ -82,8 +82,8 @@ describe("parseCreateSearchParams", () => {
     expect(result.data).toMatchObject({
       style: "juno",
       baseColor: "neutral",
-      theme: "neutral",
-      font: "geist",
+      theme: "bejamas-blue",
+      font: "inter",
       radius: "default",
       rtl: false,
       rtlLanguage: "ar",
@@ -182,17 +182,13 @@ describe("parseCreateSearchParams", () => {
 
   test("still accepts unsuffixed preview targets for compatibility", () => {
     expect(
-      resolveCreatePreviewTarget(
-        new URLSearchParams({ item: "button" }),
-      ),
+      resolveCreatePreviewTarget(new URLSearchParams({ item: "button" })),
     ).toBe("button");
   });
 
   test("falls back to the default create preview for invalid preview targets", () => {
     expect(
-      resolveCreatePreviewTarget(
-        new URLSearchParams({ item: "not-real" }),
-      ),
+      resolveCreatePreviewTarget(new URLSearchParams({ item: "not-real" })),
     ).toBeNull();
   });
 

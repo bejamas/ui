@@ -71,6 +71,42 @@ describe("preset codec versions", () => {
     expect(isPresetCode(encodePreset({ style: "juno" }))).toBe(true);
   });
 
+  it("round-trips curated bejamas blue without changing legacy codes", () => {
+    const preset = encodePreset({
+      style: "juno",
+      baseColor: "neutral",
+      theme: "bejamas-blue",
+      iconLibrary: "lucide",
+      font: "geist",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+
+    expect(decodePreset(preset)).toEqual({
+      style: "juno",
+      baseColor: "neutral",
+      theme: "bejamas-blue",
+      iconLibrary: "lucide",
+      font: "geist",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+    expect(
+      encodePreset({
+        style: "maia",
+        baseColor: "neutral",
+        theme: "neutral",
+        iconLibrary: "lucide",
+        font: "inter",
+        radius: "default",
+        menuAccent: "subtle",
+        menuColor: "default",
+      }),
+    ).toBe("abVJxYW");
+  });
+
   it("round-trips translucent menu colors without changing older codes", () => {
     const preset = encodePreset({
       style: "maia",

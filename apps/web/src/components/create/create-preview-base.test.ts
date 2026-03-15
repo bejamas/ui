@@ -119,10 +119,44 @@ describe("create preview base layer", () => {
     const selectTrigger = read(
       "packages/registry/src/ui/select/SelectTrigger.astro",
     );
+    const selectContent = read(
+      "packages/registry/src/ui/select/SelectContent.astro",
+    );
+    const selectItem = read(
+      "packages/registry/src/ui/select/SelectItem.astro",
+    );
+    const selectValue = read(
+      "packages/registry/src/ui/select/SelectValue.astro",
+    );
+    const selectGroup = read(
+      "packages/registry/src/ui/select/SelectGroup.astro",
+    );
+    const selectLabel = read(
+      "packages/registry/src/ui/select/SelectLabel.astro",
+    );
+    const selectSeparator = read(
+      "packages/registry/src/ui/select/SelectSeparator.astro",
+    );
 
     expect(selectTrigger).toContain("cn-select-trigger");
     expect(selectTrigger).not.toContain("border-input");
     expect(selectTrigger).not.toContain("rounded-lg border bg-transparent");
+    expect(selectValue).toContain('class={cn("cn-select-value", className)}');
+    expect(selectValue).not.toContain("flex flex-1 text-left");
+    expect(selectContent).toContain("cn-select-content");
+    expect(selectContent).toContain("cn-select-content-logical");
+    expect(selectContent).not.toContain("bg-popover text-popover-foreground");
+    expect(selectContent).not.toContain("rounded-lg shadow-md ring-1");
+    expect(selectItem).toContain('data-slot="select-item-text"');
+    expect(selectItem).toContain("cn-select-item");
+    expect(selectItem).not.toContain("gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm");
+    expect(selectItem).not.toContain("focus:bg-accent");
+    expect(selectGroup).toContain('class={cn("cn-select-group", className)}');
+    expect(selectGroup).not.toContain("scroll-my-1 p-1");
+    expect(selectLabel).toContain('class={cn("cn-select-label", className)}');
+    expect(selectLabel).not.toContain("text-muted-foreground px-1.5 py-1 text-xs");
+    expect(selectSeparator).toContain("cn-select-separator pointer-events-none");
+    expect(selectSeparator).not.toContain("bg-border -mx-1 my-1 h-px");
   });
 
   it("keeps tabs on the shared variant contract", () => {

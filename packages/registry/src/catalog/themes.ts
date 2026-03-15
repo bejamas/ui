@@ -1,4 +1,4 @@
-import { type RegistryItem } from "shadcn/schema"
+import { type RegistryItem } from "shadcn/schema";
 
 export const THEMES: RegistryItem[] = [
   {
@@ -1081,6 +1081,72 @@ export const THEMES: RegistryItem[] = [
       },
     },
   },
-] as const satisfies RegistryItem[]
+  {
+    name: "bejamas-blue",
+    title: "Blue",
+    type: "registry:theme",
+    cssVars: {
+      light: {
+        primary: "oklch(0.56 0.15 248.21)",
+        "primary-foreground": "oklch(0.97 0.014 254.604)",
+        secondary: "oklch(0.967 0.001 286.375)",
+        "secondary-foreground": "oklch(0.21 0.006 285.885)",
+        "chart-1": "oklch(0.809 0.105 251.813)",
+        "chart-2": "oklch(0.623 0.214 259.815)",
+        "chart-3": "oklch(0.546 0.245 262.881)",
+        "chart-4": "oklch(0.56 0.15 248.21)",
+        "chart-5": "oklch(0.424 0.199 265.638)",
+        "sidebar-primary": "oklch(0.56 0.15 248.21)",
+        "sidebar-primary-foreground": "oklch(0.97 0.014 254.604)",
+      },
+      dark: {
+        primary: "oklch(0.56 0.15 248.21)",
+        "primary-foreground": "oklch(0.97 0.014 254.604)",
+        secondary: "oklch(0.274 0.006 286.033)",
+        "secondary-foreground": "oklch(0.985 0 0)",
+        "chart-1": "oklch(0.809 0.105 251.813)",
+        "chart-2": "oklch(0.623 0.214 259.815)",
+        "chart-3": "oklch(0.546 0.245 262.881)",
+        "chart-4": "oklch(0.56 0.15 248.21)",
+        "chart-5": "oklch(0.424 0.199 265.638)",
+        "sidebar-primary": "oklch(0.56 0.15 248.21)",
+        "sidebar-primary-foreground": "oklch(0.97 0.014 254.604)",
+      },
+    },
+  },
+  {
+    name: "bejamas-neon-yellow",
+    title: "Neon Yellow",
+    type: "registry:theme",
+    cssVars: {
+      light: {
+        primary: "oklch(91.98% 0.1905 128.5)",
+        "primary-foreground": "oklch(0 0 0)",
+        secondary: "oklch(0.967 0.001 286.375)",
+        "secondary-foreground": "oklch(0.21 0.006 285.885)",
+        "chart-1": "oklch(0.905 0.182 98.111)",
+        "chart-2": "oklch(0.795 0.184 86.047)",
+        "chart-3": "oklch(0.681 0.162 75.834)",
+        "chart-4": "oklch(91.98% 0.1905 128.5)",
+        "chart-5": "oklch(0.476 0.114 61.907)",
+        "sidebar-primary": "oklch(91.98% 0.1905 128.5)",
+        "sidebar-primary-foreground": "oklch(0.421 0.095 57.708)",
+      },
+      dark: {
+        primary: "oklch(91.98% 0.1905 128.5)",
+        "primary-foreground": "oklch(0 0 0)",
+        secondary: "oklch(0.274 0.006 286.033)",
+        "secondary-foreground": "oklch(0.985 0 0)",
+        "chart-1": "oklch(0.905 0.182 98.111)",
+        "chart-2": "oklch(0.795 0.184 86.047)",
+        "chart-3": "oklch(0.681 0.162 75.834)",
+        "chart-4": "oklch(91.98% 0.1905 128.5)",
+        "chart-5": "oklch(0.476 0.114 61.907)",
+        "sidebar-primary": "oklch(91.98% 0.1905 128.5)",
+        "sidebar-primary-foreground": "oklch(0.421 0.095 57.708)",
+      },
+    },
+  },
+] as const satisfies RegistryItem[];
 
-export type Theme = (typeof THEMES)[number]
+export type Theme = (typeof THEMES)[number];

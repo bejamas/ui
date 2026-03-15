@@ -74,8 +74,8 @@ export default defineConfig({
             { label: "Themes", href: "/themes" },
           ],
           components: {
-            button: "@bejamas/ui/components/button",
-            select: "@bejamas/ui/components/select",
+            button: "@bejamas/registry/ui/button",
+            select: "@bejamas/registry/ui/select",
             Header: "./src/components/starlight/Header.astro",
             Hero: "./src/components/starlight/Hero.astro",
             Search: "./src/components/starlight/Search.astro",

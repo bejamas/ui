@@ -26,17 +26,17 @@ const {
   data-disabled={disabled ? "" : undefined}
   class={cn(
     "cn-select-item",
-    "group/item relative border border-transparent flex w-full cursor-default select-none items-center gap-1.5 rounded-md pr-8 pl-2 text-sm outline-hidden",
-    "group-data-[size=sm]/select-content:py-1 group-data-[size=default]/select-content:py-1.5 group-data-[size=lg]/select-content:py-2",
-    "data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground",
+    "group/item relative flex w-full cursor-default select-none items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden",
+    "focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground",
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
     "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+    "*:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
     className,
   )}
 >
   <span
     data-slot="select-item-text"
-    class="cn-select-item-text flex flex-1 gap-2 shrink-0 whitespace-nowrap items-center"
+    class="cn-select-item-text flex flex-1 gap-2 shrink-0 whitespace-nowrap"
     ><slot /></span
   >
 
