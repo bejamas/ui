@@ -12,7 +12,7 @@ const {
   ...rest
 } = Astro.props as Props;
 
-const itemVariants = cva("inline-flex items-center gap-1.5");
+const itemVariants = cva("inline-flex items-center");
 ---
 
 <li
@@ -22,4 +22,3 @@ const itemVariants = cva("inline-flex items-center gap-1.5");
 >
   <slot />
 </li>
-

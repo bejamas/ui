@@ -115,6 +115,29 @@ describe("create preview base layer", () => {
     expect(card).not.toContain("rounded-xl ring-1 ring-border py-6 shadow-sm");
   });
 
+  it("keeps breadcrumb visuals in the style layer", () => {
+    const breadcrumbList = read(
+      "packages/registry/src/ui/breadcrumb/BreadcrumbList.astro",
+    );
+    const breadcrumbItem = read(
+      "packages/registry/src/ui/breadcrumb/BreadcrumbItem.astro",
+    );
+    const breadcrumbSeparator = read(
+      "packages/registry/src/ui/breadcrumb/BreadcrumbSeparator.astro",
+    );
+
+    expect(breadcrumbList).toContain("cn-breadcrumb-list");
+    expect(breadcrumbList).toContain("flex flex-wrap items-center wrap-break-word");
+    expect(breadcrumbList).not.toContain("text-muted-foreground");
+    expect(breadcrumbList).not.toContain("text-sm");
+    expect(breadcrumbItem).toContain("inline-flex items-center");
+    expect(breadcrumbItem).not.toContain("gap-1.5");
+    expect(breadcrumbSeparator).toContain("cn-breadcrumb-separator");
+    expect(breadcrumbSeparator).toContain("cn-rtl-flip");
+    expect(breadcrumbSeparator).not.toContain("[&>svg]:size-3.5");
+    expect(breadcrumbSeparator).not.toContain('class="size-3.5"');
+  });
+
   it("keeps select visuals in the style layer", () => {
     const selectTrigger = read(
       "packages/registry/src/ui/select/SelectTrigger.astro",
