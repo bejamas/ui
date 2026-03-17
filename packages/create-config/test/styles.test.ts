@@ -19,6 +19,13 @@ function getSelectContentBlock(css: string) {
   return match?.[1] ?? "";
 }
 
+function getCssBlock(css: string, selector: string) {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = css.match(new RegExp(`${escapedSelector}\\s*\\{([\\s\\S]*?)\\n  \\}`));
+
+  return match?.[1] ?? "";
+}
+
 describe("style catalog defaults", () => {
   it("exposes juno as a public style", () => {
     expect(STYLES.map((style) => style.name)).toContain("juno");
@@ -102,6 +109,71 @@ describe("style catalog defaults", () => {
     expect(junoCss).not.toContain(
       "@apply grid max-w-[calc(100%-2rem)] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-250 ease-out [--tw-animation-fill-mode:both] sm:max-w-lg;",
     );
+  });
+
+  it("keeps tooltip motion and arrow nudges aligned in every style", () => {
+    for (const style of STYLES.map((entry) => entry.name)) {
+      const css = getStyleCss(style);
+      const tooltipContentBlock = getCssBlock(css, ".cn-tooltip-content");
+      const tooltipContentLogicalBlock = getCssBlock(
+        css,
+        ".cn-tooltip-content-logical",
+      );
+      const tooltipArrowBlock = getCssBlock(css, ".cn-tooltip-arrow");
+      const tooltipArrowLogicalBlock = getCssBlock(
+        css,
+        ".cn-tooltip-arrow-logical",
+      );
+
+      expect(css).toContain(".cn-tooltip-content");
+      expect(css).toContain(".cn-tooltip-arrow");
+      expect(css).toContain(".cn-tooltip-arrow-logical");
+      expect(tooltipContentBlock).toContain("data-[state=delayed-open]:animate-in");
+      expect(tooltipContentBlock).toContain("pointer-events-none");
+      expect(tooltipContentBlock).toContain("data-open:pointer-events-auto");
+      expect(tooltipContentBlock).toContain("data-closed:pointer-events-none");
+      expect(tooltipContentBlock).not.toContain("data-starting-style:opacity-0");
+      expect(tooltipContentBlock).not.toContain("data-ending-style:scale-95");
+      expect(tooltipContentBlock).not.toContain("data-instant:animate-none!");
+      expect(tooltipArrowBlock).not.toContain("pointer-events-none");
+      expect(tooltipArrowBlock).toContain("data-[side=top]:-bottom-1");
+      expect(tooltipArrowBlock).toContain("data-[side=bottom]:-top-1");
+      expect(tooltipArrowBlock).toContain("data-[side=left]:-right-1");
+      expect(tooltipArrowBlock).toContain("data-[side=right]:-left-1");
+      expect(tooltipArrowBlock).not.toContain("top-1/2!");
+      expect(tooltipArrowBlock).not.toContain("translate-y-[calc(-50%-2px)]");
+      expect(tooltipArrowLogicalBlock).not.toContain("pointer-events-none");
+      expect(tooltipArrowLogicalBlock).toContain("data-[side=inline-start]:-right-1");
+      expect(tooltipArrowLogicalBlock).toContain("data-[side=inline-end]:-left-1");
+      expect(tooltipArrowLogicalBlock).not.toContain("top-1/2!");
+      expect(tooltipArrowLogicalBlock).not.toContain("-translate-y-1/2");
+      expect(tooltipContentLogicalBlock).toContain(
+        "data-[side=inline-start]:slide-in-from-right-2",
+      );
+      expect(tooltipContentLogicalBlock).toContain(
+        "data-[side=inline-end]:slide-in-from-left-2",
+      );
+
+      if (style === "juno" || style === "maia") {
+        expect(tooltipArrowBlock).toContain("data-[side=left]:translate-x-[-1.5px]");
+        expect(tooltipArrowBlock).toContain("data-[side=right]:translate-x-[1.5px]");
+        expect(tooltipArrowLogicalBlock).toContain(
+          "data-[side=inline-start]:translate-x-[-1.5px]",
+        );
+        expect(tooltipArrowLogicalBlock).toContain(
+          "data-[side=inline-end]:translate-x-[1.5px]",
+        );
+      } else {
+        expect(tooltipArrowBlock).not.toContain("data-[side=left]:translate-x-[-1.5px]");
+        expect(tooltipArrowBlock).not.toContain("data-[side=right]:translate-x-[1.5px]");
+        expect(tooltipArrowLogicalBlock).not.toContain(
+          "data-[side=inline-start]:translate-x-[-1.5px]",
+        );
+        expect(tooltipArrowLogicalBlock).not.toContain(
+          "data-[side=inline-end]:translate-x-[1.5px]",
+        );
+      }
+    }
   });
 
   it("keeps sidebar outline styles compatible with direct color variables", () => {

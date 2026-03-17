@@ -245,6 +245,43 @@ describe("create preview base layer", () => {
     expect(dropdownLabel).not.toContain("px-2 py-1.5 text-sm font-medium");
   });
 
+  it("keeps tooltip markup aligned across registry and create preview copies", () => {
+    const registryTooltipContent = read(
+      "packages/registry/src/ui/tooltip/TooltipContent.astro",
+    );
+    const createBaseTooltipContent = read(
+      "apps/web/src/components/create/base/ui/tooltip/TooltipContent.astro",
+    );
+
+    expect(registryTooltipContent).toContain('data-slot="tooltip-arrow"');
+    expect(registryTooltipContent).toContain("cn-tooltip-arrow cn-tooltip-arrow-logical");
+    expect(registryTooltipContent).toContain('side?: TooltipSide;');
+    expect(registryTooltipContent).toContain('"inline-start"');
+    expect(registryTooltipContent).toContain('"inline-end"');
+    expect(registryTooltipContent).not.toContain('data-slot="tooltip-indicator"');
+    expect(registryTooltipContent).not.toContain("data-[state=delayed-open]");
+    expect(registryTooltipContent).not.toContain('class="cn-tooltip-portal"');
+    expect(registryTooltipContent).toContain("data-[side=top]:-bottom-1");
+    expect(registryTooltipContent).toContain("data-[side=bottom]:-top-1");
+    expect(registryTooltipContent).not.toContain("top-1/2!");
+    expect(registryTooltipContent).not.toContain("translate-y-[calc(-50%-2px)]");
+    expect(registryTooltipContent).not.toContain("pointer-events-none absolute cn-tooltip-arrow");
+
+    expect(createBaseTooltipContent).toContain('data-slot="tooltip-arrow"');
+    expect(createBaseTooltipContent).toContain("cn-tooltip-arrow cn-tooltip-arrow-logical");
+    expect(createBaseTooltipContent).toContain('side?: TooltipSide;');
+    expect(createBaseTooltipContent).toContain('"inline-start"');
+    expect(createBaseTooltipContent).toContain('"inline-end"');
+    expect(createBaseTooltipContent).not.toContain('data-slot="tooltip-indicator"');
+    expect(createBaseTooltipContent).not.toContain("data-[state=delayed-open]");
+    expect(createBaseTooltipContent).not.toContain('class="cn-tooltip-portal"');
+    expect(createBaseTooltipContent).toContain("data-[side=top]:-bottom-1");
+    expect(createBaseTooltipContent).toContain("data-[side=bottom]:-top-1");
+    expect(createBaseTooltipContent).not.toContain("top-1/2!");
+    expect(createBaseTooltipContent).not.toContain("translate-y-[calc(-50%-2px)]");
+    expect(createBaseTooltipContent).not.toContain("pointer-events-none absolute cn-tooltip-arrow");
+  });
+
   it("keeps table, field, native select, and toggle visuals in the style layer", () => {
     const tableRow = read("packages/registry/src/ui/table/TableRow.astro");
     const tableHead = read("packages/registry/src/ui/table/TableHead.astro");

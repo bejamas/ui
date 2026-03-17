@@ -65,6 +65,10 @@ describe("style registry build", () => {
       read("packages/registry/src/ui/dropdown-menu/DropdownMenuContent.astro"),
       tokenMap,
     );
+    const tooltipContent = transformRegistrySource(
+      read("packages/registry/src/ui/tooltip/TooltipContent.astro"),
+      tokenMap,
+    );
 
     expect(button).toContain('from "@/lib/utils"');
     expect(button).toContain("shadow-none hover:bg-primary/90");
@@ -80,6 +84,19 @@ describe("style registry build", () => {
     );
     expect(dropdownContent).not.toContain("cn-dropdown-menu-content");
     expect(dropdownContent).not.toContain("cn-dropdown-menu-content-logical");
+
+    expect(tooltipContent).toContain('data-slot="tooltip-arrow"');
+    expect(tooltipContent).toContain("data-[side=inline-start]:slide-in-from-right-2");
+    expect(tooltipContent).toContain("data-[state=delayed-open]:animate-in");
+    expect(tooltipContent).toContain("data-open:pointer-events-auto");
+    expect(tooltipContent).toContain("data-[side=inline-end]:translate-x-[1.5px]");
+    expect(tooltipContent).toContain("data-[side=top]:-bottom-1");
+    expect(tooltipContent).toContain("data-[side=bottom]:-top-1");
+    expect(tooltipContent).not.toContain("top-1/2!");
+    expect(tooltipContent).not.toContain("translate-y-[calc(-50%-2px)]");
+    expect(tooltipContent).not.toContain("tooltip-indicator");
+    expect(tooltipContent).not.toContain("cn-tooltip-content");
+    expect(tooltipContent).not.toContain("cn-tooltip-arrow");
   });
 
   it("converts raw style declarations into inline arbitrary utilities", () => {

@@ -2,15 +2,15 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
-import { Label } from "@bejamas/ui/components/label";
-import { Input } from "@bejamas/ui/components/input";
+import { Label } from "@bejamas/registry/ui/label";
+import { Input } from "@bejamas/registry/ui/input";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@bejamas/ui/components/select";
+} from "@bejamas/registry/ui/select";
 import {
   Popover,
   PopoverTrigger,
@@ -19,8 +19,8 @@ import {
   PopoverHeader,
   PopoverTitle,
   PopoverDescription,
-} from "@bejamas/ui/components/popover";
-import { Button } from "@bejamas/ui/components/button";
+} from "@bejamas/registry/ui/popover";
+import { Button } from "@bejamas/registry/ui/button";
 import {
   Dialog,
   DialogTrigger,
@@ -28,7 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@bejamas/ui/components/dialog";
+} from "@bejamas/registry/ui/dialog";
 ---
 
 <KitchenSinkLayout>
@@ -36,197 +36,201 @@ import {
     <h1 class="text-3xl font-bold mb-10">Popover</h1>
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
-    <KitchenSinkSection title="Basic">
-      <p class="text-sm text-muted-foreground">
-        Simple popover with header, title, and description
-      </p>
-      <Popover>
-        <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
-        <PopoverContent>
-          <PopoverHeader>
-            <PopoverTitle>Popover Title</PopoverTitle>
-            <PopoverDescription
-              >This is a simple popover with some descriptive text.</PopoverDescription
-            >
-          </PopoverHeader>
-        </PopoverContent>
-      </Popover>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="Side Variants">
-      <p class="text-sm text-muted-foreground">
-        Use the <code>side</code> prop on <code>Popover</code> to control where content
-        opens.
-      </p>
-      <div class="flex flex-wrap items-center gap-8 py-2">
+      <KitchenSinkSection title="Basic">
+        <p class="text-sm text-muted-foreground">
+          Simple popover with header, title, and description
+        </p>
         <Popover>
-          <PopoverTrigger variant="outline">Left</PopoverTrigger>
-          <PopoverContent side="left">
+          <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+          <PopoverContent>
             <PopoverHeader>
-              <PopoverTitle>Left Side</PopoverTitle>
+              <PopoverTitle>Popover Title</PopoverTitle>
               <PopoverDescription
-                >Appears to the left of the trigger.</PopoverDescription
+                >This is a simple popover with some descriptive text.</PopoverDescription
               >
             </PopoverHeader>
           </PopoverContent>
         </Popover>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Side Variants">
+        <p class="text-sm text-muted-foreground">
+          Use the <code>side</code> prop on <code>Popover</code> to control where
+          content opens.
+        </p>
+        <div class="flex flex-wrap items-center gap-8 py-2">
+          <Popover>
+            <PopoverTrigger variant="outline">Left</PopoverTrigger>
+            <PopoverContent side="left">
+              <PopoverHeader>
+                <PopoverTitle>Left Side</PopoverTitle>
+                <PopoverDescription
+                  >Appears to the left of the trigger.</PopoverDescription
+                >
+              </PopoverHeader>
+            </PopoverContent>
+          </Popover>
+
+          <Popover>
+            <PopoverTrigger variant="outline">Top</PopoverTrigger>
+            <PopoverContent side="top">
+              <PopoverHeader>
+                <PopoverTitle>Top Side</PopoverTitle>
+                <PopoverDescription
+                  >Appears above the trigger.</PopoverDescription
+                >
+              </PopoverHeader>
+            </PopoverContent>
+          </Popover>
+
+          <Popover>
+            <PopoverTrigger variant="outline">Bottom</PopoverTrigger>
+            <PopoverContent side="bottom">
+              <PopoverHeader>
+                <PopoverTitle>Bottom Side</PopoverTitle>
+                <PopoverDescription
+                  >Appears below the trigger (default).</PopoverDescription
+                >
+              </PopoverHeader>
+            </PopoverContent>
+          </Popover>
+
+          <Popover>
+            <PopoverTrigger variant="outline">Right</PopoverTrigger>
+            <PopoverContent side="right">
+              <PopoverHeader>
+                <PopoverTitle>Right Side</PopoverTitle>
+                <PopoverDescription
+                  >Appears to the right of the trigger.</PopoverDescription
+                >
+              </PopoverHeader>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Alignment Variants">
+        <p class="text-sm text-muted-foreground">
+          Set <code>align</code> on <code>Popover</code> for defaults, then override
+          with <code>PopoverContent</code> when needed.
+        </p>
+        <div class="flex flex-wrap gap-8">
+          <Popover>
+            <PopoverTrigger variant="outline">Start</PopoverTrigger>
+            <PopoverContent side="bottom" align="start">
+              <PopoverHeader>
+                <PopoverTitle>Start Aligned</PopoverTitle>
+                <PopoverDescription>Root alignment is start.</PopoverDescription
+                >
+              </PopoverHeader>
+            </PopoverContent>
+          </Popover>
+
+          <Popover>
+            <PopoverTrigger variant="outline">Center</PopoverTrigger>
+            <PopoverContent side="bottom" align="center">
+              <PopoverHeader>
+                <PopoverTitle>Center Aligned</PopoverTitle>
+                <PopoverDescription
+                  >Root alignment is center.</PopoverDescription
+                >
+              </PopoverHeader>
+            </PopoverContent>
+          </Popover>
+
+          <Popover>
+            <PopoverTrigger variant="outline">End</PopoverTrigger>
+            <PopoverContent side="bottom" align="end">
+              <PopoverHeader>
+                <PopoverTitle>End Aligned</PopoverTitle>
+                <PopoverDescription>Root alignment is end.</PopoverDescription>
+              </PopoverHeader>
+            </PopoverContent>
+          </Popover>
+        </div>
 
         <Popover>
-          <PopoverTrigger variant="outline">Top</PopoverTrigger>
-          <PopoverContent side="top">
+          <PopoverTrigger variant="outline">
+            Root bottom/start, content top/end
+          </PopoverTrigger>
+          <PopoverContent side="bottom" align="start" class="w-80">
             <PopoverHeader>
-              <PopoverTitle>Top Side</PopoverTitle>
-              <PopoverDescription>Appears above the trigger.</PopoverDescription
-              >
+              <PopoverTitle>Content Overrides Root</PopoverTitle>
+              <PopoverDescription>
+                Root sets side=bottom align=start, but content overrides to
+                side=top align=end.
+              </PopoverDescription>
             </PopoverHeader>
           </PopoverContent>
         </Popover>
+      </KitchenSinkSection>
 
+      <KitchenSinkSection title="With Form">
+        <p class="text-sm text-muted-foreground">
+          Popover containing form fields (Dimensions example)
+        </p>
         <Popover>
-          <PopoverTrigger variant="outline">Bottom</PopoverTrigger>
-          <PopoverContent side="bottom">
+          <PopoverTrigger variant="outline">Open dimensions</PopoverTrigger>
+          <PopoverContent align="start" class="w-80">
             <PopoverHeader>
-              <PopoverTitle>Bottom Side</PopoverTitle>
+              <PopoverTitle>Dimensions</PopoverTitle>
               <PopoverDescription
-                >Appears below the trigger (default).</PopoverDescription
+                >Set the dimensions for the layer.</PopoverDescription
               >
             </PopoverHeader>
+            <div class="grid gap-3">
+              <div class="grid grid-cols-3 items-center gap-2">
+                <Label class="text-xs">Width</Label>
+                <Input class="col-span-2 h-8" value="100%" />
+              </div>
+              <div class="grid grid-cols-3 items-center gap-2">
+                <Label class="text-xs">Max. width</Label>
+                <Input class="col-span-2 h-8" value="300px" />
+              </div>
+              <div class="grid grid-cols-3 items-center gap-2">
+                <Label class="text-xs">Height</Label>
+                <Input class="col-span-2 h-8" value="25px" />
+              </div>
+              <div class="grid grid-cols-3 items-center gap-2">
+                <Label class="text-xs">Overflow</Label>
+                <Select class="col-span-2">
+                  <SelectTrigger size="sm">
+                    <SelectValue placeholder="Select..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="visible">Visible</SelectItem>
+                    <SelectItem value="hidden">Hidden</SelectItem>
+                    <SelectItem value="scroll">Scroll</SelectItem>
+                    <SelectItem value="auto">Auto</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </PopoverContent>
         </Popover>
+      </KitchenSinkSection>
 
+      <KitchenSinkSection title="With Close Button">
+        <p class="text-sm text-muted-foreground">
+          Using PopoverClose inside content
+        </p>
         <Popover>
-          <PopoverTrigger variant="outline">Right</PopoverTrigger>
-          <PopoverContent side="right">
+          <PopoverTrigger variant="outline">Open with close</PopoverTrigger>
+          <PopoverContent align="start">
             <PopoverHeader>
-              <PopoverTitle>Right Side</PopoverTitle>
+              <PopoverTitle>Closeable</PopoverTitle>
               <PopoverDescription
-                >Appears to the right of the trigger.</PopoverDescription
+                >Click the button below to close.</PopoverDescription
               >
             </PopoverHeader>
-          </PopoverContent>
-        </Popover>
-      </div>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="Alignment Variants">
-      <p class="text-sm text-muted-foreground">
-        Set <code>align</code> on <code>Popover</code> for defaults, then override
-        with <code>PopoverContent</code> when needed.
-      </p>
-      <div class="flex flex-wrap gap-8">
-        <Popover>
-          <PopoverTrigger variant="outline">Start</PopoverTrigger>
-          <PopoverContent side="bottom" align="start">
-            <PopoverHeader>
-              <PopoverTitle>Start Aligned</PopoverTitle>
-              <PopoverDescription>Root alignment is start.</PopoverDescription>
-            </PopoverHeader>
-          </PopoverContent>
-        </Popover>
-
-        <Popover>
-          <PopoverTrigger variant="outline">Center</PopoverTrigger>
-          <PopoverContent side="bottom" align="center">
-            <PopoverHeader>
-              <PopoverTitle>Center Aligned</PopoverTitle>
-              <PopoverDescription>Root alignment is center.</PopoverDescription>
-            </PopoverHeader>
-          </PopoverContent>
-        </Popover>
-
-        <Popover>
-          <PopoverTrigger variant="outline">End</PopoverTrigger>
-          <PopoverContent side="bottom" align="end">
-            <PopoverHeader>
-              <PopoverTitle>End Aligned</PopoverTitle>
-              <PopoverDescription>Root alignment is end.</PopoverDescription>
-            </PopoverHeader>
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      <Popover>
-        <PopoverTrigger variant="outline">
-          Root bottom/start, content top/end
-        </PopoverTrigger>
-        <PopoverContent side="bottom" align="start" class="w-80">
-          <PopoverHeader>
-            <PopoverTitle>Content Overrides Root</PopoverTitle>
-            <PopoverDescription>
-              Root sets side=bottom align=start, but content overrides to
-              side=top align=end.
-            </PopoverDescription>
-          </PopoverHeader>
-        </PopoverContent>
-      </Popover>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="With Form">
-      <p class="text-sm text-muted-foreground">
-        Popover containing form fields (Dimensions example)
-      </p>
-      <Popover>
-        <PopoverTrigger variant="outline">Open dimensions</PopoverTrigger>
-        <PopoverContent align="start" class="w-80">
-          <PopoverHeader>
-            <PopoverTitle>Dimensions</PopoverTitle>
-            <PopoverDescription
-              >Set the dimensions for the layer.</PopoverDescription
+            <PopoverClose
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
             >
-          </PopoverHeader>
-          <div class="grid gap-3">
-            <div class="grid grid-cols-3 items-center gap-2">
-              <Label class="text-xs">Width</Label>
-              <Input class="col-span-2 h-8" value="100%" />
-            </div>
-            <div class="grid grid-cols-3 items-center gap-2">
-              <Label class="text-xs">Max. width</Label>
-              <Input class="col-span-2 h-8" value="300px" />
-            </div>
-            <div class="grid grid-cols-3 items-center gap-2">
-              <Label class="text-xs">Height</Label>
-              <Input class="col-span-2 h-8" value="25px" />
-            </div>
-            <div class="grid grid-cols-3 items-center gap-2">
-              <Label class="text-xs">Overflow</Label>
-              <Select class="col-span-2">
-                <SelectTrigger size="sm">
-                  <SelectValue placeholder="Select..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="visible">Visible</SelectItem>
-                  <SelectItem value="hidden">Hidden</SelectItem>
-                  <SelectItem value="scroll">Scroll</SelectItem>
-                  <SelectItem value="auto">Auto</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="With Close Button">
-      <p class="text-sm text-muted-foreground">
-        Using PopoverClose inside content
-      </p>
-      <Popover>
-        <PopoverTrigger variant="outline">Open with close</PopoverTrigger>
-        <PopoverContent align="start">
-          <PopoverHeader>
-            <PopoverTitle>Closeable</PopoverTitle>
-            <PopoverDescription
-              >Click the button below to close.</PopoverDescription
-            >
-          </PopoverHeader>
-          <PopoverClose
-            class="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90"
-          >
-            Close popover
-          </PopoverClose>
-        </PopoverContent>
-      </Popover>
-    </KitchenSinkSection>
+              Close popover
+            </PopoverClose>
+          </PopoverContent>
+        </Popover>
+      </KitchenSinkSection>
     </div>
 
     <KitchenSinkSection title="Event Testing">

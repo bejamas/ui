@@ -7,13 +7,13 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@bejamas/ui/components/accordion";
+} from "@bejamas/registry/ui/accordion";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
-} from "@bejamas/ui/components/card";
+} from "@bejamas/registry/ui/card";
 ---
 
 <KitchenSinkLayout>
@@ -44,24 +44,29 @@ import {
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Multiple">
-      <p class="text-sm text-muted-foreground">Multiple items can be open at the same time.</p>
+      <p class="text-sm text-muted-foreground">
+        Multiple items can be open at the same time.
+      </p>
       <Accordion multiple>
         <AccordionItem value="item-1">
           <AccordionTrigger>First section</AccordionTrigger>
           <AccordionContent>
-            This is the first section content. You can open multiple sections at once.
+            This is the first section content. You can open multiple sections at
+            once.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
           <AccordionTrigger>Second section</AccordionTrigger>
           <AccordionContent>
-            This is the second section content. Try opening this while the first is open.
+            This is the second section content. Try opening this while the first
+            is open.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
           <AccordionTrigger>Third section</AccordionTrigger>
           <AccordionContent>
-            This is the third section content. All three can be open simultaneously.
+            This is the third section content. All three can be open
+            simultaneously.
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -91,7 +96,9 @@ import {
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Non-collapsible">
-      <p class="text-sm text-muted-foreground">One item must always remain open.</p>
+      <p class="text-sm text-muted-foreground">
+        One item must always remain open.
+      </p>
       <Accordion defaultValue="item-1">
         <AccordionItem value="item-1">
           <AccordionTrigger>Always one open</AccordionTrigger>
@@ -130,7 +137,8 @@ import {
             <AccordionItem value="faq-2">
               <AccordionTrigger>Can I customize the styles?</AccordionTrigger>
               <AccordionContent>
-                Yes, all components support className and style props for customization.
+                Yes, all components support className and style props for
+                customization.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="faq-3">
@@ -162,7 +170,9 @@ import {
       <script>
         {
           function log(msg: string) {
-            (document.getElementById("accordion-event-output") as any)?._log(msg);
+            (document.getElementById("accordion-event-output") as any)?._log(
+              msg,
+            );
           }
 
           document
@@ -209,21 +219,31 @@ import {
       <script>
         {
           const accordion = document.getElementById("programmatic-accordion");
-          document.getElementById("open-prog-1")?.addEventListener("click", () => {
-            accordion?.dispatchEvent(
-              new CustomEvent("accordion:set", { detail: { value: "prog-1" } }),
-            );
-          });
-          document.getElementById("open-prog-2")?.addEventListener("click", () => {
-            accordion?.dispatchEvent(
-              new CustomEvent("accordion:set", { detail: { value: "prog-2" } }),
-            );
-          });
-          document.getElementById("close-all-accordion")?.addEventListener("click", () => {
-            accordion?.dispatchEvent(
-              new CustomEvent("accordion:set", { detail: { value: "" } }),
-            );
-          });
+          document
+            .getElementById("open-prog-1")
+            ?.addEventListener("click", () => {
+              accordion?.dispatchEvent(
+                new CustomEvent("accordion:set", {
+                  detail: { value: "prog-1" },
+                }),
+              );
+            });
+          document
+            .getElementById("open-prog-2")
+            ?.addEventListener("click", () => {
+              accordion?.dispatchEvent(
+                new CustomEvent("accordion:set", {
+                  detail: { value: "prog-2" },
+                }),
+              );
+            });
+          document
+            .getElementById("close-all-accordion")
+            ?.addEventListener("click", () => {
+              accordion?.dispatchEvent(
+                new CustomEvent("accordion:set", { detail: { value: "" } }),
+              );
+            });
         }
       </script>
     </KitchenSinkSection>

@@ -10,11 +10,11 @@ import {
   CardContent,
   CardFooter,
   CardAction,
-} from "@bejamas/ui/components/card";
-import { Button } from "@bejamas/ui/components/button";
-import { Badge } from "@bejamas/ui/components/badge";
-import { Input } from "@bejamas/ui/components/input";
-import { Label } from "@bejamas/ui/components/label";
+} from "@bejamas/registry/ui/card";
+import { Button } from "@bejamas/registry/ui/button";
+import { Badge } from "@bejamas/registry/ui/badge";
+import { Input } from "@bejamas/registry/ui/input";
+import { Label } from "@bejamas/registry/ui/label";
 ---
 
 <KitchenSinkLayout>
@@ -25,7 +25,9 @@ import { Label } from "@bejamas/ui/components/label";
       <Card class="max-w-md">
         <CardHeader>
           <CardTitle>Card Title</CardTitle>
-          <CardDescription>Card description goes here with some details.</CardDescription>
+          <CardDescription
+            >Card description goes here with some details.</CardDescription
+          >
         </CardHeader>
         <CardContent>
           <p class="text-sm text-muted-foreground">
@@ -56,17 +58,22 @@ import { Label } from "@bejamas/ui/components/label";
     <KitchenSinkSection title="With Media">
       <Card class="max-w-md overflow-hidden">
         <CardMedia>
-          <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-lg font-medium">
+          <div
+            class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-lg font-medium"
+          >
             Image Placeholder
           </div>
         </CardMedia>
         <CardHeader>
           <CardTitle>Beautiful Landscape</CardTitle>
-          <CardDescription>A card with a media section at the top.</CardDescription>
+          <CardDescription
+            >A card with a media section at the top.</CardDescription
+          >
         </CardHeader>
         <CardContent>
           <p class="text-sm text-muted-foreground">
-            Cards with media are great for blog posts, product listings, and galleries.
+            Cards with media are great for blog posts, product listings, and
+            galleries.
           </p>
         </CardContent>
         <CardFooter>
@@ -79,7 +86,9 @@ import { Label } from "@bejamas/ui/components/label";
       <Card class="max-w-sm">
         <CardHeader>
           <CardTitle>Login</CardTitle>
-          <CardDescription>Enter your credentials to access your account.</CardDescription>
+          <CardDescription
+            >Enter your credentials to access your account.</CardDescription
+          >
         </CardHeader>
         <CardContent class="space-y-4">
           <div class="space-y-2">
@@ -88,7 +97,11 @@ import { Label } from "@bejamas/ui/components/label";
           </div>
           <div class="space-y-2">
             <Label for="card-password">Password</Label>
-            <Input id="card-password" type="password" placeholder="Enter password" />
+            <Input
+              id="card-password"
+              type="password"
+              placeholder="Enter password"
+            />
           </div>
         </CardContent>
         <CardFooter>

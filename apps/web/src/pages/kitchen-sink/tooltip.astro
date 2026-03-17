@@ -6,9 +6,9 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@bejamas/ui/components/tooltip";
-import { Button } from "@bejamas/ui/components/button";
-import { Kbd } from "@bejamas/ui/components/kbd";
+} from "@bejamas/registry/ui/tooltip";
+import { Button } from "@bejamas/registry/ui/button";
+import { Kbd } from "@bejamas/registry/ui/kbd";
 import {
   PlusIcon,
   SettingsIcon,
@@ -38,39 +38,59 @@ import {
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Sides">
-        <div class="flex items-center gap-4 flex-wrap py-8">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline">Left</Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Tooltip on left</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline">Top</Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>Tooltip on top</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline">Bottom</Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <p>Tooltip on bottom</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline">Right</Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Tooltip on right</p>
-            </TooltipContent>
-          </Tooltip>
+        <div class="grid gap-4 py-8">
+          <div class="flex items-center gap-4 flex-wrap justify-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline">Left</Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                <p>Tooltip on left</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline">Top</Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p>Tooltip on top</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline">Bottom</Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Tooltip on bottom</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline">Right</Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Tooltip on right</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <div class="flex items-center gap-4 flex-wrap justify-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline">Inline Start</Button>
+              </TooltipTrigger>
+              <TooltipContent side="inline-start">
+                <p>Tooltip on inline start</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline">Inline End</Button>
+              </TooltipTrigger>
+              <TooltipContent side="inline-end">
+                <p>Tooltip on inline end</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
       </KitchenSinkSection>
 

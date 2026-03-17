@@ -3,8 +3,8 @@ export const prerender = false;
 
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import { actions, isInputError } from "astro:actions";
-import { Button } from "@bejamas/ui/components/button";
-import { Checkbox } from "@bejamas/ui/components/checkbox";
+import { Button } from "@bejamas/registry/ui/button";
+import { Checkbox } from "@bejamas/registry/ui/checkbox";
 import {
   Field,
   FieldDescription,
@@ -13,10 +13,10 @@ import {
   FieldLabel,
   FieldLegend,
   FieldSet,
-} from "@bejamas/ui/components/field";
-import { Input } from "@bejamas/ui/components/input";
-import { Spinner } from "@bejamas/ui/components/spinner";
-import { Textarea } from "@bejamas/ui/components/textarea";
+} from "@bejamas/registry/ui/field";
+import { Input } from "@bejamas/registry/ui/input";
+import { Spinner } from "@bejamas/registry/ui/spinner";
+import { Textarea } from "@bejamas/registry/ui/textarea";
 
 const serverResult = Astro.getActionResult(actions.contactServer);
 

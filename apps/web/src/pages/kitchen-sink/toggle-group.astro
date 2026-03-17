@@ -2,7 +2,10 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
-import { ToggleGroup, ToggleGroupItem } from "@bejamas/ui/components/toggle-group";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@bejamas/registry/ui/toggle-group";
 import {
   BoldIcon,
   ItalicIcon,
@@ -146,7 +149,11 @@ import {
         </div>
         <div class="space-y-2">
           <p class="text-sm text-muted-foreground">Outline variant</p>
-          <ToggleGroup orientation="vertical" variant="outline" defaultValue="middle">
+          <ToggleGroup
+            orientation="vertical"
+            variant="outline"
+            defaultValue="middle"
+          >
             <ToggleGroupItem value="top" aria-label="Align top">
               <AlignVerticalJustifyStartIcon />
             </ToggleGroupItem>
@@ -192,7 +199,11 @@ import {
       <p class="text-sm text-muted-foreground">
         Click the toggles and check the output for toggle-group:change events
       </p>
-      <ToggleGroup id="event-toggle-group" variant="outline" defaultValue="center">
+      <ToggleGroup
+        id="event-toggle-group"
+        variant="outline"
+        defaultValue="center"
+      >
         <ToggleGroupItem value="left" aria-label="Align left">
           <AlignLeftIcon />
         </ToggleGroupItem>
@@ -209,7 +220,9 @@ import {
           const eventGroup = document.getElementById("event-toggle-group");
 
           function log(msg: string) {
-            (document.getElementById("toggle-group-event-output") as any)?._log(msg);
+            (document.getElementById("toggle-group-event-output") as any)?._log(
+              msg,
+            );
           }
 
           eventGroup?.addEventListener("toggle-group:change", (e: Event) => {
@@ -259,25 +272,39 @@ import {
         </button>
       </div>
       <script>
-        const toggleGroup = document.getElementById("programmatic-toggle-group");
-        document.getElementById("set-left-btn")?.addEventListener("click", () => {
-          toggleGroup?.dispatchEvent(
-            new CustomEvent("toggle-group:set", { detail: { value: ["left"] } })
-          );
-        });
-        document.getElementById("set-center-btn")?.addEventListener("click", () => {
-          toggleGroup?.dispatchEvent(
-            new CustomEvent("toggle-group:set", { detail: { value: ["center"] } })
-          );
-        });
-        document.getElementById("set-right-btn")?.addEventListener("click", () => {
-          toggleGroup?.dispatchEvent(
-            new CustomEvent("toggle-group:set", { detail: { value: ["right"] } })
-          );
-        });
+        const toggleGroup = document.getElementById(
+          "programmatic-toggle-group",
+        );
+        document
+          .getElementById("set-left-btn")
+          ?.addEventListener("click", () => {
+            toggleGroup?.dispatchEvent(
+              new CustomEvent("toggle-group:set", {
+                detail: { value: ["left"] },
+              }),
+            );
+          });
+        document
+          .getElementById("set-center-btn")
+          ?.addEventListener("click", () => {
+            toggleGroup?.dispatchEvent(
+              new CustomEvent("toggle-group:set", {
+                detail: { value: ["center"] },
+              }),
+            );
+          });
+        document
+          .getElementById("set-right-btn")
+          ?.addEventListener("click", () => {
+            toggleGroup?.dispatchEvent(
+              new CustomEvent("toggle-group:set", {
+                detail: { value: ["right"] },
+              }),
+            );
+          });
         document.getElementById("clear-btn")?.addEventListener("click", () => {
           toggleGroup?.dispatchEvent(
-            new CustomEvent("toggle-group:set", { detail: { value: [] } })
+            new CustomEvent("toggle-group:set", { detail: { value: [] } }),
           );
         });
       </script>
@@ -317,25 +344,31 @@ import {
       </div>
       <script>
         const multiGroup = document.getElementById("multi-programmatic");
-        document.getElementById("set-all-btn")?.addEventListener("click", () => {
-          multiGroup?.dispatchEvent(
-            new CustomEvent("toggle-group:set", {
-              detail: { value: ["bold", "italic", "underline"] },
-            })
-          );
-        });
-        document.getElementById("set-bold-italic-btn")?.addEventListener("click", () => {
-          multiGroup?.dispatchEvent(
-            new CustomEvent("toggle-group:set", {
-              detail: { value: ["bold", "italic"] },
-            })
-          );
-        });
-        document.getElementById("clear-multi-btn")?.addEventListener("click", () => {
-          multiGroup?.dispatchEvent(
-            new CustomEvent("toggle-group:set", { detail: { value: [] } })
-          );
-        });
+        document
+          .getElementById("set-all-btn")
+          ?.addEventListener("click", () => {
+            multiGroup?.dispatchEvent(
+              new CustomEvent("toggle-group:set", {
+                detail: { value: ["bold", "italic", "underline"] },
+              }),
+            );
+          });
+        document
+          .getElementById("set-bold-italic-btn")
+          ?.addEventListener("click", () => {
+            multiGroup?.dispatchEvent(
+              new CustomEvent("toggle-group:set", {
+                detail: { value: ["bold", "italic"] },
+              }),
+            );
+          });
+        document
+          .getElementById("clear-multi-btn")
+          ?.addEventListener("click", () => {
+            multiGroup?.dispatchEvent(
+              new CustomEvent("toggle-group:set", { detail: { value: [] } }),
+            );
+          });
       </script>
     </KitchenSinkSection>
   </section>

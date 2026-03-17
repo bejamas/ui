@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Skeleton } from "@bejamas/ui/components/skeleton";
+import { Skeleton } from "@bejamas/registry/ui/skeleton";
 ---
 
 <KitchenSinkLayout>
@@ -9,36 +9,36 @@ import { Skeleton } from "@bejamas/ui/components/skeleton";
     <h1 class="text-3xl font-bold mb-10">Skeleton</h1>
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
-    <KitchenSinkSection title="Basic Shapes">
-      <div class="space-y-4">
-        <Skeleton class="h-4 w-[250px]" />
-        <Skeleton class="h-12 w-12 rounded-full" />
-        <Skeleton class="h-[125px] w-full" />
-      </div>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="Avatar + Text">
-      <div class="flex items-center space-x-4">
-        <Skeleton class="h-12 w-12 rounded-full" />
-        <div class="space-y-2">
-          <Skeleton class="h-4 w-[200px]" />
-          <Skeleton class="h-4 w-[150px]" />
+      <KitchenSinkSection title="Basic Shapes">
+        <div class="space-y-4">
+          <Skeleton class="h-4 w-[250px]" />
+          <Skeleton class="h-12 w-12 rounded-full" />
+          <Skeleton class="h-[125px] w-full" />
         </div>
-      </div>
-    </KitchenSinkSection>
+      </KitchenSinkSection>
 
-    <KitchenSinkSection title="Card">
-      <div class="rounded-xl border p-4 space-y-4">
+      <KitchenSinkSection title="Avatar + Text">
         <div class="flex items-center space-x-4">
-          <Skeleton class="h-10 w-10 rounded-full" />
-          <div class="space-y-2 flex-1">
-            <Skeleton class="h-4 w-3/4" />
-            <Skeleton class="h-3 w-1/2" />
+          <Skeleton class="h-12 w-12 rounded-full" />
+          <div class="space-y-2">
+            <Skeleton class="h-4 w-[200px]" />
+            <Skeleton class="h-4 w-[150px]" />
           </div>
         </div>
-        <Skeleton class="h-[140px] w-full rounded-lg" />
-      </div>
-    </KitchenSinkSection>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Card">
+        <div class="rounded-xl border p-4 space-y-4">
+          <div class="flex items-center space-x-4">
+            <Skeleton class="h-10 w-10 rounded-full" />
+            <div class="space-y-2 flex-1">
+              <Skeleton class="h-4 w-3/4" />
+              <Skeleton class="h-3 w-1/2" />
+            </div>
+          </div>
+          <Skeleton class="h-[140px] w-full rounded-lg" />
+        </div>
+      </KitchenSinkSection>
     </div>
 
     <KitchenSinkSection title="Table">
