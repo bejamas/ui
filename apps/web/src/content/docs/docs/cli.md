@@ -42,6 +42,8 @@ Base tokens & CSS variables
 
 components.json (shadcn schema)
 
+Compatibility note: `--base-color` is deprecated and ignored on the current shadcn v4-backed init flow. To use a different base color, update `tailwind.baseColor` in `components.json` after init.
+
 ### add <name>
 
 Install a component/block from configured registries (see components.json → registries). Writes files under your aliases.
