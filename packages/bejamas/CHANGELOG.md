@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.2.11
+
+### Patch Changes
+
+- [#98](https://github.com/bejamas/ui/pull/98) [`b608ac1`](https://github.com/bejamas/ui/commit/b608ac19b71b1cce6111118051fc5234f494d3a1) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Fix `bejamas init` against current `shadcn@latest` by removing the obsolete upstream `--base-color` flag, warning on deprecated `bejamas --base-color`, and normalizing generated `components.json` back to Bejamas's default `neutral` base color.
+
 ## 0.2.10
 
 ### Patch Changes
