@@ -63,11 +63,17 @@ export const initOptionsSchema = z.object({
 export function buildShadcnInitInvocation(
   localShadcnPath: string,
   hasLocalShadcn: boolean,
+  localShadcnVersion?: string | null,
 ) {
   if (hasLocalShadcn) {
+    const args = [...SHADCN_INIT_ARGS];
+    if (usesLegacyBaseColorFlag(localShadcnVersion)) {
+      args.push("--base-color", DEFAULT_COMPONENTS_BASE_COLOR);
+    }
+
     return {
       cmd: localShadcnPath,
-      args: [...SHADCN_INIT_ARGS],
+      args,
     };
   }
 
@@ -75,6 +81,27 @@ export function buildShadcnInitInvocation(
     cmd: "npx",
     args: ["-y", "shadcn@latest", ...SHADCN_INIT_ARGS],
   };
+}
+
+export function usesLegacyBaseColorFlag(version?: string | null) {
+  if (!version) {
+    return false;
+  }
+
+  const major = Number.parseInt(version.split(".")[0] ?? "", 10);
+  return Number.isFinite(major) && major > 0 && major < 4;
+}
+
+export async function getLocalShadcnVersion(cwd: string) {
+  const filePath = path.resolve(cwd, "node_modules", "shadcn", "package.json");
+
+  try {
+    const contents = await fs.readFile(filePath, "utf8");
+    const parsed = JSON.parse(contents) as { version?: unknown };
+    return typeof parsed.version === "string" ? parsed.version : null;
+  } catch {
+    return null;
+  }
 }
 
 export function getDeprecatedBaseColorWarning(baseColor?: string) {
@@ -253,9 +280,13 @@ export async function runInit(
       REGISTRY_URL: process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL,
     };
     const hasLocalShadcn = await fsExtra.pathExists(localShadcnPath);
+    const localShadcnVersion = hasLocalShadcn
+      ? await getLocalShadcnVersion(options.cwd)
+      : null;
     const invocation = buildShadcnInitInvocation(
       localShadcnPath,
       hasLocalShadcn,
+      localShadcnVersion,
     );
 
     await execa(invocation.cmd, invocation.args, {
