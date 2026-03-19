@@ -20,8 +20,8 @@ import {
   <section class="max-w-2xl mx-auto py-20 px-5 space-y-12">
     <h1 class="text-3xl font-bold mb-10">Accordion</h1>
 
-    <KitchenSinkSection title="Basic (Collapsible)">
-      <Accordion collapsible>
+    <KitchenSinkSection title="Basic (Default Single)">
+      <Accordion>
         <AccordionItem value="item-1">
           <AccordionTrigger>Is it accessible?</AccordionTrigger>
           <AccordionContent>
@@ -47,7 +47,7 @@ import {
       <p class="text-sm text-muted-foreground">
         Multiple items can be open at the same time.
       </p>
-      <Accordion multiple>
+      <Accordion multiple defaultValue={["item-1", "item-3"]}>
         <AccordionItem value="item-1">
           <AccordionTrigger>First section</AccordionTrigger>
           <AccordionContent>
@@ -73,7 +73,7 @@ import {
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Default Open">
-      <Accordion collapsible defaultValue="item-2">
+      <Accordion defaultValue="item-2">
         <AccordionItem value="item-1">
           <AccordionTrigger>Item 1</AccordionTrigger>
           <AccordionContent>
@@ -99,11 +99,12 @@ import {
       <p class="text-sm text-muted-foreground">
         One item must always remain open.
       </p>
-      <Accordion defaultValue="item-1">
+      <Accordion defaultValue="item-1" collapsible={false}>
         <AccordionItem value="item-1">
           <AccordionTrigger>Always one open</AccordionTrigger>
           <AccordionContent>
-            Without the collapsible prop, one item must always remain open.
+            With <code>collapsible=&#123;false&#125;</code>, one item must
+            always remain open.
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
@@ -127,7 +128,7 @@ import {
           <CardTitle>FAQ</CardTitle>
         </CardHeader>
         <CardContent>
-          <Accordion collapsible>
+          <Accordion>
             <AccordionItem value="faq-1">
               <AccordionTrigger>How do I get started?</AccordionTrigger>
               <AccordionContent>
@@ -156,7 +157,7 @@ import {
       <p class="text-sm text-muted-foreground">
         Open/close items and check the output for accordion:change events.
       </p>
-      <Accordion id="event-accordion" type="single" collapsible>
+      <Accordion id="event-accordion">
         <AccordionItem value="event-1">
           <AccordionTrigger>Event Item 1</AccordionTrigger>
           <AccordionContent>Content for event testing item 1.</AccordionContent>
@@ -179,14 +180,14 @@ import {
             .getElementById("event-accordion")
             ?.addEventListener("accordion:change", (e: Event) => {
               const { value } = (e as CustomEvent).detail;
-              log(`accordion:change → value: "${value}"`);
+              log(`accordion:change → value: [${value.join(", ")}]`);
             });
         }
       </script>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Programmatic Control">
-      <Accordion id="programmatic-accordion" type="single" collapsible>
+      <Accordion id="programmatic-accordion">
         <AccordionItem value="prog-1">
           <AccordionTrigger>Programmatic Item 1</AccordionTrigger>
           <AccordionContent>Content for programmatic item 1.</AccordionContent>

@@ -90,6 +90,14 @@ const STYLE_DEFAULT_RADII = {
   DesignSystemConfig["radius"]
 >;
 
+const STYLE_LOCKED_VALUES = {
+  lyra: {
+    radius: "none",
+  },
+} as const satisfies Partial<
+  Record<DesignSystemConfig["style"], Partial<Pick<DesignSystemConfig, "radius">>>
+>;
+
 export function getThemesForBaseColor(baseColorName: string) {
   const baseColorNames = BASE_COLORS.map((baseColor) => baseColor.name);
 
@@ -122,10 +130,42 @@ export function getStyleDefaultRadius(style: DesignSystemConfig["style"]) {
   return STYLE_DEFAULT_RADII[style as keyof typeof STYLE_DEFAULT_RADII];
 }
 
+export function getStyleLockedConfig(style: DesignSystemConfig["style"]) {
+  return STYLE_LOCKED_VALUES[style] ?? {};
+}
+
+export function getLockedStyleValue<
+  Key extends keyof ReturnType<typeof getStyleLockedConfig>,
+>(
+  style: DesignSystemConfig["style"],
+  key: Key,
+) {
+  return getStyleLockedConfig(style)[key];
+}
+
+export function isStyleOptionLocked(
+  style: DesignSystemConfig["style"],
+  key: keyof Pick<DesignSystemConfig, "radius">,
+) {
+  return getLockedStyleValue(style, key) !== undefined;
+}
+
+export function normalizeDesignSystemConfig(config: DesignSystemConfig) {
+  return {
+    ...config,
+    ...getStyleLockedConfig(config.style),
+  };
+}
+
 export function resolveEffectiveRadius(
   style: DesignSystemConfig["style"],
   radius: DesignSystemConfig["radius"],
 ) {
+  const lockedRadius = getLockedStyleValue(style, "radius");
+  if (lockedRadius) {
+    return lockedRadius;
+  }
+
   return radius === "default" ? getStyleDefaultRadius(style) : radius;
 }
 
@@ -171,8 +211,10 @@ export function getDocumentDirection(config: Pick<DesignSystemConfig, "rtl">) {
 export function mergeDesignSystemConfig(
   partial?: Partial<DesignSystemConfig> & Partial<PresetConfig>,
 ) {
-  return designSystemConfigSchema.parse({
-    ...DEFAULT_DESIGN_SYSTEM_CONFIG,
-    ...partial,
-  });
+  return normalizeDesignSystemConfig(
+    designSystemConfigSchema.parse({
+      ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+      ...partial,
+    }),
+  );
 }

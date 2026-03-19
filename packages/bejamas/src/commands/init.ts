@@ -2,7 +2,10 @@ import { promises as fs } from "fs";
 import path from "path";
 import { preFlightInit } from "@/src/preflights/preflight-init";
 import { applyDesignSystemToProject } from "@/src/utils/apply-design-system";
-import { syncAstroManagedFontCss } from "@/src/utils/apply-design-system";
+import {
+  syncAstroManagedFontCss,
+  syncManagedTailwindCss,
+} from "@/src/utils/apply-design-system";
 import { fixAstroImports } from "@/src/utils/astro-imports";
 
 import { BASE_COLORS, BUILTIN_REGISTRIES } from "@/src/registry/constants";
@@ -33,6 +36,7 @@ import {
   designSystemConfigSchema,
   encodePreset,
   isPresetCode,
+  normalizeDesignSystemConfig,
   RTL_LANGUAGE_VALUES,
   type DesignSystemConfig,
 } from "@bejamas/create-config/server";
@@ -64,29 +68,33 @@ export function resolveDesignSystemConfig(
   if (options.preset && isPresetCode(options.preset)) {
     const decoded = decodePreset(options.preset);
     if (decoded) {
-      return designSystemConfigSchema.parse({
-        ...DEFAULT_DESIGN_SYSTEM_CONFIG,
-        ...decoded,
-        template: options.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
-        rtl: options.rtl ?? false,
-        rtlLanguage,
-      });
+      return normalizeDesignSystemConfig(
+        designSystemConfigSchema.parse({
+          ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+          ...decoded,
+          template: options.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
+          rtl: options.rtl ?? false,
+          rtlLanguage,
+        }),
+      );
     }
   }
 
   const baseColor = options.baseColor ?? DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor;
 
-  return designSystemConfigSchema.parse({
-    ...DEFAULT_DESIGN_SYSTEM_CONFIG,
-    template: options.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
-    rtl: options.rtl ?? false,
-    rtlLanguage,
-    baseColor,
-    theme:
-      baseColor === DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor
-        ? DEFAULT_DESIGN_SYSTEM_CONFIG.theme
-        : baseColor,
-  });
+  return normalizeDesignSystemConfig(
+    designSystemConfigSchema.parse({
+      ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+      template: options.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
+      rtl: options.rtl ?? false,
+      rtlLanguage,
+      baseColor,
+      theme:
+        baseColor === DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor
+          ? DEFAULT_DESIGN_SYSTEM_CONFIG.theme
+          : baseColor,
+    }),
+  );
 }
 
 export function buildInitUrl(
@@ -425,6 +433,8 @@ export async function runInit(
       ],
       env,
     });
+
+    await syncManagedTailwindCss(options.cwd);
 
     const managedFont = toManagedAstroFont(designConfig.font);
     if (managedFont) {

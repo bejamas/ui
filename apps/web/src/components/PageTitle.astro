@@ -27,9 +27,6 @@ import {
 } from "@bejamas/ui/components/collapsible";
 import {
   Slider,
-  SliderTrack,
-  SliderRange,
-  SliderThumb,
 } from "@bejamas/ui/components/slider";
 import { Toggle } from "@bejamas/ui/components/toggle";
 import {
@@ -298,9 +295,9 @@ const options = [...filteredDefaultOptions, ...customOptions];
     <DialogContent showCloseButton={false} />
   </Dialog>
   <Accordion>
-    <AccordionItem>
-      <AccordionTrigger />
-      <AccordionContent />
+    <AccordionItem value="page-title-script-item">
+      <AccordionTrigger>Accordion</AccordionTrigger>
+      <AccordionContent>Accordion script placeholder</AccordionContent>
     </AccordionItem>
   </Accordion>
   <Collapsible>
@@ -324,12 +321,7 @@ const options = [...filteredDefaultOptions, ...customOptions];
       </NavigationMenuItem>
     </NavigationMenuList>
   </NavigationMenu>
-  <Slider>
-    <SliderTrack>
-      <SliderRange />
-    </SliderTrack>
-    <SliderThumb />
-  </Slider>
+  <Slider />
   <Toggle />
   <ToggleGroup>
     <ToggleGroupItem value="left" aria-label="Align left">

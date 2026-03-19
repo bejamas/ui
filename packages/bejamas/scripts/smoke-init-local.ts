@@ -115,6 +115,37 @@ async function runCapture(
   });
 }
 
+async function prepareLocalBejamasPackage(smokeRoot: string) {
+  const localPackageRoot = path.resolve(smokeRoot, ".local-packages/bejamas");
+  const srcDir = path.resolve(localPackageRoot, "src");
+
+  await fs.mkdir(srcDir, { recursive: true });
+  await fs.copyFile(
+    path.resolve(packageRoot, "src/tailwind.css"),
+    path.resolve(srcDir, "tailwind.css"),
+  );
+  await fs.writeFile(
+    path.resolve(localPackageRoot, "package.json"),
+    JSON.stringify(
+      {
+        name: "bejamas",
+        version: "0.0.0-local",
+        type: "module",
+        exports: {
+          "./tailwind.css": {
+            style: "./src/tailwind.css",
+          },
+        },
+      },
+      null,
+      2,
+    ) + "\n",
+    "utf8",
+  );
+
+  return localPackageRoot;
+}
+
 async function assertInitEndpoint(
   baseUrl: string,
   preset: string,
@@ -190,8 +221,8 @@ async function assertProjectState(
   const font = getFontValue(expectedConfig.font);
   const fontClass = font?.font.variable.replace("--", "");
   assert(
-    cssSource.includes('@import "shadcn/tailwind.css";'),
-    `Expected ${cssPath} to import shadcn/tailwind.css`,
+    cssSource.includes('@import "bejamas/tailwind.css";'),
+    `Expected ${cssPath} to import bejamas/tailwind.css`,
   );
   assert(
     !cssSource.includes("@fontsource-variable/"),
@@ -221,6 +252,10 @@ async function assertProjectState(
   }>(packageJsonPath);
   const fontDependency = getFontPackageName(expectedConfig.font);
 
+  assert(
+    packageJson.dependencies?.bejamas,
+    `Expected ${packageJsonPath} to include bejamas for the managed tailwind import`,
+  );
   assert(
     !packageJson.dependencies?.[fontDependency] &&
       !packageJson.devDependencies?.[fontDependency],
@@ -536,13 +571,6 @@ async function main() {
   const astroCaseRoot = path.resolve(smokeRoot, "astro");
   const monorepoCaseRoot = path.resolve(smokeRoot, "astro-monorepo");
   const cliEntry = path.resolve(packageRoot, "dist/index.js");
-  const childEnv = {
-    ...process.env,
-    BEJAMAS_UI_URL: baseUrl,
-    REGISTRY_URL: registryUrl,
-    npm_config_user_agent: `bun/${Bun.version}`,
-  };
-
   const astroConfig: DesignSystemConfig = {
     style: "lyra",
     baseColor: "zinc",
@@ -599,12 +627,24 @@ async function main() {
   };
   const astroSwitchPreset = encodePreset(astroSwitchConfig);
   const monorepoSwitchPreset = encodePreset(monorepoSwitchConfig);
+  const baseEnv = {
+    ...process.env,
+    BEJAMAS_UI_URL: baseUrl,
+    REGISTRY_URL: registryUrl,
+    npm_config_user_agent: `bun/${Bun.version}`,
+  };
 
   await fs.mkdir(astroCaseRoot, { recursive: true });
   await fs.mkdir(monorepoCaseRoot, { recursive: true });
 
   console.log(`[smoke] Building CLI in ${packageRoot}`);
-  await run("bun", ["run", "build"], packageRoot, childEnv);
+  await run("bun", ["run", "build"], packageRoot, baseEnv);
+
+  const localBejamasPackage = await prepareLocalBejamasPackage(smokeRoot);
+  const childEnv = {
+    ...baseEnv,
+    BEJAMAS_PACKAGE_OVERRIDE: localBejamasPackage,
+  };
 
   assert(
     await pathExists(cliEntry),

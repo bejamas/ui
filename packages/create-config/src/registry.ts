@@ -5,7 +5,7 @@ import { getRegistryStyleCss, type RegistryCssObject } from "./style-css";
 function buildBaseCss(css: RegistryCssObject): RegistryCssObject {
   return {
     '@import "tw-animate-css"': {},
-    '@import "shadcn/tailwind.css"': {},
+    '@import "bejamas/tailwind.css"': {},
     "@layer base": {
       "*": {
         "@apply border-border outline-ring/50": {},

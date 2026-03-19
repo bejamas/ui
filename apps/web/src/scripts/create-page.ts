@@ -4,6 +4,7 @@ import {
   getRadiusValue,
   isInvertedMenuColor,
   isTranslucentMenuColor,
+  normalizeDesignSystemConfig,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import {
@@ -48,6 +49,7 @@ import {
   type CreateLockableParam,
   createRandomDesignSystemConfig,
   getCreatePickerOptionsByName,
+  isCreatePickerDisabled,
   getCreatePickerSelectedOption,
   hasCreateLockableParam,
   isCreateFontGroup,
@@ -333,7 +335,7 @@ function getPickerContent(name: CreatePickerName) {
 function collectConfig(): CreateConfig {
   const formData = new FormData(createForm);
 
-  return {
+  return normalizeDesignSystemConfig({
     style: String(formData.get("style")) as CreateConfig["style"],
     baseColor: String(formData.get("baseColor")) as CreateConfig["baseColor"],
     theme: String(formData.get("theme")) as CreateConfig["theme"],
@@ -351,7 +353,7 @@ function collectConfig(): CreateConfig {
     rtlLanguage: String(
       formData.get("rtlLanguage") ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
     ) as CreateConfig["rtlLanguage"],
-  };
+  });
 }
 
 function isEditableTarget(target: EventTarget | null) {
@@ -620,8 +622,25 @@ function syncPickerUi(
 
   const content = getPickerContent(name);
   const selectedOption = getCreatePickerSelectedOption(name, config);
+  const disabled = isCreatePickerDisabled(name, config);
 
   picker.dataset.value = value;
+
+  const trigger = picker.querySelector(
+    "[data-create-picker-trigger]",
+  ) as HTMLButtonElement | null;
+  if (trigger) {
+    trigger.disabled = disabled;
+  }
+
+  const lockButton = picker.parentElement?.querySelector(
+    `[data-create-lock-param="${name}"]`,
+  ) as HTMLButtonElement | null;
+  if (lockButton) {
+    lockButton.disabled = disabled;
+    lockButton.classList.toggle("hidden", disabled);
+    lockButton.setAttribute("aria-hidden", disabled ? "true" : "false");
+  }
 
   content?.querySelectorAll("[data-create-picker-item]").forEach((item) => {
     if (!(item instanceof HTMLElement)) {
@@ -1238,6 +1257,11 @@ function updateUi(
   const config = collectConfig();
   rtlLanguagePicker?.classList.toggle("hidden", !config.rtl);
   config.theme = syncThemeSelection(config) as CreateConfig["theme"];
+  for (const name of PICKER_NAMES) {
+    setInputValue(name, config[name], false);
+  }
+  setInputValue("theme", config.theme, false);
+  setCheckboxValue("rtl", config.rtl, false);
   syncRadiusPicker(config);
   syncThemeTabs();
   syncThemeInputs(config);

@@ -9,6 +9,7 @@ import { highlighter } from "@/src/utils/highlighter";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
 import { execa } from "execa";
+import fg from "fast-glob";
 import fs from "fs-extra";
 import prompts from "prompts";
 import { z } from "zod";
@@ -38,6 +39,39 @@ function resolveLocalTemplatesDir() {
 }
 
 const LOCAL_TEMPLATES_DIR = resolveLocalTemplatesDir();
+
+async function applyLocalPackageOverrides(projectPath: string) {
+  const bejamasPackageOverride = process.env.BEJAMAS_PACKAGE_OVERRIDE;
+
+  if (!bejamasPackageOverride) {
+    return;
+  }
+
+  const packageJsonPaths = await fg("**/package.json", {
+    cwd: projectPath,
+    absolute: true,
+    ignore: ["**/node_modules/**"],
+  });
+  const normalizedOverride = bejamasPackageOverride.replace(/\\/g, "/");
+
+  await Promise.all(
+    packageJsonPaths.map(async (packageJsonPath) => {
+        const packageJson = await fs.readJson(packageJsonPath);
+        let changed = false;
+
+        for (const field of ["dependencies", "devDependencies"] as const) {
+          if (packageJson[field]?.bejamas) {
+            packageJson[field].bejamas = `file:${normalizedOverride}`;
+            changed = true;
+          }
+        }
+
+        if (changed) {
+          await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+        }
+      }),
+  );
+}
 
 export async function createProject(
   options: Pick<
@@ -186,6 +220,8 @@ async function createProjectFromTemplate(
         return basename !== "node_modules" && basename !== ".astro";
       },
     });
+
+    await applyLocalPackageOverrides(projectPath);
 
     await fs.remove(templatePath);
 

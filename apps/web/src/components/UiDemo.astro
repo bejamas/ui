@@ -47,9 +47,6 @@ import { Kbd, KbdGroup } from "@bejamas/registry/ui/kbd";
 import { Spinner } from "@bejamas/registry/ui/spinner";
 import {
   Slider,
-  SliderTrack,
-  SliderRange,
-  SliderThumb,
 } from "@bejamas/registry/ui/slider";
 import {
   Item,
@@ -759,13 +756,7 @@ const countries = [
           >.
         </p>
       </div>
-      <Slider id="price-slider" defaultValue={[20, 80]} max={100}>
-        <SliderTrack>
-          <SliderRange />
-        </SliderTrack>
-        <SliderThumb />
-        <SliderThumb />
-      </Slider>
+      <Slider id="price-slider" defaultValue={[20, 80]} max={100} />
     </div>
 
     <!-- Item -->
@@ -880,26 +871,36 @@ const countries = [
             <NavigationMenuContent align="center">
               <div class="grid grid-cols-2 gap-2 w-[320px] p-2">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Analytics</div>
-                  <div class="text-sm text-muted-foreground">
-                    Real-time insights
+                  <div class="flex flex-col gap-1 text-sm">
+                    <div class="font-medium leading-none">Automation</div>
+                    <div class="text-sm text-muted-foreground leading-none">
+                      Workflow builders
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Automation</div>
-                  <div class="text-sm text-muted-foreground">
-                    Workflow builders
+                  <div class="flex flex-col gap-1 text-sm">
+                    <div class="font-medium">Automation</div>
+                    <div class="text-sm text-muted-foreground">
+                      Workflow builders
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Security</div>
-                  <div class="text-sm text-muted-foreground">
-                    Enterprise-grade
+                  <div class="flex flex-col gap-1 text-sm">
+                    <div class="font-medium">Security</div>
+                    <div class="text-sm text-muted-foreground">
+                      Enterprise-grade
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Integrations</div>
-                  <div class="text-sm text-muted-foreground">Connect tools</div>
+                  <div class="flex flex-col gap-1 text-sm">
+                    <div class="font-medium">Integrations</div>
+                    <div class="text-sm text-muted-foreground">
+                      Connect tools
+                    </div>
+                  </div>
                 </NavigationMenuLink>
               </div>
             </NavigationMenuContent>
@@ -909,23 +910,31 @@ const countries = [
             <NavigationMenuContent align="end">
               <div class="grid grid-cols-2 gap-2 w-[320px] p-2">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Docs</div>
-                  <div class="text-sm text-muted-foreground">Get started</div>
-                </NavigationMenuLink>
-                <NavigationMenuLink href="#">
-                  <div class="font-medium">Blog</div>
-                  <div class="text-sm text-muted-foreground">
-                    Latest updates
+                  <div class="flex flex-col gap-1 text-sm">
+                    <div class="font-medium">Docs</div>
+                    <div class="text-sm text-muted-foreground">Get started</div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Support</div>
-                  <div class="text-sm text-muted-foreground">Get help</div>
+                  <div class="flex flex-col gap-1 text-sm">
+                    <div class="font-medium">Blog</div>
+                    <div class="text-sm text-muted-foreground">
+                      Latest updates
+                    </div>
+                  </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Guides</div>
-                  <div class="text-sm text-muted-foreground">
-                    Best practices
+                  <div class="flex flex-col gap-1 text-sm">
+                    <div class="font-medium">Support</div>
+                    <div class="text-sm text-muted-foreground">Get help</div>
+                  </div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div class="flex flex-col gap-1 text-sm">
+                    <div class="font-medium">Guides</div>
+                    <div class="text-sm text-muted-foreground">
+                      Best practices
+                    </div>
                   </div>
                 </NavigationMenuLink>
               </div>

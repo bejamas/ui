@@ -9,7 +9,7 @@ interface Props extends HTMLAttributes<"button"> {
 }
 
 export const navigationMenuTriggerStyle = cva(
-  "navigation-menu-trigger-surface px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 rounded-sm hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground",
+  "navigation-menu-trigger-surface cn-navigation-menu-trigger group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center outline-none disabled:pointer-events-none",
 );
 
 const {
@@ -23,12 +23,12 @@ const {
   {...rest}
   data-slot="navigation-menu-trigger"
   type={type}
-  class={cn("cn-navigation-menu-trigger", navigationMenuTriggerStyle(), "group", className)}
+  class={cn(navigationMenuTriggerStyle(), "group", className)}
 >
   <slot />
   <SemanticIcon
     name="chevron-down"
-    class="text-muted-foreground size-3 transition-transform duration-200 ease group-data-[state=open]:rotate-180"
+    class="cn-navigation-menu-trigger-icon"
     aria-hidden="true"
   />
 </button>

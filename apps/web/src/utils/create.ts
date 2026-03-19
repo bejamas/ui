@@ -4,6 +4,7 @@ import {
   designSystemConfigSchema,
   getDocumentLanguage,
   isPresetCode,
+  normalizeDesignSystemConfig,
   RTL_LANGUAGE_VALUES,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
@@ -119,7 +120,7 @@ export function parseCreateSearchParams(
 
   return {
     success: true as const,
-    data: result.data,
+    data: normalizeDesignSystemConfig(result.data),
   };
 }
 

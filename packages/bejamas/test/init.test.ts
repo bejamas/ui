@@ -47,6 +47,19 @@ describe("init RTL language support", () => {
     expect(config.rtlLanguage).toBe("he");
   });
 
+  test("normalizes locked Lyra radius values from preset codes", () => {
+    const config = resolveDesignSystemConfig({
+      baseColor: undefined,
+      preset: "awNgr9d",
+      template: "astro",
+      rtl: false,
+      lang: undefined,
+    });
+
+    expect(config.style).toBe("lyra");
+    expect(config.radius).toBe("none");
+  });
+
   test("falls back to Arabic when RTL is disabled", () => {
     const config = resolveDesignSystemConfig({
       baseColor: undefined,

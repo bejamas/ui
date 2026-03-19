@@ -125,14 +125,14 @@ describe("resolveDesignSystemTheme", () => {
     expect(maiaTheme.cssVars.light?.radius).toBe("0.875rem");
   });
 
-  it("keeps explicit radius overrides over the style-linked default", () => {
+  it("keeps explicit radius overrides unless the style locks radius", () => {
     const css = buildDesignSystemThemeCss({
       ...baseConfig,
       style: "lyra",
       radius: "large",
     });
 
-    expect(css).toContain("--radius: 0.875rem;");
+    expect(css).toContain("--radius: 0;");
   });
 
   it("preserves translucent dark tokens like border and input", () => {

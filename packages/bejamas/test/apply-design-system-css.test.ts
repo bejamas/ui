@@ -12,8 +12,34 @@ const astroGlobalsCss = readFileSync(
   path.resolve(repoRoot, "templates/astro/src/styles/globals.css"),
   "utf8",
 );
+const astroTemplatePackageJson = readFileSync(
+  path.resolve(repoRoot, "templates/astro/package.json"),
+  "utf8",
+);
 const astroIndexPage = readFileSync(
   path.resolve(repoRoot, "templates/astro/src/pages/index.astro"),
+  "utf8",
+);
+const monorepoUiGlobalsCss = readFileSync(
+  path.resolve(repoRoot, "templates/monorepo-astro/packages/ui/src/styles/globals.css"),
+  "utf8",
+);
+const monorepoUiPackageJson = readFileSync(
+  path.resolve(repoRoot, "templates/monorepo-astro/packages/ui/package.json"),
+  "utf8",
+);
+const docsMonorepoUiGlobalsCss = readFileSync(
+  path.resolve(
+    repoRoot,
+    "templates/monorepo-astro-with-docs/packages/ui/src/styles/globals.css",
+  ),
+  "utf8",
+);
+const docsMonorepoUiPackageJson = readFileSync(
+  path.resolve(
+    repoRoot,
+    "templates/monorepo-astro-with-docs/packages/ui/package.json",
+  ),
   "utf8",
 );
 const monorepoIndexPage = readFileSync(
@@ -46,7 +72,7 @@ describe("transformDesignSystemCss", () => {
   test("updates template CSS in place without embedding the component layer", () => {
     const result = transformDesignSystemCss(astroGlobalsCss, lyraMonoConfig);
 
-    expect(result).toContain('@import "shadcn/tailwind.css";');
+    expect(result).toContain('@import "bejamas/tailwind.css";');
     expect(result).not.toContain("@fontsource-variable/geist-mono");
     expect(result).not.toContain("--font-mono:");
     expect(result).toContain("@apply font-mono;");
@@ -76,10 +102,39 @@ describe("transformDesignSystemCss", () => {
     const twice = transformDesignSystemCss(once, lyraMonoConfig);
 
     expect(twice).toBe(once);
-    expect(twice.match(/@import "shadcn\/tailwind\.css";/g)?.length).toBe(1);
+    expect(twice.match(/@import "bejamas\/tailwind\.css";/g)?.length).toBe(1);
     expect(twice).not.toContain("@fontsource-variable/geist-mono");
     expect(twice.match(/^:root \{/gm)?.length).toBe(1);
     expect(twice.match(/^\.dark \{/gm)?.length).toBe(1);
+  });
+
+  test("preserves shadcn tailwind import in existing projects", () => {
+    const existingSource = astroGlobalsCss.replace(
+      '@import "bejamas/tailwind.css";',
+      '@import "shadcn/tailwind.css";',
+    );
+    const result = transformDesignSystemCss(existingSource, lyraMonoConfig);
+
+    expect(result).toContain('@import "shadcn/tailwind.css";');
+    expect(result).not.toContain('@import "bejamas/tailwind.css";');
+  });
+
+  test("templates import bejamas tailwind.css and declare the bejamas dependency", () => {
+    for (const source of [
+      astroGlobalsCss,
+      monorepoUiGlobalsCss,
+      docsMonorepoUiGlobalsCss,
+    ]) {
+      expect(source).toContain('@import "bejamas/tailwind.css";');
+    }
+
+    for (const packageJson of [
+      astroTemplatePackageJson,
+      monorepoUiPackageJson,
+      docsMonorepoUiPackageJson,
+    ]) {
+      expect(packageJson).toContain('"bejamas": "^');
+    }
   });
 
   test("starter landing pages do not hardcode font-sans", () => {

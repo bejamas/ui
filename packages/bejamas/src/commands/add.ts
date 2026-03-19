@@ -5,7 +5,10 @@ import prompts from "prompts";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
 import { highlighter } from "@/src/utils/highlighter";
-import { syncAstroManagedFontCss } from "@/src/utils/apply-design-system";
+import {
+  syncAstroManagedFontCss,
+  syncManagedTailwindCss,
+} from "@/src/utils/apply-design-system";
 import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
 import { getPackageRunner } from "@/src/utils/get-package-manager";
 import { fixAstroImports } from "@/src/utils/astro-imports";
@@ -627,6 +630,8 @@ export const add = new Command()
       );
 
       if (!inspectionMode) {
+        await syncManagedTailwindCss(cwd);
+
         const registryItem = await fetchRegistryItem(
           component,
           registryUrl,

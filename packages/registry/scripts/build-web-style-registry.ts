@@ -360,7 +360,7 @@ export function transformRegistrySource(content: string, tokenMap: TokenMap) {
 export function buildBaseStyleCssObject() {
   return {
     '@import "tw-animate-css"': {},
-    '@import "shadcn/tailwind.css"': {},
+    '@import "bejamas/tailwind.css"': {},
     "@layer base": {
       "*": {
         "@apply border-border outline-ring/50": {},
@@ -430,6 +430,9 @@ export async function buildStyleItem(style: Style) {
     $schema: schemaUrl,
     name: "index",
     type: "registry:style",
+    dependencies: Array.from(
+      new Set(["bejamas", ...(template.dependencies ?? [])]),
+    ),
     files: [],
     cssVars: {},
     css: buildBaseStyleCssObject(),

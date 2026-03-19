@@ -18,6 +18,12 @@ import {
 
 const CREATE_BLOCK_START = "/* bejamas:create:start */";
 const CREATE_BLOCK_END = "/* bejamas:create:end */";
+const SHADCN_TAILWIND_IMPORT = '@import "shadcn/tailwind.css";';
+const BEJAMAS_TAILWIND_IMPORT = '@import "bejamas/tailwind.css";';
+const MANAGED_TAILWIND_IMPORTS = new Set([
+  SHADCN_TAILWIND_IMPORT,
+  BEJAMAS_TAILWIND_IMPORT,
+]);
 
 type ThemeVars = ReturnType<typeof buildRegistryTheme>["cssVars"];
 
@@ -82,7 +88,7 @@ function upsertImports(source: string, imports: string[]) {
   const lines = source.split("\n");
   const cleanedLines = lines.filter((line) => {
     const trimmed = line.trim();
-    if (trimmed === '@import "shadcn/tailwind.css";') {
+    if (MANAGED_TAILWIND_IMPORTS.has(trimmed)) {
       return false;
     }
 
@@ -111,6 +117,45 @@ function upsertImports(source: string, imports: string[]) {
 
   cleanedLines.splice(insertAt + 1, 0, ...uniqueImports);
   return compactCss(cleanedLines.join("\n"));
+}
+
+function upsertManagedTailwindImport(source: string) {
+  const nextImport = resolveManagedTailwindImport(source);
+  const lines = source.split("\n");
+  const cleanedLines = lines.filter(
+    (line) => !MANAGED_TAILWIND_IMPORTS.has(line.trim()),
+  );
+
+  let insertAt = -1;
+  for (let index = 0; index < cleanedLines.length; index += 1) {
+    if (cleanedLines[index].trim().startsWith("@import ")) {
+      insertAt = index;
+      continue;
+    }
+
+    if (insertAt !== -1 && cleanedLines[index].trim() !== "") {
+      break;
+    }
+  }
+
+  if (insertAt === -1) {
+    return compactCss([nextImport, "", ...cleanedLines].join("\n"));
+  }
+
+  cleanedLines.splice(insertAt + 1, 0, nextImport);
+  return compactCss(cleanedLines.join("\n"));
+}
+
+function resolveManagedTailwindImport(source: string) {
+  if (source.includes(SHADCN_TAILWIND_IMPORT)) {
+    return SHADCN_TAILWIND_IMPORT;
+  }
+
+  if (source.includes(BEJAMAS_TAILWIND_IMPORT)) {
+    return BEJAMAS_TAILWIND_IMPORT;
+  }
+
+  return BEJAMAS_TAILWIND_IMPORT;
 }
 
 function upsertThemeInlineFont(
@@ -189,9 +234,10 @@ export function transformDesignSystemCss(
     ...(effectiveThemeVars.dark ?? {}),
   };
   const font = getFontValue(config.font);
+  const tailwindImport = resolveManagedTailwindImport(source);
   let next = stripLegacyCreateBlock(source);
 
-  next = upsertImports(next, ['@import "shadcn/tailwind.css";']);
+  next = upsertImports(next, [tailwindImport]);
   next = replaceTopLevelBlock(
     next,
     ":root",
@@ -218,9 +264,10 @@ export function transformAstroManagedFontCss(
   source: string,
   fontVariable?: string,
 ) {
+  const tailwindImport = resolveManagedTailwindImport(source);
   let next = stripLegacyCreateBlock(source);
 
-  next = upsertImports(next, ['@import "shadcn/tailwind.css";']);
+  next = upsertImports(next, [tailwindImport]);
   next = upsertThemeInlineFont(next);
 
   if (fontVariable) {
@@ -231,6 +278,10 @@ export function transformAstroManagedFontCss(
   }
 
   return compactCss(next);
+}
+
+export function transformManagedTailwindImportCss(source: string) {
+  return upsertManagedTailwindImport(source);
 }
 
 async function patchComponentsJson(
@@ -270,6 +321,39 @@ async function patchCssFileWithAstroFont(
   const current = await fs.readFile(filepath, "utf8");
   const next = transformAstroManagedFontCss(current, fontVariable);
   await fs.writeFile(filepath, next, "utf8");
+}
+
+async function patchCssFileManagedTailwindImport(filepath: string) {
+  const current = await fs.readFile(filepath, "utf8");
+  const next = transformManagedTailwindImportCss(current);
+  await fs.writeFile(filepath, next, "utf8");
+}
+
+export async function syncManagedTailwindCss(projectPath: string) {
+  const componentJsonFiles = await fg("**/components.json", {
+    cwd: projectPath,
+    absolute: true,
+    ignore: ["**/node_modules/**"],
+  });
+
+  await Promise.all(
+    componentJsonFiles.map(async (componentJsonPath) => {
+      const componentJson = await fs.readJson(componentJsonPath);
+      const cssRelativePath = componentJson?.tailwind?.css;
+
+      if (typeof cssRelativePath !== "string" || cssRelativePath.length === 0) {
+        return;
+      }
+
+      const cssPath = path.resolve(path.dirname(componentJsonPath), cssRelativePath);
+
+      if (!(await fs.pathExists(cssPath))) {
+        return;
+      }
+
+      await patchCssFileManagedTailwindImport(cssPath);
+    }),
+  );
 }
 
 export async function syncAstroManagedFontCss(

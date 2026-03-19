@@ -28,12 +28,13 @@ const {
   data-side={side}
   data-side-offset={sideOffset}
   hidden
-  class={cn("cn-navigation-menu-content", 
+  class={cn(
+    "cn-navigation-menu-content",
     "transition-[opacity,translate,filter] duration-250 ease-[cubic-bezier(0.32,0.72,0,1)]",
-    "data-starting-style:opacity-0 data-starting-style:pointer-events-none",
-    "data-[ending-style]:opacit-0",
-    "data-[motion=from-right]:animate-in data-[motion=from-right]:fade-in data-[motion=from-right]:slide-in-from-right-50",
-    "data-[motion=from-left]:animate-in data-[motion=from-left]:fade-in data-[motion=from-left]:slide-in-from-left-50",
+    "data-starting-style:pointer-events-none",
+    "data-starting-style:animate-in data-starting-style:fade-in",
+    "data-[motion=from-right]:slide-in-from-right-50",
+    "data-[motion=from-left]:slide-in-from-left-50",
     // slide exit — transition TO these values
     "data-ending-style:animate-out data-ending-style:fade-out",
     "data-[motion=to-left]:data-[ending-style]:slide-out-to-left-50 data-[motion=to-right]:data-[ending-style]:slide-out-to-right-50",

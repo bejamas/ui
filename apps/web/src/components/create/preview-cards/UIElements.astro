@@ -3,6 +3,15 @@ import { Badge } from "@bejamas/registry/ui/badge";
 import { Button } from "@bejamas/registry/ui/button";
 import { ButtonGroup } from "@bejamas/registry/ui/button-group";
 import { Card, CardContent } from "@bejamas/registry/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@bejamas/registry/ui/dropdown-menu";
 import { Checkbox } from "@bejamas/registry/ui/checkbox";
 import { Field, FieldGroup } from "@bejamas/registry/ui/field";
 import { Input } from "@bejamas/registry/ui/input";
@@ -14,12 +23,7 @@ import {
   ItemTitle,
 } from "@bejamas/registry/ui/item";
 import { RadioGroup, RadioGroupItem } from "@bejamas/registry/ui/radio-group";
-import {
-  Slider,
-  SliderTrack,
-  SliderRange,
-  SliderThumb,
-} from "@bejamas/registry/ui/slider";
+import { Slider } from "@bejamas/registry/ui/slider";
 import { Switch } from "@bejamas/registry/ui/switch";
 import { Textarea } from "@bejamas/registry/ui/textarea";
 import SemanticIcon from "@/components/icons/SemanticIcon.astro";
@@ -51,12 +55,7 @@ const { iconLibrary } = Astro.props as Props;
       </ItemActions>
     </Item>
 
-    <Slider class="w-full max-w-sm" defaultValue={[50]} max={100}>
-      <SliderTrack>
-        <SliderRange />
-      </SliderTrack>
-      <SliderThumb />
-    </Slider>
+    <Slider defaultValue={[75]} max={100} step={1} class="w-full" />
 
     <FieldGroup>
       <Field>
@@ -92,13 +91,36 @@ const { iconLibrary } = Astro.props as Props;
       <Button variant="outline">Alert Dialog</Button>
       <ButtonGroup>
         <Button variant="outline">Button Group</Button>
-        <Button variant="outline" size="icon">
-          <SemanticIcon
-            library={iconLibrary}
-            name="chevron-up"
-            class="size-4"
-          />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <SemanticIcon
+                library={iconLibrary}
+                name="chevron-up"
+                class="size-4"
+              />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" side="top" class="w-40">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
+              <DropdownMenuItem>Mute Conversation</DropdownMenuItem>
+              <DropdownMenuItem>Mark as Read</DropdownMenuItem>
+              <DropdownMenuItem>Block User</DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Conversation</DropdownMenuLabel>
+              <DropdownMenuItem>Share Conversation</DropdownMenuItem>
+              <DropdownMenuItem>Copy Conversation</DropdownMenuItem>
+              <DropdownMenuItem>Report Conversation</DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem class="text-destructive"
+              >Delete Conversation</DropdownMenuItem
+            >
+          </DropdownMenuContent>
+        </DropdownMenu>
       </ButtonGroup>
       <Switch checked class="ml-auto" />
     </div>

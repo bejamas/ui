@@ -7,26 +7,16 @@
  *
  * @preview
  *
- * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100}>
- *   <SliderTrack>
- *     <SliderRange />
- *   </SliderTrack>
- *   <SliderThumb />
- * </Slider>
+ * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} />
  *
  * @usage
  *
  * ```astro nocollapse
  * ---
- * import { Slider, SliderTrack, SliderRange, SliderThumb } from '@bejamas/ui/components/slider';
+ * import { Slider } from '@bejamas/ui/components/slider';
  * ---
  *
- * <Slider defaultValue={[50]} max={100}>
- *   <SliderTrack>
- *     <SliderRange />
- *   </SliderTrack>
- *   <SliderThumb />
- * </Slider>
+ * <Slider defaultValue={[50]} max={100} />
  * ```
  *
  * @examples
@@ -35,48 +25,27 @@
  *
  * Use two thumbs to create a range slider for selecting a min and max value.
  *
- * <Slider class="w-full max-w-sm" defaultValue={[25, 75]} max={100}>
- *   <SliderTrack>
- *     <SliderRange />
- *   </SliderTrack>
- *   <SliderThumb />
- *   <SliderThumb />
- * </Slider>
+ * <Slider class="w-full max-w-sm" defaultValue={[25, 75]} max={100} />
  *
  * ### Vertical
  *
  * Set orientation to vertical for a vertical slider.
  *
  * <div class="h-48">
- *   <Slider class="h-full" orientation="vertical" defaultValue={[50]} max={100}>
- *     <SliderTrack>
- *       <SliderRange />
- *     </SliderTrack>
- *     <SliderThumb />
- *   </Slider>
+ *   <Slider class="h-full" orientation="vertical" defaultValue={[50]} max={100} />
  * </div>
  *
  * ### Disabled
  *
  * Disable the slider to prevent interaction.
  *
- * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} disabled>
- *   <SliderTrack>
- *     <SliderRange />
- *   </SliderTrack>
- *   <SliderThumb />
- * </Slider>
+ * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} disabled />
  *
  * ### Step
  *
  * Set a custom step increment.
  *
- * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} step={10}>
- *   <SliderTrack>
- *     <SliderRange />
- *   </SliderTrack>
- *   <SliderThumb />
- * </Slider>
+ * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} step={10} />
  *
  * @api
  *
@@ -90,12 +59,7 @@
  * | `slider:commit` | `{ value: number \| [number, number] }` | Fired when value is committed (pointer up or keyboard blur) |
  *
  * ```astro nocollapse
- * <Slider id="my-slider" defaultValue={[50]} max={100}>
- *   <SliderTrack>
- *     <SliderRange />
- *   </SliderTrack>
- *   <SliderThumb />
- * </Slider>
+ * <Slider id="my-slider" defaultValue={[50]} max={100} />
  * ```
  *
  * ```js nocollapse
@@ -144,6 +108,7 @@ import { cn } from "@bejamas/ui/lib/utils";
 
 interface Props extends HTMLAttributes<"div"> {
   class?: string;
+  value?: number[];
   defaultValue?: number[];
   min?: number;
   max?: number;
@@ -154,7 +119,8 @@ interface Props extends HTMLAttributes<"div"> {
 
 const {
   class: className = "",
-  defaultValue = [0],
+  value,
+  defaultValue,
   min = 0,
   max = 100,
   step = 1,
@@ -162,32 +128,48 @@ const {
   disabled = false,
   ...rest
 } = Astro.props as Props;
+
+const resolvedValues =
+  Array.isArray(value) && value.length > 0
+    ? value
+    : Array.isArray(defaultValue) && defaultValue.length > 0
+      ? defaultValue
+      : [min];
 ---
 
 <div
   {...rest}
   data-slot="slider"
-  data-default-value={defaultValue.join(",")}
+  data-default-value={resolvedValues.join(",")}
   data-min={min}
   data-max={max}
   data-step={step}
   data-orientation={orientation}
   data-disabled={disabled ? "true" : undefined}
-  class={cn("cn-slider", 
-    "group/slider relative touch-none select-none",
-    orientation === "horizontal" && "w-full",
-    orientation === "vertical" && "h-full",
-    className,
-  )}
+  class={cn("data-horizontal:w-full data-vertical:h-full", className)}
 >
   <div
-    class={cn(
-      "relative flex items-center",
-      orientation === "horizontal" && "h-5 w-full",
-      orientation === "vertical" && "h-full w-5 flex-col",
-    )}
+    data-disabled={disabled ? "true" : undefined}
+    class="cn-slider relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:min-h-40 data-vertical:h-full data-vertical:w-auto data-vertical:flex-col"
   >
-    <slot />
+    <div
+      data-slot="slider-track"
+      class="cn-slider-track bg-muted relative grow overflow-hidden rounded-full select-none data-horizontal:h-1.5 data-horizontal:w-full data-vertical:h-full data-vertical:w-1.5"
+    >
+      <div
+        data-slot="slider-range"
+        class="cn-slider-range bg-primary select-none data-horizontal:h-full data-vertical:w-full"
+      ></div>
+    </div>
+    {
+      resolvedValues.map((_, index) => (
+        <div
+          data-slot="slider-thumb"
+          data-index={index}
+          class="cn-slider-thumb border-primary ring-ring/50 block shrink-0 rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden select-none disabled:pointer-events-none disabled:opacity-50 size-4"
+        ></div>
+      ))
+    }
   </div>
 </div>
 

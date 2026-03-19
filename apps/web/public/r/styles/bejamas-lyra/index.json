@@ -3,6 +3,7 @@
   "name": "index",
   "type": "registry:style",
   "dependencies": [
+    "bejamas",
     "class-variance-authority",
     "@lucide/astro"
   ],
@@ -15,7 +16,7 @@
   ],
   "css": {
     "@import \"tw-animate-css\"": {},
-    "@import \"shadcn/tailwind.css\"": {},
+    "@import \"bejamas/tailwind.css\"": {},
     "@layer base": {
       "*": {
         "@apply border-border outline-ring/50": {}

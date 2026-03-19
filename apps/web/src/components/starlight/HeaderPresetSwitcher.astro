@@ -6,6 +6,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@bejamas/registry/ui/dropdown-menu";
 import { Button } from "@bejamas/registry/ui/button";
 import { ChevronDownIcon } from "@lucide/astro";
@@ -53,12 +54,8 @@ const state = buildHeaderPresetSwitcherState({});
       <ChevronDownIcon class="size-4 shrink-0 opacity-60" />
     </DropdownMenuTrigger>
 
-    <DropdownMenuContent
-      align="end"
-      class="w-[17rem] p-0"
-      data-header-preset-content
-    >
-      <div class="p-1">
+    <DropdownMenuContent align="end" class="w-68" data-header-preset-content>
+      <DropdownMenuGroup>
         <DropdownMenuLabel>Presets</DropdownMenuLabel>
         {
           state.presets.map((preset) => (
@@ -92,21 +89,19 @@ const state = buildHeaderPresetSwitcherState({});
             </DropdownMenuItem>
           ))
         }
-      </div>
+      </DropdownMenuGroup>
 
       <DropdownMenuSeparator />
 
-      <div class="p-1">
-        <Button
-          as="a"
-          href={state.current.createHref}
-          variant="ghost"
-          class="w-full justify-center"
-          data-create-your-own
-        >
-          Create your own
-        </Button>
-      </div>
+      <Button
+        as="a"
+        href={state.current.createHref}
+        variant="ghost"
+        class="w-full justify-center"
+        data-create-your-own
+      >
+        Create your own
+      </Button>
     </DropdownMenuContent>
   </DropdownMenu>
 </header-preset-switcher>

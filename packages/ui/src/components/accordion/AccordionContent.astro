@@ -1,5 +1,4 @@
 ---
-import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -8,25 +7,19 @@ interface Props extends HTMLAttributes<"div"> {
 }
 
 const { class: className = "", ...rest } = Astro.props as Props;
-
-const contentWrapperVariants = cva(
-  "grid grid-rows-[0fr] transition-[grid-template-rows] duration-150 ease-in-out group-data-[state=open]/accordion:grid-rows-[1fr]",
-);
-
-const contentVariants = cva("overflow-hidden min-h-0 [&[hidden]]:!block");
-
-const contentInnerVariants = cva("pt-0 pb-4");
 ---
 
-<div class={cn("group/accordion", className)} {...rest}>
-  <div class={cn(contentWrapperVariants())}>
-    <div
-      data-slot="accordion-content"
-      class={cn("cn-accordion-content", contentVariants())}
-    >
-      <div class={cn("cn-accordion-content-inner", contentInnerVariants(), className)}>
-        <slot />
-      </div>
-    </div>
+<div
+  {...rest}
+  data-slot="accordion-content"
+  class="cn-accordion-content data-open:animate-accordion-down data-closed:animate-accordion-up text-sm overflow-hidden"
+>
+  <div
+    class={cn(
+      "cn-accordion-content-inner h-(--accordion-panel-height) data-ending-style:h-0 data-starting-style:h-0 pt-0 pb-4 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+      className,
+    )}
+  >
+    <slot />
   </div>
 </div>

@@ -55,10 +55,10 @@ const {
 >
   <div class="overflow-x-auto overflow-y-hidden contain-[paint]">
     <div
-      class="grid w-[2400px] grid-cols-7 items-start gap-4 bg-muted p-4 md:w-[3000px] md:gap-6 md:p-6 dark:bg-background"
+      class="grid w-[2400px] grid-cols-7 items-start gap-4 bg-muted p-4 md:w-[3200px] md:gap-6 lg:gap-12 md:p-6 dark:bg-background"
       data-slot="capture-target"
     >
-      <div class="flex flex-col gap-4 md:gap-6">
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
         <StyleOverview
           styleLabel={styleLabel}
           fontLabel={fontLabel}
@@ -73,44 +73,44 @@ const {
         <Invoice />
       </div>
 
-      <div class="flex flex-col gap-4 md:gap-6">
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
         <IconPreviewGrid
           iconLibrary={iconLibrary}
           iconLibraryLabel={iconLibraryLabel}
         />
         <UIElements iconLibrary={iconLibrary} />
         <ObservabilityCard />
-        <Shortcuts />
+        <!-- <Shortcuts /> -->
       </div>
 
-      <div class="flex flex-col gap-4 md:gap-6">
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
         <EnvironmentVariables />
         <InviteTeam iconLibrary={iconLibrary} />
         <ActivateAgentDialog iconLibrary={iconLibrary} />
       </div>
 
-      <div class="flex flex-col gap-4 md:gap-6">
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
         <SkeletonLoading />
         <NoTeamMembers iconLibrary={iconLibrary} />
         <ReportBug iconLibrary={iconLibrary} />
-        <Contributors />
+        <!-- <Contributors /> -->
       </div>
 
-      <div class="flex flex-col gap-4 md:gap-6">
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
         <FeedbackForm />
         <BookAppointment iconLibrary={iconLibrary} />
         <GithubProfile />
       </div>
 
-      <div class="flex flex-col gap-4 md:gap-6">
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
         <AssignIssue />
-        <WeeklyFitnessSummary />
+        <!-- <WeeklyFitnessSummary /> -->
         <FileUpload />
         <!-- <UsageCard /> -->
         <!-- <ContributionsActivity /> -->
       </div>
 
-      <div class="flex flex-col gap-4 md:gap-6">
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
         <AnomalyAlert iconLibrary={iconLibrary} />
         <ShippingAddress />
         <NotFound iconLibrary={iconLibrary} />

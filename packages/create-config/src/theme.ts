@@ -17,7 +17,7 @@ export function buildStyleIndexItem(style: DesignSystemConfig["style"]): Registr
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: "index",
     type: "registry:style",
-    dependencies: ["class-variance-authority", "@lucide/astro"],
+    dependencies: ["bejamas", "class-variance-authority", "@lucide/astro"],
     devDependencies: ["shadcn", "tw-animate-css"],
     registryDependencies: ["utils"],
     css: buildRegistryStyleCss(style),
@@ -56,6 +56,7 @@ export function buildRegistryBaseItem(config: DesignSystemConfig): RegistryItem 
       },
     },
     dependencies: [
+      "bejamas",
       "class-variance-authority",
       ...(iconLibrary ? [iconLibrary.packageName] : []),
     ],

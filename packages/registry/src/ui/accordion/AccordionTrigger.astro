@@ -13,46 +13,56 @@ interface Props extends HTMLAttributes<"button"> {
 const { class: className = "", asChild = false, type = "button", ...rest } = Astro.props as Props;
 
 const triggerVariants = cva(
-  "w-full flex flex-1 items-start justify-between outline-none transition-all disabled:pointer-events-none disabled:opacity-50 [&[aria-expanded=true]>svg]:rotate-180",
+  "cn-accordion-trigger group/accordion-trigger relative flex flex-1 items-start justify-between border border-transparent transition-all outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50",
 );
 ---
 
 {
   asChild ? (
-    <div
-      data-slot="accordion-trigger"
-      data-as-child
-      class={cn("cn-accordion-trigger", triggerVariants(), className)}
-    >
-      <slot />
+    <div class="flex">
+      <div
+        data-slot="accordion-trigger"
+        data-as-child
+        class={cn(triggerVariants(), className)}
+      >
+        <slot />
+      </div>
     </div>
   ) : (
-    <button
-      {...rest}
-      type={type}
-      data-slot="accordion-trigger"
-      class={cn("cn-accordion-trigger", triggerVariants(), className)}
-    >
-      <span class="flex-1">
+    <div class="flex">
+      <button
+        {...rest}
+        type={type}
+        data-slot="accordion-trigger"
+        class={cn(triggerVariants(), className)}
+      >
         <slot />
-      </span>
-      {
-        Astro.slots.has("icon") ? (
-          <span
-            data-slot="accordion-trigger-icon"
-            class="cn-accordion-trigger-icon inline-flex items-center justify-center transition-transform duration-200 group-open/accordion:rotate-180"
-          >
-            <slot name="icon" />
-          </span>
-        ) : (
-          <SemanticIcon
-            name="chevron-down"
-            data-slot="accordion-trigger-icon"
-            class="cn-accordion-trigger-icon shrink-0 transition-transform duration-200 group-open/accordion:rotate-180"
-            aria-hidden="true"
-          />
-        )
-      }
-    </button>
+        {
+          Astro.slots.has("icon") ? (
+            <span
+              data-slot="accordion-trigger-icon"
+              class="cn-accordion-trigger-icon pointer-events-none shrink-0"
+            >
+              <slot name="icon" />
+            </span>
+          ) : (
+            <>
+              <SemanticIcon
+                name="chevron-down"
+                data-slot="accordion-trigger-icon"
+                class="cn-accordion-trigger-icon pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+                aria-hidden="true"
+              />
+              <SemanticIcon
+                name="chevron-up"
+                data-slot="accordion-trigger-icon"
+                class="cn-accordion-trigger-icon pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+                aria-hidden="true"
+              />
+            </>
+          )
+        }
+      </button>
+    </div>
   )
 }

@@ -4,6 +4,8 @@ import {
   STYLES,
   TEMPLATE_VALUES,
   catalogs,
+  isStyleOptionLocked,
+  normalizeDesignSystemConfig,
   getThemesForBaseColor,
   isTranslucentMenuColor,
   resolveEffectiveRadius,
@@ -264,6 +266,13 @@ export function getCreatePickerOptionsByName(
   return getCreatePickerOptions(config)[name];
 }
 
+export function isCreatePickerDisabled(
+  name: CreatePickerName,
+  config: Pick<DesignSystemConfig, "style">,
+) {
+  return name === "radius" && isStyleOptionLocked(config.style, "radius");
+}
+
 export function getCreatePickerOption(
   name: CreatePickerName,
   value: string,
@@ -279,8 +288,16 @@ export function getCreatePickerSelectedOption(
   config: Pick<DesignSystemConfig, "baseColor" | "style" | "radius"> &
     Partial<DesignSystemConfig>,
 ) {
+  const normalizedConfig = normalizeDesignSystemConfig({
+    ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+    ...config,
+  });
+
   if (name === "radius" && config.radius === "default") {
-    const effectiveRadius = resolveEffectiveRadius(config.style, config.radius);
+    const effectiveRadius = resolveEffectiveRadius(
+      normalizedConfig.style,
+      normalizedConfig.radius,
+    );
     const effectiveOption =
       RADIUS_OPTIONS.find((option) => option.value === effectiveRadius) ??
       RADIUS_OPTIONS[0];
@@ -297,7 +314,7 @@ export function getCreatePickerSelectedOption(
     return undefined;
   }
 
-  return getCreatePickerOption(name, value, config);
+  return getCreatePickerOption(name, normalizedConfig[name], normalizedConfig);
 }
 
 function chooseRandom<T>(values: readonly T[]) {
@@ -356,7 +373,7 @@ export function createRandomDesignSystemConfig(
     ? getFontValuesForGroup(options.lockedFontGroup)
     : catalogs.fonts.map((font) => font.name.replace("font-", ""));
 
-  return {
+  return normalizeDesignSystemConfig({
     style,
     baseColor,
     theme,
@@ -377,5 +394,5 @@ export function createRandomDesignSystemConfig(
     rtl: current.rtl ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtl,
     rtlLanguage:
       current.rtlLanguage ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
-  };
+  });
 }

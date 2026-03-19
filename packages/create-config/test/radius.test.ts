@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import {
   getStyleDefaultRadius,
+  normalizeDesignSystemConfig,
   resolveEffectiveRadius,
 } from "../src/server";
 
@@ -17,7 +18,25 @@ describe("style-linked radius defaults", () => {
   it("uses the style default only while radius remains in default mode", () => {
     expect(resolveEffectiveRadius("lyra", "default")).toBe("none");
     expect(resolveEffectiveRadius("maia", "default")).toBe("large");
-    expect(resolveEffectiveRadius("lyra", "large")).toBe("large");
+    expect(resolveEffectiveRadius("lyra", "large")).toBe("none");
     expect(resolveEffectiveRadius("maia", "none")).toBe("none");
+  });
+
+  it("normalizes locked style options to their canonical values", () => {
+    expect(
+      normalizeDesignSystemConfig({
+        style: "lyra",
+        baseColor: "neutral",
+        theme: "neutral",
+        iconLibrary: "lucide",
+        font: "inter",
+        radius: "large",
+        menuAccent: "subtle",
+        menuColor: "default",
+        template: "astro",
+        rtl: false,
+        rtlLanguage: "ar",
+      }).radius,
+    ).toBe("none");
   });
 });

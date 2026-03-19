@@ -2,6 +2,7 @@
 @source "../**/*.{ts,tsx,astro,mdx,md}";
 
 @import "tw-animate-css";
+@import "bejamas/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 

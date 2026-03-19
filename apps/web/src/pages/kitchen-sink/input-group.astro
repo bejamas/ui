@@ -8,6 +8,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
+  SelectGroup,
 } from "@bejamas/registry/ui/select";
 ---
 
@@ -17,9 +18,7 @@ import {
 
     <div class="max-w-xs">
       <Field>
-        <FieldLabel htmlFor="input-group-demo-size-trigger"
-          >Demo Size</FieldLabel
-        >
+        <FieldLabel for="input-group-demo-size-trigger">Demo Size</FieldLabel>
         <Select
           id="input-group-size-control"
           defaultValue="default"
@@ -29,9 +28,11 @@ import {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="sm">Small (h-8)</SelectItem>
-            <SelectItem value="default">Default (h-9)</SelectItem>
-            <SelectItem value="lg">Large (h-10)</SelectItem>
+            <SelectGroup>
+              <SelectItem value="sm">Small (h-8)</SelectItem>
+              <SelectItem value="default">Default (h-9)</SelectItem>
+              <SelectItem value="lg">Large (h-10)</SelectItem>
+            </SelectGroup>
           </SelectContent>
         </Select>
       </Field>

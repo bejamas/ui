@@ -20,6 +20,10 @@ describe("registry base item", () => {
     const styleCss = buildRegistryStyleCss("juno");
 
     expect(baseItem.css).toEqual(buildRegistryBaseCss());
+    expect(Object.keys(baseItem.css ?? {})).toContain(
+      '@import "bejamas/tailwind.css"',
+    );
+    expect(baseItem.dependencies).toContain("bejamas");
     expect(JSON.stringify(baseItem.css)).not.toContain(".cn-card");
     expect(JSON.stringify(baseItem.css)).not.toContain(".cn-button");
     expect(JSON.stringify(styleCss)).toContain(".cn-card");

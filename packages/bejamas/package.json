@@ -3,11 +3,20 @@
   "version": "0.2.10",
   "license": "MIT",
   "type": "module",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./tailwind.css": {
+      "style": "./src/tailwind.css"
+    }
+  },
   "bin": {
     "bejamas": "./dist/index.js"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "src/tailwind.css"
   ],
   "keywords": [
     "components",

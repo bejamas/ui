@@ -10,6 +10,7 @@ import {
   CREATE_PICKER_GROUP_LABELS,
   createRandomDesignSystemConfig,
   getFontGroupForFontValue,
+  isCreatePickerDisabled,
   getCreatePickerOptions,
   getCreatePickerSelectedOption,
   getFontValuesForGroup,
@@ -210,7 +211,7 @@ describe("create sidebar helpers", () => {
     });
   });
 
-  it("keeps explicit radius overrides when a style changes", () => {
+  it("normalizes locked radius overrides when a style changes", () => {
     expect(
       getCreatePickerSelectedOption("radius", {
         baseColor: "neutral",
@@ -218,9 +219,15 @@ describe("create sidebar helpers", () => {
         radius: "large",
       }),
     ).toMatchObject({
-      value: "large",
-      label: "Large",
+      value: "none",
+      label: "None",
     });
+  });
+
+  it("disables the radius picker for lyra only", () => {
+    expect(isCreatePickerDisabled("radius", { style: "lyra" })).toBe(true);
+    expect(isCreatePickerDisabled("radius", { style: "juno" })).toBe(false);
+    expect(isCreatePickerDisabled("font", { style: "lyra" })).toBe(false);
   });
 
   it("exposes all four menu color options", () => {
@@ -257,6 +264,29 @@ describe("create sidebar helpers", () => {
     expect(config.template).toBe("astro-with-component-docs-monorepo");
     expect(config.rtl).toBe(true);
     expect(config.rtlLanguage).toBe("he");
+  });
+
+  it("normalizes Lyra shuffle results to radius none", () => {
+    const config = withMockedRandom(0.99, () =>
+      createRandomDesignSystemConfig({
+        style: "lyra",
+        baseColor: "neutral",
+        theme: "neutral",
+        iconLibrary: "lucide",
+        font: "inter",
+        radius: "large",
+        menuColor: "default",
+        menuAccent: "subtle",
+        template: "astro",
+        rtl: false,
+        rtlLanguage: "ar",
+      }, {
+        locked: ["style"],
+      }),
+    );
+
+    expect(config.style).toBe("lyra");
+    expect(config.radius).toBe("none");
   });
 
   it("exposes the supported lockable params", () => {

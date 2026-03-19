@@ -2,7 +2,6 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/registry/lib/utils";
 import { Input } from "../input";
-import { inputGroupControlClasses } from "./controlClasses";
 
 interface Props extends HTMLAttributes<"input"> {
   class?: string;
@@ -12,12 +11,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
 <Input
-  data-input-group-control
   data-slot="input-group-control"
-  class={cn(
-    "cn-input-group-control cn-input-group-input",
-    inputGroupControlClasses,
-    className,
-  )}
+  class={cn("cn-input-group-input flex-1", className)}
   {...rest}
 />

@@ -22,7 +22,7 @@ describe("style registry build", () => {
 
     expect(css).toEqual({
       '@import "tw-animate-css"': {},
-      '@import "shadcn/tailwind.css"': {},
+      '@import "bejamas/tailwind.css"': {},
       "@layer base": {
         "*": {
           "@apply border-border outline-ring/50": {},
@@ -44,6 +44,7 @@ describe("style registry build", () => {
     );
 
     expect(styleItem.files).toEqual([]);
+    expect(styleItem.dependencies).toContain("bejamas");
     expect(styleItem.css).toEqual(buildBaseStyleCssObject());
     expect(fontItem).toMatchObject({
       $schema: "https://ui.shadcn.com/schema/registry-item.json",

@@ -69,6 +69,20 @@ describe("parseCreateSearchParams", () => {
     expect(result.data.font).toBe("geist-mono");
   });
 
+  test("normalizes locked Lyra radius values from preset codes", () => {
+    const result = parseCreateSearchParams(
+      new URLSearchParams({ preset: "awNgr9d" }),
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.data.style).toBe("lyra");
+    expect(result.data.radius).toBe("none");
+  });
+
   test("ignores an invalid fallback preset", () => {
     const result = parseCreateSearchParams(new URLSearchParams(), {
       fallbackPreset: "not-a-preset",

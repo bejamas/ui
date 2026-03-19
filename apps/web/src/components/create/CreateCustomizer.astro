@@ -18,6 +18,7 @@ import {
   CREATE_PICKER_LABELS,
   CREATE_PICKER_MARKERS,
   getCreatePickerOptions,
+  isCreatePickerDisabled,
   getCreatePickerSelectedOption,
 } from "@/utils/create-sidebar";
 import CreateLockButton from "./CreateLockButton.astro";
@@ -159,6 +160,7 @@ const primaryPickers = [
                 markerKind={CREATE_PICKER_MARKERS[picker]}
                 lockable
                 lockParam={picker}
+                disabled={isCreatePickerDisabled(picker, config)}
               />
             ))
           }

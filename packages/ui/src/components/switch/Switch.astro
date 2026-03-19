@@ -4,7 +4,7 @@
  * @title Switch
  * @description A toggle control for switching between checked and unchecked states.
  * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2509-4236&t=YFStJ3V8fXEO8QD8-4
- * 
+ *
  * @status stable
  * @since 0.1.0
  *
@@ -30,30 +30,80 @@
  * ```
  */
 
-const { class: className = "", id = "", name = id, ...props } = Astro.props;
-
+import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
-const trackClass =
-  "relative inline-flex h-5 w-8 shrink-0 items-center rounded-full border border-transparent bg-input transition-colors outline-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-focus-visible:border-ring peer-checked:bg-primary dark:bg-input/80 dark:peer-checked:bg-primary";
+interface Props extends HTMLAttributes<"span"> {
+  class?: string;
+  id?: string;
+  size?: "sm" | "default";
+  checked?: boolean;
+  defaultChecked?: boolean;
+  name?: string;
+  value?: string;
+  uncheckedValue?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  "aria-invalid"?: boolean | "true" | "false";
+}
+
+const {
+  class: className = "",
+  id = "",
+  size = "default",
+  checked,
+  defaultChecked,
+  name,
+  value,
+  uncheckedValue,
+  disabled = false,
+  readOnly = false,
+  required = false,
+  "aria-invalid": ariaInvalid,
+  ...rest
+} = Astro.props as Props;
+
+const initialChecked = checked ?? defaultChecked ?? false;
+
+const rootClass =
+  "data-checked:bg-primary data-unchecked:bg-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 dark:data-unchecked:bg-input/80 shrink-0 rounded-full border border-transparent focus-visible:ring-3 aria-invalid:ring-3 data-[size=default]:h-[18.4px] data-[size=default]:w-[32px] data-[size=sm]:h-[14px] data-[size=sm]:w-[24px] peer group/switch relative inline-flex items-center transition-all outline-none after:absolute after:-inset-x-3 after:-inset-y-2 data-disabled:cursor-not-allowed data-disabled:opacity-50";
 
 const thumbClass =
-  "pointer-events-none shadow-xs absolute left-0.5 ease-out duration-150 top-1/2 block size-4 -translate-y-1/2 translate-x-0 rounded-full bg-background ring-0 transition-transform peer-checked:translate-x-3 dark:bg-foreground dark:peer-checked:bg-primary-foreground";
+  "bg-background dark:data-unchecked:bg-foreground dark:data-checked:bg-primary-foreground rounded-full group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=default]/switch:data-unchecked:translate-x-0 group-data-[size=sm]/switch:data-unchecked:translate-x-0 pointer-events-none block ring-0 transition-transform";
 ---
 
-<label class="inline-flex items-center gap-2 cursor-pointer">
-  <span class="relative inline-flex items-center">
-    <input
-      id={id}
-      name={name}
-      type="checkbox"
-      role="switch"
-      class="sr-only peer"
-      {...props}
-      aria-checked={props.checked ?? undefined}
-    />
-    <span class={cn("cn-switch", trackClass, className)} aria-hidden="true"></span>
-    <span class={cn("cn-switch-thumb", thumbClass)} aria-hidden="true"></span>
-  </span>
-  <slot />
-</label>
+<span
+  {...rest}
+  id={id}
+  data-slot="switch"
+  data-size={size}
+  data-default-checked={initialChecked ? "true" : undefined}
+  data-name={name}
+  data-value={value}
+  data-unchecked-value={uncheckedValue}
+  data-disabled={disabled ? "true" : undefined}
+  data-read-only={readOnly ? "true" : undefined}
+  data-required={required ? "true" : undefined}
+  data-checked={initialChecked ? "true" : undefined}
+  data-unchecked={initialChecked ? undefined : "true"}
+  aria-invalid={ariaInvalid}
+  class={cn("cn-switch", rootClass, className)}
+>
+  <span
+    data-slot="switch-thumb"
+    data-checked={initialChecked ? "true" : undefined}
+    data-unchecked={initialChecked ? undefined : "true"}
+    data-disabled={disabled ? "true" : undefined}
+    data-readonly={readOnly ? "true" : undefined}
+    data-required={required ? "true" : undefined}
+    class={cn("cn-switch-thumb", thumbClass)}
+    aria-hidden="true"
+  ></span>
+</span>
+
+<script>
+  import { create } from "@data-slot/switch";
+
+  create();
+</script>

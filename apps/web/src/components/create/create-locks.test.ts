@@ -23,6 +23,8 @@ describe("create lock controls", () => {
     expect(source).toContain('class="group/picker relative"');
     expect(source).toContain("<CreateLockButton");
     expect(source).toContain("<CreateFontGroupLockButton");
+    expect(source).toContain("disabled?: boolean");
+    expect(source).toContain("disabled={disabled}");
     expect(source).toContain('group/picker relative');
     expect(lockButtonSource).toContain("data-create-lock-param");
     expect(lockButtonSource).toContain('data-locked="false"');
@@ -38,6 +40,8 @@ describe("create lock controls", () => {
     const customizerSource = fs.readFileSync(customizerFile, "utf8");
 
     expect(customizerSource).toContain('param="theme"');
+    expect(customizerSource).toContain("isCreatePickerDisabled");
+    expect(customizerSource).toContain("disabled={isCreatePickerDisabled(picker, config)}");
     expect(themePanelSource).toContain('param="theme"');
     expect(themePanelSource).toContain('class="group/picker relative"');
   });

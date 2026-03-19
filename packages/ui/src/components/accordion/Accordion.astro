@@ -7,7 +7,7 @@
  *
  * @preview
  *
- * <Accordion class="w-full max-w-[420px] self-start mt-10" collapsible>
+ * <Accordion class="w-full max-w-[420px] self-start mt-10" defaultValue="accordion-item-1">
  *   <AccordionItem value="accordion-item-1">
  *     <AccordionTrigger>
  *       Is it accessible?
@@ -33,8 +33,8 @@
  * import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@bejamas/ui/components/accordion';
  * ---
  *
- * <Accordion class="w-full max-w-[420px] self-start">
- *   <AccordionItem open>
+ * <Accordion class="w-full max-w-[420px] self-start" defaultValue="accordion-item-1">
+ *   <AccordionItem value="accordion-item-1">
  *     <AccordionTrigger>
  *       Is it accessible?
  *     </AccordionTrigger>
@@ -56,7 +56,7 @@
  * | `accordion:change` | `{ value: string[] }` | Fired when expanded items change |
  *
  * ```astro nocollapse
- * <Accordion id="my-accordion" collapsible>
+ * <Accordion id="my-accordion">
  *   <AccordionItem value="item-1">
  *     <AccordionTrigger>Item 1</AccordionTrigger>
  *     <AccordionContent>Content 1</AccordionContent>
@@ -102,7 +102,7 @@
  *
  * ### Multiple choice accordion
  *
- * <Accordion class="w-full max-w-[420px] self-start" multiple>
+ * <Accordion class="w-full max-w-[420px] self-start" multiple defaultValue={["accordion-item-1"]}>
  *   <AccordionItem value="accordion-item-1">
  *     <AccordionTrigger>
  *       Is it accessible?
@@ -137,26 +137,35 @@ import type { HTMLAttributes } from "astro/types";
 interface Props extends HTMLAttributes<"div"> {
   class?: string;
   multiple?: boolean;
-  defaultValue?: string;
+  defaultValue?: string | string[];
   collapsible?: boolean;
 }
 
 const {
   class: className = "",
   multiple = false,
-  defaultValue = "",
-  collapsible = false,
+  defaultValue,
+  collapsible = true,
   ...rest
 } = Astro.props as Props;
+
+const serializedDefaultValue =
+  Array.isArray(defaultValue) && defaultValue.length > 0
+    ? JSON.stringify(defaultValue)
+    : undefined;
 ---
 
 <div
   {...rest}
   data-slot="accordion"
-  data-multiple={multiple}
-  data-defaultValue={defaultValue}
-  data-collapsible={collapsible}
-  class={cn("cn-accordion", className)}
+  data-multiple={multiple ? "true" : undefined}
+  data-default-value={typeof defaultValue === "string" ? defaultValue : undefined}
+  data-default-value-json={serializedDefaultValue}
+  data-collapsible={collapsible ? undefined : "false"}
+  class={cn(
+    "cn-accordion flex w-full flex-col [&:not([data-enhanced])_[data-slot=accordion-content]]:hidden",
+    className,
+  )}
 >
   <slot />
 </div>
@@ -164,7 +173,39 @@ const {
 <script>
   import { createAccordion } from "@data-slot/accordion";
 
+  const parseBooleanDataAttribute = (
+    value,
+    fallback,
+  ) => (value === undefined ? fallback : value !== "false");
+
+  const parseDefaultValue = (el) => {
+    const serializedValues = el.dataset.defaultValueJson;
+
+    if (serializedValues) {
+      try {
+        const parsed = JSON.parse(serializedValues);
+
+        if (Array.isArray(parsed)) {
+          return parsed.filter((value) => typeof value === "string");
+        }
+      } catch {
+        // Fall back to the single-value data attribute.
+      }
+    }
+
+    const defaultValue = el.dataset.defaultValue;
+
+    return defaultValue === undefined || defaultValue === "" ? undefined : defaultValue;
+  };
+
   document
     .querySelectorAll('[data-slot="accordion"]')
-    .forEach((el) => createAccordion(el));
+    .forEach((el) => {
+      createAccordion(el, {
+        multiple: parseBooleanDataAttribute(el.dataset.multiple, false),
+        collapsible: parseBooleanDataAttribute(el.dataset.collapsible, true),
+        defaultValue: parseDefaultValue(el),
+      });
+      el.setAttribute("data-enhanced", "");
+    });
 </script>

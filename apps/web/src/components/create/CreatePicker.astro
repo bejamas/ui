@@ -36,6 +36,7 @@ interface Props {
   markerKind: CreatePickerMarkerKind;
   lockable?: boolean;
   lockParam?: CreateLockableParam;
+  disabled?: boolean;
 }
 
 const {
@@ -47,6 +48,7 @@ const {
   markerKind,
   lockable = false,
   lockParam,
+  disabled = false,
 } = Astro.props as Props;
 const selectedOption =
   providedSelectedOption ??
@@ -88,6 +90,7 @@ function shouldRenderFontGroupLock(
       <Button
         type="button"
         variant="outline"
+        disabled={disabled}
         class="create-picker-trigger bg-transparent! hover:bg-muted! border-border/70! flex w-full justify-between text-left h-auto! rounded-[12px]! px-3! py-2!"
         data-create-picker-trigger
       >
@@ -241,7 +244,9 @@ function shouldRenderFontGroupLock(
     lockable && lockParam && (
       <CreateLockButton
         param={lockParam}
-        class="absolute top-1/2 right-10 -translate-y-1/2"
+        class={disabled
+          ? "absolute top-1/2 right-10 hidden -translate-y-1/2"
+          : "absolute top-1/2 right-10 -translate-y-1/2"}
       />
     )
   }
