@@ -278,6 +278,13 @@ describe("create preview base layer", () => {
     expect(root).toContain(
       "group/navigation-menu relative flex max-w-max flex-1",
     );
+    expect(root).toContain(
+      '[data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface,',
+    );
+    expect(root).toContain(
+      '.navigation-menu-trigger-surface[data-popup-open]:not([data-popup-open="false"])',
+    );
+    expect(root).toContain("background-color: transparent;");
     expect(list).toContain(
       "group flex flex-1 list-none items-center justify-center",
     );
@@ -288,11 +295,14 @@ describe("create preview base layer", () => {
     expect(trigger).toContain(
       "group/navigation-menu-trigger inline-flex h-9 w-max",
     );
+    expect(trigger).toContain("relative z-1");
     expect(trigger).not.toContain("px-4 py-2.5 bg-transparent");
     expect(link).toContain('class={cn("cn-navigation-menu-link", className)}');
     expect(link).not.toContain("hover:bg-muted");
-    expect(content).toContain("transition-[opacity,transform,translate]");
+    expect(content).toContain("transition-[opacity,translate,filter]");
+    expect(indicator).toContain("cn-navigation-menu-indicator-surface");
     expect(indicator).toContain("cn-navigation-menu-indicator-arrow");
+    expect(indicator).toContain("translate-x-(--indicator-left,0px)");
     expect(indicator).not.toContain("bg-muted/50");
   });
 

@@ -363,10 +363,13 @@ const {
 </script>
 
 <style is:global>
+  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface,
   [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:hover,
   [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:focus,
   [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:focus-visible,
-  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface[data-state="open"] {
+  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface[data-state="open"],
+  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface[data-open]:not([data-open="false"]),
+  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface[data-popup-open]:not([data-popup-open="false"]) {
     background-color: transparent;
   }
 </style>

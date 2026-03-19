@@ -816,11 +816,15 @@
   }
 
   .cn-navigation-menu-indicator {
-    @apply data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in;
+    @apply rounded-none data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in;
+  }
+
+  .cn-navigation-menu-indicator-surface {
+    @apply bg-muted/60 ring-border/40 ring-1;
   }
 
   .cn-navigation-menu-indicator-arrow {
-    @apply bg-border rounded-none shadow-md;
+    @apply hidden bg-border rounded-none shadow-md;
   }
 
   .cn-navigation-menu-positioner {

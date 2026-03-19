@@ -9,7 +9,7 @@ interface Props extends HTMLAttributes<"button"> {
 }
 
 export const navigationMenuTriggerStyle = cva(
-  "navigation-menu-trigger-surface cn-navigation-menu-trigger group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center outline-none disabled:pointer-events-none",
+  "navigation-menu-trigger-surface cn-navigation-menu-trigger group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center outline-none disabled:pointer-events-none relative z-1",
 );
 
 const {
