@@ -274,7 +274,7 @@ export class ConfigMissingError extends RegistryError {
       code: RegistryErrorCode.NOT_CONFIGURED,
       context: { cwd },
       suggestion:
-        "Run 'npx shadcn@latest init' to create a components.json file, or check that you're in the correct directory.",
+        "Run 'npx bejamas init' to create a components.json file, or check that you're in the correct directory.",
     });
     this.name = "ConfigMissingError";
   }
@@ -298,7 +298,7 @@ export class ConfigParseError extends RegistryError {
       cause: parseError,
       context: { cwd },
       suggestion:
-        "Check your components.json file for syntax errors or invalid configuration. Run 'npx shadcn@latest init' to regenerate a valid configuration.",
+        "Check your components.json file for syntax errors or invalid configuration. Run 'npx bejamas init' to regenerate a valid configuration.",
     });
     this.name = "ConfigParseError";
   }

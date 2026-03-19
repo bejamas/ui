@@ -42,7 +42,7 @@ Base tokens & CSS variables
 
 components.json (shadcn schema)
 
-Compatibility note: `--base-color` is deprecated and ignored on the current shadcn v4-backed init flow. To use a different base color, update `tailwind.baseColor` in `components.json` after init.
+Compatibility note: Bejamas currently pins `shadcn` v3.8.5 internally for `init` and `add`. This keeps the pre-v4 init/add behavior, including `init --base-color`.
 
 ### add <name>
 
