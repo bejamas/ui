@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.2.12
+
+### Patch Changes
+
+- [#100](https://github.com/bejamas/ui/pull/100) [`a43a019`](https://github.com/bejamas/ui/commit/a43a0196a9ef3b68f86d2efc5a0693970e32f032) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Pin Bejamas-managed `shadcn` calls back to `shadcn@3.8.5` for compatibility with the current Bejamas registry/init flow. This restores the legacy `init --base-color` behavior and stops routing `init` and `add` through `shadcn@latest`.
+
 ## 0.2.11
 
 ### Patch Changes
