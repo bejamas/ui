@@ -8,7 +8,7 @@ Use the `init` command to initialize dependencies for a new project.
 
 The `init` command installs dependencies, adds the `cn` util, and configures CSS variables for the project.
 
-`--base-color` is deprecated and ignored on current shadcn-backed init flows. If you want a different base color, update `tailwind.baseColor` in `components.json` after initialization.
+Bejamas currently pins `shadcn` v3.8.5 internally for `init` and `add` compatibility. The legacy `--base-color` flow remains supported on `init`.
 
 ```bash
 npx bejamas init

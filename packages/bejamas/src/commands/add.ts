@@ -5,9 +5,9 @@ import prompts from "prompts";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
 import { highlighter } from "@/src/utils/highlighter";
-import { getPackageRunner } from "@/src/utils/get-package-manager";
 import { fixAstroImports } from "@/src/utils/astro-imports";
 import { getConfig, getWorkspaceConfig } from "@/src/utils/get-config";
+import { buildPinnedShadcnInvocation } from "@/src/utils/shadcn-cli";
 import {
   reorganizeComponents,
   fetchRegistryItem,
@@ -336,40 +336,15 @@ async function addComponents(
   isSilent: boolean,
   subfolderMapResult: SubfolderMapResult,
 ): Promise<ParsedOutput> {
-  const runner = await getPackageRunner(process.cwd());
   const env = {
     ...process.env,
     REGISTRY_URL: process.env.REGISTRY_URL || DEFAULT_REGISTRY_URL,
   };
-  // Always pass --yes for non-interactive mode (skips "Add components?" confirmation)
-  // Note: we don't pass --overwrite by default to respect user customizations
-  const autoFlags: string[] = [];
-  if (!forwardedOptions.includes("--yes")) {
-    autoFlags.push("--yes");
-  }
-  const baseArgs = [
-    "shadcn@latest",
-    "add",
-    ...packages,
-    ...autoFlags,
-    ...forwardedOptions,
-  ];
-
-  let cmd = "npx";
-  let args: string[] = ["-y", ...baseArgs];
-  if (runner === "bunx") {
-    cmd = "bunx";
-    args = baseArgs;
-  } else if (runner === "pnpm dlx") {
-    cmd = "pnpm";
-    args = ["dlx", ...baseArgs];
-  } else if (runner === "npx") {
-    cmd = "npx";
-    args = ["-y", ...baseArgs];
-  }
+  const shadcnArgs = buildShadcnAddArgs(packages, forwardedOptions);
+  const invocation = buildPinnedShadcnInvocation(shadcnArgs);
 
   if (isVerbose) {
-    logger.info(`[bejamas-ui] ${cmd} ${args.join(" ")}`);
+    logger.info(`[bejamas-ui] ${invocation.cmd} ${invocation.args.join(" ")}`);
   }
 
   // Show our own spinner for checking registry
@@ -379,7 +354,7 @@ async function addComponents(
   try {
     // Run shadcn and capture output
     // Pipe "n" to stdin to answer "no" to any overwrite prompts (respects user customizations)
-    const result = await execa(cmd, args, {
+    const result = await execa(invocation.cmd, invocation.args, {
       env,
       input: "n\nn\nn\nn\nn\nn\nn\nn\nn\nn\n", // Answer "no" to up to 10 overwrite prompts
       stdout: "pipe",
@@ -425,9 +400,28 @@ async function addComponents(
   }
 }
 
+export function buildShadcnAddArgs(
+  packages: string[],
+  forwardedOptions: string[],
+) {
+  // Always pass --yes for non-interactive mode (skips "Add components?" confirmation)
+  // Note: we don't pass --overwrite by default to respect user customizations
+  const autoFlags: string[] = [];
+  if (!forwardedOptions.includes("--yes")) {
+    autoFlags.push("--yes");
+  }
+
+  return [
+    "add",
+    ...packages,
+    ...autoFlags,
+    ...forwardedOptions,
+  ];
+}
+
 export const add = new Command()
   .name("add")
-  .description("Add components via shadcn@latest using registry URLs")
+  .description("Add components via the pinned shadcn registry flow")
   .argument("[components...]", "Component package names to add")
   .option("-y, --yes", "skip confirmation prompt.", false)
   .option("-o, --overwrite", "overwrite existing files.", false)
