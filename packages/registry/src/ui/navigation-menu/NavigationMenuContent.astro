@@ -35,9 +35,9 @@ const {
     "data-starting-style:animate-in data-starting-style:fade-in",
     "data-[motion=from-right]:slide-in-from-right-50",
     "data-[motion=from-left]:slide-in-from-left-50",
-    // slide exit — transition TO these values
-    "data-ending-style:animate-out data-ending-style:fade-out",
-    "data-[motion=to-left]:data-[ending-style]:slide-out-to-left-50 data-[motion=to-right]:data-[ending-style]:slide-out-to-right-50",
+    // Full close is owned by the viewport shell. Content exit motion is only for item-to-item switches.
+    "data-[motion=to-left]:data-[ending-style]:animate-out data-[motion=to-left]:data-[ending-style]:fade-out data-[motion=to-left]:data-[ending-style]:slide-out-to-left-50",
+    "data-[motion=to-right]:data-[ending-style]:animate-out data-[motion=to-right]:data-[ending-style]:fade-out data-[motion=to-right]:data-[ending-style]:slide-out-to-right-50",
     "absolute",
     className,
   )}

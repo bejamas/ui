@@ -22,10 +22,22 @@ const registryNavigationMenuIndicatorFile = path.resolve(
   registryRoot,
   "src/ui/navigation-menu/NavigationMenuIndicator.astro",
 );
+const registryNavigationMenuContentFile = path.resolve(
+  registryRoot,
+  "src/ui/navigation-menu/NavigationMenuContent.astro",
+);
+const registryNavigationMenuViewportFile = path.resolve(
+  registryRoot,
+  "src/ui/navigation-menu/NavigationMenuViewport.astro",
+);
 
 const uiNavigationMenuFile = path.resolve(
   uiRoot,
   "src/components/navigation-menu/NavigationMenu.astro",
+);
+const uiNavigationMenuContentFile = path.resolve(
+  uiRoot,
+  "src/components/navigation-menu/NavigationMenuContent.astro",
 );
 const uiNavigationMenuIndicatorFile = path.resolve(
   uiRoot,
@@ -60,6 +72,8 @@ describe("navigation-menu compatibility contract", () => {
     const root = fs.readFileSync(registryNavigationMenuFile, "utf8");
     const list = fs.readFileSync(registryNavigationMenuListFile, "utf8");
     const trigger = fs.readFileSync(registryNavigationMenuTriggerFile, "utf8");
+    const content = fs.readFileSync(registryNavigationMenuContentFile, "utf8");
+    const viewport = fs.readFileSync(registryNavigationMenuViewportFile, "utf8");
     const indicator = fs.readFileSync(registryNavigationMenuIndicatorFile, "utf8");
 
     expect(root).toContain(
@@ -87,6 +101,17 @@ describe("navigation-menu compatibility contract", () => {
     expect(trigger).toContain("navigation-menu-trigger-surface");
     expect(trigger).toContain("relative z-1");
 
+    expect(content).toContain("data-starting-style:animate-in data-starting-style:fade-in");
+    expect(content).toContain(
+      "data-[motion=to-left]:data-[ending-style]:animate-out",
+    );
+    expect(content).toContain(
+      "data-[motion=to-right]:data-[ending-style]:animate-out",
+    );
+    expect(content).not.toContain("data-ending-style:animate-out");
+
+    expect(viewport).toContain("data-ending-style:opacity-0 data-ending-style:scale-90");
+
     expect(indicator).toContain('data-slot="navigation-menu-indicator"');
     expect(indicator).toContain("cn-navigation-menu-indicator-surface");
     expect(indicator).toContain("cn-navigation-menu-indicator-arrow");
@@ -99,6 +124,7 @@ describe("navigation-menu compatibility contract", () => {
 
   test("ui source keeps the subtle surface indicator defaults inline", () => {
     const root = fs.readFileSync(uiNavigationMenuFile, "utf8");
+    const content = fs.readFileSync(uiNavigationMenuContentFile, "utf8");
     const indicator = fs.readFileSync(uiNavigationMenuIndicatorFile, "utf8");
 
     expect(root).toContain(
@@ -116,6 +142,16 @@ describe("navigation-menu compatibility contract", () => {
     expect(root).toContain("background-color: transparent;");
     expect(root).not.toContain(':has( class="cn-navigation-menu-indicator');
 
+    expect(content).toContain("data-starting-style:animate-in data-starting-style:fade-in");
+    expect(content).toContain(
+      "data-[motion=to-left]:data-[ending-style]:animate-out",
+    );
+    expect(content).toContain(
+      "data-[motion=to-right]:data-[ending-style]:animate-out",
+    );
+    expect(content).not.toContain("data-ending-style:animate-out");
+    expect(content).not.toContain("opacit-0");
+
     expect(indicator).toContain("cn-navigation-menu-indicator-surface");
     expect(indicator).toContain("bg-muted/45");
     expect(indicator).toContain("ring-1 ring-border/40");
@@ -132,6 +168,10 @@ describe("navigation-menu compatibility contract", () => {
       rawRegistryFile,
       "ui/navigation-menu/NavigationMenuIndicator.astro",
     );
+    const rawContent = getRegistryContent(
+      rawRegistryFile,
+      "ui/navigation-menu/NavigationMenuContent.astro",
+    );
 
     const styleRoot = getRegistryContent(
       styleRegistryFile,
@@ -145,6 +185,14 @@ describe("navigation-menu compatibility contract", () => {
       styleRegistryFile,
       "ui/navigation-menu/NavigationMenuIndicator.astro",
     );
+    const styleContent = getRegistryContent(
+      styleRegistryFile,
+      "ui/navigation-menu/NavigationMenuContent.astro",
+    );
+    const styleViewport = getRegistryContent(
+      styleRegistryFile,
+      "ui/navigation-menu/NavigationMenuViewport.astro",
+    );
 
     expect(rawRoot).not.toContain(':has( class="cn-navigation-menu-indicator');
     expect(rawRoot).toContain(
@@ -156,6 +204,12 @@ describe("navigation-menu compatibility contract", () => {
     expect(rawIndicator).toContain("cn-navigation-menu-indicator-surface");
     expect(rawIndicator).toContain("bg-muted/45");
     expect(rawIndicator).toContain("translate-x-(--indicator-left,0px)");
+    expect(rawContent).toContain("data-starting-style:animate-in data-starting-style:fade-in");
+    expect(rawContent).toContain(
+      "data-[motion=to-left]:data-[ending-style]:animate-out",
+    );
+    expect(rawContent).not.toContain("data-ending-style:animate-out");
+    expect(rawContent).not.toContain("opacit-0");
 
     expect(styleRoot).not.toContain(':has( class="cn-navigation-menu-indicator');
     expect(styleRoot).toContain(
@@ -169,5 +223,12 @@ describe("navigation-menu compatibility contract", () => {
     expect(styleIndicator).toContain("bg-muted/60 ring-border/40 ring-1");
     expect(styleIndicator).toContain("hidden bg-border");
     expect(styleIndicator).not.toContain("cn-navigation-menu-indicator-surface");
+    expect(styleContent).toContain("data-[motion^=to-]:animate-out");
+    expect(styleContent).toContain(
+      "data-[motion=to-left]:data-[ending-style]:animate-out",
+    );
+    expect(styleContent).not.toContain("data-ending-style:animate-out");
+    expect(styleViewport).not.toContain("data-closed:animate-out");
+    expect(styleViewport).not.toContain("data-closed:zoom-out-95");
   });
 });

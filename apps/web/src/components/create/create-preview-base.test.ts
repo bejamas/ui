@@ -300,6 +300,10 @@ describe("create preview base layer", () => {
     expect(link).toContain('class={cn("cn-navigation-menu-link", className)}');
     expect(link).not.toContain("hover:bg-muted");
     expect(content).toContain("transition-[opacity,translate,filter]");
+    expect(content).toContain(
+      "data-[motion=to-left]:data-[ending-style]:animate-out",
+    );
+    expect(content).not.toContain("data-ending-style:animate-out");
     expect(indicator).toContain("cn-navigation-menu-indicator-surface");
     expect(indicator).toContain("cn-navigation-menu-indicator-arrow");
     expect(indicator).toContain("translate-x-(--indicator-left,0px)");
