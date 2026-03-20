@@ -1,0 +1,39 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import NavigationMenuViewport from "./NavigationMenuViewport.astro";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+  popupClass?: string;
+  viewportClass?: string;
+}
+
+const {
+  class: className = "",
+  popupClass = "",
+  viewportClass = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div data-slot="navigation-menu-portal">
+  <div
+    {...rest}
+    data-slot="navigation-menu-positioner"
+    class={cn(
+      "cn-navigation-menu-positioner isolate z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width) transition-[top,left,right,bottom] duration-250 ease data-instant:transition-none",
+      className,
+    )}
+  >
+    <div
+      data-slot="navigation-menu-popup"
+      class={cn(
+        "cn-navigation-menu-popup bg-popover text-popover-foreground xs:w-(--popup-width) relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden rounded-lg outline outline-border shadow-lg transition-[opacity,transform,width,height,scale,translate] duration-250 ease-[cubic-bezier(0.32,0.72,0,1)] data-starting-style:scale-90 data-starting-style:opacity-0 data-ending-style:scale-90 data-ending-style:opacity-0",
+        popupClass,
+      )}
+    >
+      <NavigationMenuViewport class={viewportClass} />
+    </div>
+  </div>
+</div>

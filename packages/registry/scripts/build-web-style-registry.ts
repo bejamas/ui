@@ -399,6 +399,58 @@ async function readTemplateItem(name: string) {
   return item;
 }
 
+function extractLocalRelativeImports(content: string) {
+  const imports = new Set<string>();
+  const pattern =
+    /\b(?:import|export)\s+(?:type\s+)?[\s\S]*?\bfrom\s+["'](\.[^"']+)["']/g;
+
+  for (const match of content.matchAll(pattern)) {
+    const target = match[1];
+    if (typeof target === "string") {
+      imports.add(target);
+    }
+  }
+
+  return Array.from(imports);
+}
+
+function resolveTemplateRelativePath(fromTemplatePath: string, relativeImport: string) {
+  return path.posix.normalize(
+    path.posix.join(path.posix.dirname(fromTemplatePath), relativeImport),
+  );
+}
+
+function inferRegistryFileType(filePath: string) {
+  if (filePath.startsWith("ui/")) {
+    return "registry:ui";
+  }
+
+  if (filePath.startsWith("lib/")) {
+    return "registry:lib";
+  }
+
+  throw new Error(`Unsupported registry file type for ${filePath}`);
+}
+
+async function resolveRegistrySourceImport(filePath: string) {
+  const candidates = [filePath, `${filePath}.ts`, `${filePath}.astro`, `${filePath}.js`];
+
+  for (const candidate of candidates) {
+    try {
+      const sourcePath = resolveSourceFile(candidate);
+      await fs.access(sourcePath);
+      return {
+        registryPath: candidate,
+        sourcePath,
+      };
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
+}
+
 function resolveSourceFile(templatePath: string) {
   if (templatePath.startsWith("ui/")) {
     return path.resolve(registrySourceRoot, templatePath.replace(/^ui\//, "ui/"));
@@ -420,6 +472,58 @@ async function readSourceFile(filepath: string) {
   const content = await fs.readFile(filepath, "utf8");
   fileContentCache.set(filepath, content);
   return content;
+}
+
+async function collectTemplateFiles(template: RegistryItem) {
+  const initialFiles = template.files ?? [];
+  const discoveredFiles = [...initialFiles];
+  const queue = [...initialFiles];
+  const seen = new Set(initialFiles.map((file) => file.path));
+  const localDirectories = new Set(
+    initialFiles.map((file) => path.posix.dirname(file.path)),
+  );
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (!current) {
+      continue;
+    }
+
+    const source = await readSourceFile(resolveSourceFile(current.path));
+
+    for (const relativeImport of extractLocalRelativeImports(source)) {
+      const nextImportPath = resolveTemplateRelativePath(current.path, relativeImport);
+      const resolvedImport = await resolveRegistrySourceImport(nextImportPath);
+
+      if (!resolvedImport) {
+        continue;
+      }
+
+      const nextPath = resolvedImport.registryPath;
+
+      if (
+        seen.has(nextPath) ||
+        !nextPath.startsWith("ui/") ||
+        !Array.from(localDirectories).some(
+          (directory) =>
+            nextPath === directory || nextPath.startsWith(`${directory}/`),
+        )
+      ) {
+        continue;
+      }
+
+      const nextFile = {
+        path: nextPath,
+        type: inferRegistryFileType(nextPath),
+      } satisfies RegistryFile;
+
+      seen.add(nextPath);
+      discoveredFiles.push(nextFile);
+      queue.push(nextFile);
+    }
+  }
+
+  return discoveredFiles;
 }
 
 export async function buildStyleItem(style: Style) {
@@ -448,9 +552,10 @@ export function buildFontItem(font: (typeof fonts)[number]) {
 
 async function buildRegistryItem(name: string, style: Style, tokenMap: TokenMap) {
   const template = await readTemplateItem(name);
+  const templateFiles = await collectTemplateFiles(template);
 
   const files = await Promise.all(
-    (template.files ?? []).map(async (file) => {
+    templateFiles.map(async (file) => {
       const sourcePath = resolveSourceFile(file.path);
       const source = await readSourceFile(sourcePath);
 

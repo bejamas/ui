@@ -12,9 +12,9 @@ interface Props extends HTMLAttributes<"div"> {
 
 const {
   class: className = "",
-  align = "start",
-  alignOffset = 0,
-  side = "bottom",
+  align,
+  alignOffset,
+  side,
   sideOffset = 4,
   ...rest
 } = Astro.props as Props;
@@ -29,16 +29,7 @@ const {
   data-side-offset={sideOffset}
   hidden
   class={cn(
-    "cn-navigation-menu-content",
-    "transition-[opacity,translate,filter] duration-250 ease-[cubic-bezier(0.32,0.72,0,1)]",
-    "data-starting-style:pointer-events-none",
-    "data-starting-style:animate-in data-starting-style:fade-in",
-    "data-[motion=from-right]:slide-in-from-right-50",
-    "data-[motion=from-left]:slide-in-from-left-50",
-    // Full close is owned by the viewport shell. Content exit motion is only for item-to-item switches.
-    "data-[motion=to-left]:data-[ending-style]:animate-out data-[motion=to-left]:data-[ending-style]:fade-out data-[motion=to-left]:data-[ending-style]:slide-out-to-left-50",
-    "data-[motion=to-right]:data-[ending-style]:animate-out data-[motion=to-right]:data-[ending-style]:fade-out data-[motion=to-right]:data-[ending-style]:slide-out-to-right-50",
-    "absolute",
+    "cn-navigation-menu-content data-[ending-style]:data-[activation-direction=left]:translate-x-[50%] data-[ending-style]:data-[activation-direction=right]:translate-x-[-50%] data-[starting-style]:data-[activation-direction=left]:translate-x-[-50%] data-[starting-style]:data-[activation-direction=right]:translate-x-[50%] h-full w-auto transition-[opacity,transform,translate] duration-200 ease data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none",
     className,
   )}
 >

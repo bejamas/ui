@@ -271,6 +271,12 @@ describe("create preview base layer", () => {
     const content = read(
       "packages/registry/src/ui/navigation-menu/NavigationMenuContent.astro",
     );
+    const positioner = read(
+      "packages/registry/src/ui/navigation-menu/NavigationMenuPositioner.astro",
+    );
+    const viewport = read(
+      "packages/registry/src/ui/navigation-menu/NavigationMenuViewport.astro",
+    );
     const indicator = read(
       "packages/registry/src/ui/navigation-menu/NavigationMenuIndicator.astro",
     );
@@ -278,36 +284,43 @@ describe("create preview base layer", () => {
     expect(root).toContain(
       "group/navigation-menu relative flex max-w-max flex-1",
     );
+    expect(root).toContain('align?: "start" | "center" | "end";');
     expect(root).toContain(
-      '[data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface,',
+      'import NavigationMenuPositioner from "./NavigationMenuPositioner.astro";',
     );
-    expect(root).toContain(
-      '.navigation-menu-trigger-surface[data-popup-open]:not([data-popup-open="false"])',
-    );
-    expect(root).toContain("background-color: transparent;");
+    expect(root).toContain("{viewport && <NavigationMenuPositioner align={align} />}");
+    expect(root).toContain("createNavigationMenu(el);");
+    expect(root).not.toContain("syncNavigationMenuTriggerBooleans");
+    expect(root).not.toContain("<style is:global>");
     expect(list).toContain(
       "group flex flex-1 list-none items-center justify-center",
     );
-    expect(item).toContain(
-      'class={cn("cn-navigation-menu-item relative", className)}',
-    );
-    expect(trigger).toContain("navigation-menu-trigger-surface");
+    expect(list).not.toContain("relative");
+    expect(item).toContain('class={cn("cn-navigation-menu-item relative", className)}');
     expect(trigger).toContain(
       "group/navigation-menu-trigger inline-flex h-9 w-max",
     );
-    expect(trigger).toContain("relative z-1");
-    expect(trigger).not.toContain("px-4 py-2.5 bg-transparent");
+    expect(trigger).not.toContain("navigation-menu-trigger-surface");
+    expect(trigger).not.toContain("relative z-1");
     expect(link).toContain('class={cn("cn-navigation-menu-link", className)}');
     expect(link).not.toContain("hover:bg-muted");
-    expect(content).toContain("transition-[opacity,translate,filter]");
+    expect(content).toContain("transition-[opacity,transform,translate]");
     expect(content).toContain(
-      "data-[motion=to-left]:data-[ending-style]:animate-out",
+      "data-starting-style:data-activation-direction=left:translate-x-[-50%]",
     );
-    expect(content).not.toContain("data-ending-style:animate-out");
-    expect(indicator).toContain("cn-navigation-menu-indicator-surface");
+    expect(content).toContain("data-align={align}");
+    expect(content).not.toContain("absolute");
+    expect(content).not.toContain("data-[motion=");
+    expect(positioner).toContain('data-slot="navigation-menu-portal"');
+    expect(positioner).toContain('data-slot="navigation-menu-positioner"');
+    expect(positioner).toContain('data-slot="navigation-menu-popup"');
+    expect(positioner).toContain('data-align={align}');
+    expect(positioner).toContain("h-(--positioner-height) w-(--positioner-width)");
+    expect(viewport).toContain("relative size-full overflow-hidden");
+    expect(viewport).not.toContain("navigation-menu-viewport-positioner");
     expect(indicator).toContain("cn-navigation-menu-indicator-arrow");
-    expect(indicator).toContain("translate-x-(--indicator-left,0px)");
-    expect(indicator).not.toContain("bg-muted/50");
+    expect(indicator).not.toContain("cn-navigation-menu-indicator-surface");
+    expect(indicator).not.toContain("--indicator-left");
   });
 
   it("keeps slider visuals in the style layer", () => {

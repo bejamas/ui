@@ -837,19 +837,15 @@
   }
 
   .cn-navigation-menu-viewport {
-    @apply bg-popover text-popover-foreground data-open:animate-in data-open:zoom-in-90 ring-foreground/10 rounded-lg shadow ring-1 duration-100;
+    @apply bg-popover text-popover-foreground data-open:animate-in data-closed:animate-out data-closed:zoom-out-90 data-open:zoom-in-90 ring-foreground/10 rounded-lg shadow ring-1 duration-100;
   }
 
   .cn-navigation-menu-indicator {
-    @apply rounded-lg data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in;
-  }
-
-  .cn-navigation-menu-indicator-surface {
-    @apply bg-muted/60 ring-border/40 ring-1;
+    @apply data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in;
   }
 
   .cn-navigation-menu-indicator-arrow {
-    @apply hidden bg-border rounded-tl-sm shadow-md;
+    @apply bg-border rounded-tl-sm shadow-md;
   }
 
   .cn-navigation-menu-positioner {

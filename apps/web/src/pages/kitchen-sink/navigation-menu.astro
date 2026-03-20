@@ -64,10 +64,14 @@ const components = [
                     href="/docs"
                     class="w-full flex-col items-start"
                   >
-                    <span class="font-medium leading-none">Introduction</span>
-                    <span class="text-muted-foreground line-clamp-2 text-sm">
-                      Re-usable components built with Tailwind CSS.
-                    </span>
+                    <div
+                      class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                    >
+                      <div class="leading-none font-medium">Introduction</div>
+                      <div class="line-clamp-2 text-muted-foreground">
+                        Re-usable components built with Tailwind CSS.
+                      </div>
+                    </div>
                   </NavigationMenuLink>
                 </li>
                 <li>
@@ -75,10 +79,14 @@ const components = [
                     href="/docs/installation/"
                     class="w-full flex-col items-start"
                   >
-                    <span class="font-medium leading-none">Installation</span>
-                    <span class="text-muted-foreground line-clamp-2 text-sm">
-                      How to install dependencies and structure your app.
-                    </span>
+                    <div
+                      class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                    >
+                      <div class="leading-none font-medium">Installation</div>
+                      <div class="line-clamp-2 text-muted-foreground">
+                        How to install dependencies and structure your app.
+                      </div>
+                    </div>
                   </NavigationMenuLink>
                 </li>
                 <li>
@@ -86,10 +94,14 @@ const components = [
                     href="/docs/"
                     class="w-full flex-col items-start"
                   >
-                    <span class="font-medium leading-none">Typography</span>
-                    <span class="text-muted-foreground line-clamp-2 text-sm">
-                      Styles for headings, paragraphs, lists, and more.
-                    </span>
+                    <div
+                      class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                    >
+                      <div class="leading-none font-medium">Typography</div>
+                      <div class="line-clamp-2 text-muted-foreground">
+                        Styles for headings, paragraphs, lists, and more.
+                      </div>
+                    </div>
                   </NavigationMenuLink>
                 </li>
               </ul>
@@ -108,12 +120,14 @@ const components = [
                         href={component.href}
                         class="w-full flex-col items-start"
                       >
-                        <span class="font-medium leading-none">
-                          {component.title}
-                        </span>
-                        <span class="text-muted-foreground line-clamp-2 text-sm">
-                          {component.description}
-                        </span>
+                        <div class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs">
+                          <div class="leading-none font-medium">
+                            {component.title}
+                          </div>
+                          <div class="line-clamp-2 text-muted-foreground">
+                            {component.description}
+                          </div>
+                        </div>
                       </NavigationMenuLink>
                     </li>
                   ))
@@ -143,31 +157,45 @@ const components = [
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
+              <div class="grid grid-cols-2 gap-2 w-[380px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Analytics</div>
-                  <div class="text-sm text-muted-foreground">
-                    Real-time insights
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Analytics</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Real-time insights
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="flex flex-col gap-1 text-sm">
-                    <div class="font-medium leading-none">Automation</div>
-                    <div class="text-sm text-muted-foreground leading-none">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Automation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Workflow builders
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Security</div>
-                  <div class="text-sm text-muted-foreground">
-                    Enterprise-grade
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Security</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Enterprise-grade
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Integrations</div>
-                  <div class="text-sm text-muted-foreground">
-                    Connect your tools
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Integrations</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Connect your tools
+                    </div>
                   </div>
                 </NavigationMenuLink>
               </div>
@@ -176,25 +204,45 @@ const components = [
           <NavigationMenuItem value="resources" align="center">
             <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
+              <div class="grid grid-cols-2 gap-2 w-[380px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Documentation</div>
-                  <div class="text-sm text-muted-foreground">Get started</div>
-                </NavigationMenuLink>
-                <NavigationMenuLink href="#">
-                  <div class="font-medium">Blog</div>
-                  <div class="text-sm text-muted-foreground">
-                    Latest updates
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Documentation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Get started
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Support</div>
-                  <div class="text-sm text-muted-foreground">Get help</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Blog</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Latest updates
+                    </div>
+                  </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Community</div>
-                  <div class="text-sm text-muted-foreground">
-                    Join the discussion
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Support</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Get help
+                    </div>
+                  </div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Community</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Join the discussion
+                    </div>
                   </div>
                 </NavigationMenuLink>
               </div>
@@ -213,39 +261,47 @@ const components = [
           <NavigationMenuItem value="features">
             <NavigationMenuTrigger>Features</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="grid gap-2 w-[320px] p-2">
+              <div class="grid gap-2 w-[320px]">
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <ChartBarIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Analytics</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Analytics</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Track your metrics in real time
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <ZapIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Automation</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Automation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Streamline your workflows
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <ShieldIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Security</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Security</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Enterprise-grade protection
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <PuzzleIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Integrations</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Integrations</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Connect with your favorite tools
                     </div>
                   </div>
@@ -266,7 +322,7 @@ const components = [
           <NavigationMenuItem value="getting-started">
             <NavigationMenuTrigger>Getting Started</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="grid grid-cols-[1fr_200px] gap-2 w-[480px] p-2">
+              <div class="grid grid-cols-[1fr_200px] gap-2 w-[480px]">
                 <div class="row-span-3">
                   <NavigationMenuLink
                     href="#"
@@ -280,20 +336,34 @@ const components = [
                   </NavigationMenuLink>
                 </div>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Installation</div>
-                  <div class="text-sm text-muted-foreground">
-                    Step-by-step setup
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Installation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Step-by-step setup
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Configuration</div>
-                  <div class="text-sm text-muted-foreground">
-                    Customize settings
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Configuration</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Customize settings
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Examples</div>
-                  <div class="text-sm text-muted-foreground">Code samples</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Examples</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Code samples
+                    </div>
+                  </div>
                 </NavigationMenuLink>
               </div>
             </NavigationMenuContent>
@@ -314,7 +384,7 @@ const components = [
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[200px] p-2">
+              <div class="w-[200px]">
                 <NavigationMenuLink href="#">Product One</NavigationMenuLink>
                 <NavigationMenuLink href="#">Product Two</NavigationMenuLink>
                 <NavigationMenuLink href="#">Product Three</NavigationMenuLink>
@@ -354,17 +424,25 @@ const components = [
               <NavigationMenuItem value="start-demo" align="start">
                 <NavigationMenuTrigger>Start Aligned</NavigationMenuTrigger>
                 <NavigationMenuContent align="start">
-                  <div class="w-[250px] p-2">
+                  <div class="w-[250px]">
                     <NavigationMenuLink href="#">
-                      <div class="font-medium">Option A</div>
-                      <div class="text-sm text-muted-foreground">
-                        Left-aligned content
+                      <div
+                        class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                      >
+                        <div class="leading-none font-medium">Option A</div>
+                        <div class="line-clamp-2 text-muted-foreground">
+                          Left-aligned content
+                        </div>
                       </div>
                     </NavigationMenuLink>
                     <NavigationMenuLink href="#">
-                      <div class="font-medium">Option B</div>
-                      <div class="text-sm text-muted-foreground">
-                        Another item
+                      <div
+                        class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                      >
+                        <div class="leading-none font-medium">Option B</div>
+                        <div class="line-clamp-2 text-muted-foreground">
+                          Another item
+                        </div>
                       </div>
                     </NavigationMenuLink>
                   </div>
@@ -380,17 +458,25 @@ const components = [
               <NavigationMenuItem value="center-demo" align="center">
                 <NavigationMenuTrigger>Center Aligned</NavigationMenuTrigger>
                 <NavigationMenuContent align="center">
-                  <div class="w-[250px] p-2">
+                  <div class="w-[250px]">
                     <NavigationMenuLink href="#">
-                      <div class="font-medium">Option A</div>
-                      <div class="text-sm text-muted-foreground">
-                        Center-aligned content
+                      <div
+                        class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                      >
+                        <div class="leading-none font-medium">Option A</div>
+                        <div class="line-clamp-2 text-muted-foreground">
+                          Center-aligned content
+                        </div>
                       </div>
                     </NavigationMenuLink>
                     <NavigationMenuLink href="#">
-                      <div class="font-medium">Option B</div>
-                      <div class="text-sm text-muted-foreground">
-                        Another item
+                      <div
+                        class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                      >
+                        <div class="leading-none font-medium">Option B</div>
+                        <div class="line-clamp-2 text-muted-foreground">
+                          Another item
+                        </div>
                       </div>
                     </NavigationMenuLink>
                   </div>
@@ -406,17 +492,25 @@ const components = [
               <NavigationMenuItem value="end-demo" align="end">
                 <NavigationMenuTrigger>End Aligned</NavigationMenuTrigger>
                 <NavigationMenuContent align="end">
-                  <div class="w-[250px] p-2">
+                  <div class="w-[250px]">
                     <NavigationMenuLink href="#">
-                      <div class="font-medium">Option A</div>
-                      <div class="text-sm text-muted-foreground">
-                        Right-aligned content
+                      <div
+                        class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                      >
+                        <div class="leading-none font-medium">Option A</div>
+                        <div class="line-clamp-2 text-muted-foreground">
+                          Right-aligned content
+                        </div>
                       </div>
                     </NavigationMenuLink>
                     <NavigationMenuLink href="#">
-                      <div class="font-medium">Option B</div>
-                      <div class="text-sm text-muted-foreground">
-                        Another item
+                      <div
+                        class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                      >
+                        <div class="leading-none font-medium">Option B</div>
+                        <div class="line-clamp-2 text-muted-foreground">
+                          Another item
+                        </div>
                       </div>
                     </NavigationMenuLink>
                   </div>
@@ -440,7 +534,7 @@ const components = [
           <NavigationMenuItem value="menu-a">
             <NavigationMenuTrigger>Menu A</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[200px] p-2 rounded-md border bg-popover shadow-md">
+              <div class="w-[200px] rounded-md border bg-popover shadow-md">
                 <NavigationMenuLink href="#">Option One</NavigationMenuLink>
                 <NavigationMenuLink href="#">Option Two</NavigationMenuLink>
                 <NavigationMenuLink href="#">Option Three</NavigationMenuLink>
@@ -450,7 +544,7 @@ const components = [
           <NavigationMenuItem value="menu-b">
             <NavigationMenuTrigger>Menu B</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[200px] p-2 rounded-md border bg-popover shadow-md">
+              <div class="w-[200px] rounded-md border bg-popover shadow-md">
                 <NavigationMenuLink href="#">Item Alpha</NavigationMenuLink>
                 <NavigationMenuLink href="#">Item Beta</NavigationMenuLink>
               </div>
@@ -474,7 +568,7 @@ const components = [
               <NavigationMenuItem value="ind-products">
                 <NavigationMenuTrigger>Products</NavigationMenuTrigger>
                 <NavigationMenuContent sideOffset={8}>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Product A</NavigationMenuLink>
                     <NavigationMenuLink href="#">Product B</NavigationMenuLink>
                   </div>
@@ -483,7 +577,7 @@ const components = [
               <NavigationMenuItem value="ind-solutions">
                 <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Solution A</NavigationMenuLink>
                     <NavigationMenuLink href="#">Solution B</NavigationMenuLink>
                   </div>
@@ -492,7 +586,7 @@ const components = [
               <NavigationMenuItem value="ind-about">
                 <NavigationMenuTrigger>About</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Our Team</NavigationMenuLink>
                     <NavigationMenuLink href="#">Careers</NavigationMenuLink>
                   </div>
@@ -511,7 +605,7 @@ const components = [
               <NavigationMenuItem value="no-ind-products">
                 <NavigationMenuTrigger>Products</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Product A</NavigationMenuLink>
                     <NavigationMenuLink href="#">Product B</NavigationMenuLink>
                   </div>
@@ -520,7 +614,7 @@ const components = [
               <NavigationMenuItem value="no-ind-solutions">
                 <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Solution A</NavigationMenuLink>
                     <NavigationMenuLink href="#">Solution B</NavigationMenuLink>
                   </div>
@@ -529,7 +623,7 @@ const components = [
               <NavigationMenuItem value="no-ind-about">
                 <NavigationMenuTrigger>About</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Our Team</NavigationMenuLink>
                     <NavigationMenuLink href="#">Careers</NavigationMenuLink>
                   </div>
@@ -556,7 +650,7 @@ const components = [
               <NavigationMenuItem value="slow-a">
                 <NavigationMenuTrigger>Slow Open</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Item One</NavigationMenuLink>
                     <NavigationMenuLink href="#">Item Two</NavigationMenuLink>
                   </div>
@@ -565,7 +659,7 @@ const components = [
               <NavigationMenuItem value="slow-b">
                 <NavigationMenuTrigger>Another</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Item Alpha</NavigationMenuLink>
                     <NavigationMenuLink href="#">Item Beta</NavigationMenuLink>
                   </div>
@@ -583,7 +677,7 @@ const components = [
               <NavigationMenuItem value="instant-a">
                 <NavigationMenuTrigger>Instant Open</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Item One</NavigationMenuLink>
                     <NavigationMenuLink href="#">Item Two</NavigationMenuLink>
                   </div>
@@ -592,7 +686,7 @@ const components = [
               <NavigationMenuItem value="instant-b">
                 <NavigationMenuTrigger>Another</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div class="w-[200px] p-2">
+                  <div class="w-[200px]">
                     <NavigationMenuLink href="#">Item Alpha</NavigationMenuLink>
                     <NavigationMenuLink href="#">Item Beta</NavigationMenuLink>
                   </div>
@@ -614,17 +708,25 @@ const components = [
           <NavigationMenuItem value="focus-products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[250px] p-2">
+              <div class="w-[250px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Analytics</div>
-                  <div class="text-sm text-muted-foreground">
-                    Real-time data
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Analytics</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Real-time data
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Automation</div>
-                  <div class="text-sm text-muted-foreground">
-                    Smart workflows
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Automation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Smart workflows
+                    </div>
                   </div>
                 </NavigationMenuLink>
               </div>
@@ -633,14 +735,26 @@ const components = [
           <NavigationMenuItem value="focus-resources">
             <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[250px] p-2">
+              <div class="w-[250px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Docs</div>
-                  <div class="text-sm text-muted-foreground">Get started</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Docs</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Get started
+                    </div>
+                  </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Blog</div>
-                  <div class="text-sm text-muted-foreground">Latest news</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Blog</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Latest news
+                    </div>
+                  </div>
                 </NavigationMenuLink>
               </div>
             </NavigationMenuContent>
@@ -659,14 +773,26 @@ const components = [
           <NavigationMenuItem value="narrow">
             <NavigationMenuTrigger>Narrow</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[180px] p-2">
+              <div class="w-[180px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">About</div>
-                  <div class="text-sm text-muted-foreground">Our story</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">About</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Our story
+                    </div>
+                  </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Careers</div>
-                  <div class="text-sm text-muted-foreground">Join us</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Careers</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Join us
+                    </div>
+                  </div>
                 </NavigationMenuLink>
               </div>
             </NavigationMenuContent>
@@ -674,26 +800,46 @@ const components = [
           <NavigationMenuItem value="medium">
             <NavigationMenuTrigger>Medium</NavigationMenuTrigger>
             <NavigationMenuContent align="center">
-              <div class="grid grid-cols-2 gap-2 w-[380px] p-2">
+              <div class="grid grid-cols-2 gap-2 w-[380px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Analytics</div>
-                  <div class="text-sm text-muted-foreground">Track metrics</div>
-                </NavigationMenuLink>
-                <NavigationMenuLink href="#">
-                  <div class="font-medium">Automation</div>
-                  <div class="text-sm text-muted-foreground">
-                    Build workflows
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Analytics</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Track metrics
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Security</div>
-                  <div class="text-sm text-muted-foreground">
-                    Stay protected
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Automation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Build workflows
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Integrations</div>
-                  <div class="text-sm text-muted-foreground">Connect tools</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Security</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Stay protected
+                    </div>
+                  </div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Integrations</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Connect tools
+                    </div>
+                  </div>
                 </NavigationMenuLink>
               </div>
             </NavigationMenuContent>
@@ -701,51 +847,71 @@ const components = [
           <NavigationMenuItem value="wide">
             <NavigationMenuTrigger>Wide</NavigationMenuTrigger>
             <NavigationMenuContent align="center">
-              <div class="grid grid-cols-3 gap-2 w-[520px] p-2">
+              <div class="grid grid-cols-3 gap-2 w-[520px]">
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <BookOpenIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Docs</div>
-                    <div class="text-sm text-muted-foreground">Get started</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Docs</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Get started
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <HeadphonesIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Support</div>
-                    <div class="text-sm text-muted-foreground">Get help</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Support</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Get help
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <NewspaperIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Blog</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Blog</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Latest updates
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <RocketIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Changelog</div>
-                    <div class="text-sm text-muted-foreground">What's new</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Changelog</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      What's new
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <ChartBarIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Status</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Status</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       System health
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <ZapIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">API</div>
-                    <div class="text-sm text-muted-foreground">Reference</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">API</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Reference
+                    </div>
                   </div>
                 </NavigationMenuLink>
               </div>
@@ -766,10 +932,16 @@ const components = [
           <NavigationMenuItem value="short">
             <NavigationMenuTrigger>Short</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[300px] p-2">
+              <div class="w-[300px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Quick Link</div>
-                  <div class="text-sm text-muted-foreground">Just one item</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Quick Link</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Just one item
+                    </div>
+                  </div>
                 </NavigationMenuLink>
               </div>
             </NavigationMenuContent>
@@ -777,23 +949,35 @@ const components = [
           <NavigationMenuItem value="medium" align="center">
             <NavigationMenuTrigger>Medium</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[300px] p-2">
+              <div class="w-[300px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Overview</div>
-                  <div class="text-sm text-muted-foreground">
-                    High-level summary
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Overview</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      High-level summary
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Details</div>
-                  <div class="text-sm text-muted-foreground">
-                    In-depth information
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Details</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      In-depth information
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">FAQ</div>
-                  <div class="text-sm text-muted-foreground">
-                    Common questions
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">FAQ</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Common questions
+                    </div>
                   </div>
                 </NavigationMenuLink>
               </div>
@@ -802,57 +986,71 @@ const components = [
           <NavigationMenuItem value="tall" align="center">
             <NavigationMenuTrigger>Tall</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[300px] p-2">
+              <div class="w-[300px]">
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <ChartBarIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Analytics</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Analytics</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Track your metrics
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <ZapIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Automation</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Automation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Streamline workflows
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <ShieldIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Security</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Security</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Enterprise protection
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <PuzzleIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Integrations</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Integrations</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Connect your tools
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <BookOpenIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Documentation</div>
-                    <div class="text-sm text-muted-foreground">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Documentation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
                       Guides and references
                     </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#" class="flex-row items-start gap-4">
                   <RocketIcon class="size-5 mt-1 text-muted-foreground" />
-                  <div>
-                    <div class="font-medium">Changelog</div>
-                    <div class="text-sm text-muted-foreground">What's new</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Changelog</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      What's new
+                    </div>
                   </div>
                 </NavigationMenuLink>
               </div>
@@ -874,7 +1072,7 @@ const components = [
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[200px] p-2">
+              <div class="w-[200px]">
                 <NavigationMenuLink href="#">Product A</NavigationMenuLink>
                 <NavigationMenuLink href="#">Product B</NavigationMenuLink>
               </div>
@@ -883,7 +1081,7 @@ const components = [
           <NavigationMenuItem value="solutions">
             <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[200px] p-2">
+              <div class="w-[200px]">
                 <NavigationMenuLink href="#">Solution A</NavigationMenuLink>
                 <NavigationMenuLink href="#">Solution B</NavigationMenuLink>
               </div>
@@ -892,7 +1090,7 @@ const components = [
           <NavigationMenuItem value="company">
             <NavigationMenuTrigger>Company</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <div class="w-[200px] p-2">
+              <div class="w-[200px]">
                 <NavigationMenuLink href="#">About</NavigationMenuLink>
                 <NavigationMenuLink href="#">Careers</NavigationMenuLink>
               </div>
@@ -932,13 +1130,23 @@ const components = [
             <NavigationMenuContent>
               <div class="w-[250px] p-2">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Analytics</div>
-                  <div class="text-sm text-muted-foreground">Track metrics</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Analytics</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Track metrics
+                    </div>
+                  </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Automation</div>
-                  <div class="text-sm text-muted-foreground">
-                    Build workflows
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Automation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Build workflows
+                    </div>
                   </div>
                 </NavigationMenuLink>
               </div>
@@ -949,12 +1157,24 @@ const components = [
             <NavigationMenuContent>
               <div class="w-[250px] p-2">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Docs</div>
-                  <div class="text-sm text-muted-foreground">Get started</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Docs</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Get started
+                    </div>
+                  </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Blog</div>
-                  <div class="text-sm text-muted-foreground">Latest news</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Blog</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Latest news
+                    </div>
+                  </div>
                 </NavigationMenuLink>
               </div>
             </NavigationMenuContent>

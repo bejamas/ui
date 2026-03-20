@@ -318,7 +318,7 @@
  */
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
-import NavigationMenuViewport from "./NavigationMenuViewport.astro";
+import NavigationMenuPositioner from "./NavigationMenuPositioner.astro";
 
 interface Props extends HTMLAttributes<"nav"> {
   class?: string;
@@ -351,15 +351,54 @@ const {
   )}
 >
   <slot />
-  {viewport && <NavigationMenuViewport />}
+  {viewport && <NavigationMenuPositioner />}
 </nav>
 
 <script>
   import { createNavigationMenu } from "@data-slot/navigation-menu";
 
+  const syncNavigationMenuTriggerBooleans = (root: HTMLElement) => {
+    root
+      .querySelectorAll<HTMLElement>('[data-slot="navigation-menu-trigger"]')
+      .forEach((trigger) => {
+        const isOpen =
+          trigger.getAttribute("data-state") === "open" ||
+          trigger.getAttribute("aria-expanded") === "true";
+
+        if (isOpen) {
+          trigger.setAttribute("data-open", "");
+          trigger.setAttribute("data-popup-open", "");
+          return;
+        }
+
+        trigger.removeAttribute("data-open");
+        trigger.removeAttribute("data-popup-open");
+      });
+  };
+
+  const bindNavigationMenuTriggerCompatibility = (root: HTMLElement) => {
+    const boundRoot = root as HTMLElement & {
+      __navigationMenuTriggerCompatibilityBound?: boolean;
+    };
+
+    if (boundRoot.__navigationMenuTriggerCompatibilityBound) {
+      syncNavigationMenuTriggerBooleans(root);
+      return;
+    }
+
+    boundRoot.__navigationMenuTriggerCompatibilityBound = true;
+    syncNavigationMenuTriggerBooleans(root);
+    root.addEventListener("navigation-menu:change", () =>
+      syncNavigationMenuTriggerBooleans(root),
+    );
+  };
+
   document
     .querySelectorAll<HTMLElement>('[data-slot="navigation-menu"]')
-    .forEach((el) => createNavigationMenu(el));
+    .forEach((el) => {
+      createNavigationMenu(el);
+      bindNavigationMenuTriggerCompatibility(el);
+    });
 </script>
 
 <style is:global>
