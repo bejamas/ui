@@ -24,6 +24,25 @@ function extractNavigationMenuBlock(source: string) {
   return match?.[0].trim() ?? "";
 }
 
+function stripIndicatorExtensionRules(source: string) {
+  return source
+    .replace(/\n\s*\.cn-navigation-menu-indicator\s*\{[\s\S]*?\n\s*\}\n/g, "\n")
+    .replace(
+      /\n\s*\.cn-navigation-menu-indicator-surface\s*\{[\s\S]*?\n\s*\}\n/g,
+      "\n",
+    )
+    .replace(
+      /\n\s*\.cn-navigation-menu-indicator-arrow\s*\{[\s\S]*?\n\s*\}\n/g,
+      "\n",
+    )
+    .replace(
+      /\n\s*\[data-slot="navigation-menu-list"\]:has\(> \[data-slot="navigation-menu-indicator"\]\) \.cn-navigation-menu-trigger\s*\{[\s\S]*?\n\s*\}\n/g,
+      "\n",
+    )
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 describe("navigation-menu registry parity", () => {
   test("registry source mirrors the base-ui structure without local compatibility shims", () => {
     const root = readRegistry("src/ui/navigation-menu/NavigationMenu.astro");
@@ -47,9 +66,9 @@ describe("navigation-menu registry parity", () => {
     expect(root).not.toContain("<style is:global>");
 
     expect(list).toContain(
-      'class={cn(\n    "cn-navigation-menu-list group flex flex-1 list-none items-center justify-center",',
+      'class={cn(\n    "cn-navigation-menu-list group flex flex-1 list-none items-center justify-center relative",',
     );
-    expect(list).not.toContain("relative");
+    expect(list).toContain("relative");
 
     expect(trigger).toContain(
       '  "cn-navigation-menu-trigger group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center outline-none disabled:pointer-events-none",',
@@ -85,16 +104,19 @@ describe("navigation-menu registry parity", () => {
     expect(viewport).not.toContain("navigation-menu-viewport-positioner");
 
     expect(indicator).toContain(
-      '"cn-navigation-menu-indicator top-full z-1 flex h-1.5 items-end justify-center overflow-hidden"',
+      '"cn-navigation-menu-indicator absolute left-0 top-0 z-0 pointer-events-none opacity-0 transition-[translate,width,height,opacity] duration-150 ease data-instant:transition-none data-[state=visible]:opacity-100"',
     );
     expect(indicator).toContain(
-      '<div class="cn-navigation-menu-indicator-arrow relative top-[60%] h-2 w-2 rotate-45"></div>',
+      "cn-navigation-menu-indicator-surface",
     );
-    expect(indicator).not.toContain("cn-navigation-menu-indicator-surface");
-    expect(indicator).not.toContain("--indicator-left");
+    expect(indicator).toContain("cn-navigation-menu-indicator-arrow");
+    expect(indicator).toContain("translate-x-(--indicator-left,0px)");
+    expect(indicator).toContain("translate-y-(--indicator-top,0px)");
+    expect(indicator).toContain("w-(--indicator-width,0)");
+    expect(indicator).toContain("h-(--indicator-height,0)");
   });
 
-  test("shared registry themes match the shadcn navigation-menu blocks exactly", () => {
+  test("shared registry themes keep the shadcn base selectors after stripping local indicator extensions", () => {
     const themes = ["lyra", "maia", "mira", "nova", "vega"] as const;
 
     for (const theme of themes) {
@@ -105,7 +127,28 @@ describe("navigation-menu registry parity", () => {
         readShadcn("styles", `style-${theme}.css`),
       );
 
-      expect(registryBlock).toBe(shadcnBlock);
+      expect(stripIndicatorExtensionRules(registryBlock)).toBe(
+        stripIndicatorExtensionRules(shadcnBlock),
+      );
+    }
+  });
+
+  test("theme blocks include the additive subtle indicator extension", () => {
+    const themes = ["juno", "lyra", "maia", "mira", "nova", "vega"] as const;
+
+    for (const theme of themes) {
+      const block = extractNavigationMenuBlock(
+        readRegistry("src/styles", `style-${theme}.css`),
+      );
+
+      expect(block).toContain(".cn-navigation-menu-indicator-surface");
+      expect(block).toContain("bg-muted/60 ring-border/40 ring-1");
+      expect(block).toContain("hidden bg-border");
+      expect(block).toContain(
+        '[data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .cn-navigation-menu-trigger',
+      );
+      expect(block).toContain("bg-transparent hover:bg-transparent focus:bg-transparent");
+      expect(block).toContain("relative z-1");
     }
   });
 
@@ -119,8 +162,8 @@ describe("navigation-menu registry parity", () => {
     expect(block).toContain("data-open:animate-in");
     expect(block).toContain(".cn-navigation-menu-popup");
     expect(block).toContain("data-ending-style:scale-90");
-    expect(block).not.toContain(".cn-navigation-menu-indicator-surface");
-    expect(block).not.toContain("rounded-md data-[state=visible]");
+    expect(block).toContain(".cn-navigation-menu-indicator-surface");
+    expect(block).toContain("rounded-md data-[state=visible]");
     expect(block).not.toContain("relative size-full overflow-hidden");
   });
 });

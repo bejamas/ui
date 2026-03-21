@@ -841,11 +841,19 @@
   }
 
   .cn-navigation-menu-indicator {
-    @apply data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in;
+    @apply rounded-md data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in;
+  }
+
+  .cn-navigation-menu-indicator-surface {
+    @apply bg-muted/60 ring-border/40 ring-1;
   }
 
   .cn-navigation-menu-indicator-arrow {
-    @apply bg-border rounded-tl-sm shadow-md;
+    @apply hidden bg-border rounded-tl-sm shadow-md;
+  }
+
+  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .cn-navigation-menu-trigger {
+    @apply relative z-1 bg-transparent hover:bg-transparent focus:bg-transparent data-open:bg-transparent data-open:hover:bg-transparent data-open:focus:bg-transparent data-popup-open:bg-transparent data-popup-open:hover:bg-transparent data-popup-open:focus:bg-transparent;
   }
 
   .cn-navigation-menu-positioner {

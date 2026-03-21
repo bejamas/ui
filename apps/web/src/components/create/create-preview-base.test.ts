@@ -295,7 +295,7 @@ describe("create preview base layer", () => {
     expect(list).toContain(
       "group flex flex-1 list-none items-center justify-center",
     );
-    expect(list).not.toContain("relative");
+    expect(list).toContain("relative");
     expect(item).toContain('class={cn("cn-navigation-menu-item relative", className)}');
     expect(trigger).toContain(
       "group/navigation-menu-trigger inline-flex h-9 w-max",
@@ -318,9 +318,12 @@ describe("create preview base layer", () => {
     expect(positioner).toContain("h-(--positioner-height) w-(--positioner-width)");
     expect(viewport).toContain("relative size-full overflow-hidden");
     expect(viewport).not.toContain("navigation-menu-viewport-positioner");
+    expect(indicator).toContain("cn-navigation-menu-indicator-surface");
     expect(indicator).toContain("cn-navigation-menu-indicator-arrow");
-    expect(indicator).not.toContain("cn-navigation-menu-indicator-surface");
-    expect(indicator).not.toContain("--indicator-left");
+    expect(indicator).toContain("translate-x-(--indicator-left,0px)");
+    expect(indicator).toContain("translate-y-(--indicator-top,0px)");
+    expect(indicator).toContain("w-(--indicator-width,0)");
+    expect(indicator).toContain("h-(--indicator-height,0)");
   });
 
   it("keeps slider visuals in the style layer", () => {
