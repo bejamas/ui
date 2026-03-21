@@ -12,6 +12,7 @@
     "watch:style-artifacts": "bun run scripts/watch-style-artifacts.ts",
     "build:compiled-styles": "bun run ../../packages/create-config/scripts/generate-compiled-style-css.ts",
     "build:style-registry": "bun run ../../packages/registry/scripts/build-web-style-registry.ts",
+    "generate:ui-package": "bun run ../../packages/ui/scripts/generate-from-style-registry.ts",
     "build:registry": "bun x shadcn@latest build",
     "build:docs": "bun x bejamas@canary docs:build",
     "normalize-component-paths-in-registry": "bun run scripts/normalize-paths.ts",

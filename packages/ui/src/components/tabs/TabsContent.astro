@@ -1,10 +1,11 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/tabs/TabsContent.astro directly.
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
 export const tabsContentVariants = cva(
-  "focus-visible:border-ring focus-visible:ring-ring/50 text-sm flex-1 outline-none focus-visible:ring-[3px] hidden data-[state=active]:block",
+  "flex-1 outline-none hidden data-[state=active]:block",
   {
     variants: {
       animation: {
@@ -41,7 +42,7 @@ const {
   data-slot="tabs-content"
   data-value={value}
   tabindex="0"
-  class={cn("cn-tabs-content", tabsContentVariants({ animation }), className)}
+  class={cn("text-sm", tabsContentVariants({ animation }), className)}
 >
   <slot />
 </div>

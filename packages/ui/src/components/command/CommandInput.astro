@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/command/CommandInput.astro directly.
 import { SearchIcon } from "@lucide/astro";
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
@@ -12,11 +13,8 @@ interface Props extends HTMLAttributes<"input"> {
 const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
-<div data-slot="command-input-wrapper" class="cn-command-input-wrapper p-1 pb-0">
-  <InputGroup
-    size="sm"
-    class="cn-command-input-group bg-input/30 border-input/30 h-8! rounded-lg! shadow-none! *:data-[slot=input-group-addon]:pl-2!"
-  >
+<div data-slot="command-input-wrapper" class="p-1 pb-0">
+  <InputGroup size="sm" class="bg-input/30 border-input/30 h-8! rounded-lg! shadow-none! *:data-[slot=input-group-addon]:pl-2!">
     <input
       data-input-group-control
       data-slot="command-input"
@@ -24,7 +22,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
       autocorrect="off"
       spellcheck="false"
       class={cn(
-        "cn-input-group-control cn-input-group-input cn-command-input w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+        "rounded-none border-0 bg-transparent shadow-none ring-0 focus-visible:ring-0 aria-invalid:ring-0 dark:bg-transparent w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
         inputGroupControlClasses,
         className,
       )}
@@ -33,7 +31,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
     <InputGroupAddon align="inline-end">
       <SearchIcon
         data-slot="command-input-icon"
-        class="cn-command-input-icon size-4 shrink-0 opacity-50 pointer-events-none"
+        class="size-4 shrink-0 opacity-50 pointer-events-none"
       />
     </InputGroupAddon>
   </InputGroup>

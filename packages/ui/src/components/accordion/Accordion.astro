@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/accordion/Accordion.astro directly.
 /**
  * @component Accordion
  * @title Accordion
@@ -163,7 +164,7 @@ const serializedDefaultValue =
   data-default-value-json={serializedDefaultValue}
   data-collapsible={collapsible ? undefined : "false"}
   class={cn(
-    "cn-accordion flex w-full flex-col [&:not([data-enhanced])_[data-slot=accordion-content]]:hidden",
+    "flex w-full flex-col [&:not([data-enhanced])_[data-slot=accordion-content]]:hidden",
     className,
   )}
 >
@@ -198,14 +199,12 @@ const serializedDefaultValue =
     return defaultValue === undefined || defaultValue === "" ? undefined : defaultValue;
   };
 
-  document
-    .querySelectorAll('[data-slot="accordion"]')
-    .forEach((el) => {
-      createAccordion(el, {
-        multiple: parseBooleanDataAttribute(el.dataset.multiple, false),
-        collapsible: parseBooleanDataAttribute(el.dataset.collapsible, true),
-        defaultValue: parseDefaultValue(el),
-      });
-      el.setAttribute("data-enhanced", "");
+  document.querySelectorAll('[data-slot="accordion"]').forEach((el) => {
+    createAccordion(el, {
+      multiple: parseBooleanDataAttribute(el.dataset.multiple, false),
+      collapsible: parseBooleanDataAttribute(el.dataset.collapsible, true),
+      defaultValue: parseDefaultValue(el),
     });
+    el.setAttribute("data-enhanced", "");
+  });
 </script>

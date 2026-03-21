@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/popover/PopoverHeader.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
@@ -12,7 +13,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   {...rest}
   data-slot="popover-header"
-  class={cn("cn-popover-header flex flex-col gap-0.5 text-sm", className)}
+  class={cn("flex flex-col gap-1 text-sm", className)}
 >
   <slot />
 </div>

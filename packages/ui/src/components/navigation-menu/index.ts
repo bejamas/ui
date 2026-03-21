@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/navigation-menu/index.ts directly.
 export { default as NavigationMenu } from "./NavigationMenu.astro";
 export { default as NavigationMenuList } from "./NavigationMenuList.astro";
 export { default as NavigationMenuItem } from "./NavigationMenuItem.astro";

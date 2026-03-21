@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/combobox/ComboboxInput.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import {
@@ -37,7 +38,7 @@ const {
     disabled={disabled}
     autocomplete="off"
     {...rest}
-   class="cn-combobox-input" />
+   class="" />
   {
     (showTrigger || showClear) && (
       <InputGroupAddon align="inline-end">
@@ -46,7 +47,7 @@ const {
             data-slot="combobox-clear"
             type="button"
             size="icon-xs"
-            class="cn-combobox-clear hidden [[data-value]_&]:inline-flex"
+            class="hidden [[data-value]_&]:inline-flex"
             aria-label="Clear selection"
           >
             <SemanticIcon name="x" class="size-3.5 group-data-[size=sm]/input-group:size-3" />
@@ -59,7 +60,7 @@ const {
             size="icon-xs"
             tabindex={-1}
             disabled={disabled}
-            class={cn("cn-combobox-trigger", 
+            class={cn("[&_svg:not([class*='size-'])]:size-4 rounded-lg", 
               "text-muted-foreground",
               showClear && "[[data-value]_&]:hidden",
             )}
@@ -68,7 +69,7 @@ const {
             <SemanticIcon
               name="chevron-down"
               data-slot="combobox-icon"
-              class="cn-combobox-icon size-4 group-data-[size=sm]/input-group:size-3.5"
+              class="size-4 group-data-[size=sm]/input-group:size-3.5"
             />
           </InputGroupButton>
         )}

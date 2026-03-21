@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/avatar/Avatar.astro directly.
 /**
  * @component Avatar
  * @title Avatar
@@ -128,11 +129,9 @@ const {
   data-slot="avatar"
   data-size={size}
   class={cn(
-    "cn-avatar",
-    "group/avatar relative flex size-8 shrink-0 select-none rounded-full",
-    "after:absolute after:inset-0 after:rounded-full after:border after:border-border",
-    "after:mix-blend-darken dark:after:mix-blend-lighten",
-    "data-[size=sm]:size-6 data-[size=lg]:size-10",
+    "size-8 rounded-full after:rounded-full data-[size=lg]:size-10 data-[size=sm]:size-6",
+    "group/avatar relative flex shrink-0 select-none",
+    "after:absolute after:inset-0",
     "z-1",
     className,
   )}

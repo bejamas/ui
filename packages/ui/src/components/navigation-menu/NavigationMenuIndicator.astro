@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/navigation-menu/NavigationMenuIndicator.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
@@ -12,13 +13,13 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   {...rest}
   data-slot="navigation-menu-indicator"
-  class={cn("cn-navigation-menu-indicator",
-    "absolute left-0 top-0 z-0 rounded-[calc(var(--radius)-2px)] data-instant:transition-opacity transition-[translate,width,height] duration-150 ease pointer-events-none opacity-0 data-[state=visible]:opacity-100",
+  class={cn(
+    "rounded-md data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in absolute left-0 top-0 z-0 pointer-events-none opacity-0 transition-[translate,width,height,opacity] duration-150 ease data-instant:transition-none data-[state=visible]:opacity-100",
     "translate-x-(--indicator-left,0px) translate-y-(--indicator-top,0px)",
     "w-(--indicator-width,0) h-(--indicator-height,0)",
     className,
   )}
 >
-  <div class="cn-navigation-menu-indicator-surface absolute inset-0 rounded-[inherit] bg-muted/45 ring-1 ring-border/40"></div>
-  <div class="cn-navigation-menu-indicator-arrow absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-[40%] rotate-45 rounded-tl-sm bg-border opacity-0 shadow-sm"></div>
+  <div class="bg-muted/60 ring-border/40 ring-1 absolute inset-0 rounded-[inherit]"></div>
+  <div class="hidden bg-border rounded-tl-sm shadow-md absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-[40%] rotate-45"></div>
 </div>

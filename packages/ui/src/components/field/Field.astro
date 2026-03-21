@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/field/Field.astro directly.
 /**
  * @component Field
  * @title Field
@@ -588,7 +589,7 @@
  *       Get notified when ChatGPT responds to requests that take time, like
  *       research or image generation.
  *     </FieldDescription>
- *     <FieldGroup data-slot="checkbox-group" class="cn-checkbox-group">
+ *     <FieldGroup data-slot="checkbox-group" class="">
  *       <Field orientation="horizontal">
  *         <Checkbox id="push" checked disabled />
  *         <FieldLabel for="push" class="font-normal">
@@ -604,7 +605,7 @@
  *       Get notified when tasks you've created have updates.
  *       <a href="#">Manage tasks</a>
  *     </FieldDescription>
- *     <FieldGroup data-slot="checkbox-group" class="cn-checkbox-group">
+ *     <FieldGroup data-slot="checkbox-group" class="">
  *       <Field orientation="horizontal">
  *         <Checkbox id="push-tasks" />
  *         <FieldLabel for="push-tasks" class="font-normal">
@@ -659,7 +660,7 @@ const {
   role="group"
   data-slot="field"
   data-orientation={orientation}
-  class={cn("cn-field", fieldVariants({ orientation }), className)}
+  class={cn("data-[invalid=true]:text-destructive gap-3", fieldVariants({ orientation }), className)}
   {...rest}
 >
   <slot />

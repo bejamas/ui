@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dialog/Dialog.astro directly.
 /**
  * @component Dialog
  * @title Dialog
@@ -41,7 +42,7 @@
  *       <p class="text-sm text-muted-foreground ml-8 mt-1">These cookies help us measure the effectiveness of our marketing campaigns.</p>
  *     </div>
  *     <DialogFooter>
- *       <Button data-slot="dialog-close" class="cn-dialog-close mt-4" variant="outline">Close</Button>
+ *       <Button data-slot="dialog-close" class="absolute top-4 right-4 mt-4" variant="outline">Close</Button>
  *       <Button data-dialog-close class="mt-4">Save changes</Button>
  *     </DialogFooter>
  *   </DialogContent>
@@ -128,7 +129,7 @@
  * ### Nested Dialogs
  *
  * <Dialog>
- *   <Button data-slot="dialog-trigger" class="cn-dialog-trigger">Open Nested Dialog</Button>
+ *   <Button data-slot="dialog-trigger" class="">Open Nested Dialog</Button>
  *   <DialogContent class="sm:max-w-lg">
  *     <DialogHeader>
  *       <DialogTitle>Nested Dialog</DialogTitle>
@@ -137,9 +138,9 @@
  *       </DialogDescription>
  *     </DialogHeader>
  *     <DialogFooter>
- *       <Button data-slot="dialog-close" class="cn-dialog-close mt-4" variant="outline">Close</Button>
+ *       <Button data-slot="dialog-close" class="absolute top-4 right-4 mt-4" variant="outline">Close</Button>
  *       <Dialog>
- *         <Button data-slot="dialog-trigger" class="cn-dialog-trigger mt-4">Open Nested Dialog</Button>
+ *         <Button data-slot="dialog-trigger" class="mt-4">Open Nested Dialog</Button>
  *         <DialogContent class="sm:max-w-md border-red-800">
  *           <DialogHeader>
  *             <DialogTitle>Nested Dialog</DialogTitle>
@@ -181,7 +182,7 @@ const {
   data-close-on-click-outside={closeOnClickOutside}
   data-close-on-escape={closeOnEscape}
   data-lock-scroll={lockScroll}
-  class={cn("cn-dialog", className)}
+  class={cn("", className)}
   {...rest}
 >
   <slot />

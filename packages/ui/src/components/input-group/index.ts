@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/input-group/index.ts directly.
 export { default as InputGroup } from "./InputGroup.astro";
 export { default as InputGroupAddon } from "./InputGroupAddon.astro";
 export { default as InputGroupButton } from "./InputGroupButton.astro";

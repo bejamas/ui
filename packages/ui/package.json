@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "generate": "bun run scripts/generate-from-style-registry.ts",
+    "check:sync": "bun run scripts/generate-from-style-registry.ts --check",
     "lint": "eslint . --max-warnings 0",
     "check-types": "astro check"
   },

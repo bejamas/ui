@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dropdown-menu/DropdownMenuTrigger.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import { Button } from "../button";
@@ -14,13 +15,13 @@ const { class: className = "", asChild = false, ...rest } = Astro.props as Props
 
 {
   asChild ? (
-    <div data-slot="dropdown-menu-trigger" data-as-child class={cn("cn-dropdown-menu-trigger", "inline-flex items-center", className)}>
+    <div data-slot="dropdown-menu-trigger" data-as-child class={cn("", "inline-flex items-center", className)}>
       <slot />
     </div>
   ) : (
     <Button
       data-slot="dropdown-menu-trigger"
-      class={cn("cn-dropdown-menu-trigger", "inline-flex items-center", className)}
+      class={cn("", "inline-flex items-center", className)}
       {...rest as any}
     >
       <slot />

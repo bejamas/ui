@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/tabs/TabsTrigger.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -24,10 +25,11 @@ const {
   data-slot="tabs-trigger"
   data-value={value}
   class={cn(
-    "cn-tabs-trigger",
-    "focus-visible:border-ring focus-visible:ring-ring/50 relative z-10 inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent px-1.5 py-0.5 text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start",
-    "text-foreground/60 hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground data-[state=active]:text-foreground",
-    "group-data-[variant=default]/tabs-list:data-[state=active]:bg-background group-data-[variant=default]/tabs-list:data-[state=active]:shadow-sm dark:group-data-[variant=default]/tabs-list:data-[state=active]:border-input dark:group-data-[variant=default]/tabs-list:data-[state=active]:bg-input/30",
+    "gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium group-data-[variant=default]/tabs-list:data-active:shadow-sm group-data-[variant=line]/tabs-list:data-active:shadow-none [&_svg:not([class*='size-'])]:size-4",
+    "relative z-10 inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center whitespace-nowrap outline-none transition-all disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start",
+    "focus-visible:border-ring focus-visible:ring-ring/50 text-foreground/60 hover:text-foreground data-[state=active]:text-foreground focus-visible:ring-[3px] focus-visible:outline-1 focus-visible:outline-ring dark:text-muted-foreground dark:hover:text-foreground",
+    "group-data-[variant=default]/tabs-list:data-[state=active]:bg-background dark:group-data-[variant=default]/tabs-list:data-[state=active]:border-input dark:group-data-[variant=default]/tabs-list:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground",
+    "group-data-[variant=default]/tabs-list:data-[state=active]:shadow-sm",
     "group-data-[variant=indicator]/tabs-list:data-[state=active]:bg-transparent group-data-[variant=indicator]/tabs-list:data-[state=active]:shadow-none",
     "group-data-[variant=line]/tabs-list:rounded-none group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:shadow-none",
     "group-data-[variant=line-animated]/tabs-list:rounded-none group-data-[variant=line-animated]/tabs-list:bg-transparent group-data-[variant=line-animated]/tabs-list:data-[state=active]:bg-transparent group-data-[variant=line-animated]/tabs-list:data-[state=active]:shadow-none",

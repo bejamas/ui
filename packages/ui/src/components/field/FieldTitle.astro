@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/field/FieldTitle.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
@@ -10,8 +11,8 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   data-slot="field-title"
   class={cn(
-    "cn-field-title",
-    "gap-2 text-sm font-medium group-data-[disabled=true]/field:opacity-50 flex w-fit items-center leading-snug",
+    "gap-2 text-sm font-medium group-data-[disabled=true]/field:opacity-50",
+    "flex w-fit items-center leading-snug",
     className,
   )}
   {...rest}

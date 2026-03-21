@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/select/SelectTrigger.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import SemanticIcon from "../icon/SemanticIcon.astro";
@@ -21,22 +22,18 @@ const {
   data-slot="select-trigger"
   data-size={size}
   class={cn(
-    "cn-select-trigger",
-    "border-input data-[placeholder]:text-muted-foreground dark:bg-input/30 dark:hover:bg-input/50",
-    "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-    "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 aria-invalid:ring-[3px]",
-    "flex w-full items-center justify-between gap-1.5 whitespace-nowrap rounded-lg border bg-transparent px-3 py-2 text-sm outline-none select-none transition-colors",
+    "border-input data-placeholder:text-muted-foreground dark:bg-input/30 dark:hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 gap-1.5 rounded-md border bg-transparent py-2 pr-2 pl-2.5 text-sm shadow-xs transition-[color,box-shadow] focus-visible:ring-3 aria-invalid:ring-3 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:flex *:data-[slot=select-value]:gap-1.5 [&_svg:not([class*='size-'])]:size-4 rounded-lg px-3",
+    "flex w-fit items-center justify-between whitespace-nowrap outline-none",
     "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-    "data-[size=sm]:h-8 data-[size=default]:h-9 data-[size=lg]:h-10",
-    "*:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5",
-    "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+    "*:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center",
+    "[&_svg]:pointer-events-none [&_svg]:shrink-0",
     className,
   )}
 >
   <slot />
   <SemanticIcon
     name="chevron-down"
-    class="cn-select-icon cn-select-trigger-icon pointer-events-none"
+    class="text-muted-foreground size-4 -mr-0.75 pointer-events-none"
     data-slot="select-icon"
   />
 </button>

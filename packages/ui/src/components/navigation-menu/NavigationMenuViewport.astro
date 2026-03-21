@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/navigation-menu/NavigationMenuViewport.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
@@ -13,7 +14,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   data-slot="navigation-menu-viewport"
   class={cn(
-    "cn-navigation-menu-viewport relative size-full overflow-hidden",
+    "bg-popover text-popover-foreground data-open:animate-in data-closed:animate-out data-closed:zoom-out-90 data-open:zoom-in-90 ring-foreground/10 rounded-lg shadow ring-1 duration-100 relative size-full overflow-hidden",
     className,
   )}
 ></div>

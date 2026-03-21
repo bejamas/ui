@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/field/FieldError.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
@@ -34,7 +35,7 @@ const shouldRender = forceMount || hasContent || uniqueMessages.length > 0;
     <div
       role="alert"
       data-slot="field-error"
-      class={cn("cn-field-error text-destructive text-sm font-normal", className)}
+      class={cn("text-destructive text-sm font-normal", className)}
       {...rest}
     >
       {hasContent && <slot />}

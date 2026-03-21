@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/alert/AlertTitle.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -15,11 +16,10 @@ const {
 <div
   {...rest}
   data-slot="alert-title"
-  class={cn("cn-alert-title", 
-    "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
+  class={cn(
+    "font-medium group-has-[>svg]/alert:col-start-2 col-start-2 line-clamp-1 min-h-4 tracking-tight [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground",
     className,
   )}
 >
   <slot />
 </div>
-

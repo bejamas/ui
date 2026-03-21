@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/button-group/ButtonGroup.astro directly.
 /**
  * @component ButtonGroup
  * @title Button Group
@@ -107,7 +108,7 @@ export const buttonGroupVariants = cva(
     variants: {
       orientation: {
         horizontal:
-          "*:data-slot:rounded-e-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-e-lg! [&>[data-slot]~[data-slot]]:rounded-s-none [&>[data-slot]~[data-slot]]:border-s-0",
+          "*:data-slot:rounded-e-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-e-lg! [&>[data-slot]~[data-slot]]:rounded-s-none slot-siblings:border-s-0",
         vertical:
           "flex-col *:data-slot:rounded-b-none [&>[data-slot]:not(:has(~[data-slot]))]:rounded-b-lg! [&>[data-slot]~[data-slot]]:rounded-t-none [&>[data-slot]~[data-slot]]:border-t-0",
       },
@@ -123,7 +124,7 @@ export const buttonGroupVariants = cva(
   role="group"
   data-slot="button-group"
   data-orientation={orientation}
-  class={cn("cn-button-group", buttonGroupVariants({ orientation }), className)}
+  class={cn("has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md", buttonGroupVariants({ orientation }), className)}
   {...props}
 >
   <slot />

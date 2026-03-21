@@ -2,6 +2,8 @@ import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import path from "node:path";
 import {
+  REGISTRY_LIB_DIRECTORY_RELATIVE_PATH,
+  REGISTRY_UI_DIRECTORY_RELATIVE_PATH,
   STYLE_BUILD_SCRIPTS,
   STYLE_IGNORED_OUTPUT_RELATIVE_PATHS,
   STYLE_PIPELINE_FILE_RELATIVE_PATHS,
@@ -18,7 +20,9 @@ const watcherScriptFile = path.resolve(
 
 describe("dev style watch workflow", () => {
   test("routes the app dev script through the orchestrator", () => {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonFile, "utf8")) as {
+    const packageJson = JSON.parse(
+      fs.readFileSync(packageJsonFile, "utf8"),
+    ) as {
       scripts?: Record<string, string>;
     };
 
@@ -30,6 +34,12 @@ describe("dev style watch workflow", () => {
     expect(STYLE_SOURCE_DIRECTORY_RELATIVE_PATH).toBe(
       "packages/registry/src/styles",
     );
+    expect(REGISTRY_UI_DIRECTORY_RELATIVE_PATH).toBe(
+      "packages/registry/src/ui",
+    );
+    expect(REGISTRY_LIB_DIRECTORY_RELATIVE_PATH).toBe(
+      "packages/registry/src/lib",
+    );
     expect(STYLE_PIPELINE_FILE_RELATIVE_PATHS).toEqual([
       "packages/registry/src/style-source.ts",
       "packages/create-config/src/style-css-source.ts",
@@ -37,10 +47,12 @@ describe("dev style watch workflow", () => {
       "packages/create-config/src/style-css-compiler.ts",
       "packages/create-config/scripts/generate-compiled-style-css.ts",
       "packages/registry/scripts/build-web-style-registry.ts",
+      "packages/ui/scripts/generate-from-style-registry.ts",
     ]);
     expect(STYLE_BUILD_SCRIPTS).toEqual([
       "build:compiled-styles",
       "build:style-registry",
+      "generate:ui-package",
     ]);
     expect(STYLE_IGNORED_OUTPUT_RELATIVE_PATHS).toEqual([
       "packages/create-config/src/generated",
@@ -66,7 +78,18 @@ describe("dev style watch workflow", () => {
 
     expect(source).toContain("await runStyleArtifactBuild();");
     expect(source).toContain('await runCommand("build:docs");');
-    expect(source).toContain("const styleWatcher = startStyleArtifactWatcher();");
+    expect(source).toContain(
+      "const styleWatcher = startStyleArtifactWatcher();",
+    );
     expect(source).toContain('cmd: ["bun", "run", "start"]');
+  });
+
+  test("routes registry component and lib edits through the same rebuild path", () => {
+    const source = fs.readFileSync(watcherScriptFile, "utf8");
+
+    expect(source).toContain("function isRegistrySourcePath");
+    expect(source).toContain("REGISTRY_UI_DIRECTORY");
+    expect(source).toContain("REGISTRY_LIB_DIRECTORY");
+    expect(source).toContain("isRegistrySourcePath(filePath)");
   });
 });

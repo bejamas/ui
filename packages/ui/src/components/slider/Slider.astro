@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/slider/Slider.astro directly.
 /**
  * @component Slider
  * @title Slider
@@ -134,7 +135,7 @@ const resolvedValues =
     ? value
     : Array.isArray(defaultValue) && defaultValue.length > 0
       ? defaultValue
-      : [min];
+      : [min, max];
 ---
 
 <div
@@ -150,24 +151,25 @@ const resolvedValues =
 >
   <div
     data-disabled={disabled ? "true" : undefined}
-    class="cn-slider relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:min-h-40 data-vertical:h-full data-vertical:w-auto data-vertical:flex-col"
+    class="data-vertical:min-h-40 relative flex w-full touch-none items-center select-none data-disabled:opacity-50 data-vertical:h-full data-vertical:w-auto data-vertical:flex-col"
   >
     <div
       data-slot="slider-track"
-      class="cn-slider-track bg-muted relative grow overflow-hidden rounded-full select-none data-horizontal:h-1.5 data-horizontal:w-full data-vertical:h-full data-vertical:w-1.5"
+      class="bg-muted rounded-full data-horizontal:h-1.5 data-horizontal:w-full data-vertical:h-full data-vertical:w-1.5 relative grow overflow-hidden select-none"
     >
       <div
         data-slot="slider-range"
-        class="cn-slider-range bg-primary select-none data-horizontal:h-full data-vertical:w-full"
-      ></div>
+        class="bg-primary select-none data-horizontal:h-full data-vertical:w-full"
+      >
+      </div>
     </div>
     {
       resolvedValues.map((_, index) => (
         <div
           data-slot="slider-thumb"
           data-index={index}
-          class="cn-slider-thumb border-primary ring-ring/50 block shrink-0 rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden select-none disabled:pointer-events-none disabled:opacity-50 size-4"
-        ></div>
+          class="border-primary ring-ring/50 size-4 rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden block shrink-0 select-none disabled:pointer-events-none disabled:opacity-50"
+        />
       ))
     }
   </div>

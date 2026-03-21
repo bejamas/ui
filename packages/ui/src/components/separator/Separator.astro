@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/separator/Separator.astro directly.
 /**
  * @component Separator
  * @title Separator
@@ -50,10 +51,9 @@ const {
   aria-orientation={orientation}
   aria-hidden={decorative ? "true" : undefined}
   class={cn(
-    "cn-separator",
-    orientation === "vertical" ? "cn-separator-vertical" : "cn-separator-horizontal",
     "bg-border shrink-0",
     orientation === "vertical" ? "h-full w-px" : "h-px w-full",
+    "shrink-0",
     className,
   )}
   {...props}

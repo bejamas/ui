@@ -5,6 +5,8 @@ export const APP_ROOT = path.resolve(import.meta.dir, "..");
 export const WORKSPACE_ROOT = path.resolve(APP_ROOT, "../..");
 export const STYLE_SOURCE_DIRECTORY_RELATIVE_PATH =
   "packages/registry/src/styles";
+export const REGISTRY_UI_DIRECTORY_RELATIVE_PATH = "packages/registry/src/ui";
+export const REGISTRY_LIB_DIRECTORY_RELATIVE_PATH = "packages/registry/src/lib";
 export const STYLE_PIPELINE_FILE_RELATIVE_PATHS = [
   "packages/registry/src/style-source.ts",
   "packages/create-config/src/style-css-source.ts",
@@ -12,6 +14,7 @@ export const STYLE_PIPELINE_FILE_RELATIVE_PATHS = [
   "packages/create-config/src/style-css-compiler.ts",
   "packages/create-config/scripts/generate-compiled-style-css.ts",
   "packages/registry/scripts/build-web-style-registry.ts",
+  "packages/ui/scripts/generate-from-style-registry.ts",
 ] as const;
 export const STYLE_IGNORED_OUTPUT_RELATIVE_PATHS = [
   "packages/create-config/src/generated",
@@ -20,6 +23,7 @@ export const STYLE_IGNORED_OUTPUT_RELATIVE_PATHS = [
 export const STYLE_BUILD_SCRIPTS = [
   "build:compiled-styles",
   "build:style-registry",
+  "generate:ui-package",
 ] as const;
 export const STYLE_REBUILD_DEBOUNCE_MS = 150;
 
@@ -38,14 +42,21 @@ type StyleArtifactWatcher = {
 const STYLE_SOURCE_DIRECTORY = resolveWorkspacePath(
   STYLE_SOURCE_DIRECTORY_RELATIVE_PATH,
 );
+const REGISTRY_UI_DIRECTORY = resolveWorkspacePath(
+  REGISTRY_UI_DIRECTORY_RELATIVE_PATH,
+);
+const REGISTRY_LIB_DIRECTORY = resolveWorkspacePath(
+  REGISTRY_LIB_DIRECTORY_RELATIVE_PATH,
+);
 const STYLE_PIPELINE_FILE_PATHS = new Set(
   STYLE_PIPELINE_FILE_RELATIVE_PATHS.map(resolveWorkspacePath),
 );
-const STYLE_IGNORED_OUTPUT_PATHS = STYLE_IGNORED_OUTPUT_RELATIVE_PATHS.map(
-  resolveWorkspacePath,
-);
+const STYLE_IGNORED_OUTPUT_PATHS =
+  STYLE_IGNORED_OUTPUT_RELATIVE_PATHS.map(resolveWorkspacePath);
 const STYLE_WATCH_DIRECTORIES = [
   STYLE_SOURCE_DIRECTORY,
+  REGISTRY_UI_DIRECTORY,
+  REGISTRY_LIB_DIRECTORY,
   ...new Set(
     STYLE_PIPELINE_FILE_RELATIVE_PATHS.map((filePath) =>
       path.dirname(resolveWorkspacePath(filePath)),
@@ -60,7 +71,8 @@ function resolveWorkspacePath(relativePath: string) {
 function isIgnoredPath(filePath: string) {
   return STYLE_IGNORED_OUTPUT_PATHS.some(
     (ignoredPath) =>
-      filePath === ignoredPath || filePath.startsWith(`${ignoredPath}${path.sep}`),
+      filePath === ignoredPath ||
+      filePath.startsWith(`${ignoredPath}${path.sep}`),
   );
 }
 
@@ -71,15 +83,38 @@ function isStyleSourcePath(filePath: string) {
   );
 }
 
+function isRegistrySourcePath(filePath: string) {
+  const extension = path.extname(filePath);
+  const directory = path.dirname(filePath);
+
+  if (extension !== ".astro" && extension !== ".ts") {
+    return false;
+  }
+
+  return (
+    directory.startsWith(`${REGISTRY_UI_DIRECTORY}${path.sep}`) ||
+    directory === REGISTRY_UI_DIRECTORY ||
+    directory.startsWith(`${REGISTRY_LIB_DIRECTORY}${path.sep}`) ||
+    directory === REGISTRY_LIB_DIRECTORY
+  );
+}
+
 function shouldRebuildFromFile(filePath: string) {
   if (isIgnoredPath(filePath)) {
     return false;
   }
 
-  return isStyleSourcePath(filePath) || STYLE_PIPELINE_FILE_PATHS.has(filePath);
+  return (
+    isStyleSourcePath(filePath) ||
+    isRegistrySourcePath(filePath) ||
+    STYLE_PIPELINE_FILE_PATHS.has(filePath)
+  );
 }
 
-async function runScript(scriptName: (typeof STYLE_BUILD_SCRIPTS)[number], cwd: string) {
+async function runScript(
+  scriptName: (typeof STYLE_BUILD_SCRIPTS)[number],
+  cwd: string,
+) {
   const process = Bun.spawn({
     cmd: ["bun", "run", scriptName],
     cwd,
@@ -178,8 +213,7 @@ export function startStyleArtifactWatcher(
         await runStyleArtifactBuild({ cwd, logger });
         logger.info("[style-watch] style artifacts updated");
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : String(error);
+        const message = error instanceof Error ? error.message : String(error);
         logger.error(`[style-watch] rebuild failed: ${message}`);
       }
     } while (!closed && hasPendingBuild);
@@ -204,5 +238,5 @@ export function startStyleArtifactWatcher(
 
 if (import.meta.main) {
   startStyleArtifactWatcher();
-  console.info("[style-watch] watching registry style sources");
+  console.info("[style-watch] watching registry source files");
 }

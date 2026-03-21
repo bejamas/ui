@@ -1,3 +1,4 @@
+// Generated from packages/registry/src/lib. Do not edit packages/ui/src/lib/select.ts directly.
 import {
   createSelect as createBaseSelect,
   type SelectController,

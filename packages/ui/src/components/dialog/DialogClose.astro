@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dialog/DialogClose.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -13,7 +14,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   data-slot="dialog-close"
   data-dialog-close
-  class={cn("cn-dialog-close inline-flex items-center gap-2", className)}
+  class={cn("absolute top-4 right-4 inline-flex items-center gap-2", className)}
 >
   <slot />
   {!Astro.slots.has("default") && <span class="sr-only">Close</span>}

@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dropdown-menu/index.ts directly.
 export { default as DropdownMenu } from "./DropdownMenu.astro";
 export { default as DropdownMenuTrigger } from "./DropdownMenuTrigger.astro";
 export { default as DropdownMenuContent } from "./DropdownMenuContent.astro";

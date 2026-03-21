@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dialog/DialogHeader.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -11,7 +12,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 
 <div
   data-slot="dialog-header"
-  class={cn("cn-dialog-header flex flex-col", className)}
+  class={cn("gap-2 flex flex-col", className)}
   {...rest}
 >
   <slot />

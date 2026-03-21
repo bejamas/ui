@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/table/TableCaption.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -12,7 +13,6 @@ const {
 } = Astro.props as Props;
 ---
 
-<caption data-slot="table-caption" class={cn("cn-table-caption", "text-muted-foreground mt-4 text-sm", className)} {...rest}>
+<caption data-slot="table-caption" class={cn("text-muted-foreground mt-4 text-sm", className)} {...rest}>
   <slot />
 </caption>
-

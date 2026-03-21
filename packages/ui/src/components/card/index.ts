@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/card/index.ts directly.
 export { default as Card } from "./Card.astro";
 export { default as CardMedia } from "./CardMedia.astro";
 export { default as CardHeader } from "./CardHeader.astro";

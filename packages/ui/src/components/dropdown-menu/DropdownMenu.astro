@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dropdown-menu/DropdownMenu.astro directly.
 /**
  * @component DropdownMenu
  * @title Dropdown Menu
@@ -105,7 +106,7 @@
  * ### With Labels and Groups
  *
  * <DropdownMenu>
- *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="cn-dropdown-menu-trigger">Account</Button>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="">Account</Button>
  *   <DropdownMenuContent>
  *     <DropdownMenuLabel>Actions</DropdownMenuLabel>
  *     <DropdownMenuGroup>
@@ -120,7 +121,7 @@
  * ### With Keyboard Shortcuts
  *
  * <DropdownMenu>
- *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="cn-dropdown-menu-trigger">Edit</Button>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="">Edit</Button>
  *   <DropdownMenuContent>
  *     <DropdownMenuItem>
  *       Undo
@@ -149,7 +150,7 @@
  * ### With Disabled Items
  *
  * <DropdownMenu>
- *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="cn-dropdown-menu-trigger">Options</Button>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="">Options</Button>
  *   <DropdownMenuContent>
  *     <DropdownMenuItem>Available action</DropdownMenuItem>
  *     <DropdownMenuItem disabled>Disabled action</DropdownMenuItem>
@@ -171,7 +172,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   {...rest}
   data-slot="dropdown-menu"
-  class={cn("cn-dropdown-menu", "relative inline-block", className)}
+  class={cn("", "relative inline-block", className)}
 >
   <slot />
 </div>

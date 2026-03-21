@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/table/TableRow.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -14,9 +15,8 @@ const {
 
 <tr
   data-slot="table-row"
-  class={cn("cn-table-row", "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors", className)}
+  class={cn("hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors", className)}
   {...rest}
 >
   <slot />
 </tr>
-

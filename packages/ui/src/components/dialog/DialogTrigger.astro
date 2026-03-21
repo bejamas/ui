@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dialog/DialogTrigger.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -21,7 +22,7 @@ const defaultClasses =
 
 {
   asChild ? (
-    <div data-slot="dialog-trigger" data-as-child class={cn("cn-dialog-trigger", defaultClasses, className)}>
+    <div data-slot="dialog-trigger" data-as-child class={cn("", defaultClasses, className)}>
       <slot />
     </div>
   ) : (
@@ -29,7 +30,7 @@ const defaultClasses =
       {...rest}
       type={type}
       data-slot="dialog-trigger"
-      class={cn("cn-dialog-trigger", defaultClasses, className)}
+      class={cn("", defaultClasses, className)}
     >
       <slot />
     </button>

@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/accordion/AccordionContent.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -12,11 +13,11 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   {...rest}
   data-slot="accordion-content"
-  class="cn-accordion-content data-open:animate-accordion-down data-closed:animate-accordion-up text-sm overflow-hidden"
+  class="data-open:animate-accordion-down data-closed:animate-accordion-up text-sm overflow-hidden"
 >
   <div
     class={cn(
-      "cn-accordion-content-inner h-(--accordion-panel-height) data-ending-style:h-0 data-starting-style:h-0 pt-0 pb-4 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+      "pt-0 pb-4 h-(--accordion-panel-height) data-ending-style:h-0 data-starting-style:h-0 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
       className,
     )}
   >

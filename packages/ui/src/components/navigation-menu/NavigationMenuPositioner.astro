@@ -1,18 +1,23 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/navigation-menu/NavigationMenuPositioner.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import NavigationMenuViewport from "./NavigationMenuViewport.astro";
 
 interface Props extends HTMLAttributes<"div"> {
   class?: string;
-  popupClass?: string;
-  viewportClass?: string;
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "bottom";
+  sideOffset?: number;
 }
 
 const {
   class: className = "",
-  popupClass = "",
-  viewportClass = "",
+  side = "bottom",
+  sideOffset = 8,
+  align = "start",
+  alignOffset = 0,
   ...rest
 } = Astro.props as Props;
 ---
@@ -21,19 +26,20 @@ const {
   <div
     {...rest}
     data-slot="navigation-menu-positioner"
+    data-side={side}
+    data-side-offset={sideOffset}
+    data-align={align}
+    data-align-offset={alignOffset}
     class={cn(
-      "cn-navigation-menu-positioner isolate z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width) transition-[top,left,right,bottom] duration-250 ease data-instant:transition-none",
+      "transition-[top,left,right,bottom] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] data-[side=bottom]:before:top-[-10px] data-[side=bottom]:before:right-0 data-[side=bottom]:before:left-0 isolate z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width) duration-[0.35s] data-instant:transition-none",
       className,
     )}
   >
     <div
       data-slot="navigation-menu-popup"
-      class={cn(
-        "cn-navigation-menu-popup bg-popover text-popover-foreground xs:w-(--popup-width) relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) overflow-hidden rounded-lg outline outline-border shadow-lg transition-[opacity,transform,width,height,scale,translate] duration-250 ease-[cubic-bezier(0.32,0.72,0,1)] data-starting-style:scale-90 data-starting-style:opacity-0 data-ending-style:scale-90 data-ending-style:opacity-0",
-        popupClass,
-      )}
+      class="bg-popover text-popover-foreground ring-foreground/10 rounded-lg shadow ring-1 transition-all ease-[cubic-bezier(0.22,1,0.36,1)] outline-none data-ending-style:scale-90 data-ending-style:opacity-0 data-ending-style:duration-150 data-starting-style:scale-90 data-starting-style:opacity-0 data-[ending-style]:easing-[ease] xs:w-(--popup-width) relative h-(--popup-height) w-(--popup-width) origin-(--transform-origin) transition-[opacity,transform,width,height,scale,translate] duration-[0.35s]"
     >
-      <NavigationMenuViewport class={viewportClass} />
+      <NavigationMenuViewport />
     </div>
   </div>
 </div>

@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/select/index.ts directly.
 export { default as Select } from "./Select.astro";
 export { default as SelectTrigger } from "./SelectTrigger.astro";
 export { default as SelectValue } from "./SelectValue.astro";

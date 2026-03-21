@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/marquee/Marquee.astro directly.
 /**
  * @component Marquee
  * @title Marquee
@@ -86,7 +87,7 @@ const marqueeVariants = cva("relative w-full", {
   data-marquee
   data-direction={direction}
   class={cn(
-    "cn-marquee",
+    "",
     // container utilities
     "group flex overflow-hidden w-full [&[data-direction=top]]:flex-col [&[data-direction=bottom]]:flex-col",
     marqueeVariants({ variant }),
@@ -97,7 +98,7 @@ const marqueeVariants = cva("relative w-full", {
 >
   <div
     class={cn(
-      "cn-marquee-content",
+      "",
       "marquee-content shrink-0 flex justify-around min-w-full will-change-transform whitespace-nowrap [animation:marquee-x_var(--duration,_20s)_linear_infinite] motion-reduce:[animation-play-state:paused] group-data-[direction=right]:[animation-direction:reverse] group-data-[direction=top]:[animation:marquee-y_var(--duration,_20s)_linear_infinite] group-data-[direction=bottom]:[animation:marquee-y_var(--duration,_20s)_linear_infinite] [&[data-direction=top]]:min-h-full [&[data-direction=bottom]]:min-h-full [&[data-direction=top]]:flex-col [&[data-direction=bottom]]:flex-col group-data-[direction=bottom]:[animation-direction:reverse]",
       direction === "top" && "flex-col",
       direction === "bottom" && "flex-col",
@@ -107,7 +108,7 @@ const marqueeVariants = cva("relative w-full", {
   </div>
   <div
     class={cn(
-      "cn-marquee-content",
+      "",
       "marquee-content shrink-0 flex justify-around min-w-full will-change-transform whitespace-nowrap [animation:marquee-x_var(--duration,_20s)_linear_infinite] motion-reduce:[animation-play-state:paused] group-data-[direction=right]:[animation-direction:reverse] group-data-[direction=top]:[animation:marquee-y_var(--duration,_20s)_linear_infinite] group-data-[direction=bottom]:[animation:marquee-y_var(--duration,_20s)_linear_infinite] [&[data-direction=top]]:min-h-full [&[data-direction=bottom]]:min-h-full [&[data-direction=top]]:flex-col [&[data-direction=bottom]]:flex-col group-data-[direction=bottom]:[animation-direction:reverse]",
       direction === "top" && "flex-col",
       direction === "bottom" && "flex-col",

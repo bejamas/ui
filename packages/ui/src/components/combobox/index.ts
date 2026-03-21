@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/combobox/index.ts directly.
 export { default as Combobox } from "./Combobox.astro";
 export { default as ComboboxInput } from "./ComboboxInput.astro";
 export { default as ComboboxContent } from "./ComboboxContent.astro";

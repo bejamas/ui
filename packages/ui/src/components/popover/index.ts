@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/popover/index.ts directly.
 export { default as Popover } from "./Popover.astro";
 export { default as PopoverTrigger } from "./PopoverTrigger.astro";
 export { default as PopoverContent } from "./PopoverContent.astro";

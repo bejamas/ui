@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/navigation-menu/NavigationMenu.astro directly.
 /**
  * @component NavigationMenu
  * @title Navigation Menu
@@ -161,6 +162,7 @@
  *
  * | Prop | Type | Default | Description |
  * |------|------|---------|-------------|
+ * | `align` | `"start" \| "center" \| "end"` | `"start"` | Viewport alignment relative to the trigger row |
  * | `viewport` | `boolean` | `true` | Enable animated viewport container for content |
  * | `delayOpen` | `number` | `0` | Delay in ms before opening menu |
  * | `delayClose` | `number` | `0` | Delay in ms before closing menu |
@@ -271,7 +273,6 @@
  * ### With Simple Links
  *
  * Use `navigationMenuTriggerStyle()` to style regular links to match triggers.
- * When `<NavigationMenuIndicator />` is present, the indicator owns the surface highlight.
  *
  * <NavigationMenu>
  *   <NavigationMenuList>
@@ -285,12 +286,12 @@
  *       </NavigationMenuContent>
  *     </NavigationMenuItem>
  *     <NavigationMenuItem>
- *       <NavigationMenuLink href="#" class="navigation-menu-trigger-surface px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 rounded-sm hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground">
+ *       <NavigationMenuLink href="#" class="bg-background hover:bg-muted focus:bg-muted data-open:hover:bg-muted data-open:focus:bg-muted data-open:bg-muted/50 focus-visible:ring-ring/50 data-popup-open:bg-muted/50 data-popup-open:hover:bg-muted rounded-md px-4 py-2 text-sm font-medium transition-all focus-visible:ring-3 focus-visible:outline-1 disabled:opacity-50 group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center outline-none disabled:pointer-events-none">
  *         Pricing
  *       </NavigationMenuLink>
  *     </NavigationMenuItem>
  *     <NavigationMenuItem>
- *       <NavigationMenuLink href="/docs" class="navigation-menu-trigger-surface px-4 py-2.5 bg-transparent border-none cursor-pointer flex items-center gap-1.5 transition-colors relative z-1 rounded-sm hover:bg-muted hover:text-foreground focus:bg-muted focus:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground">
+ *       <NavigationMenuLink href="/docs" class="bg-background hover:bg-muted focus:bg-muted data-open:hover:bg-muted data-open:focus:bg-muted data-open:bg-muted/50 focus-visible:ring-ring/50 data-popup-open:bg-muted/50 data-popup-open:hover:bg-muted rounded-md px-4 py-2 text-sm font-medium transition-all focus-visible:ring-3 focus-visible:outline-1 disabled:opacity-50 group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center outline-none disabled:pointer-events-none">
  *         Docs
  *       </NavigationMenuLink>
  *     </NavigationMenuItem>
@@ -322,6 +323,7 @@ import NavigationMenuPositioner from "./NavigationMenuPositioner.astro";
 
 interface Props extends HTMLAttributes<"nav"> {
   class?: string;
+  align?: "start" | "center" | "end";
   viewport?: boolean;
   delayOpen?: number;
   delayClose?: number;
@@ -330,9 +332,10 @@ interface Props extends HTMLAttributes<"nav"> {
 
 const {
   class: className = "",
+  align = "start",
   viewport = true,
   delayOpen = 0,
-  delayClose = 50,
+  delayClose = 0,
   openOnFocus,
   ...rest
 } = Astro.props as Props;
@@ -346,69 +349,20 @@ const {
   data-delay-close={delayClose}
   data-open-on-focus={openOnFocus}
   class={cn(
-    "cn-navigation-menu group/navigation-menu relative flex max-w-max flex-1 items-center justify-center",
+    "max-w-max group/navigation-menu relative flex flex-1 items-center justify-center",
     className,
   )}
 >
   <slot />
-  {viewport && <NavigationMenuPositioner />}
+  {viewport && <NavigationMenuPositioner align={align} />}
 </nav>
 
 <script>
   import { createNavigationMenu } from "@data-slot/navigation-menu";
 
-  const syncNavigationMenuTriggerBooleans = (root: HTMLElement) => {
-    root
-      .querySelectorAll<HTMLElement>('[data-slot="navigation-menu-trigger"]')
-      .forEach((trigger) => {
-        const isOpen =
-          trigger.getAttribute("data-state") === "open" ||
-          trigger.getAttribute("aria-expanded") === "true";
-
-        if (isOpen) {
-          trigger.setAttribute("data-open", "");
-          trigger.setAttribute("data-popup-open", "");
-          return;
-        }
-
-        trigger.removeAttribute("data-open");
-        trigger.removeAttribute("data-popup-open");
-      });
-  };
-
-  const bindNavigationMenuTriggerCompatibility = (root: HTMLElement) => {
-    const boundRoot = root as HTMLElement & {
-      __navigationMenuTriggerCompatibilityBound?: boolean;
-    };
-
-    if (boundRoot.__navigationMenuTriggerCompatibilityBound) {
-      syncNavigationMenuTriggerBooleans(root);
-      return;
-    }
-
-    boundRoot.__navigationMenuTriggerCompatibilityBound = true;
-    syncNavigationMenuTriggerBooleans(root);
-    root.addEventListener("navigation-menu:change", () =>
-      syncNavigationMenuTriggerBooleans(root),
-    );
-  };
-
   document
     .querySelectorAll<HTMLElement>('[data-slot="navigation-menu"]')
     .forEach((el) => {
       createNavigationMenu(el);
-      bindNavigationMenuTriggerCompatibility(el);
     });
 </script>
-
-<style is:global>
-  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface,
-  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:hover,
-  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:focus,
-  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface:focus-visible,
-  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface[data-state="open"],
-  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface[data-open]:not([data-open="false"]),
-  [data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .navigation-menu-trigger-surface[data-popup-open]:not([data-popup-open="false"]) {
-    background-color: transparent;
-  }
-</style>

@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/date/Date.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 /**
  * @component Date
@@ -120,7 +121,7 @@ if (parsedDate) {
     ) : (
       <time
         datetime={parsedDate.toISOString()}
-        class={cn("cn-date", className)}
+        class={cn("", className)}
         {...props}
       >
         {formatted}
@@ -128,7 +129,7 @@ if (parsedDate) {
     )
   ) : (
     <span
-      class={cn("cn-date cn-date-invalid text-destructive", className)}
+      class={cn("text-destructive", className)}
       {...props}
     >
       Invalid date

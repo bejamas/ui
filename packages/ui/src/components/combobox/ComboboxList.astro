@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/combobox/ComboboxList.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
@@ -13,7 +14,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   data-slot="combobox-list"
   class={cn(
-    "cn-combobox-list no-scrollbar max-h-[min(18rem,calc(var(--available-height)-var(--anchor-height)))] overflow-y-auto overscroll-contain scroll-py-1 p-1 data-empty:p-0",
+    "no-scrollbar max-h-[min(calc(--spacing(72)---spacing(9)),calc(var(--available-height)---spacing(9)))] scroll-py-1 overflow-y-auto p-1 data-empty:p-0 max-h-[min(18rem,calc(var(--available-height)-var(--anchor-height)))] overscroll-contain",
     className,
   )}
 >
