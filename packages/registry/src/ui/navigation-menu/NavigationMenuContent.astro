@@ -15,7 +15,7 @@ const {
   align,
   alignOffset,
   side,
-  sideOffset,
+  sideOffset = 6,
   ...rest
 } = Astro.props as Props;
 ---
@@ -29,7 +29,7 @@ const {
   data-side-offset={sideOffset}
   hidden
   class={cn(
-    "cn-navigation-menu-content data-ending-style:data-activation-direction=left:translate-x-[50%] data-ending-style:data-activation-direction=right:translate-x-[-50%] data-starting-style:data-activation-direction=left:translate-x-[-50%] data-starting-style:data-activation-direction=right:translate-x-[50%] h-full w-auto transition-[opacity,transform,translate] duration-[0.35s] data-ending-style:opacity-0 data-starting-style:opacity-0 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none",
+    "cn-navigation-menu-content data-[ending-style]:data-[activation-direction=left]:translate-x-[50%] data-[ending-style]:data-[activation-direction=right]:translate-x-[-50%] data-[starting-style]:data-[activation-direction=left]:translate-x-[-50%] data-[starting-style]:data-[activation-direction=right]:translate-x-[50%] h-full w-auto transition-[opacity,transform,translate] duration-200 ease data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none",
     className,
   )}
 >

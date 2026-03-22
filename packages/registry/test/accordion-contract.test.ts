@@ -59,10 +59,13 @@ describe("accordion compatibility contract", () => {
 
     expect(source).toContain("defaultValue?: string | string[]");
     expect(source).toContain("collapsible = true");
-    expect(source).toContain("data-default-value-json");
-    expect(source).toContain("createAccordion(el, {");
-    expect(source).toContain("defaultValue: parseDefaultValue(el)");
-    expect(source).toContain("data-enhanced");
+    expect(source).toContain("const rootDefaultValue");
+    expect(source).toContain("data-default-value={rootDefaultValue}");
+    expect(source).toContain("createAccordion(el);");
+    expect(source).not.toContain("data-default-value-json");
+    expect(source).not.toContain("parseDefaultValue");
+    expect(source).not.toContain("parseBooleanDataAttribute");
+    expect(source).not.toContain("data-enhanced");
     expect(source).not.toContain('data-defaultValue={defaultValue}');
   });
 
@@ -72,6 +75,7 @@ describe("accordion compatibility contract", () => {
     const triggerSource = fs.readFileSync(accordionTriggerFile, "utf8");
 
     expect(contentSource).toContain('class="cn-accordion-content overflow-hidden"');
+    expect(contentSource).toContain("hidden");
     expect(contentSource).toContain("h-(--accordion-panel-height)");
     expect(contentSource).toContain("data-ending-style:h-0");
     expect(contentSource).toContain("data-starting-style:h-0");
@@ -94,7 +98,7 @@ describe("accordion compatibility contract", () => {
     const itemSource = fs.readFileSync(uiAccordionItemFile, "utf8");
     const triggerSource = fs.readFileSync(uiAccordionTriggerFile, "utf8");
 
-    expect(itemSource).toContain('class={cn("cn-accordion-item not-last:border-b", className)}');
+    expect(itemSource).toContain('class={cn("not-last:border-b", className)}');
 
     expect(triggerSource).toContain("rounded-md py-4 text-left text-sm font-medium hover:underline");
     expect(triggerSource).toContain("**:data-[slot=accordion-trigger-icon]:ml-auto");
@@ -111,19 +115,19 @@ describe("accordion compatibility contract", () => {
   test("published registry payloads stay aligned with the accordion contract", () => {
     const registryAccordion = getRegistryContent(
       registryFile,
-      "../../packages/ui/src/components/accordion/Accordion.astro",
+      "ui/accordion/Accordion.astro",
     );
     const registryContent = getRegistryContent(
       registryFile,
-      "../../packages/ui/src/components/accordion/AccordionContent.astro",
+      "ui/accordion/AccordionContent.astro",
     );
     const registryItem = getRegistryContent(
       registryFile,
-      "../../packages/ui/src/components/accordion/AccordionItem.astro",
+      "ui/accordion/AccordionItem.astro",
     );
     const registryTrigger = getRegistryContent(
       registryFile,
-      "../../packages/ui/src/components/accordion/AccordionTrigger.astro",
+      "ui/accordion/AccordionTrigger.astro",
     );
     const styleAccordion = getRegistryContent(
       styleRegistryFile,
@@ -135,10 +139,15 @@ describe("accordion compatibility contract", () => {
     );
 
     expect(registryAccordion).toContain("defaultValue?: string | string[]");
-    expect(registryAccordion).toContain("data-default-value-json");
+    expect(registryAccordion).toContain("const rootDefaultValue");
+    expect(registryAccordion).toContain("data-default-value={rootDefaultValue}");
+    expect(registryAccordion).toContain("createAccordion(el);");
+    expect(registryAccordion).not.toContain("data-default-value-json");
+    expect(registryAccordion).not.toContain("data-enhanced");
     expect(registryAccordion).not.toContain("AccordionItem open");
 
     expect(registryContent).toContain("data-open:animate-accordion-down");
+    expect(registryContent).toContain("hidden");
     expect(registryContent).toContain("h-(--accordion-panel-height)");
     expect(registryContent).toContain("pt-0 pb-4");
     expect(registryContent).not.toContain("grid-rows-[0fr]");
@@ -147,9 +156,13 @@ describe("accordion compatibility contract", () => {
     expect(registryItem).not.toContain("open?: boolean");
     expect(registryTrigger).toContain("rounded-md py-4 text-left text-sm font-medium hover:underline");
 
-    expect(styleAccordion).toContain("data-default-value-json");
-    expect(styleAccordion).toContain("data-enhanced");
+    expect(styleAccordion).toContain("const rootDefaultValue");
+    expect(styleAccordion).toContain("data-default-value={rootDefaultValue}");
+    expect(styleAccordion).toContain("createAccordion(el);");
+    expect(styleAccordion).not.toContain("data-default-value-json");
+    expect(styleAccordion).not.toContain("data-enhanced");
     expect(styleContent).toContain("data-open:animate-accordion-down");
+    expect(styleContent).toContain("hidden");
     expect(styleContent).toContain("h-(--accordion-panel-height)");
     expect(styleContent).toContain("data-ending-style:h-0");
     expect(styleContent).toContain("data-starting-style:h-0");

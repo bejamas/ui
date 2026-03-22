@@ -13,6 +13,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   {...rest}
   data-slot="accordion-content"
+  hidden
   class="data-open:animate-accordion-down data-closed:animate-accordion-up text-sm overflow-hidden"
 >
   <div

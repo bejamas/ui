@@ -149,23 +149,18 @@ const {
   ...rest
 } = Astro.props as Props;
 
-const serializedDefaultValue =
-  Array.isArray(defaultValue) && defaultValue.length > 0
-    ? JSON.stringify(defaultValue)
-    : undefined;
+const rootDefaultValue = Array.isArray(defaultValue)
+  ? JSON.stringify(defaultValue)
+  : defaultValue;
 ---
 
 <div
   {...rest}
   data-slot="accordion"
   data-multiple={multiple ? "true" : undefined}
-  data-default-value={typeof defaultValue === "string" ? defaultValue : undefined}
-  data-default-value-json={serializedDefaultValue}
+  data-default-value={rootDefaultValue}
   data-collapsible={collapsible ? undefined : "false"}
-  class={cn(
-    "cn-accordion flex w-full flex-col [&:not([data-enhanced])_[data-slot=accordion-content]]:hidden",
-    className,
-  )}
+  class={cn("cn-accordion flex w-full flex-col", className)}
 >
   <slot />
 </div>
@@ -173,37 +168,7 @@ const serializedDefaultValue =
 <script>
   import { createAccordion } from "@data-slot/accordion";
 
-  const parseBooleanDataAttribute = (
-    value,
-    fallback,
-  ) => (value === undefined ? fallback : value !== "false");
-
-  const parseDefaultValue = (el) => {
-    const serializedValues = el.dataset.defaultValueJson;
-
-    if (serializedValues) {
-      try {
-        const parsed = JSON.parse(serializedValues);
-
-        if (Array.isArray(parsed)) {
-          return parsed.filter((value) => typeof value === "string");
-        }
-      } catch {
-        // Fall back to the single-value data attribute.
-      }
-    }
-
-    const defaultValue = el.dataset.defaultValue;
-
-    return defaultValue === undefined || defaultValue === "" ? undefined : defaultValue;
-  };
-
   document.querySelectorAll('[data-slot="accordion"]').forEach((el) => {
-    createAccordion(el, {
-      multiple: parseBooleanDataAttribute(el.dataset.multiple, false),
-      collapsible: parseBooleanDataAttribute(el.dataset.collapsible, true),
-      defaultValue: parseDefaultValue(el),
-    });
-    el.setAttribute("data-enhanced", "");
+    createAccordion(el);
   });
 </script>

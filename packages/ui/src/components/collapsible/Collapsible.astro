@@ -185,8 +185,9 @@ const {
   data-state={open ? "open" : "closed"}
   data-default-open={open ? true : undefined}
   data-hidden-until-found={hiddenUntilFound ? "" : undefined}
-  class={cn("", 
-    "group/collapsible [&:not([data-enhanced])[data-state=closed]_[data-slot=collapsible-content]]:hidden",
+  class={cn(
+    "",
+    "group/collapsible data-[state=closed]:[&_[data-slot=collapsible-content]]:hidden",
     className,
   )}
 >
@@ -196,14 +197,7 @@ const {
 <script>
   import { createCollapsible } from "@data-slot/collapsible";
 
-  const parseBooleanDataAttribute = (value: string | undefined) =>
-    value !== undefined && value !== "false";
-
   document.querySelectorAll<HTMLElement>('[data-slot="collapsible"]').forEach((el) => {
-    createCollapsible(el, {
-      defaultOpen: parseBooleanDataAttribute(el.dataset.defaultOpen),
-      hiddenUntilFound: parseBooleanDataAttribute(el.dataset.hiddenUntilFound),
-    });
-    el.setAttribute("data-enhanced", "");
+    createCollapsible(el);
   });
 </script>
