@@ -1,0 +1,19 @@
+---
+interface Props {
+  label: string;
+  values: ("check" | "x")[];
+}
+
+const { label, values } = Astro.props;
+---
+
+<div class="flex items-center gap-8 border-t border-border py-3 lg:py-4">
+  <span class="w-70 shrink-0 text-base lg:text-lg font-medium tracking-tight text-foreground">
+    {label}
+  </span>
+  {values.map((val) => (
+    <span class="flex flex-1 items-center justify-center text-[1.25rem] font-medium text-foreground md:text-2xl">
+      {val === "check" ? "*" : "x"}
+    </span>
+  ))}
+</div>

@@ -1,0 +1,52 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import Card from "./components/card.astro";
+
+const plans = [
+  {
+    name: "Starter",
+    price: "$4.95",
+    description:
+      "Explore proven methods to grow your wealth through smart saving, strategic investing, and disciplined financial planning — empowering you to achieve lasting stability and long-term success.",
+    image:
+      "https://gradient.bejamas.com/api/gradient.png?color=7c5cff&funkiness=15&contrast=0&noise=0&w=800&h=600&seed=9zqtablo&shape=ellipse",
+  },
+  {
+    name: "Essential",
+    price: "$8.95",
+    description:
+      "Explore proven methods to grow your wealth through smart saving, strategic investing, and disciplined financial planning — empowering you to achieve lasting stability and long-term success.",
+    image:
+      "https://gradient.bejamas.com/api/gradient.png?color=7c5cff&funkiness=15&contrast=0&noise=0&w=800&h=600&seed=9zqtablo&shape=ellipse",
+  },
+  {
+    name: "Ultra",
+    price: "$14.95",
+    description:
+      "Explore proven methods to grow your wealth through smart saving, strategic investing, and disciplined financial planning — empowering you to achieve lasting stability and long-term success.",
+    image:
+      "https://gradient.bejamas.com/api/gradient.png?color=7c5cff&funkiness=15&contrast=0&noise=0&w=800&h=600&seed=9zqtablo&shape=ellipse",
+  },
+];
+---
+
+<BlockExampleLayout>
+  <section class="bg-background py-40 px-8 text-foreground">
+    <div class="mx-auto max-w-384">
+      <div class="flex flex-col items-center gap-6 mb-20">
+        <h2 class="text-center font-semibold text-[clamp(2.5rem,6vw,4rem)] leading-[1.1] tracking-tight text-foreground">
+          Powerful Value, Clear Prices
+        </h2>
+        <p class="max-w-140 text-foreground text-center text-lg md:text-xl font-medium leading-normal tracking-tight">
+          Choose a plan that fits your goals — no hidden fees, just straightforward value.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 md:gap-4 lg:gap-8 md:grid-cols-3">
+        {plans.map((plan) => (
+          <Card {...plan} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BlockExampleLayout>

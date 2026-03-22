@@ -1,0 +1,36 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+
+interface Props {
+  name: string;
+  price: string;
+  description: string;
+  image: string;
+}
+
+const { name, price, description, image } = Astro.props;
+---
+
+<div class="flex flex-col gap-4 pb-2 overflow-hidden">
+  <img class="w-full object-cover aspect-491/295" src={image} alt="" />
+  <div class="flex flex-col gap-10">
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl font-semibold tracking-tight text-foreground">
+          {name}
+        </span>
+        <span class="text-lg font-medium tracking-tight text-foreground -translate-y-2">
+          for {price}
+        </span>
+      </div>
+      <p class="text-base leading-relaxed text-muted-foreground">
+        {description}
+      </p>
+    </div>
+    <div class="flex justify-end pt-3">
+      <Button variant="outline">
+        Choose {name}
+      </Button>
+    </div>
+  </div>
+</div>

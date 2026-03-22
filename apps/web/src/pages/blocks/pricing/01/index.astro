@@ -1,0 +1,39 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import Row from "./components/row.astro";
+
+const plans = ["Starter", "Essential", "Ultra"];
+
+const features = [
+  { label: "Wealth Growth Strategies", values: ["check", "check", "check"] },
+  { label: "Investment Diversification", values: ["x", "check", "check"] },
+  { label: "Passive Income Streams", values: ["x", "x", "check"] },
+  { label: "Retirement Planning Tips", values: ["check", "check", "check"] },
+  { label: "Tax Optimization Techniques", values: ["x", "check", "check"] },
+  { label: "Real Estate Investment Options", values: ["x", "x", "check"] },
+  { label: "Stock Market Analysis", values: ["check", "check", "check"] },
+  { label: "Financial Independence Roadmap", values: ["x", "check", "check"] },
+] as const;
+---
+
+<BlockExampleLayout>
+  <section class="bg-background py-8 text-foreground">
+    <div class="@container mx-auto px-8">
+      <div class="-mx-8 overflow-auto px-8">
+        <div class="ml-auto min-w-200 max-w-286">
+          <div class="flex items-center gap-8 py-3 lg:py-4">
+            <span class="w-70 shrink-0"></span>
+            {plans.map((plan) => (
+              <span class="flex-1 text-center text-lg font-medium tracking-tight text-foreground lg:text-2xl">
+                {plan}
+              </span>
+            ))}
+          </div>
+          {features.map((feature) => (
+            <Row label={feature.label} values={feature.values as any} />
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</BlockExampleLayout>
