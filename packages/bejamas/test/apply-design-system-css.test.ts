@@ -60,6 +60,7 @@ const lyraMonoConfig: DesignSystemConfig = {
   theme: "cyan",
   iconLibrary: "tabler",
   font: "geist-mono",
+  fontHeading: "inherit",
   radius: "default",
   menuColor: "default",
   menuAccent: "subtle",
@@ -74,8 +75,11 @@ describe("transformDesignSystemCss", () => {
 
     expect(result).toContain('@import "bejamas/tailwind.css";');
     expect(result).not.toContain("@fontsource-variable/geist-mono");
-    expect(result).not.toContain("--font-mono:");
+    expect(result).toContain("--font-mono: var(--font-mono);");
+    expect(result).toContain("--font-heading: var(--font-heading);");
     expect(result).toContain("@apply font-mono;");
+    expect(result).toContain(".cn-font-heading");
+    expect(result).toContain("@apply font-heading;");
     expect(result).toContain("--primary: oklch(0.52 0.105 223.128);");
     expect(result).not.toContain("/* bejamas:create:start */");
     expect(result).not.toContain(".cn-button");
@@ -126,6 +130,8 @@ describe("transformDesignSystemCss", () => {
       docsMonorepoUiGlobalsCss,
     ]) {
       expect(source).toContain('@import "bejamas/tailwind.css";');
+      expect(source).toContain("--font-heading: var(--font-heading);");
+      expect(source).toContain(".cn-font-heading");
     }
 
     for (const packageJson of [

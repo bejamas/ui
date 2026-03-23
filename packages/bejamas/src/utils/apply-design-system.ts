@@ -158,18 +158,17 @@ function resolveManagedTailwindImport(source: string) {
   return BEJAMAS_TAILWIND_IMPORT;
 }
 
-function upsertThemeInlineFont(
-  source: string,
-  fontVariable?: string,
-  fontFamily?: string,
-) {
+function upsertThemeInlineFont(source: string, fontVariable?: string) {
   const pattern = /@theme inline\s*\{[\s\S]*?\n\}/m;
 
   if (!pattern.test(source)) {
-    const block =
-      fontVariable && fontFamily
-        ? `@theme inline {\n  ${fontVariable}: ${fontFamily};\n}`
-        : "@theme inline {\n}";
+    const declarations = [
+      fontVariable ? `  ${fontVariable}: var(${fontVariable});` : null,
+      "  --font-heading: var(--font-heading);",
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const block = `@theme inline {\n${declarations}\n}`;
     const customVariantIndex = source.indexOf("@custom-variant");
 
     if (customVariantIndex !== -1) {
@@ -184,17 +183,19 @@ function upsertThemeInlineFont(
 
   return source.replace(pattern, (block) => {
     const withoutManagedFonts = block
-      .replace(/\n\s*--font-(sans|serif|mono):[^\n]+/g, "")
+      .replace(/\n\s*--font-(sans|serif|mono|heading):[^\n]+/g, "")
       .replace(/\n\s*--bejamas-font-family:[^\n]+/g, "")
       .replace(/@theme inline\s*\{\n?/, "@theme inline {\n");
-
-    if (!fontVariable || !fontFamily) {
-      return withoutManagedFonts;
-    }
+    const declarations = [
+      fontVariable ? `  ${fontVariable}: var(${fontVariable});` : null,
+      "  --font-heading: var(--font-heading);",
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     return withoutManagedFonts.replace(
       "@theme inline {\n",
-      `@theme inline {\n  ${fontVariable}: ${fontFamily};\n`,
+      `@theme inline {\n${declarations}\n`,
     );
   });
 }
@@ -203,15 +204,19 @@ function upsertBaseLayerHtmlFont(source: string, fontClass: string) {
   const pattern = /@layer base\s*\{[\s\S]*?\n\}/m;
 
   if (!pattern.test(source)) {
-    return `${source.trimEnd()}\n\n@layer base {\n  html {\n    @apply ${fontClass};\n  }\n}\n`;
+    return `${source.trimEnd()}\n\n@layer base {\n  .cn-font-heading {\n    @apply font-heading;\n  }\n  html {\n    @apply ${fontClass};\n  }\n}\n`;
   }
 
   return source.replace(pattern, (block) => {
     const htmlRulePattern = /\n\s*html\s*\{[\s\S]*?\n\s*\}/m;
-    const cleanedBlock = block.replace(htmlRulePattern, "");
+    const headingRulePattern =
+      /\n\s*\.cn-font-heading\s*\{[\s\S]*?\n\s*\}/m;
+    const cleanedBlock = block
+      .replace(htmlRulePattern, "")
+      .replace(headingRulePattern, "");
     return cleanedBlock.replace(
       /\n\}$/,
-      `\n  html {\n    @apply ${fontClass};\n  }\n}`,
+      `\n  .cn-font-heading {\n    @apply font-heading;\n  }\n  html {\n    @apply ${fontClass};\n  }\n}`,
     );
   });
 }
@@ -248,7 +253,7 @@ export function transformDesignSystemCss(
     ".dark",
     buildCssVarBlock(".dark", darkVars),
   );
-  next = upsertThemeInlineFont(next);
+  next = upsertThemeInlineFont(next, font?.font.variable);
 
   if (font) {
     next = upsertBaseLayerHtmlFont(
@@ -268,7 +273,7 @@ export function transformAstroManagedFontCss(
   let next = stripLegacyCreateBlock(source);
 
   next = upsertImports(next, [tailwindImport]);
-  next = upsertThemeInlineFont(next);
+  next = upsertThemeInlineFont(next, fontVariable);
 
   if (fontVariable) {
     next = upsertBaseLayerHtmlFont(
@@ -474,11 +479,20 @@ export async function applyDesignSystemToProject(
     ].map((filepath) => patchLayoutFile(filepath, config)),
   );
 
-  const managedFont = toManagedAstroFont(config.font);
-  if (managedFont) {
+  const managedFonts = [
+    toManagedAstroFont(config.font),
+    config.fontHeading !== "inherit"
+      ? toManagedAstroFont(`font-heading-${config.fontHeading}`)
+      : null,
+  ].filter((font): font is NonNullable<typeof font> => font !== null);
+  const managedFont = managedFonts.find(
+    (font) => font.cssVariable !== "--font-heading",
+  );
+
+  if (managedFonts.length > 0 && managedFont) {
     await syncAstroFontsInProject(
       projectPath,
-      [managedFont],
+      managedFonts,
       managedFont.cssVariable,
     );
     await cleanupAstroFontPackages(projectPath);

@@ -135,12 +135,7 @@ function applyPreviewConfig(
   );
   setText(
     "[data-create-style-font-summary]",
-    [
-      catalogs.styles.find((style) => style.name === config.style)?.title ??
-        config.style,
-      catalogs.fonts.find((font) => font.name === `font-${config.font}`)
-        ?.title ?? config.font,
-    ].join(" - "),
+    buildStyleFontSummary(config),
   );
   setText(
     "[data-create-radius-label]",
@@ -165,6 +160,28 @@ function applyPreviewConfig(
         isTranslucentMenuColor(config.menuColor),
       );
     });
+}
+
+function buildStyleFontSummary(config: DesignSystemConfig) {
+  const styleLabel =
+    catalogs.styles.find((style) => style.name === config.style)?.title ??
+    config.style;
+  const fontLabel =
+    catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ??
+    config.font;
+  const headingFontLabel =
+    config.fontHeading === "inherit"
+      ? null
+      : (catalogs.fonts.find(
+          (font) => font.name === `font-${config.fontHeading}`,
+        )?.title ?? config.fontHeading);
+
+  return [
+    styleLabel,
+    headingFontLabel && headingFontLabel !== fontLabel
+      ? `${fontLabel} / ${headingFontLabel}`
+      : fontLabel,
+  ].join(" - ");
 }
 
 function setText(selector: string, value: string) {

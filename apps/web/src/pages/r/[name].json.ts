@@ -16,7 +16,10 @@ export async function getStaticPaths() {
   const fileNames = filenames
     .filter((filename) => filename.endsWith(".json"))
     .map((filename) => filename.slice(0, -".json".length));
-  const fontNames = catalogs.fonts.map((font) => font.name);
+  const fontNames = [
+    ...catalogs.fonts.map((font) => font.name),
+    ...catalogs.headingFonts.map((font) => font.name),
+  ];
 
   return Array.from(new Set([...fileNames, ...fontNames, "utils"])).map(
     (name) => ({

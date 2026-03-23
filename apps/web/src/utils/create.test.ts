@@ -21,6 +21,7 @@ describe("parseCreateSearchParams", () => {
       baseColor: "neutral",
       theme: "bejamas-blue",
       font: "inter",
+      fontHeading: "inherit",
       radius: "default",
       rtl: false,
       rtlLanguage: "ar",
@@ -69,6 +70,50 @@ describe("parseCreateSearchParams", () => {
     expect(result.data.font).toBe("geist-mono");
   });
 
+  test("lets an explicit fontHeading query param override a decoded preset", () => {
+    const preset = encodePreset({
+      font: "inter",
+      fontHeading: "inherit",
+      theme: "neutral",
+    });
+    const result = parseCreateSearchParams(
+      new URLSearchParams({
+        preset,
+        fontHeading: "playfair-display",
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.data.font).toBe("inter");
+    expect(result.data.fontHeading).toBe("playfair-display");
+  });
+
+  test("normalizes fontHeading back to inherit when it matches the body font", () => {
+    const preset = encodePreset({
+      font: "inter",
+      fontHeading: "playfair-display",
+      theme: "neutral",
+    });
+    const result = parseCreateSearchParams(
+      new URLSearchParams({
+        preset,
+        fontHeading: "inter",
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.data.font).toBe("inter");
+    expect(result.data.fontHeading).toBe("inherit");
+  });
+
   test("normalizes locked Lyra radius values from preset codes", () => {
     const result = parseCreateSearchParams(
       new URLSearchParams({ preset: "awNgr9d" }),
@@ -81,6 +126,47 @@ describe("parseCreateSearchParams", () => {
 
     expect(result.data.style).toBe("lyra");
     expect(result.data.radius).toBe("none");
+  });
+
+  test("accepts modern shadcn b-codes with longer font catalogs", () => {
+    const result = parseCreateSearchParams(
+      new URLSearchParams({ preset: "b4aRK5K0fb" }),
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.preset).toBe("b4aRK5K0fb");
+    expect(result.data).toMatchObject({
+      style: "maia",
+      baseColor: "mauve",
+      theme: "emerald",
+      iconLibrary: "hugeicons",
+      font: "ibm-plex-sans",
+      fontHeading: "merriweather",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "inverted-translucent",
+    });
+  });
+
+  test("does not preserve the raw preset string when URL params override preset fields", () => {
+    const result = parseCreateSearchParams(
+      new URLSearchParams({
+        preset: "b4aRK5K0fb",
+        fontHeading: "playfair-display",
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      return;
+    }
+
+    expect(result.preset).toBeNull();
+    expect(result.data.fontHeading).toBe("playfair-display");
   });
 
   test("ignores an invalid fallback preset", () => {
@@ -98,6 +184,7 @@ describe("parseCreateSearchParams", () => {
       baseColor: "neutral",
       theme: "bejamas-blue",
       font: "inter",
+      fontHeading: "inherit",
       radius: "default",
       rtl: false,
       rtlLanguage: "ar",
@@ -221,6 +308,7 @@ describe("parseCreateSearchParams", () => {
           theme: "neutral",
           iconLibrary: "lucide",
           font: "geist",
+          fontHeading: "inherit",
           radius: "default",
           menuAccent: "subtle",
           menuColor: "default",
@@ -253,6 +341,7 @@ describe("parseCreateSearchParams", () => {
           theme: "orange",
           iconLibrary: "lucide",
           font: "geist",
+          fontHeading: "inherit",
           radius: "default",
           menuAccent: "subtle",
           menuColor: "default",

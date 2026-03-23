@@ -67,6 +67,7 @@ import {
 } from "@/utils/create-project-dialog";
 
 type CreateConfig = DesignSystemConfig;
+type CreatePresetConfig = Omit<CreateConfig, "template" | "rtl" | "rtlLanguage">;
 type HistoryMode = "push" | "replace";
 type PreviewMessage = {
   type: "bejamas:create-preview";
@@ -101,12 +102,25 @@ const PICKER_NAMES = [
   "style",
   "baseColor",
   "iconLibrary",
+  "fontHeading",
   "font",
   "radius",
   "menuColor",
   "menuAccent",
   "rtlLanguage",
 ] satisfies CreatePickerName[];
+
+const PRESET_CONFIG_NAMES = [
+  "style",
+  "baseColor",
+  "theme",
+  "iconLibrary",
+  "fontHeading",
+  "font",
+  "radius",
+  "menuColor",
+  "menuAccent",
+] as const satisfies readonly (keyof CreatePresetConfig)[];
 
 const form = document.querySelector(
   "[data-create-form]",
@@ -243,13 +257,20 @@ let themeOverrides = normalizeThemeOverrides(
 );
 let themeSyncTimer = 0;
 let themeStatusMessage = "";
-let currentPreviewTarget = resolveCreatePreviewTarget(
-  new URLSearchParams(window.location.search),
-);
+const initialSearchParams = new URLSearchParams(window.location.search);
+let currentPreviewTarget = resolveCreatePreviewTarget(initialSearchParams);
 let themePanelOpen = false;
 let themePanelTransitionToken = 0;
 const lockedParams = new Set<CreateLockableParam>();
 let lockedFontGroup: CreateFontGroup | null = null;
+const initialPresetResult = parseCreateSearchParams(initialSearchParams);
+const preservedPreset =
+  initialPresetResult.success && initialPresetResult.preset
+    ? {
+        code: initialPresetResult.preset,
+        config: toPresetConfig(initialPresetResult.data),
+      }
+    : null;
 
 const CREATE_PREVIEW_DEFAULT_KEY = CREATE_PREVIEW_COMMAND_VALUE;
 const THEME_PANEL_EXIT_DURATION = 80;
@@ -340,6 +361,9 @@ function collectConfig(): CreateConfig {
     baseColor: String(formData.get("baseColor")) as CreateConfig["baseColor"],
     theme: String(formData.get("theme")) as CreateConfig["theme"],
     font: String(formData.get("font")) as CreateConfig["font"],
+    fontHeading: String(
+      formData.get("fontHeading") ?? DEFAULT_DESIGN_SYSTEM_CONFIG.fontHeading,
+    ) as CreateConfig["fontHeading"],
     iconLibrary: String(
       formData.get("iconLibrary"),
     ) as CreateConfig["iconLibrary"],
@@ -547,6 +571,16 @@ function syncThemeSelection(config: CreateConfig) {
 }
 
 function getCurrentPreset(config: CreateConfig) {
+  const presetConfig = toPresetConfig(config);
+
+  if (preservedPreset && isSamePresetConfig(presetConfig, preservedPreset.config)) {
+    return preservedPreset.code;
+  }
+
+  return encodePreset(presetConfig as Parameters<typeof encodePreset>[0]);
+}
+
+function toPresetConfig(config: CreateConfig): CreatePresetConfig {
   const {
     template: _template,
     rtl: _rtl,
@@ -554,7 +588,14 @@ function getCurrentPreset(config: CreateConfig) {
     ...presetConfig
   } = config;
 
-  return encodePreset(presetConfig as Parameters<typeof encodePreset>[0]);
+  return presetConfig;
+}
+
+function isSamePresetConfig(
+  left: CreatePresetConfig,
+  right: CreatePresetConfig,
+) {
+  return PRESET_CONFIG_NAMES.every((name) => left[name] === right[name]);
 }
 
 function syncNavigateDialogSelection() {
@@ -607,6 +648,34 @@ function syncRadiusPicker(config: CreateConfig) {
       radiusOptions,
       config.radius,
     );
+  }
+}
+
+function syncFontHeadingPicker(config: CreateConfig) {
+  const inheritOption = getCreatePickerSelectedOption("fontHeading", {
+    ...config,
+    fontHeading: "inherit",
+  });
+  const inheritItem = getPickerContent("fontHeading")?.querySelector(
+    '[data-create-picker-item][data-value="inherit"]',
+  ) as HTMLElement | null;
+
+  if (!inheritOption || !inheritItem) {
+    return;
+  }
+
+  const labelNode = inheritItem.querySelector(
+    "[data-create-picker-item-label]",
+  ) as HTMLElement | null;
+  if (labelNode) {
+    labelNode.textContent = inheritOption.label;
+  }
+
+  const markerNode = inheritItem.querySelector(
+    "[data-create-picker-item-marker]",
+  ) as HTMLElement | null;
+  if (markerNode) {
+    markerNode.innerHTML = renderMarkerHtml("font", inheritOption);
   }
 }
 
@@ -1263,6 +1332,7 @@ function updateUi(
   setInputValue("theme", config.theme, false);
   setCheckboxValue("rtl", config.rtl, false);
   syncRadiusPicker(config);
+  syncFontHeadingPicker(config);
   syncThemeTabs();
   syncThemeInputs(config);
   syncThemeTrigger(config);

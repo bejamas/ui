@@ -29,6 +29,13 @@ const interFont = {
   subsets: ["latin"] as [string, ...string[]],
 };
 
+const headingFont = {
+  name: "Playfair Display",
+  provider: "google" as const,
+  cssVariable: "--font-heading",
+  subsets: ["latin"] as [string, ...string[]],
+};
+
 describe("astro font helpers", () => {
   test("patchAstroConfigSource bootstraps Astro fonts config", () => {
     const source = `// @ts-check\nimport { defineConfig } from 'astro/config';\n\nexport default defineConfig({\n  vite: {}\n});\n`;
@@ -111,6 +118,19 @@ describe("astro font helpers", () => {
     expect(result).toMatch(/<body\b[^>]*class="font-mono"[^>]*\/>/);
   });
 
+  test("patchAstroLayoutSource injects a separate heading font without changing the body class", () => {
+    const source = `---\nimport "@/styles/globals.css";\n---\n\n<html><head></head><body class="min-h-screen"></body></html>\n`;
+    const result = patchAstroLayoutSource(
+      source,
+      [interFont, headingFont],
+      "--font-sans",
+    );
+
+    expect(result).toContain('<Font cssVariable="--font-sans" />');
+    expect(result).toContain('<Font cssVariable="--font-heading" />');
+    expect(result).toContain('<body class="min-h-screen"></body>');
+  });
+
   test("patchAstroLayoutSource preserves existing body classes and removes managed mono classes for sans", () => {
     const source = `---\nimport "@/styles/globals.css";\n---\n\n<html><head></head><body class="min-h-screen font-mono" data-test="true"></body></html>\n`;
     const result = patchAstroLayoutSource(source, [sansFont], "--font-sans");
@@ -151,6 +171,11 @@ describe("astro font helpers", () => {
       name: "Inter",
       provider: "google",
       cssVariable: "--font-sans",
+    });
+    expect(toManagedAstroFont("font-heading-playfair-display")).toMatchObject({
+      name: "Playfair Display",
+      provider: "google",
+      cssVariable: "--font-heading",
     });
   });
 });

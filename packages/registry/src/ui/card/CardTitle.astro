@@ -9,7 +9,7 @@ interface Props extends HTMLAttributes<"div"> {
 
 const { class: className = "", ...rest } = Astro.props as Props;
 
-const titleVariants = cva("text-balance");
+const titleVariants = cva("cn-font-heading text-balance");
 ---
 
 <div

@@ -1,6 +1,7 @@
 import type { RegistryItem } from "shadcn/schema";
 import {
   getFontValue,
+  getHeadingFontValue,
   getStyleId,
   type DesignSystemConfig,
 } from "./config";
@@ -34,10 +35,20 @@ export function buildRegistryBaseItem(config: DesignSystemConfig): RegistryItem 
     (library) => library.name === config.iconLibrary,
   );
   const font = getFontValue(config.font);
+  const normalizedFontHeading =
+    config.fontHeading === config.font ? "inherit" : config.fontHeading;
+  const headingFont =
+    normalizedFontHeading === "inherit"
+      ? null
+      : getHeadingFontValue(normalizedFontHeading);
   const registryDependencies = ["utils"];
 
   if (font) {
     registryDependencies.push(font.name);
+  }
+
+  if (headingFont) {
+    registryDependencies.push(headingFont.name);
   }
 
   return {
@@ -66,7 +77,10 @@ export function buildRegistryBaseItem(config: DesignSystemConfig): RegistryItem 
     cssVars: buildRegistryTheme(config).cssVars,
     ...(font
       ? {
-          docs: `Font family: ${font.font.family}`,
+          docs:
+            headingFont
+              ? `Font family: ${font.font.family}; Heading font family: ${headingFont.font.family}`
+              : `Font family: ${font.font.family}`,
         }
       : {}),
   } as RegistryItem;

@@ -1,6 +1,7 @@
 import {
   buildRegistryTheme,
   getFontValue,
+  getHeadingFontValue,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import type { ThemeStyles } from "../types/theme";
@@ -102,9 +103,17 @@ function resolveThemeModeStyles(
 
 function resolveSharedFontStyles(config: DesignSystemConfig): ThemeStyleMap {
   const selectedFont = getFontValue(config.font);
+  const selectedHeadingFont =
+    config.fontHeading === "inherit" || config.fontHeading === config.font
+      ? selectedFont
+      : getHeadingFontValue(config.fontHeading);
   const defaultLightStyles = defaultThemeStyles.light ?? {};
   const styles: ThemeStyleMap = {
     "font-sans": defaultLightStyles["font-sans"] ?? "Inter, sans-serif",
+    "font-heading":
+      defaultLightStyles["font-heading"] ??
+      defaultLightStyles["font-sans"] ??
+      "Inter, sans-serif",
     "font-serif": defaultLightStyles["font-serif"] ?? "ui-serif, Georgia, serif",
     "font-mono":
       defaultLightStyles["font-mono"] ??
@@ -125,6 +134,10 @@ function resolveSharedFontStyles(config: DesignSystemConfig): ThemeStyleMap {
 
   if (selectedFont.font.variable === "--font-mono") {
     styles["font-mono"] = selectedFont.font.family;
+  }
+
+  if (selectedHeadingFont) {
+    styles["font-heading"] = selectedHeadingFont.font.family;
   }
 
   return styles;

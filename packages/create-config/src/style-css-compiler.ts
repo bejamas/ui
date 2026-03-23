@@ -17,6 +17,7 @@ export const STYLE_LAYER_ORDER_DECLARATION =
 
 function buildCompilerInput(css: string) {
   return [
+    '@import "tw-animate-css";',
     `@reference "${globalsCssPath.replace(/\\/g, "/")}";`,
     STYLE_LAYER_ORDER_DECLARATION,
     "@utility no-scrollbar {",

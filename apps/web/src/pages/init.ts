@@ -1,6 +1,5 @@
 import {
   buildRegistryBaseItem,
-  getFontValue,
   getStyleId,
 } from "@bejamas/create-config/server";
 import {
@@ -13,15 +12,16 @@ import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
 
 export const prerender = false;
 
-function buildAbsoluteRegistryDependencies(url: URL, style: string, font?: string) {
+function buildAbsoluteRegistryDependencies(
+  url: URL,
+  style: string,
+  registryDependencies: string[],
+) {
   const styleId = getStyleId(style as Parameters<typeof getStyleId>[0]);
-  const names = ["utils"];
 
-  if (font) {
-    names.push(font);
-  }
-
-  return names.map((name) => new URL(`/r/styles/${styleId}/${name}.json`, url).toString());
+  return registryDependencies.map((name) =>
+    new URL(`/r/styles/${styleId}/${name}.json`, url).toString(),
+  );
 }
 
 export async function GET({ url }: { url: URL }) {
@@ -34,12 +34,11 @@ export async function GET({ url }: { url: URL }) {
   const themeRef = resolveCreateThemeRef(url.searchParams);
   const themeOverrides = await getThemeOverridesByRef(themeRef);
   const item = buildRegistryBaseItem(result.data);
-  const font = getFontValue(result.data.font);
 
   item.registryDependencies = buildAbsoluteRegistryDependencies(
     url,
     result.data.style,
-    font?.name,
+    item.registryDependencies ?? ["utils"],
   );
 
   if (themeOverrides) {

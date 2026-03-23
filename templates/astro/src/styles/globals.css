@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-heading: var(--font-heading);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -93,6 +94,9 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  .cn-font-heading {
+    @apply font-heading;
   }
   body {
     @apply bg-background text-foreground;

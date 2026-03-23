@@ -10,6 +10,7 @@ const baseConfig = {
   baseColor: "neutral",
   theme: "neutral",
   font: "geist",
+  fontHeading: "inherit",
   iconLibrary: "lucide",
   radius: "default",
   menuAccent: "subtle",
@@ -93,6 +94,19 @@ describe("resolveDesignSystemTheme", () => {
     expect(resolved.font.family).toContain("JetBrains Mono");
   });
 
+  it("keeps font-heading aligned with the body font unless a distinct heading font is selected", () => {
+    const inherited = resolveDesignSystemTheme(baseConfig);
+    const distinct = resolveDesignSystemTheme({
+      ...baseConfig,
+      font: "inter",
+      fontHeading: "playfair-display",
+    });
+
+    expect(inherited.styles.light["font-heading"]).toContain("Geist");
+    expect(distinct.styles.light["font-sans"]).toContain("Inter");
+    expect(distinct.styles.light["font-heading"]).toContain("Playfair Display");
+  });
+
   it("builds site theme css through the existing applyThemeToCss path", () => {
     const css = buildDesignSystemThemeCss({
       ...baseConfig,
@@ -104,6 +118,7 @@ describe("resolveDesignSystemTheme", () => {
     expect(css).toContain("--accent:");
     expect(css).toContain("--radius:");
     expect(css).toContain("--font-sans:");
+    expect(css).toContain("--font-heading:");
     expect(css).toContain(".cn-menu-target.dark");
     expect(css).toContain("oklch(");
     expect(css).not.toContain("hsl(");

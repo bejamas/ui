@@ -17,6 +17,7 @@ export type CreatePickerName =
   | "baseColor"
   | "theme"
   | "iconLibrary"
+  | "fontHeading"
   | "font"
   | "radius"
   | "menuColor"
@@ -34,6 +35,7 @@ export const CREATE_LOCKABLE_PARAMS = [
   "baseColor",
   "theme",
   "iconLibrary",
+  "fontHeading",
   "font",
   "radius",
   "menuColor",
@@ -125,6 +127,7 @@ export const CREATE_PICKER_LABELS: Record<CreatePickerName, string> = {
   baseColor: "Base Color",
   theme: "Theme",
   iconLibrary: "Icon Library",
+  fontHeading: "Heading",
   font: "Font",
   radius: "Radius",
   menuColor: "Menu Color",
@@ -141,6 +144,7 @@ export const CREATE_PICKER_MARKERS: Record<
   baseColor: "swatch",
   theme: "swatch",
   iconLibrary: "icon-library",
+  fontHeading: "font",
   font: "font",
   radius: "radius",
   menuColor: "menu-color",
@@ -152,6 +156,10 @@ export const CREATE_PICKER_MARKERS: Record<
 function getThemeColor(theme: (typeof catalogs.themes)[number]) {
   const lightVars = (theme.cssVars?.light ?? {}) as Record<string, string>;
   return lightVars.primary ?? lightVars.ring ?? "oklch(0.72 0 0)";
+}
+
+function getFontValueFromCatalog(value: string) {
+  return catalogs.fonts.find((item) => item.name.replace("font-", "") === value);
 }
 
 function getFontPickerGroup(
@@ -175,7 +183,7 @@ export function isCreateFontGroup(value: string): value is CreateFontGroup {
 export function getFontGroupForFontValue(
   value: string,
 ): CreateFontGroup | null {
-  const font = catalogs.fonts.find((item) => item.name.replace("font-", "") === value);
+  const font = getFontValueFromCatalog(value);
 
   return font ? getFontPickerGroup(font) : null;
 }
@@ -187,9 +195,30 @@ export function getFontValuesForGroup(group: CreateFontGroup) {
 }
 
 export function getCreatePickerOptions(
-  config: Pick<DesignSystemConfig, "baseColor" | "style">,
+  config: Pick<DesignSystemConfig, "baseColor" | "style"> &
+    Partial<Pick<DesignSystemConfig, "font">>,
 ) {
   const effectiveRadius = resolveEffectiveRadius(config.style, "default");
+  const currentBodyFont =
+    getFontValueFromCatalog(config.font ?? DEFAULT_DESIGN_SYSTEM_CONFIG.font) ??
+    catalogs.fonts[0];
+  const fontOptions = catalogs.fonts
+    .map((font) => ({
+      value: font.name.replace("font-", ""),
+      label: font.title ?? font.name.replace("font-", ""),
+      family: font.font.family,
+      group: getFontPickerGroup(font),
+    }))
+    .sort((left, right) => {
+      const groupOrder = { sans: 0, serif: 1, mono: 2 } as const;
+      const groupDiff =
+        groupOrder[left.group as keyof typeof groupOrder] -
+        groupOrder[right.group as keyof typeof groupOrder];
+
+      return groupDiff !== 0
+        ? groupDiff
+        : left.label.localeCompare(right.label);
+    });
 
   return {
     style: STYLES.map((style) => ({
@@ -212,23 +241,18 @@ export function getCreatePickerOptions(
       value: iconLibrary.name,
       label: iconLibrary.label,
     })),
-    font: catalogs.fonts
-      .map((font) => ({
-        value: font.name.replace("font-", ""),
-        label: font.title,
-        family: font.font.family,
-        group: getFontPickerGroup(font),
-      }))
-      .sort((left, right) => {
-        const groupOrder = { sans: 0, serif: 1, mono: 2 } as const;
-        const groupDiff =
-          groupOrder[left.group as keyof typeof groupOrder] -
-          groupOrder[right.group as keyof typeof groupOrder];
-
-        return groupDiff !== 0
-          ? groupDiff
-          : left.label.localeCompare(right.label);
-      }),
+    fontHeading: [
+      {
+        value: "inherit",
+        label:
+          currentBodyFont?.title ??
+          currentBodyFont?.name.replace("font-", "") ??
+          "Body font",
+        family: currentBodyFont?.font.family,
+      },
+      ...fontOptions,
+    ],
+    font: fontOptions,
     radius: RADIUS_OPTIONS.map((option) =>
       option.value === "default"
         ? {
@@ -261,7 +285,8 @@ export function getCreatePickerOptions(
 
 export function getCreatePickerOptionsByName(
   name: CreatePickerName,
-  config: Pick<DesignSystemConfig, "baseColor" | "style">,
+  config: Pick<DesignSystemConfig, "baseColor" | "style"> &
+    Partial<Pick<DesignSystemConfig, "font">>,
 ) {
   return getCreatePickerOptions(config)[name];
 }
@@ -276,7 +301,8 @@ export function isCreatePickerDisabled(
 export function getCreatePickerOption(
   name: CreatePickerName,
   value: string,
-  config: Pick<DesignSystemConfig, "baseColor" | "style">,
+  config: Pick<DesignSystemConfig, "baseColor" | "style"> &
+    Partial<Pick<DesignSystemConfig, "font">>,
 ) {
   return getCreatePickerOptionsByName(name, config).find(
     (option) => option.value === value,
@@ -372,6 +398,30 @@ export function createRandomDesignSystemConfig(
   const fontOptions = options.lockedFontGroup
     ? getFontValuesForGroup(options.lockedFontGroup)
     : catalogs.fonts.map((font) => font.name.replace("font-", ""));
+  const font = locked.has("font")
+    ? (current.font ?? DEFAULT_DESIGN_SYSTEM_CONFIG.font)
+    : (chooseRandom(fontOptions) ?? DEFAULT_DESIGN_SYSTEM_CONFIG.font);
+  const bodyFontGroup = getFontGroupForFontValue(font);
+  const contrastingHeadingFonts = catalogs.fonts
+    .map((fontOption) => fontOption.name.replace("font-", ""))
+    .filter((value) => {
+      if (value === font) {
+        return false;
+      }
+
+      if (!bodyFontGroup) {
+        return true;
+      }
+
+      return getFontGroupForFontValue(value) !== bodyFontGroup;
+    });
+  const fontHeading = locked.has("fontHeading")
+    ? (current.fontHeading ?? DEFAULT_DESIGN_SYSTEM_CONFIG.fontHeading)
+    : Math.random() < 0.7
+      ? "inherit"
+      : (chooseRandom(contrastingHeadingFonts) ??
+        chooseRandom(catalogs.fonts.map((item) => item.name.replace("font-", ""))) ??
+        DEFAULT_DESIGN_SYSTEM_CONFIG.font);
 
   return normalizeDesignSystemConfig({
     style,
@@ -381,9 +431,8 @@ export function createRandomDesignSystemConfig(
       ? (current.iconLibrary ?? DEFAULT_DESIGN_SYSTEM_CONFIG.iconLibrary)
       : (chooseRandom(catalogs.iconLibraries.map((item) => item.name)) ??
         DEFAULT_DESIGN_SYSTEM_CONFIG.iconLibrary),
-    font: locked.has("font")
-      ? (current.font ?? DEFAULT_DESIGN_SYSTEM_CONFIG.font)
-      : (chooseRandom(fontOptions) ?? DEFAULT_DESIGN_SYSTEM_CONFIG.font),
+    font,
+    fontHeading,
     radius: locked.has("radius")
       ? (current.radius ?? DEFAULT_DESIGN_SYSTEM_CONFIG.radius)
       : (chooseRandom(RADIUS_OPTIONS.map((option) => option.value)) ??

@@ -54,7 +54,10 @@ const selectedOption =
   providedSelectedOption ??
   options.find((option) => option.value === value) ??
   options[0];
-const groupedPickerNames = new Set(["style", "font"]);
+const groupedPickerNames = new Set(["style", "font", "fontHeading"]);
+const ungroupedOptions = groupedPickerNames.has(name)
+  ? options.filter((option) => !option.group)
+  : [];
 const groupedOptions = groupedPickerNames.has(name)
   ? (Object.entries(CREATE_PICKER_GROUP_LABELS)
       .map(([group, groupLabel]) => ({
@@ -137,7 +140,62 @@ function shouldRenderFontGroupLock(
     >
       {
         groupedOptions.length > 0 ? (
-          groupedOptions.map((group, index) => (
+          <>
+            {
+              ungroupedOptions.length > 0 && (
+                <>
+                  <DropdownMenuGroup>
+                    {ungroupedOptions.map((option) => {
+                      const isSelected = option.value === selectedOption?.value;
+
+                      return (
+                        <DropdownMenuItem
+                          class="create-picker-item !items-start !gap-2.5 !rounded-[12px] !px-3 !py-2.5 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
+                          data-create-picker-item
+                          data-value={option.value}
+                          data-selected={isSelected ? "" : undefined}
+                        >
+                          <span class="min-w-0 flex-1">
+                            <span
+                              class="block truncate text-[14px] font-medium tracking-[-0.01em]"
+                              data-create-picker-item-label
+                            >
+                              {option.label}
+                            </span>
+                            {option.description && (
+                              <span class="mt-0.5 block text-[12px] leading-4 text-white/52">
+                                {option.description}
+                              </span>
+                            )}
+                          </span>
+                          <span class="ml-auto flex shrink-0 items-center gap-2 pt-0.5">
+                            <span data-create-picker-item-marker>
+                              <CreatePickerMarker
+                                kind={markerKind}
+                                value={option.markerValue ?? option.value}
+                                label={option.label}
+                                color={option.color}
+                                family={option.family}
+                              />
+                            </span>
+                            <CheckIcon
+                              class:list={[
+                                "size-4 text-white/78 transition-opacity",
+                                isSelected ? "opacity-100" : "opacity-0",
+                              ]}
+                              data-create-picker-item-check
+                              aria-hidden="true"
+                            />
+                          </span>
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator class="!my-1.5 !bg-white/8" />
+                </>
+              )
+            }
+            {groupedOptions.map((group, index) => (
             <>
               {index > 0 && (
                 <DropdownMenuSeparator class="!my-1.5 !bg-white/8" />
@@ -196,7 +254,8 @@ function shouldRenderFontGroupLock(
                 })}
               </DropdownMenuGroup>
             </>
-          ))
+            ))}
+          </>
         ) : (
           <div data-create-picker-items>
             {options.map((option) => {

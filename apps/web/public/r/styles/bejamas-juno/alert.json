@@ -16,7 +16,7 @@
     {
       "path": "ui/alert/AlertTitle.astro",
       "type": "registry:ui",
-      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst {\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<div\n  {...rest}\n  data-slot=\"alert-title\"\n  class={cn(\n    \"font-medium group-has-[>svg]/alert:col-start-2 col-start-2 line-clamp-1 min-h-4 tracking-tight [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground\",\n    className,\n  )}\n>\n  <slot />\n</div>\n"
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst {\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<div\n  {...rest}\n  data-slot=\"alert-title\"\n  class={cn(\n    \"font-medium group-has-[>svg]/alert:col-start-2 col-start-2 line-clamp-1 min-h-4 tracking-tight cn-font-heading [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground\",\n    className,\n  )}\n>\n  <slot />\n</div>\n"
     },
     {
       "path": "ui/alert/index.ts",

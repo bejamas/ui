@@ -18,6 +18,18 @@ interface ParseCreateSearchParamsOptions {
   fallbackPreset?: string | null;
 }
 
+const PRESERVED_PRESET_OVERRIDE_PARAMS = [
+  "style",
+  "baseColor",
+  "theme",
+  "iconLibrary",
+  "font",
+  "fontHeading",
+  "radius",
+  "menuAccent",
+  "menuColor",
+] as const;
+
 function omitUndefined<T extends Record<string, unknown>>(value: T) {
   return Object.fromEntries(
     Object.entries(value).filter(([, entry]) => entry !== undefined),
@@ -50,6 +62,11 @@ export function parseCreateSearchParams(
   let input: Partial<DesignSystemConfig> = {};
   const preset = searchParams.get("preset");
   const rtl = searchParams.get("rtl") === "true";
+  const preservedPreset =
+    preset &&
+    !PRESERVED_PRESET_OVERRIDE_PARAMS.some((param) => searchParams.has(param))
+      ? preset
+      : null;
 
   if (preset) {
     if (!isPresetCode(preset)) {
@@ -63,6 +80,8 @@ export function parseCreateSearchParams(
 
     input = omitUndefined({
       ...decoded,
+      fontHeading: (searchParams.get("fontHeading") ??
+        decoded.fontHeading) as DesignSystemConfig["fontHeading"] | undefined,
       rtl,
       rtlLanguage: getRtlLanguageValue(searchParams, rtl),
     });
@@ -71,6 +90,8 @@ export function parseCreateSearchParams(
     if (decoded) {
       input = omitUndefined({
         ...decoded,
+        fontHeading: (searchParams.get("fontHeading") ??
+          decoded.fontHeading) as DesignSystemConfig["fontHeading"] | undefined,
         rtl,
         rtlLanguage: getRtlLanguageValue(searchParams, rtl),
       });
@@ -91,6 +112,9 @@ export function parseCreateSearchParams(
         | undefined,
       font: (searchParams.get("font") ?? undefined) as
         | DesignSystemConfig["font"]
+        | undefined,
+      fontHeading: (searchParams.get("fontHeading") ?? undefined) as
+        | DesignSystemConfig["fontHeading"]
         | undefined,
       radius: (searchParams.get("radius") ?? undefined) as
         | DesignSystemConfig["radius"]
@@ -121,6 +145,7 @@ export function parseCreateSearchParams(
   return {
     success: true as const,
     data: normalizeDesignSystemConfig(result.data),
+    preset: preservedPreset,
   };
 }
 

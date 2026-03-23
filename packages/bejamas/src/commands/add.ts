@@ -639,9 +639,7 @@ export const add = new Command()
         );
 
         if (registryItem?.type === "registry:font") {
-          const nextFont = toManagedAstroFont(
-            registryItem.name.replace(/^font-/, "") as never,
-          );
+          const nextFont = toManagedAstroFont(registryItem.name);
 
           if (nextFont) {
             const currentFonts = await readManagedAstroFontsFromProject(cwd);

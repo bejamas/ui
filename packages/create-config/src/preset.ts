@@ -17,6 +17,14 @@ export const PRESET_STYLES = [
   "juno",
 ] as const;
 
+const SHARED_PRESET_STYLES = [
+  "nova",
+  "vega",
+  "maia",
+  "lyra",
+  "mira",
+] as const;
+
 export const PRESET_BASE_COLORS = [
   "neutral",
   "stone",
@@ -28,7 +36,7 @@ export const PRESET_BASE_COLORS = [
   "taupe",
 ] as const;
 
-export const PRESET_THEMES = [
+const SHARED_PRESET_THEMES = [
   "neutral",
   "stone",
   "zinc",
@@ -54,9 +62,30 @@ export const PRESET_THEMES = [
   "olive",
   "mist",
   "taupe",
+] as const;
+
+export const PRESET_THEMES = [
+  ...SHARED_PRESET_THEMES,
   "bejamas-blue",
   "bejamas-neon-yellow",
 ] as const;
+
+export const PRESET_CHART_COLORS = SHARED_PRESET_THEMES;
+
+export const V1_CHART_COLOR_MAP: Partial<
+  Record<
+    (typeof PRESET_BASE_COLORS)[number],
+    (typeof PRESET_CHART_COLORS)[number]
+  >
+> = {
+  neutral: "blue",
+  stone: "lime",
+  zinc: "amber",
+  mauve: "emerald",
+  olive: "violet",
+  mist: "rose",
+  taupe: "cyan",
+};
 
 export const PRESET_ICON_LIBRARIES = [
   "lucide",
@@ -84,7 +113,16 @@ export const PRESET_FONTS = [
   "playfair-display",
   "noto-serif",
   "roboto-slab",
+  "oxanium",
+  "manrope",
+  "space-grotesk",
+  "montserrat",
+  "ibm-plex-sans",
+  "source-sans-3",
+  "instrument-sans",
 ] as const;
+
+export const PRESET_FONT_HEADINGS = ["inherit", ...PRESET_FONTS] as const;
 
 export const PRESET_RADII = [
   "default",
@@ -95,6 +133,7 @@ export const PRESET_RADII = [
 ] as const;
 
 export const PRESET_MENU_ACCENTS = ["subtle", "bold"] as const;
+
 export const PRESET_MENU_COLORS = [
   "default",
   "inverted",
@@ -106,11 +145,15 @@ type PresetFieldKey =
   | "style"
   | "baseColor"
   | "theme"
+  | "chartColor"
   | "iconLibrary"
   | "font"
+  | "fontHeading"
   | "radius"
   | "menuAccent"
   | "menuColor";
+
+type PresetVersion = "a" | "b" | "c";
 
 type PresetFieldDefinition = {
   key: PresetFieldKey;
@@ -119,8 +162,9 @@ type PresetFieldDefinition = {
 };
 
 type PresetVersionDefinition = {
-  version: "a" | "b";
+  version: PresetVersion;
   fields: readonly PresetFieldDefinition[];
+  kind: "shadcn-v1" | "shadcn-v2" | "bejamas-v2" | "bejamas-v3";
 };
 
 const PRESET_FIELDS_A = [
@@ -129,16 +173,18 @@ const PRESET_FIELDS_A = [
   { key: "radius", values: PRESET_RADII, bits: 4 },
   { key: "font", values: PRESET_FONTS, bits: 6 },
   { key: "iconLibrary", values: PRESET_ICON_LIBRARIES, bits: 6 },
-  { key: "theme", values: PRESET_THEMES, bits: 6 },
+  { key: "theme", values: SHARED_PRESET_THEMES, bits: 6 },
   { key: "baseColor", values: PRESET_BASE_COLORS, bits: 6 },
-  {
-    key: "style",
-    values: ["nova", "vega", "maia", "lyra", "mira"] as const,
-    bits: 6,
-  },
+  { key: "style", values: SHARED_PRESET_STYLES, bits: 6 },
 ] as const satisfies readonly PresetFieldDefinition[];
 
-const PRESET_FIELDS_B = [
+const PRESET_FIELDS_B_SHARED = [
+  ...PRESET_FIELDS_A,
+  { key: "chartColor", values: PRESET_CHART_COLORS, bits: 6 },
+  { key: "fontHeading", values: PRESET_FONT_HEADINGS, bits: 5 },
+] as const satisfies readonly PresetFieldDefinition[];
+
+const PRESET_FIELDS_B_LEGACY = [
   { key: "menuColor", values: PRESET_MENU_COLORS, bits: 3 },
   { key: "menuAccent", values: PRESET_MENU_ACCENTS, bits: 3 },
   { key: "radius", values: PRESET_RADII, bits: 4 },
@@ -149,27 +195,58 @@ const PRESET_FIELDS_B = [
   { key: "style", values: PRESET_STYLES, bits: 6 },
 ] as const satisfies readonly PresetFieldDefinition[];
 
-const PRESET_VERSIONS = [
-  {
-    version: "a",
-    fields: PRESET_FIELDS_A,
-  },
-  {
-    version: "b",
-    fields: PRESET_FIELDS_B,
-  },
-] as const satisfies readonly PresetVersionDefinition[];
+const PRESET_FIELDS_C = [
+  ...PRESET_FIELDS_B_LEGACY,
+  { key: "fontHeading", values: PRESET_FONT_HEADINGS, bits: 5 },
+] as const satisfies readonly PresetFieldDefinition[];
 
-const PRESET_VERSION_MAP = new Map(
-  PRESET_VERSIONS.map((version) => [version.version, version]),
-);
+const PRESET_VERSION_A = {
+  version: "a",
+  fields: PRESET_FIELDS_A,
+  kind: "shadcn-v1",
+} as const satisfies PresetVersionDefinition;
+
+const PRESET_VERSION_B_SHARED = {
+  version: "b",
+  fields: PRESET_FIELDS_B_SHARED,
+  kind: "shadcn-v2",
+} as const satisfies PresetVersionDefinition;
+
+const PRESET_VERSION_B_LEGACY = {
+  version: "b",
+  fields: PRESET_FIELDS_B_LEGACY,
+  kind: "bejamas-v2",
+} as const satisfies PresetVersionDefinition;
+
+const PRESET_VERSION_C = {
+  version: "c",
+  fields: PRESET_FIELDS_C,
+  kind: "bejamas-v3",
+} as const satisfies PresetVersionDefinition;
+
+const PRESET_VERSIONS = [
+  PRESET_VERSION_A,
+  PRESET_VERSION_B_LEGACY,
+  PRESET_VERSION_B_SHARED,
+  PRESET_VERSION_C,
+] as const;
+
+const PRESET_VERSION_MAP = new Map([
+  ["a", PRESET_VERSION_A],
+  ["c", PRESET_VERSION_C],
+]);
+
+const VALID_VERSIONS = ["a", "b", "c"] as const;
+const MAX_LEGACY_B_PRESET_LENGTH = 8;
 
 export type PresetConfig = {
   style: (typeof PRESET_STYLES)[number];
   baseColor: (typeof PRESET_BASE_COLORS)[number];
   theme: (typeof PRESET_THEMES)[number];
+  chartColor?: (typeof PRESET_CHART_COLORS)[number];
   iconLibrary: (typeof PRESET_ICON_LIBRARIES)[number];
   font: (typeof PRESET_FONTS)[number];
+  fontHeading: (typeof PRESET_FONT_HEADINGS)[number];
   radius: (typeof PRESET_RADII)[number];
   menuAccent: (typeof PRESET_MENU_ACCENTS)[number];
   menuColor: (typeof PRESET_MENU_COLORS)[number];
@@ -181,6 +258,7 @@ export const DEFAULT_PRESET_CONFIG: PresetConfig = {
   theme: "bejamas-blue",
   iconLibrary: "lucide",
   font: "inter",
+  fontHeading: "inherit",
   radius: "default",
   menuAccent: "subtle",
   menuColor: "default",
@@ -219,12 +297,97 @@ export function fromBase62(value: string) {
   return result;
 }
 
+function omitUndefined<T extends Record<string, unknown>>(value: T) {
+  return Object.fromEntries(
+    Object.entries(value).filter(([, entry]) => entry !== undefined),
+  ) as T;
+}
+
+function hasValue<T extends readonly string[]>(
+  values: T,
+  value: string | undefined,
+): value is T[number] {
+  return value !== undefined && values.includes(value);
+}
+
+function isBejamasOnlyTheme(
+  value: string | undefined,
+): value is Exclude<(typeof PRESET_THEMES)[number], (typeof SHARED_PRESET_THEMES)[number]> {
+  return value === "bejamas-blue" || value === "bejamas-neon-yellow";
+}
+
+function hasBejamasOnlyValues(config: Partial<PresetConfig>) {
+  return config.style === "juno" || isBejamasOnlyTheme(config.theme);
+}
+
+function resolveChartColorValue(
+  config: Partial<PresetConfig>,
+): (typeof PRESET_CHART_COLORS)[number] {
+  if (hasValue(PRESET_CHART_COLORS, config.chartColor)) {
+    return config.chartColor;
+  }
+
+  if (hasValue(PRESET_BASE_COLORS, config.theme)) {
+    return V1_CHART_COLOR_MAP[config.theme] ?? config.theme;
+  }
+
+  if (hasValue(PRESET_CHART_COLORS, config.theme)) {
+    return config.theme;
+  }
+
+  return PRESET_CHART_COLORS[0];
+}
+
+function normalizePresetConfig(config: Partial<PresetConfig>): PresetConfig {
+  const merged = {
+    ...DEFAULT_PRESET_CONFIG,
+    ...config,
+  };
+  const normalizedFontHeading =
+    merged.fontHeading === merged.font ? "inherit" : merged.fontHeading;
+
+  return omitUndefined({
+    ...merged,
+    fontHeading: normalizedFontHeading,
+    chartColor: hasValue(PRESET_CHART_COLORS, merged.chartColor)
+      ? merged.chartColor
+      : undefined,
+  }) as PresetConfig;
+}
+
+function getEncodedFieldValue(
+  config: PresetConfig,
+  field: PresetFieldDefinition,
+  version: PresetVersionDefinition,
+) {
+  if (field.key === "chartColor") {
+    return resolveChartColorValue(config);
+  }
+
+  return config[field.key];
+}
+
 function canEncodeWithVersion(
   config: PresetConfig,
   version: PresetVersionDefinition,
 ) {
+  if (
+    version.kind !== "shadcn-v2" &&
+    hasValue(PRESET_CHART_COLORS, config.chartColor)
+  ) {
+    return false;
+  }
+
+  if (
+    version.kind !== "shadcn-v2" &&
+    version.kind !== "bejamas-v3" &&
+    config.fontHeading !== DEFAULT_PRESET_CONFIG.fontHeading
+  ) {
+    return false;
+  }
+
   return version.fields.every((field) =>
-    field.values.includes(config[field.key]),
+    field.values.includes(getEncodedFieldValue(config, field, version)),
   );
 }
 
@@ -236,7 +399,7 @@ function encodePresetWithVersion(
   let offset = 0;
 
   for (const field of version.fields) {
-    const index = field.values.indexOf(config[field.key]);
+    const index = field.values.indexOf(getEncodedFieldValue(config, field, version));
     bits += (index === -1 ? 0 : index) * 2 ** offset;
     offset += field.bits;
   }
@@ -247,7 +410,7 @@ function encodePresetWithVersion(
 function decodePresetWithVersion(
   code: string,
   version: PresetVersionDefinition,
-): PresetConfig | null {
+): Partial<PresetConfig> | null {
   const bits = fromBase62(code.slice(1));
   if (bits < 0) {
     return null;
@@ -263,11 +426,30 @@ function decodePresetWithVersion(
     offset += field.bits;
   }
 
-  return result as PresetConfig;
+  return result as Partial<PresetConfig>;
+}
+
+function normalizeDecodedPreset(
+  decoded: Partial<PresetConfig>,
+): PresetConfig {
+  return normalizePresetConfig(decoded);
+}
+
+function shouldDecodeLegacyBejamasB(code: string) {
+  if (code.length > MAX_LEGACY_B_PRESET_LENGTH) {
+    return false;
+  }
+
+  const decoded = decodePresetWithVersion(code, PRESET_VERSION_B_LEGACY);
+  if (!decoded) {
+    return false;
+  }
+
+  return hasBejamasOnlyValues(decoded);
 }
 
 export function encodePreset(config: Partial<PresetConfig>) {
-  const merged = { ...DEFAULT_PRESET_CONFIG, ...config };
+  const merged = normalizePresetConfig(config);
 
   for (const version of PRESET_VERSIONS) {
     if (canEncodeWithVersion(merged, version)) {
@@ -275,10 +457,7 @@ export function encodePreset(config: Partial<PresetConfig>) {
     }
   }
 
-  return encodePresetWithVersion(
-    merged,
-    PRESET_VERSIONS[PRESET_VERSIONS.length - 1],
-  );
+  return encodePresetWithVersion(merged, PRESET_VERSION_C);
 }
 
 export function decodePreset(code: string): PresetConfig | null {
@@ -286,12 +465,28 @@ export function decodePreset(code: string): PresetConfig | null {
     return null;
   }
 
-  const version = PRESET_VERSION_MAP.get(code[0] as "a" | "b");
-  if (!version) {
+  const version = code[0] as (typeof VALID_VERSIONS)[number];
+  if (!VALID_VERSIONS.includes(version)) {
     return null;
   }
 
-  return decodePresetWithVersion(code, version);
+  if (version === "b") {
+    const presetVersion = shouldDecodeLegacyBejamasB(code)
+      ? PRESET_VERSION_B_LEGACY
+      : PRESET_VERSION_B_SHARED;
+    const decoded = decodePresetWithVersion(code, presetVersion);
+
+    return decoded ? normalizeDecodedPreset(decoded) : null;
+  }
+
+  const presetVersion = PRESET_VERSION_MAP.get(version);
+  if (!presetVersion) {
+    return null;
+  }
+
+  const decoded = decodePresetWithVersion(code, presetVersion);
+
+  return decoded ? normalizeDecodedPreset(decoded) : null;
 }
 
 export function isPresetCode(value: string) {
@@ -299,7 +494,7 @@ export function isPresetCode(value: string) {
     return false;
   }
 
-  if (!PRESET_VERSION_MAP.has(value[0] as "a" | "b")) {
+  if (!VALID_VERSIONS.includes(value[0] as (typeof VALID_VERSIONS)[number])) {
     return false;
   }
 

@@ -31,6 +31,7 @@ interface Props {
   iconLibraryLabel?: string;
   styleLabel?: string;
   fontLabel?: string;
+  fontHeadingLabel?: string | null;
   radiusLabel?: string;
   menuColorLabel?: string;
   menuInverted?: boolean;
@@ -42,6 +43,7 @@ const {
   iconLibraryLabel,
   styleLabel,
   fontLabel,
+  fontHeadingLabel = null,
   radiusLabel,
   menuColorLabel = "default",
   menuInverted = false,
@@ -62,6 +64,7 @@ const {
         <StyleOverview
           styleLabel={styleLabel}
           fontLabel={fontLabel}
+          fontHeadingLabel={fontHeadingLabel}
           radiusLabel={radiusLabel}
         />
         <CodespacesCard

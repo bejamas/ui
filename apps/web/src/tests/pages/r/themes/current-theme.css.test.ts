@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import type { AstroCookies } from "astro";
 import { encodePreset } from "@bejamas/create-config/server";
 import { GET } from "../../../../pages/r/themes/current-theme.css";
 
@@ -9,7 +10,7 @@ describe("current-theme.css", () => {
         get() {
           return undefined;
         },
-      } as AstroCookies,
+      } as unknown as AstroCookies,
     });
     const css = await response.text();
 
@@ -43,12 +44,12 @@ describe("current-theme.css", () => {
 
           return { value: preset };
         },
-      } as AstroCookies,
+      } as unknown as AstroCookies,
     });
     const css = await response.text();
 
     expect(css).toContain("Playfair Display Variable");
-    expect(css).toContain("--radius: 0.875rem;");
+    expect(css).toContain("--radius: 0;");
     expect(css).toContain(
       "@layer base, starlight.reset, starlight, bejamas, theme, components, utilities;",
     );
@@ -57,6 +58,30 @@ describe("current-theme.css", () => {
     expect(css).not.toContain(".style-lyra");
     expect(css).toContain("oklch(");
     expect(css).not.toContain("hsl(");
+  });
+
+  test("keeps body and heading font tokens separate for distinct heading presets", async () => {
+    const preset = encodePreset({
+      style: "juno",
+      font: "inter",
+      fontHeading: "playfair-display",
+      theme: "neutral",
+    });
+    const response = await GET({
+      cookies: {
+        get(name: string) {
+          if (name !== "theme") {
+            return undefined;
+          }
+
+          return { value: preset };
+        },
+      } as unknown as AstroCookies,
+    });
+    const css = await response.text();
+
+    expect(css).toContain("--font-sans: 'Inter Variable', sans-serif;");
+    expect(css).toContain("--font-heading: 'Playfair Display Variable', serif;");
   });
 
   test("uses upstream-compatible a-codes when decoding create preset cookies", async () => {
@@ -69,13 +94,31 @@ describe("current-theme.css", () => {
 
           return { value: "abVJxYW" };
         },
-      } as AstroCookies,
+      } as unknown as AstroCookies,
     });
     const css = await response.text();
 
     expect(css).toContain(".cn-card");
     expect(css).toContain("--radius: 0.875rem;");
     expect(css).not.toContain(".style-maia");
+  });
+
+  test("uses modern shadcn b-codes with separate body and heading fonts", async () => {
+    const response = await GET({
+      cookies: {
+        get(name: string) {
+          if (name !== "theme") {
+            return undefined;
+          }
+
+          return { value: "b4aRK5K0fb" };
+        },
+      } as unknown as AstroCookies,
+    });
+    const css = await response.text();
+
+    expect(css).toContain("--font-sans: 'IBM Plex Sans Variable', sans-serif;");
+    expect(css).toContain("--font-heading: 'Merriweather Variable', serif;");
   });
 
   test("uses the style-linked default radius for create presets", async () => {
@@ -92,7 +135,7 @@ describe("current-theme.css", () => {
 
           return { value: preset };
         },
-      } as AstroCookies,
+      } as unknown as AstroCookies,
     });
     const css = await response.text();
 
@@ -109,7 +152,7 @@ describe("current-theme.css", () => {
 
           return { value: "rome" };
         },
-      } as AstroCookies,
+      } as unknown as AstroCookies,
     });
     const css = await response.text();
 

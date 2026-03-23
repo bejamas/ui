@@ -1,12 +1,14 @@
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
+  DEFAULT_PRESET_CONFIG,
   catalogs,
   decodePreset,
   encodePreset,
   isPresetCode,
   type DesignSystemConfig,
+  type PresetConfig,
 } from "@bejamas/create-config/server";
-import type { ThemeStyles } from "@/types/theme";
+import type { ThemeStyles } from "@/utils/types/theme";
 import { type ThemeOverrides } from "./create-theme";
 import { getThemeOverridesByRef } from "./create-theme.server";
 import { resolveDesignSystemTheme } from "./design-system-adapter";
@@ -45,6 +47,20 @@ type CuratedPresetDefinition = {
   config: DesignSystemConfig;
 };
 
+function toPresetConfig(config: DesignSystemConfig): Partial<PresetConfig> {
+  return {
+    style: config.style,
+    baseColor: config.baseColor,
+    theme: config.theme,
+    iconLibrary: config.iconLibrary,
+    font: config.font,
+    fontHeading: config.fontHeading,
+    radius: config.radius,
+    menuAccent: config.menuAccent,
+    menuColor: config.menuColor,
+  } as Partial<PresetConfig>;
+}
+
 const CURATED_HEADER_PRESET_DEFINITIONS = [
   {
     config: {
@@ -53,6 +69,7 @@ const CURATED_HEADER_PRESET_DEFINITIONS = [
       theme: "indigo",
       iconLibrary: "lucide",
       font: "inter",
+      fontHeading: "inherit",
       radius: "default",
       menuColor: "default",
       menuAccent: "subtle",
@@ -68,6 +85,7 @@ const CURATED_HEADER_PRESET_DEFINITIONS = [
       theme: "amber",
       iconLibrary: "lucide",
       font: "playfair-display",
+      fontHeading: "inherit",
       radius: "default",
       menuColor: "default",
       menuAccent: "subtle",
@@ -83,6 +101,7 @@ const CURATED_HEADER_PRESET_DEFINITIONS = [
       theme: "cyan",
       iconLibrary: "lucide",
       font: "geist-mono",
+      fontHeading: "inherit",
       radius: "default",
       menuColor: "default",
       menuAccent: "subtle",
@@ -104,7 +123,10 @@ function getPresetLabel(config: Pick<DesignSystemConfig, "style" | "font">) {
   return `${styleLabel} - ${fontLabel}`;
 }
 
-function getSwatchesFromStyles(styles: ThemeStyles): HeaderPresetSwatches {
+function getSwatchesFromStyles(styles: {
+  light: Partial<ThemeStyles["light"]>;
+  dark: Partial<ThemeStyles["dark"]>;
+}): HeaderPresetSwatches {
   return {
     light: {
       primary: styles.light.primary ?? "oklch(0.2 0 0)",
@@ -167,7 +189,7 @@ function buildResolvedPresetSummary(
 function buildCuratedPresetOption(
   definition: CuratedPresetDefinition,
 ): HeaderPresetOption {
-  const presetId = encodePreset(definition.config);
+  const presetId = encodePreset(toPresetConfig(definition.config));
   const resolved = resolveDesignSystemTheme(definition.config);
 
   return {
@@ -182,7 +204,7 @@ function buildCuratedPresetOption(
 
 function buildDefaultCurrentSummary(): HeaderPresetSummary {
   return buildResolvedPresetSummary(
-    encodePreset(DEFAULT_DESIGN_SYSTEM_CONFIG),
+    encodePreset(DEFAULT_PRESET_CONFIG),
     DEFAULT_DESIGN_SYSTEM_CONFIG,
     null,
   );
@@ -232,7 +254,7 @@ export function buildHeaderPresetSwitcherState(options: {
       current: {
         ...buildDefaultCurrentSummary(),
         createHref: buildCreateHref(
-          encodePreset(DEFAULT_DESIGN_SYSTEM_CONFIG),
+          encodePreset(DEFAULT_PRESET_CONFIG),
           themeRef,
         ),
         themeRef,

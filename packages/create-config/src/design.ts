@@ -1,4 +1,4 @@
-import { fonts } from "./catalog/fonts";
+import { bodyFonts, headingFonts } from "./catalog/fonts";
 import { BASE_COLORS } from "./catalog/base-colors";
 import { STYLES } from "./catalog/styles";
 import { THEMES } from "./catalog/themes";
@@ -10,6 +10,8 @@ import {
 import {
   getBaseColor,
   getFontValue,
+  getHeadingFontValue,
+  getInheritedHeadingFontValue,
   getRadiusValue,
   getStyleId,
   getTheme,
@@ -91,10 +93,22 @@ export function buildRegistryTheme(config: DesignSystemConfig) {
   }
 
   const font = getFontValue(config.font);
+  const normalizedFontHeading =
+    config.fontHeading === config.font ? "inherit" : config.fontHeading;
   const themeVars: Record<string, string> = {};
 
   if (font) {
     themeVars["bejamas-font-family"] = font.font.family;
+  }
+
+  if (normalizedFontHeading === "inherit") {
+    themeVars["font-heading"] = getInheritedHeadingFontValue(config.font);
+  } else {
+    const headingFont = getHeadingFontValue(normalizedFontHeading);
+
+    if (headingFont) {
+      themeVars["font-heading"] = headingFont.font.family;
+    }
   }
 
   return {
@@ -131,7 +145,8 @@ export function buildThemeCss(config: DesignSystemConfig) {
 export const catalogs = {
   themes: THEMES,
   baseColors: BASE_COLORS,
-  fonts,
+  fonts: bodyFonts,
+  headingFonts,
   styles: STYLES,
   iconLibraries: ICON_LIBRARIES,
 };

@@ -33,6 +33,7 @@ describe("create sidebar helpers", () => {
   it("exposes the expected customizer labels", () => {
     expect(CREATE_PICKER_LABELS.style).toBe("Style");
     expect(CREATE_PICKER_LABELS.baseColor).toBe("Base Color");
+    expect(CREATE_PICKER_LABELS.fontHeading).toBe("Heading");
     expect(CREATE_PICKER_LABELS.template).toBe("Template");
     expect(CREATE_PICKER_LABELS.rtlLanguage).toBe("Language");
   });
@@ -172,6 +173,25 @@ describe("create sidebar helpers", () => {
     ]);
   });
 
+  it("pins a same-as-body option at the top of the heading font picker", () => {
+    const options = getCreatePickerOptions({
+      baseColor: "neutral",
+      style: "juno",
+      font: "playfair-display",
+    });
+
+    expect(options.fontHeading[0]).toMatchObject({
+      value: "inherit",
+      label: "Playfair Display",
+    });
+    expect("group" in (options.fontHeading[0] ?? {})).toBe(false);
+    expect(
+      options.fontHeading.find((option) => option.value === "inter"),
+    ).toMatchObject({
+      group: "sans",
+    });
+  });
+
   it("exposes font-group helpers for the grouped font picker", () => {
     expect(CREATE_FONT_GROUPS).toEqual(["sans", "serif", "mono"]);
     expect(isCreateFontGroup("sans")).toBe(true);
@@ -295,6 +315,7 @@ describe("create sidebar helpers", () => {
       "baseColor",
       "theme",
       "iconLibrary",
+      "fontHeading",
       "font",
       "radius",
       "menuColor",
@@ -381,6 +402,65 @@ describe("create sidebar helpers", () => {
     );
 
     expect(config.font).toBe("inter");
+  });
+
+  it("defaults heading shuffles to inherit most of the time", () => {
+    const config = withMockedRandom(0.69, () =>
+      createRandomDesignSystemConfig(
+        {
+          style: "juno",
+          baseColor: "neutral",
+          theme: "neutral",
+          iconLibrary: "lucide",
+          font: "inter",
+          fontHeading: "playfair-display",
+          radius: "default",
+          menuColor: "default",
+          menuAccent: "subtle",
+          template: "astro",
+          rtl: false,
+          rtlLanguage: "ar",
+        },
+        {
+          locked: ["font"],
+        },
+      ),
+    );
+
+    expect(config.font).toBe("inter");
+    expect(config.fontHeading).toBe("inherit");
+  });
+
+  it("picks a contrasting heading font when it does not inherit", () => {
+    const config = withMockedRandom(0.99, () =>
+      createRandomDesignSystemConfig(
+        {
+          style: "juno",
+          baseColor: "neutral",
+          theme: "neutral",
+          iconLibrary: "lucide",
+          font: "inter",
+          fontHeading: "inherit",
+          radius: "default",
+          menuColor: "default",
+          menuAccent: "subtle",
+          template: "astro",
+          rtl: false,
+          rtlLanguage: "ar",
+        },
+        {
+          locked: ["font"],
+          lockedFontGroup: "mono",
+        },
+      ),
+    );
+
+    expect(config.font).toBe("inter");
+    expect(config.fontHeading).not.toBe("inherit");
+    expect(config.fontHeading).not.toBe(config.font);
+    expect(getFontGroupForFontValue(config.fontHeading)).not.toBe(
+      getFontGroupForFontValue(config.font),
+    );
   });
 
   it("keeps the base color when theme is locked to a base theme", () => {

@@ -17,10 +17,16 @@ import {
 interface Props {
   styleLabel?: string;
   fontLabel?: string;
+  fontHeadingLabel?: string | null;
   radiusLabel?: string;
 }
 
-const { styleLabel, fontLabel, radiusLabel = "default" } = Astro.props as Props;
+const {
+  styleLabel,
+  fontLabel,
+  fontHeadingLabel = null,
+  radiusLabel = "default",
+} = Astro.props as Props;
 
 const overviewTokens = [
   "--background",
@@ -38,7 +44,14 @@ const overviewTokens = [
 ] as const;
 
 const summary =
-  [styleLabel, fontLabel].filter(Boolean).join(" - ") || "Juno - Inter";
+  [
+    styleLabel,
+    fontHeadingLabel && fontHeadingLabel !== fontLabel
+      ? `${fontLabel} / ${fontHeadingLabel}`
+      : fontLabel,
+  ]
+    .filter(Boolean)
+    .join(" - ") || "Juno - Inter";
 ---
 
 <Card class="w-full">

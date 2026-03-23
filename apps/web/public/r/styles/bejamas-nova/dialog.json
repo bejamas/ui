@@ -41,7 +41,7 @@
     {
       "path": "ui/dialog/DialogTitle.astro",
       "type": "registry:ui",
-      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst { class: className = \"\", ...rest } = Astro.props as Props;\n---\n\n<div\n  {...rest}\n  data-slot=\"dialog-title\"\n  class={cn(\"text-base leading-none font-medium\", className)}\n>\n  <slot />\n</div>\n"
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst { class: className = \"\", ...rest } = Astro.props as Props;\n---\n\n<div\n  {...rest}\n  data-slot=\"dialog-title\"\n  class={cn(\"text-base leading-none font-medium cn-font-heading\", className)}\n>\n  <slot />\n</div>\n"
     },
     {
       "path": "ui/dialog/DialogTrigger.astro",

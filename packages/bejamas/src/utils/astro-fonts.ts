@@ -5,6 +5,7 @@ import {
   fonts,
   getFontPackageName,
   getFontValue,
+  getHeadingFontValue,
   type DesignSystemConfig,
 } from "@bejamas/create-config/server";
 
@@ -435,9 +436,15 @@ export function patchStarlightHeadSource(
 }
 
 export function toManagedAstroFont(
-  fontName: DesignSystemConfig["font"],
+  fontName: string,
 ): ManagedAstroFont | null {
-  const font = getFontValue(fontName);
+  const normalized = fontName.replace(/^font-heading-/, "").replace(/^font-/, "");
+  const font =
+    fontName.startsWith("font-heading-")
+      ? getHeadingFontValue(
+          normalized as Exclude<DesignSystemConfig["fontHeading"], "inherit">,
+        )
+      : getFontValue(normalized as DesignSystemConfig["font"]);
   if (
     !font ||
     font.type !== "registry:font" ||
@@ -449,9 +456,13 @@ export function toManagedAstroFont(
   }
 
   return {
-    name: font.title ?? font.font.import.replace(/_/g, " "),
+    name:
+      font.title?.replace(/\s+\(Heading\)$/, "") ??
+      font.font.import.replace(/_/g, " "),
     cssVariable: font.font.variable,
-    provider: ASTRO_FONTSOURCE_FONT_NAMES.has(fontName)
+    provider: ASTRO_FONTSOURCE_FONT_NAMES.has(
+      normalized as DesignSystemConfig["font"],
+    )
       ? "fontsource"
       : "google",
     subsets: normalizeManagedAstroFontSubsets(font.font.subsets),
@@ -567,7 +578,9 @@ export async function cleanupAstroFontPackages(projectPath: string) {
       .filter((font) => font.type === "registry:font")
       .map((font) =>
         getFontPackageName(
-          font.name.replace(/^font-/, "") as DesignSystemConfig["font"],
+          font.name
+            .replace(/^font-heading-/, "")
+            .replace(/^font-/, "") as DesignSystemConfig["font"],
         ),
       ),
   );

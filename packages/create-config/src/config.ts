@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BASE_COLORS } from "./catalog/base-colors";
-import { fonts } from "./catalog/fonts";
+import { bodyFonts, headingFonts } from "./catalog/fonts";
 import { STYLES } from "./catalog/styles";
 import { THEMES } from "./catalog/themes";
 import {
@@ -26,10 +26,14 @@ export const DEFAULT_LANGUAGE = "en" as const;
 export type RtlLanguageValue = (typeof RTL_LANGUAGE_VALUES)[number];
 export type AppLanguageValue = (typeof APP_LANGUAGE_VALUES)[number];
 
-const FONT_VALUES = fonts.map((font) => font.name.replace("font-", "")) as [
+const FONT_VALUES = bodyFonts.map((font) => font.name.replace("font-", "")) as [
   string,
   ...string[],
 ];
+const FONT_HEADING_VALUES = ["inherit", ...FONT_VALUES] as const;
+
+export type FontValue = (typeof FONT_VALUES)[number];
+export type FontHeadingValue = (typeof FONT_HEADING_VALUES)[number];
 
 export const designSystemConfigSchema = z
   .object({
@@ -40,6 +44,7 @@ export const designSystemConfigSchema = z
     theme: z.enum(THEMES.map((theme) => theme.name) as [string, ...string[]]),
     iconLibrary: z.enum(PRESET_ICON_LIBRARIES),
     font: z.enum(FONT_VALUES),
+    fontHeading: z.enum(FONT_HEADING_VALUES).default("inherit"),
     radius: z.enum(PRESET_RADII),
     menuAccent: z.enum(PRESET_MENU_ACCENTS),
     menuColor: z.enum(PRESET_MENU_COLORS),
@@ -131,7 +136,7 @@ export function getStyleDefaultRadius(style: DesignSystemConfig["style"]) {
 }
 
 export function getStyleLockedConfig(style: DesignSystemConfig["style"]) {
-  return STYLE_LOCKED_VALUES[style] ?? {};
+  return STYLE_LOCKED_VALUES[style as keyof typeof STYLE_LOCKED_VALUES] ?? {};
 }
 
 export function getLockedStyleValue<
@@ -151,8 +156,12 @@ export function isStyleOptionLocked(
 }
 
 export function normalizeDesignSystemConfig(config: DesignSystemConfig) {
+  const normalizedFontHeading =
+    config.fontHeading === config.font ? "inherit" : config.fontHeading;
+
   return {
     ...config,
+    fontHeading: normalizedFontHeading,
     ...getStyleLockedConfig(config.style),
   };
 }
@@ -190,11 +199,21 @@ export function isTranslucentMenuColor(
   );
 }
 
-export function getFontValue(name: DesignSystemConfig["font"]) {
-  return fonts.find((font) => font.name === `font-${name}`);
+export function getFontValue(name: FontValue) {
+  return bodyFonts.find((font) => font.name === `font-${name}`);
 }
 
-export function getFontPackageName(name: DesignSystemConfig["font"]) {
+export function getHeadingFontValue(
+  name: Exclude<FontHeadingValue, "inherit">,
+) {
+  return headingFonts.find((font) => font.name === `font-heading-${name}`);
+}
+
+export function getInheritedHeadingFontValue(font: FontValue) {
+  return `var(${getFontValue(font)?.font.variable ?? "--font-sans"})`;
+}
+
+export function getFontPackageName(name: FontValue) {
   return `@fontsource-variable/${name}`;
 }
 

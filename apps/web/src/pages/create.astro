@@ -38,7 +38,8 @@ const requestedThemeRef = resolveCreateThemeRef(Astro.url.searchParams, {
 });
 const themeOverrides = await getThemeOverridesByRef(requestedThemeRef);
 const themeRef = themeOverrides ? requestedThemeRef : null;
-const preset = encodePreset(config);
+const preset =
+  result.success && result.preset ? result.preset : encodePreset(config);
 const previewTarget = resolveCreatePreviewTarget(Astro.url.searchParams);
 const previewUrl = buildCreatePreviewUrl(config, preset, {
   previewTarget,

@@ -14,6 +14,7 @@ describe("preset codec versions", () => {
       menuAccent: "subtle",
       radius: "default",
       font: "inter",
+      fontHeading: "inherit",
       iconLibrary: "lucide",
       theme: "neutral",
       baseColor: "neutral",
@@ -27,6 +28,7 @@ describe("preset codec versions", () => {
         theme: "neutral",
         iconLibrary: "lucide",
         font: "inter",
+        fontHeading: "inherit",
         radius: "default",
         menuAccent: "subtle",
         menuColor: "default",
@@ -59,6 +61,7 @@ describe("preset codec versions", () => {
       menuAccent: "subtle",
       radius: "default",
       font: "inter",
+      fontHeading: "inherit",
       iconLibrary: "lucide",
       theme: "neutral",
       baseColor: "neutral",
@@ -69,6 +72,63 @@ describe("preset codec versions", () => {
   it("accepts both preset-code versions", () => {
     expect(isPresetCode("abVJxYW")).toBe(true);
     expect(isPresetCode(encodePreset({ style: "juno" }))).toBe(true);
+  });
+
+  it("emits c-codes when the heading font differs from the body font", () => {
+    const preset = encodePreset({
+      style: "juno",
+      baseColor: "neutral",
+      theme: "bejamas-blue",
+      iconLibrary: "lucide",
+      font: "geist",
+      fontHeading: "playfair-display",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+
+    expect(preset.startsWith("c")).toBe(true);
+    expect(decodePreset(preset)).toEqual({
+      style: "juno",
+      baseColor: "neutral",
+      theme: "bejamas-blue",
+      iconLibrary: "lucide",
+      font: "geist",
+      fontHeading: "playfair-display",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+  });
+
+  it("decodes and re-encodes modern shadcn b-codes with heading fonts", () => {
+    expect(decodePreset("b4aRK5K0fb")).toEqual({
+      style: "maia",
+      baseColor: "mauve",
+      theme: "emerald",
+      chartColor: "red",
+      iconLibrary: "hugeicons",
+      font: "ibm-plex-sans",
+      fontHeading: "merriweather",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "inverted-translucent",
+    });
+
+    expect(
+      encodePreset({
+        style: "maia",
+        baseColor: "mauve",
+        theme: "emerald",
+        chartColor: "red",
+        iconLibrary: "hugeicons",
+        font: "ibm-plex-sans",
+        fontHeading: "merriweather",
+        radius: "default",
+        menuAccent: "subtle",
+        menuColor: "inverted-translucent",
+      }),
+    ).toBe("b4aRK5K0fb");
   });
 
   it("round-trips curated bejamas blue without changing legacy codes", () => {
@@ -89,6 +149,7 @@ describe("preset codec versions", () => {
       theme: "bejamas-blue",
       iconLibrary: "lucide",
       font: "geist",
+      fontHeading: "inherit",
       radius: "default",
       menuAccent: "subtle",
       menuColor: "default",
@@ -100,6 +161,7 @@ describe("preset codec versions", () => {
         theme: "neutral",
         iconLibrary: "lucide",
         font: "inter",
+        fontHeading: "inherit",
         radius: "default",
         menuAccent: "subtle",
         menuColor: "default",

@@ -3,6 +3,7 @@ import { colorFormatter } from "./color-converter";
 
 export const COMMON_NON_COLOR_KEYS = [
   "font-sans",
+  "font-heading",
   "font-serif",
   "font-mono",
   "radius",

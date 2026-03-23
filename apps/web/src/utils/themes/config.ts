@@ -7,6 +7,7 @@ export const COMMON_STYLES = [...COMMON_NON_COLOR_KEYS];
 
 export const DEFAULT_FONT_SANS =
   "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'";
+export const DEFAULT_FONT_HEADING = DEFAULT_FONT_SANS;
 
 export const DEFAULT_FONT_SERIF =
   'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif';
@@ -50,6 +51,7 @@ export const defaultLightThemeStyles = {
   "sidebar-border": "oklch(0.922 0 0)",
   "sidebar-ring": "oklch(0.708 0 0)",
   "font-sans": DEFAULT_FONT_SANS,
+  "font-heading": DEFAULT_FONT_HEADING,
   "font-serif": DEFAULT_FONT_SERIF,
   "font-mono": DEFAULT_FONT_MONO,
 

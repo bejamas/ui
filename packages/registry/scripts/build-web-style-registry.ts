@@ -36,7 +36,11 @@ const stylesRoot = path.resolve(webRoot, "public/r/styles");
 const templateStyleDir = path.resolve(stylesRoot, STYLES[0].id);
 const registrySourceRoot = path.resolve(__dirname, "..", "src");
 const schemaUrl = "https://ui.shadcn.com/schema/registry-item.json";
-const preservedTokens = new Set(["cn-menu-target", "cn-menu-translucent"]);
+const preservedTokens = new Set([
+  "cn-font-heading",
+  "cn-menu-target",
+  "cn-menu-translucent",
+]);
 const templateCache = new Map<string, RegistryItem>();
 const fileContentCache = new Map<string, string>();
 

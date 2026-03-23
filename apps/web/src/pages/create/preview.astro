@@ -93,6 +93,13 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
               (font) => font.name === `font-${currentConfig.font}`,
             )?.title ?? currentConfig.font
           }
+          fontHeadingLabel={
+            currentConfig.fontHeading === "inherit"
+              ? null
+              : (catalogs.fonts.find(
+                  (font) => font.name === `font-${currentConfig.fontHeading}`,
+                )?.title ?? currentConfig.fontHeading)
+          }
           radiusLabel={currentRadiusLabel}
           menuColorLabel={
             getCreatePickerSelectedOption("menuColor", currentConfig)?.label ??

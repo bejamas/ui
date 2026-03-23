@@ -8,6 +8,7 @@
 
 @theme inline {
   --font-sans: var(--bejamas-font-family, ui-sans-serif, system-ui, sans-serif);
+  --font-heading: var(--font-heading);
   --font-serif: var(
     --bejamas-font-family-serif,
     ui-serif,
@@ -168,6 +169,9 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  .cn-font-heading {
+    @apply font-heading;
   }
   body {
     @apply bg-background text-foreground;

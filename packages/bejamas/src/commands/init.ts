@@ -436,11 +436,20 @@ export async function runInit(
 
     await syncManagedTailwindCss(options.cwd);
 
-    const managedFont = toManagedAstroFont(designConfig.font);
-    if (managedFont) {
+    const managedFonts = [
+      toManagedAstroFont(designConfig.font),
+      designConfig.fontHeading !== "inherit"
+        ? toManagedAstroFont(`font-heading-${designConfig.fontHeading}`)
+        : null,
+    ].filter((font): font is NonNullable<typeof font> => font !== null);
+    const managedFont = managedFonts.find(
+      (font) => font.cssVariable !== "--font-heading",
+    );
+
+    if (managedFonts.length > 0 && managedFont) {
       await syncAstroFontsInProject(
         options.cwd,
-        [managedFont],
+        managedFonts,
         managedFont.cssVariable,
       );
       await syncAstroManagedFontCss(options.cwd, managedFont.cssVariable);
