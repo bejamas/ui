@@ -1,0 +1,97 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@bejamas/ui/components/accordion";
+import { Button } from "@bejamas/ui/components/button";
+import { ArrowRight, Plus } from "@lucide/astro";
+
+const faq_items = [
+  {
+    question: "What is VIRA?",
+    answer:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  },
+  {
+    question: "Is it easy to customize VIRA?",
+    answer:
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+  },
+  {
+    question: "Is VIRA responsive and mobile-friendly?",
+    answer:
+      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+  },
+  {
+    question: "How do I edit the colors, fonts, or layout?",
+    answer:
+      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
+  },
+  {
+    question: "How can I get support if I run into issues?",
+    answer:
+      "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.",
+  },
+  {
+    question: "Will I receive updates for this template in the future?",
+    answer:
+      "Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio.",
+  },
+];
+---
+
+<BlockExampleLayout>
+  <section class="bg-background py-16 lg:py-40 px-4 lg:px-8">
+    <div class="max-w-360 mx-auto flex flex-col gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-2">
+        <div class="hidden lg:block"></div>
+        <h2 class="text-foreground font-semibold text-3xl md:text-5xl lg:text-6xl tracking-tight leading-[1.12] lg:pr-4">
+          FAQ
+        </h2>
+      </div>
+
+      <Accordion class="w-full space-y-6 lg:space-y-10" collapsible>
+        {faq_items.map((item, i) => (
+          <AccordionItem value={`faq-${i + 1}`} class="border-b border-border">
+            <AccordionTrigger class="py-2 gap-0 text-foreground text-base md:text-xl lg:text-2xl leading-[1.1] font-medium tracking-tight no-underline hover:no-underline items-center">
+              <span class="grid grid-cols-[auto_1fr] lg:grid-cols-2 gap-x-2 lg:gap-x-0 items-center w-full">
+                <span class="text-foreground font-medium tabular-nums">({i + 1})</span>
+                <span class="flex items-center justify-between gap-4">
+                  <span>{item.question}</span>
+                  <Plus class="size-4 lg:size-5 shrink-0 text-foreground transition-transform duration-200 group-data-[state=open]/accordion:rotate-45" />
+                </span>
+              </span>
+              <span slot="icon"></span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div class="grid grid-cols-[auto_1fr] lg:grid-cols-2 gap-x-2 lg:gap-x-0">
+                <span class="text-base md:text-xl lg:text-2xl font-medium tabular-nums invisible" aria-hidden="true">(0)</span>
+                <p class="text-muted-foreground text-sm lg:text-base">{item.answer}</p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2">
+        <div class="hidden lg:block"></div>
+        <div class="flex flex-col gap-5 lg:pr-4">
+          <p class="text-muted-foreground text-sm lg:text-lg">Don't see the answer you're looking for?</p>
+          <div class="flex items-center gap-5">
+            <Button as="a" href="#">
+              Get in touch
+              <ArrowRight class="size-5" />
+            </Button>
+            <Button as="a" href="#" variant="outline">
+              Join Vira's Slack
+              <ArrowRight class="size-5" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BlockExampleLayout>

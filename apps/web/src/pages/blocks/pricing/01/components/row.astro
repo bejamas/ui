@@ -12,7 +12,7 @@ const { label, values } = Astro.props;
     {label}
   </span>
   {values.map((val) => (
-    <span class="flex flex-1 items-center justify-center text-[1.25rem] font-medium text-foreground md:text-2xl">
+    <span class="flex flex-1 items-center justify-center text-5 font-medium text-foreground md:text-2xl">
       {val === "check" ? "*" : "x"}
     </span>
   ))}

@@ -11,11 +11,11 @@ const { value, suffix, description, index = 0 } = Astro.props;
 
 <div class="item border-l border-border pl-6" style={`--offset: ${index * 8}vw`}>
   <div class="flex items-start text-foreground font-medium">
-    <span class="text-[5rem] lg:text-[clamp(4rem,15vw,15rem)] leading-none tracking-[-0.03em]">
+    <span class="text-20 lg:text-[clamp(4rem,15vw,15rem)] leading-none tracking-tighter">
       {value}
     </span>
     {suffix && (
-      <span class="text-[1rem] lg:text-[clamp(1rem,4vw,2.5rem)] leading-[1.2] tracking-tight">
+      <span class="text-4 lg:text-[clamp(1rem,4vw,2.5rem)] leading-[1.2] tracking-tight">
         {suffix}
       </span>
     )}

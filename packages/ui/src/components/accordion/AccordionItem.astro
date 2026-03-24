@@ -16,7 +16,7 @@ const {
   ...rest
 } = Astro.props as Props;
 
-const itemVariants = cva("border-b last:border-b-0");
+const itemVariants = cva("border-b transition-opacity duration-150 hover:opacity-80");
 ---
 
 <div

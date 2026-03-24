@@ -1,0 +1,73 @@
+---
+import BlockExampleLayout from "@/components/BlockExampleLayout.astro";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@bejamas/ui/components/accordion";
+import { Plus } from "@lucide/astro";
+
+const faq_items = [
+  {
+    question: "What is VIRA?",
+    answer:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  },
+  {
+    question: "Is it easy to customize VIRA?",
+    answer:
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+  },
+  {
+    question: "Is VIRA responsive and mobile-friendly?",
+    answer:
+      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+  },
+  {
+    question: "How do I edit the colors, fonts, or layout?",
+    answer:
+      "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
+  },
+  {
+    question: "How can I get support if I run into issues?",
+    answer:
+      "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.",
+  },
+  {
+    question: "Will I receive updates for this template in the future?",
+    answer:
+      "Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio.",
+  },
+];
+---
+
+<BlockExampleLayout>
+  <section class="bg-background py-16 lg:py-40 px-4 lg:px-8">
+    <div class="max-w-360 mx-auto flex flex-col lg:flex-row gap-8 lg:gap-16">
+      <h2 class="text-foreground font-semibold text-3xl md:text-5xl lg:text-6xl tracking-tight leading-[1.12] lg:max-w-md shrink-0">
+        Frequently asked questions
+      </h2>
+
+      <Accordion class="w-full space-y-6 lg:space-y-10" collapsible>
+        {faq_items.map((item, i) => (
+          <AccordionItem value={`faq-${i + 1}`} class="border-b border-border">
+            <AccordionTrigger class="py-2 text-foreground text-base md:text-xl lg:text-2xl leading-[1.1] font-medium tracking-tight no-underline hover:no-underline">
+              <span class="flex items-center gap-2 lg:gap-15">
+                <span class="text-foreground font-medium tabular-nums">({i + 1})</span>
+                <span>{item.question}</span>
+              </span>
+              <Plus slot="icon" class="size-4 lg:size-5 shrink-0 text-foreground transition-transform duration-200" />
+            </AccordionTrigger>
+            <AccordionContent>
+              <div class="flex gap-2 lg:gap-15">
+                <span class="shrink-0 text-base md:text-xl lg:text-2xl font-medium tabular-nums invisible" aria-hidden="true">(0)</span>
+                <p class="text-muted-foreground text-sm lg:text-base">{item.answer}</p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  </section>
+</BlockExampleLayout>
