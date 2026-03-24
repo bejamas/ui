@@ -16,7 +16,7 @@ describe("create preview base layer", () => {
     expect(previewSurface).toContain('data-slot="capture-target"');
     expect(previewSurface).toContain("grid-cols-7");
     expect(previewSurface).toContain("w-[2400px]");
-    expect(previewSurface).toContain("md:w-[3200px]");
+    expect(previewSurface).toContain("md:w-[3044px]");
     expect(columnMatches?.length).toBe(7);
     expect(previewSurface).not.toContain("@bejamas/ui/components/");
   });
@@ -288,7 +288,9 @@ describe("create preview base layer", () => {
     expect(root).toContain(
       'import NavigationMenuPositioner from "./NavigationMenuPositioner.astro";',
     );
-    expect(root).toContain("{viewport && <NavigationMenuPositioner align={align} />}");
+    expect(root).toContain(
+      "{viewport && <NavigationMenuPositioner align={align} />}",
+    );
     expect(root).toContain("createNavigationMenu(el);");
     expect(root).not.toContain("syncNavigationMenuTriggerBooleans");
     expect(root).not.toContain("<style is:global>");
@@ -296,7 +298,9 @@ describe("create preview base layer", () => {
       "group flex flex-1 list-none items-center justify-center",
     );
     expect(list).toContain("relative");
-    expect(item).toContain('class={cn("cn-navigation-menu-item relative", className)}');
+    expect(item).toContain(
+      'class={cn("cn-navigation-menu-item relative", className)}',
+    );
     expect(trigger).toContain(
       "group/navigation-menu-trigger inline-flex h-9 w-max",
     );
@@ -314,8 +318,10 @@ describe("create preview base layer", () => {
     expect(positioner).toContain('data-slot="navigation-menu-portal"');
     expect(positioner).toContain('data-slot="navigation-menu-positioner"');
     expect(positioner).toContain('data-slot="navigation-menu-popup"');
-    expect(positioner).toContain('data-align={align}');
-    expect(positioner).toContain("h-(--positioner-height) w-(--positioner-width)");
+    expect(positioner).toContain("data-align={align}");
+    expect(positioner).toContain(
+      "h-(--positioner-height) w-(--positioner-width)",
+    );
     expect(viewport).toContain("relative size-full overflow-hidden");
     expect(viewport).not.toContain("navigation-menu-viewport-positioner");
     expect(indicator).toContain("cn-navigation-menu-indicator-surface");
@@ -359,7 +365,9 @@ describe("create preview base layer", () => {
     expect(switchFile).toContain(
       "cn-switch peer group/switch relative inline-flex items-center transition-all outline-none",
     );
-    expect(switchFile).toContain('data-default-checked={initialChecked ? "true" : undefined}');
+    expect(switchFile).toContain(
+      'data-default-checked={initialChecked ? "true" : undefined}',
+    );
     expect(switchFile).toContain('data-slot="switch-thumb"');
     expect(switchFile).toContain('import { create } from "@data-slot/switch";');
     expect(switchFile).toContain("create();");

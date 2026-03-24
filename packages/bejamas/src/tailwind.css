@@ -94,8 +94,11 @@
   }
 }
 
+/*.cn-button-group .cn-button {
+  background: red !important;
+}*/
 @custom-variant slot-siblings {
-  &:where(> [data-slot] ~ [data-slot] [data-slot]) {
+  &:where(> [data-slot] ~ [data-slot] button) {
     @slot;
   }
 }

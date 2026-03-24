@@ -15,3 +15,12 @@
     max-width: calc(var(--spacing) * 10);
   }
 }
+
+/*.cn-button-group .cn-button {
+  background: red !important;
+}*/
+@custom-variant slot-siblings {
+  &:where(> [data-slot] ~ [data-slot] [data-slot]) {
+    @slot;
+  }
+}

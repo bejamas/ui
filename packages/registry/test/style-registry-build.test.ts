@@ -79,6 +79,7 @@ describe("style registry build", () => {
     expect(button).not.toContain('"cn-button"');
 
     expect(dropdownContent).toContain("cn-menu-target");
+    expect(dropdownContent).toContain("cn-menu-translucent");
     expect(dropdownContent).toContain("min-w-32 rounded-md p-1 shadow-md ring-1");
     expect(dropdownContent).toContain(
       "data-[side=inline-start]:slide-in-from-right-2",

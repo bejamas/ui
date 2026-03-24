@@ -133,10 +133,7 @@ function applyPreviewConfig(
     catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ??
       config.font,
   );
-  setText(
-    "[data-create-style-font-summary]",
-    buildStyleFontSummary(config),
-  );
+  setText("[data-create-style-font-summary]", buildStyleFontSummary(config));
   setText(
     "[data-create-radius-label]",
     getCreatePickerSelectedOption("radius", config)?.label ?? config.radius,
@@ -179,7 +176,7 @@ function buildStyleFontSummary(config: DesignSystemConfig) {
   return [
     styleLabel,
     headingFontLabel && headingFontLabel !== fontLabel
-      ? `${fontLabel} / ${headingFontLabel}`
+      ? headingFontLabel
       : fontLabel,
   ].join(" - ");
 }

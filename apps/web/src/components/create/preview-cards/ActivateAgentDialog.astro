@@ -27,20 +27,25 @@ const features = [
 
 <Card class="w-full">
   <CardHeader>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 mb-2">
       <Badge>Beta</Badge>
       <Badge variant="outline">Agent</Badge>
     </div>
-    <CardTitle>Ship faster &amp; safer with Vercel Agent</CardTitle>
+    <CardTitle>Ship faster &amp; safer with Agents</CardTitle>
     <CardDescription>
-      Review pull requests, release notes, and deploy health from one assistant-oriented flow.
+      Review pull requests, release notes, and deploy health from one
+      assistant-oriented flow.
     </CardDescription>
   </CardHeader>
   <CardContent class="space-y-3">
     {
       features.map((feature) => (
         <div class="flex items-start gap-3 rounded-lg border border-border px-3 py-2">
-          <SemanticIcon library={iconLibrary} name="check" class="mt-0.5 size-4 text-primary" />
+          <SemanticIcon
+            library={iconLibrary}
+            name="check"
+            class="mt-0.5 size-4 text-primary"
+          />
           <span class="text-sm">{feature}</span>
         </div>
       ))
