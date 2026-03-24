@@ -1,107 +1,43 @@
 ---
 // Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/radio-group/RadioGroupItem.astro directly.
-import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
 
-interface Props extends HTMLAttributes<"div"> {
+interface Props extends HTMLAttributes<"span"> {
   value: string;
   class?: string;
-  name?: string;
-  checked?: boolean;
   disabled?: boolean;
-  required?: boolean;
   id?: string;
-  "aria-invalid"?: boolean;
+  "aria-invalid"?: boolean | "true" | "false";
 }
 
 const {
   class: className = "",
-  id: inputId,
-  name,
+  id = "",
   value,
-  checked = false,
   disabled = false,
-  required = false,
   "aria-invalid": ariaInvalid,
   ...rest
 } = Astro.props as Props;
 ---
 
-<div
+<span
   {...rest}
+  id={id}
   data-slot="radio-group-item"
-  data-checked={checked ? "true" : undefined}
+  data-value={value}
+  data-disabled={disabled ? "true" : undefined}
+  aria-invalid={ariaInvalid}
   class={cn(
-    "border-input dark:bg-input/30 data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary data-checked:border-primary aria-invalid:aria-checked:border-primary aria-invalid:border-destructive focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 dark:aria-invalid:border-destructive/50 flex size-4 rounded-full focus-visible:ring-3 aria-invalid:ring-3 group/radio-group-item peer relative aspect-square shrink-0 border outline-none after:absolute after:-inset-x-3 after:-inset-y-2 peer-focus-visible:border-ring peer-focus-visible:ring-ring/50 peer-focus-visible:ring-3 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+    "border-input dark:bg-input/30 data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary data-checked:border-primary aria-invalid:aria-checked:border-primary aria-invalid:border-destructive focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 dark:aria-invalid:border-destructive/50 flex size-4 rounded-full focus-visible:ring-3 aria-invalid:ring-3 group/radio-group-item peer relative aspect-square shrink-0 border outline-none after:absolute after:-inset-x-3 after:-inset-y-2 disabled:cursor-not-allowed disabled:opacity-50",
     className,
   )}
 >
-  <input
-    type="radio"
-    id={inputId}
-    name={name}
-    value={value}
-    checked={checked}
-    disabled={disabled}
-    required={required}
-    aria-invalid={ariaInvalid}
-    class="peer absolute inset-0 m-0 opacity-0"
-  />
   <span
     aria-hidden="true"
     data-slot="radio-group-indicator"
-    class="flex size-4 items-center justify-center"
+    class="flex size-4 items-center justify-center data-unchecked:hidden"
   >
     <span class="bg-primary-foreground absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full"></span>
   </span>
-</div>
-
-<script is:inline type="module">
-  if (!window.__bejamasRadioGroupSync) {
-    window.__bejamasRadioGroupSync = true;
-
-    const syncRadio = (input) => {
-      const root = input?.closest?.('[data-slot="radio-group-item"]');
-      if (!root) return;
-
-      if (input.checked) {
-        root.dataset.checked = "true";
-      } else {
-        delete root.dataset.checked;
-      }
-
-      if (input.disabled) {
-        root.dataset.disabled = "true";
-      } else {
-        delete root.dataset.disabled;
-      }
-    };
-
-    const syncAllRadios = () => {
-      document
-        .querySelectorAll(
-          '[data-slot="radio-group-item"] > input[type="radio"]',
-        )
-        .forEach((input) => syncRadio(input));
-    };
-
-    syncAllRadios();
-
-    document.addEventListener("change", (event) => {
-      const input = event.target?.closest?.(
-        '[data-slot="radio-group-item"] > input[type="radio"]',
-      );
-      if (!input) return;
-
-      const name = input.getAttribute("name");
-      if (!name) {
-        syncRadio(input);
-        return;
-      }
-
-      document
-        .querySelectorAll(`input[type="radio"][name="${CSS.escape(name)}"]`)
-        .forEach((radio) => syncRadio(radio));
-    });
-  }
-</script>
+</span>

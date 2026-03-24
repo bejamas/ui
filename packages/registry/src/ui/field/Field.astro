@@ -487,13 +487,11 @@
  *   <FieldDescription>
  *     Yearly and lifetime plans offer significant savings.
  *   </FieldDescription>
- *   <RadioGroup>
+ *   <RadioGroup name="subscription-plan" defaultValue="monthly">
  *     <Field orientation="horizontal">
  *       <RadioGroupItem
- *         name="subscription-plan"
  *         value="monthly"
  *         id="plan-monthly"
- *         checked
  *       />
  *       <FieldLabel for="plan-monthly" class="font-normal">
  *         Monthly ($9.99/month)
@@ -540,7 +538,10 @@
  *     <FieldDescription>
  *       Select the compute environment for your cluster.
  *     </FieldDescription>
- *     <RadioGroup>
+ *     <RadioGroup
+ *       name="compute-environment"
+ *       defaultValue="kubernetes"
+ *     >
  *       <FieldLabel for="kubernetes-r2h">
  *         <Field orientation="horizontal">
  *           <FieldContent>
@@ -550,10 +551,8 @@
  *             </FieldDescription>
  *           </FieldContent>
  *           <RadioGroupItem
- *             name="compute-environment"
  *             value="kubernetes"
  *             id="kubernetes-r2h"
- *             checked
  *           />
  *         </Field>
  *       </FieldLabel>
@@ -566,7 +565,6 @@
  *             </FieldDescription>
  *           </FieldContent>
  *           <RadioGroupItem
- *             name="compute-environment"
  *             value="vm"
  *             id="vm-z4k"
  *           />

@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@bejamas/ui/components/dropdown-menu";
 import { Separator } from "@bejamas/ui/components/separator";
-import { Switch } from "@bejamas/ui/components/switch";
 import type { DesignSystemConfig } from "@bejamas/create-config/server";
 import {
   CREATE_PICKER_LABELS,
@@ -156,7 +155,10 @@ const pickerGroups = [
                     label={CREATE_PICKER_LABELS[picker]}
                     value={config[picker]}
                     options={pickerOptions[picker]}
-                    selectedOption={getCreatePickerSelectedOption(picker, config)}
+                    selectedOption={getCreatePickerSelectedOption(
+                      picker,
+                      config,
+                    )}
                     markerKind={CREATE_PICKER_MARKERS[picker]}
                     lockable
                     lockParam={picker}
@@ -173,9 +175,7 @@ const pickerGroups = [
                       data-create-theme-trigger
                     >
                       <span class="min-w-0">
-                        <span
-                          class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38"
-                        >
+                        <span class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38">
                           Theme
                         </span>
                         <span
@@ -186,9 +186,7 @@ const pickerGroups = [
                         </span>
                       </span>
 
-                      <span
-                        class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65"
-                      >
+                      <span class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65">
                         <span
                           class="inline-flex items-center justify-center"
                           data-create-theme-current-marker
@@ -215,43 +213,6 @@ const pickerGroups = [
             </>
           ))
         }
-
-        <div class="p-2.5 flex flex-col gap-2">
-          <label
-            class="border border-border flex w-full justify-between text-left h-auto! rounded-[12px]! px-3! py-2!"
-          >
-            <span>
-              <span
-                class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38"
-                >Direction</span
-              >
-              <span
-                class="block text-[14px] font-medium tracking-[-0.01em] text-white/90"
-                >RTL</span
-              >
-            </span>
-            <Switch
-              name="rtl"
-              checked={config.rtl}
-              class="!bg-white/15 peer-checked:!bg-white"
-              data-create-rtl
-            />
-          </label>
-
-          <div class:list={[!config.rtl && "hidden"]} data-create-rtl-language>
-            <CreatePicker
-              name="rtlLanguage"
-              label={CREATE_PICKER_LABELS.rtlLanguage}
-              value={config.rtlLanguage}
-              options={pickerOptions.rtlLanguage}
-              selectedOption={getCreatePickerSelectedOption(
-                "rtlLanguage",
-                config,
-              )}
-              markerKind={CREATE_PICKER_MARKERS.rtlLanguage}
-            />
-          </div>
-        </div>
       </div>
 
       <CreateThemePanel

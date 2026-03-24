@@ -67,7 +67,10 @@ import {
 } from "@/utils/create-project-dialog";
 
 type CreateConfig = DesignSystemConfig;
-type CreatePresetConfig = Omit<CreateConfig, "template" | "rtl" | "rtlLanguage">;
+type CreatePresetConfig = Omit<
+  CreateConfig,
+  "template" | "rtl" | "rtlLanguage"
+>;
 type HistoryMode = "push" | "replace";
 type PreviewMessage = {
   type: "bejamas:create-preview";
@@ -107,7 +110,6 @@ const PICKER_NAMES = [
   "radius",
   "menuColor",
   "menuAccent",
-  "rtlLanguage",
 ] satisfies CreatePickerName[];
 
 const PRESET_CONFIG_NAMES = [
@@ -174,21 +176,6 @@ const createProjectCopyCommandLabel = document.querySelector(
 ) as HTMLElement | null;
 const createProjectMonorepoField = document.querySelector(
   "[data-create-project-monorepo]",
-) as HTMLInputElement | null;
-const createProjectDocsField = document.querySelector(
-  "[data-create-project-docs]",
-) as HTMLInputElement | null;
-const createProjectRtlField = document.querySelector(
-  "[data-create-project-rtl]",
-) as HTMLInputElement | null;
-const createProjectRtlLanguageRow = document.querySelector(
-  "[data-create-project-rtl-language-row]",
-) as HTMLElement | null;
-const createProjectRtlLanguageSeparator = document.querySelector(
-  "[data-create-project-rtl-language-separator]",
-) as HTMLElement | null;
-const createProjectRtlLanguageSelect = document.querySelector(
-  "[data-create-project-rtl-language-select]",
 ) as HTMLElement | null;
 const themeStyleNode = document.getElementById("create-page-theme-css");
 const styleStyleNode = document.getElementById("create-page-style-css");
@@ -232,9 +219,6 @@ const themeImportTextarea = document.getElementById(
 const themeRefHiddenInput = document.querySelector(
   "[data-create-theme-ref-input]",
 ) as HTMLInputElement | null;
-const rtlLanguagePicker = document.querySelector(
-  "[data-create-rtl-language]",
-) as HTMLElement | null;
 
 if (!form || !iframe || !presetNode) {
   throw new Error("Create page is missing required form elements.");
@@ -373,10 +357,8 @@ function collectConfig(): CreateConfig {
     ) as CreateConfig["menuAccent"],
     menuColor: String(formData.get("menuColor")) as CreateConfig["menuColor"],
     template: DEFAULT_DESIGN_SYSTEM_CONFIG.template,
-    rtl: formData.get("rtl") === "on",
-    rtlLanguage: String(
-      formData.get("rtlLanguage") ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
-    ) as CreateConfig["rtlLanguage"],
+    rtl: false,
+    rtlLanguage: DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
   });
 }
 
@@ -524,23 +506,6 @@ function setInputValue(name: string, value: string, shouldDispatch = true) {
   }
 }
 
-function setCheckboxValue(
-  name: string,
-  checked: boolean,
-  shouldDispatch = true,
-) {
-  const field = getField(name);
-  if (!field || field.checked === checked) {
-    return;
-  }
-
-  field.checked = checked;
-
-  if (shouldDispatch) {
-    field.dispatchEvent(new Event("change", { bubbles: true }));
-  }
-}
-
 function setThemeRefValue(value: string | null) {
   if (themeRefHiddenInput) {
     themeRefHiddenInput.value = value ?? "";
@@ -573,7 +538,10 @@ function syncThemeSelection(config: CreateConfig) {
 function getCurrentPreset(config: CreateConfig) {
   const presetConfig = toPresetConfig(config);
 
-  if (preservedPreset && isSamePresetConfig(presetConfig, preservedPreset.config)) {
+  if (
+    preservedPreset &&
+    isSamePresetConfig(presetConfig, preservedPreset.config)
+  ) {
     return preservedPreset.code;
   }
 
@@ -799,7 +767,7 @@ function syncThemeSeedButtons(
       return `
         <section class="space-y-2" data-create-theme-group="${escapeHtml(option.group)}">
           <header class="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/38">${escapeHtml(option.label)}</header>
-          <div class="grid grid-cols-2 gap-2 rounded-[18px] border border-white/8 bg-white/[0.02] p-2">
+          <div class="grid grid-cols-2 gap-2">
             ${option.options.map((seedOption) => renderThemeSeedButton(seedOption, selectedTheme)).join("")}
           </div>
         </section>
@@ -1164,6 +1132,30 @@ function getSelectedCreateProjectPackageManager(): CreateProjectPackageManager {
   return "bun";
 }
 
+function getCreateProjectSwitchChecked(field: HTMLElement | null) {
+  return (
+    field?.hasAttribute("data-checked") ||
+    field?.getAttribute("aria-checked") === "true"
+  );
+}
+
+function setCreateProjectSwitchChecked(
+  field: HTMLElement | null,
+  checked: boolean,
+) {
+  if (!field || getCreateProjectSwitchChecked(field) === checked) {
+    return;
+  }
+
+  field.dispatchEvent(
+    new CustomEvent("switch:set", {
+      detail: {
+        checked,
+      },
+    }),
+  );
+}
+
 function setSelectedCreateProjectPackageManager(
   packageManager: CreateProjectPackageManager,
   options: { persist?: boolean; syncTabs?: boolean } = {},
@@ -1189,45 +1181,12 @@ function setSelectedCreateProjectPackageManager(
 
 function getCreateProjectTemplate() {
   return getCreateProjectTemplateValue({
-    monorepo: createProjectMonorepoField?.checked ?? false,
-    withDocs: createProjectDocsField?.checked ?? false,
+    monorepo: getCreateProjectSwitchChecked(createProjectMonorepoField),
+    withDocs: false,
   });
 }
 
-function getCreateProjectDialogRtlSettings() {
-  return {
-    rtl: createProjectRtlField?.checked ?? false,
-    rtlLanguage:
-      (createProjectRtlLanguageSelect?.dataset.value as
-        | CreateConfig["rtlLanguage"]
-        | undefined) ?? DEFAULT_DESIGN_SYSTEM_CONFIG.rtlLanguage,
-  };
-}
-
-function syncCreateProjectRtlControls(options: {
-  rtl: boolean;
-  rtlLanguage: CreateConfig["rtlLanguage"];
-}) {
-  if (createProjectRtlField) {
-    createProjectRtlField.checked = options.rtl;
-  }
-
-  createProjectRtlLanguageRow?.classList.toggle("hidden", !options.rtl);
-  createProjectRtlLanguageSeparator?.classList.toggle("hidden", !options.rtl);
-
-  if (createProjectRtlLanguageSelect?.dataset.value !== options.rtlLanguage) {
-    createProjectRtlLanguageSelect?.dispatchEvent(
-      new CustomEvent("select:set", {
-        detail: {
-          value: options.rtlLanguage,
-        },
-      }),
-    );
-  }
-}
-
 function syncCreateProjectCommands(config: CreateConfig, preset: string) {
-  const dialogRtlSettings = getCreateProjectDialogRtlSettings();
   const template = getCreateProjectTemplate();
 
   for (const packageManager of CREATE_PROJECT_PACKAGE_MANAGERS) {
@@ -1236,8 +1195,6 @@ function syncCreateProjectCommands(config: CreateConfig, preset: string) {
       template,
       preset,
       themeRef,
-      rtl: dialogRtlSettings.rtl,
-      rtlLanguage: dialogRtlSettings.rtlLanguage,
     });
 
     const node = createProjectCommandNodes[packageManager];
@@ -1303,7 +1260,6 @@ function applyConfig(
   }
 
   setInputValue("theme", config.theme, false);
-  setCheckboxValue("rtl", config.rtl, false);
 
   if (options.clearCustomTheme) {
     clearThemeOverrides();
@@ -1324,13 +1280,11 @@ function updateUi(
   }
 
   const config = collectConfig();
-  rtlLanguagePicker?.classList.toggle("hidden", !config.rtl);
   config.theme = syncThemeSelection(config) as CreateConfig["theme"];
   for (const name of PICKER_NAMES) {
     setInputValue(name, config[name], false);
   }
   setInputValue("theme", config.theme, false);
-  setCheckboxValue("rtl", config.rtl, false);
   syncRadiusPicker(config);
   syncFontHeadingPicker(config);
   syncThemeTabs();
@@ -1341,16 +1295,10 @@ function updateUi(
     syncPickerUi(name, config[name], config);
   }
 
-  const { rtl, rtlLanguage } = config;
   const preset = getCurrentPreset(config);
   const params = new URLSearchParams({
     preset,
   });
-
-  if (rtl) {
-    params.set("rtl", "true");
-    params.set("lang", rtlLanguage);
-  }
 
   if (themeRef) {
     params.set("themeRef", themeRef);
@@ -1585,10 +1533,6 @@ createProjectDialog?.addEventListener("dialog:change", (event) => {
   }
 
   const config = collectConfig();
-  syncCreateProjectRtlControls({
-    rtl: config.rtl,
-    rtlLanguage: config.rtlLanguage,
-  });
   syncCreateProjectCommands(config, getCurrentPreset(config));
 });
 
@@ -1695,48 +1639,8 @@ createProjectPackageTabs?.addEventListener("tabs:change", (event) => {
   syncCreateProjectCommands(config, getCurrentPreset(config));
 });
 
-createProjectMonorepoField?.addEventListener("change", () => {
-  const monorepo = createProjectMonorepoField.checked;
-  const withDocs = monorepo && (createProjectDocsField?.checked ?? false);
-
-  if (!monorepo && createProjectDocsField) {
-    createProjectDocsField.checked = false;
-  }
-
-  const config = collectConfig();
-  syncCreateProjectCommands(config, getCurrentPreset(config));
-});
-
-createProjectDocsField?.addEventListener("change", () => {
-  const withDocs = createProjectDocsField.checked;
-
-  if (withDocs && createProjectMonorepoField) {
-    createProjectMonorepoField.checked = true;
-  }
-
-  const config = collectConfig();
-  syncCreateProjectCommands(config, getCurrentPreset(config));
-});
-
-createProjectRtlField?.addEventListener("change", () => {
-  syncCreateProjectRtlControls({
-    rtl: createProjectRtlField.checked,
-    rtlLanguage: getCreateProjectDialogRtlSettings().rtlLanguage,
-  });
-  const config = collectConfig();
-  syncCreateProjectCommands(config, getCurrentPreset(config));
-});
-
-createProjectRtlLanguageSelect?.addEventListener("select:change", (event) => {
-  const value = (event as CustomEvent<{ value: string }>).detail.value;
-  if (!value) {
-    return;
-  }
-
-  syncCreateProjectRtlControls({
-    rtl: createProjectRtlField?.checked ?? false,
-    rtlLanguage: value as CreateConfig["rtlLanguage"],
-  });
+createProjectMonorepoField?.addEventListener("switch:change", (event) => {
+  const monorepo = (event as CustomEvent<{ checked: boolean }>).detail.checked;
   const config = collectConfig();
   syncCreateProjectCommands(config, getCurrentPreset(config));
 });

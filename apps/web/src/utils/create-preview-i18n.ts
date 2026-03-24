@@ -58,7 +58,7 @@ export const CREATE_PREVIEW_TRANSLATIONS = {
     "structured.accordionInstallQuestion":
       "How does the preset affect the install flow?",
     "structured.accordionInstallAnswer":
-      "The init command writes style, base color, RTL, and component defaults into the generated project.",
+      "The init command writes style, base color, and component defaults into the generated project.",
     "structured.accordionComponentsQuestion":
       "Can I still add components later?",
     "structured.accordionComponentsAnswer":
@@ -133,7 +133,7 @@ export const CREATE_PREVIEW_TRANSLATIONS = {
     "structured.accordionInstallQuestion":
       "كيف يؤثر الإعداد المسبق في التثبيت؟",
     "structured.accordionInstallAnswer":
-      "يكتب أمر التهيئة النمط واللون الأساسي وRTL وإعدادات المكونات الافتراضية داخل المشروع الناتج.",
+      "يكتب أمر التهيئة النمط واللون الأساسي وإعدادات المكونات الافتراضية داخل المشروع الناتج.",
     "structured.accordionComponentsQuestion": "هل يمكنني إضافة مكونات لاحقًا؟",
     "structured.accordionComponentsAnswer":
       "نعم. يظل السجل واعيًا للنمط، لذلك تستمر الإضافات اللاحقة في مطابقة الإعداد المسبق.",
@@ -210,7 +210,7 @@ export const CREATE_PREVIEW_TRANSLATIONS = {
     "structured.accordionInstallQuestion":
       "این پریست چه اثری روی جریان نصب دارد؟",
     "structured.accordionInstallAnswer":
-      "دستور init استایل، رنگ پایه، RTL و پیش‌فرض‌های کامپوننت را در پروژه ایجادشده می‌نویسد.",
+      "دستور init استایل، رنگ پایه و پیش‌فرض‌های کامپوننت را در پروژه ایجادشده می‌نویسد.",
     "structured.accordionComponentsQuestion":
       "آیا بعداً هم می‌توانم کامپوننت اضافه کنم؟",
     "structured.accordionComponentsAnswer":
@@ -284,7 +284,7 @@ export const CREATE_PREVIEW_TRANSLATIONS = {
     "structured.accordionInstallQuestion":
       "איך ה-preset משפיע על תהליך ההתקנה?",
     "structured.accordionInstallAnswer":
-      "פקודת init כותבת את הסטייל, צבע הבסיס, RTL וברירות המחדל של הרכיבים לתוך הפרויקט שנוצר.",
+      "פקודת init כותבת את הסטייל, צבע הבסיס וברירות המחדל של הרכיבים לתוך הפרויקט שנוצר.",
     "structured.accordionComponentsQuestion":
       "אפשר עדיין להוסיף רכיבים אחר כך?",
     "structured.accordionComponentsAnswer":

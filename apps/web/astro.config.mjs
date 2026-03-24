@@ -71,7 +71,6 @@ export default defineConfig({
             { label: "Docs", href: "/docs/introduction" },
             { label: "Components", href: "/components" },
             { label: "Create", href: "/create" },
-            { label: "Themes", href: "/themes" },
           ],
           components: {
             button: "@bejamas/registry/ui/button",

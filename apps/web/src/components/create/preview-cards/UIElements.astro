@@ -38,22 +38,23 @@ const { iconLibrary } = Astro.props as Props;
 
 <Card class="w-full">
   <CardContent class="flex flex-col gap-6">
-    <div class="flex flex-wrap gap-2">
-      <Button>Button</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="ghost">Ghost</Button>
-    </div>
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-wrap gap-2">
+        <Button>Button</Button>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="outline">Outline</Button>
+        <Button variant="ghost">Ghost</Button>
+      </div>
 
-    <Item variant="outline">
-      <ItemContent>
-        <ItemTitle>Two-factor authentication</ItemTitle>
-        <ItemDescription>Verify via email or phone number.</ItemDescription>
-      </ItemContent>
-      <ItemActions>
-        <Button size="sm" variant="secondary">Enable</Button>
-      </ItemActions>
-    </Item>
+      <Item variant="outline">
+        <ItemContent>
+          <ItemTitle>Two-factor authentication</ItemTitle>
+        </ItemContent>
+        <ItemActions>
+          <Button size="sm" variant="secondary">Enable</Button>
+        </ItemActions>
+      </Item>
+    </div>
 
     <Slider defaultValue={[75]} max={100} step={1} class="w-full" />
 
@@ -73,7 +74,7 @@ const { iconLibrary } = Astro.props as Props;
       </Field>
     </FieldGroup>
 
-    <div class="flex flex-wrap items-center gap-3">
+    <div class="flex flex-wrap items-center gap-2">
       <Badge>Badge</Badge>
       <Badge variant="secondary">Secondary</Badge>
       <Badge variant="outline">Outline</Badge>

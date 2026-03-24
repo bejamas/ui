@@ -357,6 +357,7 @@ describe("create preview base layer", () => {
 
   it("keeps switch and radio-group visuals mostly in the style layer", () => {
     const switchFile = read("packages/registry/src/ui/switch/Switch.astro");
+    const radioGroup = read("packages/registry/src/ui/radio-group/RadioGroup.astro");
     const radioItem = read(
       "packages/registry/src/ui/radio-group/RadioGroupItem.astro",
     );
@@ -375,10 +376,20 @@ describe("create preview base layer", () => {
       "h-5 w-8 shrink-0 items-center rounded-full border border-transparent bg-input",
     );
     expect(switchFile).not.toContain("window.__bejamasSwitchSync");
+    expect(radioGroup).toContain('data-slot="radio-group"');
+    expect(radioGroup).toContain('data-default-value={defaultValue}');
+    expect(radioGroup).toContain('data-name={name}');
+    expect(radioGroup).toContain(
+      'import { create } from "@data-slot/radio-group";',
+    );
+    expect(radioGroup).toContain("create();");
+    expect(radioGroup).not.toContain('role="radiogroup"');
     expect(radioItem).toContain('data-slot="radio-group-indicator"');
+    expect(radioItem).toContain('data-value={value}');
     expect(radioItem).toContain("cn-radio-group-indicator-icon");
     expect(radioItem).not.toContain("border-input text-primary");
-    expect(radioItem).toContain("window.__bejamasRadioGroupSync");
+    expect(radioItem).not.toContain('type="radio"');
+    expect(radioItem).not.toContain("window.__bejamasRadioGroupSync");
   });
 
   it("keeps tabs on the shared variant contract", () => {

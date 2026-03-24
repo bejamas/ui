@@ -191,7 +191,7 @@ describe("parseCreateSearchParams", () => {
     });
   });
 
-  test("ignores template in the URL but still takes rtl and lang when restoring from the fallback preset", () => {
+  test("ignores template, rtl, and lang when restoring from the fallback preset", () => {
     const fallbackPreset = encodePreset({
       font: "playfair-display",
       radius: "large",
@@ -213,11 +213,11 @@ describe("parseCreateSearchParams", () => {
     expect(result.data.font).toBe("playfair-display");
     expect(result.data.radius).toBe("large");
     expect(result.data.template).toBe("astro");
-    expect(result.data.rtl).toBe(true);
-    expect(result.data.rtlLanguage).toBe("he");
+    expect(result.data.rtl).toBe(false);
+    expect(result.data.rtlLanguage).toBe("ar");
   });
 
-  test("ignores lang when rtl is disabled", () => {
+  test("ignores lang entirely in the create flow", () => {
     const result = parseCreateSearchParams(
       new URLSearchParams({
         lang: "fa",
@@ -356,7 +356,7 @@ describe("parseCreateSearchParams", () => {
         },
       ),
     ).toBe(
-      `/kitchen-sink/select?preset=${preset}&rtl=true&lang=he&themeRef=custom-theme-123&embed=create`,
+      `/kitchen-sink/select?preset=${preset}&themeRef=custom-theme-123&embed=create`,
     );
   });
 });

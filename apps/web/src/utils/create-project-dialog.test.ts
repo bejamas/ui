@@ -47,34 +47,30 @@ describe("create project dialog helpers", () => {
           packageManager,
           template: "astro-monorepo",
           preset: "abc123",
-          rtl: true,
-          rtlLanguage: "he",
           themeRef: "theme-42",
         }),
       ]),
     );
 
     expect(commands.pnpm).toBe(
-      "pnpm dlx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42 --rtl --lang he",
+      "pnpm dlx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42",
     );
     expect(commands.npm).toBe(
-      "npx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42 --rtl --lang he",
+      "npx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42",
     );
     expect(commands.yarn).toBe(
-      "yarn dlx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42 --rtl --lang he",
+      "yarn dlx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42",
     );
     expect(commands.bun).toBe(
-      "bunx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42 --rtl --lang he",
+      "bunx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42",
     );
   });
 
-  it("omits the RTL language flag when RTL is disabled", () => {
+  it("omits rtl flags entirely from create dialog commands", () => {
     const command = buildCreateProjectCommand({
       packageManager: "bun",
       template: "astro",
       preset: "abc123",
-      rtl: false,
-      rtlLanguage: "fa",
       themeRef: null,
     });
 

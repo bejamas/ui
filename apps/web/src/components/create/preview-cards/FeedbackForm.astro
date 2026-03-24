@@ -23,23 +23,27 @@ import { Textarea } from "@bejamas/registry/ui/textarea";
   <CardContent class="space-y-4">
     <Field class="space-y-3">
       <FieldLabel>How polished does this feel?</FieldLabel>
-      <RadioGroup class="grid grid-cols-3 gap-3">
+      <RadioGroup
+        name="polished"
+        defaultValue="good"
+        class="grid grid-cols-3 gap-3"
+      >
         <label
           class="rounded-lg border border-border px-3 py-2 text-center text-sm flex items-center gap-2"
         >
-          <RadioGroupItem name="polished" value="rough" />
+          <RadioGroupItem value="rough" />
           Rough
         </label>
         <label
           class="rounded-lg border border-border px-3 py-2 text-center text-sm flex items-center gap-2"
         >
-          <RadioGroupItem name="polished" checked value="good" />
+          <RadioGroupItem value="good" />
           Good
         </label>
         <label
           class="rounded-lg border border-border px-3 py-2 text-center text-sm flex items-center gap-2"
         >
-          <RadioGroupItem name="polished" value="great" />
+          <RadioGroupItem value="great" />
           Great
         </label>
       </RadioGroup>

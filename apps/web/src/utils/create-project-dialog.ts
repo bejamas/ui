@@ -44,8 +44,6 @@ export function buildCreateProjectCommand(options: {
   template: DesignSystemConfig["template"];
   preset: string;
   themeRef?: string | null;
-  rtl: boolean;
-  rtlLanguage: DesignSystemConfig["rtlLanguage"];
 }) {
   const runners: Record<CreateProjectPackageManager, string> = {
     pnpm: "pnpm dlx bejamas init",
@@ -59,8 +57,6 @@ export function buildCreateProjectCommand(options: {
     `--template ${options.template}`,
     `--preset ${options.preset}`,
     options.themeRef ? `--theme-ref ${options.themeRef}` : "",
-    options.rtl ? "--rtl" : "",
-    options.rtl ? `--lang ${options.rtlLanguage}` : "",
   ]
     .filter(Boolean)
     .join(" ");

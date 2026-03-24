@@ -55,13 +55,10 @@ const summary =
 ---
 
 <Card class="w-full">
-  <CardHeader>
+  <CardHeader class="gap-0">
     <CardTitle class="text-2xl font-medium" data-create-style-font-summary>
       {summary}
     </CardTitle>
-    <!-- <CardDescription>
-      Preview the core theme tokens without relying on chart-only variables.
-    </CardDescription> -->
   </CardHeader>
   <CardContent>
     <div class="grid grid-cols-3 gap-3 sm:grid-cols-4 xl:grid-cols-6">
@@ -71,7 +68,7 @@ const summary =
             <TooltipTrigger asChild>
               <div class="flex flex-col items-center gap-2">
                 <div
-                  class="relative aspect-square w-full rounded-lg bg-(--color) after:absolute after:inset-0 after:rounded-xl after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten"
+                  class="relative aspect-square w-full rounded-lg bg-(--color) after:absolute after:inset-0 after:rounded-lg after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten"
                   style={{ "--color": `var(${token})` }}
                 />
               </div>

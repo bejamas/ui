@@ -2,10 +2,8 @@ import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
   decodePreset,
   designSystemConfigSchema,
-  getDocumentLanguage,
   isPresetCode,
   normalizeDesignSystemConfig,
-  RTL_LANGUAGE_VALUES,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import { getThemeRefFromSearchParams } from "./themes/create-theme";
@@ -36,32 +34,12 @@ function omitUndefined<T extends Record<string, unknown>>(value: T) {
   ) as Partial<T>;
 }
 
-function getRtlLanguageValue(
-  searchParams: URLSearchParams,
-  rtl: boolean,
-): DesignSystemConfig["rtlLanguage"] | undefined {
-  if (!rtl) {
-    return undefined;
-  }
-
-  const value = searchParams.get("lang");
-  if (
-    !value ||
-    !RTL_LANGUAGE_VALUES.includes(value as DesignSystemConfig["rtlLanguage"])
-  ) {
-    return undefined;
-  }
-
-  return value as DesignSystemConfig["rtlLanguage"];
-}
-
 export function parseCreateSearchParams(
   searchParams: URLSearchParams,
   options: ParseCreateSearchParamsOptions = {},
 ) {
   let input: Partial<DesignSystemConfig> = {};
   const preset = searchParams.get("preset");
-  const rtl = searchParams.get("rtl") === "true";
   const preservedPreset =
     preset &&
     !PRESERVED_PRESET_OVERRIDE_PARAMS.some((param) => searchParams.has(param))
@@ -80,10 +58,9 @@ export function parseCreateSearchParams(
 
     input = omitUndefined({
       ...decoded,
-      fontHeading: (searchParams.get("fontHeading") ??
-        decoded.fontHeading) as DesignSystemConfig["fontHeading"] | undefined,
-      rtl,
-      rtlLanguage: getRtlLanguageValue(searchParams, rtl),
+      fontHeading: (searchParams.get("fontHeading") ?? decoded.fontHeading) as
+        | DesignSystemConfig["fontHeading"]
+        | undefined,
     });
   } else if (options.fallbackPreset && isPresetCode(options.fallbackPreset)) {
     const decoded = decodePreset(options.fallbackPreset);
@@ -92,8 +69,6 @@ export function parseCreateSearchParams(
         ...decoded,
         fontHeading: (searchParams.get("fontHeading") ??
           decoded.fontHeading) as DesignSystemConfig["fontHeading"] | undefined,
-        rtl,
-        rtlLanguage: getRtlLanguageValue(searchParams, rtl),
       });
     }
   } else {
@@ -125,8 +100,6 @@ export function parseCreateSearchParams(
       menuColor: (searchParams.get("menuColor") ?? undefined) as
         | DesignSystemConfig["menuColor"]
         | undefined,
-      rtl,
-      rtlLanguage: getRtlLanguageValue(searchParams, rtl),
     });
   }
 
@@ -175,11 +148,6 @@ export function buildCreatePreviewUrl(
   } = {},
 ) {
   const params = new URLSearchParams({ preset });
-
-  if (config.rtl) {
-    params.set("rtl", "true");
-    params.set("lang", getDocumentLanguage(config));
-  }
 
   if (options.themeRef) {
     params.set("themeRef", options.themeRef);
