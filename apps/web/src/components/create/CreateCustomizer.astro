@@ -51,15 +51,12 @@ const themeLabel = themeRef ? "Custom" : (themeOption?.label ?? config.theme);
 const themeSwatchColor =
   themeOverrides?.light?.primary ?? themeOption?.color ?? "oklch(0.72 0 0)";
 
-const primaryPickers = [
-  "style",
-  "baseColor",
-  "iconLibrary",
-  "fontHeading",
-  "font",
-  "radius",
-  "menuColor",
-  "menuAccent",
+const pickerGroups = [
+  ["style"],
+  ["baseColor"],
+  ["fontHeading", "font"],
+  ["iconLibrary", "radius"],
+  ["menuColor", "menuAccent"],
 ] as const;
 ---
 
@@ -149,69 +146,75 @@ const primaryPickers = [
         data-create-form-main
         data-panel-state="active"
       >
-        <div class="p-2.5 gap-2 flex flex-col">
-          {
-            primaryPickers.map((picker) => (
-              <CreatePicker
-                name={picker}
-                label={CREATE_PICKER_LABELS[picker]}
-                value={config[picker]}
-                options={pickerOptions[picker]}
-                selectedOption={getCreatePickerSelectedOption(picker, config)}
-                markerKind={CREATE_PICKER_MARKERS[picker]}
-                lockable
-                lockParam={picker}
-                disabled={isCreatePickerDisabled(picker, config)}
-              />
-            ))
-          }
-
-          <div class="group/picker relative">
-            <Button
-              type="button"
-              variant="outline"
-              class="create-picker-trigger bg-transparent! hover:bg-muted! border-border/70! flex w-full justify-between text-left h-auto! rounded-[12px]! px-3! py-2!"
-              data-create-theme-trigger
-            >
-              <span class="min-w-0">
-                <span
-                  class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38"
-                >
-                  Theme
-                </span>
-                <span
-                  class="block truncate text-sm font-medium tracking-[-0.01em] text-white/90"
-                  data-create-theme-current-label
-                >
-                  {themeLabel}
-                </span>
-              </span>
-
-              <span
-                class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65"
-              >
-                <span
-                  class="inline-flex items-center justify-center"
-                  data-create-theme-current-marker
-                >
-                  <CreatePickerMarker
-                    kind="swatch"
-                    value={config.theme}
-                    label={themeLabel}
-                    color={themeSwatchColor}
+        {
+          pickerGroups.map((group, groupIndex) => (
+            <>
+              <div class="p-2.5 gap-2 flex flex-col">
+                {group.map((picker) => (
+                  <CreatePicker
+                    name={picker}
+                    label={CREATE_PICKER_LABELS[picker]}
+                    value={config[picker]}
+                    options={pickerOptions[picker]}
+                    selectedOption={getCreatePickerSelectedOption(picker, config)}
+                    markerKind={CREATE_PICKER_MARKERS[picker]}
+                    lockable
+                    lockParam={picker}
+                    disabled={isCreatePickerDisabled(picker, config)}
                   />
-                </span>
-              </span>
-            </Button>
+                ))}
 
-            <CreateLockButton
-              param="theme"
-              class="absolute top-1/2 right-8 -translate-y-1/2"
-            />
-          </div>
-        </div>
+                {groupIndex === 1 && (
+                  <div class="group/picker relative">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      class="create-picker-trigger bg-transparent! hover:bg-muted! border-border/70! flex w-full justify-between text-left h-auto! rounded-[12px]! px-3! py-2!"
+                      data-create-theme-trigger
+                    >
+                      <span class="min-w-0">
+                        <span
+                          class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38"
+                        >
+                          Theme
+                        </span>
+                        <span
+                          class="block truncate text-sm font-medium tracking-[-0.01em] text-white/90"
+                          data-create-theme-current-label
+                        >
+                          {themeLabel}
+                        </span>
+                      </span>
 
-        <Separator class="!bg-white/8" />
+                      <span
+                        class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65"
+                      >
+                        <span
+                          class="inline-flex items-center justify-center"
+                          data-create-theme-current-marker
+                        >
+                          <CreatePickerMarker
+                            kind="swatch"
+                            value={config.theme}
+                            label={themeLabel}
+                            color={themeSwatchColor}
+                          />
+                        </span>
+                      </span>
+                    </Button>
+
+                    <CreateLockButton
+                      param="theme"
+                      class="absolute top-1/2 right-8 -translate-y-1/2"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <Separator class="!bg-white/8" />
+            </>
+          ))
+        }
 
         <div class="p-2.5 flex flex-col gap-2">
           <label

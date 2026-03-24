@@ -130,7 +130,7 @@ export const CREATE_PICKER_LABELS: Record<CreatePickerName, string> = {
   fontHeading: "Heading",
   font: "Font",
   radius: "Radius",
-  menuColor: "Menu Color",
+  menuColor: "Menu",
   menuAccent: "Menu Accent",
   template: "Template",
   rtlLanguage: "Language",
