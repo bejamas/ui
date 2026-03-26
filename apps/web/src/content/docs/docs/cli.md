@@ -32,6 +32,8 @@ Create an Astro app or monorepo, wire Tailwind v4, tokens, base styles, and comp
 
 You can also switch an existing app to a different preset by rerunning `init --preset`. Installed UI components are reconfigured to the new preset automatically; use `--no-reinstall` to opt out.
 
+Starter templates are English-only by default. Use `--rtl --lang <ar|fa|he>` when you want the CLI to add the template i18n/RTL wiring.
+
 #### Usage
 
 ```bash

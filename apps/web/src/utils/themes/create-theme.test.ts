@@ -85,6 +85,10 @@ describe("create theme helpers", () => {
     expect(groups[0]?.options.map((option) => option.value)).toEqual([
       "bejamas-blue",
       "bejamas-neon-yellow",
+      "bejamas-apple",
+      "bejamas-orange",
+      "bejamas-sunflower",
+      "bejamas-violet",
     ]);
     expect(groups[1]?.options.some((option) => option.value === "blue")).toBe(
       true,
@@ -103,7 +107,7 @@ describe("create theme helpers", () => {
       getCreateThemeSeedOption("neutral", "bejamas-neon-yellow"),
     ).toMatchObject({
       value: "bejamas-neon-yellow",
-      label: "Neon Yellow",
+      label: "Neon",
       color: "oklch(91.98% 0.1905 128.5)",
       group: "bejamas",
     });

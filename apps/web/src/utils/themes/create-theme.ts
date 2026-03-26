@@ -40,6 +40,10 @@ export type CreateThemeSeedOptionGroup = {
 const CURATED_THEME_VALUES = [
   "bejamas-blue",
   "bejamas-neon-yellow",
+  "bejamas-apple",
+  "bejamas-orange",
+  "bejamas-sunflower",
+  "bejamas-violet",
 ] as const satisfies readonly DesignSystemConfig["theme"][];
 
 export const CREATE_THEME_TOKEN_SECTIONS: ThemeTokenSection[] = [

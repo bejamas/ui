@@ -200,10 +200,7 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
 
   :root[data-create-docs-themed]
     :is([data-create-main-menu-content], [data-create-picker-content])
-    [data-slot="dropdown-menu-item"][data-highlighted],
-  :root[data-create-docs-themed]
-    :is([data-create-main-menu-content], [data-create-picker-content])
-    [data-slot="dropdown-menu-item"][data-selected] {
+    [data-slot="dropdown-menu-item"][data-highlighted] {
     background: rgba(255, 255, 255, 0.06) !important;
     color: rgba(255, 255, 255, 0.92) !important;
   }
@@ -211,14 +208,6 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
   :root[data-create-docs-themed]
     :is([data-create-main-menu-content], [data-create-picker-content])
     [data-slot="dropdown-menu-item"][data-highlighted]
-    :is(
-      svg,
-      [data-create-picker-item-label],
-      [data-slot="dropdown-menu-shortcut"]
-    ),
-  :root[data-create-docs-themed]
-    :is([data-create-main-menu-content], [data-create-picker-content])
-    [data-slot="dropdown-menu-item"][data-selected]
     :is(
       svg,
       [data-create-picker-item-label],

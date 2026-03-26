@@ -56,20 +56,20 @@ async function applyLocalPackageOverrides(projectPath: string) {
 
   await Promise.all(
     packageJsonPaths.map(async (packageJsonPath) => {
-        const packageJson = await fs.readJson(packageJsonPath);
-        let changed = false;
+      const packageJson = await fs.readJson(packageJsonPath);
+      let changed = false;
 
-        for (const field of ["dependencies", "devDependencies"] as const) {
-          if (packageJson[field]?.bejamas) {
-            packageJson[field].bejamas = `file:${normalizedOverride}`;
-            changed = true;
-          }
+      for (const field of ["dependencies", "devDependencies"] as const) {
+        if (packageJson[field]?.bejamas) {
+          packageJson[field].bejamas = `file:${normalizedOverride}`;
+          changed = true;
         }
+      }
 
-        if (changed) {
-          await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
-        }
-      }),
+      if (changed) {
+        await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+      }
+    }),
   );
 }
 
@@ -204,7 +204,10 @@ async function createProjectFromTemplate(
 
   try {
     dotenv.config({ quiet: true });
-    const templatePath = path.join(os.tmpdir(), `bejamas-template-${Date.now()}`);
+    const templatePath = path.join(
+      os.tmpdir(),
+      `bejamas-template-${Date.now()}`,
+    );
     const templateSource = path.resolve(
       LOCAL_TEMPLATES_DIR,
       TEMPLATE_DIRNAME[options.templateKey],
@@ -220,6 +223,8 @@ async function createProjectFromTemplate(
         return basename !== "node_modules" && basename !== ".astro";
       },
     });
+
+    await removeEmptyTemplateI18nDirs(projectPath);
 
     await applyLocalPackageOverrides(projectPath);
 
@@ -256,4 +261,24 @@ async function createProjectFromTemplate(
     );
     handleError(error);
   }
+}
+
+async function removeEmptyTemplateI18nDirs(projectPath: string) {
+  const candidates = [
+    path.resolve(projectPath, "src/i18n"),
+    path.resolve(projectPath, "apps/web/src/i18n"),
+  ];
+
+  await Promise.all(
+    candidates.map(async (candidate) => {
+      if (!(await fs.pathExists(candidate))) {
+        return;
+      }
+
+      const entries = await fs.readdir(candidate);
+      if (entries.length === 0) {
+        await fs.remove(candidate);
+      }
+    }),
+  );
 }

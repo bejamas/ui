@@ -68,6 +68,10 @@ export const PRESET_THEMES = [
   ...SHARED_PRESET_THEMES,
   "bejamas-blue",
   "bejamas-neon-yellow",
+  "bejamas-apple",
+  "bejamas-orange",
+  "bejamas-sunflower",
+  "bejamas-violet",
 ] as const;
 
 export const PRESET_CHART_COLORS = SHARED_PRESET_THEMES;
@@ -313,7 +317,7 @@ function hasValue<T extends readonly string[]>(
 function isBejamasOnlyTheme(
   value: string | undefined,
 ): value is Exclude<(typeof PRESET_THEMES)[number], (typeof SHARED_PRESET_THEMES)[number]> {
-  return value === "bejamas-blue" || value === "bejamas-neon-yellow";
+  return !!value && value.startsWith("bejamas-");
 }
 
 function hasBejamasOnlyValues(config: Partial<PresetConfig>) {

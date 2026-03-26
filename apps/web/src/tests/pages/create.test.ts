@@ -8,7 +8,7 @@ const createPageFile = path.resolve(
 );
 
 describe("create page stable customizer overrides", () => {
-  test("pins dropdown menu highlighted and selected states to the muted dark create palette", () => {
+  test("pins dropdown menu highlighted state to the muted dark create palette", () => {
     const source = fs.readFileSync(createPageFile, "utf8");
 
     expect(source).toContain(
@@ -17,7 +17,6 @@ describe("create page stable customizer overrides", () => {
     expect(source).toContain(
       '[data-slot="dropdown-menu-item"][data-highlighted]',
     );
-    expect(source).toContain('[data-slot="dropdown-menu-item"][data-selected]');
     expect(source).toContain(
       "background: rgba(255, 255, 255, 0.06) !important;",
     );

@@ -465,7 +465,7 @@ function renderPickerItems(
           data-create-picker-item
           data-value="${escapeHtml(option.value)}"
           ${selected ? 'data-selected=""' : ""}
-          class="cn-dropdown-menu-item group/dropdown-menu-item relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 create-picker-item !gap-2.5 !rounded-[12px] !px-3 !py-2 !text-[14px] !font-medium !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92"
+          class="cn-dropdown-menu-item group/dropdown-menu-item relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 create-picker-item !gap-2.5 !rounded-[12px] !px-3 !py-2 !text-[14px] !font-medium !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
         >
           <span class="truncate" data-create-picker-item-label>${escapeHtml(option.label)}</span>
           <span class="ml-auto flex shrink-0 items-center gap-2">
@@ -785,7 +785,7 @@ function renderThemeSeedButton(
   return `
     <button
       type="button"
-      class="flex items-center gap-2 rounded-[12px] border px-2.5 py-2 text-left transition-colors ${selected ? "border-white/16 bg-white/[0.08] text-white" : "border-white/0 bg-white/[0.02] text-white/78 hover:bg-white/[0.05]"}"
+      class="flex items-center gap-2 rounded-[12px] border px-2.5 py-2 text-left transition-colors ${selected ? "border-white/16 bg-white/[0.08] text-white" : "border-white/0 bg-transparent text-white/78 hover:bg-white/[0.05]"}"
       data-create-theme-option
       data-value="${escapeHtml(option.value)}"
       ${selected ? 'data-selected=""' : ""}

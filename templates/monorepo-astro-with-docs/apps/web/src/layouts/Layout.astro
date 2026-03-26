@@ -1,11 +1,10 @@
 ---
 import "@repo/ui/globals.css";
 import { Font } from "astro:assets";
-import { appUi } from "@/i18n/ui";
 ---
 
 <!doctype html>
-<html lang={appUi.lang} dir={appUi.dir}>
+<html lang="en">
   <head>
     <!-- bejamas:astro-fonts:start -->
     <Font cssVariable="--font-sans" />
@@ -14,7 +13,7 @@ import { appUi } from "@/i18n/ui";
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{appUi.metadataTitle}</title>
+    <title>bejamas/ui Astro project</title>
   </head>
   <body>
     <slot />

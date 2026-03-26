@@ -24,8 +24,256 @@ const MANAGED_TAILWIND_IMPORTS = new Set([
   SHADCN_TAILWIND_IMPORT,
   BEJAMAS_TAILWIND_IMPORT,
 ]);
+const TEMPLATE_APP_UI_IMPORT = 'import { appUi } from "@/i18n/ui";';
+
+type TemplateI18nVariant = "astro" | "monorepo";
 
 type ThemeVars = ReturnType<typeof buildRegistryTheme>["cssVars"];
+
+const TEMPLATE_I18N_SOURCES: Record<TemplateI18nVariant, string> = {
+  astro: `const RTL_LANGUAGES = ["ar", "fa", "he"] as const;
+
+export type TemplateLanguage = "en" | (typeof RTL_LANGUAGES)[number];
+
+export const CURRENT_LANGUAGE: TemplateLanguage = "en";
+
+const ui = {
+  en: {
+    metadataTitle: "bejamas/ui Astro project",
+    welcomeMessage: "Welcome to {project} Astro project.",
+    getStartedMessage: "Get started by editing src/pages/index.astro.",
+    readDocs: "Read docs",
+    getCustomDemo: "Get custom demo",
+  },
+  ar: {
+    metadataTitle: "مشروع Astro من bejamas/ui",
+    welcomeMessage: "مرحبًا بك في مشروع Astro الخاص بـ {project}.",
+    getStartedMessage: "ابدأ بتحرير src/pages/index.astro.",
+    readDocs: "اقرأ التوثيق",
+    getCustomDemo: "احصل على عرض توضيحي مخصص",
+  },
+  fa: {
+    metadataTitle: "پروژه Astro با bejamas/ui",
+    welcomeMessage: "به پروژه Astro با {project} خوش آمدید.",
+    getStartedMessage: "برای شروع src/pages/index.astro را ویرایش کنید.",
+    readDocs: "مطالعه مستندات",
+    getCustomDemo: "درخواست دموی سفارشی",
+  },
+  he: {
+    metadataTitle: "פרויקט Astro עם bejamas/ui",
+    welcomeMessage: "ברוכים הבאים לפרויקט Astro של {project}.",
+    getStartedMessage: "התחילו בעריכת src/pages/index.astro.",
+    readDocs: "קריאת התיעוד",
+    getCustomDemo: "קבלת דמו מותאם",
+  },
+} as const satisfies Record<TemplateLanguage, Record<string, string>>;
+
+export const appUi = {
+  lang: CURRENT_LANGUAGE,
+  dir: RTL_LANGUAGES.includes(
+    CURRENT_LANGUAGE as (typeof RTL_LANGUAGES)[number],
+  )
+    ? "rtl"
+    : "ltr",
+  ...ui[CURRENT_LANGUAGE],
+};
+`,
+  monorepo: `const RTL_LANGUAGES = ["ar", "fa", "he"] as const;
+
+export type TemplateLanguage = "en" | (typeof RTL_LANGUAGES)[number];
+
+export const CURRENT_LANGUAGE: TemplateLanguage = "en";
+
+const ui = {
+  en: {
+    metadataTitle: "bejamas/ui Astro project",
+    welcomeMessage: "Welcome to {project} Astro monorepo.",
+    getStartedMessage: "Get started by editing apps/web/src/pages/index.astro.",
+    readDocs: "Read docs",
+    getCustomDemo: "Get custom demo",
+  },
+  ar: {
+    metadataTitle: "مشروع Astro من bejamas/ui",
+    welcomeMessage: "مرحبًا بك في مشروع Astro الأحادي من {project}.",
+    getStartedMessage: "ابدأ بتحرير apps/web/src/pages/index.astro.",
+    readDocs: "اقرأ التوثيق",
+    getCustomDemo: "احصل على عرض توضيحي مخصص",
+  },
+  fa: {
+    metadataTitle: "پروژه Astro با bejamas/ui",
+    welcomeMessage: "به مونوریپوی Astro با {project} خوش آمدید.",
+    getStartedMessage:
+      "برای شروع apps/web/src/pages/index.astro را ویرایش کنید.",
+    readDocs: "مطالعه مستندات",
+    getCustomDemo: "درخواست دموی سفارشی",
+  },
+  he: {
+    metadataTitle: "פרויקט Astro עם bejamas/ui",
+    welcomeMessage: "ברוכים הבאים למונורפו Astro של {project}.",
+    getStartedMessage: "התחילו בעריכת apps/web/src/pages/index.astro.",
+    readDocs: "קריאת התיעוד",
+    getCustomDemo: "קבלת דמו מותאם",
+  },
+} as const satisfies Record<TemplateLanguage, Record<string, string>>;
+
+export const appUi = {
+  lang: CURRENT_LANGUAGE,
+  dir: RTL_LANGUAGES.includes(
+    CURRENT_LANGUAGE as (typeof RTL_LANGUAGES)[number],
+  )
+    ? "rtl"
+    : "ltr",
+  ...ui[CURRENT_LANGUAGE],
+};
+`,
+};
+
+const TEMPLATE_PAGE_VARIANTS = [
+  {
+    matchers: [
+      'import { Button } from "@/ui/button";',
+      "Astro project.",
+      "Get started by editing src/pages/index.astro.",
+    ],
+    i18nSource: `---
+import Layout from "@/layouts/Layout.astro";
+import { appUi } from "@/i18n/ui";
+import { Button } from "@/ui/button";
+
+const [welcomePrefix, welcomeSuffix = ""] =
+  appUi.welcomeMessage.split("{project}");
+---
+
+<Layout>
+  <div
+    class="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20"
+  >
+    <div class="flex flex-col gap-6 row-start-2 items-center sm:items-start">
+      <img src="/bejamas.svg" alt="bejamas/ui" class="w-8 dark:invert" />
+      <div class="space-y-2">
+        <p class="text-sm">
+          {welcomePrefix}<code
+            class="font-bold relative bg-muted rounded p-1"
+            >@bejamas/ui</code
+          >{welcomeSuffix}
+        </p>
+        <p class="text-sm">
+          {appUi.getStartedMessage}
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <Button as="a" href="https://ui.bejamas.com/docs"
+          >{appUi.readDocs}</Button
+        >
+        <Button as="a" href="https://bejamas.com/get-in-touch" variant="outline"
+          >{appUi.getCustomDemo}</Button
+        >
+      </div>
+    </div>
+  </div>
+</Layout>
+`,
+  },
+  {
+    matchers: [
+      'import { Button } from "@repo/ui/components/button";',
+      'width="32"',
+      "Astro monorepo.",
+      "Get started by editing apps/web/src/pages/index.astro.",
+    ],
+    i18nSource: `---
+import Layout from "@/layouts/Layout.astro";
+import { appUi } from "@/i18n/ui";
+import { Button } from "@repo/ui/components/button";
+
+const [welcomePrefix, welcomeSuffix = ""] =
+  appUi.welcomeMessage.split("{project}");
+---
+
+<Layout>
+  <div
+    class="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20"
+  >
+    <div class="flex flex-col gap-6 row-start-2 items-center sm:items-start">
+      <img
+        src="/bejamas.svg"
+        alt="bejamas/ui"
+        class="w-8 dark:invert"
+        width="32"
+        height="32"
+        alt="bejamas/ui logo"
+      />
+      <div class="space-y-2">
+        <p class="text-sm">
+          {welcomePrefix}<code
+            class="font-bold relative bg-muted rounded p-1"
+            >@bejamas/ui</code
+          >{welcomeSuffix}
+        </p>
+        <p class="text-sm">
+          {appUi.getStartedMessage}
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <Button as="a" href="https://ui.bejamas.com/docs"
+          >{appUi.readDocs}</Button
+        >
+        <Button as="a" href="https://bejamas.com/get-in-touch" variant="outline"
+          >{appUi.getCustomDemo}</Button
+        >
+      </div>
+    </div>
+  </div>
+</Layout>
+`,
+  },
+  {
+    matchers: [
+      'import { Button } from "@repo/ui/components/button";',
+      '<img src="/bejamas.svg" alt="bejamas/ui" class="w-8 dark:invert" />',
+      "Astro monorepo.",
+      "Get started by editing apps/web/src/pages/index.astro.",
+    ],
+    i18nSource: `---
+import Layout from "@/layouts/Layout.astro";
+import { appUi } from "@/i18n/ui";
+import { Button } from "@repo/ui/components/button";
+
+const [welcomePrefix, welcomeSuffix = ""] =
+  appUi.welcomeMessage.split("{project}");
+---
+
+<Layout>
+  <div
+    class="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20"
+  >
+    <div class="flex flex-col gap-6 row-start-2 items-center sm:items-start">
+      <img src="/bejamas.svg" alt="bejamas/ui" class="w-8 dark:invert" />
+      <div class="space-y-2">
+        <p class="text-sm">
+          {welcomePrefix}<code
+            class="font-bold relative bg-muted rounded p-1"
+            >@bejamas/ui</code
+          >{welcomeSuffix}
+        </p>
+        <p class="text-sm">
+          {appUi.getStartedMessage}
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <Button as="a" href="https://ui.bejamas.com/docs"
+          >{appUi.readDocs}</Button
+        >
+        <Button as="a" href="https://bejamas.com/get-in-touch" variant="outline"
+          >{appUi.getCustomDemo}</Button
+        >
+      </div>
+    </div>
+  </div>
+</Layout>
+`,
+  },
+];
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -33,6 +281,15 @@ function escapeRegExp(value: string) {
 
 function compactCss(source: string) {
   return source.replace(/\n{3,}/g, "\n\n").trimEnd() + "\n";
+}
+
+function compactSource(source: string) {
+  return (
+    source
+      .replace(/\r\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trimEnd() + "\n"
+  );
 }
 
 function stripLegacyCreateBlock(source: string) {
@@ -158,6 +415,81 @@ function resolveManagedTailwindImport(source: string) {
   return BEJAMAS_TAILWIND_IMPORT;
 }
 
+function normalizeSourceForComparison(source: string) {
+  return source.replace(/\r\n/g, "\n").replace(/\s+/g, " ").trim();
+}
+
+function upsertFrontmatterImport(source: string, importLine: string) {
+  if (source.includes(importLine)) {
+    return source;
+  }
+
+  const frontmatterEnd = source.indexOf("\n---", 3);
+  if (source.startsWith("---\n") && frontmatterEnd !== -1) {
+    return `${source.slice(0, frontmatterEnd).trimEnd()}\n${importLine}${source.slice(frontmatterEnd)}`;
+  }
+
+  return `${importLine}\n${source}`;
+}
+
+function getTemplateI18nVariant(filepath: string): TemplateI18nVariant {
+  return filepath.includes(`${path.sep}apps${path.sep}web${path.sep}`)
+    ? "monorepo"
+    : "astro";
+}
+
+function buildTemplateI18nSource(
+  variant: TemplateI18nVariant,
+  language: string,
+) {
+  return compactSource(
+    TEMPLATE_I18N_SOURCES[variant].replace(
+      'export const CURRENT_LANGUAGE: TemplateLanguage = "en";',
+      `export const CURRENT_LANGUAGE: TemplateLanguage = "${language}";`,
+    ),
+  );
+}
+
+function transformTemplateLayoutToI18n(source: string) {
+  if (source.includes(TEMPLATE_APP_UI_IMPORT)) {
+    return source;
+  }
+
+  let next = upsertFrontmatterImport(source, TEMPLATE_APP_UI_IMPORT);
+  next = next
+    .replace(/<html([^>]*?)\slang=(\"[^\"]*\"|\{[^}]+\})([^>]*)>/, "<html$1$3>")
+    .replace(/<html([^>]*?)\sdir=(\"[^\"]*\"|\{[^}]+\})([^>]*)>/, "<html$1$3>");
+  next = next.replace(
+    /<html([^>]*)>/,
+    "<html$1 lang={appUi.lang} dir={appUi.dir}>",
+  );
+  next = next.replace(
+    /<title>[\s\S]*?<\/title>/,
+    "<title>{appUi.metadataTitle}</title>",
+  );
+
+  return compactSource(next);
+}
+
+function transformStarterPageToI18n(source: string) {
+  if (source.includes(TEMPLATE_APP_UI_IMPORT)) {
+    return source;
+  }
+
+  const normalized = normalizeSourceForComparison(source);
+  const match = TEMPLATE_PAGE_VARIANTS.find((variant) =>
+    variant.matchers.every((matcher) =>
+      normalized.includes(normalizeSourceForComparison(matcher)),
+    ),
+  );
+
+  if (!match) {
+    return source;
+  }
+
+  return compactSource(match.i18nSource);
+}
+
 function upsertThemeInlineFont(source: string, fontVariable?: string) {
   const pattern = /@theme inline\s*\{[\s\S]*?\n\}/m;
 
@@ -209,8 +541,7 @@ function upsertBaseLayerHtmlFont(source: string, fontClass: string) {
 
   return source.replace(pattern, (block) => {
     const htmlRulePattern = /\n\s*html\s*\{[\s\S]*?\n\s*\}/m;
-    const headingRulePattern =
-      /\n\s*\.cn-font-heading\s*\{[\s\S]*?\n\s*\}/m;
+    const headingRulePattern = /\n\s*\.cn-font-heading\s*\{[\s\S]*?\n\s*\}/m;
     const cleanedBlock = block
       .replace(htmlRulePattern, "")
       .replace(headingRulePattern, "");
@@ -350,7 +681,10 @@ export async function syncManagedTailwindCss(projectPath: string) {
         return;
       }
 
-      const cssPath = path.resolve(path.dirname(componentJsonPath), cssRelativePath);
+      const cssPath = path.resolve(
+        path.dirname(componentJsonPath),
+        cssRelativePath,
+      );
 
       if (!(await fs.pathExists(cssPath))) {
         return;
@@ -392,16 +726,27 @@ async function patchTemplateI18nFile(
   filepath: string,
   config: DesignSystemConfig,
 ) {
+  if (!config.rtl) {
+    return;
+  }
+
+  const nextLanguage = getDocumentLanguage(config);
+  const variant = getTemplateI18nVariant(filepath);
+  const nextSource = buildTemplateI18nSource(variant, nextLanguage);
+
   if (!(await fs.pathExists(filepath))) {
+    await fs.ensureDir(path.dirname(filepath));
+    await fs.writeFile(filepath, nextSource, "utf8");
     return;
   }
 
   const current = await fs.readFile(filepath, "utf8");
-  const nextLanguage = getDocumentLanguage(config);
-  const next = current.replace(
-    /export const CURRENT_LANGUAGE: TemplateLanguage = "[^"]+";/,
-    `export const CURRENT_LANGUAGE: TemplateLanguage = "${nextLanguage}";`,
-  );
+  const next = current.includes("export const CURRENT_LANGUAGE")
+    ? current.replace(
+        /export const CURRENT_LANGUAGE: TemplateLanguage = "[^"]+";/,
+        `export const CURRENT_LANGUAGE: TemplateLanguage = "${nextLanguage}";`,
+      )
+    : nextSource;
 
   if (next !== current) {
     await fs.writeFile(filepath, next, "utf8");
@@ -418,6 +763,16 @@ async function patchLayoutFile(filepath: string, config: DesignSystemConfig) {
     return;
   }
 
+  if (config.rtl) {
+    const next = transformTemplateLayoutToI18n(current);
+
+    if (next !== current) {
+      await fs.writeFile(filepath, next, "utf8");
+    }
+
+    return;
+  }
+
   const nextLanguage = getDocumentLanguage(config);
   const nextDirection = getDocumentDirection(config);
   let next = current
@@ -428,6 +783,22 @@ async function patchLayoutFile(filepath: string, config: DesignSystemConfig) {
     /<html([^>]*)>/,
     `<html$1 lang="${nextLanguage}"${config.rtl ? ` dir="${nextDirection}"` : ""}>`,
   );
+
+  if (next !== current) {
+    await fs.writeFile(filepath, next, "utf8");
+  }
+}
+
+async function patchStarterPageFile(
+  filepath: string,
+  config: DesignSystemConfig,
+) {
+  if (!config.rtl || !(await fs.pathExists(filepath))) {
+    return;
+  }
+
+  const current = await fs.readFile(filepath, "utf8");
+  const next = transformStarterPageToI18n(current);
 
   if (next !== current) {
     await fs.writeFile(filepath, next, "utf8");
@@ -477,6 +848,12 @@ export async function applyDesignSystemToProject(
       path.resolve(projectPath, "src/layouts/Layout.astro"),
       path.resolve(projectPath, "apps/web/src/layouts/Layout.astro"),
     ].map((filepath) => patchLayoutFile(filepath, config)),
+  );
+  await Promise.all(
+    [
+      path.resolve(projectPath, "src/pages/index.astro"),
+      path.resolve(projectPath, "apps/web/src/pages/index.astro"),
+    ].map((filepath) => patchStarterPageFile(filepath, config)),
   );
 
   const managedFonts = [

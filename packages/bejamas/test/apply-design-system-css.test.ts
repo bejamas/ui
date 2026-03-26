@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DesignSystemConfig } from "@bejamas/create-config/server";
@@ -20,8 +20,15 @@ const astroIndexPage = readFileSync(
   path.resolve(repoRoot, "templates/astro/src/pages/index.astro"),
   "utf8",
 );
+const astroLayout = readFileSync(
+  path.resolve(repoRoot, "templates/astro/src/layouts/Layout.astro"),
+  "utf8",
+);
 const monorepoUiGlobalsCss = readFileSync(
-  path.resolve(repoRoot, "templates/monorepo-astro/packages/ui/src/styles/globals.css"),
+  path.resolve(
+    repoRoot,
+    "templates/monorepo-astro/packages/ui/src/styles/globals.css",
+  ),
   "utf8",
 );
 const monorepoUiPackageJson = readFileSync(
@@ -43,13 +50,30 @@ const docsMonorepoUiPackageJson = readFileSync(
   "utf8",
 );
 const monorepoIndexPage = readFileSync(
-  path.resolve(repoRoot, "templates/monorepo-astro/apps/web/src/pages/index.astro"),
+  path.resolve(
+    repoRoot,
+    "templates/monorepo-astro/apps/web/src/pages/index.astro",
+  ),
+  "utf8",
+);
+const monorepoLayout = readFileSync(
+  path.resolve(
+    repoRoot,
+    "templates/monorepo-astro/apps/web/src/layouts/Layout.astro",
+  ),
   "utf8",
 );
 const docsMonorepoIndexPage = readFileSync(
   path.resolve(
     repoRoot,
     "templates/monorepo-astro-with-docs/apps/web/src/pages/index.astro",
+  ),
+  "utf8",
+);
+const docsMonorepoLayout = readFileSync(
+  path.resolve(
+    repoRoot,
+    "templates/monorepo-astro-with-docs/apps/web/src/layouts/Layout.astro",
   ),
   "utf8",
 );
@@ -153,5 +177,61 @@ describe("transformDesignSystemCss", () => {
     expect(astroIndexPage).not.toContain("font-mono");
     expect(monorepoIndexPage).not.toContain("font-mono");
     expect(docsMonorepoIndexPage).not.toContain("font-mono");
+  });
+
+  test("default Astro templates do not ship template i18n files", () => {
+    expect(
+      existsSync(path.resolve(repoRoot, "templates/astro/src/i18n/ui.ts")),
+    ).toBe(false);
+    expect(existsSync(path.resolve(repoRoot, "templates/astro/src/i18n"))).toBe(
+      false,
+    );
+    expect(
+      existsSync(
+        path.resolve(
+          repoRoot,
+          "templates/monorepo-astro/apps/web/src/i18n/ui.ts",
+        ),
+      ),
+    ).toBe(false);
+    expect(
+      existsSync(
+        path.resolve(repoRoot, "templates/monorepo-astro/apps/web/src/i18n"),
+      ),
+    ).toBe(false);
+    expect(
+      existsSync(
+        path.resolve(
+          repoRoot,
+          "templates/monorepo-astro-with-docs/apps/web/src/i18n/ui.ts",
+        ),
+      ),
+    ).toBe(false);
+    expect(
+      existsSync(
+        path.resolve(
+          repoRoot,
+          "templates/monorepo-astro-with-docs/apps/web/src/i18n",
+        ),
+      ),
+    ).toBe(false);
+  });
+
+  test("default Astro templates use static English layout and page content", () => {
+    for (const source of [
+      astroLayout,
+      astroIndexPage,
+      monorepoLayout,
+      monorepoIndexPage,
+      docsMonorepoLayout,
+      docsMonorepoIndexPage,
+    ]) {
+      expect(source).not.toContain('from "@/i18n/ui"');
+      expect(source).not.toContain("appUi.");
+    }
+
+    expect(astroLayout).toContain('<html lang="en">');
+    expect(monorepoLayout).toContain('<html lang="en">');
+    expect(docsMonorepoLayout).toContain('<html lang="en">');
   });
 });

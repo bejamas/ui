@@ -1,10 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { appUi } from "@/i18n/ui";
 import { Button } from "@repo/ui/components/button";
-
-const [welcomePrefix, welcomeSuffix = ""] =
-  appUi.welcomeMessage.split("{project}");
 ---
 
 <Layout>
@@ -22,21 +18,18 @@ const [welcomePrefix, welcomeSuffix = ""] =
       />
       <div class="space-y-2">
         <p class="text-sm">
-          {welcomePrefix}<code
-            class="font-bold relative bg-muted rounded p-1"
+          Welcome to <code class="font-bold relative bg-muted rounded p-1"
             >@bejamas/ui</code
-          >{welcomeSuffix}
+          > Astro monorepo.
         </p>
         <p class="text-sm">
-          {appUi.getStartedMessage}
+          Get started by editing apps/web/src/pages/index.astro.
         </p>
       </div>
       <div class="flex gap-2">
-        <Button as="a" href="https://ui.bejamas.com/docs"
-          >{appUi.readDocs}</Button
-        >
+        <Button as="a" href="https://ui.bejamas.com/docs">Read docs</Button>
         <Button as="a" href="https://bejamas.com/get-in-touch" variant="outline"
-          >{appUi.getCustomDemo}</Button
+          >Get custom demo</Button
         >
       </div>
     </div>
