@@ -12,7 +12,7 @@ describe("create page stable customizer overrides", () => {
     const source = fs.readFileSync(createPageFile, "utf8");
 
     expect(source).toContain(
-      "[data-create-main-menu-content], [data-create-picker-content]",
+      "[data-create-picker-content]",
     );
     expect(source).toContain(
       '[data-slot="dropdown-menu-item"][data-highlighted]',

@@ -44,6 +44,8 @@ const CURATED_THEME_VALUES = [
   "bejamas-orange",
   "bejamas-sunflower",
   "bejamas-violet",
+  "bejamas-turquoise",
+  "bejamas-magenta",
 ] as const satisfies readonly DesignSystemConfig["theme"][];
 
 export const CREATE_THEME_TOKEN_SECTIONS: ThemeTokenSection[] = [

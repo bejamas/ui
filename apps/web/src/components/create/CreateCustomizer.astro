@@ -1,17 +1,5 @@
 ---
-import FolderPlusIcon from "@lucide/astro/icons/folder-plus";
-import MenuIcon from "@lucide/astro/icons/menu";
-import RotateCcwIcon from "@lucide/astro/icons/rotate-ccw";
-import ShuffleIcon from "@lucide/astro/icons/shuffle";
 import { Button } from "@bejamas/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@bejamas/ui/components/dropdown-menu";
-import { Separator } from "@bejamas/ui/components/separator";
 import type { DesignSystemConfig } from "@bejamas/create-config/server";
 import {
   CREATE_PICKER_LABELS,
@@ -25,7 +13,9 @@ import CreatePicker from "./CreatePicker.astro";
 import CreatePickerMarker from "./CreatePickerMarker.astro";
 import CreateNavigateDialog from "./CreateNavigateDialog.astro";
 import CreateProjectDialog from "./CreateProjectDialog.astro";
-import CreateThemePanel from "./CreateThemePanel.astro";
+import CreateThemeListPanel from "./CreateThemeListPanel.astro";
+import CreatePalettePanel from "./CreatePalettePanel.astro";
+import CreateSidebarHeader from "./CreateSidebarHeader.astro";
 import {
   getCreateThemeSeedOption,
   type ThemeOverrides,
@@ -57,6 +47,8 @@ const pickerGroups = [
   ["iconLibrary", "radius"],
   ["menuColor", "menuAccent"],
 ] as const;
+
+const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
 ---
 
 <aside
@@ -64,67 +56,10 @@ const pickerGroups = [
   data-create-customizer-stable
 >
   <div
-    class="create-customizer rounded-[22px] border bg-secondary/90 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] backdrop-blur-xl xl:flex xl:h-full xl:flex-col"
+    class="create-customizer create-sidebar-stripe-bg relative overflow-hidden border rounded-r-[22px] border-white/10 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] xl:flex xl:h-full xl:flex-col"
   >
-    <DropdownMenu data-create-main-menu class="flex items-center w-full p-2.5">
-      <DropdownMenuTrigger asChild class="w-full">
-        <Button
-          variant="outline"
-          class="create-customizer-toolbar w-full flex items-center justify-between gap-2.5 rounded-[12px]! px-3 py-2"
-        >
-          <span
-            class="flex items-center gap-2 text-sm font-medium tracking-[-0.01em]"
-          >
-            <MenuIcon class="size-4 text-white/70" />
-            Menu
-          </span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        data-create-main-menu-content
-        side="right"
-        align="start"
-        sideOffset={20}
-        class="!min-w-48 !rounded-[18px] !border-white/8 !bg-[#353331]/96 !p-1.25 !text-white !shadow-[0_18px_46px_rgba(0,0,0,0.3)] !ring-0 backdrop-blur-xl"
-      >
-        <DropdownMenuItem
-          class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
-          data-value="navigate"
-        >
-          <MenuIcon class="size-4 text-white" />
-          Navigate...
-          <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
-          data-value="shuffle"
-        >
-          <ShuffleIcon class="size-4" />
-          Shuffle
-          <DropdownMenuShortcut>R</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
-          data-value="reset"
-        >
-          <RotateCcwIcon class="size-4" />
-          Reset to defaults
-          <DropdownMenuShortcut>D</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          class="!rounded-[12px] !px-3 !py-2 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
-          data-value="create-project"
-        >
-          <FolderPlusIcon class="size-4" />
-          Create project
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-
-    <Separator class="!bg-white/8" />
-
     <form
-      class="xl:flex xl:min-h-0 xl:flex-1 xl:flex-col xl:overflow-hidden"
+      class="relative xl:flex xl:min-h-0 xl:flex-1 xl:flex-col xl:overflow-hidden"
       data-create-form
     >
       <input
@@ -141,37 +76,25 @@ const pickerGroups = [
       />
 
       <div
-        class="overflow-y-auto xl:min-h-0 xl:flex-1 [scrollbar-width:none] gap-y-1 will-change-[opacity,filter] transition-[opacity,filter] duration-80 ease-out motion-reduce:transition-none data-[panel-state=entering]:opacity-0 data-[panel-state=entering]:blur-sm data-[panel-state=entering]:pointer-events-none data-[panel-state=exiting]:opacity-0 data-[panel-state=exiting]:blur-sm data-[panel-state=exiting]:pointer-events-none data-[panel-state=inactive]:opacity-0 data-[panel-state=inactive]:blur-sm data-[panel-state=inactive]:pointer-events-none"
+        class="overflow-y-auto pl-5 xl:min-h-0 xl:flex-1 [scrollbar-width:none] will-change-[opacity,filter] transition-[opacity,filter] duration-80 ease-out motion-reduce:transition-none data-[panel-state=entering]:opacity-0 data-[panel-state=entering]:blur-sm data-[panel-state=entering]:pointer-events-none data-[panel-state=exiting]:opacity-0 data-[panel-state=exiting]:blur-sm data-[panel-state=exiting]:pointer-events-none data-[panel-state=inactive]:opacity-0 data-[panel-state=inactive]:blur-sm data-[panel-state=inactive]:pointer-events-none"
         data-create-form-main
         data-panel-state="active"
       >
-        {
-          pickerGroups.map((group, groupIndex) => (
-            <>
-              <div class="p-2.5 gap-2 flex flex-col">
-                {group.map((picker) => (
-                  <CreatePicker
-                    name={picker}
-                    label={CREATE_PICKER_LABELS[picker]}
-                    value={config[picker]}
-                    options={pickerOptions[picker]}
-                    selectedOption={getCreatePickerSelectedOption(
-                      picker,
-                      config,
-                    )}
-                    markerKind={CREATE_PICKER_MARKERS[picker]}
-                    lockable
-                    lockParam={picker}
-                    disabled={isCreatePickerDisabled(picker, config)}
-                  />
-                ))}
+        <div class="bg-[#0040a1] mb-0.5">
+          <CreateSidebarHeader title="Create" />
+        </div>
+        <div class="create-sidebar-scroll-fade relative h-full">
+          {
+            pickerGroups.map((group, groupIndex) => (
+              <>
+                {groupIndex > 0 && <div class="h-4" />}
 
                 {groupIndex === 1 && (
-                  <div class="group/picker relative">
+                  <div class="group/picker relative bg-[#0040a1]">
                     <Button
                       type="button"
                       variant="outline"
-                      class="create-picker-trigger bg-transparent! hover:bg-muted! border-border/70! flex w-full justify-between text-left h-auto! rounded-[12px]! px-3! py-2!"
+                      class="create-picker-trigger bg-transparent! hover:bg-white/[0.04]! border-0! shadow-none! flex w-full justify-between text-left h-auto! rounded-none! px-4! py-3! mb-0.5"
                       data-create-theme-trigger
                     >
                       <span class="min-w-0">
@@ -207,24 +130,48 @@ const pickerGroups = [
                     />
                   </div>
                 )}
-              </div>
 
-              <Separator class="!bg-white/8" />
-            </>
-          ))
-        }
+                {group.map((picker) => (
+                  <div class="bg-[#0040a1] mb-0.5">
+                    <CreatePicker
+                      name={picker}
+                      label={CREATE_PICKER_LABELS[picker]}
+                      value={config[picker]}
+                      options={pickerOptions[picker]}
+                      selectedOption={getCreatePickerSelectedOption(
+                        picker,
+                        config,
+                      )}
+                      markerKind={
+                        pickersWithMarkers.has(picker)
+                          ? CREATE_PICKER_MARKERS[picker]
+                          : undefined
+                      }
+                      lockable
+                      lockParam={picker}
+                      disabled={isCreatePickerDisabled(picker, config)}
+                    />
+                  </div>
+                ))}
+              </>
+            ))
+          }
+        </div>
       </div>
 
-      <CreateThemePanel
+      <CreateThemeListPanel
+        config={config}
+        themeRef={themeRef}
+        themeOverrides={themeOverrides}
+      />
+      <CreatePalettePanel
         config={config}
         themeRef={themeRef}
         themeOverrides={themeOverrides}
       />
     </form>
 
-    <Separator class="!bg-white/8" />
-
-    <div class="create-customizer-actions p-2.5 xl:shrink-0">
+    <div class="create-customizer-actions bg-[#0040a1] ml-5 p-2.5 xl:shrink-0">
       <CreateNavigateDialog />
 
       <button
@@ -235,22 +182,95 @@ const pickerGroups = [
         <span data-preset-code>{`--preset ${preset}`}</span>
       </button>
 
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-2 gap-2" data-actions-default>
+        <Button
+          type="button"
+          variant="outline"
+          class="create-customizer-action rounded-[14px]"
+          data-create-randomize
+        >
+          Shuffle
+        </Button>
+
         <CreateProjectDialog
           config={config}
           preset={preset}
           themeRef={themeRef}
         />
-
+      </div>
+      <div class="grid grid-cols-2 gap-2 hidden" data-actions-palette>
         <Button
           type="button"
           variant="outline"
-          class="create-customizer-action flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
-          data-create-randomize
+          class="flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
+          data-create-palette-cancel
         >
-          <span>Shuffle</span>
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          class="flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
+          data-create-palette-save
+        >
+          Save
         </Button>
       </div>
     </div>
   </div>
 </aside>
+
+<style>
+  :global(.create-sidebar-scroll-fade::before),
+  :global(.create-sidebar-scroll-fade::after) {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  :global(.create-sidebar-scroll-fade::before) {
+    top: var(--create-sidebar-header-height);
+    height: 40px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    background: linear-gradient(to bottom, #0040a1 0%, transparent 50%);
+  }
+
+  :global(.create-sidebar-scroll-fade::after) {
+    bottom: 0;
+    height: 60px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    mask-image: linear-gradient(to top, black 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+    background: linear-gradient(to top, #0040a1 0%, transparent 40%);
+  }
+
+  .create-customizer::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .create-sidebar-stripe-bg {
+    background-color: #0040a1;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 255, 255, 0.12) 3px,
+      rgba(255, 255, 255, 0.12) 5px
+    );
+  }
+</style>

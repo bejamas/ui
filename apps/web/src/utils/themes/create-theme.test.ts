@@ -89,6 +89,8 @@ describe("create theme helpers", () => {
       "bejamas-orange",
       "bejamas-sunflower",
       "bejamas-violet",
+      "bejamas-turquoise",
+      "bejamas-magenta",
     ]);
     expect(groups[1]?.options.some((option) => option.value === "blue")).toBe(
       true,
@@ -98,8 +100,8 @@ describe("create theme helpers", () => {
   test("resolves the curated blue seed option", () => {
     expect(getCreateThemeSeedOption("neutral", "bejamas-blue")).toMatchObject({
       value: "bejamas-blue",
-      label: "Blue",
-      color: "oklch(0.56 0.15 248.21)",
+      label: "Marine",
+      color: "oklch(0.4634 0.2647 264.76)",
       group: "bejamas",
     });
 
@@ -107,7 +109,7 @@ describe("create theme helpers", () => {
       getCreateThemeSeedOption("neutral", "bejamas-neon-yellow"),
     ).toMatchObject({
       value: "bejamas-neon-yellow",
-      label: "Neon",
+      label: "Lime",
       color: "oklch(91.98% 0.1905 128.5)",
       group: "bejamas",
     });

@@ -33,7 +33,7 @@ interface Props {
   value: string;
   options: CreatePickerOption[];
   selectedOption?: CreatePickerOption;
-  markerKind: CreatePickerMarkerKind;
+  markerKind?: CreatePickerMarkerKind;
   lockable?: boolean;
   lockParam?: CreateLockableParam;
   disabled?: boolean;
@@ -94,7 +94,7 @@ function shouldRenderFontGroupLock(
         type="button"
         variant="outline"
         disabled={disabled}
-        class="create-picker-trigger bg-transparent! hover:bg-muted! border-border/70! flex w-full justify-between text-left h-auto! rounded-[12px]! px-3! py-2!"
+        class="create-picker-trigger bg-transparent! hover:bg-white/[0.04]! border-0! shadow-none! flex w-full justify-between text-left h-auto! rounded-none! px-4! py-3!"
         data-create-picker-trigger
       >
         <span class="min-w-0">
@@ -110,24 +110,26 @@ function shouldRenderFontGroupLock(
           </span>
         </span>
 
-        <span class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65">
-          <span
-            class="inline-flex items-center justify-center"
-            data-create-picker-current-marker
-          >
-            {
-              selectedOption && (
-                <CreatePickerMarker
-                  kind={markerKind}
-                  value={selectedOption.markerValue ?? selectedOption.value}
-                  label={selectedOption.label}
-                  color={selectedOption.color}
-                  family={selectedOption.family}
-                />
-              )
-            }
+        {markerKind && (
+          <span class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65">
+            <span
+              class="inline-flex items-center justify-center"
+              data-create-picker-current-marker
+            >
+              {
+                selectedOption && (
+                  <CreatePickerMarker
+                    kind={markerKind}
+                    value={selectedOption.markerValue ?? selectedOption.value}
+                    label={selectedOption.label}
+                    color={selectedOption.color}
+                    family={selectedOption.family}
+                  />
+                )
+              }
+            </span>
           </span>
-        </span>
+        )}
       </Button>
     </DropdownMenuTrigger>
 
@@ -135,125 +137,123 @@ function shouldRenderFontGroupLock(
       data-create-picker-content={name}
       side="right"
       align="start"
-      sideOffset={20}
-      class="create-picker-content !min-w-[10.5rem] !rounded-[18px] !border-white/8 !bg-[#353331]/96 !p-1.25 !text-white !shadow-[0_20px_50px_rgba(0,0,0,0.32)] !ring-0 backdrop-blur-xl max-h-92 overflow-auto"
+      sideOffset={12}
+      class="create-picker-content !min-w-[10.5rem] !rounded-[18px] !border-white/10 !bg-[#0040a1]/96 !p-1.25 !text-white !shadow-[0_20px_50px_rgba(0,0,0,0.32)] !ring-0 backdrop-blur-xl max-h-92 overflow-auto"
     >
       {
         groupedOptions.length > 0 ? (
           <>
-            {
-              ungroupedOptions.length > 0 && (
-                <>
-                  <DropdownMenuGroup>
-                    {ungroupedOptions.map((option) => {
-                      const isSelected = option.value === selectedOption?.value;
+            {ungroupedOptions.length > 0 && (
+              <>
+                <DropdownMenuGroup>
+                  {ungroupedOptions.map((option) => {
+                    const isSelected = option.value === selectedOption?.value;
 
-                      return (
-                        <DropdownMenuItem
-                          class="create-picker-item !items-start !gap-2.5 !rounded-[12px] !px-3 !py-2.5 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
-                          data-create-picker-item
-                          data-value={option.value}
-                          data-selected={isSelected ? "" : undefined}
-                        >
-                          <span class="min-w-0 flex-1">
-                            <span
-                              class="block truncate text-[14px] font-medium tracking-[-0.01em]"
-                              data-create-picker-item-label
-                            >
-                              {option.label}
-                            </span>
-                            {option.description && (
-                              <span class="mt-0.5 block text-[12px] leading-4 text-white/52">
-                                {option.description}
-                              </span>
-                            )}
+                    return (
+                      <DropdownMenuItem
+                        class="create-picker-item !items-start !gap-2.5 !rounded-[12px] !px-3 !py-2.5 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
+                        data-create-picker-item
+                        data-value={option.value}
+                        data-selected={isSelected ? "" : undefined}
+                      >
+                        <span class="min-w-0 flex-1">
+                          <span
+                            class="block truncate text-[14px] font-medium tracking-[-0.01em]"
+                            data-create-picker-item-label
+                          >
+                            {option.label}
                           </span>
-                          <span class="ml-auto flex shrink-0 items-center gap-2 pt-0.5">
-                            <span data-create-picker-item-marker>
-                              <CreatePickerMarker
-                                kind={markerKind}
-                                value={option.markerValue ?? option.value}
-                                label={option.label}
-                                color={option.color}
-                                family={option.family}
-                              />
+                          {option.description && (
+                            <span class="mt-0.5 block text-[12px] leading-4 text-white/52">
+                              {option.description}
                             </span>
-                            <CheckIcon
-                              class:list={[
-                                "size-4 text-white/78 transition-opacity",
-                                isSelected ? "opacity-100" : "opacity-0",
-                              ]}
-                              data-create-picker-item-check
-                              aria-hidden="true"
+                          )}
+                        </span>
+                        <span class="ml-auto flex shrink-0 items-center gap-2 pt-0.5">
+                          <span data-create-picker-item-marker>
+                            <CreatePickerMarker
+                              kind={markerKind}
+                              value={option.markerValue ?? option.value}
+                              label={option.label}
+                              color={option.color}
+                              family={option.family}
                             />
                           </span>
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator class="!my-1.5 !bg-white/8" />
-                </>
-              )
-            }
-            {groupedOptions.map((group, index) => (
-            <>
-              {index > 0 && (
-                <DropdownMenuSeparator class="!my-1.5 !bg-white/8" />
-              )}
-              <DropdownMenuLabel class="group/font-group flex items-center justify-between gap-2 !px-3 !pb-0.5 !pt-1.5 !text-[8px] !font-semibold !uppercase !tracking-[0.12em] !text-white/40">
-                <span>{group.label}</span>
-                {shouldRenderFontGroupLock(name, group.group) && (
-                  <CreateFontGroupLockButton group={group.group} />
-                )}
-              </DropdownMenuLabel>
-              <DropdownMenuGroup>
-                {group.options.map((option) => {
-                  const isSelected = option.value === selectedOption?.value;
-
-                  return (
-                    <DropdownMenuItem
-                      class="create-picker-item !items-start !gap-2.5 !rounded-[12px] !px-3 !py-2.5 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
-                      data-create-picker-item
-                      data-value={option.value}
-                      data-selected={isSelected ? "" : undefined}
-                    >
-                      <span class="min-w-0 flex-1">
-                        <span
-                          class="block truncate text-[14px] font-medium tracking-[-0.01em]"
-                          data-create-picker-item-label
-                        >
-                          {option.label}
-                        </span>
-                        {option.description && (
-                          <span class="mt-0.5 block text-[12px] leading-4 text-white/52">
-                            {option.description}
-                          </span>
-                        )}
-                      </span>
-                      <span class="ml-auto flex shrink-0 items-center gap-2 pt-0.5">
-                        <span data-create-picker-item-marker>
-                          <CreatePickerMarker
-                            kind={markerKind}
-                            value={option.markerValue ?? option.value}
-                            label={option.label}
-                            color={option.color}
-                            family={option.family}
+                          <CheckIcon
+                            class:list={[
+                              "size-4 text-white/78 transition-opacity",
+                              isSelected ? "opacity-100" : "opacity-0",
+                            ]}
+                            data-create-picker-item-check
+                            aria-hidden="true"
                           />
                         </span>
-                        <CheckIcon
-                          class:list={[
-                            "size-4 text-white/78 transition-opacity",
-                            isSelected ? "opacity-100" : "opacity-0",
-                          ]}
-                          data-create-picker-item-check
-                          aria-hidden="true"
-                        />
-                      </span>
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuGroup>
-            </>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator class="!my-1.5 !bg-white/8" />
+              </>
+            )}
+            {groupedOptions.map((group, index) => (
+              <>
+                {index > 0 && (
+                  <DropdownMenuSeparator class="!my-1.5 !bg-white/8" />
+                )}
+                <DropdownMenuLabel class="group/font-group flex items-center justify-between gap-2 !px-3 !pb-0.5 !pt-1.5 !text-[8px] !font-semibold !uppercase !tracking-[0.12em] !text-white/40">
+                  <span>{group.label}</span>
+                  {shouldRenderFontGroupLock(name, group.group) && (
+                    <CreateFontGroupLockButton group={group.group} />
+                  )}
+                </DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  {group.options.map((option) => {
+                    const isSelected = option.value === selectedOption?.value;
+
+                    return (
+                      <DropdownMenuItem
+                        class="create-picker-item !items-start !gap-2.5 !rounded-[12px] !px-3 !py-2.5 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
+                        data-create-picker-item
+                        data-value={option.value}
+                        data-selected={isSelected ? "" : undefined}
+                      >
+                        <span class="min-w-0 flex-1">
+                          <span
+                            class="block truncate text-[14px] font-medium tracking-[-0.01em]"
+                            data-create-picker-item-label
+                          >
+                            {option.label}
+                          </span>
+                          {option.description && (
+                            <span class="mt-0.5 block text-[12px] leading-4 text-white/52">
+                              {option.description}
+                            </span>
+                          )}
+                        </span>
+                        <span class="ml-auto flex shrink-0 items-center gap-2 pt-0.5">
+                          <span data-create-picker-item-marker>
+                            <CreatePickerMarker
+                              kind={markerKind}
+                              value={option.markerValue ?? option.value}
+                              label={option.label}
+                              color={option.color}
+                              family={option.family}
+                            />
+                          </span>
+                          <CheckIcon
+                            class:list={[
+                              "size-4 text-white/78 transition-opacity",
+                              isSelected ? "opacity-100" : "opacity-0",
+                            ]}
+                            data-create-picker-item-check
+                            aria-hidden="true"
+                          />
+                        </span>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuGroup>
+              </>
             ))}
           </>
         ) : (
@@ -303,9 +303,11 @@ function shouldRenderFontGroupLock(
     lockable && lockParam && (
       <CreateLockButton
         param={lockParam}
-        class={disabled
-          ? "absolute top-1/2 right-10 hidden -translate-y-1/2"
-          : "absolute top-1/2 right-10 -translate-y-1/2"}
+        class={
+          disabled
+            ? "absolute top-1/2 hidden -translate-y-1/2 " + (markerKind ? "right-10" : "right-3")
+            : "absolute top-1/2 -translate-y-1/2 " + (markerKind ? "right-10" : "right-3")
+        }
       />
     )
   }

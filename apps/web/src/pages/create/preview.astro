@@ -62,7 +62,7 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
 ---
 
 <!doctype html>
-<html lang={currentLanguage} dir={currentDirection}>
+<html lang={currentLanguage} dir={currentDirection} class="bg-background">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -74,7 +74,11 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
     <style id="create-theme-css" set:html={themeCss}></style>
     <style id="create-style-css" set:html={compiledStyleCss}></style>
   </head>
-  <body class:list={currentConfig ? [`style-${currentConfig.style}`] : []}>
+  <body
+    class:list={currentConfig
+      ? [`style-${currentConfig.style}`, "bg-background"]
+      : []}
+  >
     {
       currentConfig ? (
         <CreatePreviewSurface

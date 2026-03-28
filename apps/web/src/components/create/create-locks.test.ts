@@ -8,7 +8,7 @@ const fontGroupLockButtonFile = path.resolve(
   import.meta.dir,
   "./CreateFontGroupLockButton.astro",
 );
-const themePanelFile = path.resolve(import.meta.dir, "./CreateThemePanel.astro");
+const themeListPanelFile = path.resolve(import.meta.dir, "./CreateThemeListPanel.astro");
 const customizerFile = path.resolve(import.meta.dir, "./CreateCustomizer.astro");
 
 describe("create lock controls", () => {
@@ -36,13 +36,13 @@ describe("create lock controls", () => {
   });
 
   test("renders theme lock controls in both collapsed and expanded theme UI", () => {
-    const themePanelSource = fs.readFileSync(themePanelFile, "utf8");
+    const themeListSource = fs.readFileSync(themeListPanelFile, "utf8");
     const customizerSource = fs.readFileSync(customizerFile, "utf8");
 
     expect(customizerSource).toContain('param="theme"');
     expect(customizerSource).toContain("isCreatePickerDisabled");
     expect(customizerSource).toContain("disabled={isCreatePickerDisabled(picker, config)}");
-    expect(themePanelSource).toContain('param="theme"');
-    expect(themePanelSource).toContain('class="group/picker relative"');
+    expect(themeListSource).toContain('param="theme"');
+    expect(themeListSource).toContain('class="group/picker relative"');
   });
 });

@@ -1,0 +1,83 @@
+---
+import ArrowLeftIcon from "@lucide/astro/icons/arrow-left";
+import { resolveDesignSystemTheme } from "@/utils/themes/design-system-adapter";
+import {
+  CREATE_THEME_TOKEN_SECTIONS,
+  formatThemeTokenLabel,
+  type ThemeOverrides,
+} from "@/utils/themes/create-theme";
+import ColorInput from "@/components/theme-editor/ColorInput.astro";
+import type { DesignSystemConfig } from "@bejamas/create-config/server";
+import { Button } from "@bejamas/registry/ui/button";
+
+interface Props {
+  config: DesignSystemConfig;
+  themeRef?: string | null;
+  themeOverrides?: ThemeOverrides | null;
+}
+
+const { config, themeRef = null, themeOverrides = null } = Astro.props as Props;
+const resolvedTheme = resolveDesignSystemTheme(config, themeOverrides).styles;
+---
+
+<section
+  hidden
+  class="bg-[#0040a1] ml-5 space-y-3.5 xl:min-h-0 p-2.5 xl:flex xl:flex-1 xl:flex-col xl:overflow-hidden will-change-[opacity,filter] transition-[opacity,filter] duration-100 ease-out motion-reduce:transition-none data-[panel-state=entering]:opacity-0 data-[panel-state=entering]:blur-sm data-[panel-state=entering]:pointer-events-none data-[panel-state=exiting]:opacity-0 data-[panel-state=exiting]:blur-sm data-[panel-state=exiting]:pointer-events-none data-[panel-state=inactive]:opacity-0 data-[panel-state=inactive]:blur-sm data-[panel-state=inactive]:pointer-events-none"
+  data-create-palette-panel
+  data-panel-state="inactive"
+>
+  <div class="flex items-center justify-between gap-2">
+    <div class="min-w-0">
+      <span class="block text-[8px] font-semibold uppercase tracking-[0.12em] text-white/38">
+        Theme
+      </span>
+      <span
+        class="block truncate text-sm font-medium tracking-[-0.01em] text-white/90"
+        data-palette-theme-label
+      >
+      </span>
+    </div>
+    <span
+      class="inline-flex size-5 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]"
+      data-palette-theme-swatch
+    >
+    </span>
+  </div>
+
+  <Button
+    variant="outline"
+    size="sm"
+    data-create-palette-back
+  >
+    <ArrowLeftIcon class="size-3 text-white/70" />
+    Go back
+  </Button>
+
+  <div class="overflow-auto gap-4 flex flex-col xl:flex-1">
+    {
+      (["light", "dark"] as const).map((mode, index) => (
+        <div
+          class:list={[index > 0 && "hidden"]}
+          data-create-theme-mode-panel
+          data-mode={mode}
+        >
+          <div class="grid grid-cols-2 gap-x-2 gap-y-4">
+            {CREATE_THEME_TOKEN_SECTIONS.flatMap((section) =>
+              section.tokens.map((token) => (
+                <ColorInput
+                  token={token}
+                  label={formatThemeTokenLabel(token)}
+                  value={resolvedTheme[mode][token] ?? ""}
+                  variant="palette"
+                  class="p-2"
+                  data-create-theme-input
+                  data-create-theme-mode={mode}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

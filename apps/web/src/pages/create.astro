@@ -124,7 +124,7 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
   }
 
   .content-panel {
-    @apply border-0 pt-0 pb-0 first-of-type:hidden;
+    @apply border-0 pt-0 pb-0 first-of-type:hidden last:pl-0;
   }
 
   .content-panel h1 {
@@ -157,7 +157,6 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
   }
 
   :root[data-create-docs-themed] [data-create-customizer-stable],
-  :root[data-create-docs-themed] [data-create-main-menu-content],
   :root[data-create-docs-themed] [data-create-picker-content] {
     font-family: "Geist Variable", sans-serif;
     --radius: 0.625rem;
@@ -170,7 +169,7 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
   [data-create-form-main] {
     display: flex;
     flex-direction: column;
-    gap: calc(var(--spacing) * 1.5);
+    gap: 2px;
   }
 
   .create-customizer-actions {
@@ -199,14 +198,14 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
   }
 
   :root[data-create-docs-themed]
-    :is([data-create-main-menu-content], [data-create-picker-content])
+    [data-create-picker-content]
     [data-slot="dropdown-menu-item"][data-highlighted] {
     background: rgba(255, 255, 255, 0.06) !important;
     color: rgba(255, 255, 255, 0.92) !important;
   }
 
   :root[data-create-docs-themed]
-    :is([data-create-main-menu-content], [data-create-picker-content])
+    [data-create-picker-content]
     [data-slot="dropdown-menu-item"][data-highlighted]
     :is(
       svg,

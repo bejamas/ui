@@ -6,9 +6,13 @@ const customizerFile = path.resolve(
   import.meta.dir,
   "./CreateCustomizer.astro",
 );
-const themePanelFile = path.resolve(
+const themeListPanelFile = path.resolve(
   import.meta.dir,
-  "./CreateThemePanel.astro",
+  "./CreateThemeListPanel.astro",
+);
+const palettePanelFile = path.resolve(
+  import.meta.dir,
+  "./CreatePalettePanel.astro",
 );
 const createPageFile = path.resolve(
   import.meta.dir,
@@ -16,18 +20,24 @@ const createPageFile = path.resolve(
 );
 
 describe("create theme panel transitions", () => {
-  test("renders transition state hooks for the main form and theme panel", () => {
+  test("renders transition state hooks for the main form and theme panels", () => {
     const customizerSource = fs.readFileSync(customizerFile, "utf8");
-    const themePanelSource = fs.readFileSync(themePanelFile, "utf8");
+    const themeListSource = fs.readFileSync(themeListPanelFile, "utf8");
+    const paletteSource = fs.readFileSync(palettePanelFile, "utf8");
 
     expect(customizerSource).toContain("data-create-form-main");
     expect(customizerSource).toContain('data-panel-state="active"');
     expect(customizerSource).toContain("transition-[opacity,filter]");
 
-    expect(themePanelSource).toContain("data-create-theme-panel");
-    expect(themePanelSource).toContain('data-panel-state="inactive"');
-    expect(themePanelSource).toContain("<section\n  hidden\n");
-    expect(themePanelSource).toContain("transition-[opacity,filter]");
+    expect(themeListSource).toContain("data-create-theme-list-panel");
+    expect(themeListSource).toContain('data-panel-state="inactive"');
+    expect(themeListSource).toContain("<section\n  hidden\n");
+    expect(themeListSource).toContain("transition-[opacity,filter]");
+
+    expect(paletteSource).toContain("data-create-palette-panel");
+    expect(paletteSource).toContain('data-panel-state="inactive"');
+    expect(paletteSource).toContain("<section\n  hidden\n");
+    expect(paletteSource).toContain("transition-[opacity,filter]");
   });
 
   test("uses a staged runtime transition with reduced-motion fallback", () => {
@@ -37,13 +47,12 @@ describe("create theme panel transitions", () => {
     expect(source).toContain("themePanelTransitionToken");
     expect(source).toContain("waitForThemePanelTransition");
     expect(source).toContain(
-      'setThemePanelElementState(themeMainPanel, "exiting", false)',
+      'setThemePanelElementState(currentElement, "exiting", false)',
     );
     expect(source).toContain(
-      'setThemePanelElementState(themeEditorPanel, "entering", false)',
+      'setThemePanelElementState(targetElement, "entering", false)',
     );
-    expect(source).toContain("themeBackButton?.focus()");
-    expect(source).toContain("themeTrigger?.focus()");
+    expect(source).toContain("getFocusTargetForPanel(target)?.focus()");
   });
 
   test("syncs theme panel tabs through the shared global theme mode path", () => {

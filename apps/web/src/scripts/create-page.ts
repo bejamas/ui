@@ -139,9 +139,15 @@ const presetButton = document.querySelector(
 const randomizeButtons = Array.from(
   document.querySelectorAll("[data-create-randomize]"),
 ) as HTMLButtonElement[];
-const mainMenu = document.querySelector(
-  "[data-create-main-menu]",
-) as HTMLElement | null;
+const headerNavigateButtons = Array.from(
+  document.querySelectorAll("[data-create-header-navigate]"),
+) as HTMLButtonElement[];
+const headerShuffleButtons = Array.from(
+  document.querySelectorAll("[data-create-header-shuffle]"),
+) as HTMLButtonElement[];
+const headerSearchButtons = Array.from(
+  document.querySelectorAll("[data-create-header-search]"),
+) as HTMLButtonElement[];
 const createProjectDialog = document.querySelector(
   "[data-create-project-dialog]",
 ) as HTMLElement | null;
@@ -183,15 +189,39 @@ const docsRoot = document.documentElement;
 const themeMainPanel = document.querySelector(
   "[data-create-form-main]",
 ) as HTMLElement | null;
-const themeEditorPanel = document.querySelector(
-  "[data-create-theme-panel]",
+const themeListPanel = document.querySelector(
+  "[data-create-theme-list-panel]",
+) as HTMLElement | null;
+const palettePanel = document.querySelector(
+  "[data-create-palette-panel]",
 ) as HTMLElement | null;
 const themeTrigger = document.querySelector(
   "[data-create-theme-trigger]",
 ) as HTMLButtonElement | null;
-const themeBackButton = document.querySelector(
-  "[data-create-theme-back]",
+const themeListBackButton = document.querySelector(
+  "[data-create-theme-list-back]",
 ) as HTMLButtonElement | null;
+const paletteBackButton = document.querySelector(
+  "[data-create-palette-back]",
+) as HTMLButtonElement | null;
+const paletteCancelButton = document.querySelector(
+  "[data-create-palette-cancel]",
+) as HTMLButtonElement | null;
+const paletteSaveButton = document.querySelector(
+  "[data-create-palette-save]",
+) as HTMLButtonElement | null;
+const paletteThemeLabel = document.querySelector(
+  "[data-palette-theme-label]",
+) as HTMLElement | null;
+const paletteThemeSwatch = document.querySelector(
+  "[data-palette-theme-swatch]",
+) as HTMLElement | null;
+const actionsDefault = document.querySelector(
+  "[data-actions-default]",
+) as HTMLElement | null;
+const actionsPalette = document.querySelector(
+  "[data-actions-palette]",
+) as HTMLElement | null;
 const themeStatusNode = document.querySelector(
   "[data-create-theme-status]",
 ) as HTMLElement | null;
@@ -243,8 +273,10 @@ let themeSyncTimer = 0;
 let themeStatusMessage = "";
 const initialSearchParams = new URLSearchParams(window.location.search);
 let currentPreviewTarget = resolveCreatePreviewTarget(initialSearchParams);
-let themePanelOpen = false;
+type CreateSidebarPanel = "main" | "theme-list" | "palette-editor";
+let activePanel: CreateSidebarPanel = "main";
 let themePanelTransitionToken = 0;
+let paletteSnapshot: { themeRef: string | null; themeOverrides: ThemeOverrides } | null = null;
 const lockedParams = new Set<CreateLockableParam>();
 let lockedFontGroup: CreateFontGroup | null = null;
 const initialPresetResult = parseCreateSearchParams(initialSearchParams);
@@ -767,7 +799,7 @@ function syncThemeSeedButtons(
       return `
         <section class="space-y-2" data-create-theme-group="${escapeHtml(option.group)}">
           <header class="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/38">${escapeHtml(option.label)}</header>
-          <div class="grid grid-cols-2 gap-2">
+          <div class="flex flex-col">
             ${option.options.map((seedOption) => renderThemeSeedButton(seedOption, selectedTheme)).join("")}
           </div>
         </section>
@@ -785,13 +817,16 @@ function renderThemeSeedButton(
   return `
     <button
       type="button"
-      class="flex items-center gap-2 rounded-[12px] border px-2.5 py-2 text-left transition-colors ${selected ? "border-white/16 bg-white/[0.08] text-white" : "border-white/0 bg-transparent text-white/78 hover:bg-white/[0.05]"}"
+      class="group/seed flex items-center gap-3 rounded-[12px] border px-3 py-2.5 text-left transition-colors ${selected ? "border-white/16 bg-white/[0.08] text-white" : "border-white/0 bg-transparent text-white/78 hover:bg-white/[0.05]"}"
       data-create-theme-option
       data-value="${escapeHtml(option.value)}"
       ${selected ? 'data-selected=""' : ""}
     >
-      <span class="inline-flex size-4 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]" style="background:${escapeHtml(option.color)};"></span>
-      <span class="truncate text-[13px] font-medium tracking-[-0.01em]">${escapeHtml(option.label)}</span>
+      <span class="inline-flex size-6 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]" style="background:${escapeHtml(option.color)};"></span>
+      <span class="flex-1 truncate text-sm font-medium tracking-[-0.01em]">${escapeHtml(option.label)}</span>
+      <span class="shrink-0 text-white/30 opacity-0 transition-opacity group-hover/seed:opacity-100 ${selected ? "opacity-100" : ""}" data-create-palette-open data-value="${escapeHtml(option.value)}" ${selected ? 'data-selected=""' : ""}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+      </span>
     </button>
   `;
 }
@@ -868,89 +903,105 @@ function setThemePanelElementState(
   element.hidden = hidden;
 }
 
-function applyThemePanelStateImmediately(open: boolean) {
-  themePanelOpen = open;
-  setThemePanelElementState(themeMainPanel, open ? "inactive" : "active", open);
-  setThemePanelElementState(
-    themeEditorPanel,
-    open ? "active" : "inactive",
-    !open,
-  );
+const panelElements: Record<CreateSidebarPanel, HTMLElement | null> = {
+  "main": themeMainPanel,
+  "theme-list": themeListPanel,
+  "palette-editor": palettePanel,
+};
+
+function applyPanelStateImmediately(target: CreateSidebarPanel) {
+  activePanel = target;
+  for (const [panel, element] of Object.entries(panelElements)) {
+    setThemePanelElementState(element, panel === target ? "active" : "inactive", panel !== target);
+  }
+  syncActionBarVisibility();
 }
 
-async function setThemePanelOpen(open: boolean) {
-  if (!themeMainPanel || !themeEditorPanel) {
-    themePanelOpen = open;
+function syncActionBarVisibility() {
+  if (actionsDefault) actionsDefault.hidden = activePanel === "palette-editor";
+  if (actionsPalette) actionsPalette.hidden = activePanel !== "palette-editor";
+}
+
+function syncPaletteHeader() {
+  const config = collectConfig();
+  const selectedTheme = getCreateThemeSeedOption(config.baseColor, config.theme);
+  const mergedStyles = getMergedThemeStyles(config);
+  const label = hasThemeOverrides(themeOverrides)
+    ? "Custom"
+    : (selectedTheme?.label ?? config.theme);
+  const color = mergedStyles.light.primary ?? selectedTheme?.color ?? "oklch(0.72 0 0)";
+
+  if (paletteThemeLabel) paletteThemeLabel.textContent = label;
+  if (paletteThemeSwatch) paletteThemeSwatch.style.background = color;
+}
+
+function getFocusTargetForPanel(panel: CreateSidebarPanel): HTMLElement | null {
+  switch (panel) {
+    case "main": return themeTrigger;
+    case "theme-list": return themeListBackButton;
+    case "palette-editor": return paletteBackButton;
+  }
+}
+
+async function setActivePanel(target: CreateSidebarPanel) {
+  const currentElement = panelElements[activePanel];
+  const targetElement = panelElements[target];
+
+  if (!currentElement || !targetElement) {
+    applyPanelStateImmediately(target);
     return;
   }
 
-  if (themePanelOpen === open && themePanelTransitionToken === 0) {
+  if (activePanel === target && themePanelTransitionToken === 0) {
     return;
   }
 
   const transitionToken = ++themePanelTransitionToken;
 
   if (prefersReducedThemePanelMotion()) {
-    applyThemePanelStateImmediately(open);
+    applyPanelStateImmediately(target);
     themePanelTransitionToken = 0;
-    if (open) {
-      themeBackButton?.focus();
-    } else {
-      themeTrigger?.focus();
-    }
+    getFocusTargetForPanel(target)?.focus();
     return;
   }
 
-  if (open) {
-    themePanelOpen = true;
-    setThemePanelElementState(themeEditorPanel, "inactive", true);
-    setThemePanelElementState(themeMainPanel, "exiting", false);
-    await waitForThemePanelTransition(THEME_PANEL_EXIT_DURATION);
-    if (transitionToken !== themePanelTransitionToken) {
-      return;
-    }
-
-    setThemePanelElementState(themeMainPanel, "inactive", true);
-    setThemePanelElementState(themeEditorPanel, "entering", false);
-    await waitForThemePanelFrame();
-    if (transitionToken !== themePanelTransitionToken) {
-      return;
-    }
-
-    setThemePanelElementState(themeEditorPanel, "active", false);
-    await waitForThemePanelTransition(THEME_PANEL_ENTER_DURATION);
-    if (transitionToken !== themePanelTransitionToken) {
-      return;
-    }
-
-    themeBackButton?.focus();
-    themePanelTransitionToken = 0;
-    return;
-  }
-
-  themePanelOpen = false;
-  setThemePanelElementState(themeMainPanel, "inactive", true);
-  setThemePanelElementState(themeEditorPanel, "exiting", false);
+  // Exit current panel
+  activePanel = target;
+  syncActionBarVisibility();
+  setThemePanelElementState(targetElement, "inactive", true);
+  setThemePanelElementState(currentElement, "exiting", false);
   await waitForThemePanelTransition(THEME_PANEL_EXIT_DURATION);
-  if (transitionToken !== themePanelTransitionToken) {
-    return;
-  }
+  if (transitionToken !== themePanelTransitionToken) return;
 
-  setThemePanelElementState(themeEditorPanel, "inactive", true);
-  setThemePanelElementState(themeMainPanel, "entering", false);
+  // Enter target panel
+  setThemePanelElementState(currentElement, "inactive", true);
+  setThemePanelElementState(targetElement, "entering", false);
   await waitForThemePanelFrame();
-  if (transitionToken !== themePanelTransitionToken) {
-    return;
-  }
+  if (transitionToken !== themePanelTransitionToken) return;
 
-  setThemePanelElementState(themeMainPanel, "active", false);
+  setThemePanelElementState(targetElement, "active", false);
   await waitForThemePanelTransition(THEME_PANEL_ENTER_DURATION);
-  if (transitionToken !== themePanelTransitionToken) {
-    return;
+  if (transitionToken !== themePanelTransitionToken) return;
+
+  // Set inactive state on all non-target panels
+  for (const [panel, element] of Object.entries(panelElements)) {
+    if (panel !== target) {
+      setThemePanelElementState(element, "inactive", true);
+    }
   }
 
-  themeTrigger?.focus();
+  getFocusTargetForPanel(target)?.focus();
   themePanelTransitionToken = 0;
+}
+
+function cancelPalette() {
+  if (paletteSnapshot) {
+    themeRef = paletteSnapshot.themeRef;
+    themeOverrides = paletteSnapshot.themeOverrides;
+    paletteSnapshot = null;
+    updateUi();
+  }
+  setActivePanel("theme-list");
 }
 
 function setThemeStatus(message: string) {
@@ -1461,36 +1512,22 @@ for (const name of PICKER_NAMES) {
   });
 }
 
-mainMenu?.addEventListener("dropdown-menu:select", (event) => {
-  const value = (event as CustomEvent<{ value: string }>).detail.value;
-  const currentConfig = collectConfig();
-
-  if (value === "navigate") {
+headerNavigateButtons.forEach((button) => {
+  button.addEventListener("click", () => {
     setNavigateDialogOpen(true);
-    return;
-  }
+  });
+});
 
-  if (value === "shuffle") {
+headerShuffleButtons.forEach((button) => {
+  button.addEventListener("click", () => {
     handleRandomize();
-    return;
-  }
+  });
+});
 
-  if (value === "reset") {
-    applyConfig(DEFAULT_DESIGN_SYSTEM_CONFIG, {
-      clearCustomTheme: true,
-    });
-    return;
-  }
-
-  if (value === "create-project") {
-    createProjectDialog?.dispatchEvent(
-      new CustomEvent("dialog:set", {
-        detail: {
-          open: true,
-        },
-      }),
-    );
-  }
+headerSearchButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setNavigateDialogOpen(true);
+  });
 });
 
 navigateDialog?.addEventListener("dialog:change", (event) => {
@@ -1579,11 +1616,24 @@ document
   });
 
 themeTrigger?.addEventListener("click", () => {
-  setThemePanelOpen(true);
+  setActivePanel("theme-list");
 });
 
-themeBackButton?.addEventListener("click", () => {
-  setThemePanelOpen(false);
+themeListBackButton?.addEventListener("click", () => {
+  setActivePanel("main");
+});
+
+paletteBackButton?.addEventListener("click", () => {
+  cancelPalette();
+});
+
+paletteCancelButton?.addEventListener("click", () => {
+  cancelPalette();
+});
+
+paletteSaveButton?.addEventListener("click", () => {
+  paletteSnapshot = null;
+  setActivePanel("theme-list");
 });
 
 themeTabButtons.forEach((button) => {
@@ -1605,6 +1655,19 @@ themeTabButtons.forEach((button) => {
 });
 
 themeSeedContainer?.addEventListener("click", (event) => {
+  const gear = (event.target as HTMLElement).closest("[data-create-palette-open]");
+  if (gear) {
+    event.stopPropagation();
+    const value = (gear as HTMLElement).dataset.value;
+    if (value) handleThemeSeedSelect(value);
+    paletteSnapshot = { themeRef, themeOverrides: structuredClone(themeOverrides) };
+    syncPaletteHeader();
+    syncThemeTabs();
+    syncThemeInputs(collectConfig());
+    setActivePanel("palette-editor");
+    return;
+  }
+
   const button = (event.target as HTMLElement).closest(
     "[data-create-theme-option]",
   ) as HTMLButtonElement | null;
@@ -1649,7 +1712,7 @@ createProjectCopyCommandButton?.addEventListener("click", () => {
   void handleCopyCreateProjectCommand();
 });
 
-themeEditorPanel?.addEventListener("color-change", (event) => {
+palettePanel?.addEventListener("color-change", (event) => {
   const target = event.target as ColorInputElement | null;
   if (!target) {
     return;
@@ -1738,5 +1801,5 @@ setSelectedCreateProjectPackageManager(getStoredCreateProjectPackageManager(), {
 syncLockButtons();
 syncFontGroupLockButtons();
 syncActiveThemeMode();
-setThemePanelOpen(false);
+applyPanelStateImmediately("main");
 updateUi();

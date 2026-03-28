@@ -72,6 +72,8 @@ export const PRESET_THEMES = [
   "bejamas-orange",
   "bejamas-sunflower",
   "bejamas-violet",
+  "bejamas-turquoise",
+  "bejamas-magenta",
 ] as const;
 
 export const PRESET_CHART_COLORS = SHARED_PRESET_THEMES;
