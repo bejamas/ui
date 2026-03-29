@@ -3,6 +3,7 @@ import PlusIcon from "@lucide/astro/icons/plus";
 import RefreshCwIcon from "@lucide/astro/icons/refresh-cw";
 import SearchIcon from "@lucide/astro/icons/search";
 import { Button } from "@bejamas/ui/components/button";
+import CreateLockButton from "./CreateLockButton.astro";
 
 interface Props {
   title: string;
@@ -12,8 +13,13 @@ const { title } = Astro.props;
 ---
 
 <div class="flex items-center justify-between p-2.5 pl-4">
-  <span class="text-sm font-medium tracking-[-0.01em] text-white/90">
-    {title}
+  <span class="flex items-center gap-2">
+    <span class="text-sm font-medium tracking-[-0.01em] text-white/90" data-create-sidebar-title>
+      {title}
+    </span>
+    <span hidden data-create-header-theme-lock>
+      <CreateLockButton param="theme" class="opacity-100!" />
+    </span>
   </span>
   <div class="flex items-center gap-0.5">
     <Button

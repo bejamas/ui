@@ -148,6 +148,12 @@ const headerShuffleButtons = Array.from(
 const headerSearchButtons = Array.from(
   document.querySelectorAll("[data-create-header-search]"),
 ) as HTMLButtonElement[];
+const sidebarTitle = document.querySelector(
+  "[data-create-sidebar-title]",
+) as HTMLElement | null;
+const headerThemeLock = document.querySelector(
+  "[data-create-header-theme-lock]",
+) as HTMLElement | null;
 const createProjectDialog = document.querySelector(
   "[data-create-project-dialog]",
 ) as HTMLElement | null;
@@ -276,7 +282,10 @@ let currentPreviewTarget = resolveCreatePreviewTarget(initialSearchParams);
 type CreateSidebarPanel = "main" | "theme-list" | "palette-editor";
 let activePanel: CreateSidebarPanel = "main";
 let themePanelTransitionToken = 0;
-let paletteSnapshot: { themeRef: string | null; themeOverrides: ThemeOverrides } | null = null;
+let paletteSnapshot: {
+  themeRef: string | null;
+  themeOverrides: ThemeOverrides;
+} | null = null;
 const lockedParams = new Set<CreateLockableParam>();
 let lockedFontGroup: CreateFontGroup | null = null;
 const initialPresetResult = parseCreateSearchParams(initialSearchParams);
@@ -289,8 +298,7 @@ const preservedPreset =
     : null;
 
 const CREATE_PREVIEW_DEFAULT_KEY = CREATE_PREVIEW_COMMAND_VALUE;
-const THEME_PANEL_EXIT_DURATION = 80;
-const THEME_PANEL_ENTER_DURATION = 100;
+const THEME_PANEL_TRANSITION_DURATION = 350;
 
 previewFrame.dataset.previewKey =
   previewFrame.dataset.previewKey ??
@@ -797,7 +805,7 @@ function syncThemeSeedButtons(
   themeSeedContainer.innerHTML = groups
     .map((option) => {
       return `
-        <section class="space-y-2" data-create-theme-group="${escapeHtml(option.group)}">
+        <section class="flex flex-col gap-2 pt-2" data-create-theme-group="${escapeHtml(option.group)}">
           <header class="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/38">${escapeHtml(option.label)}</header>
           <div class="flex flex-col">
             ${option.options.map((seedOption) => renderThemeSeedButton(seedOption, selectedTheme)).join("")}
@@ -890,6 +898,21 @@ function waitForThemePanelFrame() {
   });
 }
 
+const PANEL_ORDER: CreateSidebarPanel[] = [
+  "main",
+  "theme-list",
+  "palette-editor",
+];
+
+function getPanelDirection(
+  from: CreateSidebarPanel,
+  to: CreateSidebarPanel,
+): "forward" | "back" {
+  return PANEL_ORDER.indexOf(to) > PANEL_ORDER.indexOf(from)
+    ? "forward"
+    : "back";
+}
+
 function setThemePanelElementState(
   element: HTMLElement | null,
   state: ThemePanelVisualState,
@@ -904,17 +927,35 @@ function setThemePanelElementState(
 }
 
 const panelElements: Record<CreateSidebarPanel, HTMLElement | null> = {
-  "main": themeMainPanel,
+  main: themeMainPanel,
   "theme-list": themeListPanel,
   "palette-editor": palettePanel,
 };
 
+const SIDEBAR_PANEL_TITLES: Record<CreateSidebarPanel, string> = {
+  main: "Create",
+  "theme-list": "Theme",
+  "palette-editor": "Palette",
+};
+
+function syncSidebarTitle(target: CreateSidebarPanel) {
+  if (sidebarTitle) sidebarTitle.textContent = SIDEBAR_PANEL_TITLES[target];
+  if (headerThemeLock) {
+    headerThemeLock.hidden = target === "main";
+  }
+}
+
 function applyPanelStateImmediately(target: CreateSidebarPanel) {
   activePanel = target;
   for (const [panel, element] of Object.entries(panelElements)) {
-    setThemePanelElementState(element, panel === target ? "active" : "inactive", panel !== target);
+    setThemePanelElementState(
+      element,
+      panel === target ? "active" : "inactive",
+      panel !== target,
+    );
   }
   syncActionBarVisibility();
+  syncSidebarTitle(target);
 }
 
 function syncActionBarVisibility() {
@@ -924,12 +965,16 @@ function syncActionBarVisibility() {
 
 function syncPaletteHeader() {
   const config = collectConfig();
-  const selectedTheme = getCreateThemeSeedOption(config.baseColor, config.theme);
+  const selectedTheme = getCreateThemeSeedOption(
+    config.baseColor,
+    config.theme,
+  );
   const mergedStyles = getMergedThemeStyles(config);
   const label = hasThemeOverrides(themeOverrides)
     ? "Custom"
     : (selectedTheme?.label ?? config.theme);
-  const color = mergedStyles.light.primary ?? selectedTheme?.color ?? "oklch(0.72 0 0)";
+  const color =
+    mergedStyles.light.primary ?? selectedTheme?.color ?? "oklch(0.72 0 0)";
 
   if (paletteThemeLabel) paletteThemeLabel.textContent = label;
   if (paletteThemeSwatch) paletteThemeSwatch.style.background = color;
@@ -937,9 +982,12 @@ function syncPaletteHeader() {
 
 function getFocusTargetForPanel(panel: CreateSidebarPanel): HTMLElement | null {
   switch (panel) {
-    case "main": return themeTrigger;
-    case "theme-list": return themeListBackButton;
-    case "palette-editor": return paletteBackButton;
+    case "main":
+      return themeTrigger;
+    case "theme-list":
+      return themeListBackButton;
+    case "palette-editor":
+      return paletteBackButton;
   }
 }
 
@@ -965,28 +1013,49 @@ async function setActivePanel(target: CreateSidebarPanel) {
     return;
   }
 
-  // Exit current panel
+  // Determine slide direction
+  const previousPanel = activePanel;
+  const direction = getPanelDirection(previousPanel, target);
   activePanel = target;
   syncActionBarVisibility();
-  setThemePanelElementState(targetElement, "inactive", true);
-  setThemePanelElementState(currentElement, "exiting", false);
-  await waitForThemePanelTransition(THEME_PANEL_EXIT_DURATION);
+  syncSidebarTitle(target);
+
+  // Set direction on both panels
+  if (currentElement) currentElement.dataset.panelDirection = direction;
+  if (targetElement) targetElement.dataset.panelDirection = direction;
+
+  // Place target at its entering position instantly (no transition)
+  if (targetElement) {
+    targetElement.classList.add("create-panel-no-transition");
+    targetElement.dataset.panelState = "entering";
+    targetElement.hidden = false;
+  }
+
+  // Double rAF: paint entering position, then start transition
+  await new Promise<void>((r) =>
+    requestAnimationFrame(() => requestAnimationFrame(() => r())),
+  );
   if (transitionToken !== themePanelTransitionToken) return;
 
-  // Enter target panel
-  setThemePanelElementState(currentElement, "inactive", true);
-  setThemePanelElementState(targetElement, "entering", false);
-  await waitForThemePanelFrame();
+  // Cross-fade both simultaneously
+  if (targetElement)
+    targetElement.classList.remove("create-panel-no-transition");
+  if (currentElement) {
+    currentElement.dataset.panelState = "exiting";
+  }
+  if (targetElement) {
+    targetElement.dataset.panelState = "active";
+  }
+
+  await waitForThemePanelTransition(THEME_PANEL_TRANSITION_DURATION);
   if (transitionToken !== themePanelTransitionToken) return;
 
-  setThemePanelElementState(targetElement, "active", false);
-  await waitForThemePanelTransition(THEME_PANEL_ENTER_DURATION);
-  if (transitionToken !== themePanelTransitionToken) return;
-
-  // Set inactive state on all non-target panels
+  // Clean up: fully hide exited panels
   for (const [panel, element] of Object.entries(panelElements)) {
-    if (panel !== target) {
-      setThemePanelElementState(element, "inactive", true);
+    if (panel !== target && element) {
+      element.dataset.panelState = "inactive";
+      element.hidden = true;
+      delete element.dataset.panelDirection;
     }
   }
 
@@ -1655,12 +1724,17 @@ themeTabButtons.forEach((button) => {
 });
 
 themeSeedContainer?.addEventListener("click", (event) => {
-  const gear = (event.target as HTMLElement).closest("[data-create-palette-open]");
+  const gear = (event.target as HTMLElement).closest(
+    "[data-create-palette-open]",
+  );
   if (gear) {
     event.stopPropagation();
     const value = (gear as HTMLElement).dataset.value;
     if (value) handleThemeSeedSelect(value);
-    paletteSnapshot = { themeRef, themeOverrides: structuredClone(themeOverrides) };
+    paletteSnapshot = {
+      themeRef,
+      themeOverrides: structuredClone(themeOverrides),
+    };
     syncPaletteHeader();
     syncThemeTabs();
     syncThemeInputs(collectConfig());

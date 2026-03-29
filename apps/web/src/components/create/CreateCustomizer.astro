@@ -58,8 +58,12 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
   <div
     class="create-customizer create-sidebar-stripe-bg relative overflow-hidden border rounded-r-[22px] border-white/10 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] xl:flex xl:h-full xl:flex-col"
   >
+    <div class="bg-[#0040a1] ml-5 mb-0.5">
+      <CreateSidebarHeader title="Create" />
+    </div>
+
     <form
-      class="relative xl:flex xl:min-h-0 xl:flex-1 xl:flex-col xl:overflow-hidden"
+      class="relative xl:min-h-0 xl:flex-1 xl:overflow-hidden"
       data-create-form
     >
       <input
@@ -76,14 +80,11 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
       />
 
       <div
-        class="overflow-y-auto pl-5 xl:min-h-0 xl:flex-1 [scrollbar-width:none] will-change-[opacity,filter] transition-[opacity,filter] duration-80 ease-out motion-reduce:transition-none data-[panel-state=entering]:opacity-0 data-[panel-state=entering]:blur-sm data-[panel-state=entering]:pointer-events-none data-[panel-state=exiting]:opacity-0 data-[panel-state=exiting]:blur-sm data-[panel-state=exiting]:pointer-events-none data-[panel-state=inactive]:opacity-0 data-[panel-state=inactive]:blur-sm data-[panel-state=inactive]:pointer-events-none"
+        class="create-panel-transition pl-5 [scrollbar-width:none]"
         data-create-form-main
         data-panel-state="active"
       >
-        <div class="bg-[#0040a1] mb-0.5">
-          <CreateSidebarHeader title="Create" />
-        </div>
-        <div class="create-sidebar-scroll-fade relative h-full">
+        <div class="create-sidebar-scroll-fade before:hidden relative h-full">
           {
             pickerGroups.map((group, groupIndex) => (
               <>
@@ -233,12 +234,12 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
 
   :global(.create-sidebar-scroll-fade::before) {
     top: var(--create-sidebar-header-height);
-    height: 40px;
-    backdrop-filter: blur(6px);
+    height: 120px;
+    backdrop-filter: blur(7px);
     -webkit-backdrop-filter: blur(6px);
     mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
-    background: linear-gradient(to bottom, #0040a1 0%, transparent 50%);
+    background: linear-gradient(to bottom, #0040a1 0%, transparent 30%);
   }
 
   :global(.create-sidebar-scroll-fade::after) {
@@ -249,6 +250,81 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
     mask-image: linear-gradient(to top, black 0%, transparent 100%);
     -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
     background: linear-gradient(to top, #0040a1 0%, transparent 40%);
+  }
+
+  :global(.create-panel-transition) {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    transition:
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  :global(.create-panel-no-transition) {
+    transition: none !important;
+  }
+
+  :global(.create-panel-transition[data-panel-state="active"]) {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  :global(.create-panel-transition[data-panel-state="exiting"]) {
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Forward: exit slides left, enter from right */
+  :global(
+    .create-panel-transition[data-panel-state="exiting"][data-panel-direction="forward"]
+  ) {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(-8px);
+  }
+
+  :global(
+    .create-panel-transition[data-panel-state="entering"][data-panel-direction="forward"]
+  ) {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(8px);
+    pointer-events: none;
+  }
+
+  /* Back: exit slides right, enter from left */
+  :global(
+    .create-panel-transition[data-panel-state="exiting"][data-panel-direction="back"]
+  ) {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(8px);
+  }
+
+  :global(
+    .create-panel-transition[data-panel-state="entering"][data-panel-direction="back"]
+  ) {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(-8px);
+    pointer-events: none;
+  }
+
+  :global(.create-panel-transition[data-panel-state="inactive"]) {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.create-panel-transition) {
+      transition: none;
+    }
   }
 
   .create-customizer::after {

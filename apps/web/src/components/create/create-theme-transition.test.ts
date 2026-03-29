@@ -27,17 +27,17 @@ describe("create theme panel transitions", () => {
 
     expect(customizerSource).toContain("data-create-form-main");
     expect(customizerSource).toContain('data-panel-state="active"');
-    expect(customizerSource).toContain("transition-[opacity,filter]");
+    expect(customizerSource).toContain("create-panel-transition");
 
     expect(themeListSource).toContain("data-create-theme-list-panel");
     expect(themeListSource).toContain('data-panel-state="inactive"');
     expect(themeListSource).toContain("<section\n  hidden\n");
-    expect(themeListSource).toContain("transition-[opacity,filter]");
+    expect(themeListSource).toContain("create-panel-transition");
 
     expect(paletteSource).toContain("data-create-palette-panel");
     expect(paletteSource).toContain('data-panel-state="inactive"');
     expect(paletteSource).toContain("<section\n  hidden\n");
-    expect(paletteSource).toContain("transition-[opacity,filter]");
+    expect(paletteSource).toContain("create-panel-transition");
   });
 
   test("uses a staged runtime transition with reduced-motion fallback", () => {
@@ -47,10 +47,10 @@ describe("create theme panel transitions", () => {
     expect(source).toContain("themePanelTransitionToken");
     expect(source).toContain("waitForThemePanelTransition");
     expect(source).toContain(
-      'setThemePanelElementState(currentElement, "exiting", false)',
+      'currentElement.dataset.panelState = "exiting"',
     );
     expect(source).toContain(
-      'setThemePanelElementState(targetElement, "entering", false)',
+      'targetElement.dataset.panelState = "entering"',
     );
     expect(source).toContain("getFocusTargetForPanel(target)?.focus()");
   });
