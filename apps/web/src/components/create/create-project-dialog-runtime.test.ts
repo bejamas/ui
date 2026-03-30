@@ -38,20 +38,41 @@ describe("create project dialog runtime", () => {
     expect(source).not.toContain("data-create-project-rtl-language-select");
   });
 
-  test("uses Stimulus targets and shared switch/tabs events for project options", () => {
+  test("uses portal-safe control hooks for project options", () => {
     const dialogSource = fs.readFileSync(dialogFile, "utf8");
     const controllerSource = fs.readFileSync(dialogControllerFile, "utf8");
     const editorSource = fs.readFileSync(editorControllerFile, "utf8");
 
-    expect(dialogSource).toContain(
+    expect(dialogSource).not.toContain(
       'data-action="switch:change->create-project-dialog#monorepoChanged"',
     );
-    expect(dialogSource).toContain(
+    expect(dialogSource).not.toContain(
       'data-action="tabs:change->create-project-dialog#packageManagerChanged"',
     );
+    expect(dialogSource).not.toContain(
+      'data-action="click->create-project-dialog#copyCommand"',
+    );
+    expect(dialogSource).not.toContain(
+      'data-create-project-dialog-target="packageTabs"',
+    );
+    expect(dialogSource).not.toContain(
+      'data-create-project-dialog-target="monorepoField"',
+    );
+    expect(dialogSource).not.toContain(
+      'data-create-project-dialog-target="copyButton"',
+    );
     expect(controllerSource).toContain('new CustomEvent("tabs:set"');
+    expect(controllerSource).toContain('addEventListener("tabs:change"');
+    expect(controllerSource).toContain('addEventListener(\n        "switch:change"');
+    expect(controllerSource).toContain('addEventListener("click", this.handleCopyClick)');
     expect(controllerSource).toContain(
-      'this.monorepoFieldTarget?.hasAttribute("data-checked")',
+      'document.querySelector(\n      "[data-create-project-package-tabs]"',
+    );
+    expect(controllerSource).toContain(
+      'document.querySelector(\n      "[data-create-project-monorepo]"',
+    );
+    expect(controllerSource).toContain(
+      'this.monorepoField?.hasAttribute("data-checked")',
     );
     expect(editorSource).toContain(
       "CREATE_PROJECT_PACKAGE_MANAGER_STORAGE_KEY",

@@ -28,7 +28,6 @@ const createPreviewKeywords = [
   id="create-navigate-dialog"
   data-create-navigate-dialog
   data-controller="create-navigate"
-  data-create-navigate-target="dialog"
   data-action="dialog:change->create-navigate#dialogChanged"
   title="Navigate"
   description="Jump the preview iframe to a component example without leaving `/create`."
@@ -36,15 +35,12 @@ const createPreviewKeywords = [
 >
   <Command
     data-create-navigate-command
-    data-create-navigate-target="command"
-    data-action="command:select->create-navigate#selectCommand"
     label="Navigate preview targets"
   >
     <CommandInput
       autofocus
       placeholder="Search component examples..."
       data-create-navigate-input
-      data-create-navigate-target="input"
     />
 
     <CommandList class="max-h-[28rem]">

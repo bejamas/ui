@@ -2,27 +2,30 @@ import { Controller } from "@hotwired/stimulus";
 import { CREATE_PREVIEW_COMMAND_VALUE } from "@/utils/create";
 
 export default class extends Controller<HTMLElement> {
-  static targets = ["dialog", "command", "input"];
-
   static values = {
     selectedTarget: String,
   };
 
-  declare readonly hasDialogTarget: boolean;
-  declare readonly dialogTarget: HTMLElement;
-  declare readonly hasCommandTarget: boolean;
-  declare readonly commandTarget: HTMLElement;
-  declare readonly hasInputTarget: boolean;
-  declare readonly inputTarget: HTMLInputElement;
   declare selectedTargetValue: string;
 
   private isReady = false;
+  private boundCommandRoot: HTMLElement | null = null;
+  private readonly handleCommandSelect = (
+    event: Event,
+  ) => this.selectCommand(event as CustomEvent<{ value: string }>);
 
   connect() {
     this.isReady = true;
+    this.bindPortalCommand();
+  }
+
+  disconnect() {
+    this.unbindPortalCommand();
   }
 
   dialogChanged(event: CustomEvent<{ open: boolean }>) {
+    this.bindPortalCommand();
+
     if (!event.detail.open) {
       this.syncSelection();
       return;
@@ -30,16 +33,18 @@ export default class extends Controller<HTMLElement> {
 
     this.syncSelection();
     window.requestAnimationFrame(() => {
-      if (!this.hasInputTarget) {
+      const input = this.inputElement;
+      if (!input) {
         return;
       }
 
-      this.inputTarget.focus();
-      this.inputTarget.select();
+      input.focus();
+      input.select();
     });
   }
 
   selectCommand(event: CustomEvent<{ value: string }>) {
+    this.selectedTargetValue = event.detail.value;
     this.dispatch("select-target", {
       detail: {
         value: event.detail.value,
@@ -56,11 +61,7 @@ export default class extends Controller<HTMLElement> {
   }
 
   open() {
-    if (!this.hasDialogTarget) {
-      return;
-    }
-
-    this.dialogTarget.dispatchEvent(
+    this.element.dispatchEvent(
       new CustomEvent("dialog:set", {
         detail: {
           open: true,
@@ -70,11 +71,7 @@ export default class extends Controller<HTMLElement> {
   }
 
   close() {
-    if (!this.hasDialogTarget) {
-      return;
-    }
-
-    this.dialogTarget.dispatchEvent(
+    this.element.dispatchEvent(
       new CustomEvent("dialog:set", {
         detail: {
           open: false,
@@ -88,11 +85,12 @@ export default class extends Controller<HTMLElement> {
   }
 
   private syncSelection() {
-    if (!this.hasCommandTarget) {
+    const commandRoot = this.commandRoot;
+    if (!commandRoot) {
       return;
     }
 
-    this.commandTarget.dispatchEvent(
+    commandRoot.dispatchEvent(
       new CustomEvent("command:set", {
         detail: {
           search: "",
@@ -100,5 +98,38 @@ export default class extends Controller<HTMLElement> {
         },
       }),
     );
+  }
+
+  private bindPortalCommand() {
+    const commandRoot = this.commandRoot;
+    if (!commandRoot || commandRoot === this.boundCommandRoot) {
+      return;
+    }
+
+    this.unbindPortalCommand();
+    commandRoot.addEventListener("command:select", this.handleCommandSelect);
+    this.boundCommandRoot = commandRoot;
+  }
+
+  private unbindPortalCommand() {
+    if (!this.boundCommandRoot) {
+      return;
+    }
+
+    this.boundCommandRoot.removeEventListener(
+      "command:select",
+      this.handleCommandSelect,
+    );
+    this.boundCommandRoot = null;
+  }
+
+  private get commandRoot() {
+    return document.querySelector("[data-create-navigate-command]") as HTMLElement | null;
+  }
+
+  private get inputElement() {
+    return document.querySelector(
+      "[data-create-navigate-input]",
+    ) as HTMLInputElement | null;
   }
 }

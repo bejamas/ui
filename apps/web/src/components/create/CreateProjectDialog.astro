@@ -90,8 +90,6 @@ const initialCommands = Object.fromEntries(
             id="create-project-monorepo"
             checked={templateState.monorepo}
             data-create-project-monorepo
-            data-create-project-dialog-target="monorepoField"
-            data-action="switch:change->create-project-dialog#monorepoChanged"
           />
         </label>
       </div>
@@ -102,7 +100,6 @@ const initialCommands = Object.fromEntries(
         type="hidden"
         value="bun"
         data-create-project-package-manager
-        data-create-project-dialog-target="packageManagerInput"
       />
 
       <Tabs
@@ -110,8 +107,6 @@ const initialCommands = Object.fromEntries(
         data-create-project-package-tabs
         defaultValue="bun"
         class="min-w-0 overflow-hidden rounded-[18px] border border-border bg-muted/20"
-        data-create-project-dialog-target="packageTabs"
-        data-action="tabs:change->create-project-dialog#packageManagerChanged"
       >
         <div class="px-2 pt-2">
           <TabsList class="w-fit gap-1 rounded-[12px] bg-background/80 p-1">
@@ -150,12 +145,9 @@ const initialCommands = Object.fromEntries(
         type="button"
         class="w-full"
         data-create-project-copy-command
-        data-create-project-dialog-target="copyButton"
-        data-action="click->create-project-dialog#copyCommand"
       >
         <span
           data-create-project-copy-command-label
-          data-create-project-dialog-target="copyLabel"
         >
           Copy Command
         </span>

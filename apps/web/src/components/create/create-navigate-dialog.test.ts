@@ -43,7 +43,7 @@ describe("create navigate dialog", () => {
     expect(headerSource).toContain("data-create-header-search");
   });
 
-  test("renders a dialog-backed command list with Stimulus controller targets", () => {
+  test("renders a dialog-backed command list with portal-safe hooks", () => {
     const source = fs.readFileSync(dialogFile, "utf8");
 
     expect(source).toContain("@bejamas/ui/components/command");
@@ -53,9 +53,6 @@ describe("create navigate dialog", () => {
     expect(source).toContain("data-create-navigate-dialog");
     expect(source).toContain("data-create-navigate-command");
     expect(source).toContain("data-create-navigate-input");
-    expect(source).toContain('data-create-navigate-target="dialog"');
-    expect(source).toContain('data-create-navigate-target="command"');
-    expect(source).toContain('data-create-navigate-target="input"');
     expect(source).toContain('placeholder="Search component examples..."');
     expect(source).toContain('heading="Component Examples"');
     expect(source).toContain("<CommandEmpty>No matching pages.</CommandEmpty>");
@@ -63,6 +60,11 @@ describe("create navigate dialog", () => {
     expect(source).toContain("data-create-preview-default");
     expect(source).toContain("value={page.id}");
     expect(source).toContain("KITCHEN_SINK_PAGES.map");
+    expect(source).not.toContain(
+      'data-action="command:select->create-navigate#selectCommand"',
+    );
+    expect(source).not.toContain('data-create-navigate-target="command"');
+    expect(source).not.toContain('data-create-navigate-target="input"');
     expect(source).not.toContain("@bejamas/ui/components/dialog");
     expect(source).not.toContain("@bejamas/ui/components/input");
   });
@@ -78,6 +80,10 @@ describe("create navigate dialog", () => {
     );
     expect(pageSource).toContain('import "@/stimulus/create";');
     expect(navigateSource).toContain('new CustomEvent("command:set"');
+    expect(navigateSource).toContain('addEventListener("command:select"');
+    expect(navigateSource).toContain('removeEventListener(\n      "command:select"');
+    expect(navigateSource).toContain('document.querySelector("[data-create-navigate-command]")');
+    expect(navigateSource).toContain('document.querySelector(\n      "[data-create-navigate-input]"');
     expect(navigateSource).toContain("this.dispatch(\"select-target\"");
     expect(editorSource).toContain("this.createNavigateOutlet.setSelectedTarget");
     expect(editorSource).toContain("this.createNavigateOutlet.open()");
