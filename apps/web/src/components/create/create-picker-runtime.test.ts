@@ -30,6 +30,9 @@ describe("create picker runtime", () => {
     expect(pickerSource).toContain("defaultValue={selectedOption?.value ?? value}");
     expect(pickerSource).toContain("data-checked:!bg-white/[0.06]");
     expect(pickerSource).toContain("!pr-9");
+    expect(pickerSource).toContain("!bg-[#0040a1]");
+    expect(pickerSource).toContain("mr-6");
+    expect(pickerSource).not.toContain("backdrop-blur-xl");
     expect(pickerSource).not.toContain("data-selected={isSelected");
     expect(pickerSource).not.toContain("data-create-picker-item-check");
     expect(pickerSource).not.toContain('import CheckIcon from "@lucide/astro/icons/check";');
@@ -39,6 +42,10 @@ describe("create picker runtime", () => {
     expect(pageSource).toContain(
       "create-picker:change->create-editor#handlePickerChange",
     );
+    expect(pageSource).toContain("backdrop-filter: none !important;");
+    expect(pageSource).toContain("content: none !important;");
+    expect(pageSource).toContain('[data-slot="dropdown-menu-radio-item-indicator"]');
+    expect(pageSource).toContain("inset-block: 0 !important;");
     expect(bootstrapSource).toContain(
       'application.register("create-picker", CreatePickerController);',
     );

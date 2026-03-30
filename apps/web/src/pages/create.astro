@@ -230,4 +230,19 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
     ) {
     color: inherit !important;
   }
+
+  :root[data-create-docs-themed] [data-create-picker-content] {
+    backdrop-filter: none !important;
+  }
+
+  :root[data-create-docs-themed] [data-create-picker-content]::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  :root[data-create-docs-themed]
+    [data-create-picker-content]
+    [data-slot="dropdown-menu-radio-item-indicator"] {
+    inset-block: 0 !important;
+  }
 </style>
