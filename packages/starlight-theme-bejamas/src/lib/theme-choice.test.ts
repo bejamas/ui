@@ -1,17 +1,18 @@
 import { describe, expect, it } from "bun:test";
 import {
   STARLIGHT_THEME_STORAGE_KEY,
+  THEME_TOGGLE_CHANGED_EVENT,
   applyThemeModeToRoot,
-  buildIframeThemeSyncInlineScript,
+  buildThemeChoiceBootstrapInlineScript,
   getThemeChoiceFromRoot,
   getThemeModeFromRoot,
   loadStoredThemeChoice,
   parseStoredThemeChoice,
   resolveThemeMode,
-  setGlobalThemeChoice,
+  setThemeChoice,
   storeThemeChoice,
-  syncThemeChoiceTabs,
-} from "./iframe-theme-sync";
+  syncThemeChoiceControls,
+} from "./theme-choice";
 
 function createThemeRoot() {
   const classes = new Set<string>();
@@ -37,7 +38,7 @@ function createThemeRoot() {
   };
 }
 
-describe("iframe theme sync helpers", () => {
+describe("theme choice runtime", () => {
   it("parses only supported stored theme choices", () => {
     expect(parseStoredThemeChoice("light")).toBe("light");
     expect(parseStoredThemeChoice("dark")).toBe("dark");
@@ -114,28 +115,110 @@ describe("iframe theme sync helpers", () => {
     expect(getThemeModeFromRoot(root, "light")).toBe("dark");
   });
 
-  it("applies the shared global theme choice path including storage and picker syncing", () => {
-    const { root, classes } = createThemeRoot();
-    const stored = new Map<string, string>();
-    const syncCalls: string[] = [];
-    const dispatchCalls: Array<{ theme: string; themeChoice: string }> = [];
+  it("syncs tabs-based and legacy select-based controls to the requested choice", () => {
     let tabsValue = "";
+    let selectValue = "";
+    const nativeSelect = { value: "" };
     const tabsRoot = {
-      querySelectorAll: () =>
-        [
-          {
-            dataset: {} as Record<string, string | undefined>,
-            dispatchEvent: (event: Event) => {
-              const nextValue = (event as CustomEvent<{ value?: string }>).detail
-                ?.value;
-              tabsValue = nextValue ?? "";
-              return true;
-            },
-          },
-        ] as unknown as NodeListOf<HTMLDivElement>,
+      dataset: {} as Record<string, string | undefined>,
+      dispatchEvent: (event: Event) => {
+        tabsValue =
+          (event as CustomEvent<{ value?: string }>).detail?.value ?? "";
+        return true;
+      },
+    };
+    const selectRoot = {
+      dataset: {} as Record<string, string | undefined>,
+      dispatchEvent: (event: Event) => {
+        selectValue =
+          (event as CustomEvent<{ value?: string }>).detail?.value ?? "";
+        return true;
+      },
+    };
+    const picker = {
+      querySelector: (selector: string) => {
+        if (selector === '[data-slot="tabs"][data-theme-choice-tabs]') {
+          return tabsRoot;
+        }
+
+        if (selector === "select") {
+          return nativeSelect;
+        }
+
+        if (selector === '#starlight-theme-select, [data-slot="select"]') {
+          return selectRoot;
+        }
+
+        return null;
+      },
+      querySelectorAll: () => [] as unknown as NodeListOf<Element>,
+    };
+    const root = {
+      querySelectorAll: (selector: string) => {
+        if (selector === "starlight-theme-select") {
+          return [picker] as unknown as NodeListOf<Element>;
+        }
+
+        if (selector === '[data-slot="tabs"][data-theme-choice-tabs]') {
+          return [tabsRoot] as unknown as NodeListOf<Element>;
+        }
+
+        return [] as unknown as NodeListOf<Element>;
+      },
     };
 
-    const effectiveTheme = setGlobalThemeChoice("dark", {
+    syncThemeChoiceControls("light", root as unknown as ParentNode);
+
+    expect(tabsRoot.dataset.defaultValue).toBe("light");
+    expect(tabsRoot.dataset.value).toBe("light");
+    expect(tabsValue).toBe("light");
+    expect(nativeSelect.value).toBe("light");
+    expect(selectRoot.dataset.defaultValue).toBe("light");
+    expect(selectRoot.dataset.value).toBe("light");
+    expect(selectValue).toBe("light");
+  });
+
+  it("applies the shared global theme choice path including storage, controls, and event dispatch", () => {
+    const { root, classes } = createThemeRoot();
+    const stored = new Map<string, string>();
+    const dispatched: Array<{ theme: string; themeChoice: string }> = [];
+    let tabsValue = "";
+    const tabsRoot = {
+      dataset: {} as Record<string, string | undefined>,
+      dispatchEvent: (event: Event) => {
+        tabsValue =
+          (event as CustomEvent<{ value?: string }>).detail?.value ?? "";
+        return true;
+      },
+    };
+    const controlsRoot = {
+      querySelectorAll: (selector: string) => {
+        if (selector === '[data-slot="tabs"][data-theme-choice-tabs]') {
+          return [tabsRoot] as unknown as NodeListOf<Element>;
+        }
+
+        return [] as unknown as NodeListOf<Element>;
+      },
+    };
+    const dispatchTarget = {
+      dispatchEvent: (event: Event) => {
+        const customEvent = event as CustomEvent<{
+          theme?: string;
+          themeChoice?: string;
+        }>;
+
+        if (event.type === THEME_TOGGLE_CHANGED_EVENT) {
+          dispatched.push({
+            theme: customEvent.detail?.theme ?? "",
+            themeChoice: customEvent.detail?.themeChoice ?? "",
+          });
+        }
+
+        return true;
+      },
+    };
+
+    const effectiveTheme = setThemeChoice("dark", {
       root,
       prefersLight: true,
       storage: {
@@ -143,13 +226,8 @@ describe("iframe theme sync helpers", () => {
           stored.set(key, value);
         },
       },
-      syncPickers: (themeChoice) => {
-        syncCalls.push(themeChoice);
-      },
-      dispatchChange: (theme, themeChoice) => {
-        dispatchCalls.push({ theme, themeChoice });
-      },
-      tabsRoot: tabsRoot as unknown as ParentNode,
+      controlsRoot: controlsRoot as unknown as ParentNode,
+      dispatchTarget: dispatchTarget as unknown as EventTarget,
     });
 
     expect(effectiveTheme).toBe("dark");
@@ -157,31 +235,17 @@ describe("iframe theme sync helpers", () => {
     expect(root.dataset.theme).toBe("dark");
     expect(classes.has("dark")).toBe(true);
     expect(stored.get(STARLIGHT_THEME_STORAGE_KEY)).toBe("dark");
-    expect(syncCalls).toEqual(["dark"]);
-    expect(dispatchCalls).toEqual([{ theme: "dark", themeChoice: "dark" }]);
     expect(tabsValue).toBe("dark");
+    expect(dispatched).toEqual([{ theme: "dark", themeChoice: "dark" }]);
   });
 
-  it("syncs all starlight theme tab controls to the requested choice", () => {
-    const tabs = {
-      dataset: {} as Record<string, string | undefined>,
-      dispatchEvent: () => true,
-    };
-    const root = {
-      querySelectorAll: () => [tabs] as unknown as NodeListOf<HTMLDivElement>,
-    };
-
-    syncThemeChoiceTabs("light", root as unknown as ParentNode);
-
-    expect(tabs.dataset.defaultValue).toBe("light");
-    expect(tabs.dataset.value).toBe("light");
-  });
-
-  it("builds an inline script that uses the shared storage key and state attrs", () => {
-    const script = buildIframeThemeSyncInlineScript();
+  it("builds an inline bootstrap script that owns root state and control sync", () => {
+    const script = buildThemeChoiceBootstrapInlineScript();
 
     expect(script).toContain(STARLIGHT_THEME_STORAGE_KEY);
     expect(script).toContain("dataset.themeChoice");
+    expect(script).toContain('[data-slot="tabs"][data-theme-choice-tabs]');
+    expect(script).toContain(THEME_TOGGLE_CHANGED_EVENT);
     expect(script).toContain("prefers-color-scheme: light");
   });
 });

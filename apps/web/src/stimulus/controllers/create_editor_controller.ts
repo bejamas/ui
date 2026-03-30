@@ -29,7 +29,7 @@ import {
   getThemeChoiceFromRoot,
   getThemeModeFromRoot,
   resolveThemeMode as resolveGlobalThemeMode,
-} from "@/utils/themes/iframe-theme-sync";
+} from "starlight-theme-bejamas/lib/theme-choice";
 import { normalizeThemeTokenValue } from "@/utils/themes/theme-tokens";
 import { setStoredPreset } from "@/utils/themes/preset-store";
 import {

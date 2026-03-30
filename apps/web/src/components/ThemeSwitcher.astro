@@ -5,9 +5,14 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
 ---
 
-<div class="flex items-center">
+<div class="flex items-center" data-theme-switcher-root>
   <starlight-theme-select>
-    <Tabs defaultValue="auto" class="theme-tabs">
+    <Tabs
+      defaultValue="auto"
+      class="theme-tabs"
+      data-theme-choice-tabs
+      data-theme-tabs-preloaded
+    >
       <TabsList>
         <TabsTrigger
           value="light"
@@ -35,21 +40,18 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
   </starlight-theme-select>
 </div>
 
-<!-- Legacy theme editor stays mounted but hidden during the /create transition. -->
-<div hidden aria-hidden="true">
-  <ThemeEditorGlobal />
-</div>
-
 <script is:inline>
   (() => {
     const script = document.currentScript;
-    const root = script?.previousElementSibling?.previousElementSibling;
+    const root = script?.previousElementSibling;
 
     if (!(root instanceof HTMLElement)) {
       return;
     }
 
-    const tabsRoot = root.querySelector('[data-slot="tabs"]');
+    const tabsRoot = root.querySelector(
+      'starlight-theme-select [data-slot="tabs"]',
+    );
     if (!(tabsRoot instanceof HTMLElement)) {
       return;
     }
@@ -59,55 +61,27 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
         ? value
         : "auto";
 
-    let themeChoice = parseThemeChoice(
+    const themeChoice = parseThemeChoice(
       document.documentElement.dataset.themeChoice,
     );
 
-    if (themeChoice === "auto") {
-      try {
-        themeChoice = parseThemeChoice(localStorage.getItem("starlight-theme"));
-      } catch {}
-    }
-
     tabsRoot.dataset.defaultValue = themeChoice;
     tabsRoot.dataset.value = themeChoice;
-    tabsRoot.setAttribute("data-theme-tabs-preloaded", "");
   })();
 </script>
 
-<script is:inline>
-  if (typeof StarlightThemeProvider !== "undefined") {
-    StarlightThemeProvider.updatePickers();
-  }
-</script>
+<!-- Legacy theme editor stays mounted but hidden during the /create transition. -->
+<div hidden aria-hidden="true">
+  <ThemeEditorGlobal />
+</div>
 
 <script>
   import {
-    loadStoredThemeChoice,
+    getThemeChoiceFromRoot,
     parseStoredThemeChoice,
-    setGlobalThemeChoice,
-    type ThemeChoice,
-  } from "@/utils/themes/iframe-theme-sync";
-
-  const loadTheme = (): ThemeChoice => loadStoredThemeChoice(localStorage);
-
-  function onThemeChange(theme: ThemeChoice): void {
-    setGlobalThemeChoice(theme, {
-      syncPickers: (themeChoice) =>
-        window.StarlightThemeProvider?.updatePickers?.(themeChoice),
-      dispatchChange: (effectiveTheme, themeChoice) => {
-        window.dispatchEvent(
-          new CustomEvent("theme-toggle-changed", {
-            detail: { theme: effectiveTheme, themeChoice },
-          }),
-        );
-      },
-    });
-  }
-
-  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
-    if (loadTheme() === "auto") onThemeChange("auto");
-  });
+    setThemeChoice,
+    syncThemeChoiceControls,
+  } from "starlight-theme-bejamas/lib/theme-choice";
 
   class StarlightThemeSelect extends HTMLElement {
     private tabsEl: HTMLDivElement | null = null;
@@ -122,13 +96,15 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
       );
       if (nextTheme === currentTheme) return;
 
-      onThemeChange(nextTheme);
+      setThemeChoice(nextTheme);
     };
 
     connectedCallback() {
       this.tabsEl = this.querySelector<HTMLDivElement>('[data-slot="tabs"]');
-      const currentTheme = loadTheme();
-      onThemeChange(currentTheme);
+      syncThemeChoiceControls(
+        getThemeChoiceFromRoot(document.documentElement),
+        this,
+      );
 
       if (this.tabsEl?.hasAttribute("data-theme-tabs-preloaded")) {
         requestAnimationFrame(() => {

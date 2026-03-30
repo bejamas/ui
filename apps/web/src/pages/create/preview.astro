@@ -5,9 +5,9 @@ import {
   isInvertedMenuColor,
   isTranslucentMenuColor,
 } from "@bejamas/create-config/server";
+import { buildThemeChoiceBootstrapInlineScript } from "starlight-theme-bejamas/lib/theme-choice";
 import CreatePreviewSurface from "@/components/create/CreatePreviewSurface.astro";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
-import { buildIframeThemeSyncInlineScript } from "@/utils/themes/iframe-theme-sync";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
 import { getCreatePreviewCopy } from "@/utils/create-preview-i18n";
 import { getDefaultCreateBootstrapState } from "@/utils/create-bootstrap";
@@ -16,7 +16,7 @@ import themeFontsStylesheet from "@/styles/theme-fonts.css?url";
 const { config } = getDefaultCreateBootstrapState();
 const themeCss = buildDesignSystemThemeCss(config);
 const compiledStyleCss = await getCompiledStyleCss(config.style);
-const iframeThemeSyncScript = buildIframeThemeSyncInlineScript();
+const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 const currentRadiusLabel =
   getCreatePickerSelectedOption("radius", config)?.label ?? config.radius;
 const previewCopy = getCreatePreviewCopy("en");
@@ -41,7 +41,7 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script is:inline set:html={iframeThemeSyncScript} />
+    <script is:inline set:html={themeChoiceBootstrapScript} />
     <link rel="stylesheet" href={themeFontsStylesheet} />
     <style is:global>
       @import "../../styles/globals.css";

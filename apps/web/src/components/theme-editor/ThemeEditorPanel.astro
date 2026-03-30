@@ -487,6 +487,7 @@ const sectionTitles = [
 
   <script>
     import Alpine from "alpinejs";
+    import { setThemeChoice } from "starlight-theme-bejamas/lib/theme-choice";
     import { applyThemeToElement } from "../../utils/themes/apply-theme";
     import {
       getStoredPreset,
@@ -1123,31 +1124,7 @@ const sectionTitles = [
               });
 
               if (!fromExternal) {
-                localStorage.setItem("starlight-theme", mode);
-                document.documentElement.dataset.theme = mode;
-                document.documentElement.dataset.themeChoice = mode;
-                document.documentElement.classList.toggle(
-                  "dark",
-                  mode === "dark",
-                );
-
-                window.dispatchEvent(
-                  new CustomEvent("theme-toggle-changed", {
-                    detail: { theme: mode },
-                  }),
-                );
-
-                document
-                  .querySelectorAll<HTMLDivElement>(
-                    'starlight-theme-select [data-slot="tabs"]',
-                  )
-                  .forEach((tabsEl) => {
-                    tabsEl.dataset.defaultValue = mode;
-                    tabsEl.dataset.value = mode;
-                    tabsEl.dispatchEvent(
-                      new CustomEvent("tabs:set", { detail: { value: mode } }),
-                    );
-                  });
+                setThemeChoice(mode);
               }
 
               this.applyLivePreview();

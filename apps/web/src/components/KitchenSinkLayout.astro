@@ -5,6 +5,9 @@ import {
   STYLES,
   getCompiledStyleCss,
 } from "@bejamas/create-config/server";
+import {
+  buildThemeChoiceBootstrapInlineScript,
+} from "starlight-theme-bejamas/lib/theme-choice";
 import { Tabs, TabsList, TabsTrigger } from "@bejamas/ui/components/tabs";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
 import { buildWindowAssignmentInlineScript } from "@/utils/inline-script";
@@ -27,6 +30,7 @@ const createPreviewPayloadScript = buildWindowAssignmentInlineScript(
     styleCssByStyle: createStyleCssByStyle,
   },
 );
+const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 ---
 
 <html lang="en" dir="ltr" class="bg-background">
@@ -39,39 +43,7 @@ const createPreviewPayloadScript = buildWindowAssignmentInlineScript(
         document.documentElement.dataset.createPreviewPending = "true";
       }
     </script>
-    <script is:inline>
-      const storageKey = "starlight-theme";
-      const parseTheme = (t) =>
-        t === "auto" || t === "dark" || t === "light" ? t : "auto";
-      const getPreferredColorScheme = () =>
-        matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-      const loadTheme = () => {
-        try {
-          return parseTheme(
-            typeof localStorage !== "undefined" &&
-              localStorage.getItem(storageKey),
-          );
-        } catch {
-          return "auto";
-        }
-      };
-      function applyTheme(theme) {
-        const effective = theme === "auto" ? getPreferredColorScheme() : theme;
-        document.documentElement.dataset.theme = effective;
-        document.documentElement.classList.remove("light", "dark");
-        document.documentElement.classList.add(effective);
-      }
-      applyTheme(loadTheme());
-      window.addEventListener("storage", (event) => {
-        if (event.key === storageKey) applyTheme(loadTheme());
-      });
-      matchMedia("(prefers-color-scheme: light)").addEventListener(
-        "change",
-        () => {
-          if (loadTheme() === "auto") applyTheme("auto");
-        },
-      );
-    </script>
+    <script is:inline set:html={themeChoiceBootstrapScript} />
     <link rel="stylesheet" href={themeFontsStylesheet} />
     <style id="create-theme-css"></style>
     <style id="create-style-css"></style>
@@ -120,7 +92,7 @@ const createPreviewPayloadScript = buildWindowAssignmentInlineScript(
 
         <div class="flex flex-col gap-2 px-4 pb-4">
           <ks-theme-select>
-            <Tabs class="ks-theme-tabs" id="ks-theme-tabs">
+            <Tabs class="ks-theme-tabs" id="ks-theme-tabs" data-theme-choice-tabs>
               <TabsList class="w-full">
                 <TabsTrigger value="light" class="ks-theme-tab" title="Light theme">
                   <SunIcon class="size-4" />
@@ -186,63 +158,39 @@ const createPreviewPayloadScript = buildWindowAssignmentInlineScript(
       }
     </script>
     <script>
-      type Theme = "auto" | "dark" | "light";
-      const storageKey = "starlight-theme";
-
-      const parseTheme = (theme: unknown): Theme =>
-        theme === "auto" || theme === "dark" || theme === "light"
-          ? theme
-          : "auto";
-
-      const loadTheme = (): Theme =>
-        parseTheme(
-          typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
-        );
-
-      function storeTheme(theme: Theme): void {
-        if (typeof localStorage !== "undefined") {
-          localStorage.setItem(
-            storageKey,
-            theme === "light" || theme === "dark" ? theme : "",
-          );
-        }
-      }
-
-      const getPreferredColorScheme = (): Theme =>
-        matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-
-      function onThemeChange(theme: Theme): void {
-        const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
-        document.documentElement.dataset.theme = resolved;
-        document.documentElement.classList.remove("light", "dark");
-        document.documentElement.classList.add(resolved);
-        storeTheme(theme);
-        window.dispatchEvent(
-          new CustomEvent("theme-toggle-changed", {
-            detail: { theme: resolved },
-          }),
-        );
-        document
-          .querySelector<HTMLDivElement>("#ks-theme-tabs")
-          ?.dispatchEvent(new CustomEvent("tabs:set", { detail: { value: theme } }));
-      }
-
-      matchMedia("(prefers-color-scheme: light)").addEventListener(
-        "change",
-        () => {
-          if (loadTheme() === "auto") onThemeChange("auto");
-        },
-      );
+      import {
+        getThemeChoiceFromRoot,
+        parseStoredThemeChoice,
+        setThemeChoice,
+        syncThemeChoiceControls,
+      } from "starlight-theme-bejamas/lib/theme-choice";
 
       class KsThemeSelect extends HTMLElement {
-        connectedCallback() {
-          const currentTheme = loadTheme();
-          onThemeChange(currentTheme);
+        private tabsEl: HTMLDivElement | null = null;
 
-          const el = document.querySelector("#ks-theme-tabs");
-          el?.addEventListener("tabs:change", (e: any) => {
-            onThemeChange(parseTheme(e.detail.value));
-          });
+        private onTabsChange = (event: Event) => {
+          const value = (event as CustomEvent<{ value?: unknown }>).detail?.value;
+          if (typeof value !== "string") return;
+
+          const nextTheme = parseStoredThemeChoice(value);
+          const currentTheme = getThemeChoiceFromRoot(document.documentElement);
+          if (nextTheme === currentTheme) return;
+
+          setThemeChoice(nextTheme);
+        };
+
+        connectedCallback() {
+          this.tabsEl = this.querySelector<HTMLDivElement>('[data-slot="tabs"]');
+          syncThemeChoiceControls(
+            getThemeChoiceFromRoot(document.documentElement),
+            this,
+          );
+          this.tabsEl?.addEventListener("tabs:change", this.onTabsChange);
+        }
+
+        disconnectedCallback() {
+          this.tabsEl?.removeEventListener("tabs:change", this.onTabsChange);
+          this.tabsEl = null;
         }
       }
 

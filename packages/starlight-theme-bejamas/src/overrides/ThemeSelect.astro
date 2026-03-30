@@ -36,61 +36,46 @@ import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
   </div>
 </starlight-theme-select>
 
-<script is:inline>
-  StarlightThemeProvider.updatePickers();
-</script>
-
 <script>
-  type Theme = "auto" | "dark" | "light";
-  const storageKey = "starlight-theme";
-
-  const parseTheme = (theme: unknown): Theme =>
-    theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
-
-  const loadTheme = (): Theme =>
-    parseTheme(
-      typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
-    );
-
-  function storeTheme(theme: Theme): void {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem(
-        storageKey,
-        theme === "light" || theme === "dark" ? theme : "",
-      );
-    }
-  }
-
-  const getPreferredColorScheme = (): Theme =>
-    matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-
-  function onThemeChange(theme: Theme): void {
-    const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
-    StarlightThemeProvider.updatePickers(theme);
-    document.documentElement.dataset.theme = resolved;
-    document.documentElement.dataset.themeChoice = theme;
-    document.documentElement.classList.toggle("dark", resolved === "dark");
-    storeTheme(theme);
-  }
-
-  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
-    if (loadTheme() === "auto") onThemeChange("auto");
-  });
+  import {
+    getThemeChoiceFromRoot,
+    parseStoredThemeChoice,
+    setThemeChoice,
+    syncThemeChoiceControls,
+  } from "../lib/theme-choice";
 
   class StarlightThemeSelect extends HTMLElement {
-    constructor() {
-      super();
-      onThemeChange(loadTheme());
-      const select = this.querySelector("#starlight-theme-select");
-      select?.addEventListener("select:change", (e) => {
-        if (e.detail.value) {
-          onThemeChange(parseTheme(e.detail.value));
-        }
-      });
+    private selectRoot: HTMLElement | null = null;
+
+    private onSelectChange = (event: Event) => {
+      const value = (event as CustomEvent<{ value?: unknown }>).detail?.value;
+      if (typeof value !== "string") return;
+
+      const nextTheme = parseStoredThemeChoice(value);
+      const currentTheme = getThemeChoiceFromRoot(document.documentElement);
+      if (nextTheme === currentTheme) return;
+
+      setThemeChoice(nextTheme);
+    };
+
+    connectedCallback() {
+      this.selectRoot = this.querySelector<HTMLElement>("#starlight-theme-select");
+      syncThemeChoiceControls(
+        getThemeChoiceFromRoot(document.documentElement),
+        this,
+      );
+      this.selectRoot?.addEventListener("select:change", this.onSelectChange);
+    }
+
+    disconnectedCallback() {
+      this.selectRoot?.removeEventListener("select:change", this.onSelectChange);
+      this.selectRoot = null;
     }
   }
 
-  customElements.define("starlight-theme-select", StarlightThemeSelect);
+  if (!customElements.get("starlight-theme-select")) {
+    customElements.define("starlight-theme-select", StarlightThemeSelect);
+  }
 </script>
 
 <style>

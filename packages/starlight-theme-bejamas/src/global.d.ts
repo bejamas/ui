@@ -1,12 +1,14 @@
 declare global {
   interface Window {
     StarlightThemeProvider?: {
-      updatePickers: (theme?: string) => void;
+      refreshThemeColors?: (theme?: string) => void;
+      updatePickers?: (theme?: string) => void;
     };
   }
 
   const StarlightThemeProvider: {
-    updatePickers: (theme?: string) => void;
+    refreshThemeColors?: (theme?: string) => void;
+    updatePickers?: (theme?: string) => void;
   };
 
   namespace App {

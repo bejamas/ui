@@ -59,8 +59,5 @@ declare global {
     __BEJAMAS_CREATE_PREVIEW__?: {
       styleCssByStyle: Record<string, string>;
     };
-    StarlightThemeProvider?: {
-      updatePickers?: (themeChoice: ThemeMode) => void;
-    };
   }
 }

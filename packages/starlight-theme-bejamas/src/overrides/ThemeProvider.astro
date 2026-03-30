@@ -1,7 +1,14 @@
+---
+import { buildThemeChoiceBootstrapInlineScript } from "../lib/theme-choice";
+
+const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
+---
+
+<script is:inline set:html={themeChoiceBootstrapScript} />
+
 {/* This is intentionally inlined to avoid FOUC. */}
 <script is:inline>
   window.StarlightThemeProvider = (() => {
-    const storageKey = "starlight-theme";
     const themeMetaMedias = [
       "(prefers-color-scheme: light)",
       "(prefers-color-scheme: dark)",
@@ -18,10 +25,6 @@
       window.matchMedia("(prefers-color-scheme: light)").matches
         ? "light"
         : "dark";
-    const getStoredThemeChoice = () =>
-      parseTheme(
-        typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
-      );
 
     const readThemeColors = () => {
       const html = document.documentElement;
@@ -82,19 +85,11 @@
       });
     }
 
-    const themeChoice = getStoredThemeChoice();
     const effectiveTheme =
-      themeChoice === "auto"
-        ? window.matchMedia("(prefers-color-scheme: light)").matches
-          ? "light"
-          : "dark"
-        : themeChoice;
-    document.documentElement.dataset.theme = effectiveTheme;
-    document.documentElement.dataset.themeChoice = themeChoice;
-    document.documentElement.classList.toggle(
-      "dark",
-      effectiveTheme === "dark",
-    );
+      document.documentElement.dataset.theme === "light" ||
+      document.documentElement.dataset.theme === "dark"
+        ? document.documentElement.dataset.theme
+        : getPreferredColorScheme();
     syncThemeColor(effectiveTheme);
     return {
       refreshThemeColors(theme) {
@@ -106,7 +101,9 @@
         syncThemeColor(effectiveTheme);
       },
       updatePickers(theme) {
-        const themeChoice = parseTheme(theme ?? getStoredThemeChoice());
+        const themeChoice = parseTheme(
+          theme ?? document.documentElement.dataset.themeChoice,
+        );
         document
           .querySelectorAll("starlight-theme-select")
           .forEach((picker) => {
@@ -122,17 +119,6 @@
               selectRoot.dispatchEvent(
                 new CustomEvent("select:set", { detail: { value: themeChoice } }),
               );
-            }
-
-            /** @type {HTMLTemplateElement | null} */
-            const tmpl = document.querySelector(`#theme-icons`);
-            const newIcon =
-              tmpl && tmpl.content.querySelector("." + themeChoice);
-            if (newIcon) {
-              const oldIcon = picker.querySelector("svg.label-icon");
-              if (oldIcon) {
-                oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
-              }
             }
           });
       },
@@ -234,6 +220,15 @@
   if (!(SETUP_KEY in window)) {
     window[SETUP_KEY] = true;
     syncDocumentIconLibrary();
+
+    window.addEventListener("theme-toggle-changed", (event) => {
+      const themeChoice =
+        event instanceof CustomEvent && typeof event.detail?.themeChoice === "string"
+          ? event.detail.themeChoice
+          : undefined;
+
+      window.StarlightThemeProvider?.refreshThemeColors?.(themeChoice);
+    });
 
     window.addEventListener(PRESET_CHANGE_EVENT, (event) => {
       const presetChange = event;
