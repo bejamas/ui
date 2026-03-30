@@ -58,10 +58,23 @@ describe("static rendering boundary", () => {
     expect(source).toContain('output: "server"');
     expect(source).toContain('name: "static-first-routes"');
     expect(source).toContain('"astro:route:setup"({ route }) {');
+    expect(source).toContain('if (!route.component.startsWith("src/pages/")) {');
+    expect(source).toContain('route.component.startsWith("src/pages/api/")');
+    expect(source).toContain('const DYNAMIC_HTML_ROUTE_COMPONENTS = new Set([');
+    expect(source).toContain('"src/pages/kitchen-sink/forms-actions.astro"');
+    expect(source).toContain('"src/pages/t/[id].astro"');
+    expect(source).toContain('const DYNAMIC_ENDPOINT_COMPONENTS = new Set([');
+    expect(source).toContain('"src/pages/init.ts"');
+    expect(source).toContain('"src/pages/r/themes/current-theme.css.ts"');
+    expect(source).toContain('"src/pages/r/themes/[slug].json.ts"');
     expect(source).toContain("route.prerender = true;");
+    expect(source).toContain("route.prerender = false;");
+    expect(source).not.toContain('if (typeof route.prerender === "undefined")');
   });
 
   test("keeps create pages static and limits dynamic HTML routes to the approved exceptions", () => {
+    const source = fs.readFileSync(astroConfigFile, "utf8");
+
     expect(fs.readFileSync(createPageFile, "utf8")).not.toContain(
       "export const prerender = false;",
     );
@@ -74,6 +87,8 @@ describe("static rendering boundary", () => {
     expect(fs.readFileSync(sharedThemePageFile, "utf8")).toContain(
       "export const prerender = false;",
     );
+    expect(source).not.toContain('"src/pages/index.astro"');
+    expect(source).not.toContain('"src/pages/components.astro"');
   });
 
   test("drops the dead theme-cookie personalization from route middleware", () => {

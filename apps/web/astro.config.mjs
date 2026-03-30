@@ -14,13 +14,33 @@ import { posthog } from "./src/utils/posthog";
 import alpinejs from "@astrojs/alpinejs";
 
 const isVercel = process.env.VERCEL === "1";
+const DYNAMIC_HTML_ROUTE_COMPONENTS = new Set([
+  "src/pages/kitchen-sink/forms-actions.astro",
+  "src/pages/t/[id].astro",
+]);
+const DYNAMIC_ENDPOINT_COMPONENTS = new Set([
+  "src/pages/init.ts",
+  "src/pages/r/themes/current-theme.css.ts",
+  "src/pages/r/themes/[slug].json.ts",
+]);
 const staticFirstRoutes = {
   name: "static-first-routes",
   hooks: {
     "astro:route:setup"({ route }) {
-      if (typeof route.prerender === "undefined") {
-        route.prerender = true;
+      if (!route.component.startsWith("src/pages/")) {
+        return;
       }
+
+      if (
+        route.component.startsWith("src/pages/api/") ||
+        DYNAMIC_HTML_ROUTE_COMPONENTS.has(route.component) ||
+        DYNAMIC_ENDPOINT_COMPONENTS.has(route.component)
+      ) {
+        route.prerender = false;
+        return;
+      }
+
+      route.prerender = true;
     },
   },
 };
