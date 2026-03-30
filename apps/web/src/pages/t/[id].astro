@@ -86,7 +86,7 @@ const cliCommands = {
   hasSidebar={true}
   frontmatter={{ title: `Install Theme: ${theme.name}`, template: "splash" }}
 >
-  <div class="relative">
+  <div class="relative" data-page-scope="shared-theme">
     <div class="not-content relative z-10">
       <div class="max-w-2xl mx-auto">
       <!-- Back link -->
@@ -309,7 +309,7 @@ const cliCommands = {
 </StarlightPage>
 
 <style is:global>
-  .sl-bejamas-docs-title {
+  :root:has([data-page-scope="shared-theme"]) .sl-bejamas-docs-title {
     justify-content: center;
     position: relative;
     z-index: 20;

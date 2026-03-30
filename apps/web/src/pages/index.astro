@@ -54,7 +54,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     },
   }}
 >
-  <div class="max-w-384 mx-auto">
+  <div class="max-w-384 mx-auto" data-page-scope="home">
     <UiDemo />
     <!-- 
   <div
@@ -84,7 +84,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
   <style is:global>
     @reference "tailwindcss";
 
-    .hero h1 {
+    :root:has([data-page-scope="home"]) .hero h1 {
       letter-spacing: calc(var(--letter-spacing) - 0.025em);
       @apply text-3xl font-medium text-left text-balance block max-w-xl leading-[1.15];
     }
@@ -99,49 +99,49 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
       0px 1.18145px 0px rgba(5, 23, 41, 0.08);
   } */
 
-    :root:after {
+    :root:has([data-page-scope="home"]):after {
       left: calc(var(--spacing) * 6);
       /* border-left: 1px solid var(--border);
       border-right: 1px solid var(--border); */
     }
 
-    .kudos {
+    :root:has([data-page-scope="home"]) .kudos {
       display: none;
     }
 
-    .hero .copy {
+    :root:has([data-page-scope="home"]) .hero .copy {
       @apply items-start;
     }
 
-    .tagline {
+    :root:has([data-page-scope="home"]) .tagline {
       text-align: left;
       font-size: 1.1875rem;
       max-width: 50ch;
     }
 
     @media (min-width: 48rem) {
-      .hero h1 {
+      :root:has([data-page-scope="home"]) .hero h1 {
         @apply text-5xl;
       }
     }
 
-    .page-bg {
+    :root:has([data-page-scope="home"]) .page-bg {
       background-color: var(--sl-main-frame-inner-background);
     }
 
-    .content-panel:first-child {
+    :root:has([data-page-scope="home"]) .content-panel:first-child {
       @apply pt-0;
     }
 
-    .main-frame {
+    :root:has([data-page-scope="home"]) .main-frame {
       padding-inline: 0;
     }
 
-    .main-pane > main {
+    :root:has([data-page-scope="home"]) .main-pane > main {
       @apply pb-0 mb-0;
     }
 
-    .hero {
+    :root:has([data-page-scope="home"]) .hero {
       opacity: 1;
       transform-origin: left center;
 
@@ -149,30 +149,30 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     }
 
     @media (min-width: 48rem) {
-      .main-pane > main {
+      :root:has([data-page-scope="home"]) .main-pane > main {
         padding: var(--sl-main-pad);
         padding-bottom: 0;
       }
     }
 
-    .sl-container {
+    :root:has([data-page-scope="home"]) .sl-container {
       @apply max-w-full;
     }
 
-    .sl-markdown-content {
+    :root:has([data-page-scope="home"]) .sl-markdown-content {
       @apply mx-auto max-w-full mt-0 pt-0 relative;
     }
 
-    .actions {
+    :root:has([data-page-scope="home"]) .actions {
       @apply justify-start;
     }
 
-    footer.sl-flex {
+    :root:has([data-page-scope="home"]) footer.sl-flex {
       @apply hidden;
     }
 
     @media (min-width: 48rem) {
-      .main-frame-splash {
+      :root:has([data-page-scope="home"]) .main-frame-splash {
         --sl-splash-frame-top: calc(var(--spacing) * 18);
         --sl-splash-frame-inline: calc(var(--spacing) * 6);
       }

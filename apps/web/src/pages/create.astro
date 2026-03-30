@@ -56,6 +56,7 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
 >
   <div
     class:list={["not-content create-page-root"]}
+    data-page-scope="create"
     data-create-pending
     data-create-page
     data-controller="create-editor"
@@ -107,36 +108,36 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
     visibility: hidden;
   }
 
-  .content-panel {
+  :root:has([data-page-scope="create"]) .content-panel {
     @apply border-0 pt-0 pb-0 first-of-type:hidden last:pl-0;
   }
 
-  .content-panel h1 {
+  :root:has([data-page-scope="create"]) .content-panel h1 {
     @apply text-5xl font-medium text-left;
   }
 
-  .main-frame-splash::before,
-  .kudos {
+  :root:has([data-page-scope="create"]) .main-frame-splash::before,
+  :root:has([data-page-scope="create"]) .kudos {
     display: none;
   }
 
-  .sl-container {
+  :root:has([data-page-scope="create"]) .sl-container {
     @apply max-w-full;
   }
 
-  .sl-markdown-content {
+  :root:has([data-page-scope="create"]) .sl-markdown-content {
     @apply mx-auto mt-0 max-w-full pt-0;
   }
 
-  .main-frame {
+  :root:has([data-page-scope="create"]) .main-frame {
     padding-inline: 0;
   }
 
-  .main-pane > main {
+  :root:has([data-page-scope="create"]) .main-pane > main {
     @apply pb-0;
   }
 
-  footer.sl-flex {
+  :root:has([data-page-scope="create"]) footer.sl-flex {
     @apply hidden;
   }
 
