@@ -235,7 +235,7 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
     // Update cookie with swatches if requested
     if (updateCookie) {
       const swatches = getSwatchesFromPreset(preset);
-      setStoredPreset(key, swatches);
+      setStoredPreset(key, swatches, preset.label);
     }
   }
 

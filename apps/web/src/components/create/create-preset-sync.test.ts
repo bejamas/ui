@@ -44,6 +44,16 @@ describe("create preset store sync", () => {
     expect(controllerSource).toContain("designSystemConfigSchema.safeParse");
   });
 
+  test("stores rich preset metadata so non-curated presets can prepaint correctly in the header", () => {
+    const controllerSource = fs.readFileSync(createEditorControllerFile, "utf8");
+
+    expect(controllerSource).toContain("getThemeSwatchesFromStyles");
+    expect(controllerSource).toContain("getHeaderPresetLabel");
+    expect(controllerSource).toContain("setStoredPreset(");
+    expect(controllerSource).toContain("getThemeSwatchesFromStyles(presetStyles)");
+    expect(controllerSource).toContain("getHeaderPresetLabel(config)");
+  });
+
   test("stores serializable history state so popstate can restore create config, theme state, and preview target", () => {
     const controllerSource = fs.readFileSync(createEditorControllerFile, "utf8");
     const typesSource = fs.readFileSync(createTypesFile, "utf8");

@@ -161,6 +161,33 @@ const state = buildHeaderPresetSwitcherState({});
       return { id };
     };
 
+    const isPresetCode = (value) => {
+      if (!value || value.length < 2 || value.length > 10) {
+        return false;
+      }
+
+      if (!["a", "b", "c"].includes(value[0])) {
+        return false;
+      }
+
+      return /^[A-Za-z0-9]+$/.test(value);
+    };
+
+    const buildCreateHref = (presetId, currentThemeRef) => {
+      const params = new URLSearchParams();
+
+      if (presetId) {
+        params.set("preset", presetId);
+      }
+
+      if (currentThemeRef) {
+        params.set("themeRef", currentThemeRef);
+      }
+
+      const query = params.toString();
+      return query ? `/create?${query}` : "/create";
+    };
+
     const readStoredPreset = () => {
       const themeCookie = readCookie("theme");
       if (themeCookie) {
@@ -172,6 +199,20 @@ const state = buildHeaderPresetSwitcherState({});
         return presetId ? { id: presetId } : null;
       } catch {
         return null;
+      }
+    };
+
+    const getCustomPresets = () => {
+      try {
+        const stored = localStorage.getItem("bejamas-custom-presets");
+        if (!stored) {
+          return {};
+        }
+
+        const parsed = JSON.parse(stored);
+        return parsed?.presets ?? {};
+      } catch {
+        return {};
       }
     };
 
@@ -191,12 +232,14 @@ const state = buildHeaderPresetSwitcherState({});
     );
     const stored = readStoredPreset();
     const themeRef = readCookie("theme-ref");
+    const customPresets = getCustomPresets();
 
     let summary = current;
     let selectedPresetId = root.dataset.selectedPresetId || "";
 
     if (stored) {
       const curatedPreset = themeRef ? null : presets.get(stored.id);
+      const customPreset = customPresets[stored.id] ?? null;
 
       if (curatedPreset) {
         summary = {
@@ -217,7 +260,7 @@ const state = buildHeaderPresetSwitcherState({});
       } else if (stored.swatches) {
         summary = {
           id: stored.id,
-          label: stored.name || current?.label || stored.id,
+          label: stored.name || customPreset?.name || current?.label || stored.id,
           swatches: {
             light: {
               primary: stored.swatches.primaryLight,
@@ -228,9 +271,40 @@ const state = buildHeaderPresetSwitcherState({});
               accent: stored.swatches.accentDark,
             },
           },
-          createHref: themeRef
-            ? `/create?themeRef=${encodeURIComponent(themeRef)}`
-            : "/create",
+          createHref: buildCreateHref(
+            isPresetCode(stored.id) ? stored.id : null,
+            themeRef,
+          ),
+          themeRef,
+        };
+        selectedPresetId = "";
+      } else if (customPreset?.styles) {
+        summary = {
+          id: stored.id,
+          label: customPreset.name,
+          swatches: {
+            light: {
+              primary:
+                customPreset.styles.light?.primary ??
+                current?.swatches?.light?.primary ??
+                "oklch(0.2 0 0)",
+              accent:
+                customPreset.styles.light?.accent ??
+                current?.swatches?.light?.accent ??
+                "oklch(0.7 0 0)",
+            },
+            dark: {
+              primary:
+                customPreset.styles.dark?.primary ??
+                current?.swatches?.dark?.primary ??
+                "oklch(0.98 0 0)",
+              accent:
+                customPreset.styles.dark?.accent ??
+                current?.swatches?.dark?.accent ??
+                "oklch(0.8 0 0)",
+            },
+          },
+          createHref: buildCreateHref(null, themeRef),
           themeRef,
         };
         selectedPresetId = "";

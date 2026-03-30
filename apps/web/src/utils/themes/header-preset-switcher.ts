@@ -1,41 +1,27 @@
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
   DEFAULT_PRESET_CONFIG,
-  catalogs,
   decodePreset,
   encodePreset,
   isPresetCode,
   type DesignSystemConfig,
   type PresetConfig,
 } from "@bejamas/create-config/server";
-import type { ThemeStyles } from "@/utils/types/theme";
 import { type ThemeOverrides } from "./create-theme";
 import { getThemeOverridesByRef } from "./create-theme.server";
 import { resolveDesignSystemTheme } from "./design-system-adapter";
 import { defaultPresets } from "./presets";
 import { parseThemeCookie, type ThemeSwatches } from "./theme-cookie";
-
-export interface HeaderPresetColorPair {
-  primary: string;
-  accent: string;
-}
-
-export interface HeaderPresetSwatches {
-  light: HeaderPresetColorPair;
-  dark: HeaderPresetColorPair;
-}
-
-export interface HeaderPresetSummary {
-  id: string;
-  label: string;
-  swatches: HeaderPresetSwatches;
-  createHref: string;
-  themeRef: string | null;
-}
-
-export interface HeaderPresetOption extends HeaderPresetSummary {
-  styles: ThemeStyles;
-}
+import {
+  type HeaderPresetOption,
+  type HeaderPresetSummary,
+  buildCreateHref,
+  buildDefaultCurrentSummary,
+  buildResolvedPresetSummary,
+  getPresetLabel,
+  getSwatchesFromStyles,
+  getSwatchesFromThemeCookie,
+} from "./header-preset-summary";
 
 export interface HeaderPresetSwitcherState {
   current: HeaderPresetSummary;
@@ -112,80 +98,6 @@ const CURATED_HEADER_PRESET_DEFINITIONS = [
   },
 ] as const satisfies readonly CuratedPresetDefinition[];
 
-function getPresetLabel(config: Pick<DesignSystemConfig, "style" | "font">) {
-  const styleLabel =
-    catalogs.styles.find((style) => style.name === config.style)?.title ??
-    config.style;
-  const fontLabel =
-    catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ??
-    config.font;
-
-  return `${styleLabel} - ${fontLabel}`;
-}
-
-function getSwatchesFromStyles(styles: {
-  light: Partial<ThemeStyles["light"]>;
-  dark: Partial<ThemeStyles["dark"]>;
-}): HeaderPresetSwatches {
-  return {
-    light: {
-      primary: styles.light.primary ?? "oklch(0.2 0 0)",
-      accent: styles.light.accent ?? "oklch(0.7 0 0)",
-    },
-    dark: {
-      primary: styles.dark.primary ?? "oklch(0.98 0 0)",
-      accent: styles.dark.accent ?? "oklch(0.8 0 0)",
-    },
-  };
-}
-
-function getSwatchesFromThemeCookie(
-  swatches: ThemeSwatches,
-): HeaderPresetSwatches {
-  return {
-    light: {
-      primary: swatches.primaryLight,
-      accent: swatches.accentLight,
-    },
-    dark: {
-      primary: swatches.primaryDark,
-      accent: swatches.accentDark,
-    },
-  };
-}
-
-function buildCreateHref(preset: string | null, themeRef: string | null) {
-  const params = new URLSearchParams();
-
-  if (preset) {
-    params.set("preset", preset);
-  }
-
-  if (themeRef) {
-    params.set("themeRef", themeRef);
-  }
-
-  const query = params.toString();
-  return query ? `/create?${query}` : "/create";
-}
-
-function buildResolvedPresetSummary(
-  presetId: string,
-  config: DesignSystemConfig,
-  themeRef: string | null,
-  themeOverrides?: Partial<ThemeOverrides> | null,
-): HeaderPresetSummary {
-  const resolved = resolveDesignSystemTheme(config, themeOverrides);
-
-  return {
-    id: presetId,
-    label: getPresetLabel(config),
-    swatches: getSwatchesFromStyles(resolved.styles),
-    createHref: buildCreateHref(presetId, themeRef),
-    themeRef,
-  };
-}
-
 function buildCuratedPresetOption(
   definition: CuratedPresetDefinition,
 ): HeaderPresetOption {
@@ -200,14 +112,6 @@ function buildCuratedPresetOption(
     themeRef: null,
     styles: resolved.styles,
   };
-}
-
-function buildDefaultCurrentSummary(): HeaderPresetSummary {
-  return buildResolvedPresetSummary(
-    encodePreset(DEFAULT_PRESET_CONFIG),
-    DEFAULT_DESIGN_SYSTEM_CONFIG,
-    null,
-  );
 }
 
 function buildLegacySummary(

@@ -66,6 +66,10 @@ describe("header preset switcher", () => {
     expect(scriptSource).toContain(
       'import { applyDocsPreset } from "@/utils/themes/apply-docs-preset";',
     );
+    expect(scriptSource).toContain(
+      'import { getCustomPresets } from "@/utils/themes/custom-presets-store";',
+    );
+    expect(scriptSource).toContain("resolveHeaderPresetSelection({");
     expect(scriptSource).toContain("applyDocsPreset({");
     expect(scriptSource).not.toContain("window.history.pushState");
     expect(scriptSource).not.toContain("window.location.assign");

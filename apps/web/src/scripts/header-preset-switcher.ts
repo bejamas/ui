@@ -1,39 +1,16 @@
-import {
-  DEFAULT_DESIGN_SYSTEM_CONFIG,
-  decodePreset,
-  isPresetCode,
-  catalogs,
-} from "@bejamas/create-config/browser";
-import type { ThemeStyles } from "@/utils/types/theme";
 import { applyDocsPreset } from "@/utils/themes/apply-docs-preset";
-import { resolveDesignSystemTheme } from "@/utils/themes/design-system-adapter";
 import {
   PRESET_CHANGE_EVENT,
   getStoredPresetWithSwatches,
 } from "@/utils/themes/preset-store";
+import { getCustomPresets } from "@/utils/themes/custom-presets-store";
 import { THEME_REF_COOKIE_NAME } from "@/utils/themes/theme-cookie";
-
-type HeaderPresetColorPair = {
-  primary: string;
-  accent: string;
-};
-
-type HeaderPresetSwatches = {
-  light: HeaderPresetColorPair;
-  dark: HeaderPresetColorPair;
-};
-
-type CurrentSummary = {
-  id: string;
-  label: string;
-  swatches: HeaderPresetSwatches;
-  createHref: string;
-  themeRef: string | null;
-};
-
-type PresetOption = CurrentSummary & {
-  styles: ThemeStyles;
-};
+import {
+  type HeaderPresetOption as PresetOption,
+  type HeaderPresetSummary as CurrentSummary,
+  resolveHeaderPresetSelection,
+  getThemeSwatchesFromStyles,
+} from "@/utils/themes/header-preset-summary";
 
 function readCookie(name: string) {
   const match = document.cookie.match(
@@ -43,30 +20,6 @@ function readCookie(name: string) {
   );
 
   return match ? decodeURIComponent(match[1]) : null;
-}
-
-function getPresetLabel(preset: { style: string; font: string }) {
-  const styleLabel =
-    catalogs.styles.find((style) => style.name === preset.style)?.title ??
-    preset.style;
-  const fontLabel =
-    catalogs.fonts.find((font) => font.name === `font-${preset.font}`)?.title ??
-    preset.font;
-
-  return `${styleLabel} - ${fontLabel}`;
-}
-
-function getSwatchesFromStyles(styles: Record<string, Record<string, string>>) {
-  return {
-    light: {
-      primary: styles.light?.primary ?? "oklch(0.2 0 0)",
-      accent: styles.light?.accent ?? "oklch(0.7 0 0)",
-    },
-    dark: {
-      primary: styles.dark?.primary ?? "oklch(0.98 0 0)",
-      accent: styles.dark?.accent ?? "oklch(0.8 0 0)",
-    },
-  };
 }
 
 class HeaderPresetSwitcherElement extends HTMLElement {
@@ -110,12 +63,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
     applyDocsPreset({
       id: preset.id,
       label: preset.label,
-      swatches: {
-        primaryLight: preset.swatches.light.primary,
-        accentLight: preset.swatches.light.accent,
-        primaryDark: preset.swatches.dark.primary,
-        accentDark: preset.swatches.dark.accent,
-      },
+      swatches: getThemeSwatchesFromStyles(preset.styles),
       themeRef: null,
     });
 
@@ -163,95 +111,22 @@ class HeaderPresetSwitcherElement extends HTMLElement {
   syncFromStoredState() {
     const stored = getStoredPresetWithSwatches();
     const themeRef = readCookie(THEME_REF_COOKIE_NAME);
+    const customPresets = getCustomPresets();
 
-    if (!stored) {
-      if (this.current) {
-        this.renderCurrent(this.current);
-      }
-      this.syncSelectedPreset(this.dataset.selectedPresetId || null);
-      return;
-    }
-
-    const curatedPreset = themeRef ? null : this.presets.get(stored.id);
-    if (curatedPreset) {
-      this.renderCurrent({
-        id: curatedPreset.id,
-        label: curatedPreset.label,
-        swatches: curatedPreset.swatches,
-        createHref: curatedPreset.createHref,
-        themeRef: null,
-      });
-      this.syncSelectedPreset(curatedPreset.id);
-      return;
-    }
-
-    if (
-      this.current &&
-      stored.id === this.current.id &&
-      themeRef === (this.current.themeRef ?? null)
-    ) {
-      this.renderCurrent(this.current);
-      this.syncSelectedPreset(null);
-      return;
-    }
-
-    if (stored.swatches && !isPresetCode(stored.id)) {
-      this.renderCurrent({
-        id: stored.id,
-        label: stored.name ?? stored.id,
-        swatches: {
-          light: {
-            primary: stored.swatches.primaryLight,
-            accent: stored.swatches.accentLight,
-          },
-          dark: {
-            primary: stored.swatches.primaryDark,
-            accent: stored.swatches.accentDark,
-          },
-        },
-        createHref: themeRef
-          ? `/create?themeRef=${encodeURIComponent(themeRef)}`
-          : "/create",
-        themeRef,
-      });
-      this.syncSelectedPreset(null);
-      return;
-    }
-
-    if (isPresetCode(stored.id)) {
-      const decoded = decodePreset(stored.id);
-      if (decoded) {
-        const styles = resolveDesignSystemTheme({
-          ...DEFAULT_DESIGN_SYSTEM_CONFIG,
-          ...decoded,
-        }).styles;
-        this.renderCurrent({
-          id: stored.id,
-          label: getPresetLabel(decoded),
-          swatches: getSwatchesFromStyles(styles),
-          createHref: `/create?preset=${encodeURIComponent(stored.id)}${
-            themeRef ? `&themeRef=${encodeURIComponent(themeRef)}` : ""
-          }`,
-          themeRef,
-        });
-        this.syncSelectedPreset(null);
-        return;
-      }
-    }
-
-    this.renderCurrent({
-      id: stored.id,
-      label: stored.name ?? stored.id,
-      swatches: this.current?.swatches ?? {
-        light: { primary: "oklch(0.2 0 0)", accent: "oklch(0.7 0 0)" },
-        dark: { primary: "oklch(0.98 0 0)", accent: "oklch(0.8 0 0)" },
-      },
-      createHref: themeRef
-        ? `/create?themeRef=${encodeURIComponent(themeRef)}`
-        : "/create",
+    const next = resolveHeaderPresetSelection({
+      current: this.current,
+      presets: Array.from(this.presets.values()),
+      stored,
       themeRef,
+      customPresets,
     });
-    this.syncSelectedPreset(null);
+
+    if (!next.summary) {
+      return;
+    }
+
+    this.renderCurrent(next.summary);
+    this.syncSelectedPreset(next.selectedPresetId);
   }
 
   renderCurrent(summary: CurrentSummary) {

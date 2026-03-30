@@ -26,6 +26,10 @@ import {
   resolveDesignSystemTheme,
 } from "@/utils/themes/design-system-adapter";
 import {
+  getPresetLabel as getHeaderPresetLabel,
+  getThemeSwatchesFromStyles,
+} from "@/utils/themes/header-preset-summary";
+import {
   getThemeChoiceFromRoot,
   getThemeModeFromRoot,
   resolveThemeMode as resolveGlobalThemeMode,
@@ -1241,7 +1245,16 @@ export default class extends Controller<HTMLElement> {
     this.syncCreateProjectCommands(preset);
     this.suppressPresetStoreChange = true;
     try {
-      setStoredPreset(preset, undefined, undefined, this.themeRef);
+      const presetStyles = resolveDesignSystemTheme(
+        config,
+        this.themeOverrides,
+      ).styles;
+      setStoredPreset(
+        preset,
+        getThemeSwatchesFromStyles(presetStyles),
+        getHeaderPresetLabel(config),
+        this.themeRef,
+      );
     } finally {
       this.suppressPresetStoreChange = false;
     }

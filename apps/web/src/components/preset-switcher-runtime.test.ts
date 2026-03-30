@@ -32,6 +32,7 @@ describe("preset switcher dropdown runtime", () => {
     expect(islandSource).toContain('data-slot="dropdown-menu-radio-item"');
     expect(islandSource).toContain('data-slot="dropdown-menu-radio-item-indicator"');
     expect(islandSource).toContain('new CustomEvent("dropdown-menu:set", {');
+    expect(islandSource).toContain("setStoredPreset(key, swatches, preset.label);");
     expect(islandSource).not.toContain("data-selected");
     expect(islandSource).not.toContain('data-slot="dropdown-menu-item-indicator"');
     expect(islandSource).not.toContain('content?.addEventListener("click"');
