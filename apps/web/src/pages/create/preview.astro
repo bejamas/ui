@@ -78,6 +78,8 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
     class:list={currentConfig
       ? [`style-${currentConfig.style}`, "bg-background"]
       : []}
+    data-controller="create-preview"
+    data-action="message@window->create-preview#receiveMessage keydown.meta+p@document->create-preview#openNavigateShortcut keydown.ctrl+p@document->create-preview#openNavigateShortcut"
   >
     {
       currentConfig ? (
@@ -121,7 +123,7 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
     }
     <script is:inline set:html={previewPayloadScript} />
     <script>
-      import "@/scripts/create-preview.ts";
+      import "@/stimulus/create";
     </script>
   </body>
 </html>

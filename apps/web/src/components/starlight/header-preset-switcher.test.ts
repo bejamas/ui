@@ -45,10 +45,13 @@ describe("header preset switcher", () => {
     expect(source).toContain("<DropdownMenuLabel>Presets</DropdownMenuLabel>");
     expect(source).toContain("value={preset.id}");
     expect(source).toContain("data-header-preset-id={preset.id}");
+    expect(source).toContain("<DropdownMenuRadioItem");
     expect(source).toContain("Create your own");
     expect(scriptSource).toContain(
-      'this.addEventListener("dropdown-menu:select", this.onSelect)',
+      'this.addEventListener("dropdown-menu:value-change", this.onValueChange)',
     );
+    expect(scriptSource).toContain('new CustomEvent("dropdown-menu:set", {');
+    expect(scriptSource).not.toContain("data-selected");
     expect(scriptSource).toContain(
       'window.addEventListener("storage", this.onStorage)',
     );

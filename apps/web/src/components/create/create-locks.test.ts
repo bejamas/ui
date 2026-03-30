@@ -22,17 +22,26 @@ describe("create lock controls", () => {
     );
 
     expect(source).toContain('class="group/picker relative"');
+    expect(source).toContain('data-controller="create-picker"');
+    expect(source).toContain('dropdown-menu:value-change->create-picker#valueChanged');
+    expect(source).toContain("<DropdownMenuRadioItem");
+    expect(source).toContain('data-create-picker-name-value={name}');
     expect(source).toContain("<CreateLockButton");
     expect(source).toContain("<CreateFontGroupLockButton");
     expect(source).toContain("disabled?: boolean");
     expect(source).toContain("disabled={disabled}");
     expect(source).toContain('group/picker relative');
     expect(lockButtonSource).toContain("data-create-lock-param");
+    expect(lockButtonSource).toContain('data-action="click->create-sidebar#toggleLock"');
+    expect(lockButtonSource).toContain("data-create-sidebar-lock-param-param");
     expect(lockButtonSource).toContain('data-locked="false"');
     expect(lockButtonSource).toContain("group-has-[:focus-visible]/picker:opacity-100");
     expect(lockButtonSource).not.toContain("group-focus-within/picker:opacity-100");
     expect(fontGroupLockButtonSource).toContain("data-create-font-group-lock-button");
     expect(fontGroupLockButtonSource).toContain("data-create-font-group");
+    expect(fontGroupLockButtonSource).toContain(
+      'data-action="click->create-sidebar#toggleFontGroupLock"',
+    );
     expect(fontGroupLockButtonSource).toContain('data-locked="false"');
   });
 

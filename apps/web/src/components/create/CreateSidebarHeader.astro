@@ -14,10 +14,10 @@ const { title } = Astro.props;
 
 <div class="flex items-center justify-between p-2.5 pl-4">
   <span class="flex items-center gap-2">
-    <span class="text-sm font-medium tracking-[-0.01em] text-white/90" data-create-sidebar-title>
+    <span class="text-sm font-medium tracking-[-0.01em] text-white/90" data-create-sidebar-title data-create-sidebar-target="sidebarTitle">
       {title}
     </span>
-    <span hidden data-create-header-theme-lock>
+    <span hidden data-create-header-theme-lock data-create-sidebar-target="headerThemeLock">
       <CreateLockButton param="theme" class="opacity-100!" />
     </span>
   </span>
@@ -29,6 +29,7 @@ const { title } = Astro.props;
       class="size-7! rounded-[8px]! border border-white/20 text-white/60 hover:text-white/90 hover:bg-white/[0.06]"
       data-create-header-navigate
       aria-label="Navigate"
+      data-action="click->create-sidebar#openNavigate"
     >
       <PlusIcon class="size-3.5" />
     </Button>
@@ -39,6 +40,7 @@ const { title } = Astro.props;
       class="size-7! rounded-[8px]! border border-white/20 text-white/60 hover:text-white/90 hover:bg-white/[0.06]"
       data-create-header-shuffle
       aria-label="Shuffle"
+      data-action="click->create-sidebar#randomize"
     >
       <RefreshCwIcon class="size-3.5" />
     </Button>
@@ -49,6 +51,7 @@ const { title } = Astro.props;
       class="size-7! rounded-[8px]! border border-white/20 text-white/60 hover:text-white/90 hover:bg-white/[0.06]"
       data-create-header-search
       aria-label="Search"
+      data-action="click->create-sidebar#openNavigate"
     >
       <SearchIcon class="size-3.5" />
     </Button>

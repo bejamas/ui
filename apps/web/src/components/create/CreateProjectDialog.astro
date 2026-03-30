@@ -44,7 +44,12 @@ const initialCommands = Object.fromEntries(
 );
 ---
 
-<Dialog id="create-project-dialog" data-create-project-dialog>
+<Dialog
+  id="create-project-dialog"
+  data-create-project-dialog
+  data-controller="create-project-dialog"
+  data-action="dialog:change->create-project-dialog#dialogChanged"
+>
   <DialogTrigger asChild class="w-full">
     <Button
       type="button"
@@ -85,19 +90,28 @@ const initialCommands = Object.fromEntries(
             id="create-project-monorepo"
             checked={templateState.monorepo}
             data-create-project-monorepo
+            data-create-project-dialog-target="monorepoField"
+            data-action="switch:change->create-project-dialog#monorepoChanged"
           />
         </label>
       </div>
     </div>
 
     <DialogFooter class="flex flex-col gap-4">
-      <input type="hidden" value="bun" data-create-project-package-manager />
+      <input
+        type="hidden"
+        value="bun"
+        data-create-project-package-manager
+        data-create-project-dialog-target="packageManagerInput"
+      />
 
       <Tabs
         id="create-project-package-tabs"
         data-create-project-package-tabs
         defaultValue="bun"
         class="min-w-0 overflow-hidden rounded-[18px] border border-border bg-muted/20"
+        data-create-project-dialog-target="packageTabs"
+        data-action="tabs:change->create-project-dialog#packageManagerChanged"
       >
         <div class="px-2 pt-2">
           <TabsList class="w-fit gap-1 rounded-[12px] bg-background/80 p-1">
@@ -132,8 +146,19 @@ const initialCommands = Object.fromEntries(
         }
       </Tabs>
 
-      <Button type="button" class="w-full" data-create-project-copy-command>
-        <span data-create-project-copy-command-label>Copy Command</span>
+      <Button
+        type="button"
+        class="w-full"
+        data-create-project-copy-command
+        data-create-project-dialog-target="copyButton"
+        data-action="click->create-project-dialog#copyCommand"
+      >
+        <span
+          data-create-project-copy-command-label
+          data-create-project-dialog-target="copyLabel"
+        >
+          Copy Command
+        </span>
       </Button>
     </DialogFooter>
   </DialogContent>

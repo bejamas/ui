@@ -2,7 +2,7 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuRadioItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -22,7 +22,7 @@ const state = buildHeaderPresetSwitcherState({});
   data-presets={JSON.stringify(state.presets)}
   data-selected-preset-id={state.selectedPresetId ?? ""}
 >
-  <DropdownMenu>
+  <DropdownMenu defaultValue={state.selectedPresetId ?? undefined}>
     <DropdownMenuTrigger
       variant="outline"
       class="header-preset-switcher-trigger max-w-[11.75rem] min-w-0 justify-between gap-2 px-2.5 text-sm"
@@ -59,13 +59,10 @@ const state = buildHeaderPresetSwitcherState({});
         <DropdownMenuLabel>Presets</DropdownMenuLabel>
         {
           state.presets.map((preset) => (
-            <DropdownMenuItem
+            <DropdownMenuRadioItem
               class="cursor-pointer gap-3 rounded-md px-3 py-2"
               value={preset.id}
               data-header-preset-id={preset.id}
-              data-selected={
-                state.selectedPresetId === preset.id ? "" : undefined
-              }
             >
               <span class="flex shrink-0 -space-x-1 items-center">
                 <span
@@ -86,7 +83,7 @@ const state = buildHeaderPresetSwitcherState({});
                 />
               </span>
               <span class="truncate">{preset.label}</span>
-            </DropdownMenuItem>
+            </DropdownMenuRadioItem>
           ))
         }
       </DropdownMenuGroup>

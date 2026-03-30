@@ -14,9 +14,21 @@ const palettePanelFile = path.resolve(
   import.meta.dir,
   "./CreatePalettePanel.astro",
 );
+const createSidebarControllerFile = path.resolve(
+  import.meta.dir,
+  "../../stimulus/controllers/create_sidebar_controller.ts",
+);
+const createPickerControllerFile = path.resolve(
+  import.meta.dir,
+  "../../stimulus/controllers/create_picker_controller.ts",
+);
+const createEditorControllerFile = path.resolve(
+  import.meta.dir,
+  "../../stimulus/controllers/create_editor_controller.ts",
+);
 const createPageFile = path.resolve(
   import.meta.dir,
-  "../../scripts/create-page.ts",
+  "../../pages/create.astro",
 );
 
 describe("create theme panel transitions", () => {
@@ -38,14 +50,17 @@ describe("create theme panel transitions", () => {
     expect(paletteSource).toContain('data-panel-state="inactive"');
     expect(paletteSource).toContain("<section\n  hidden\n");
     expect(paletteSource).toContain("create-panel-transition");
+    expect(themeListSource).toContain('type="button"');
+    expect(paletteSource).toContain('type="button"');
   });
 
-  test("uses a staged runtime transition with reduced-motion fallback", () => {
-    const source = fs.readFileSync(createPageFile, "utf8");
+  test("uses a staged Stimulus transition with reduced-motion fallback", () => {
+    const source = fs.readFileSync(createSidebarControllerFile, "utf8");
+    const pickerSource = fs.readFileSync(createPickerControllerFile, "utf8");
 
     expect(source).toContain("prefers-reduced-motion: reduce");
-    expect(source).toContain("themePanelTransitionToken");
-    expect(source).toContain("waitForThemePanelTransition");
+    expect(source).toContain("transitionToken");
+    expect(source).toContain("waitForPanelTransition");
     expect(source).toContain(
       'currentElement.dataset.panelState = "exiting"',
     );
@@ -53,21 +68,34 @@ describe("create theme panel transitions", () => {
       'targetElement.dataset.panelState = "entering"',
     );
     expect(source).toContain("getFocusTargetForPanel(target)?.focus()");
+    expect(source).toContain('static outlets = ["create-picker"]');
+    expect(source).toContain("picker.render(state)");
+    expect(source).not.toContain("syncPickerUi");
+    expect(pickerSource).toContain("syncRadiusDefaultItem");
+    expect(pickerSource).toContain("syncFontHeadingInheritItem");
+    expect(pickerSource).toContain('this.dispatch("change"');
+    expect(pickerSource).toContain('new CustomEvent("dropdown-menu:set"');
+    expect(pickerSource).not.toContain("data-selected");
   });
 
-  test("syncs theme panel tabs through the shared global theme mode path", () => {
-    const source = fs.readFileSync(createPageFile, "utf8");
+  test("syncs sidebar theme mode through the shared global theme change path", () => {
+    const pageSource = fs.readFileSync(createPageFile, "utf8");
+    const controllerSource = fs.readFileSync(createEditorControllerFile, "utf8");
 
-    expect(source).toContain("setGlobalThemeChoice(nextMode");
-    expect(source).toContain('window.addEventListener("theme-toggle-changed"');
-    expect(source).toContain("syncActiveThemeMode()");
-    expect(source).not.toContain(
-      'activeThemeMode = (button.dataset.value as ThemeMode) ?? "light";',
+    expect(pageSource).toContain(
+      "create-picker:change->create-editor#handlePickerChange",
+    );
+    expect(pageSource).toContain(
+      "theme-toggle-changed@window->create-editor#handleThemeToggle",
+    );
+    expect(controllerSource).toContain("this.activeThemeMode = this.resolveCurrentThemeMode()");
+    expect(controllerSource).toContain(
+      "this.createSidebarOutlet.themeModeValue = this.activeThemeMode;",
     );
   });
 
   test("tracks shuffle count from the shared randomize handler", () => {
-    const source = fs.readFileSync(createPageFile, "utf8");
+    const source = fs.readFileSync(createEditorControllerFile, "utf8");
 
     expect(source).toContain(
       'import { incrementShuffleCountRequest } from "@/utils/shuffles";',

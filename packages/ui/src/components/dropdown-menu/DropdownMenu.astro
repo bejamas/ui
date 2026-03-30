@@ -3,23 +3,17 @@
 /**
  * @component DropdownMenu
  * @title Dropdown Menu
- * @description A menu that appears on trigger click, displaying a list of actions or options.
+ * @description Action and selection menus with runtime-owned open, highlight, and committed selection state.
  *
  * @preview
- * <DropdownMenu>
+ * <DropdownMenu defaultValue="pro">
  *   <DropdownMenuTrigger variant="outline">Open</DropdownMenuTrigger>
  *   <DropdownMenuContent align="start">
- *     <DropdownMenuLabel>My Account</DropdownMenuLabel>
+ *     <DropdownMenuLabel>Plans</DropdownMenuLabel>
  *     <DropdownMenuGroup>
- *       <DropdownMenuItem>
- *         Profile
- *         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
- *       </DropdownMenuItem>
- *       <DropdownMenuItem>Settings</DropdownMenuItem>
+ *       <DropdownMenuRadioItem value="starter">Starter</DropdownMenuRadioItem>
+ *       <DropdownMenuRadioItem value="pro">Pro</DropdownMenuRadioItem>
  *     </DropdownMenuGroup>
- *     <DropdownMenuSeparator />
- *     <DropdownMenuItem disabled>API</DropdownMenuItem>
- *     <DropdownMenuItem>Log out</DropdownMenuItem>
  *   </DropdownMenuContent>
  * </DropdownMenu>
  *
@@ -27,7 +21,13 @@
  *
  * ```astro nocollapse
  * ---
- * import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@bejamas/ui/components/dropdown-menu';
+ * import {
+ *   DropdownMenu,
+ *   DropdownMenuTrigger,
+ *   DropdownMenuContent,
+ *   DropdownMenuItem,
+ *   DropdownMenuRadioItem,
+ * } from '@bejamas/ui/components/dropdown-menu';
  * ---
  *
  * <DropdownMenu>
@@ -46,15 +46,19 @@
  *
  * | Event | Detail | Description |
  * |-------|--------|-------------|
- * | `dropdown-menu:change` | `{ open: boolean }` | Fired when the menu opens or closes |
- * | `dropdown-menu:select` | `{ value: string }` | Fired when an item is selected |
+ * | `dropdown-menu:open-change` | `{ open, previousOpen, source, reason }` | Fired on real open-state changes |
+ * | `dropdown-menu:change` | same detail | Deprecated alias for `dropdown-menu:open-change` |
+ * | `dropdown-menu:highlight-change` | `{ value, previousValue, item, previousItem, source }` | Fired when highlight changes |
+ * | `dropdown-menu:select` | `{ value, item, itemType, source, checked? }` | Cancelable user activation event fired before commit |
+ * | `dropdown-menu:value-change` | `{ value, previousValue, item, previousItem, source }` | Fired when radio selection commits |
+ * | `dropdown-menu:values-change` | `{ values, previousValues, changedValue, checked, item, source }` | Fired when checkbox selection commits |
  *
  * ```astro nocollapse
- * <DropdownMenu id="my-dropdown">
+ * <DropdownMenu id="my-dropdown" defaultValue="edit">
  *   <DropdownMenuTrigger>Menu</DropdownMenuTrigger>
  *   <DropdownMenuContent>
- *     <DropdownMenuItem value="edit">Edit</DropdownMenuItem>
- *     <DropdownMenuItem value="delete">Delete</DropdownMenuItem>
+ *     <DropdownMenuRadioItem value="edit">Edit</DropdownMenuRadioItem>
+ *     <DropdownMenuRadioItem value="delete">Delete</DropdownMenuRadioItem>
  *   </DropdownMenuContent>
  * </DropdownMenu>
  * ```
@@ -62,11 +66,11 @@
  * ```js nocollapse
  *   const dropdown = document.getElementById('my-dropdown');
  *
- *   dropdown.addEventListener('dropdown-menu:change', (e) => {
+ *   dropdown.addEventListener('dropdown-menu:open-change', (e) => {
  *     console.log('Is open:', e.detail.open);
  *   });
  *
- *   dropdown.addEventListener('dropdown-menu:select', (e) => {
+ *   dropdown.addEventListener('dropdown-menu:value-change', (e) => {
  *     console.log('Selected:', e.detail.value);
  *   });
  * ```
@@ -83,9 +87,14 @@
  *   detail: { open: true }
  * }));
  *
- * // Close the dropdown menu
+ * // Commit radio selection
  * dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
- *   detail: { open: false }
+ *   detail: { value: 'delete', source: 'restore' }
+ * }));
+ *
+ * // Commit checkbox selection
+ * dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
+ *   detail: { values: ['email', 'push'], source: 'restore' }
  * }));
  * ```
  *
@@ -96,14 +105,16 @@
  * | Attribute | Element | Description |
  * |-----------|---------|-------------|
  * | `data-state` | dropdown-menu, dropdown-menu-content | Current state (`open` or `closed`) |
+ * | `data-value` | dropdown-menu | Current committed radio value |
  * | `data-side` | dropdown-menu-content | Computed position (`top`, `right`, `bottom`, or `left`) |
  * | `data-align` | dropdown-menu-content | Alignment (`start`, `center`, or `end`) |
- * | `data-highlighted` | dropdown-menu-item | Present when item is focused |
- * | `data-disabled` | dropdown-menu-item | Present when item is disabled |
+ * | `data-highlighted` | menu items | Present when item is focused |
+ * | `data-checked` | radio and checkbox items | Present when item is committed as checked |
+ * | `data-disabled` | menu items | Present when item is disabled |
  *
  * @examples
  *
- * ### With Labels and Groups
+ * ### Action Menu
  *
  * <DropdownMenu>
  *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="">Account</Button>
@@ -118,43 +129,25 @@
  *   </DropdownMenuContent>
  * </DropdownMenu>
  *
- * ### With Keyboard Shortcuts
+ * ### Single Select
  *
- * <DropdownMenu>
- *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="">Edit</Button>
+ * <DropdownMenu defaultValue="pro">
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="">Plan</Button>
  *   <DropdownMenuContent>
- *     <DropdownMenuItem>
- *       Undo
- *       <DropdownMenuShortcut>⌘Z</DropdownMenuShortcut>
- *     </DropdownMenuItem>
- *     <DropdownMenuItem>
- *       Redo
- *       <DropdownMenuShortcut>⇧⌘Z</DropdownMenuShortcut>
- *     </DropdownMenuItem>
- *     <DropdownMenuSeparator />
- *     <DropdownMenuItem>
- *       Cut
- *       <DropdownMenuShortcut>⌘X</DropdownMenuShortcut>
- *     </DropdownMenuItem>
- *     <DropdownMenuItem>
- *       Copy
- *       <DropdownMenuShortcut>⌘C</DropdownMenuShortcut>
- *     </DropdownMenuItem>
- *     <DropdownMenuItem>
- *       Paste
- *       <DropdownMenuShortcut>⌘V</DropdownMenuShortcut>
- *     </DropdownMenuItem>
+ *     <DropdownMenuRadioItem value="starter">Starter</DropdownMenuRadioItem>
+ *     <DropdownMenuRadioItem value="pro">Pro</DropdownMenuRadioItem>
+ *     <DropdownMenuRadioItem value="team">Team</DropdownMenuRadioItem>
  *   </DropdownMenuContent>
  * </DropdownMenu>
  *
- * ### With Disabled Items
+ * ### Multi Select
  *
- * <DropdownMenu>
- *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="">Options</Button>
+ * <DropdownMenu defaultValues={["email", "push"]} closeOnSelect={false}>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="">Notifications</Button>
  *   <DropdownMenuContent>
- *     <DropdownMenuItem>Available action</DropdownMenuItem>
- *     <DropdownMenuItem disabled>Disabled action</DropdownMenuItem>
- *     <DropdownMenuItem>Another action</DropdownMenuItem>
+ *     <DropdownMenuCheckboxItem value="email">Email</DropdownMenuCheckboxItem>
+ *     <DropdownMenuCheckboxItem value="sms">SMS</DropdownMenuCheckboxItem>
+ *     <DropdownMenuCheckboxItem value="push">Push</DropdownMenuCheckboxItem>
  *   </DropdownMenuContent>
  * </DropdownMenu>
  */
@@ -163,15 +156,57 @@ import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
 interface Props extends HTMLAttributes<"div"> {
+  defaultOpen?: boolean;
+  defaultValue?: string | null;
+  defaultValues?: string[];
+  closeOnClickOutside?: boolean;
+  closeOnEscape?: boolean;
+  closeOnSelect?: boolean;
+  lockScroll?: boolean;
+  highlightItemOnHover?: boolean;
   class?: string;
 }
 
-const { class: className = "", ...rest } = Astro.props as Props;
+const {
+  defaultOpen,
+  defaultValue,
+  defaultValues,
+  closeOnClickOutside,
+  closeOnEscape,
+  closeOnSelect,
+  lockScroll,
+  highlightItemOnHover,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const hasProp = (name: keyof Props) =>
+  Object.prototype.hasOwnProperty.call(Astro.props, name);
+const defaultValuesJson =
+  defaultValues !== undefined ? JSON.stringify(defaultValues) : undefined;
 ---
 
 <div
   {...rest}
   data-slot="dropdown-menu"
+  data-default-open={hasProp("defaultOpen") ? String(!!defaultOpen) : undefined}
+  data-default-value={defaultValue ?? undefined}
+  data-default-values={defaultValuesJson}
+  data-close-on-click-outside={
+    hasProp("closeOnClickOutside") ? String(!!closeOnClickOutside) : undefined
+  }
+  data-close-on-escape={
+    hasProp("closeOnEscape") ? String(!!closeOnEscape) : undefined
+  }
+  data-close-on-select={
+    hasProp("closeOnSelect") ? String(!!closeOnSelect) : undefined
+  }
+  data-lock-scroll={hasProp("lockScroll") ? String(!!lockScroll) : undefined}
+  data-highlight-item-on-hover={
+    hasProp("highlightItemOnHover")
+      ? String(!!highlightItemOnHover)
+      : undefined
+  }
   class={cn("", "relative inline-block", className)}
 >
   <slot />

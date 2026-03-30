@@ -54,6 +54,10 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
 <aside
   class="xl:sticky xl:top-[var(--create-page-inset)] xl:h-[var(--create-sidebar-height)] dark"
   data-create-customizer-stable
+  data-controller="create-sidebar"
+  data-create-sidebar-panel-value="main"
+  data-create-sidebar-theme-mode-value="light"
+  data-create-sidebar-create-picker-outlet='[data-controller~="create-picker"]'
 >
   <div
     class="create-customizer create-sidebar-stripe-bg relative overflow-hidden border rounded-r-[22px] border-white/10 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] xl:flex xl:h-full xl:flex-col"
@@ -65,6 +69,7 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
     <form
       class="relative xl:min-h-0 xl:flex-1 xl:overflow-hidden"
       data-create-form
+      data-create-editor-target="form"
     >
       <input
         type="hidden"
@@ -83,6 +88,7 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
         class="create-panel-transition pl-5 [scrollbar-width:none]"
         data-create-form-main
         data-panel-state="active"
+        data-create-sidebar-target="mainPanel"
       >
         <div class="create-sidebar-scroll-fade before:hidden relative h-full">
           {
@@ -97,6 +103,8 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
                       variant="outline"
                       class="create-picker-trigger bg-transparent! hover:bg-white/[0.04]! border-0! shadow-none! flex w-full justify-between text-left h-auto! rounded-none! px-4! py-3! mb-0.5"
                       data-create-theme-trigger
+                      data-create-sidebar-target="themeTrigger"
+                      data-action="click->create-sidebar#showThemeList"
                     >
                       <span class="min-w-0">
                         <span class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38">
@@ -179,16 +187,18 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
         type="button"
         class="create-customizer-action hidden w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
         data-create-copy-preset
+        data-action="click->create-sidebar#copyPreset"
       >
-        <span data-preset-code>{`--preset ${preset}`}</span>
+        <span data-preset-code data-create-sidebar-target="presetCode">{`--preset ${preset}`}</span>
       </button>
 
-      <div class="grid grid-cols-2 gap-2" data-actions-default>
+      <div class="grid grid-cols-2 gap-2" data-actions-default data-create-sidebar-target="actionsDefault">
         <Button
           type="button"
           variant="outline"
           class="create-customizer-action rounded-[14px]"
           data-create-randomize
+          data-action="click->create-sidebar#randomize"
         >
           Shuffle
         </Button>
@@ -199,12 +209,13 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
           themeRef={themeRef}
         />
       </div>
-      <div class="grid grid-cols-2 gap-2 hidden" data-actions-palette>
+      <div class="grid grid-cols-2 gap-2 hidden" data-actions-palette data-create-sidebar-target="actionsPalette">
         <Button
           type="button"
           variant="outline"
           class="flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
           data-create-palette-cancel
+          data-action="click->create-sidebar#cancelPalette"
         >
           Cancel
         </Button>
@@ -213,6 +224,7 @@ const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
           variant="outline"
           class="flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
           data-create-palette-save
+          data-action="click->create-sidebar#savePalette"
         >
           Save
         </Button>

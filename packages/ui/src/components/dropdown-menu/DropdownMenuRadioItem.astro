@@ -1,0 +1,48 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.astro directly.
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"div"> {
+  disabled?: boolean;
+  inset?: boolean;
+  value: string;
+  defaultChecked?: boolean;
+  class?: string;
+}
+
+const {
+  disabled = false,
+  inset = false,
+  value,
+  defaultChecked = false,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  role="menuitemradio"
+  tabindex={disabled ? -1 : 0}
+  data-slot="dropdown-menu-radio-item"
+  data-value={value}
+  data-disabled={disabled ? "" : undefined}
+  data-inset={inset ? "" : undefined}
+  data-default-checked={defaultChecked ? "" : undefined}
+  class={cn(
+    "focus:bg-accent focus:text-accent-foreground focus:**:text-accent-foreground gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm data-inset:pl-8 [&_svg:not([class*='size-'])]:size-4",
+    "group/dropdown-menu-item relative flex cursor-default items-center outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+    className,
+  )}
+>
+  <slot />
+  <span
+    data-slot="dropdown-menu-item-indicator"
+    class="absolute right-2 flex items-center justify-center text-current opacity-0 transition-opacity group-data-checked/dropdown-menu-item:opacity-100"
+    aria-hidden="true"
+  >
+    <SemanticIcon name="check" class="size-4" />
+  </span>
+</div>

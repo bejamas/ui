@@ -26,6 +26,7 @@ const themeSeedGroups = getCreateThemeSeedGroups(config.baseColor);
   class="create-panel-transition bg-[#0040a1] ml-5 space-y-3.5 xl:min-h-0 xl:flex xl:flex-1 xl:flex-col xl:overflow-hidden"
   data-create-theme-list-panel
   data-panel-state="inactive"
+  data-create-sidebar-target="themeListPanel"
 >
   <div
     style={{
@@ -39,20 +40,29 @@ const themeSeedGroups = getCreateThemeSeedGroups(config.baseColor);
       <Button
         variant="outline"
         size="sm"
+        type="button"
         data-create-theme-list-back
         class="backdrop-blur-md"
+        data-create-sidebar-target="themeListBackButton"
+        data-action="click->create-sidebar#backToMain"
       >
         <ArrowLeftIcon class="size-4 text-white/70" />
         Back
       </Button>
 
-      <Button variant="ghost" type="button" size="sm" data-create-theme-import>
+      <Button
+        variant="ghost"
+        type="button"
+        size="sm"
+        data-create-theme-import
+        data-action="click->create-sidebar#openThemeImportDialog"
+      >
         <DownloadIcon class="size-3 text-white/65" />
         Import
       </Button>
     </div>
 
-    <div class="flex flex-col gap-2 pt-2" data-create-theme-seeds>
+    <div class="flex flex-col gap-2 pt-2" data-create-theme-seeds data-create-sidebar-target="themeSeedContainer">
       {
         themeSeedGroups.map((group) => (
           <section
@@ -72,8 +82,11 @@ const themeSeedGroups = getCreateThemeSeedGroups(config.baseColor);
                       ? "border-white/16 bg-transparent text-white"
                       : "border-white/0 bg-transparent text-white/78 hover:bg-white/[0.05]",
                   ]}
+                  data-create-sidebar-target="themeOption"
                   data-create-theme-option
                   data-value={option.value}
+                  data-action="click->create-sidebar#selectThemeSeed"
+                  data-create-sidebar-theme-value-param={option.value}
                   data-selected={option.value === config.theme ? "" : undefined}
                 >
                   <span
@@ -87,6 +100,8 @@ const themeSeedGroups = getCreateThemeSeedGroups(config.baseColor);
                     class="!hidden shrink-0 text-white/30 opacity-0 transition-opacity group-hover/seed:opacity-100 data-[selected]:opacity-100"
                     data-create-palette-open
                     data-value={option.value}
+                    data-action="click->create-sidebar#openPaletteEditor"
+                    data-create-sidebar-theme-value-param={option.value}
                     data-selected={
                       option.value === config.theme ? "" : undefined
                     }

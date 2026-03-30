@@ -17,6 +17,8 @@ const { group, class: className = "" } = Astro.props as Props;
   data-create-font-group-lock-button
   data-create-font-group={group}
   data-locked="false"
+  data-action="click->create-sidebar#toggleFontGroupLock"
+  data-create-sidebar-font-group-param={group}
   class={cn(
     "group/create-lock flex size-3.5 cursor-pointer items-center justify-center rounded opacity-0 ring-white/40 transition-opacity outline-none group-hover/font-group:opacity-100 group-has-[:focus-visible]/font-group:opacity-100 focus-visible:opacity-100 focus-visible:ring-1 data-[locked=true]:opacity-100 pointer-coarse:hidden text-white/60 hover:text-white",
     className,

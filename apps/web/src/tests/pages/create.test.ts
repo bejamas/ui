@@ -15,7 +15,7 @@ describe("create page stable customizer overrides", () => {
       "[data-create-picker-content]",
     );
     expect(source).toContain(
-      '[data-slot="dropdown-menu-item"][data-highlighted]',
+      '[data-slot="dropdown-menu-radio-item"]',
     );
     expect(source).toContain(
       "background: rgba(255, 255, 255, 0.06) !important;",

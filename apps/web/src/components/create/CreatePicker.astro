@@ -1,12 +1,10 @@
 ---
-import CheckIcon from "@lucide/astro/icons/check";
-import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 import { Button } from "@bejamas/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
+  DropdownMenuRadioItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -20,6 +18,7 @@ import type {
   CreatePickerName,
 } from "@/utils/create-sidebar";
 import {
+  CREATE_PICKER_MARKERS,
   CREATE_PICKER_GROUP_LABELS,
   isCreateFontGroup,
 } from "@/utils/create-sidebar";
@@ -54,6 +53,7 @@ const selectedOption =
   providedSelectedOption ??
   options.find((option) => option.value === value) ??
   options[0];
+const itemMarkerKind = CREATE_PICKER_MARKERS[name];
 const groupedPickerNames = new Set(["style", "font", "fontHeading"]);
 const ungroupedOptions = groupedPickerNames.has(name)
   ? options.filter((option) => !option.group)
@@ -76,17 +76,25 @@ function shouldRenderFontGroupLock(
 }
 ---
 
-<div class="group/picker relative">
+<div
+  class="group/picker relative"
+  data-controller="create-picker"
+  data-action="dropdown-menu:value-change->create-picker#valueChanged"
+  data-create-picker-name-value={name}
+  data-create-picker-marker-kind-value={markerKind}
+>
   <DropdownMenu
+    defaultValue={selectedOption?.value ?? value}
+    closeOnSelect={false}
     data-create-picker={name}
     class="block w-full"
-    data-close-on-select="false"
   >
     <input
       type="hidden"
       name={name}
       value={selectedOption?.value ?? value}
       data-create-input
+      data-create-picker-target="input"
     />
 
     <DropdownMenuTrigger asChild class="w-full block">
@@ -96,6 +104,7 @@ function shouldRenderFontGroupLock(
         disabled={disabled}
         class="create-picker-trigger bg-transparent! hover:bg-white/[0.04]! border-0! shadow-none! flex w-full justify-between text-left h-auto! rounded-none! px-4! py-3!"
         data-create-picker-trigger
+        data-create-picker-target="trigger"
       >
         <span class="min-w-0">
           <span
@@ -105,6 +114,7 @@ function shouldRenderFontGroupLock(
           <span
             class="block truncate text-sm font-medium tracking-[-0.01em] text-white/90"
             data-create-picker-current-label
+            data-create-picker-target="currentLabel"
           >
             {selectedOption?.label ?? value}
           </span>
@@ -115,6 +125,7 @@ function shouldRenderFontGroupLock(
             <span
               class="inline-flex items-center justify-center"
               data-create-picker-current-marker
+              data-create-picker-target="currentMarker"
             >
               {
                 selectedOption && (
@@ -147,14 +158,11 @@ function shouldRenderFontGroupLock(
               <>
                 <DropdownMenuGroup>
                   {ungroupedOptions.map((option) => {
-                    const isSelected = option.value === selectedOption?.value;
-
                     return (
-                      <DropdownMenuItem
-                        class="create-picker-item !items-start !gap-2.5 !rounded-[12px] !px-3 !py-2.5 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
+                      <DropdownMenuRadioItem
+                        value={option.value}
+                        class="group/picker-item create-picker-item !items-start !gap-2.5 !rounded-[12px] !pl-3 !pr-9 !py-2.5 !text-white/86 data-checked:!bg-white/[0.06] data-checked:!text-white/92 data-checked:**:[svg]:!text-white/92 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
                         data-create-picker-item
-                        data-value={option.value}
-                        data-selected={isSelected ? "" : undefined}
                       >
                         <span class="min-w-0 flex-1">
                           <span
@@ -169,26 +177,18 @@ function shouldRenderFontGroupLock(
                             </span>
                           )}
                         </span>
-                        <span class="ml-auto flex shrink-0 items-center gap-2 pt-0.5">
+                        <span class="ml-auto flex shrink-0 items-center pt-0.5">
                           <span data-create-picker-item-marker>
                             <CreatePickerMarker
-                              kind={markerKind}
+                              kind={itemMarkerKind}
                               value={option.markerValue ?? option.value}
                               label={option.label}
                               color={option.color}
                               family={option.family}
                             />
                           </span>
-                          <CheckIcon
-                            class:list={[
-                              "size-4 text-white/78 transition-opacity",
-                              isSelected ? "opacity-100" : "opacity-0",
-                            ]}
-                            data-create-picker-item-check
-                            aria-hidden="true"
-                          />
                         </span>
-                      </DropdownMenuItem>
+                      </DropdownMenuRadioItem>
                     );
                   })}
                 </DropdownMenuGroup>
@@ -208,14 +208,11 @@ function shouldRenderFontGroupLock(
                 </DropdownMenuLabel>
                 <DropdownMenuGroup>
                   {group.options.map((option) => {
-                    const isSelected = option.value === selectedOption?.value;
-
                     return (
-                      <DropdownMenuItem
-                        class="create-picker-item !items-start !gap-2.5 !rounded-[12px] !px-3 !py-2.5 !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
+                      <DropdownMenuRadioItem
+                        value={option.value}
+                        class="group/picker-item create-picker-item !items-start !gap-2.5 !rounded-[12px] !pl-3 !pr-9 !py-2.5 !text-white/86 data-checked:!bg-white/[0.06] data-checked:!text-white/92 data-checked:**:[svg]:!text-white/92 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
                         data-create-picker-item
-                        data-value={option.value}
-                        data-selected={isSelected ? "" : undefined}
                       >
                         <span class="min-w-0 flex-1">
                           <span
@@ -230,26 +227,18 @@ function shouldRenderFontGroupLock(
                             </span>
                           )}
                         </span>
-                        <span class="ml-auto flex shrink-0 items-center gap-2 pt-0.5">
+                        <span class="ml-auto flex shrink-0 items-center pt-0.5">
                           <span data-create-picker-item-marker>
                             <CreatePickerMarker
-                              kind={markerKind}
+                              kind={itemMarkerKind}
                               value={option.markerValue ?? option.value}
                               label={option.label}
                               color={option.color}
                               family={option.family}
                             />
                           </span>
-                          <CheckIcon
-                            class:list={[
-                              "size-4 text-white/78 transition-opacity",
-                              isSelected ? "opacity-100" : "opacity-0",
-                            ]}
-                            data-create-picker-item-check
-                            aria-hidden="true"
-                          />
                         </span>
-                      </DropdownMenuItem>
+                      </DropdownMenuRadioItem>
                     );
                   })}
                 </DropdownMenuGroup>
@@ -259,38 +248,27 @@ function shouldRenderFontGroupLock(
         ) : (
           <div data-create-picker-items>
             {options.map((option) => {
-              const isSelected = option.value === selectedOption?.value;
-
               return (
-                <DropdownMenuItem
-                  class="create-picker-item !gap-2.5 !rounded-[12px] !px-3 !py-2 !text-[14px] !font-medium !text-white/86 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
+                <DropdownMenuRadioItem
+                  value={option.value}
+                  class="group/picker-item create-picker-item !gap-2.5 !rounded-[12px] !pl-3 !pr-9 !py-2 !text-[14px] !font-medium !text-white/86 data-checked:!bg-white/[0.06] data-checked:!text-white/92 data-checked:**:[svg]:!text-white/92 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
                   data-create-picker-item
-                  data-value={option.value}
-                  data-selected={isSelected ? "" : undefined}
                 >
                   <span class="truncate" data-create-picker-item-label>
                     {option.label}
                   </span>
-                  <span class="ml-auto flex shrink-0 items-center gap-2">
+                  <span class="ml-auto flex shrink-0 items-center">
                     <span data-create-picker-item-marker>
                       <CreatePickerMarker
-                        kind={markerKind}
+                        kind={itemMarkerKind}
                         value={option.markerValue ?? option.value}
                         label={option.label}
                         color={option.color}
                         family={option.family}
                       />
                     </span>
-                    <CheckIcon
-                      class:list={[
-                        "size-4 text-white/78 transition-opacity",
-                        isSelected ? "opacity-100" : "opacity-0",
-                      ]}
-                      data-create-picker-item-check
-                      aria-hidden="true"
-                    />
                   </span>
-                </DropdownMenuItem>
+                </DropdownMenuRadioItem>
               );
             })}
           </div>

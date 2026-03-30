@@ -4,7 +4,7 @@ import {
   isPresetCode,
   catalogs,
 } from "@bejamas/create-config/browser";
-import type { ThemeStyles } from "@/types/theme";
+import type { ThemeStyles } from "@/utils/types/theme";
 import { applyDocsPreset } from "@/utils/themes/apply-docs-preset";
 import { resolveDesignSystemTheme } from "@/utils/themes/design-system-adapter";
 import {
@@ -89,9 +89,16 @@ class HeaderPresetSwitcherElement extends HTMLElement {
     this.syncFromStoredState();
   };
 
-  onSelect = (event: Event) => {
-    const presetId = (event as CustomEvent<{ value: string }>).detail?.value;
-    if (!presetId) {
+  onValueChange = (event: Event) => {
+    const detail = (event as CustomEvent<{
+      value: string | null;
+      source: string;
+    }>).detail;
+    const presetId = detail?.value;
+    if (
+      !presetId ||
+      (detail.source !== "pointer" && detail.source !== "keyboard")
+    ) {
       return;
     }
 
@@ -119,7 +126,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
       createHref: preset.createHref,
       themeRef: null,
     });
-    this.renderSelectedPreset(preset.id);
+    this.syncSelectedPreset(preset.id);
   };
 
   connectedCallback() {
@@ -127,7 +134,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
     const presets = this.parseJson<PresetOption[]>(this.dataset.presets) ?? [];
     this.presets = new Map(presets.map((preset) => [preset.id, preset]));
 
-    this.addEventListener("dropdown-menu:select", this.onSelect);
+    this.addEventListener("dropdown-menu:value-change", this.onValueChange);
     window.addEventListener(PRESET_CHANGE_EVENT, this.onPresetChange);
     window.addEventListener("storage", this.onStorage);
     document.addEventListener("astro:after-swap", this.onAfterSwap);
@@ -135,7 +142,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.removeEventListener("dropdown-menu:select", this.onSelect);
+    this.removeEventListener("dropdown-menu:value-change", this.onValueChange);
     window.removeEventListener(PRESET_CHANGE_EVENT, this.onPresetChange);
     window.removeEventListener("storage", this.onStorage);
     document.removeEventListener("astro:after-swap", this.onAfterSwap);
@@ -161,7 +168,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
       if (this.current) {
         this.renderCurrent(this.current);
       }
-      this.renderSelectedPreset(this.dataset.selectedPresetId || null);
+      this.syncSelectedPreset(this.dataset.selectedPresetId || null);
       return;
     }
 
@@ -174,7 +181,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
         createHref: curatedPreset.createHref,
         themeRef: null,
       });
-      this.renderSelectedPreset(curatedPreset.id);
+      this.syncSelectedPreset(curatedPreset.id);
       return;
     }
 
@@ -184,7 +191,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
       themeRef === (this.current.themeRef ?? null)
     ) {
       this.renderCurrent(this.current);
-      this.renderSelectedPreset(null);
+      this.syncSelectedPreset(null);
       return;
     }
 
@@ -207,7 +214,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
           : "/create",
         themeRef,
       });
-      this.renderSelectedPreset(null);
+      this.syncSelectedPreset(null);
       return;
     }
 
@@ -227,7 +234,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
           }`,
           themeRef,
         });
-        this.renderSelectedPreset(null);
+        this.syncSelectedPreset(null);
         return;
       }
     }
@@ -244,7 +251,7 @@ class HeaderPresetSwitcherElement extends HTMLElement {
         : "/create",
       themeRef,
     });
-    this.renderSelectedPreset(null);
+    this.syncSelectedPreset(null);
   }
 
   renderCurrent(summary: CurrentSummary) {
@@ -269,15 +276,15 @@ class HeaderPresetSwitcherElement extends HTMLElement {
     this.updateSwatch("dark-accent", summary.swatches.dark.accent);
   }
 
-  renderSelectedPreset(selectedPresetId: string | null) {
+  syncSelectedPreset(selectedPresetId: string | null) {
     this.dataset.selectedPresetId = selectedPresetId ?? "";
-    this.querySelectorAll<HTMLElement>("[data-header-preset-id]").forEach(
-      (item) => {
-        item.toggleAttribute(
-          "data-selected",
-          item.dataset.headerPresetId === selectedPresetId,
-        );
-      },
+    this.querySelector<HTMLElement>('[data-slot="dropdown-menu"]')?.dispatchEvent(
+      new CustomEvent("dropdown-menu:set", {
+        detail: {
+          value: selectedPresetId,
+          source: "restore",
+        },
+      }),
     );
   }
 

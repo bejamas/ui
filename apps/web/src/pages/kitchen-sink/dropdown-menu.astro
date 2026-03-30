@@ -13,12 +13,14 @@ import {
   DialogFooter,
 } from "@bejamas/registry/ui/dialog";
 import {
-  DropdownMenu,
+  DropdownMenu as DropdownMenuRoot,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuItem,
+  DropdownMenuRadioItem,
+  DropdownMenuCheckboxItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
 } from "@bejamas/registry/ui/dropdown-menu";
@@ -40,75 +42,52 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
     <h1 class="text-3xl font-bold mb-10">Dropdown Menu</h1>
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
-      <KitchenSinkSection title="Basic">
+      <KitchenSinkSection title="Action Menu">
         <p class="text-sm text-muted-foreground">
-          Simple trigger with a few plain items.
+          Plain action items without committed selection state.
         </p>
-        <DropdownMenu>
+        <DropdownMenuRoot>
           <DropdownMenuTrigger variant="outline">Open Menu</DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>New Tab</DropdownMenuItem>
             <DropdownMenuItem>New Window</DropdownMenuItem>
             <DropdownMenuItem>New Incognito Window</DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenuRoot>
       </KitchenSinkSection>
 
-      <KitchenSinkSection title="With Icons">
+      <KitchenSinkSection title="Single Select">
         <p class="text-sm text-muted-foreground">
-          Items with leading Lucide icons.
+          Radio items with runtime-owned checked state.
         </p>
-        <DropdownMenu>
-          <DropdownMenuTrigger variant="outline">Account</DropdownMenuTrigger>
+        <DropdownMenuRoot defaultValue="pro">
+          <DropdownMenuTrigger variant="outline">Plan</DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>
-              <UserIcon class="size-4" />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <SettingsIcon class="size-4" />
-              Settings
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <LogOutIcon class="size-4" />
-              Log out
-            </DropdownMenuItem>
+            <DropdownMenuRadioItem value="starter">
+              Starter
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="pro">Pro</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="team">Team</DropdownMenuRadioItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenuRoot>
       </KitchenSinkSection>
 
-      <KitchenSinkSection title="With Keyboard Shortcuts">
+      <KitchenSinkSection title="Multi Select">
         <p class="text-sm text-muted-foreground">
-          Items with <code class="text-xs bg-muted px-1 py-0.5 rounded"
-            >DropdownMenuShortcut</code
-          > displaying hotkeys.
+          Checkbox items usually stay open while users toggle multiple values.
         </p>
-        <DropdownMenu>
-          <DropdownMenuTrigger variant="outline">Edit</DropdownMenuTrigger>
+        <DropdownMenuRoot defaultValues={["email", "push"]} closeOnSelect={false}>
+          <DropdownMenuTrigger variant="outline">Notifications</DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>
-              Undo
-              <DropdownMenuShortcut>⌘Z</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Redo
-              <DropdownMenuShortcut>⇧⌘Z</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              Cut
-              <DropdownMenuShortcut>⌘X</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Copy
-              <DropdownMenuShortcut>⌘C</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Paste
-              <DropdownMenuShortcut>⌘V</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            <DropdownMenuCheckboxItem value="email">
+              Email
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem value="sms">SMS</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem value="push">
+              Push
+            </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenuRoot>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Disabled Items">
@@ -116,7 +95,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           Mix of enabled and disabled items — disabled items show reduced
           opacity and can't be interacted with.
         </p>
-        <DropdownMenu>
+        <DropdownMenuRoot>
           <DropdownMenuTrigger variant="outline">Options</DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>Available action</DropdownMenuItem>
@@ -125,14 +104,14 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
             <DropdownMenuItem disabled>Also disabled</DropdownMenuItem>
             <DropdownMenuItem>Final action</DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenuRoot>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Groups, Labels & Separators">
         <p class="text-sm text-muted-foreground">
           Organized sections using Group, Label, and Separator sub-components.
         </p>
-        <DropdownMenu>
+        <DropdownMenuRoot>
           <DropdownMenuTrigger variant="outline">My Account</DropdownMenuTrigger
           >
           <DropdownMenuContent class="w-56">
@@ -177,7 +156,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               API
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenuRoot>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Inset Items">
@@ -186,7 +165,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
             >inset</code
           > prop on MenuItem and MenuLabel for left-padding alignment.
         </p>
-        <DropdownMenu>
+        <DropdownMenuRoot>
           <DropdownMenuTrigger variant="outline">View</DropdownMenuTrigger>
           <DropdownMenuContent class="w-48">
             <DropdownMenuLabel inset>Appearance</DropdownMenuLabel>
@@ -199,7 +178,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
             <DropdownMenuItem inset>Date modified</DropdownMenuItem>
             <DropdownMenuItem inset>Size</DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenuRoot>
       </KitchenSinkSection>
     </div>
 
@@ -212,36 +191,36 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
       <div class="flex flex-wrap gap-8">
         <div class="space-y-2">
           <span class="text-xs text-muted-foreground">align="start"</span>
-          <DropdownMenu>
+          <DropdownMenuRoot>
             <DropdownMenuTrigger variant="outline">Start</DropdownMenuTrigger>
             <DropdownMenuContent side="bottom" align="start">
               <DropdownMenuItem>Option 1</DropdownMenuItem>
               <DropdownMenuItem>Option 2</DropdownMenuItem>
               <DropdownMenuItem>Option 3</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenuRoot>
         </div>
         <div class="space-y-2">
           <span class="text-xs text-muted-foreground">align="center"</span>
-          <DropdownMenu>
+          <DropdownMenuRoot>
             <DropdownMenuTrigger variant="outline">Center</DropdownMenuTrigger>
             <DropdownMenuContent side="bottom" align="center">
               <DropdownMenuItem>Option 1</DropdownMenuItem>
               <DropdownMenuItem>Option 2</DropdownMenuItem>
               <DropdownMenuItem>Option 3</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenuRoot>
         </div>
         <div class="space-y-2">
           <span class="text-xs text-muted-foreground">align="end"</span>
-          <DropdownMenu>
+          <DropdownMenuRoot>
             <DropdownMenuTrigger variant="outline">End</DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="end">
               <DropdownMenuItem>Option 1</DropdownMenuItem>
               <DropdownMenuItem>Option 2</DropdownMenuItem>
               <DropdownMenuItem>Option 3</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenuRoot>
         </div>
       </div>
     </KitchenSinkSection>
@@ -252,7 +231,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           Uses <code class="text-xs bg-muted px-1 py-0.5 rounded">asChild</code> on
           the trigger with a custom-styled button inside.
         </p>
-        <DropdownMenu>
+        <DropdownMenuRoot>
           <DropdownMenuTrigger asChild>
             <button
               class="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors"
@@ -277,45 +256,98 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenuRoot>
       </KitchenSinkSection>
     </div>
 
     <KitchenSinkSection title="Event Handling">
       <p class="text-sm text-muted-foreground">
-        Listens for <code class="text-xs bg-muted px-1 py-0.5 rounded"
-          >dropdown-menu:change</code
-        > and
+        Logs committed selection and open-state events from both radio and
+        checkbox menus using
         <code class="text-xs bg-muted px-1 py-0.5 rounded"
-          >dropdown-menu:select</code
-        > events, logging to the output below.
+          >dropdown-menu:open-change</code
+        >,
+        <code class="text-xs bg-muted px-1 py-0.5 rounded"
+          >dropdown-menu:value-change</code
+        >, and
+        <code class="text-xs bg-muted px-1 py-0.5 rounded"
+          >dropdown-menu:values-change</code
+        >.
       </p>
-      <DropdownMenu id="event-dropdown">
-        <DropdownMenuTrigger variant="outline">Actions</DropdownMenuTrigger>
+      <div class="flex flex-wrap gap-3">
+      <DropdownMenuRoot id="event-radio-dropdown" defaultValue="pro">
+        <DropdownMenuTrigger variant="outline">Radio Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem value="edit">Edit</DropdownMenuItem>
-          <DropdownMenuItem value="duplicate">Duplicate</DropdownMenuItem>
-          <DropdownMenuItem value="archive">Archive</DropdownMenuItem>
-          <DropdownMenuItem value="delete">Delete</DropdownMenuItem>
+          <DropdownMenuRadioItem value="starter">
+            Starter
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="pro">Pro</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="team">Team</DropdownMenuRadioItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenuRoot>
+      <DropdownMenuRoot
+        id="event-checkbox-dropdown"
+        defaultValues={["email", "push"]}
+        closeOnSelect={false}
+      >
+        <DropdownMenuTrigger variant="outline">Checkbox Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuCheckboxItem value="email">
+            Email
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem value="sms">
+            SMS
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem value="push">
+            Push
+          </DropdownMenuCheckboxItem>
+        </DropdownMenuContent>
+      </DropdownMenuRoot>
+      </div>
       <EventLog id="event-output" />
       <script>
         {
-          const dropdown = document.getElementById("event-dropdown");
+          const radioDropdown = document.getElementById("event-radio-dropdown");
+          const checkboxDropdown = document.getElementById(
+            "event-checkbox-dropdown",
+          );
 
           function log(msg: string) {
             (document.getElementById("event-output") as any)?._log(msg);
           }
 
-          dropdown?.addEventListener("dropdown-menu:change", (e: Event) => {
-            const { open } = (e as CustomEvent).detail;
-            log(`dropdown-menu:change → open: ${open}`);
+          radioDropdown?.addEventListener(
+            "dropdown-menu:open-change",
+            (e: Event) => {
+              const { open } = (e as CustomEvent).detail;
+              log(`radio open-change → open: ${open}`);
+            },
+          );
+
+          radioDropdown?.addEventListener("dropdown-menu:value-change", (e: Event) => {
+            const { value, source } = (e as CustomEvent).detail;
+            log(`radio value-change → value: "${value}" (source: ${source})`);
           });
 
-          dropdown?.addEventListener("dropdown-menu:select", (e: Event) => {
-            const { value } = (e as CustomEvent).detail;
-            log(`dropdown-menu:select → value: "${value}"`);
+          checkboxDropdown?.addEventListener(
+            "dropdown-menu:open-change",
+            (e: Event) => {
+              const { open } = (e as CustomEvent).detail;
+              log(`checkbox open-change → open: ${open}`);
+            },
+          );
+
+          checkboxDropdown?.addEventListener("dropdown-menu:values-change", (e: Event) => {
+            const { values, changedValue, checked, source } =
+              (e as CustomEvent).detail;
+            log(
+              `checkbox values-change → values: [${values.join(", ")}], changed: ${changedValue}, checked: ${checked}, source: ${source}`,
+            );
+          });
+
+          radioDropdown?.addEventListener("dropdown-menu:change", (e: Event) => {
+            const { open } = (e as CustomEvent).detail;
+            log(`deprecated change alias → open: ${open}`);
           });
         }
       </script>
@@ -327,7 +359,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           >dropdown-menu:set</code
         > to open/close the menu externally.
       </p>
-      <DropdownMenu id="programmatic-dropdown">
+      <DropdownMenuRoot id="programmatic-dropdown">
         <DropdownMenuTrigger variant="outline"
           >Controlled Menu</DropdownMenuTrigger
         >
@@ -336,7 +368,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           <DropdownMenuItem>Item Two</DropdownMenuItem>
           <DropdownMenuItem>Item Three</DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenuRoot>
       <div class="flex gap-2 mt-2">
         <button
           id="dm-open"
@@ -376,7 +408,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           A "user account" dropdown combining avatar trigger, groups, labels,
           icons, shortcuts, separator, and a destructive log-out item.
         </p>
-        <DropdownMenu>
+        <DropdownMenuRoot>
           <DropdownMenuTrigger asChild>
             <button
               class="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium shadow-xs hover:bg-muted transition-colors"
@@ -438,7 +470,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenuRoot>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="In a Dialog">
@@ -458,7 +490,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               </DialogDescription>
             </DialogHeader>
             <div class="py-4">
-              <DropdownMenu>
+              <DropdownMenuRoot>
                 <DropdownMenuTrigger variant="outline"
                   >Actions</DropdownMenuTrigger
                 >
@@ -479,7 +511,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                     Log out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenuRoot>
             </div>
             <DialogFooter>
               <Button data-slot="dialog-close" variant="outline">Close</Button>

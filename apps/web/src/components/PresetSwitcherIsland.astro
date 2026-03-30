@@ -8,7 +8,7 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@bejamas/ui/components/dropdown-menu";
@@ -67,7 +67,7 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
   data-initial-theme={currentThemeId}
   data-initial-label={currentLabel}
 >
-  <DropdownMenu>
+  <DropdownMenu defaultValue={currentThemeId}>
     <Button
       variant="outline"
       data-slot="dropdown-menu-trigger"
@@ -117,10 +117,10 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
       <DropdownMenuLabel>Presets</DropdownMenuLabel>
       {
         Object.entries(leanPresets).map(([key, preset]) => (
-          <DropdownMenuItem 
+          <DropdownMenuRadioItem
+            value={key}
             data-preset-key={key} 
             class="cursor-pointer gap-2"
-            data-selected={key === currentThemeId ? "" : undefined}
           >
             {/* Light mode swatches */}
             <div class="flex -space-x-1 items-center dark:hidden">
@@ -145,7 +145,7 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
               />
             </div>
             <span class="truncate">{preset.label}</span>
-          </DropdownMenuItem>
+          </DropdownMenuRadioItem>
         ))
       }
 
@@ -161,6 +161,7 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
 
 <script>
   import { applyThemeToElement } from "../utils/themes/apply-theme.ts";
+  import type { ThemePreset, ThemeStyles } from "../utils/types/theme.ts";
   import {
     getStoredPreset,
     setStoredPreset,
@@ -172,19 +173,15 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
     getCustomPresets,
     getEditingPresetDraft,
     CUSTOM_PRESETS_CHANGE_EVENT,
-    type CustomPreset,
   } from "../utils/themes/custom-presets-store.ts";
 
   type PresetType = {
     label: string;
-    styles: { light: Record<string, string>; dark: Record<string, string> };
+    styles: ThemePreset["styles"];
   };
 
   // Global presets cache (populated from first element's data-presets)
   let PRESETS: Record<string, PresetType> = {};
-
-  // Flag to prevent recursive event handling
-  let isApplyingPreset = false;
 
   function getSwatchesFromPreset(preset: PresetType): ThemeSwatches {
     return {
@@ -223,13 +220,13 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
 
     // Apply theme CSS variables to document (do not touch light/dark class; ThemeProvider owns it)
     applyThemeToElement(
-      { styles, currentMode: mode },
+      { styles: styles as ThemeStyles, currentMode: mode },
       document.documentElement,
       { skipModeClass: true },
     );
 
     // Update current swatches and label display
-    updateCurrentDisplay(key, preset);
+    updateCurrentDisplay(preset);
 
     // Update cookie with swatches if requested
     if (updateCookie) {
@@ -238,9 +235,7 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
     }
   }
 
-  function updateCurrentDisplay(key: string, preset: PresetType) {
-    const mode = getCurrentMode();
-
+  function updateCurrentDisplay(preset: PresetType) {
     // Update all swatch indicators and labels
     document.querySelectorAll("preset-switcher-wrapper").forEach((wrapper) => {
       const container = wrapper.querySelector(".preset-current-swatches");
@@ -265,17 +260,22 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
       if (label) {
         label.textContent = preset.label;
       }
-
-      // Update selected state on items
-      wrapper.querySelectorAll("[data-preset-key]").forEach((item) => {
-        const itemKey = (item as HTMLElement).dataset.presetKey;
-        item.toggleAttribute("data-selected", itemKey === key);
-      });
     });
   }
 
+  function syncDropdownValue(wrapper: Element, key: string) {
+    const dropdown = wrapper.querySelector<HTMLElement>('[data-slot="dropdown-menu"]');
+    dropdown?.dispatchEvent(
+      new CustomEvent("dropdown-menu:set", {
+        detail: {
+          value: key,
+          source: "restore",
+        },
+      }),
+    );
+  }
+
   function syncAllDropdowns(key: string) {
-    isApplyingPreset = true;
     // Find the preset to get label
     let preset: PresetType | undefined = PRESETS[key];
     if (!preset) {
@@ -289,10 +289,10 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
       }
     }
     if (preset) {
-      updateCurrentDisplay(key, preset);
+      updateCurrentDisplay(preset);
     }
-    queueMicrotask(() => {
-      isApplyingPreset = false;
+    document.querySelectorAll("preset-switcher-wrapper").forEach((wrapper) => {
+      syncDropdownValue(wrapper, key);
     });
   }
 
@@ -317,17 +317,15 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
       .map(([key, preset]) => {
         const lightStyles = preset.styles?.light || {};
         const darkStyles = preset.styles?.dark || {};
-        const isSelected = key === currentTheme;
-
         return `
           <div
-            role="menuitem"
+            role="menuitemradio"
             tabindex="0"
-            data-slot="dropdown-menu-item"
+            data-slot="dropdown-menu-radio-item"
+            data-value="${key}"
             data-preset-key="${key}"
             data-custom="true"
-            ${isSelected ? 'data-selected=""' : ''}
-            class="relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground group/dropdown-menu-item"
+            class="relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 pr-8 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground group/dropdown-menu-item"
           >
             <div class="flex -space-x-1 items-center dark:hidden">
               <div class="size-4 rounded-full" style="background: ${lightStyles.primary || "#888"}"></div>
@@ -338,10 +336,19 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
               <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.accent || "#888"}"></div>
             </div>
             <span class="truncate">${preset.name}</span>
+            <span
+              data-slot="dropdown-menu-item-indicator"
+              class="absolute right-2 flex items-center justify-center opacity-0 transition-opacity group-data-checked/dropdown-menu-item:opacity-100"
+              aria-hidden="true"
+            >✓</span>
           </div>
         `;
       })
       .join("");
+
+    if (currentTheme) {
+      syncDropdownValue(wrapper, currentTheme);
+    }
 
     // Also update the label if current theme is custom
     const currentPreset = customPresets[currentTheme || ""];
@@ -412,6 +419,24 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
 
   // Custom element for each PresetSwitcher instance
   class PresetSwitcherWrapper extends HTMLElement {
+    onValueChange = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        value: string | null;
+        source: string;
+      }>).detail;
+      const key = detail?.value;
+      if (!key || (detail.source !== "pointer" && detail.source !== "keyboard")) {
+        return;
+      }
+
+      const current = getStoredPreset();
+      if (current === key) {
+        return;
+      }
+
+      applyPresetTheme(key, true);
+    };
+
     connectedCallback() {
       // Parse presets from data attribute (first element populates global cache)
       if (Object.keys(PRESETS).length === 0) {
@@ -439,35 +464,11 @@ const accentDarkColor = currentSwatches?.accentDark ?? builtInPreset?.styles.dar
         applyPresetTheme(initial);
         syncAllDropdowns(initial);
       }
+      this.addEventListener("dropdown-menu:value-change", this.onValueChange);
+    }
 
-      // Handle dropdown item clicks (using event delegation)
-      const content = this.querySelector('[data-slot="dropdown-menu-content"]');
-      content?.addEventListener("click", (e) => {
-        if (isApplyingPreset) return;
-
-        const target = (e.target as HTMLElement).closest("[data-preset-key]");
-        if (!target) return;
-
-        const key = (target as HTMLElement).dataset.presetKey;
-        if (!key) return;
-
-        // Apply theme and update cookie with swatches
-        applyPresetTheme(key, true);
-      });
-
-      // Also handle keyboard selection
-      content?.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          const target = (e.target as HTMLElement).closest("[data-preset-key]");
-          if (!target) return;
-
-          e.preventDefault();
-          const key = (target as HTMLElement).dataset.presetKey;
-          if (!key) return;
-
-          applyPresetTheme(key, true);
-        }
-      });
+    disconnectedCallback() {
+      this.removeEventListener("dropdown-menu:value-change", this.onValueChange);
     }
   }
 

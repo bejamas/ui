@@ -1,14 +1,14 @@
 ---
 // Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dropdown-menu/DropdownMenuTrigger.astro directly.
-import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 import { Button } from "../button";
+import type { Props as ButtonProps } from "../button/Button.astro";
 
-interface Props extends HTMLAttributes<"button"> {
+type Props = ButtonProps & {
   class?: string;
   /** Radix-like: render wrapper so the child can be the interactive element */
   asChild?: boolean;
-}
+};
 
 const { class: className = "", asChild = false, ...rest } = Astro.props as Props;
 ---

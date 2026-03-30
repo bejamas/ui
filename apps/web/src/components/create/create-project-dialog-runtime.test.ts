@@ -7,9 +7,13 @@ const customizerFile = path.resolve(
   "./CreateCustomizer.astro",
 );
 const dialogFile = path.resolve(import.meta.dir, "./CreateProjectDialog.astro");
-const createPageFile = path.resolve(
+const dialogControllerFile = path.resolve(
   import.meta.dir,
-  "../../scripts/create-page.ts",
+  "../../stimulus/controllers/create_project_dialog_controller.ts",
+);
+const editorControllerFile = path.resolve(
+  import.meta.dir,
+  "../../stimulus/controllers/create_editor_controller.ts",
 );
 
 describe("create project dialog runtime", () => {
@@ -34,21 +38,23 @@ describe("create project dialog runtime", () => {
     expect(source).not.toContain("data-create-project-rtl-language-select");
   });
 
-  test("uses the data-slot switch contract for monorepo only", () => {
-    const source = fs.readFileSync(createPageFile, "utf8");
+  test("uses Stimulus targets and shared switch/tabs events for project options", () => {
+    const dialogSource = fs.readFileSync(dialogFile, "utf8");
+    const controllerSource = fs.readFileSync(dialogControllerFile, "utf8");
+    const editorSource = fs.readFileSync(editorControllerFile, "utf8");
 
-    expect(source).toContain('new CustomEvent("switch:set"');
-    expect(source).toContain(
-      'createProjectMonorepoField?.addEventListener("switch:change"',
+    expect(dialogSource).toContain(
+      'data-action="switch:change->create-project-dialog#monorepoChanged"',
     );
-    expect(source).toContain('field?.hasAttribute("data-checked")');
-    expect(source).not.toContain(
-      'createProjectMonorepoField?.addEventListener("change"',
+    expect(dialogSource).toContain(
+      'data-action="tabs:change->create-project-dialog#packageManagerChanged"',
     );
-    expect(source).not.toContain("createProjectMonorepoField.checked");
-    expect(source).not.toContain("createProjectDocsField");
-    expect(source).not.toContain("data-create-project-docs");
-    expect(source).not.toContain("data-create-project-rtl");
-    expect(source).not.toContain("data-create-project-rtl-language-select");
+    expect(controllerSource).toContain('new CustomEvent("tabs:set"');
+    expect(controllerSource).toContain(
+      'this.monorepoFieldTarget?.hasAttribute("data-checked")',
+    );
+    expect(editorSource).toContain(
+      "CREATE_PROJECT_PACKAGE_MANAGER_STORAGE_KEY",
+    );
   });
 });

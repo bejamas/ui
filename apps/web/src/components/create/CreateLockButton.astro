@@ -17,6 +17,8 @@ const { param, class: className = "" } = Astro.props as Props;
   data-create-lock-button
   data-create-lock-param={param}
   data-locked="false"
+  data-action="click->create-sidebar#toggleLock"
+  data-create-sidebar-lock-param-param={param}
   class={cn(
     "group/create-lock flex size-4 cursor-pointer items-center justify-center rounded opacity-0 ring-white/40 transition-opacity outline-none group-has-[:focus-visible]/picker:opacity-100 group-hover/picker:opacity-100 focus-visible:opacity-100 focus-visible:ring-1 data-[locked=true]:opacity-100 pointer-coarse:hidden text-white/80 hover:text-white",
     className,
