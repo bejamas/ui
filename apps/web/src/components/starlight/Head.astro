@@ -1,0 +1,16 @@
+---
+import { buildCreateDocsRootPrepaintScript } from "@/utils/create-docs-shell";
+
+const { head } = Astro.locals.starlightRoute;
+const createDocsRootPrepaintScript =
+  Astro.url.pathname === "/create"
+    ? buildCreateDocsRootPrepaintScript()
+    : null;
+---
+
+{
+  createDocsRootPrepaintScript && (
+    <script is:inline set:html={createDocsRootPrepaintScript} />
+  )
+}
+{head.map(({ tag: Tag, attrs, content }) => <Tag {...attrs} set:html={content} />)}

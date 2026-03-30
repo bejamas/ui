@@ -3,7 +3,6 @@ import {
   STYLES,
   getCompiledStyleCss,
 } from "@bejamas/create-config/server";
-import { buildCreateDocsRootInitScript } from "@/utils/create-docs-shell";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
 import { buildCreatePreviewUrl } from "@/utils/create";
 import { getDefaultCreateBootstrapState } from "@/utils/create-bootstrap";
@@ -17,7 +16,6 @@ const previewUrl = buildCreatePreviewUrl(config, preset, {
   themeRef: null,
 });
 const compiledStyleCss = await getCompiledStyleCss(config.style);
-const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
 const styleCssByStyle = Object.fromEntries(
   await Promise.all(
     STYLES.map(async (style) => [
@@ -37,7 +35,6 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
 <style is:global>
   @import "../styles/globals.css";
 </style>
-<script is:inline set:html={docsRootInitScript} />
 <style
   id="create-page-theme-css"
   set:html={buildDesignSystemThemeCss(config)}

@@ -14,6 +14,7 @@ describe("create page stable customizer overrides", () => {
     expect(source).toContain("data-create-pending");
     expect(source).toContain("visibility: hidden;");
     expect(source).toContain('"__BEJAMAS_CREATE__"');
+    expect(source).not.toContain("buildCreateDocsRootInitScript(");
   });
 
   test("pins dropdown menu highlighted state to the muted dark create palette", () => {

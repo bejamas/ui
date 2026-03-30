@@ -1,81 +1,130 @@
-import { describe, expect, it } from "bun:test";
+import { afterEach, describe, expect, test } from "bun:test";
+import { encodePreset } from "@bejamas/create-config/browser";
 import {
   CREATE_DOCS_ROOT_ATTRIBUTE,
   CREATE_DOCS_ROOT_STYLE_ATTRIBUTE,
-  applyCreateDocsRootState,
-  buildCreateDocsRootInitScript,
-  cleanupCreateDocsRootState,
-  getCreateStyleClass,
+  buildCreateDocsRootPrepaintScript,
 } from "./create-docs-shell";
 
-function createMockRoot() {
+type RootStub = {
+  classList: {
+    add: (...tokens: string[]) => void;
+    remove: (...tokens: string[]) => void;
+  };
+  getAttribute: (name: string) => string | null;
+  setAttribute: (name: string, value: string) => void;
+  removeAttribute: (name: string) => void;
+};
+
+const originalDocument = globalThis.document;
+const originalLocation = globalThis.location;
+const originalLocalStorage = globalThis.localStorage;
+
+afterEach(() => {
+  globalThis.document = originalDocument;
+  globalThis.location = originalLocation;
+  globalThis.localStorage = originalLocalStorage;
+});
+
+describe("create docs-root prepaint script", () => {
+  test("prefers explicit style search params over preset, cookie, localStorage, and default", () => {
+    const root = runPrepaintScript({
+      search: `?style=maia&preset=${encodePreset({ style: "lyra" })}`,
+      cookiePreset: encodePreset({ style: "vega" }),
+      storedPreset: encodePreset({ style: "nova" }),
+    });
+
+    expect(root.getAttribute(CREATE_DOCS_ROOT_ATTRIBUTE)).toBe("");
+    expect(root.getAttribute(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE)).toBe("style-maia");
+  });
+
+  test("falls back from query preset to cookie to localStorage, then default", () => {
+    const fromCookie = runPrepaintScript({
+      search: "?preset=invalid",
+      cookiePreset: encodePreset({ style: "vega" }),
+      storedPreset: encodePreset({ style: "nova" }),
+    });
+    const fromStorage = runPrepaintScript({
+      cookiePreset: null,
+      storedPreset: encodePreset({ style: "nova" }),
+    });
+    const fromDefault = runPrepaintScript({
+      search: "?preset=invalid",
+      cookiePreset: "invalid",
+      storedPreset: "invalid",
+    });
+
+    expect(fromCookie.getAttribute(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE)).toBe(
+      "style-vega",
+    );
+    expect(fromStorage.getAttribute(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE)).toBe(
+      "style-nova",
+    );
+    expect(fromDefault.getAttribute(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE)).toBe(
+      "style-juno",
+    );
+  });
+});
+
+function runPrepaintScript(options: {
+  search?: string;
+  cookiePreset?: string | null;
+  storedPreset?: string | null;
+}) {
+  const root = createRootStub();
+  const cookieValue =
+    options.cookiePreset === undefined
+      ? ""
+      : options.cookiePreset === null
+        ? ""
+        : `theme=${encodeURIComponent(options.cookiePreset)}`;
+
+  globalThis.document = {
+    cookie: cookieValue,
+    documentElement: root,
+  } as typeof document;
+  globalThis.location = {
+    search: options.search ?? "",
+  } as typeof location;
+  globalThis.localStorage =
+    options.storedPreset === undefined
+      ? originalLocalStorage
+      : ({
+          getItem(key: string) {
+            return key === "theme-preset" ? options.storedPreset ?? null : null;
+          },
+        } as typeof localStorage);
+
+  new Function(buildCreateDocsRootPrepaintScript())();
+
+  return root;
+}
+
+function createRootStub(): RootStub {
   const attributes = new Map<string, string>();
-  const classes = new Set<string>();
+  const classNames = new Set<string>();
 
   return {
-    attributes,
-    classes,
-    root: {
-      classList: {
-        add: (...tokens: string[]) => {
-          for (const token of tokens) {
-            classes.add(token);
-          }
-        },
-        remove: (...tokens: string[]) => {
-          for (const token of tokens) {
-            classes.delete(token);
-          }
-        },
+    classList: {
+      add: (...tokens: string[]) => {
+        for (const token of tokens) {
+          classNames.add(token);
+        }
       },
-      getAttribute: (name: string) => attributes.get(name) ?? null,
-      setAttribute: (name: string, value: string) => {
-        attributes.set(name, value);
+      remove: (...tokens: string[]) => {
+        for (const token of tokens) {
+          classNames.delete(token);
+        }
       },
-      removeAttribute: (name: string) => {
-        attributes.delete(name);
-      },
+    },
+    getAttribute(name: string) {
+      return attributes.get(name) ?? null;
+    },
+    setAttribute(name: string, value: string) {
+      attributes.set(name, value);
+    },
+    removeAttribute(name: string) {
+      attributes.delete(name);
     },
   };
 }
-
-describe("create docs shell helpers", () => {
-  it("applies the route marker and active style class to the root host", () => {
-    const { root, classes, attributes } = createMockRoot();
-
-    applyCreateDocsRootState(root, "nova");
-
-    expect(classes.has("style-nova")).toBe(true);
-    expect(attributes.get(CREATE_DOCS_ROOT_ATTRIBUTE)).toBe("");
-    expect(attributes.get(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE)).toBe("style-nova");
-  });
-
-  it("replaces the previous create style class when the selection changes", () => {
-    const { root, classes } = createMockRoot();
-
-    applyCreateDocsRootState(root, "nova");
-    applyCreateDocsRootState(root, "vega");
-
-    expect(classes.has("style-nova")).toBe(false);
-    expect(classes.has("style-vega")).toBe(true);
-  });
-
-  it("cleans up the route marker and style class", () => {
-    const { root, classes, attributes } = createMockRoot();
-
-    applyCreateDocsRootState(root, "lyra");
-    cleanupCreateDocsRootState(root);
-
-    expect(classes.has("style-lyra")).toBe(false);
-    expect(attributes.has(CREATE_DOCS_ROOT_ATTRIBUTE)).toBe(false);
-    expect(attributes.has(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE)).toBe(false);
-  });
-
-  it("builds an init script that tags the route root with the selected style", () => {
-    const script = buildCreateDocsRootInitScript("juno");
-
-    expect(script).toContain(CREATE_DOCS_ROOT_ATTRIBUTE);
-    expect(script).toContain(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE);
-    expect(script).toContain(getCreateStyleClass("juno"));
-  });
-});

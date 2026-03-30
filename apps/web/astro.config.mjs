@@ -95,6 +95,7 @@ export default defineConfig({
           components: {
             button: "@bejamas/registry/ui/button",
             select: "@bejamas/registry/ui/select",
+            Head: "./src/components/starlight/Head.astro",
             Header: "./src/components/starlight/Header.astro",
             Hero: "./src/components/starlight/Hero.astro",
             Search: "./src/components/starlight/Search.astro",
@@ -105,6 +106,7 @@ export default defineConfig({
         starlightPageActions(),
       ],
       components: {
+        Head: "./src/components/starlight/Head.astro",
         Header: "./src/components/starlight/Header.astro",
         Hero: "./src/components/starlight/Hero.astro",
         Search: "./src/components/starlight/Search.astro",
