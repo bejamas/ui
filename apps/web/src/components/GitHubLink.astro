@@ -1,5 +1,12 @@
 ---
+import {
+  NO_STORE_CACHE_CONTROL,
+  SHARED_DYNAMIC_CACHE_CONTROL,
+} from "@/utils/http-cache";
+
 let starCount: number | null = null;
+
+Astro.response.headers.set("Cache-Control", NO_STORE_CACHE_CONTROL);
 
 try {
   const response = await fetch("https://api.github.com/repos/bejamas/ui", {
@@ -10,6 +17,10 @@ try {
   if (response.ok) {
     const data = await response.json();
     starCount = data.stargazers_count;
+    Astro.response.headers.set(
+      "Cache-Control",
+      SHARED_DYNAMIC_CACHE_CONTROL,
+    );
   }
 } catch (error) {
   // Silently fail - component will render without count
