@@ -64,9 +64,12 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
     const themeChoice = parseThemeChoice(
       document.documentElement.dataset.themeChoice,
     );
+    const themeChoiceIndex =
+      themeChoice === "light" ? "0" : themeChoice === "dark" ? "1" : "2";
 
     tabsRoot.dataset.defaultValue = themeChoice;
     tabsRoot.dataset.value = themeChoice;
+    tabsRoot.dataset.themeChoiceIndex = themeChoiceIndex;
   })();
 </script>
 
@@ -142,5 +145,40 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
   .theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-indicator"],
   .theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-trigger"] {
     transition: none;
+  }
+
+  .theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-list"] {
+    position: relative;
+  }
+
+  .theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-trigger"] {
+    color: var(--muted-foreground);
+  }
+
+  .theme-tabs[data-theme-tabs-preloaded][data-value="light"]
+    [data-slot="tabs-trigger"][data-value="light"],
+  .theme-tabs[data-theme-tabs-preloaded][data-value="dark"]
+    [data-slot="tabs-trigger"][data-value="dark"],
+  .theme-tabs[data-theme-tabs-preloaded][data-value="auto"]
+    [data-slot="tabs-trigger"][data-value="auto"] {
+    color: var(--foreground);
+  }
+
+  .theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-indicator"] {
+    top: 2px;
+    bottom: 2px;
+    height: calc(100% - 4px);
+    width: calc((100% - 4px) / 3);
+    left: 2px;
+  }
+
+  .theme-tabs[data-theme-tabs-preloaded][data-theme-choice-index="1"]
+    [data-slot="tabs-indicator"] {
+    left: calc(2px + ((100% - 4px) / 3));
+  }
+
+  .theme-tabs[data-theme-tabs-preloaded][data-theme-choice-index="2"]
+    [data-slot="tabs-indicator"] {
+    left: calc(2px + (((100% - 4px) / 3) * 2));
   }
 </style>

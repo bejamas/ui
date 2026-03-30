@@ -25,6 +25,7 @@ describe("theme switcher", () => {
     );
     expect(source).toContain("tabsRoot.dataset.defaultValue = themeChoice;");
     expect(source).toContain("tabsRoot.dataset.value = themeChoice;");
+    expect(source).toContain('tabsRoot.dataset.themeChoiceIndex = themeChoiceIndex;');
     expect(source).toContain("syncThemeChoiceControls(");
     expect(source).toContain("setThemeChoice(nextTheme);");
     expect(preloadIndex).toBeGreaterThan(-1);
@@ -46,6 +47,15 @@ describe("theme switcher", () => {
     );
     expect(source).toContain(
       '.theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-trigger"]',
+    );
+    expect(source).toContain(
+      '.theme-tabs[data-theme-tabs-preloaded][data-value="light"]',
+    );
+    expect(source).toContain(
+      '.theme-tabs[data-theme-tabs-preloaded][data-theme-choice-index="1"]',
+    );
+    expect(source).toContain(
+      '.theme-tabs[data-theme-tabs-preloaded][data-theme-choice-index="2"]',
     );
     expect(source).toContain("transition: none;");
   });

@@ -18,6 +18,17 @@ describe("kitchen sink layout", () => {
     expect(source).toContain('body.dataset.controller = [body.dataset.controller, "create-preview"]');
     expect(source).toContain('import("@/stimulus/create")');
     expect(source).toContain("data-theme-choice-tabs");
+    expect(source).toContain("data-theme-tabs-preloaded");
+    expect(source).toContain("tabsRoot.dataset.themeChoiceIndex = themeChoiceIndex;");
+    expect(source).toContain(
+      'if (this.tabsEl?.hasAttribute("data-theme-tabs-preloaded")) {',
+    );
+    expect(source).toContain(
+      'this.tabsEl?.removeAttribute("data-theme-tabs-preloaded");',
+    );
+    expect(source).toContain(
+      '.ks-theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-indicator"]',
+    );
     expect(source).not.toContain('const storageKey = "starlight-theme";');
   });
 });
