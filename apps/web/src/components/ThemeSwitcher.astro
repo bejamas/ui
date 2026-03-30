@@ -41,6 +41,41 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
 </div>
 
 <script is:inline>
+  (() => {
+    const script = document.currentScript;
+    const root = script?.previousElementSibling?.previousElementSibling;
+
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const tabsRoot = root.querySelector('[data-slot="tabs"]');
+    if (!(tabsRoot instanceof HTMLElement)) {
+      return;
+    }
+
+    const parseThemeChoice = (value) =>
+      value === "light" || value === "dark" || value === "auto"
+        ? value
+        : "auto";
+
+    let themeChoice = parseThemeChoice(
+      document.documentElement.dataset.themeChoice,
+    );
+
+    if (themeChoice === "auto") {
+      try {
+        themeChoice = parseThemeChoice(localStorage.getItem("starlight-theme"));
+      } catch {}
+    }
+
+    tabsRoot.dataset.defaultValue = themeChoice;
+    tabsRoot.dataset.value = themeChoice;
+    tabsRoot.setAttribute("data-theme-tabs-preloaded", "");
+  })();
+</script>
+
+<script is:inline>
   if (typeof StarlightThemeProvider !== "undefined") {
     StarlightThemeProvider.updatePickers();
   }
@@ -91,10 +126,16 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
     };
 
     connectedCallback() {
+      this.tabsEl = this.querySelector<HTMLDivElement>('[data-slot="tabs"]');
       const currentTheme = loadTheme();
       onThemeChange(currentTheme);
 
-      this.tabsEl = this.querySelector<HTMLDivElement>('[data-slot="tabs"]');
+      if (this.tabsEl?.hasAttribute("data-theme-tabs-preloaded")) {
+        requestAnimationFrame(() => {
+          this.tabsEl?.removeAttribute("data-theme-tabs-preloaded");
+        });
+      }
+
       this.tabsEl?.addEventListener("tabs:change", this.onTabsChange);
     }
 
@@ -120,5 +161,10 @@ import ThemeEditorGlobal from "./theme-editor/ThemeEditorGlobal.astro";
 
   .theme-tab[data-state="inactive"] {
     color: var(--muted-foreground);
+  }
+
+  .theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-indicator"],
+  .theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-trigger"] {
+    transition: none;
   }
 </style>
