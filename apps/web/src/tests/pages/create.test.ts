@@ -8,6 +8,14 @@ const createPageFile = path.resolve(
 );
 
 describe("create page stable customizer overrides", () => {
+  test("boots from a static shell and keeps the create page hidden until Stimulus applies real state", () => {
+    const source = fs.readFileSync(createPageFile, "utf8");
+
+    expect(source).toContain("data-create-pending");
+    expect(source).toContain("visibility: hidden;");
+    expect(source).toContain('"__BEJAMAS_CREATE__"');
+  });
+
   test("pins dropdown menu highlighted state to the muted dark create palette", () => {
     const source = fs.readFileSync(createPageFile, "utf8");
 

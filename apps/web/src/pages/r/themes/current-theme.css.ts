@@ -1,3 +1,4 @@
+import type { AstroCookies } from "astro";
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
   decodePreset,
@@ -14,6 +15,7 @@ import {
   THEME_REF_COOKIE_NAME,
 } from "../../../utils/themes/theme-cookie";
 import { getThemeOverridesByRef } from "../../../utils/themes/create-theme.server";
+import { SHORT_SHARED_CACHE_CONTROL } from "../../../utils/http-cache";
 
 export const prerender = false;
 
@@ -25,15 +27,13 @@ export async function GET({ cookies }: { cookies: AstroCookies }) {
     const generated = await resolveThemeCss(themeId, themeRef);
 
     return new Response(
-      `/* current theme */\n/* dynamically generated at ${new Date().toISOString()} */\n${generated}`,
+      `/* current theme */\n${generated}`,
       {
         status: 200,
         headers: {
           "Access-Control-Allow-Origin": "*",
-          "Cache-Control": "public, max-age=0, must-revalidate",
+          "Cache-Control": SHORT_SHARED_CACHE_CONTROL,
           "Content-Type": "text/css",
-          "Vercel-CDN-Cache-Control":
-            "public, s-maxage=60, stale-while-revalidate=300",
           Vary: "Cookie",
         },
       },

@@ -2,78 +2,43 @@
 import "@/styles/blocks.css";
 import "@bejamas/ui/styles/globals.css";
 import {
-  DEFAULT_DESIGN_SYSTEM_CONFIG,
   STYLES,
   getCompiledStyleCss,
-  getDocumentDirection,
-  getDocumentLanguage,
 } from "@bejamas/create-config/server";
 import { Tabs, TabsList, TabsTrigger } from "@bejamas/ui/components/tabs";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
-import { parseCreateSearchParams, resolveCreateThemeRef } from "@/utils/create";
 import { buildWindowAssignmentInlineScript } from "@/utils/inline-script";
-import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
-import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
 import themeFontsStylesheet from "@/styles/theme-fonts.css?url";
 import { KITCHEN_SINK_PAGES as pages } from "@/utils/kitchen-sink";
 
 const { theme = "current-theme" } = Astro.props;
 const currentPath = Astro.url.pathname.replace(/\/$/, "");
-const isCreateEmbed = Astro.url.searchParams.get("embed") === "create";
-const createResult = isCreateEmbed
-  ? parseCreateSearchParams(Astro.url.searchParams)
-  : null;
-const createConfig = isCreateEmbed
-  ? (createResult?.success
-      ? createResult.data
-      : DEFAULT_DESIGN_SYSTEM_CONFIG)
-  : null;
-const requestedThemeRef = isCreateEmbed
-  ? resolveCreateThemeRef(Astro.url.searchParams)
-  : null;
-const themeOverrides = isCreateEmbed
-  ? await getThemeOverridesByRef(requestedThemeRef)
-  : null;
-const createThemeCss = createConfig
-  ? buildDesignSystemThemeCss(createConfig, themeOverrides)
-  : "";
-const createStyleCss = createConfig
-  ? await getCompiledStyleCss(createConfig.style)
-  : "";
-const createStyleCssByStyle = isCreateEmbed
-  ? Object.fromEntries(
-      await Promise.all(
-        STYLES.map(async (style) => [
-          style.name,
-          await getCompiledStyleCss(style.name),
-        ]),
-      ),
-    )
-  : null;
-const createPreviewPayloadScript =
-  isCreateEmbed && createConfig
-    ? buildWindowAssignmentInlineScript("__BEJAMAS_CREATE_PREVIEW__", {
-        styleCssByStyle: createStyleCssByStyle,
-        initialThemeOverrides: themeOverrides,
-        initialConfig: createConfig,
-      })
-    : null;
-const createLanguage = createConfig
-  ? getDocumentLanguage(createConfig)
-  : "en";
-const createDirection = createConfig
-  ? getDocumentDirection(createConfig)
-  : "ltr";
+const createStyleCssByStyle = Object.fromEntries(
+  await Promise.all(
+    STYLES.map(async (style) => [
+      style.name,
+      await getCompiledStyleCss(style.name),
+    ]),
+  ),
+);
+const createPreviewPayloadScript = buildWindowAssignmentInlineScript(
+  "__BEJAMAS_CREATE_PREVIEW__",
+  {
+    styleCssByStyle: createStyleCssByStyle,
+  },
+);
 ---
 
-<html
-  lang={createLanguage}
-  dir={createDirection}
-  class:list={[!isCreateEmbed && "bg-background"]}
->
+<html lang="en" dir="ltr" class="bg-background">
   <head>
     <meta charset="utf-8" />
     <meta name="robots" content="noindex, nofollow" />
+    <script is:inline>
+      if (new URLSearchParams(window.location.search).get("embed") === "create") {
+        document.documentElement.dataset.createEmbed = "true";
+        document.documentElement.dataset.createPreviewPending = "true";
+      }
+    </script>
     <script is:inline>
       const storageKey = "starlight-theme";
       const parseTheme = (t) =>
@@ -107,202 +72,197 @@ const createDirection = createConfig
         },
       );
     </script>
-    {isCreateEmbed && <link rel="stylesheet" href={themeFontsStylesheet} />}
-    {isCreateEmbed ? (
-      <>
-        <style id="create-theme-css" set:html={createThemeCss}></style>
-        <style id="create-style-css" set:html={createStyleCss}></style>
-      </>
-    ) : null}
+    <link rel="stylesheet" href={themeFontsStylesheet} />
+    <style id="create-theme-css"></style>
+    <style id="create-style-css"></style>
+    <style is:global>
+      :root[data-create-embed] body {
+        background: var(--background);
+      }
+
+      :root[data-create-embed][data-create-preview-pending] body {
+        visibility: hidden;
+      }
+
+      :root[data-create-embed] [data-kitchen-sink-shell] {
+        display: block;
+      }
+
+      :root[data-create-embed] [data-kitchen-sink-shell] > aside {
+        display: none;
+      }
+
+      :root[data-create-embed] [data-kitchen-sink-main] {
+        min-height: 100vh;
+        padding: 0;
+      }
+
+      :root[data-create-embed] [data-kitchen-sink-panel] {
+        border: 0;
+        border-radius: 0;
+        min-height: 100vh;
+      }
+    </style>
   </head>
-  <body
-    class:list={[
-      "antialiased bg-muted/30",
-      isCreateEmbed && createConfig && `style-${createConfig.style}`,
-    ]}
-  >
-    {isCreateEmbed ? (
-      <>
-        <main class="min-h-screen bg-background">
-          <slot />
-        </main>
-      </>
-    ) : (
-      <>
-        <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
+  <body class="antialiased bg-muted/30">
+    <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
 
-        <div class="flex min-h-screen">
-          <aside class="sticky top-0 h-screen w-56 shrink-0 overflow-y-auto">
-            <div class="p-4">
-              <a
-                href="/kitchen-sink"
-                class="text-sm font-semibold text-foreground tracking-wide uppercase"
-              >
-                Kitchen Sink
-              </a>
-            </div>
-
-            <div class="flex flex-col gap-2 px-4 pb-4">
-              <ks-theme-select>
-                <Tabs class="ks-theme-tabs" id="ks-theme-tabs">
-                  <TabsList class="w-full">
-                    <TabsTrigger
-                      value="light"
-                      class="ks-theme-tab"
-                      title="Light theme"
-                    >
-                      <SunIcon class="size-4" />
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="dark"
-                      class="ks-theme-tab"
-                      title="Dark theme"
-                    >
-                      <MoonIcon class="size-4" />
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="auto"
-                      class="ks-theme-tab"
-                      title="Auto (system)"
-                    >
-                      <LaptopIcon class="size-4" />
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </ks-theme-select>
-            </div>
-
-            <nav class="flex flex-col gap-0.5 px-2 pb-4">
-              {
-                pages.map(({ href, label, js }) => (
-                  <a
-                    href={href}
-                    class:list={[
-                      "flex items-center rounded-md px-3 py-2 text-sm transition-colors",
-                      currentPath === href
-                        ? "bg-muted text-foreground font-medium"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-                    ]}
-                  >
-                    {label}
-                    {js && (
-                      <span class="ml-auto rounded border border-border/60 px-1 py-0.5 text-[10px] leading-none font-medium text-muted-foreground/70">
-                        JS
-                      </span>
-                    )}
-                  </a>
-                ))
-              }
-            </nav>
-          </aside>
-
-          <main class="min-w-0 flex-1 py-3 pr-3">
-            <div class="rounded-2xl border border-border bg-background">
-              <slot />
-            </div>
-          </main>
+    <div class="flex min-h-screen" data-kitchen-sink-shell>
+      <aside class="sticky top-0 h-screen w-56 shrink-0 overflow-y-auto">
+        <div class="p-4">
+          <a
+            href="/kitchen-sink"
+            class="text-sm font-semibold text-foreground tracking-wide uppercase"
+          >
+            Kitchen Sink
+          </a>
         </div>
-      </>
-    )}
 
-    {
-      isCreateEmbed && (
-        <>
-          <script is:inline set:html={createPreviewPayloadScript} />
-          <script>
-            import "@/scripts/create-preview.ts";
-          </script>
-        </>
-      )
-    }
-  </body>
-</html>
+        <div class="flex flex-col gap-2 px-4 pb-4">
+          <ks-theme-select>
+            <Tabs class="ks-theme-tabs" id="ks-theme-tabs">
+              <TabsList class="w-full">
+                <TabsTrigger value="light" class="ks-theme-tab" title="Light theme">
+                  <SunIcon class="size-4" />
+                </TabsTrigger>
+                <TabsTrigger value="dark" class="ks-theme-tab" title="Dark theme">
+                  <MoonIcon class="size-4" />
+                </TabsTrigger>
+                <TabsTrigger value="auto" class="ks-theme-tab" title="Auto (system)">
+                  <LaptopIcon class="size-4" />
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </ks-theme-select>
+        </div>
 
-{
-  !isCreateEmbed && (
-    <>
-      <script>
-        type Theme = "auto" | "dark" | "light";
-        const storageKey = "starlight-theme";
-
-        const parseTheme = (theme: unknown): Theme =>
-          theme === "auto" || theme === "dark" || theme === "light"
-            ? theme
-            : "auto";
-
-        const loadTheme = (): Theme =>
-          parseTheme(
-            typeof localStorage !== "undefined" &&
-              localStorage.getItem(storageKey),
-          );
-
-        function storeTheme(theme: Theme): void {
-          if (typeof localStorage !== "undefined") {
-            localStorage.setItem(
-              storageKey,
-              theme === "light" || theme === "dark" ? theme : "",
-            );
+        <nav class="flex flex-col gap-0.5 px-2 pb-4">
+          {
+            pages.map(({ href, label, js }) => (
+              <a
+                href={href}
+                class:list={[
+                  "flex items-center rounded-md px-3 py-2 text-sm transition-colors",
+                  currentPath === href
+                    ? "bg-muted text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+                ]}
+              >
+                {label}
+                {js && (
+                  <span class="ml-auto rounded border border-border/60 px-1 py-0.5 text-[10px] leading-none font-medium text-muted-foreground/70">
+                    JS
+                  </span>
+                )}
+              </a>
+            ))
           }
-        }
+        </nav>
+      </aside>
 
-        const getPreferredColorScheme = (): Theme =>
-          matchMedia("(prefers-color-scheme: light)").matches
-            ? "light"
-            : "dark";
+      <main class="min-w-0 flex-1 py-3 pr-3" data-kitchen-sink-main>
+        <div class="rounded-2xl border border-border bg-background" data-kitchen-sink-panel>
+          <slot />
+        </div>
+      </main>
+    </div>
 
-        function onThemeChange(theme: Theme): void {
-          const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
-          document.documentElement.dataset.theme = resolved;
-          document.documentElement.classList.remove("light", "dark");
-          document.documentElement.classList.add(resolved);
-          storeTheme(theme);
-          window.dispatchEvent(
-            new CustomEvent("theme-toggle-changed", {
-              detail: { theme: resolved },
-            }),
-          );
-          document
-            .querySelector<HTMLDivElement>("#ks-theme-tabs")
-            ?.dispatchEvent(new CustomEvent("tabs:set", { detail: { value: theme } }));
-        }
+    <script is:inline set:html={createPreviewPayloadScript} />
+    <script>
+      if (new URLSearchParams(window.location.search).get("embed") === "create") {
+        const body = document.body;
+        body.dataset.controller = [body.dataset.controller, "create-preview"]
+          .filter(Boolean)
+          .join(" ");
+        body.dataset.action = [
+          body.dataset.action,
+          "message@window->create-preview#receiveMessage",
+          "keydown.meta+p@document->create-preview#openNavigateShortcut",
+          "keydown.ctrl+p@document->create-preview#openNavigateShortcut",
+        ]
+          .filter(Boolean)
+          .join(" ");
+        import("@/stimulus/create");
+      }
+    </script>
+    <script>
+      type Theme = "auto" | "dark" | "light";
+      const storageKey = "starlight-theme";
 
-        matchMedia("(prefers-color-scheme: light)").addEventListener(
-          "change",
-          () => {
-            if (loadTheme() === "auto") onThemeChange("auto");
-          },
+      const parseTheme = (theme: unknown): Theme =>
+        theme === "auto" || theme === "dark" || theme === "light"
+          ? theme
+          : "auto";
+
+      const loadTheme = (): Theme =>
+        parseTheme(
+          typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
         );
 
-        class KsThemeSelect extends HTMLElement {
-          connectedCallback() {
-            const currentTheme = loadTheme();
-            onThemeChange(currentTheme);
-
-            const el = document.querySelector("#ks-theme-tabs");
-            el?.addEventListener("tabs:change", (e: any) => {
-              onThemeChange(parseTheme(e.detail.value));
-            });
-          }
+      function storeTheme(theme: Theme): void {
+        if (typeof localStorage !== "undefined") {
+          localStorage.setItem(
+            storageKey,
+            theme === "light" || theme === "dark" ? theme : "",
+          );
         }
+      }
 
-        if (!customElements.get("ks-theme-select")) {
-          customElements.define("ks-theme-select", KsThemeSelect);
-        }
-      </script>
+      const getPreferredColorScheme = (): Theme =>
+        matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 
-      <style>
-        .ks-theme-tabs {
-          gap: 0;
-        }
+      function onThemeChange(theme: Theme): void {
+        const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
+        document.documentElement.dataset.theme = resolved;
+        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.add(resolved);
+        storeTheme(theme);
+        window.dispatchEvent(
+          new CustomEvent("theme-toggle-changed", {
+            detail: { theme: resolved },
+          }),
+        );
+        document
+          .querySelector<HTMLDivElement>("#ks-theme-tabs")
+          ?.dispatchEvent(new CustomEvent("tabs:set", { detail: { value: theme } }));
+      }
 
-        .ks-theme-tab[data-state="active"] {
-          color: var(--foreground);
-        }
+      matchMedia("(prefers-color-scheme: light)").addEventListener(
+        "change",
+        () => {
+          if (loadTheme() === "auto") onThemeChange("auto");
+        },
+      );
 
-        .ks-theme-tab[data-state="inactive"] {
-          color: var(--muted-foreground);
+      class KsThemeSelect extends HTMLElement {
+        connectedCallback() {
+          const currentTheme = loadTheme();
+          onThemeChange(currentTheme);
+
+          const el = document.querySelector("#ks-theme-tabs");
+          el?.addEventListener("tabs:change", (e: any) => {
+            onThemeChange(parseTheme(e.detail.value));
+          });
         }
-      </style>
-    </>
-  )
-}
+      }
+
+      if (!customElements.get("ks-theme-select")) {
+        customElements.define("ks-theme-select", KsThemeSelect);
+      }
+    </script>
+
+    <style>
+      .ks-theme-tabs {
+        gap: 0;
+      }
+
+      .ks-theme-tab[data-state="active"] {
+        color: var(--foreground);
+      }
+
+      .ks-theme-tab[data-state="inactive"] {
+        color: var(--muted-foreground);
+      }
+    </style>
+  </body>
+</html>

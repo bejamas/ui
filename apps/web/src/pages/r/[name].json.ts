@@ -6,6 +6,7 @@ import {
   catalogs,
 } from "@bejamas/create-config/server";
 import { jsonResponse, readStaticRegistryItem } from "@/utils/create-registry";
+import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
 
 export const prerender = true;
 
@@ -30,18 +31,30 @@ export async function getStaticPaths() {
 
 export async function GET({ params }: { params: { name: string } }) {
   if (params.name === "utils") {
-    return jsonResponse(buildUtilsRegistryItem());
+    return jsonResponse(buildUtilsRegistryItem(), {
+      headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+    });
   }
 
   const fontItem = buildFontRegistryItem(params.name);
   if (fontItem) {
-    return jsonResponse(fontItem);
+    return jsonResponse(fontItem, {
+      headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+    });
   }
 
   try {
     const item = await readStaticRegistryItem(params.name);
-    return jsonResponse(item);
+    return jsonResponse(item, {
+      headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+    });
   } catch {
-    return jsonResponse({ error: "Registry item not found." }, { status: 404 });
+    return jsonResponse(
+      { error: "Registry item not found." },
+      {
+        status: 404,
+        headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+      },
+    );
   }
 }

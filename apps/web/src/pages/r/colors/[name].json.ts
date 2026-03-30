@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { BASE_COLORS } from "@bejamas/create-config/browser";
 import { jsonResponse } from "@/utils/create-registry";
+import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
 
 export const prerender = true;
 
@@ -21,8 +22,16 @@ export async function GET({ params }: { params: { name: string } }) {
 
   try {
     const payload = JSON.parse(await fs.readFile(filepath, "utf8"));
-    return jsonResponse(payload);
+    return jsonResponse(payload, {
+      headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+    });
   } catch {
-    return jsonResponse({ error: "Base color not found." }, { status: 404 });
+    return jsonResponse(
+      { error: "Base color not found." },
+      {
+        status: 404,
+        headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+      },
+    );
   }
 }

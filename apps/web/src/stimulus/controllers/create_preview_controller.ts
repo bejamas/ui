@@ -8,12 +8,10 @@ import {
 } from "@bejamas/create-config/browser";
 import { syncSemanticIconsInRoot } from "@bejamas/semantic-icons/browser";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
+import { resolveCreateBootstrapState } from "@/utils/create-bootstrap";
 import { getCreatePreviewCopy } from "@/utils/create-preview-i18n";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
-import {
-  normalizeThemeOverrides,
-  type ThemeOverrides,
-} from "@/utils/themes/create-theme";
+import { type ThemeOverrides } from "@/utils/themes/create-theme";
 import type {
   CreateConfig,
   PreviewMessage,
@@ -22,17 +20,7 @@ import type {
 
 export default class extends Controller<HTMLElement> {
   connect() {
-    const initialConfig = window.__BEJAMAS_CREATE_PREVIEW__?.initialConfig;
-    if (!initialConfig) {
-      return;
-    }
-
-    this.applyPreviewConfig(
-      initialConfig,
-      normalizeThemeOverrides(
-        window.__BEJAMAS_CREATE_PREVIEW__?.initialThemeOverrides,
-      ),
-    );
+    void this.bootstrap();
   }
 
   receiveMessage(event: MessageEvent<PreviewMessage>) {
@@ -44,9 +32,10 @@ export default class extends Controller<HTMLElement> {
       return;
     }
 
-    this.applyPreviewConfig(
+    void this.applyPreviewConfig(
       event.data.config,
-      normalizeThemeOverrides(event.data.themeOverrides),
+      event.data.themeOverrides,
+      event.data.styleCss,
     );
   }
 
@@ -74,9 +63,29 @@ export default class extends Controller<HTMLElement> {
     );
   }
 
-  private applyPreviewConfig(
+  private async bootstrap() {
+    const result = await resolveCreateBootstrapState(
+      new URLSearchParams(window.location.search),
+      { allowCookieFallback: false },
+    );
+
+    if (!result.success) {
+      this.showInvalidState();
+      this.clearPendingState();
+      return;
+    }
+
+    await this.applyPreviewConfig(
+      result.config,
+      result.themeOverrides,
+      window.__BEJAMAS_CREATE_PREVIEW__?.styleCssByStyle?.[result.config.style] ?? "",
+    );
+  }
+
+  private async applyPreviewConfig(
     config: CreateConfig,
     themeOverrides: ThemeOverrides,
+    styleCss?: string,
   ) {
     const themeTag = document.getElementById("create-theme-css");
     const styleTag = document.getElementById("create-style-css");
@@ -87,7 +96,9 @@ export default class extends Controller<HTMLElement> {
 
     if (styleTag) {
       styleTag.textContent =
-        window.__BEJAMAS_CREATE_PREVIEW__?.styleCssByStyle?.[config.style] ?? "";
+        styleCss ??
+        window.__BEJAMAS_CREATE_PREVIEW__?.styleCssByStyle?.[config.style] ??
+        "";
     }
 
     Array.from(document.body.classList).forEach((className) => {
@@ -146,6 +157,9 @@ export default class extends Controller<HTMLElement> {
           isTranslucentMenuColor(config.menuColor),
         );
       });
+
+    this.showPreviewSurface();
+    this.clearPendingState();
   }
 
   private buildStyleFontSummary(config: CreateConfig) {
@@ -228,5 +242,26 @@ export default class extends Controller<HTMLElement> {
         ].join(","),
       ),
     );
+  }
+
+  private showPreviewSurface() {
+    const surface = document.querySelector<HTMLElement>("[data-create-preview-surface]");
+    const invalid = document.querySelector<HTMLElement>("[data-create-preview-invalid]");
+
+    surface?.classList.remove("hidden");
+    invalid?.classList.add("hidden");
+  }
+
+  private showInvalidState() {
+    const surface = document.querySelector<HTMLElement>("[data-create-preview-surface]");
+    const invalid = document.querySelector<HTMLElement>("[data-create-preview-invalid]");
+
+    surface?.classList.add("hidden");
+    invalid?.classList.remove("hidden");
+  }
+
+  private clearPendingState() {
+    this.element.removeAttribute("data-create-preview-pending");
+    document.documentElement.removeAttribute("data-create-preview-pending");
   }
 }

@@ -6,6 +6,7 @@ import {
   type SharedTheme,
 } from "../../../lib/redis";
 import { normalizeThemeOverrides } from "../../../utils/themes/create-theme";
+import { NO_STORE_CACHE_CONTROL } from "../../../utils/http-cache";
 
 const nanoid = customAlphabet(
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
@@ -53,7 +54,10 @@ export const POST: APIRoute = async ({ request }) => {
     if (!name || typeof name !== "string") {
       return new Response(JSON.stringify({ error: "Theme name is required" }), {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": NO_STORE_CACHE_CONTROL,
+        },
       });
     }
 
@@ -62,7 +66,10 @@ export const POST: APIRoute = async ({ request }) => {
         JSON.stringify({ error: "Theme styles (light and dark) are required" }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": NO_STORE_CACHE_CONTROL,
+          },
         },
       );
     }
@@ -88,7 +95,10 @@ export const POST: APIRoute = async ({ request }) => {
         }),
         {
           status: 503,
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": NO_STORE_CACHE_CONTROL,
+          },
         },
       );
     }
@@ -105,7 +115,10 @@ export const POST: APIRoute = async ({ request }) => {
       }),
       {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": NO_STORE_CACHE_CONTROL,
+        },
       },
     );
   } catch (error) {
@@ -116,7 +129,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": NO_STORE_CACHE_CONTROL,
+      },
     });
   }
 };

@@ -1,11 +1,6 @@
 ---
-export const prerender = false;
-
 import {
   catalogs,
-  DEFAULT_LANGUAGE,
-  getDocumentDirection,
-  getDocumentLanguage,
   getCompiledStyleCss,
   isInvertedMenuColor,
   isTranslucentMenuColor,
@@ -13,36 +8,18 @@ import {
 import CreatePreviewSurface from "@/components/create/CreatePreviewSurface.astro";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
 import { buildIframeThemeSyncInlineScript } from "@/utils/themes/iframe-theme-sync";
-import { parseCreateSearchParams, resolveCreateThemeRef } from "@/utils/create";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
 import { getCreatePreviewCopy } from "@/utils/create-preview-i18n";
-import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
+import { getDefaultCreateBootstrapState } from "@/utils/create-bootstrap";
 import { buildWindowAssignmentInlineScript } from "@/utils/inline-script";
 import themeFontsStylesheet from "@/styles/theme-fonts.css?url";
-
-const result = parseCreateSearchParams(Astro.url.searchParams);
-const config = result.success ? result.data : undefined;
-const requestedThemeRef = resolveCreateThemeRef(Astro.url.searchParams);
-const themeOverrides = await getThemeOverridesByRef(requestedThemeRef);
-const currentConfig = config ?? undefined;
-const themeCss = currentConfig
-  ? buildDesignSystemThemeCss(currentConfig, themeOverrides)
-  : "";
-const compiledStyleCss = currentConfig
-  ? await getCompiledStyleCss(currentConfig.style)
-  : "";
+const { config } = getDefaultCreateBootstrapState();
+const themeCss = buildDesignSystemThemeCss(config);
+const compiledStyleCss = await getCompiledStyleCss(config.style);
 const iframeThemeSyncScript = buildIframeThemeSyncInlineScript();
-const currentRadiusLabel = currentConfig
-  ? (getCreatePickerSelectedOption("radius", currentConfig)?.label ??
-    currentConfig.radius)
-  : undefined;
-const currentLanguage = currentConfig
-  ? getDocumentLanguage(currentConfig)
-  : DEFAULT_LANGUAGE;
-const currentDirection = currentConfig
-  ? getDocumentDirection(currentConfig)
-  : "ltr";
-const previewCopy = getCreatePreviewCopy(currentLanguage);
+const currentRadiusLabel =
+  getCreatePickerSelectedOption("radius", config)?.label ?? config.radius;
+const previewCopy = getCreatePreviewCopy("en");
 const styleCssByStyle = Object.fromEntries(
   await Promise.all(
     catalogs.styles.map(async (style) => [
@@ -55,14 +32,12 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
   "__BEJAMAS_CREATE_PREVIEW__",
   {
     styleCssByStyle,
-    initialThemeOverrides: themeOverrides,
-    initialConfig: currentConfig,
   },
 );
 ---
 
 <!doctype html>
-<html lang={currentLanguage} dir={currentDirection} class="bg-background">
+<html lang="en" dir="ltr" class="bg-background">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -71,56 +46,57 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
     <style is:global>
       @import "../../styles/globals.css";
     </style>
+    <style is:global>
+      body[data-create-preview-pending] {
+        visibility: hidden;
+      }
+    </style>
     <style id="create-theme-css" set:html={themeCss}></style>
     <style id="create-style-css" set:html={compiledStyleCss}></style>
   </head>
   <body
-    class:list={currentConfig
-      ? [`style-${currentConfig.style}`, "bg-background"]
-      : []}
+    class:list={[`style-${config.style}`, "bg-background"]}
+    data-create-preview-pending
     data-controller="create-preview"
     data-action="message@window->create-preview#receiveMessage keydown.meta+p@document->create-preview#openNavigateShortcut keydown.ctrl+p@document->create-preview#openNavigateShortcut"
   >
-    {
-      currentConfig ? (
-        <CreatePreviewSurface
-          iconLibrary={currentConfig.iconLibrary}
-          iconLibraryLabel={
-            catalogs.iconLibraries.find(
-              (library) => library.name === currentConfig.iconLibrary,
-            )?.label ?? currentConfig.iconLibrary
-          }
-          styleLabel={
-            catalogs.styles.find((style) => style.name === currentConfig.style)
-              ?.title ?? currentConfig.style
-          }
-          fontLabel={
-            catalogs.fonts.find(
-              (font) => font.name === `font-${currentConfig.font}`,
-            )?.title ?? currentConfig.font
-          }
-          fontHeadingLabel={
-            currentConfig.fontHeading === "inherit"
-              ? null
-              : (catalogs.fonts.find(
-                  (font) => font.name === `font-${currentConfig.fontHeading}`,
-                )?.title ?? currentConfig.fontHeading)
-          }
-          radiusLabel={currentRadiusLabel}
-          menuColorLabel={
-            getCreatePickerSelectedOption("menuColor", currentConfig)?.label ??
-            currentConfig.menuColor
-          }
-          menuInverted={isInvertedMenuColor(currentConfig.menuColor)}
-          menuTranslucent={isTranslucentMenuColor(currentConfig.menuColor)}
-          copy={previewCopy}
-        />
-      ) : (
-        <div class="grid min-h-screen place-items-center bg-background text-foreground">
-          <p class="text-sm text-muted-foreground">Invalid preview config.</p>
-        </div>
-      )
-    }
+    <div data-create-preview-surface>
+      <CreatePreviewSurface
+        iconLibrary={config.iconLibrary}
+        iconLibraryLabel={
+          catalogs.iconLibraries.find((library) => library.name === config.iconLibrary)
+            ?.label ?? config.iconLibrary
+        }
+        styleLabel={
+          catalogs.styles.find((style) => style.name === config.style)?.title ??
+          config.style
+        }
+        fontLabel={
+          catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ??
+          config.font
+        }
+        fontHeadingLabel={
+          config.fontHeading === "inherit"
+            ? null
+            : (catalogs.fonts.find(
+                (font) => font.name === `font-${config.fontHeading}`,
+              )?.title ?? config.fontHeading)
+        }
+        radiusLabel={currentRadiusLabel}
+        menuColorLabel={
+          getCreatePickerSelectedOption("menuColor", config)?.label ?? config.menuColor
+        }
+        menuInverted={isInvertedMenuColor(config.menuColor)}
+        menuTranslucent={isTranslucentMenuColor(config.menuColor)}
+        copy={previewCopy}
+      />
+    </div>
+    <div
+      class="hidden grid min-h-screen place-items-center bg-background text-foreground"
+      data-create-preview-invalid
+    >
+      <p class="text-sm text-muted-foreground">Invalid preview config.</p>
+    </div>
     <script is:inline set:html={previewPayloadScript} />
     <script>
       import "@/stimulus/create";

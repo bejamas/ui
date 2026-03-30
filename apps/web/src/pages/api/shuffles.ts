@@ -1,5 +1,9 @@
 import type { APIRoute } from "astro";
 import { getShuffleCount, incrementShuffleCount } from "../../lib/redis";
+import {
+  NO_STORE_CACHE_CONTROL,
+  SHORT_SHARED_CACHE_CONTROL,
+} from "../../utils/http-cache";
 
 export const prerender = false;
 
@@ -10,7 +14,7 @@ export const GET: APIRoute = async () => {
     status: 200,
     headers: {
       "Content-Type": "application/json",
-      "Cache-Control": "private, max-age=60, stale-while-revalidate=300",
+      "Cache-Control": SHORT_SHARED_CACHE_CONTROL,
     },
   });
 };
@@ -22,7 +26,7 @@ export const POST: APIRoute = async () => {
     status: 200,
     headers: {
       "Content-Type": "application/json",
-      "Cache-Control": "no-store",
+      "Cache-Control": NO_STORE_CACHE_CONTROL,
     },
   });
 };

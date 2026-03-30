@@ -1,49 +1,20 @@
 ---
-export const prerender = false;
-
 import {
-  DEFAULT_DESIGN_SYSTEM_CONFIG,
   STYLES,
-  encodePreset,
   getCompiledStyleCss,
 } from "@bejamas/create-config/server";
 import { buildCreateDocsRootInitScript } from "@/utils/create-docs-shell";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
-import {
-  buildCreatePreviewUrl,
-  parseCreateSearchParams,
-  resolveCreatePreviewTarget,
-  resolveCreateThemeRef,
-} from "@/utils/create";
-import {
-  parseThemeCookie,
-  PRESET_COOKIE_NAME,
-  THEME_REF_COOKIE_NAME,
-} from "@/utils/themes/theme-cookie";
-import { getThemeOverridesByRef } from "@/utils/themes/create-theme.server";
+import { buildCreatePreviewUrl } from "@/utils/create";
+import { getDefaultCreateBootstrapState } from "@/utils/create-bootstrap";
 import { buildWindowAssignmentInlineScript } from "@/utils/inline-script";
 import CreateCustomizer from "@/components/create/CreateCustomizer.astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
-const cookieThemeId = Astro.cookies.has(PRESET_COOKIE_NAME)
-  ? parseThemeCookie(Astro.cookies.get(PRESET_COOKIE_NAME)!.value).id
-  : null;
-const result = parseCreateSearchParams(Astro.url.searchParams, {
-  fallbackPreset: cookieThemeId,
-});
-const config = result.success ? result.data : DEFAULT_DESIGN_SYSTEM_CONFIG;
-const cookieThemeRef = Astro.cookies.get(THEME_REF_COOKIE_NAME)?.value ?? null;
-const requestedThemeRef = resolveCreateThemeRef(Astro.url.searchParams, {
-  fallbackThemeRef: cookieThemeRef,
-});
-const themeOverrides = await getThemeOverridesByRef(requestedThemeRef);
-const themeRef = themeOverrides ? requestedThemeRef : null;
-const preset =
-  result.success && result.preset ? result.preset : encodePreset(config);
-const previewTarget = resolveCreatePreviewTarget(Astro.url.searchParams);
+const { config, preset } = getDefaultCreateBootstrapState();
 const previewUrl = buildCreatePreviewUrl(config, preset, {
-  previewTarget,
-  themeRef,
+  previewTarget: null,
+  themeRef: null,
 });
 const compiledStyleCss = await getCompiledStyleCss(config.style);
 const docsRootInitScript = buildCreateDocsRootInitScript(config.style);
@@ -59,8 +30,6 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
   "__BEJAMAS_CREATE__",
   {
     styleCssByStyle,
-    initialThemeRef: themeRef,
-    initialThemeOverrides: themeOverrides,
   },
 );
 ---
@@ -71,7 +40,7 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
 <script is:inline set:html={docsRootInitScript} />
 <style
   id="create-page-theme-css"
-  set:html={buildDesignSystemThemeCss(config, themeOverrides)}
+  set:html={buildDesignSystemThemeCss(config)}
 ></style>
 <style id="create-page-style-css" set:html={compiledStyleCss}></style>
 
@@ -87,6 +56,7 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
 >
   <div
     class:list={["not-content create-page-root"]}
+    data-create-pending
     data-create-page
     data-controller="create-editor"
     data-action="create-picker:change->create-editor#handlePickerChange create-sidebar:toggle-lock->create-editor#handleToggleLock create-sidebar:toggle-font-group-lock->create-editor#handleToggleFontGroupLock create-sidebar:randomize->create-editor#handleRandomize create-sidebar:select-theme-seed->create-editor#handleSelectThemeSeed create-sidebar:open-palette->create-editor#handleOpenPalette create-sidebar:cancel-palette->create-editor#handleCancelPalette create-sidebar:save-palette->create-editor#handleSavePalette create-sidebar:color-change->create-editor#handleColorChange create-sidebar:import-theme->create-editor#handleThemeImport create-sidebar:open-navigate->create-editor#handleOpenNavigate create-sidebar:copy-preset->create-editor#handleCopyPreset create-project-dialog:open->create-editor#handleProjectDialogOpen create-project-dialog:package-manager-change->create-editor#handlePackageManagerChange create-project-dialog:monorepo-change->create-editor#handleMonorepoChange create-navigate:select-target->create-editor#handleNavigateSelectTarget message@window->create-editor#handleWindowMessage popstate@window->create-editor#handlePopstate pagehide@window->create-editor#handlePageHide theme-toggle-changed@window->create-editor#handleThemeToggle bejamas:preset-change@window->create-editor#handlePresetStoreChange astro:before-swap@document->create-editor#handleBeforeSwap keydown.meta+p@document->create-editor#openNavigateShortcut keydown.ctrl+p@document->create-editor#openNavigateShortcut"
@@ -101,8 +71,8 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
         <CreateCustomizer
           config={config}
           preset={preset}
-          themeRef={themeRef}
-          themeOverrides={themeOverrides}
+          themeRef={null}
+          themeOverrides={null}
         />
 
         <iframe
@@ -131,6 +101,10 @@ const createPayloadScript = buildWindowAssignmentInlineScript(
       100dvh - var(--sl-nav-height) - var(--create-page-inset)
     );
     --create-sidebar-height: var(--create-preview-height);
+  }
+
+  [data-create-page][data-create-pending] {
+    visibility: hidden;
   }
 
   .content-panel {

@@ -10,10 +10,12 @@ import {
 import {
   buildCreatePreviewUrl,
   CREATE_PREVIEW_COMMAND_VALUE,
-  parseCreateSearchParams,
   resolveCreatePreviewTarget,
-  resolveCreateThemeRef,
 } from "@/utils/create";
+import {
+  getDefaultCreateBootstrapState,
+  resolveCreateBootstrapState,
+} from "@/utils/create-bootstrap";
 import { getKitchenSinkCreateItemId } from "@/utils/kitchen-sink";
 import {
   applyCreateDocsRootState,
@@ -121,6 +123,7 @@ export default class extends Controller<HTMLElement> {
   private paletteSnapshot: PaletteSnapshot = null;
   private lockedParams = new Set<CreateLockableParam>();
   private lockedFontGroup: CreateFontGroup | null = null;
+  private hasBootstrapped = false;
   private suppressPresetStoreChange = false;
   private preservedPreset: {
     code: string;
@@ -132,34 +135,16 @@ export default class extends Controller<HTMLElement> {
       throw new Error("Create page is missing required form elements.");
     }
 
-    const initialSearchParams = new URLSearchParams(window.location.search);
-    const initialPresetResult = parseCreateSearchParams(initialSearchParams);
-
     this.activeThemeMode = this.resolveCurrentThemeMode();
-    this.themeRef = window.__BEJAMAS_CREATE__?.initialThemeRef ?? null;
-    this.themeOverrides = normalizeThemeOverrides(
-      window.__BEJAMAS_CREATE__?.initialThemeOverrides,
-    );
-    this.currentPreviewTarget = resolveCreatePreviewTarget(initialSearchParams);
-    this.preservedPreset =
-      initialPresetResult.success && initialPresetResult.preset
-        ? {
-            code: initialPresetResult.preset,
-            config: this.toPresetConfig(initialPresetResult.data),
-          }
-        : null;
-
     this.frameTarget.dataset.previewKey =
-      this.frameTarget.dataset.previewKey ??
-      this.currentPreviewTarget ??
-      CREATE_PREVIEW_DEFAULT_KEY;
+      this.frameTarget.dataset.previewKey ?? CREATE_PREVIEW_DEFAULT_KEY;
 
     if (!this.themeStatusMessage) {
       this.syncThemeStatus();
     }
 
     this.applyStoredCreateProjectPackageManager();
-    this.updateUi();
+    void this.bootstrap();
   }
 
   disconnect() {
@@ -168,20 +153,36 @@ export default class extends Controller<HTMLElement> {
   }
 
   createSidebarOutletConnected() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     this.updateUi();
   }
 
   createProjectDialogOutletConnected() {
-    const config = this.collectConfig();
     this.applyStoredCreateProjectPackageManager();
-    this.syncCreateProjectCommands(config, this.getCurrentPreset(config));
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
+    const config = this.collectConfig();
+    this.syncCreateProjectCommands(this.getCurrentPreset(config));
   }
 
   createNavigateOutletConnected() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     this.syncNavigateSelection();
   }
 
   handleFormChange() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     this.updateUi();
   }
 
@@ -190,6 +191,10 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleFrameLoad() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     this.updateUi();
   }
 
@@ -205,38 +210,32 @@ export default class extends Controller<HTMLElement> {
     this.openNavigate();
   }
 
-  handlePopstate(event: PopStateEvent) {
-    const searchParams = new URLSearchParams(window.location.search);
-    this.currentPreviewTarget = resolveCreatePreviewTarget(searchParams);
+  async handlePopstate(event: PopStateEvent) {
     if (this.isCreateHistoryState(event.state)) {
       this.restoreHistoryState(event.state);
       return;
     }
 
-    const result = parseCreateSearchParams(searchParams);
+    const result = await resolveCreateBootstrapState(
+      new URLSearchParams(window.location.search),
+      { allowCookieFallback: false },
+    );
     if (!result.success) {
       return;
     }
 
     window.clearTimeout(this.themeSyncTimer);
-    const nextThemeRef = resolveCreateThemeRef(searchParams, {
-      fallbackThemeRef: null,
-    });
-    if (nextThemeRef !== this.themeRef) {
-      this.themeOverrides = emptyThemeOverrides();
-    }
-    this.themeRef = nextThemeRef;
+    this.currentPreviewTarget = result.previewTarget;
+    this.themeRef = result.themeRef;
+    this.themeOverrides = result.themeOverrides;
     this.paletteSnapshot = null;
-    this.preservedPreset =
-      result.preset && isPresetCode(result.preset)
-        ? {
-            code: result.preset,
-            config: this.toPresetConfig(result.data),
-          }
-        : null;
+    this.preservedPreset = {
+      code: result.preset,
+      config: this.toPresetConfig(result.config),
+    };
     this.setThemeRefValue(this.themeRef);
     this.syncThemeStatus();
-    this.applyConfig(result.data, {
+    this.applyConfig(result.config, {
       history: "replace",
       previewTarget: this.currentPreviewTarget,
       forceIframeReload: true,
@@ -260,7 +259,7 @@ export default class extends Controller<HTMLElement> {
   }
 
   handlePresetStoreChange(event: CustomEvent<PresetStoreChangeDetail>) {
-    if (this.suppressPresetStoreChange) {
+    if (this.suppressPresetStoreChange || !this.hasBootstrapped) {
       return;
     }
 
@@ -299,12 +298,20 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleCopyPreset() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     void this.copyPreset();
   }
 
   handlePickerChange(
     event: CustomEvent<{ name: string; value: string }>,
   ) {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     const { name, value } = event.detail;
     if (!name || !value) {
       return;
@@ -321,6 +328,10 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleToggleLock(event: CustomEvent<{ param: CreateLockableParam }>) {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     const { param } = event.detail;
 
     if (this.lockedParams.has(param)) {
@@ -335,12 +346,20 @@ export default class extends Controller<HTMLElement> {
   handleToggleFontGroupLock(
     event: CustomEvent<{ group: CreateFontGroup }>,
   ) {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     const { group } = event.detail;
     this.lockedFontGroup = this.lockedFontGroup === group ? null : group;
     this.renderSidebar();
   }
 
   handleRandomize() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     const currentConfig = this.collectConfig();
     const preserveCustomTheme = this.isParamLocked("theme");
 
@@ -361,10 +380,18 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleSelectThemeSeed(event: CustomEvent<{ value: string }>) {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     this.handleThemeSeedSelect(event.detail.value);
   }
 
   handleOpenPalette(event: CustomEvent<{ value: string }>) {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     if (event.detail.value) {
       this.handleThemeSeedSelect(event.detail.value);
     }
@@ -381,6 +408,10 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleCancelPalette() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     if (this.paletteSnapshot) {
       this.themeRef = this.paletteSnapshot.themeRef;
       this.themeOverrides = this.paletteSnapshot.themeOverrides;
@@ -395,6 +426,10 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleSavePalette() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     this.paletteSnapshot = null;
 
     if (this.hasCreateSidebarOutlet) {
@@ -405,6 +440,10 @@ export default class extends Controller<HTMLElement> {
   handleColorChange(
     event: CustomEvent<{ token: string; mode: ThemeMode; value: string }>,
   ) {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     const { token, mode, value } = event.detail;
     const config = this.collectConfig();
 
@@ -414,6 +453,10 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleThemeImport(event: CustomEvent<{ css: string }>) {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     const config = this.collectConfig();
     const css = event.detail.css?.trim() ?? "";
     if (!css) {
@@ -455,28 +498,48 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleOpenNavigate() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     this.openNavigate();
   }
 
   handleProjectDialogOpen() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     const config = this.collectConfig();
-    this.syncCreateProjectCommands(config, this.getCurrentPreset(config));
+    this.syncCreateProjectCommands(this.getCurrentPreset(config));
   }
 
   handlePackageManagerChange(
     event: CustomEvent<{ packageManager: CreateProjectPackageManager }>,
   ) {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     this.setStoredCreateProjectPackageManager(event.detail.packageManager);
     const config = this.collectConfig();
-    this.syncCreateProjectCommands(config, this.getCurrentPreset(config));
+    this.syncCreateProjectCommands(this.getCurrentPreset(config));
   }
 
   handleMonorepoChange() {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     const config = this.collectConfig();
-    this.syncCreateProjectCommands(config, this.getCurrentPreset(config));
+    this.syncCreateProjectCommands(this.getCurrentPreset(config));
   }
 
   handleNavigateSelectTarget(event: CustomEvent<{ value: string }>) {
+    if (!this.hasBootstrapped) {
+      return;
+    }
+
     this.selectNavigatePreviewTarget(
       event.detail.value === CREATE_PREVIEW_COMMAND_VALUE
         ? null
@@ -519,6 +582,55 @@ export default class extends Controller<HTMLElement> {
     this.createNavigateOutlet.setSelectedTarget(this.currentPreviewTarget);
   }
 
+  private async bootstrap() {
+    this.setPendingState(true);
+
+    const result = await resolveCreateBootstrapState(
+      new URLSearchParams(window.location.search),
+      { allowCookieFallback: true },
+    );
+    const fallback = getDefaultCreateBootstrapState();
+
+    if (!result.success) {
+      this.themeRef = null;
+      this.themeOverrides = emptyThemeOverrides();
+      this.currentPreviewTarget = result.previewTarget;
+      this.paletteSnapshot = null;
+      this.preservedPreset = {
+        code: fallback.preset,
+        config: this.toPresetConfig(fallback.config),
+      };
+      this.setThemeRefValue(null);
+      this.syncThemeStatus();
+      this.hasBootstrapped = true;
+      this.applyConfig(fallback.config, {
+        history: "replace",
+        previewTarget: result.previewTarget,
+        forceIframeReload: true,
+      });
+      this.setPendingState(false);
+      return;
+    }
+
+    this.themeRef = result.themeRef;
+    this.themeOverrides = result.themeOverrides;
+    this.currentPreviewTarget = result.previewTarget;
+    this.paletteSnapshot = null;
+    this.preservedPreset = {
+      code: result.preset,
+      config: this.toPresetConfig(result.config),
+    };
+    this.setThemeRefValue(this.themeRef);
+    this.syncThemeStatus();
+    this.hasBootstrapped = true;
+    this.applyConfig(result.config, {
+      history: "replace",
+      previewTarget: result.previewTarget,
+      forceIframeReload: true,
+    });
+    this.setPendingState(false);
+  }
+
   private getField(name: string) {
     return this.formTarget.elements.namedItem(name) as HTMLInputElement | null;
   }
@@ -545,6 +657,15 @@ export default class extends Controller<HTMLElement> {
 
   private get styleStyleNode() {
     return document.getElementById("create-page-style-css");
+  }
+
+  private setPendingState(isPending: boolean) {
+    if (isPending) {
+      this.element.setAttribute("data-create-pending", "");
+      return;
+    }
+
+    this.element.removeAttribute("data-create-pending");
   }
 
   private collectConfig(): CreateConfig {
@@ -794,7 +915,9 @@ export default class extends Controller<HTMLElement> {
           code:
             detail.key && isPresetCode(detail.key)
               ? detail.key
-              : encodePreset(this.toPresetConfig(config)),
+              : encodePreset(
+                  this.toPresetConfig(config) as Parameters<typeof encodePreset>[0],
+                ),
           config,
         };
       }
@@ -991,7 +1114,7 @@ export default class extends Controller<HTMLElement> {
     });
   }
 
-  private syncCreateProjectCommands(config: CreateConfig, preset: string) {
+  private syncCreateProjectCommands(preset: string) {
     if (!this.hasCreateProjectDialogOutlet) {
       return;
     }
@@ -1115,7 +1238,7 @@ export default class extends Controller<HTMLElement> {
       this.presetButton.dataset.idleLabel = `--preset ${preset}`;
     }
 
-    this.syncCreateProjectCommands(config, preset);
+    this.syncCreateProjectCommands(preset);
     this.suppressPresetStoreChange = true;
     try {
       setStoredPreset(preset, undefined, undefined, this.themeRef);

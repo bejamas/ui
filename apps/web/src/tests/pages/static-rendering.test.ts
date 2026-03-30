@@ -14,6 +14,14 @@ const createPreviewFile = path.resolve(
   import.meta.dir,
   "../../pages/create/preview.astro",
 );
+const formsActionsPageFile = path.resolve(
+  import.meta.dir,
+  "../../pages/kitchen-sink/forms-actions.astro",
+);
+const sharedThemePageFile = path.resolve(
+  import.meta.dir,
+  "../../pages/t/[id].astro",
+);
 const registryItemRouteFile = path.resolve(
   import.meta.dir,
   "../../pages/r/[name].json.ts",
@@ -53,11 +61,17 @@ describe("static rendering boundary", () => {
     expect(source).toContain("route.prerender = true;");
   });
 
-  test("keeps request-driven create pages explicitly dynamic", () => {
-    expect(fs.readFileSync(createPageFile, "utf8")).toContain(
+  test("keeps create pages static and limits dynamic HTML routes to the approved exceptions", () => {
+    expect(fs.readFileSync(createPageFile, "utf8")).not.toContain(
       "export const prerender = false;",
     );
-    expect(fs.readFileSync(createPreviewFile, "utf8")).toContain(
+    expect(fs.readFileSync(createPreviewFile, "utf8")).not.toContain(
+      "export const prerender = false;",
+    );
+    expect(fs.readFileSync(formsActionsPageFile, "utf8")).toContain(
+      "export const prerender = false;",
+    );
+    expect(fs.readFileSync(sharedThemePageFile, "utf8")).toContain(
       "export const prerender = false;",
     );
   });
@@ -89,17 +103,22 @@ describe("static rendering boundary", () => {
 
     expect(registrySource).toContain('path.resolve(process.cwd(), "public/r")');
     expect(registrySource).toContain("export const prerender = true;");
+    expect(registrySource).toContain("STATIC_ASSET_CACHE_CONTROL");
     expect(registrySource).not.toContain("fileURLToPath");
     expect(colorRegistrySource).toContain("export const prerender = true;");
+    expect(colorRegistrySource).toContain("STATIC_ASSET_CACHE_CONTROL");
     expect(styleRegistryIndexSource).toContain(
       "export const prerender = true;",
     );
+    expect(styleRegistryIndexSource).toContain("STATIC_ASSET_CACHE_CONTROL");
     expect(styleRegistrySource).toContain(
       'path.resolve(process.cwd(), "public/r/styles")',
     );
     expect(styleRegistrySource).toContain("export const prerender = true;");
+    expect(styleRegistrySource).toContain("STATIC_ASSET_CACHE_CONTROL");
     expect(styleRegistrySource).not.toContain("fileURLToPath");
     expect(themeStylesheetSource).toContain("export const prerender = true;");
+    expect(themeStylesheetSource).toContain("STATIC_ASSET_CACHE_CONTROL");
     expect(blockRouteSource).toContain("export const prerender = true;");
   });
 });

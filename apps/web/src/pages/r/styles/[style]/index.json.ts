@@ -3,6 +3,7 @@ import {
   jsonResponse,
   readStaticStyleRegistryIndex,
 } from "@/utils/create-registry";
+import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
 
 export const prerender = true;
 
@@ -16,15 +17,26 @@ export async function GET({ params }: { params: { style: string } }) {
   const style = STYLES.find((entry) => entry.id === params.style);
 
   if (!style) {
-    return jsonResponse({ error: "Style not found." }, { status: 404 });
+    return jsonResponse(
+      { error: "Style not found." },
+      {
+        status: 404,
+        headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+      },
+    );
   }
 
   try {
-    return jsonResponse(await readStaticStyleRegistryIndex(style.id));
+    return jsonResponse(await readStaticStyleRegistryIndex(style.id), {
+      headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+    });
   } catch {
     return jsonResponse(
       { error: "Registry style not found." },
-      { status: 404 },
+      {
+        status: 404,
+        headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+      },
     );
   }
 }

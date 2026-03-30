@@ -5,6 +5,7 @@ import {
   jsonResponse,
   readStaticStyleRegistryItem,
 } from "@/utils/create-registry";
+import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
 
 export const prerender = true;
 
@@ -38,17 +39,37 @@ export async function GET({
 }) {
   const style = STYLES.find((entry) => entry.id === params.style);
   if (!style) {
-    return jsonResponse({ error: "Style not found." }, { status: 404 });
+    return jsonResponse(
+      { error: "Style not found." },
+      {
+        status: 404,
+        headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+      },
+    );
   }
 
   if (params.name === "index") {
-    return jsonResponse({ error: "Unsupported route." }, { status: 404 });
+    return jsonResponse(
+      { error: "Unsupported route." },
+      {
+        status: 404,
+        headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+      },
+    );
   }
 
   try {
     const item = await readStaticStyleRegistryItem(style.id, params.name);
-    return jsonResponse(item);
+    return jsonResponse(item, {
+      headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+    });
   } catch {
-    return jsonResponse({ error: "Registry item not found." }, { status: 404 });
+    return jsonResponse(
+      { error: "Registry item not found." },
+      {
+        status: 404,
+        headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
+      },
+    );
   }
 }

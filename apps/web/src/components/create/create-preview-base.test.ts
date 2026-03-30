@@ -44,7 +44,9 @@ describe("create preview base layer", () => {
     const iconGrid = read(
       "apps/web/src/components/create/preview-cards/IconPreviewGrid.astro",
     );
-    const previewScript = read("apps/web/src/scripts/create-preview.ts");
+    const previewController = read(
+      "apps/web/src/stimulus/controllers/create_preview_controller.ts",
+    );
 
     expect(previewSurface).toContain("import StyleOverview");
     expect(previewSurface).toContain("import CodespacesCard");
@@ -94,8 +96,8 @@ describe("create preview base layer", () => {
     expect(iconGrid).toContain('"shopping-bag"');
     expect(iconGrid).toContain('"settings"');
     expect(iconGrid).not.toContain("IconPlaceholder");
-    expect(previewScript).toContain("[data-create-style-font-summary]");
-    expect(previewScript).toContain('].join(" - ")');
+    expect(previewController).toContain("[data-create-style-font-summary]");
+    expect(previewController).toContain('].join(" - ")');
   });
 
   it("keeps button visuals in the style layer", () => {

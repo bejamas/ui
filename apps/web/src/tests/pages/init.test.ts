@@ -13,6 +13,9 @@ describe("/init", () => {
     });
     const item = (await response.json()) as { registryDependencies?: string[] };
 
+    expect(response.headers.get("Cache-Control")).toBe(
+      "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
+    );
     expect(item.registryDependencies).toEqual([
       "http://localhost:4322/r/styles/bejamas-vega/utils.json",
       "http://localhost:4322/r/styles/bejamas-vega/font-playfair-display.json",
@@ -48,5 +51,18 @@ describe("/init", () => {
       "http://localhost:4322/r/styles/bejamas-maia/font-ibm-plex-sans.json",
       "http://localhost:4322/r/styles/bejamas-maia/font-heading-merriweather.json",
     ]);
+  });
+
+  test("marks custom theme init payloads as non-cacheable", async () => {
+    const preset = encodePreset({
+      style: "vega",
+    });
+    const response = await GET({
+      url: new URL(
+        `http://localhost:4322/init?preset=${preset}&themeRef=custom-123&template=astro`,
+      ),
+    });
+
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 });

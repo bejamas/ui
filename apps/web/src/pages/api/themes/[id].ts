@@ -1,5 +1,9 @@
 import type { APIRoute } from "astro";
-import { getSharedTheme } from "../../../lib/redis";
+import { getCustomTheme, getSharedTheme } from "../../../lib/redis";
+import {
+  NO_STORE_CACHE_CONTROL,
+  SHARED_DYNAMIC_CACHE_CONTROL,
+} from "../../../utils/http-cache";
 
 export const prerender = false;
 
@@ -14,6 +18,28 @@ export const GET: APIRoute = async ({ params }) => {
   }
 
   try {
+    if (id.startsWith("custom-")) {
+      const theme = await getCustomTheme(id);
+
+      if (!theme) {
+        return new Response(
+          JSON.stringify({ error: "Theme not found or has expired" }),
+          {
+            status: 404,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      return new Response(JSON.stringify(theme), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": NO_STORE_CACHE_CONTROL,
+        },
+      });
+    }
+
     const theme = await getSharedTheme(id);
 
     if (!theme) {
@@ -22,7 +48,7 @@ export const GET: APIRoute = async ({ params }) => {
         {
           status: 404,
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -30,8 +56,7 @@ export const GET: APIRoute = async ({ params }) => {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        // Cache for 5 minutes on CDN, stale-while-revalidate for 1 hour
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
+        "Cache-Control": SHARED_DYNAMIC_CACHE_CONTROL,
       },
     });
   } catch (error) {

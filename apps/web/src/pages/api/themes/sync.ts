@@ -5,6 +5,7 @@ import {
   type CustomTheme,
 } from "../../../lib/redis";
 import { normalizeThemeOverrides } from "../../../utils/themes/create-theme";
+import { NO_STORE_CACHE_CONTROL } from "../../../utils/http-cache";
 
 export const prerender = false;
 
@@ -24,7 +25,13 @@ export const POST: APIRoute = async ({ request }) => {
       if (!theme.id || !theme.name || !theme.styles) {
         return new Response(
           JSON.stringify({ error: "Invalid theme structure" }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": NO_STORE_CACHE_CONTROL,
+            },
+          },
         );
       }
 
@@ -32,7 +39,13 @@ export const POST: APIRoute = async ({ request }) => {
       if (!theme.id.startsWith("custom-")) {
         return new Response(
           JSON.stringify({ error: "Only custom themes can be synced" }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": NO_STORE_CACHE_CONTROL,
+            },
+          },
         );
       }
 
@@ -51,13 +64,22 @@ export const POST: APIRoute = async ({ request }) => {
           JSON.stringify({
             error: "Failed to sync theme (Redis not configured)",
           }),
-          { status: 503, headers: { "Content-Type": "application/json" } },
+          {
+            status: 503,
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": NO_STORE_CACHE_CONTROL,
+            },
+          },
         );
       }
 
       return new Response(JSON.stringify({ success: true, id: theme.id }), {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": NO_STORE_CACHE_CONTROL,
+        },
       });
     }
 
@@ -66,7 +88,13 @@ export const POST: APIRoute = async ({ request }) => {
       if (!id.startsWith("custom-")) {
         return new Response(
           JSON.stringify({ error: "Only custom themes can be deleted" }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": NO_STORE_CACHE_CONTROL,
+            },
+          },
         );
       }
 
@@ -77,25 +105,40 @@ export const POST: APIRoute = async ({ request }) => {
           JSON.stringify({
             error: "Failed to delete theme (Redis not configured)",
           }),
-          { status: 503, headers: { "Content-Type": "application/json" } },
+          {
+            status: 503,
+            headers: {
+              "Content-Type": "application/json",
+              "Cache-Control": NO_STORE_CACHE_CONTROL,
+            },
+          },
         );
       }
 
       return new Response(JSON.stringify({ success: true }), {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": NO_STORE_CACHE_CONTROL,
+        },
       });
     }
 
     return new Response(JSON.stringify({ error: "Invalid action" }), {
       status: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": NO_STORE_CACHE_CONTROL,
+      },
     });
   } catch (error) {
     console.error("Theme sync error:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": NO_STORE_CACHE_CONTROL,
+      },
     });
   }
 };

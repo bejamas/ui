@@ -1,5 +1,6 @@
 import { getCollection, getEntry } from "astro:content";
 import { applyThemeToCss } from "@/utils/themes/apply-theme";
+import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
 
 export const prerender = true;
 
@@ -32,6 +33,7 @@ export async function GET({ params }: { params: { slug: string } }) {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "text/css",
+        "Cache-Control": STATIC_ASSET_CACHE_CONTROL,
       },
     });
   } catch (e) {

@@ -14,6 +14,7 @@ export type PreviewMessage = {
   config: CreateConfig;
   themeRef: string | null;
   themeOverrides: ThemeOverrides;
+  styleCss?: string;
 };
 
 export type PreviewShortcutMessage = {
@@ -54,13 +55,9 @@ declare global {
   interface Window {
     __BEJAMAS_CREATE__?: {
       styleCssByStyle: Record<string, string>;
-      initialThemeRef?: string | null;
-      initialThemeOverrides?: Partial<ThemeOverrides> | null;
     };
     __BEJAMAS_CREATE_PREVIEW__?: {
       styleCssByStyle: Record<string, string>;
-      initialThemeOverrides?: Partial<ThemeOverrides> | null;
-      initialConfig?: CreateConfig | null;
     };
     StarlightThemeProvider?: {
       updatePickers?: (themeChoice: ThemeMode) => void;
