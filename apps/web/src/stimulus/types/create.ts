@@ -42,6 +42,14 @@ export type CreateSidebarRenderState = {
   lockedFontGroup: CreateFontGroup | null;
 };
 
+export type CreateHistoryState = {
+  config: CreateConfig;
+  preset: string;
+  themeRef: string | null;
+  themeOverrides: ThemeOverrides;
+  previewTarget: string | null;
+};
+
 declare global {
   interface Window {
     __BEJAMAS_CREATE__?: {

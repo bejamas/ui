@@ -1,7 +1,10 @@
 import { Controller } from "@hotwired/stimulus";
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
+  decodePreset,
+  designSystemConfigSchema,
   encodePreset,
+  isPresetCode,
   normalizeDesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import {
@@ -9,6 +12,7 @@ import {
   CREATE_PREVIEW_COMMAND_VALUE,
   parseCreateSearchParams,
   resolveCreatePreviewTarget,
+  resolveCreateThemeRef,
 } from "@/utils/create";
 import { getKitchenSinkCreateItemId } from "@/utils/kitchen-sink";
 import {
@@ -56,6 +60,7 @@ import type CreateProjectDialogController from "@/stimulus/controllers/create_pr
 import type CreateNavigateController from "@/stimulus/controllers/create_navigate_controller";
 import type {
   CreateConfig,
+  CreateHistoryState,
   HistoryMode,
   PaletteSnapshot,
   PreviewMessage,
@@ -63,6 +68,11 @@ import type {
 } from "@/stimulus/types/create";
 
 type CreatePresetConfig = Omit<CreateConfig, "template" | "rtl" | "rtlLanguage">;
+type PresetStoreChangeDetail = {
+  key?: string;
+  preset?: Partial<CreatePresetConfig> | null;
+  themeRef?: string | null;
+};
 
 const PICKER_NAMES = [
   "style",
@@ -111,6 +121,7 @@ export default class extends Controller<HTMLElement> {
   private paletteSnapshot: PaletteSnapshot = null;
   private lockedParams = new Set<CreateLockableParam>();
   private lockedFontGroup: CreateFontGroup | null = null;
+  private suppressPresetStoreChange = false;
   private preservedPreset: {
     code: string;
     config: CreatePresetConfig;
@@ -144,11 +155,7 @@ export default class extends Controller<HTMLElement> {
       CREATE_PREVIEW_DEFAULT_KEY;
 
     if (!this.themeStatusMessage) {
-      this.setThemeStatus(
-        this.themeRef
-          ? "Custom theme loaded. Edit tokens or import CSS to update it."
-          : "Pick a seed theme, then adjust tokens in light and dark modes.",
-      );
+      this.syncThemeStatus();
     }
 
     this.applyStoredCreateProjectPackageManager();
@@ -198,16 +205,39 @@ export default class extends Controller<HTMLElement> {
     this.openNavigate();
   }
 
-  handlePopstate() {
+  handlePopstate(event: PopStateEvent) {
     const searchParams = new URLSearchParams(window.location.search);
     this.currentPreviewTarget = resolveCreatePreviewTarget(searchParams);
+    if (this.isCreateHistoryState(event.state)) {
+      this.restoreHistoryState(event.state);
+      return;
+    }
 
     const result = parseCreateSearchParams(searchParams);
     if (!result.success) {
       return;
     }
 
-    this.updateUi({
+    window.clearTimeout(this.themeSyncTimer);
+    const nextThemeRef = resolveCreateThemeRef(searchParams, {
+      fallbackThemeRef: null,
+    });
+    if (nextThemeRef !== this.themeRef) {
+      this.themeOverrides = emptyThemeOverrides();
+    }
+    this.themeRef = nextThemeRef;
+    this.paletteSnapshot = null;
+    this.preservedPreset =
+      result.preset && isPresetCode(result.preset)
+        ? {
+            code: result.preset,
+            config: this.toPresetConfig(result.data),
+          }
+        : null;
+    this.setThemeRefValue(this.themeRef);
+    this.syncThemeStatus();
+    this.applyConfig(result.data, {
+      history: "replace",
       previewTarget: this.currentPreviewTarget,
       forceIframeReload: true,
     });
@@ -227,6 +257,31 @@ export default class extends Controller<HTMLElement> {
     if (this.hasCreateSidebarOutlet) {
       this.createSidebarOutlet.themeModeValue = this.activeThemeMode;
     }
+  }
+
+  handlePresetStoreChange(event: CustomEvent<PresetStoreChangeDetail>) {
+    if (this.suppressPresetStoreChange) {
+      return;
+    }
+
+    const presetSelection = this.resolvePresetStoreSelection(event.detail);
+    if (
+      !presetSelection ||
+      this.shouldIgnorePresetStoreSelection(presetSelection)
+    ) {
+      return;
+    }
+
+    window.clearTimeout(this.themeSyncTimer);
+    this.preservedPreset = {
+      code: presetSelection.code,
+      config: this.toPresetConfig(presetSelection.config),
+    };
+    this.paletteSnapshot = null;
+    this.applyConfig(presetSelection.config, {
+      clearCustomTheme: true,
+      history: "push",
+    });
   }
 
   openNavigateShortcut(event: KeyboardEvent) {
@@ -605,6 +660,14 @@ export default class extends Controller<HTMLElement> {
     this.themeStatusMessage = message;
   }
 
+  private syncThemeStatus() {
+    this.setThemeStatus(
+      this.themeRef || hasThemeOverrides(this.themeOverrides)
+        ? "Custom theme loaded. Edit tokens or import CSS to update it."
+        : "Pick a seed theme, then adjust tokens in light and dark modes.",
+    );
+  }
+
   private clearThemeOverrides(options?: { message?: string }) {
     this.themeOverrides = emptyThemeOverrides();
     this.themeRef = null;
@@ -709,6 +772,125 @@ export default class extends Controller<HTMLElement> {
     this.themeSyncTimer = window.setTimeout(() => {
       void this.syncThemeRef(config);
     }, 280);
+  }
+
+  private resolvePresetStoreSelection(
+    detail: PresetStoreChangeDetail | null | undefined,
+  ): { code: string; config: CreateConfig } | null {
+    if (!detail) {
+      return null;
+    }
+
+    if (detail.preset) {
+      const presetResult = designSystemConfigSchema.safeParse({
+        ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+        ...detail.preset,
+      });
+
+      if (presetResult.success) {
+        const config = normalizeDesignSystemConfig(presetResult.data);
+
+        return {
+          code:
+            detail.key && isPresetCode(detail.key)
+              ? detail.key
+              : encodePreset(this.toPresetConfig(config)),
+          config,
+        };
+      }
+    }
+
+    if (!detail.key || !isPresetCode(detail.key)) {
+      return null;
+    }
+
+    const decodedPreset = decodePreset(detail.key);
+    if (!decodedPreset) {
+      return null;
+    }
+
+    const presetResult = designSystemConfigSchema.safeParse({
+      ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+      ...decodedPreset,
+    });
+
+    if (!presetResult.success) {
+      return null;
+    }
+
+    return {
+      code: detail.key,
+      config: normalizeDesignSystemConfig(presetResult.data),
+    };
+  }
+
+  private shouldIgnorePresetStoreSelection(selection: {
+    code: string;
+    config: CreateConfig;
+  }) {
+    const currentConfig = this.collectConfig();
+    const currentPreset = this.getCurrentPreset(currentConfig);
+
+    return (
+      selection.code === currentPreset &&
+      this.preservedPreset?.code === selection.code &&
+      this.isSamePresetConfig(
+        this.toPresetConfig(currentConfig),
+        this.toPresetConfig(selection.config),
+      ) &&
+      this.themeRef === null &&
+      !hasThemeOverrides(this.themeOverrides) &&
+      this.paletteSnapshot === null
+    );
+  }
+
+  private buildHistoryState(
+    config: CreateConfig,
+    preset: string,
+  ): CreateHistoryState {
+    return {
+      config,
+      preset,
+      themeRef: this.themeRef,
+      themeOverrides: structuredClone(this.themeOverrides),
+      previewTarget: this.currentPreviewTarget,
+    };
+  }
+
+  private isCreateHistoryState(value: unknown): value is CreateHistoryState {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+
+    const state = value as Partial<CreateHistoryState>;
+
+    return (
+      typeof state.preset === "string" &&
+      (state.themeRef === null || typeof state.themeRef === "string") &&
+      (state.previewTarget === null || typeof state.previewTarget === "string") &&
+      designSystemConfigSchema.safeParse(state.config).success
+    );
+  }
+
+  private restoreHistoryState(state: CreateHistoryState) {
+    window.clearTimeout(this.themeSyncTimer);
+    this.currentPreviewTarget = state.previewTarget;
+    this.themeRef = state.themeRef;
+    this.themeOverrides = normalizeThemeOverrides(state.themeOverrides);
+    this.paletteSnapshot = null;
+    this.preservedPreset = isPresetCode(state.preset)
+      ? {
+          code: state.preset,
+          config: this.toPresetConfig(state.config),
+        }
+      : null;
+    this.setThemeRefValue(this.themeRef);
+    this.syncThemeStatus();
+    this.applyConfig(state.config, {
+      history: "replace",
+      previewTarget: state.previewTarget,
+      forceIframeReload: true,
+    });
   }
 
   private async copyPreset() {
@@ -835,7 +1017,12 @@ export default class extends Controller<HTMLElement> {
 
   private applyConfig(
     config: CreateConfig,
-    options: { clearCustomTheme?: boolean } = {},
+    options: {
+      clearCustomTheme?: boolean;
+      history?: HistoryMode;
+      previewTarget?: string | null;
+      forceIframeReload?: boolean;
+    } = {},
   ) {
     for (const name of PICKER_NAMES) {
       this.setInputValue(name, config[name], false);
@@ -847,7 +1034,11 @@ export default class extends Controller<HTMLElement> {
       this.clearThemeOverrides();
     }
 
-    this.updateUi();
+    this.updateUi({
+      history: options.history,
+      previewTarget: options.previewTarget,
+      forceIframeReload: options.forceIframeReload,
+    });
   }
 
   private renderSidebar() {
@@ -925,10 +1116,15 @@ export default class extends Controller<HTMLElement> {
     }
 
     this.syncCreateProjectCommands(config, preset);
-    setStoredPreset(preset, undefined, undefined, this.themeRef);
+    this.suppressPresetStoreChange = true;
+    try {
+      setStoredPreset(preset, undefined, undefined, this.themeRef);
+    } finally {
+      this.suppressPresetStoreChange = false;
+    }
 
     window.history[options.history === "push" ? "pushState" : "replaceState"](
-      {},
+      this.buildHistoryState(config, preset),
       "",
       `/create?${params.toString()}`,
     );
