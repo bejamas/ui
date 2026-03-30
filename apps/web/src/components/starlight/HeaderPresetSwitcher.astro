@@ -102,3 +102,161 @@ const state = buildHeaderPresetSwitcherState({});
     </DropdownMenuContent>
   </DropdownMenu>
 </header-preset-switcher>
+
+<script is:inline>
+  (() => {
+    const script = document.currentScript;
+    const root = script?.previousElementSibling;
+
+    if (!(root instanceof HTMLElement) || !root.matches("[data-header-preset-switcher]")) {
+      return;
+    }
+
+    const parseJson = (value, fallback = null) => {
+      if (!value) {
+        return fallback;
+      }
+
+      try {
+        return JSON.parse(value);
+      } catch {
+        return fallback;
+      }
+    };
+
+    const readCookie = (name) => {
+      const match = document.cookie.match(
+        new RegExp(
+          `(?:^|; )${name.replace(/[$()*+.?[\\\\\\]^{|}]/g, "\\$&")}=([^;]*)`,
+        ),
+      );
+
+      return match ? decodeURIComponent(match[1]) : null;
+    };
+
+    const parseThemeCookie = (cookieValue) => {
+      if (!cookieValue) {
+        return null;
+      }
+
+      const parts = cookieValue.split("|");
+      const id = parts[0];
+      if (!id) {
+        return null;
+      }
+
+      if (parts.length >= 5) {
+        return {
+          id,
+          swatches: {
+            primaryLight: parts[1],
+            accentLight: parts[2],
+            primaryDark: parts[3],
+            accentDark: parts[4],
+          },
+          name: parts[5] || undefined,
+        };
+      }
+
+      return { id };
+    };
+
+    const readStoredPreset = () => {
+      const themeCookie = readCookie("theme");
+      if (themeCookie) {
+        return parseThemeCookie(themeCookie);
+      }
+
+      try {
+        const presetId = localStorage.getItem("theme-preset");
+        return presetId ? { id: presetId } : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const updateSwatch = (name, color) => {
+      const swatch = root.querySelector(`[data-current-swatch="${name}"]`);
+      if (swatch instanceof HTMLElement) {
+        swatch.style.background = color;
+      }
+    };
+
+    const current = parseJson(root.dataset.current, null);
+    const presets = new Map(
+      (parseJson(root.dataset.presets, []) ?? []).map((preset) => [
+        preset.id,
+        preset,
+      ]),
+    );
+    const stored = readStoredPreset();
+    const themeRef = readCookie("theme-ref");
+
+    let summary = current;
+    let selectedPresetId = root.dataset.selectedPresetId || "";
+
+    if (stored) {
+      const curatedPreset = themeRef ? null : presets.get(stored.id);
+
+      if (curatedPreset) {
+        summary = {
+          id: curatedPreset.id,
+          label: curatedPreset.label,
+          swatches: curatedPreset.swatches,
+          createHref: curatedPreset.createHref,
+          themeRef: null,
+        };
+        selectedPresetId = curatedPreset.id;
+      } else if (
+        current &&
+        stored.id === current.id &&
+        themeRef === (current.themeRef ?? null)
+      ) {
+        summary = current;
+        selectedPresetId = "";
+      } else if (stored.swatches) {
+        summary = {
+          id: stored.id,
+          label: stored.name || current?.label || stored.id,
+          swatches: {
+            light: {
+              primary: stored.swatches.primaryLight,
+              accent: stored.swatches.accentLight,
+            },
+            dark: {
+              primary: stored.swatches.primaryDark,
+              accent: stored.swatches.accentDark,
+            },
+          },
+          createHref: themeRef
+            ? `/create?themeRef=${encodeURIComponent(themeRef)}`
+            : "/create",
+          themeRef,
+        };
+        selectedPresetId = "";
+      }
+    }
+
+    if (!summary) {
+      return;
+    }
+
+    root.dataset.current = JSON.stringify(summary);
+    root.dataset.selectedPresetId = selectedPresetId;
+
+    const label = root.querySelector("[data-current-label]");
+    if (label) {
+      label.textContent = summary.label;
+    }
+
+    const createLink = root.querySelector("[data-create-your-own]");
+    if (createLink instanceof HTMLAnchorElement) {
+      createLink.href = summary.createHref;
+    }
+
+    updateSwatch("light-primary", summary.swatches.light.primary);
+    updateSwatch("light-accent", summary.swatches.light.accent);
+    updateSwatch("dark-primary", summary.swatches.dark.primary);
+    updateSwatch("dark-accent", summary.swatches.dark.accent);
+  })();
+</script>

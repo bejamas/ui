@@ -42,10 +42,7 @@ describe("page style scoping", () => {
     expect(createSource).toContain('data-page-scope="create"');
     expect(createSource).toContain(':root:has([data-page-scope="create"]) .content-panel');
 
-    expect(sharedThemeSource).toContain('data-page-scope="shared-theme"');
-    expect(sharedThemeSource).toContain(
-      ':root:has([data-page-scope="shared-theme"]) .sl-bejamas-docs-title',
-    );
-    expect(sharedThemeSource).not.toContain("\n  .sl-bejamas-docs-title {\n    justify-content: center;");
+    expect(sharedThemeSource).not.toContain('data-page-scope="shared-theme"');
+    expect(sharedThemeSource).not.toContain(".sl-bejamas-docs-title");
   });
 });

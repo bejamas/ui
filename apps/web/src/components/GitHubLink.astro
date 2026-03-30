@@ -27,6 +27,10 @@ try {
 }
 ---
 
-<span class="w-8.5 items-center flex justify-center text-center">
+<span
+  class="w-8.5 items-center flex justify-center text-center"
+  data-github-stars-display
+  data-github-stars-value={starCount !== null ? String(starCount) : undefined}
+>
   {starCount !== null ? starCount.toLocaleString() : "69"}
 </span>

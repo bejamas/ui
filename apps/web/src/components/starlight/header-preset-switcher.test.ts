@@ -23,6 +23,8 @@ describe("header preset switcher", () => {
     expect(source).toContain("<HeaderPresetSwitcher />");
     expect(source).not.toContain("server:defer");
     expect(source).toContain('import "@/scripts/header-preset-switcher.ts";');
+    expect(source).toContain('<div class="header-mobile-stars">');
+    expect(source).not.toContain("transition:persist");
   });
 
   test("uses the curated dropdown contract and static fallback state", () => {
