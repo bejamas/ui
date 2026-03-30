@@ -832,7 +832,7 @@ function renderThemeSeedButton(
     >
       <span class="inline-flex size-6 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]" style="background:${escapeHtml(option.color)};"></span>
       <span class="flex-1 truncate text-sm font-medium tracking-[-0.01em]">${escapeHtml(option.label)}</span>
-      <span class="shrink-0 text-white/30 opacity-0 transition-opacity group-hover/seed:opacity-100 ${selected ? "opacity-100" : ""}" data-create-palette-open data-value="${escapeHtml(option.value)}" ${selected ? 'data-selected=""' : ""}>
+      <span class="!hidden shrink-0 text-white/30 opacity-0 transition-opacity group-hover/seed:opacity-100 ${selected ? "opacity-100" : ""}" data-create-palette-open data-value="${escapeHtml(option.value)}" ${selected ? 'data-selected=""' : ""}>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
       </span>
     </button>
