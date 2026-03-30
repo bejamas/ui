@@ -6,6 +6,7 @@ interface Props extends HTMLAttributes<"div"> {
   disabled?: boolean;
   inset?: boolean;
   value?: string;
+  variant?: "default" | "destructive";
   class?: string;
 }
 
@@ -13,6 +14,7 @@ const {
   disabled = false,
   inset = false,
   value,
+  variant = "default",
   class: className = "",
   ...rest
 } = Astro.props as Props;
@@ -26,6 +28,7 @@ const {
   data-value={value}
   data-disabled={disabled ? "" : undefined}
   data-inset={inset ? "" : undefined}
+  data-variant={variant}
   class={cn(
     "cn-dropdown-menu-item",
     "group/dropdown-menu-item relative flex cursor-default items-center outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",

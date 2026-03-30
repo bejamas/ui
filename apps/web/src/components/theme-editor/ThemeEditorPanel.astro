@@ -1004,7 +1004,10 @@ const sectionTitles = [
               item.appendChild(textLabel);
 
               const indicator = document.createElement("span");
-              indicator.setAttribute("data-slot", "dropdown-menu-item-indicator");
+              indicator.setAttribute(
+                "data-slot",
+                "dropdown-menu-radio-item-indicator",
+              );
               indicator.setAttribute("aria-hidden", "true");
               indicator.className =
                 "absolute right-2 flex items-center justify-center opacity-0 transition-opacity group-data-checked/dropdown-menu-item:opacity-100";

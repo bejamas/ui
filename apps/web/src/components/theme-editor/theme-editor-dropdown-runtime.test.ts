@@ -13,8 +13,10 @@ describe("theme editor preset dropdown runtime", () => {
     expect(source).toContain('defaultValue={presetKeys[0]}');
     expect(source).toContain('dropdown?.addEventListener("dropdown-menu:value-change"');
     expect(source).toContain('data-slot", "dropdown-menu-radio-item"');
+    expect(source).toContain('dropdown-menu-radio-item-indicator');
     expect(source).toContain('new CustomEvent("dropdown-menu:set", {');
     expect(source).toContain("syncPresetDropdownSelection()");
     expect(source).not.toContain('[data-slot="dropdown-menu-item"]');
+    expect(source).not.toContain('dropdown-menu-item-indicator');
   });
 });

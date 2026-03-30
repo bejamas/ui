@@ -18,8 +18,10 @@ describe("preset switcher dropdown runtime", () => {
     expect(source).toContain('this.addEventListener("dropdown-menu:value-change", this.onValueChange);');
     expect(source).toContain('data-value="${key}"');
     expect(source).toContain('data-slot="dropdown-menu-radio-item"');
+    expect(source).toContain('data-slot="dropdown-menu-radio-item-indicator"');
     expect(source).toContain('new CustomEvent("dropdown-menu:set", {');
     expect(source).not.toContain("data-selected");
+    expect(source).not.toContain('data-slot="dropdown-menu-item-indicator"');
     expect(source).not.toContain('content?.addEventListener("click"');
     expect(source).not.toContain('content?.addEventListener("keydown"');
 
@@ -28,8 +30,10 @@ describe("preset switcher dropdown runtime", () => {
     expect(islandSource).toContain('this.addEventListener("dropdown-menu:value-change", this.onValueChange);');
     expect(islandSource).toContain('data-value="${key}"');
     expect(islandSource).toContain('data-slot="dropdown-menu-radio-item"');
+    expect(islandSource).toContain('data-slot="dropdown-menu-radio-item-indicator"');
     expect(islandSource).toContain('new CustomEvent("dropdown-menu:set", {');
     expect(islandSource).not.toContain("data-selected");
+    expect(islandSource).not.toContain('data-slot="dropdown-menu-item-indicator"');
     expect(islandSource).not.toContain('content?.addEventListener("click"');
     expect(islandSource).not.toContain('content?.addEventListener("keydown"');
   });

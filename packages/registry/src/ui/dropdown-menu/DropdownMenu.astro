@@ -97,6 +97,11 @@
  * }));
  * ```
  *
+ * ### Structural Wrappers
+ *
+ * `DropdownMenuPortal` and `DropdownMenuRadioGroup` are available for low-level authored markup.
+ * Most consumers should keep using `DropdownMenuContent` directly.
+ *
  * ### Data Attributes
  *
  * The dropdown menu sets these data attributes that you can use for styling or querying state:
@@ -105,6 +110,7 @@
  * |-----------|---------|-------------|
  * | `data-state` | dropdown-menu, dropdown-menu-content | Current state (`open` or `closed`) |
  * | `data-value` | dropdown-menu | Current committed radio value |
+ * | `data-variant` | dropdown-menu-item | Visual variant (`default` or `destructive`) |
  * | `data-side` | dropdown-menu-content | Computed position (`top`, `right`, `bottom`, or `left`) |
  * | `data-align` | dropdown-menu-content | Alignment (`start`, `center`, or `end`) |
  * | `data-highlighted` | menu items | Present when item is focused |
