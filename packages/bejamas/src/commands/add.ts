@@ -2,15 +2,11 @@ import path from "node:path";
 import { Command } from "commander";
 import { execa } from "execa";
 import prompts from "prompts";
-import { logger } from "@/src/utils/logger";
-import { spinner } from "@/src/utils/spinner";
-import { highlighter } from "@/src/utils/highlighter";
+
 import {
   syncAstroManagedFontCss,
   syncManagedTailwindCss,
 } from "@/src/utils/apply-design-system";
-import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
-import { getPackageRunner } from "@/src/utils/get-package-manager";
 import { fixAstroImports } from "@/src/utils/astro-imports";
 import {
   cleanupAstroFontPackages,
@@ -20,12 +16,17 @@ import {
   toManagedAstroFont,
 } from "@/src/utils/astro-fonts";
 import { getConfig, getWorkspaceConfig } from "@/src/utils/get-config";
+import { highlighter } from "@/src/utils/highlighter";
+import { logger } from "@/src/utils/logger";
 import {
-  reorganizeComponents,
   fetchRegistryItem,
   getSubfolderFromPaths,
+  reorganizeComponents,
   shouldReorganizeRegistryUiFiles,
 } from "@/src/utils/reorganize-components";
+import { buildPinnedShadcnInvocation } from "@/src/utils/shadcn-cli";
+import { spinner } from "@/src/utils/spinner";
+import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
 
 interface ParsedOutput {
   created: string[];
@@ -33,13 +34,11 @@ interface ParsedOutput {
   skipped: string[];
 }
 
-// Derive only the user-provided flags for shadcn to avoid losing options
+// Derive only the user-provided flags for shadcn to avoid losing options.
 export function extractOptionsForShadcn(
   rawArgv: string[],
   cmd: Command,
 ): string[] {
-  // Prefer commander metadata when available so we only forward options that
-  // were explicitly set (avoids defaults and keeps aliases consistent).
   if (typeof cmd.getOptionValueSource === "function") {
     const opts = cmd.optsWithGlobals() as Record<string, unknown>;
     const forwarded: string[] = [];
@@ -87,7 +86,6 @@ export function extractOptionsForShadcn(
     addOptionalString("diff", "--diff");
     addOptionalString("view", "--view");
 
-    // Preserve any explicit passthrough after "--" for shadcn.
     const addIndex = rawArgv.findIndex((arg) => arg === "add");
     if (addIndex !== -1) {
       const rest = rawArgv.slice(addIndex + 1);
@@ -100,7 +98,6 @@ export function extractOptionsForShadcn(
     return forwarded;
   }
 
-  // Fallback: lightweight parser that only forwards known options.
   const addIndex = rawArgv.findIndex((arg) => arg === "add");
   if (addIndex === -1) return [];
   const rest = rawArgv.slice(addIndex + 1);
@@ -115,10 +112,10 @@ export function extractOptionsForShadcn(
   ]);
   const filteredFlags = new Set(["-v", "--verbose"]);
 
-  for (let i = 0; i < rest.length; i += 1) {
-    const token = rest[i];
+  for (let index = 0; index < rest.length; index += 1) {
+    const token = rest[index];
     if (token === "--") {
-      forwarded.push("--", ...rest.slice(i + 1));
+      forwarded.push("--", ...rest.slice(index + 1));
       break;
     }
     if (!token.startsWith("-")) continue;
@@ -128,13 +125,14 @@ export function extractOptionsForShadcn(
     if (token.includes("=")) continue;
 
     if (optionsWithValues.has(token)) {
-      const next = rest[i + 1];
+      const next = rest[index + 1];
       if (next) {
         forwarded.push(next);
-        i += 1;
+        index += 1;
       }
     }
   }
+
   return forwarded;
 }
 
@@ -159,14 +157,11 @@ export function formatSkippedFilesHeading(
 }
 
 interface SubfolderMapResult {
-  // Maps unique filename -> subfolder/filename
   uniqueMap: Map<string, string>;
-  // Set of shared filenames (like index.ts) that appear in multiple components
   sharedFilenames: Set<string>;
   requiresReorganization: boolean;
 }
 
-/** Build maps for path rewriting, handling filename collisions */
 async function buildSubfolderMap(
   components: string[],
   uiDir: string,
@@ -176,7 +171,6 @@ async function buildSubfolderMap(
   const filenameToSubfolders = new Map<string, string[]>();
   let requiresReorganization = false;
 
-  // First pass: collect all filename -> subfolder mappings
   for (const componentName of components) {
     const registryItem = await fetchRegistryItem(
       componentName,
@@ -195,8 +189,6 @@ async function buildSubfolderMap(
     for (const file of registryItem.files) {
       if (file.type === "registry:ui") {
         const filename = path.basename(file.path);
-
-        // Track which subfolders each filename appears in
         const subfolders = filenameToSubfolders.get(filename) || [];
         subfolders.push(subfolder);
         filenameToSubfolders.set(filename, subfolders);
@@ -204,16 +196,13 @@ async function buildSubfolderMap(
     }
   }
 
-  // Build the unique map (only filenames that appear once)
   const uniqueMap = new Map<string, string>();
   const sharedFilenames = new Set<string>();
 
   filenameToSubfolders.forEach((subfolders, filename) => {
     if (subfolders.length === 1) {
-      // Unique filename - safe to map directly
       uniqueMap.set(filename, `${subfolders[0]}/${filename}`);
     } else {
-      // Shared filename (like index.ts) - track for context-based rewriting
       sharedFilenames.add(filename);
     }
   });
@@ -221,10 +210,6 @@ async function buildSubfolderMap(
   return { uniqueMap, sharedFilenames, requiresReorganization };
 }
 
-/**
- * Rewrite file paths to include correct subfolders.
- * Handles shared filenames (like index.ts) by tracking current component context.
- */
 function rewritePaths(
   paths: string[],
   mapResult: SubfolderMapResult,
@@ -235,32 +220,24 @@ function rewritePaths(
   return paths.map((filePath) => {
     const filename = path.basename(filePath);
     const parentDir = path.basename(path.dirname(filePath));
-
-    // Check if this is a unique filename (can map directly)
     const uniqueMapping = uniqueMap.get(filename);
+
     if (uniqueMapping) {
       const expectedSubfolder = path.dirname(uniqueMapping);
-
-      // Update current context for subsequent shared files
       currentSubfolder = expectedSubfolder;
 
-      // Only rewrite if not already in the correct subfolder
       if (parentDir !== expectedSubfolder) {
         const dir = path.dirname(filePath);
         return `${dir}/${uniqueMapping}`;
       }
+
       return filePath;
     }
 
-    // Check if this is a shared filename (like index.ts)
     if (sharedFilenames.has(filename) && currentSubfolder) {
-      // Use the current component context
-      const expectedSubfolder = currentSubfolder;
-
-      // Only rewrite if not already in the correct subfolder
-      if (parentDir !== expectedSubfolder) {
+      if (parentDir !== currentSubfolder) {
         const dir = path.dirname(filePath);
-        return `${dir}/${expectedSubfolder}/${filename}`;
+        return `${dir}/${currentSubfolder}/${filename}`;
       }
     }
 
@@ -268,7 +245,6 @@ function rewritePaths(
   });
 }
 
-/** Fetch available components from the registry */
 async function fetchAvailableComponents(
   registryUrl: string,
 ): Promise<{ name: string; type?: string }[]> {
@@ -277,12 +253,11 @@ async function fetchAvailableComponents(
   if (!response.ok) {
     throw new Error(`Failed to fetch registry index: ${response.statusText}`);
   }
+
   const data = await response.json();
-  // Registry index is an array of objects with at least a name property
   return Array.isArray(data) ? data : [];
 }
 
-/** Prompt user to select components interactively */
 async function promptForComponents(
   registryUrl: string,
 ): Promise<string[] | null> {
@@ -292,7 +267,7 @@ async function promptForComponents(
   try {
     components = await fetchAvailableComponents(registryUrl);
     checkingSpinner.succeed();
-  } catch (error) {
+  } catch {
     checkingSpinner.fail();
     logger.error("Failed to fetch available components from registry.");
     return null;
@@ -303,14 +278,13 @@ async function promptForComponents(
     return null;
   }
 
-  // Filter to only ui:* type components if type info is available
   const uiComponents = components.filter(
-    (c) => !c.type || c.type === "registry:ui",
+    (component) => !component.type || component.type === "registry:ui",
   );
 
-  const choices = uiComponents.map((c) => ({
-    title: c.name,
-    value: c.name,
+  const choices = uiComponents.map((component) => ({
+    title: component.name,
+    value: component.name,
   }));
 
   const { selected } = await prompts({
@@ -322,7 +296,6 @@ async function promptForComponents(
     instructions: false,
   });
 
-  // User cancelled (Ctrl+C)
   if (!selected) {
     return null;
   }
@@ -330,16 +303,11 @@ async function promptForComponents(
   return selected;
 }
 
-/** Parse shadcn output to extract file lists (stdout has paths, stderr has headers) */
 function parseShadcnOutput(stdout: string, stderr: string): ParsedOutput {
   const result: ParsedOutput = { created: [], updated: [], skipped: [] };
-
-  // Remove ANSI escape codes for parsing
   const cleanStderr = stderr.replace(/\x1b\[[0-9;]*m/g, "");
   const cleanStdout = stdout.replace(/\x1b\[[0-9;]*m/g, "");
 
-  // Extract counts from stderr headers
-  // Matches patterns like "✔ Created 4 files:" or "ℹ Skipped 2 files:"
   const createdMatch = cleanStderr.match(/Created\s+(\d+)\s+file/i);
   const updatedMatch = cleanStderr.match(/Updated\s+(\d+)\s+file/i);
   const skippedMatch = cleanStderr.match(/Skipped\s+(\d+)\s+file/i);
@@ -348,7 +316,6 @@ function parseShadcnOutput(stdout: string, stderr: string): ParsedOutput {
   const updatedCount = updatedMatch ? parseInt(updatedMatch[1], 10) : 0;
   const skippedCount = skippedMatch ? parseInt(skippedMatch[1], 10) : 0;
 
-  // Extract file paths from stdout (lines starting with "  - ")
   const allPaths: string[] = [];
   for (const line of cleanStdout.split("\n")) {
     const match = line.match(/^\s+-\s+(.+)$/);
@@ -357,86 +324,72 @@ function parseShadcnOutput(stdout: string, stderr: string): ParsedOutput {
     }
   }
 
-  // Also check stderr for file paths (some shadcn versions output there)
   for (const line of cleanStderr.split("\n")) {
     const match = line.match(/^\s+-\s+(.+)$/);
     if (match) {
       const filePath = match[1].trim();
-      // Avoid duplicates
       if (!allPaths.includes(filePath)) {
         allPaths.push(filePath);
       }
     }
   }
 
-  // Assign paths to sections based on counts (order: created, updated, skipped)
-  let idx = 0;
-  for (let i = 0; i < createdCount && idx < allPaths.length; i++) {
-    result.created.push(allPaths[idx++]);
+  let index = 0;
+  for (
+    let count = 0;
+    count < createdCount && index < allPaths.length;
+    count += 1
+  ) {
+    result.created.push(allPaths[index]);
+    index += 1;
   }
-  for (let i = 0; i < updatedCount && idx < allPaths.length; i++) {
-    result.updated.push(allPaths[idx++]);
+  for (
+    let count = 0;
+    count < updatedCount && index < allPaths.length;
+    count += 1
+  ) {
+    result.updated.push(allPaths[index]);
+    index += 1;
   }
-  for (let i = 0; i < skippedCount && idx < allPaths.length; i++) {
-    result.skipped.push(allPaths[idx++]);
+  for (
+    let count = 0;
+    count < skippedCount && index < allPaths.length;
+    count += 1
+  ) {
+    result.skipped.push(allPaths[index]);
+    index += 1;
   }
 
   return result;
 }
 
 async function addComponents(
+  cwd: string,
   packages: string[],
   forwardedOptions: string[],
   isVerbose: boolean,
   isSilent: boolean,
   inspectionMode: boolean,
 ): Promise<ParsedOutput> {
-  const runner = await getPackageRunner(process.cwd());
   const env = {
     ...process.env,
     REGISTRY_URL: resolveRegistryUrl(),
   };
-  // Always pass --yes for non-interactive mode (skips "Add components?" confirmation)
-  // Note: we don't pass --overwrite by default to respect user customizations
-  const autoFlags: string[] = [];
-  if (!forwardedOptions.includes("--yes")) {
-    autoFlags.push("--yes");
-  }
-  const baseArgs = [
-    "shadcn@latest",
-    "add",
-    ...packages,
-    ...autoFlags,
-    ...forwardedOptions,
-  ];
-
-  let cmd = "npx";
-  let args: string[] = ["-y", ...baseArgs];
-  if (runner === "bunx") {
-    cmd = "bunx";
-    args = baseArgs;
-  } else if (runner === "pnpm dlx") {
-    cmd = "pnpm";
-    args = ["dlx", ...baseArgs];
-  } else if (runner === "npx") {
-    cmd = "npx";
-    args = ["-y", ...baseArgs];
-  }
+  const shadcnArgs = buildShadcnAddArgs(packages, forwardedOptions);
+  const invocation = buildPinnedShadcnInvocation(shadcnArgs);
 
   if (isVerbose) {
-    logger.info(`[bejamas-ui] ${cmd} ${args.join(" ")}`);
+    logger.info(`[bejamas-ui] ${invocation.cmd} ${invocation.args.join(" ")}`);
   }
 
-  // Show our own spinner for checking registry
   const registrySpinner = spinner("Checking registry.", { silent: isSilent });
   registrySpinner.start();
 
   try {
-    // Run shadcn and capture output
-    // Pipe "n" to stdin to answer "no" to any overwrite prompts (respects user customizations)
-    const result = await execa(cmd, args, {
+    const result = await execa(invocation.cmd, invocation.args, {
+      cwd,
       env,
-      input: "n\nn\nn\nn\nn\nn\nn\nn\nn\nn\n", // Answer "no" to up to 10 overwrite prompts
+      input: "n\nn\nn\nn\nn\nn\nn\nn\nn\nn\n",
       stdout: "pipe",
       stderr: "pipe",
       reject: false,
@@ -444,13 +397,11 @@ async function addComponents(
 
     registrySpinner.succeed();
 
-    // Show installing spinner (already done at this point)
     const installSpinner = spinner("Installing components.", {
       silent: isSilent,
     });
     installSpinner.succeed();
 
-    // Parse the output to get file lists (stdout has paths, stderr has headers)
     const stdout = result.stdout || "";
     const stderr = result.stderr || "";
 
@@ -472,11 +423,7 @@ async function addComponents(
       ? { created: [], updated: [], skipped: [] }
       : parseShadcnOutput(stdout, stderr);
 
-    // Return parsed data - display is handled by caller after reorganization
-    // This allows accurate reporting (shadcn says "created" but we may skip)
-
     if (result.exitCode !== 0) {
-      // Show any error output
       if (result.stderr) {
         logger.error(result.stderr);
       }
@@ -484,16 +431,28 @@ async function addComponents(
     }
 
     return parsed;
-  } catch (err) {
+  } catch {
     registrySpinner.fail();
     logger.error("Failed to add components");
     process.exit(1);
   }
 }
 
+export function buildShadcnAddArgs(
+  packages: string[],
+  forwardedOptions: string[],
+) {
+  const autoFlags: string[] = [];
+  if (!forwardedOptions.includes("--yes")) {
+    autoFlags.push("--yes");
+  }
+
+  return ["add", ...packages, ...autoFlags, ...forwardedOptions];
+}
+
 export const add = new Command()
   .name("add")
-  .description("Add components via shadcn@latest using registry URLs")
+  .description("Add components via the Bejamas-managed shadcn registry flow")
   .argument("[components...]", "Component package names to add")
   .option("-y, --yes", "skip confirmation prompt.", false)
   .option("-o, --overwrite", "overwrite existing files.", false)
@@ -517,8 +476,6 @@ export const add = new Command()
     "--no-src-dir",
     "do not use the src directory when creating a new project.",
   )
-  // .option("--css-variables", "use css variables for theming.", true)
-  // .option("--no-css-variables", "do not use css variables for theming.")
   .action(async function action(packages: string[], _opts, cmd) {
     const root = cmd?.parent;
     const verbose = Boolean(root?.opts?.().verbose);
@@ -539,7 +496,6 @@ export const add = new Command()
     const isSilent = opts.silent || false;
     const registryUrl = resolveRegistryUrl();
 
-    // Handle --all flag: fetch all available components
     if (wantsAll && componentsToAdd.length === 0) {
       const fetchingSpinner = spinner("Fetching available components.", {
         silent: isSilent,
@@ -547,39 +503,32 @@ export const add = new Command()
       try {
         const allComponents = await fetchAvailableComponents(registryUrl);
         const uiComponents = allComponents.filter(
-          (c) => !c.type || c.type === "registry:ui",
+          (component) => !component.type || component.type === "registry:ui",
         );
-        componentsToAdd = uiComponents.map((c) => c.name);
+        componentsToAdd = uiComponents.map((component) => component.name);
         fetchingSpinner.succeed();
-      } catch (error) {
+      } catch {
         fetchingSpinner.fail();
         logger.error("Failed to fetch available components from registry.");
         process.exit(1);
       }
     }
 
-    // Interactive mode: prompt user to select components
     if (componentsToAdd.length === 0) {
       const selected = await promptForComponents(registryUrl);
       if (!selected || selected.length === 0) {
-        // User cancelled or no selection
         return;
       }
       componentsToAdd = selected;
     }
 
-    // Get config for resolved paths (needed for reorganization)
-    // In monorepos, we need to follow the alias chain to find the actual UI package config
     const config = await getConfig(cwd);
-
-    // Try to get workspace config (follows aliases to find package-specific configs)
     let uiDir = config?.resolvedPaths?.ui || "";
     let uiConfig = config;
 
     if (config) {
       const workspaceConfig = await getWorkspaceConfig(config);
       if (workspaceConfig?.ui) {
-        // Use the UI package's own config (e.g., packages/ui/components.json)
         uiConfig = workspaceConfig.ui;
         uiDir = uiConfig.resolvedPaths?.ui || uiDir;
       }
@@ -594,24 +543,19 @@ export const add = new Command()
     }
 
     const activeStyle = uiConfig?.style || config?.style || "bejamas-juno";
-
-    // Process components ONE AT A TIME to avoid index.ts conflicts
-    // When shadcn runs with multiple components, files with same name overwrite each other
     const totalComponents = componentsToAdd.length;
 
-    for (let i = 0; i < componentsToAdd.length; i++) {
-      const component = componentsToAdd[i];
+    for (let index = 0; index < componentsToAdd.length; index += 1) {
+      const component = componentsToAdd[index];
 
-      // Show component header when adding multiple
       if (totalComponents > 1 && !isSilent) {
         logger.break();
         logger.info(
-          highlighter.info(`[${i + 1}/${totalComponents}]`) +
+          highlighter.info(`[${index + 1}/${totalComponents}]`) +
             ` Adding ${highlighter.success(component)}...`,
         );
       }
 
-      // Build subfolder map for this single component
       const subfolderMapResult = inspectionMode
         ? {
             uniqueMap: new Map<string, string>(),
@@ -620,8 +564,8 @@ export const add = new Command()
           }
         : await buildSubfolderMap([component], uiDir, registryUrl, activeStyle);
 
-      // Run shadcn for just this component
       const parsed = await addComponents(
+        cwd,
         [component],
         forwardedOptions,
         verbose,
@@ -644,19 +588,13 @@ export const add = new Command()
           if (nextFont) {
             const currentFonts = await readManagedAstroFontsFromProject(cwd);
             const nextFonts = mergeManagedAstroFonts(currentFonts, nextFont);
-            await syncAstroFontsInProject(
-              cwd,
-              nextFonts,
-              nextFont.cssVariable,
-            );
+            await syncAstroFontsInProject(cwd, nextFonts, nextFont.cssVariable);
             await syncAstroManagedFontCss(cwd, nextFont.cssVariable);
             await cleanupAstroFontPackages(cwd);
           }
         }
       }
 
-      // Keep the compatibility reorganization only for workspace targets where
-      // upstream shadcn still flattens nested registry paths.
       let skippedCount = 0;
       if (
         !inspectionMode &&
@@ -673,11 +611,7 @@ export const add = new Command()
         skippedCount = reorgResult.skippedFiles.length;
       }
 
-      // Display accurate results (accounting for files we skipped after shadcn "created" them)
       if (!isSilent && !inspectionMode) {
-        const relativeUiDir = uiDir ? path.relative(cwd, uiDir) : "";
-
-        // Files that were actually created (shadcn created minus our skipped)
         const actuallyCreated = Math.max(
           0,
           parsed.created.length - skippedCount,
@@ -696,7 +630,6 @@ export const add = new Command()
           }
         }
 
-        // Updated files (globals.css etc)
         if (parsed.updated.length > 0) {
           const uniqueUpdated = Array.from(new Set(parsed.updated));
           const updatedPaths = rewritePaths(uniqueUpdated, subfolderMapResult);
@@ -708,14 +641,12 @@ export const add = new Command()
           }
         }
 
-        // Files skipped because they already exist in subfolder
         if (skippedCount > 0) {
           logger.info(
             `Skipped ${skippedCount} file${skippedCount > 1 ? "s" : ""}: (already exists)`,
           );
         }
 
-        // Files shadcn skipped (different from our reorganization skip)
         if (parsed.skipped.length > 0) {
           const skippedPaths = rewritePaths(parsed.skipped, subfolderMapResult);
           logger.info(
@@ -726,7 +657,6 @@ export const add = new Command()
           }
         }
 
-        // Nothing happened
         if (
           actuallyCreated === 0 &&
           parsed.updated.length === 0 &&
@@ -738,7 +668,6 @@ export const add = new Command()
       }
     }
 
-    // Fix aliases inside Astro files until upstream adds .astro support.
     if (!inspectionMode) {
       await fixAstroImports(cwd, verbose);
     }

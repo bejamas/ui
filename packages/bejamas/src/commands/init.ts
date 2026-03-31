@@ -1,34 +1,5 @@
-import { promises as fs } from "fs";
-import path from "path";
-import { preFlightInit } from "@/src/preflights/preflight-init";
-import { applyDesignSystemToProject } from "@/src/utils/apply-design-system";
-import {
-  syncAstroManagedFontCss,
-  syncManagedTailwindCss,
-} from "@/src/utils/apply-design-system";
-import { fixAstroImports } from "@/src/utils/astro-imports";
-
-import { BASE_COLORS, BUILTIN_REGISTRIES } from "@/src/registry/constants";
-import { clearRegistryContext } from "@/src/registry/context";
-
-import { TEMPLATES, createProject } from "@/src/utils/create-project";
-import * as ERRORS from "@/src/utils/errors";
-import { getConfig, createConfig, type Config } from "@/src/utils/get-config";
-import { getProjectInfo } from "@/src/utils/get-project-info";
-import { handleError } from "@/src/utils/handle-error";
-import { highlighter } from "@/src/utils/highlighter";
-import { getInstalledUiComponents } from "@/src/utils/installed-ui-components";
-import { logger } from "@/src/utils/logger";
-import { reorganizeComponents } from "@/src/utils/reorganize-components";
-import {
-  cleanupAstroFontPackages,
-  syncAstroFontsInProject,
-  toManagedAstroFont,
-} from "@/src/utils/astro-fonts";
-import { buildUiUrl, resolveRegistryUrl } from "@/src/utils/ui-base-url";
-import { runShadcnCommand } from "@/src/utils/shadcn-command";
+import path from "node:path";
 import { Command } from "commander";
-import fsExtra from "fs-extra";
 import { z } from "zod";
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
@@ -42,17 +13,30 @@ import {
 } from "@bejamas/create-config/server";
 import type { RegistryItem } from "shadcn/schema";
 
-// process.on("exit", (code) => {
-//   const filePath = path.resolve(process.cwd(), "components.json")
-
-//   // Delete backup if successful.
-//   if (code === 0) {
-//     return deleteFileBackup(filePath)
-//   }
-
-//   // Restore backup if error.
-//   return restoreFileBackup(filePath)
-// })
+import { BASE_COLORS } from "@/src/registry/constants";
+import { clearRegistryContext } from "@/src/registry/context";
+import { preFlightInit } from "@/src/preflights/preflight-init";
+import {
+  applyDesignSystemToProject,
+  syncAstroManagedFontCss,
+  syncManagedTailwindCss,
+} from "@/src/utils/apply-design-system";
+import {
+  cleanupAstroFontPackages,
+  syncAstroFontsInProject,
+  toManagedAstroFont,
+} from "@/src/utils/astro-fonts";
+import { fixAstroImports } from "@/src/utils/astro-imports";
+import { TEMPLATES, createProject } from "@/src/utils/create-project";
+import * as ERRORS from "@/src/utils/errors";
+import { getConfig } from "@/src/utils/get-config";
+import { handleError } from "@/src/utils/handle-error";
+import { highlighter } from "@/src/utils/highlighter";
+import { getInstalledUiComponents } from "@/src/utils/installed-ui-components";
+import { logger } from "@/src/utils/logger";
+import { reorganizeComponents } from "@/src/utils/reorganize-components";
+import { runShadcnCommand } from "@/src/utils/shadcn-command";
+import { buildUiUrl, resolveRegistryUrl } from "@/src/utils/ui-base-url";
 
 export function resolveDesignSystemConfig(
   options: Pick<
@@ -201,7 +185,16 @@ export function ensureShadcnReinstallFlag(
     return forwardedOptions;
   }
 
-  return [...forwardedOptions, "--reinstall"];
+  const passthroughIndex = forwardedOptions.indexOf("--");
+  if (passthroughIndex === -1) {
+    return [...forwardedOptions, "--reinstall"];
+  }
+
+  return [
+    ...forwardedOptions.slice(0, passthroughIndex),
+    "--reinstall",
+    ...forwardedOptions.slice(passthroughIndex),
+  ];
 }
 
 export function extractOptionsForShadcnInit(
@@ -288,7 +281,7 @@ export const init = new Command()
   .argument("[components...]", "names, url or local path to component")
   .option(
     "-t, --template <template>",
-    "the template to use. (next, next-monorepo)",
+    "the template to use. (astro, astro-monorepo, astro-with-component-docs-monorepo)",
   )
   .option(
     "-b, --base-color <base-color>",
@@ -298,7 +291,7 @@ export const init = new Command()
   .option("-p, --preset <preset>", "the encoded create preset to use")
   .option("--theme-ref <theme-ref>", "the custom theme ref to use")
   .option("-y, --yes", "skip confirmation prompt.", false)
-  .option("-d, --defaults,", "use default configuration.", false)
+  .option("-d, --defaults", "use default configuration.", false)
   .option("-f, --force", "force overwrite of existing configuration.", false)
   .option(
     "-c, --cwd <cwd>",
@@ -352,8 +345,8 @@ export async function runInit(
   },
 ) {
   const designConfig = resolveDesignSystemConfig(options);
-  let projectInfo;
   let newProjectTemplate;
+
   if (!options.skipPreflight) {
     const preflight = await preFlightInit(options);
 
@@ -366,9 +359,6 @@ export async function runInit(
       options.isNewProject = true;
       newProjectTemplate = template;
     }
-    projectInfo = preflight.projectInfo;
-  } else {
-    projectInfo = await getProjectInfo(options.cwd);
   }
 
   if (newProjectTemplate) {
@@ -423,14 +413,10 @@ export async function runInit(
       options.forwardedOptions ?? [],
       shouldReinstall,
     );
+
     await runShadcnCommand({
       cwd: options.cwd,
-      args: [
-        "init",
-        initUrl,
-        ...reinstallComponents,
-        ...forwardedOptions,
-      ],
+      args: ["init", initUrl, ...reinstallComponents, ...forwardedOptions],
       env,
     });
 
@@ -474,7 +460,7 @@ export async function runInit(
 
       await fixAstroImports(options.cwd, false);
     }
-  } catch (err) {
+  } catch {
     // shadcn already printed the detailed error to stdio, avoid double-reporting
     process.exit(1);
   }

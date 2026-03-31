@@ -237,6 +237,14 @@ describe("init RTL language support", () => {
     ).toEqual(["--yes", "--no-reinstall"]);
   });
 
+  test("inserts --reinstall before passthrough args", () => {
+    expect(ensureShadcnReinstallFlag(["--", "--debug"], true)).toEqual([
+      "--reinstall",
+      "--",
+      "--debug",
+    ]);
+  });
+
   test("preserves passthrough init flags after --", () => {
     const cmd = createInitLikeCommand();
     cmd.parse(["node", "bejamas", "init", "--", "--debug"]);

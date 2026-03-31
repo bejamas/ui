@@ -1,82 +1,46 @@
 import { describe, expect, test } from "bun:test";
-import path from "node:path";
 import {
-  extractPassthroughArgs,
-  getLocalShadcnBinaryPath,
-  resolveShadcnInvocation,
-} from "../src/utils/shadcn-command";
+  buildPinnedShadcnInvocation,
+  PINNED_SHADCN_PACKAGE,
+  PINNED_SHADCN_VERSION,
+} from "../src/utils/shadcn-cli";
+import { extractPassthroughArgs } from "../src/utils/shadcn-command";
 
-describe("shadcn command runner", () => {
-  test("prefers a local shadcn binary when available", () => {
-    const cwd = "/repo/app";
-    const localBinaryPath = getLocalShadcnBinaryPath(cwd, "linux");
-
-    const invocation = resolveShadcnInvocation({
-      cwd,
-      runner: "bunx",
-      hasLocalBinary: true,
-      localBinaryPath,
-    });
+describe("pinned shadcn invocation", () => {
+  test("uses the bundled shadcn entrypoint when available", () => {
+    const bundledEntrypoint = "/repo/node_modules/shadcn/dist/index.js";
+    const invocation = buildPinnedShadcnInvocation(
+      ["add", "button"],
+      bundledEntrypoint,
+    );
 
     expect(invocation).toEqual({
-      command: localBinaryPath,
-      argsPrefix: [],
+      cmd: process.execPath,
+      args: [bundledEntrypoint, "add", "button"],
+      source: "bundled",
     });
   });
 
-  test("falls back to the detected package runner", () => {
-    expect(
-      resolveShadcnInvocation({
-        cwd: "/repo/app",
-        runner: "bunx",
-        hasLocalBinary: false,
-      }),
-    ).toEqual({
-      command: "bunx",
-      argsPrefix: ["shadcn@latest"],
-    });
-
-    expect(
-      resolveShadcnInvocation({
-        cwd: "/repo/app",
-        runner: "pnpm dlx",
-        hasLocalBinary: false,
-      }),
-    ).toEqual({
-      command: "pnpm",
-      argsPrefix: ["dlx", "shadcn@latest"],
-    });
-
-    expect(
-      resolveShadcnInvocation({
-        cwd: "/repo/app",
-        runner: "npx",
-        hasLocalBinary: false,
-      }),
-    ).toEqual({
-      command: "npx",
-      argsPrefix: ["-y", "shadcn@latest"],
+  test("falls back to exact shadcn@4.1.1 when no bundled entrypoint is available", () => {
+    expect(PINNED_SHADCN_VERSION).toBe("4.1.1");
+    expect(buildPinnedShadcnInvocation(["info"], null)).toEqual({
+      cmd: "npx",
+      args: ["-y", PINNED_SHADCN_PACKAGE, "info"],
+      source: "fallback",
     });
   });
+});
 
+describe("shadcn command runner", () => {
   test("extracts passthrough args after -- for wrapped subcommands", () => {
-    expect(extractPassthroughArgs(["docs", "button", "--", "--json"], "docs")).toEqual([
-      "--json",
-    ]);
+    expect(
+      extractPassthroughArgs(["docs", "button", "--", "--json"], "docs"),
+    ).toEqual(["--json"]);
 
     expect(extractPassthroughArgs(["info", "--", "--json"], "info")).toEqual([
       "--json",
     ]);
 
     expect(extractPassthroughArgs(["docs", "button"], "docs")).toEqual([]);
-  });
-
-  test("uses platform-specific local binary names", () => {
-    expect(getLocalShadcnBinaryPath("/repo/app", "linux")).toBe(
-      path.resolve("/repo/app", "node_modules", ".bin", "shadcn"),
-    );
-    expect(getLocalShadcnBinaryPath("/repo/app", "win32")).toBe(
-      path.resolve("/repo/app", "node_modules", ".bin", "shadcn.cmd"),
-    );
   });
 });

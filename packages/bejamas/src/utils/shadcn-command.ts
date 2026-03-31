@@ -1,58 +1,7 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import { execa } from "execa";
-import { getPackageRunner } from "@/src/utils/get-package-manager";
+import { buildPinnedShadcnInvocation } from "@/src/utils/shadcn-cli";
 
-export function getLocalShadcnBinaryPath(
-  cwd: string,
-  platform: NodeJS.Platform = process.platform,
-) {
-  const shadcnBin = platform === "win32" ? "shadcn.cmd" : "shadcn";
-  return path.resolve(cwd, "node_modules", ".bin", shadcnBin);
-}
-
-export function resolveShadcnInvocation({
-  cwd,
-  runner,
-  hasLocalBinary,
-  localBinaryPath = getLocalShadcnBinaryPath(cwd),
-}: {
-  cwd: string;
-  runner: "bunx" | "pnpm dlx" | "npx";
-  hasLocalBinary: boolean;
-  localBinaryPath?: string;
-}) {
-  if (hasLocalBinary) {
-    return {
-      command: localBinaryPath,
-      argsPrefix: [] as string[],
-    };
-  }
-
-  if (runner === "bunx") {
-    return {
-      command: "bunx",
-      argsPrefix: ["shadcn@latest"],
-    };
-  }
-
-  if (runner === "pnpm dlx") {
-    return {
-      command: "pnpm",
-      argsPrefix: ["dlx", "shadcn@latest"],
-    };
-  }
-
-  return {
-    command: "npx",
-    argsPrefix: ["-y", "shadcn@latest"],
-  };
-}
-
-export function extractPassthroughArgs(
-  rawArgv: string[],
-  commandName: string,
-) {
+export function extractPassthroughArgs(rawArgv: string[], commandName: string) {
   const commandIndex = rawArgv.findIndex((arg) => arg === commandName);
   if (commandIndex === -1) {
     return [];
@@ -77,23 +26,9 @@ export async function runShadcnCommand({
   args: string[];
   env?: NodeJS.ProcessEnv;
 }) {
-  const runner = await getPackageRunner(cwd);
-  const localBinaryPath = getLocalShadcnBinaryPath(cwd);
-  let hasLocalBinary = false;
+  const invocation = buildPinnedShadcnInvocation(args);
 
-  try {
-    await fs.access(localBinaryPath);
-    hasLocalBinary = true;
-  } catch {}
-
-  const invocation = resolveShadcnInvocation({
-    cwd,
-    runner,
-    hasLocalBinary,
-    localBinaryPath,
-  });
-
-  await execa(invocation.command, [...invocation.argsPrefix, ...args], {
+  await execa(invocation.cmd, invocation.args, {
     cwd,
     env: {
       ...process.env,
