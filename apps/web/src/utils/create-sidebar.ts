@@ -67,6 +67,7 @@ export type CreatePickerOption = {
   color?: string;
   family?: string;
   markerValue?: string;
+  disabled?: boolean;
 };
 
 export type CreatePickerGroup = {
@@ -196,7 +197,7 @@ export function getFontValuesForGroup(group: CreateFontGroup) {
 
 export function getCreatePickerOptions(
   config: Pick<DesignSystemConfig, "baseColor" | "style"> &
-    Partial<Pick<DesignSystemConfig, "font">>,
+    Partial<Pick<DesignSystemConfig, "font" | "menuColor">>,
 ) {
   const effectiveRadius = resolveEffectiveRadius(config.style, "default");
   const currentBodyFont =
@@ -262,7 +263,14 @@ export function getCreatePickerOptions(
         : option,
     ),
     menuColor: [...MENU_COLOR_OPTIONS],
-    menuAccent: [...MENU_ACCENT_OPTIONS],
+    menuAccent: MENU_ACCENT_OPTIONS.map((option) => ({
+      ...option,
+      disabled:
+        option.value === "bold" &&
+        isTranslucentMenuColor(
+          config.menuColor ?? DEFAULT_DESIGN_SYSTEM_CONFIG.menuColor,
+        ),
+    })),
     template: TEMPLATE_VALUES.map((template) => {
       const option = TEMPLATE_OPTIONS.find((item) => item.value === template);
       return {
@@ -286,7 +294,7 @@ export function getCreatePickerOptions(
 export function getCreatePickerOptionsByName(
   name: CreatePickerName,
   config: Pick<DesignSystemConfig, "baseColor" | "style"> &
-    Partial<Pick<DesignSystemConfig, "font">>,
+    Partial<Pick<DesignSystemConfig, "font" | "menuColor">>,
 ) {
   return getCreatePickerOptions(config)[name];
 }

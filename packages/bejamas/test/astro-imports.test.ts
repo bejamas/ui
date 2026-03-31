@@ -178,11 +178,12 @@ test("rewrites menu placeholders for translucent menu output", () => {
     menuColor: "default-translucent",
   });
 
-  const raw = `<div class="cn-dropdown-menu-content cn-menu-target rounded-lg shadow-md"></div>`;
+  const raw = `<div class="cn-dropdown-menu-content cn-menu-target cn-menu-translucent rounded-lg shadow-md"></div>`;
 
   const result = rewriteAstroImports(raw, config);
 
   expect(result).not.toContain("cn-menu-target");
+  expect(result).not.toContain("cn-menu-translucent");
   expect(result).toContain("bg-popover/70");
   expect(result).toContain("before:backdrop-blur-2xl");
   expect(result).toContain('class="cn-dropdown-menu-content');
@@ -193,11 +194,12 @@ test("rewrites menu placeholders for inverted translucent menu output", () => {
     menuColor: "inverted-translucent",
   });
 
-  const raw = `<div class="cn-dropdown-menu-content cn-menu-target rounded-lg shadow-md"></div>`;
+  const raw = `<div class="cn-dropdown-menu-content cn-menu-target cn-menu-translucent rounded-lg shadow-md"></div>`;
 
   const result = rewriteAstroImports(raw, config);
 
   expect(result).toContain("dark");
   expect(result).toContain("bg-popover/70");
   expect(result).not.toContain("cn-menu-target");
+  expect(result).not.toContain("cn-menu-translucent");
 });

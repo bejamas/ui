@@ -3,8 +3,6 @@ import {
   catalogs,
   getDocumentDirection,
   getDocumentLanguage,
-  isInvertedMenuColor,
-  isTranslucentMenuColor,
 } from "@bejamas/create-config/browser";
 import { syncSemanticIconsInRoot } from "@bejamas/semantic-icons/browser";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
@@ -12,6 +10,7 @@ import { resolveCreateBootstrapState } from "@/utils/create-bootstrap";
 import { getCreatePreviewCopy } from "@/utils/create-preview-i18n";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
 import { type ThemeOverrides } from "@/utils/themes/create-theme";
+import { syncMenuSurfaceElements } from "@/utils/themes/menu-color-state";
 import type {
   CreateConfig,
   PreviewMessage,
@@ -146,17 +145,12 @@ export default class extends Controller<HTMLElement> {
     this.setLocalizedText(copy);
     this.setLocalizedPlaceholders(copy);
 
-    document
-      .querySelectorAll<HTMLElement>(
-        "[data-create-menu-preview], .cn-menu-target",
-      )
-      .forEach((node) => {
-        node.classList.toggle("dark", isInvertedMenuColor(config.menuColor));
-        node.classList.toggle(
-          "cn-menu-translucent",
-          isTranslucentMenuColor(config.menuColor),
-        );
-      });
+    syncMenuSurfaceElements(
+      document.querySelectorAll<HTMLElement>(
+        "[data-create-menu-preview], .cn-menu-target, [data-menu-translucent]",
+      ),
+      config.menuColor,
+    );
 
     this.showPreviewSurface();
     this.clearPendingState();

@@ -50,8 +50,11 @@ describe("create picker runtime", () => {
       'application.register("create-picker", CreatePickerController);',
     );
     expect(controllerSource).toContain('this.dispatch("change"');
+    expect(controllerSource).toContain('this.getItem(value)?.hasAttribute("data-disabled")');
     expect(controllerSource).toContain('new CustomEvent("dropdown-menu:set"');
     expect(controllerSource).toContain("source: \"restore\"");
+    expect(controllerSource).toContain("this.syncItemDisabledStates(state.config);");
+    expect(controllerSource).toContain('item.toggleAttribute("data-disabled", disabled);');
     expect(controllerSource).toContain('[data-create-picker-content="${this.nameValue}"]');
     expect(controllerSource).not.toContain('querySelectorAll<HTMLElement>(');
     expect(controllerSource).not.toContain("data-selected");

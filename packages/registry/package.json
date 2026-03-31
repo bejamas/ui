@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:web-registry": "bun run ./scripts/build-web-style-registry.ts"
+    "build:web-registry": "bun run ./scripts/build-web-style-registry.ts",
+    "refresh:shadcn-cn-audit": "bun run ./scripts/refresh-shadcn-cn-audit.ts"
   },
   "dependencies": {
     "@bejamas/semantic-icons": "workspace:*",

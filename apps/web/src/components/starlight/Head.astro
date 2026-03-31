@@ -1,13 +1,16 @@
 ---
 import { buildCreateDocsRootPrepaintScript } from "@/utils/create-docs-shell";
+import { buildMenuColorRootBootstrapScript } from "@/utils/themes/menu-color-state";
 
 const { head } = Astro.locals.starlightRoute;
 const createDocsRootPrepaintScript =
   Astro.url.pathname === "/create"
     ? buildCreateDocsRootPrepaintScript()
     : null;
+const menuColorRootBootstrapScript = buildMenuColorRootBootstrapScript();
 ---
 
+<script is:inline set:html={menuColorRootBootstrapScript} />
 {
   createDocsRootPrepaintScript && (
     <script is:inline set:html={createDocsRootPrepaintScript} />

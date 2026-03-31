@@ -30,6 +30,7 @@ describe("create lock controls", () => {
     expect(source).toContain("<CreateFontGroupLockButton");
     expect(source).toContain("disabled?: boolean");
     expect(source).toContain("disabled={disabled}");
+    expect(source).toContain("disabled={option.disabled}");
     expect(source).toContain('group/picker relative');
     expect(lockButtonSource).toContain("data-create-lock-param");
     expect(lockButtonSource).toContain('data-action="click->create-sidebar#toggleLock"');

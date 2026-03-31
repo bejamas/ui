@@ -158,10 +158,15 @@ export function isStyleOptionLocked(
 export function normalizeDesignSystemConfig(config: DesignSystemConfig) {
   const normalizedFontHeading =
     config.fontHeading === config.font ? "inherit" : config.fontHeading;
+  const normalizedMenuAccent =
+    config.menuAccent === "bold" && isTranslucentMenuColor(config.menuColor)
+      ? "subtle"
+      : config.menuAccent;
 
   return {
     ...config,
     fontHeading: normalizedFontHeading,
+    menuAccent: normalizedMenuAccent,
     ...getStyleLockedConfig(config.style),
   };
 }

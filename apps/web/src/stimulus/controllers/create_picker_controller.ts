@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import {
   CREATE_PICKER_MARKERS,
+  getCreatePickerOptionsByName,
   getCreatePickerSelectedOption,
   hasCreateLockableParam,
   isCreateFontGroup,
@@ -39,6 +40,10 @@ export default class extends Controller<HTMLElement> {
       return;
     }
 
+    if (this.getItem(value)?.hasAttribute("data-disabled")) {
+      return;
+    }
+
     this.dispatch("change", {
       detail: {
         name: this.nameValue,
@@ -58,6 +63,7 @@ export default class extends Controller<HTMLElement> {
 
     this.syncRadiusDefaultItem(state.config);
     this.syncFontHeadingInheritItem(state.config);
+    this.syncItemDisabledStates(state.config);
     this.syncDropdownValue(value);
     this.syncTriggerValue(value, selectedOption);
     this.syncLockButton(disabled, state);
@@ -157,6 +163,28 @@ export default class extends Controller<HTMLElement> {
         inheritOption,
       );
     }
+  }
+
+  private syncItemDisabledStates(config: CreateConfig) {
+    const options = getCreatePickerOptionsByName(this.nameValue, config);
+
+    options.forEach((option) => {
+      const item = this.getItem(option.value);
+      if (!item) {
+        return;
+      }
+
+      const disabled = Boolean(option.disabled);
+      item.toggleAttribute("data-disabled", disabled);
+      item.setAttribute("tabindex", disabled ? "-1" : "0");
+
+      if (disabled) {
+        item.setAttribute("aria-disabled", "true");
+        return;
+      }
+
+      item.removeAttribute("aria-disabled");
+    });
   }
 
   private get dropdownMenuRoot() {

@@ -97,7 +97,12 @@ describe("create preview base layer", () => {
     expect(iconGrid).toContain('"settings"');
     expect(iconGrid).not.toContain("IconPlaceholder");
     expect(previewController).toContain("[data-create-style-font-summary]");
+    expect(previewController).toContain("syncMenuSurfaceElements(");
+    expect(previewController).toContain(
+      "[data-create-menu-preview], .cn-menu-target, [data-menu-translucent]",
+    );
     expect(previewController).toContain('].join(" - ")');
+    expect(previewController).not.toContain('node.classList.toggle("dark"');
   });
 
   it("keeps button visuals in the style layer", () => {

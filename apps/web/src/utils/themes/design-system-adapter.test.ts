@@ -120,6 +120,7 @@ describe("resolveDesignSystemTheme", () => {
     expect(css).toContain("--font-sans:");
     expect(css).toContain("--font-heading:");
     expect(css).toContain(".cn-menu-target.dark");
+    expect(css).not.toContain("html[data-menu-inverted] .cn-menu-target");
     expect(css).toContain("oklch(");
     expect(css).not.toContain("hsl(");
   });

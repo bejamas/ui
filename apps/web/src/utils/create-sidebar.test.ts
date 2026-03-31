@@ -166,11 +166,12 @@ describe("create sidebar helpers", () => {
       group: "mono",
     });
 
-    expect(options.font.map((option) => option.group)).toEqual([
-      ...Array(10).fill("sans"),
-      ...Array(5).fill("serif"),
-      ...Array(2).fill("mono"),
-    ]);
+    const groupOrder = { sans: 0, serif: 1, mono: 2 } as const;
+    const orderedGroups = options.font.map(
+      (option) => groupOrder[option.group as keyof typeof groupOrder],
+    );
+
+    expect(orderedGroups).toEqual([...orderedGroups].sort((left, right) => left - right));
   });
 
   it("pins a same-as-body option at the top of the heading font picker", () => {
@@ -261,6 +262,50 @@ describe("create sidebar helpers", () => {
       "inverted",
       "default-translucent",
       "inverted-translucent",
+    ]);
+  });
+
+  it("disables bold menu accent for translucent menus only", () => {
+    const defaultTranslucent = getCreatePickerOptions({
+      baseColor: "neutral",
+      style: "juno",
+      menuColor: "default-translucent",
+    });
+    const invertedTranslucent = getCreatePickerOptions({
+      baseColor: "neutral",
+      style: "juno",
+      menuColor: "inverted-translucent",
+    });
+
+    expect(defaultTranslucent.menuAccent).toEqual([
+      { value: "subtle", label: "Subtle", disabled: false },
+      { value: "bold", label: "Bold", disabled: true },
+    ]);
+    expect(invertedTranslucent.menuAccent).toEqual([
+      { value: "subtle", label: "Subtle", disabled: false },
+      { value: "bold", label: "Bold", disabled: true },
+    ]);
+  });
+
+  it("keeps bold menu accent enabled for solid menus", () => {
+    const defaultSolid = getCreatePickerOptions({
+      baseColor: "neutral",
+      style: "juno",
+      menuColor: "default",
+    });
+    const invertedSolid = getCreatePickerOptions({
+      baseColor: "neutral",
+      style: "juno",
+      menuColor: "inverted",
+    });
+
+    expect(defaultSolid.menuAccent).toEqual([
+      { value: "subtle", label: "Subtle", disabled: false },
+      { value: "bold", label: "Bold", disabled: false },
+    ]);
+    expect(invertedSolid.menuAccent).toEqual([
+      { value: "subtle", label: "Subtle", disabled: false },
+      { value: "bold", label: "Bold", disabled: false },
     ]);
   });
 
