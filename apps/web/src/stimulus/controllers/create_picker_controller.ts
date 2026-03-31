@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import {
   CREATE_PICKER_MARKERS,
+  decomposeMenuColor,
   getCreatePickerOptionsByName,
   getCreatePickerSelectedOption,
   hasCreateLockableParam,
@@ -71,6 +72,17 @@ export default class extends Controller<HTMLElement> {
   }
 
   private syncDropdownValue(value: string) {
+    if (this.nameValue === "menuColor") {
+      const { color, appearance } = decomposeMenuColor(value);
+      this.dropdownMenuRoot?.dispatchEvent(
+        new CustomEvent("dropdown-menu:set", {
+          detail: { value: color, source: "restore" },
+        }),
+      );
+      this.syncMenuColorAppearance(appearance);
+      return;
+    }
+
     this.dropdownMenuRoot?.dispatchEvent(
       new CustomEvent("dropdown-menu:set", {
         detail: {
@@ -79,6 +91,27 @@ export default class extends Controller<HTMLElement> {
         },
       }),
     );
+  }
+
+  private syncMenuColorAppearance(appearance: string) {
+    const content = this.getPickerContent();
+    if (!content) {
+      return;
+    }
+
+    for (const val of ["solid", "translucent"]) {
+      const item = content.querySelector(
+        `[data-value="${val}"]`,
+      ) as HTMLElement | null;
+      if (!item) {
+        continue;
+      }
+      if (val === appearance) {
+        item.dataset.checked = "";
+      } else {
+        delete item.dataset.checked;
+      }
+    }
   }
 
   private syncTriggerValue(

@@ -86,6 +86,8 @@ export const CREATE_PICKER_GROUP_LABELS = {
   sans: "Sans Serif",
   serif: "Serif",
   mono: "Monospace",
+  color: "Color",
+  appearance: "Appearance",
 } as const;
 
 const RADIUS_OPTIONS = [
@@ -102,6 +104,42 @@ const MENU_COLOR_OPTIONS = [
   { value: "default-translucent", label: "Default Translucent" },
   { value: "inverted-translucent", label: "Inverted Translucent" },
 ] as const satisfies readonly CreatePickerOption[];
+
+const MENU_COLOR_PICKER_OPTIONS: readonly CreatePickerOption[] = [
+  { value: "default", label: "Default", group: "color" },
+  { value: "inverted", label: "Inverted", group: "color" },
+  { value: "solid", label: "Solid", group: "appearance" },
+  { value: "translucent", label: "Translucent", group: "appearance" },
+];
+
+export function decomposeMenuColor(combined: string): {
+  color: string;
+  appearance: string;
+} {
+  return {
+    color: combined.startsWith("inverted") ? "inverted" : "default",
+    appearance: combined.includes("translucent") ? "translucent" : "solid",
+  };
+}
+
+export function resolveMenuColorVirtualValue(
+  virtualValue: string,
+  currentCombined: string,
+): string {
+  const { color, appearance } = decomposeMenuColor(currentCombined);
+  if (virtualValue === "default" || virtualValue === "inverted") {
+    return appearance === "translucent"
+      ? `${virtualValue}-translucent`
+      : virtualValue;
+  }
+  if (virtualValue === "solid") {
+    return color;
+  }
+  if (virtualValue === "translucent") {
+    return `${color}-translucent`;
+  }
+  return virtualValue;
+}
 
 const MENU_ACCENT_OPTIONS = [
   { value: "subtle", label: "Subtle" },
@@ -262,7 +300,7 @@ export function getCreatePickerOptions(
           }
         : option,
     ),
-    menuColor: [...MENU_COLOR_OPTIONS],
+    menuColor: [...MENU_COLOR_PICKER_OPTIONS],
     menuAccent: MENU_ACCENT_OPTIONS.map((option) => ({
       ...option,
       disabled:
@@ -312,6 +350,11 @@ export function getCreatePickerOption(
   config: Pick<DesignSystemConfig, "baseColor" | "style"> &
     Partial<Pick<DesignSystemConfig, "font">>,
 ) {
+  if (name === "menuColor") {
+    return (MENU_COLOR_OPTIONS as readonly CreatePickerOption[]).find(
+      (option) => option.value === value,
+    );
+  }
   return getCreatePickerOptionsByName(name, config).find(
     (option) => option.value === value,
   );

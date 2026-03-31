@@ -21,6 +21,7 @@ import {
   CREATE_PICKER_MARKERS,
   CREATE_PICKER_GROUP_LABELS,
   isCreateFontGroup,
+  decomposeMenuColor,
 } from "@/utils/create-sidebar";
 import CreateFontGroupLockButton from "./CreateFontGroupLockButton.astro";
 import CreateLockButton from "./CreateLockButton.astro";
@@ -53,8 +54,11 @@ const selectedOption =
   providedSelectedOption ??
   options.find((option) => option.value === value) ??
   options[0];
-const itemMarkerKind = CREATE_PICKER_MARKERS[name];
-const groupedPickerNames = new Set(["style", "font", "fontHeading"]);
+const pickersWithoutItemMarkers = new Set(["menuColor", "menuAccent", "iconLibrary"]);
+const itemMarkerKind = pickersWithoutItemMarkers.has(name)
+  ? undefined
+  : CREATE_PICKER_MARKERS[name];
+const groupedPickerNames = new Set(["style", "font", "fontHeading", "menuColor"]);
 const ungroupedOptions = groupedPickerNames.has(name)
   ? options.filter((option) => !option.group)
   : [];
@@ -84,7 +88,7 @@ function shouldRenderFontGroupLock(
   data-create-picker-marker-kind-value={markerKind}
 >
   <DropdownMenu
-    defaultValue={selectedOption?.value ?? value}
+    defaultValue={name === "menuColor" ? decomposeMenuColor(selectedOption?.value ?? value).color : (selectedOption?.value ?? value)}
     closeOnSelect={false}
     data-create-picker={name}
     class="block w-full"
@@ -178,17 +182,19 @@ function shouldRenderFontGroupLock(
                             </span>
                           )}
                         </span>
-                        <span class="ml-auto mr-6 flex shrink-0 items-center pt-0.5">
-                          <span data-create-picker-item-marker>
-                            <CreatePickerMarker
-                              kind={itemMarkerKind}
-                              value={option.markerValue ?? option.value}
-                              label={option.label}
-                              color={option.color}
-                              family={option.family}
-                            />
+                        {itemMarkerKind && (
+                          <span class="ml-auto mr-6 flex shrink-0 items-center pt-0.5">
+                            <span data-create-picker-item-marker>
+                              <CreatePickerMarker
+                                kind={itemMarkerKind}
+                                value={option.markerValue ?? option.value}
+                                label={option.label}
+                                color={option.color}
+                                family={option.family}
+                              />
+                            </span>
                           </span>
-                        </span>
+                        )}
                       </DropdownMenuRadioItem>
                     );
                   })}
@@ -229,17 +235,19 @@ function shouldRenderFontGroupLock(
                             </span>
                           )}
                         </span>
-                        <span class="ml-auto mr-6 flex shrink-0 items-center pt-0.5">
-                          <span data-create-picker-item-marker>
-                            <CreatePickerMarker
-                              kind={itemMarkerKind}
-                              value={option.markerValue ?? option.value}
-                              label={option.label}
-                              color={option.color}
-                              family={option.family}
-                            />
+                        {itemMarkerKind && (
+                          <span class="ml-auto mr-6 flex shrink-0 items-center pt-0.5">
+                            <span data-create-picker-item-marker>
+                              <CreatePickerMarker
+                                kind={itemMarkerKind}
+                                value={option.markerValue ?? option.value}
+                                label={option.label}
+                                color={option.color}
+                                family={option.family}
+                              />
+                            </span>
                           </span>
-                        </span>
+                        )}
                       </DropdownMenuRadioItem>
                     );
                   })}
@@ -260,17 +268,19 @@ function shouldRenderFontGroupLock(
                   <span class="truncate" data-create-picker-item-label>
                     {option.label}
                   </span>
-                  <span class="ml-auto mr-6 flex shrink-0 items-center">
-                    <span data-create-picker-item-marker>
-                      <CreatePickerMarker
-                        kind={itemMarkerKind}
-                        value={option.markerValue ?? option.value}
-                        label={option.label}
-                        color={option.color}
-                        family={option.family}
-                      />
+                  {itemMarkerKind && (
+                    <span class="ml-auto mr-6 flex shrink-0 items-center">
+                      <span data-create-picker-item-marker>
+                        <CreatePickerMarker
+                          kind={itemMarkerKind}
+                          value={option.markerValue ?? option.value}
+                          label={option.label}
+                          color={option.color}
+                          family={option.family}
+                        />
+                      </span>
                     </span>
-                  </span>
+                  )}
                 </DropdownMenuRadioItem>
               );
             })}

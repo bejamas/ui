@@ -49,6 +49,7 @@ import { parseCssVariables } from "@/components/theme-editor/utils/themeEditorUt
 import {
   createRandomDesignSystemConfig,
   getCreatePickerOptionsByName,
+  resolveMenuColorVirtualValue,
   type CreateFontGroup,
   type CreateLockableParam,
   type CreatePickerName,
@@ -316,9 +317,16 @@ export default class extends Controller<HTMLElement> {
       return;
     }
 
-    const { name, value } = event.detail;
+    const { name } = event.detail;
+    let { value } = event.detail;
     if (!name || !value) {
       return;
+    }
+
+    if (name === "menuColor") {
+      const currentMenuColor =
+        this.getField("menuColor")?.value ?? "default";
+      value = resolveMenuColorVirtualValue(value, currentMenuColor);
     }
 
     if (name === "baseColor") {
