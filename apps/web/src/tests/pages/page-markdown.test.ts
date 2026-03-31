@@ -1,7 +1,9 @@
 import { describe, expect, test } from "bun:test";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { GET, getStaticPaths } from "../../pages/[...page].md";
-import { transformMarkdown } from "../../utils/docsMarkdown";
+import { resolveDocsRoot, transformMarkdown } from "../../utils/docsMarkdown";
 
 describe("docs markdown export", () => {
   test("prerenders markdown routes for known docs pages", () => {
@@ -35,6 +37,21 @@ describe("docs markdown export", () => {
 
     expect(response.status).toBe(404);
     expect(await response.text()).toBe("Not found");
+  });
+
+  test("resolves docs content from the app cwd when running from built server output", () => {
+    const appRoot = fileURLToPath(new URL("../../../", import.meta.url));
+    const builtModuleUrl = new URL(
+      "../../../dist/server/.prerender/chunks/docsMarkdown.fake.mjs",
+      import.meta.url,
+    ).href;
+
+    expect(
+      resolveDocsRoot({
+        importMetaUrl: builtModuleUrl,
+        cwd: appRoot,
+      }),
+    ).toBe(path.join(appRoot, "src/content/docs"));
   });
 
   test("strips frontmatter imports and link-card markup when transforming markdown", () => {

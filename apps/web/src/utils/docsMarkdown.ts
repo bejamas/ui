@@ -69,6 +69,29 @@ export function transformMarkdown(content: string) {
   return `${title ? `# ${title}\n\n` : ""}${cleanContent.trim()}`;
 }
 
+export function resolveDocsRoot(options: {
+  importMetaUrl?: string;
+  cwd?: string;
+} = {}) {
+  const importMetaUrl = options.importMetaUrl ?? import.meta.url;
+  const cwd = options.cwd ?? process.cwd();
+  const candidates = [
+    fileURLToPath(new URL("../content/docs", importMetaUrl)),
+    path.resolve(cwd, "src/content/docs"),
+    path.resolve(cwd, "apps/web/src/content/docs"),
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
+      return candidate;
+    }
+  }
+
+  throw new Error(
+    `Unable to resolve docs content root. Checked: ${candidates.join(", ")}`,
+  );
+}
+
 function toRoutePath(sourcePath: string) {
   const relativePath = sourcePath.replace(/^\/src\/content\/docs\//, "");
   const withoutExtension = relativePath.replace(/\.(md|mdx)$/, "");
@@ -90,7 +113,7 @@ function loadDocSources() {
     }) as Record<string, string>;
   }
 
-  const docsRoot = fileURLToPath(new URL("../content/docs", import.meta.url));
+  const docsRoot = resolveDocsRoot();
   const collected: Record<string, string> = {};
   const queue = [docsRoot];
 
