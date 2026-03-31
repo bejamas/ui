@@ -47,9 +47,9 @@ Tailwind v4 + globals
 
 Base tokens & CSS variables
 
-components.json (shadcn schema)
+components.json (Bejamas schema)
 
-Compatibility note: Bejamas bundles exact `shadcn` v4.1.1 for managed CLI commands. Bejamas still preserves its custom `init` behavior, including preset switching, style support, and `init --base-color`.
+Compatibility note: Bejamas runs exact `shadcn` v4.1.1 for managed CLI commands. Bejamas still preserves its custom `init` behavior, including preset switching, style support, and `init --base-color`.
 
 ### add <name>
 

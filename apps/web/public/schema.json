@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://ui.bejamas.com/schema.json"
+    },
+    "style": {
+      "type": "string",
+      "enum": [
+        "bejamas-juno",
+        "bejamas-vega",
+        "bejamas-nova",
+        "bejamas-lyra",
+        "bejamas-maia",
+        "bejamas-mira"
+      ]
+    },
+    "tailwind": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "type": "string"
+        },
+        "css": {
+          "type": "string"
+        },
+        "baseColor": {
+          "type": "string",
+          "enum": [
+            "neutral",
+            "gray",
+            "zinc",
+            "stone",
+            "slate",
+            "mauve",
+            "olive",
+            "mist",
+            "taupe"
+          ]
+        },
+        "cssVariables": {
+          "default": true,
+          "type": "boolean"
+        },
+        "prefix": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "css",
+        "baseColor",
+        "cssVariables"
+      ],
+      "additionalProperties": false
+    },
+    "iconLibrary": {
+      "type": "string",
+      "enum": [
+        "lucide",
+        "hugeicons",
+        "tabler",
+        "phosphor",
+        "remixicon"
+      ]
+    },
+    "rtl": {
+      "default": false,
+      "type": "boolean"
+    },
+    "menuColor": {
+      "default": "default",
+      "type": "string",
+      "enum": [
+        "default",
+        "inverted",
+        "default-translucent",
+        "inverted-translucent"
+      ]
+    },
+    "menuAccent": {
+      "default": "subtle",
+      "type": "string",
+      "enum": [
+        "subtle",
+        "bold"
+      ]
+    },
+    "aliases": {
+      "type": "object",
+      "properties": {
+        "components": {
+          "type": "string"
+        },
+        "utils": {
+          "type": "string"
+        },
+        "ui": {
+          "type": "string"
+        },
+        "lib": {
+          "type": "string"
+        },
+        "hooks": {
+          "type": "string"
+        },
+        "docs": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "components",
+        "utils"
+      ],
+      "additionalProperties": false
+    },
+    "registries": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "params": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "headers": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "url"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "style",
+    "tailwind",
+    "aliases"
+  ],
+  "additionalProperties": false,
+  "$id": "https://ui.bejamas.com/schema.json",
+  "title": "Bejamas Components Config",
+  "description": "Configuration for Bejamas-managed components.json files."
+}

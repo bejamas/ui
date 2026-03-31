@@ -8,7 +8,7 @@ Use the `init` command to initialize dependencies for a new project.
 
 The `init` command installs dependencies, adds the `cn` util, and configures CSS variables for the project.
 
-Bejamas currently bundles exact `shadcn` v4.1.1 for managed CLI commands. The Bejamas-specific `init` flow still preserves preset switching, style support, and the legacy `--base-color` option.
+Bejamas currently runs exact `shadcn` v4.1.1 for managed CLI commands. The Bejamas-specific `init` flow still preserves preset switching, style support, and the legacy `--base-color` option.
 
 ```bash
 npx bejamas init

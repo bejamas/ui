@@ -15,6 +15,7 @@ import {
   syncAstroFontsInProject,
   toManagedAstroFont,
 } from "@/src/utils/astro-fonts";
+import { BEJAMAS_COMPONENTS_SCHEMA_URL } from "@/src/schema";
 
 const CREATE_BLOCK_START = "/* bejamas:create:start */";
 const CREATE_BLOCK_END = "/* bejamas:create:end */";
@@ -625,8 +626,10 @@ async function patchComponentsJson(
   config: DesignSystemConfig,
 ) {
   const current = await fs.readJson(filepath);
+  const { rsc: _rsc, tsx: _tsx, ...normalizedCurrent } = current;
   const next = {
-    ...current,
+    ...normalizedCurrent,
+    $schema: BEJAMAS_COMPONENTS_SCHEMA_URL,
     style: getStyleId(config.style),
     iconLibrary: config.iconLibrary,
     rtl: config.rtl,

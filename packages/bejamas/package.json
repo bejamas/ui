@@ -34,6 +34,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
+    "generate:schema": "bun run scripts/generate-schema.ts",
     "smoke:init:local": "bun run scripts/smoke-init-local.ts",
     "prepublishOnly": "bun run build",
     "test": "bun run build && bun test"

@@ -1,4 +1,27 @@
+import {
+  PRESET_ICON_LIBRARIES,
+  PRESET_MENU_ACCENTS,
+  PRESET_MENU_COLORS,
+  STYLE_IDS,
+} from "@bejamas/create-config/server";
 import { z } from "zod";
+
+export const BEJAMAS_COMPONENTS_SCHEMA_URL =
+  "https://ui.bejamas.com/schema.json";
+export const DEPRECATED_CONFIG_KEYS = ["rsc", "tsx"] as const;
+
+const PUBLIC_STYLE_IDS = STYLE_IDS as [string, ...string[]];
+const PUBLIC_BASE_COLOR_VALUES = [
+  "neutral",
+  "gray",
+  "zinc",
+  "stone",
+  "slate",
+  "mauve",
+  "olive",
+  "mist",
+  "taupe",
+] as const;
 
 const registryUrlSchema = z.union([
   z.string().refine((value) => value.includes("{name}"), {
@@ -20,49 +43,91 @@ export const registryConfigSchema = z.record(
   registryUrlSchema,
 );
 
-export const rawConfigSchema = z
+const configTailwindSchema = z.object({
+  config: z.string().optional(),
+  css: z.string(),
+  baseColor: z.string(),
+  cssVariables: z.boolean().default(true),
+  prefix: z.string().default("").optional(),
+});
+
+const publicConfigTailwindSchema = z.object({
+  config: z.string().optional(),
+  css: z.string(),
+  baseColor: z.enum(PUBLIC_BASE_COLOR_VALUES),
+  cssVariables: z.boolean().default(true),
+  prefix: z.string().default("").optional(),
+});
+
+const configAliasesSchema = z.object({
+  components: z.string(),
+  utils: z.string(),
+  ui: z.string().optional(),
+  lib: z.string().optional(),
+  hooks: z.string().optional(),
+  docs: z.string().optional(),
+});
+
+export const publicConfigSchema = z
   .object({
-    $schema: z.string().optional(),
-    style: z.string(),
-    rsc: z.coerce.boolean().default(false),
-    tsx: z.coerce.boolean().default(true),
-    tailwind: z.object({
-      config: z.string().optional(),
-      css: z.string(),
-      baseColor: z.string(),
-      cssVariables: z.boolean().default(true),
-      prefix: z.string().default("").optional(),
-    }),
-    iconLibrary: z.string().optional(),
-    rtl: z.coerce.boolean().default(false).optional(),
-    menuColor: z
-      .enum([
-        "default",
-        "inverted",
-        "default-translucent",
-        "inverted-translucent",
-      ])
-      .default("default")
-      .optional(),
-    menuAccent: z.enum(["subtle", "bold"]).default("subtle").optional(),
-    aliases: z.object({
-      components: z.string(),
-      utils: z.string(),
-      ui: z.string().optional(),
-      lib: z.string().optional(),
-      hooks: z.string().optional(),
-    }),
+    $schema: z.literal(BEJAMAS_COMPONENTS_SCHEMA_URL).optional(),
+    style: z.enum(PUBLIC_STYLE_IDS),
+    tailwind: publicConfigTailwindSchema,
+    iconLibrary: z.enum(PRESET_ICON_LIBRARIES).optional(),
+    rtl: z.boolean().default(false).optional(),
+    menuColor: z.enum(PRESET_MENU_COLORS).default("default").optional(),
+    menuAccent: z.enum(PRESET_MENU_ACCENTS).default("subtle").optional(),
+    aliases: configAliasesSchema,
     registries: registryConfigSchema.optional(),
   })
   .strict();
 
-const partialRawConfigSchema = rawConfigSchema
-  .partial()
-  .extend({
-    tailwind: rawConfigSchema.shape.tailwind.partial().optional(),
-    aliases: rawConfigSchema.shape.aliases.partial().optional(),
+export const rawConfigSchema = z
+  .object({
+    $schema: z.string().optional(),
+    style: z.string(),
+    tailwind: configTailwindSchema,
+    iconLibrary: z.string().optional(),
+    rtl: z.coerce.boolean().default(false).optional(),
+    menuColor: z.enum(PRESET_MENU_COLORS).default("default").optional(),
+    menuAccent: z.enum(PRESET_MENU_ACCENTS).default("subtle").optional(),
+    aliases: configAliasesSchema,
     registries: registryConfigSchema.optional(),
-  });
+  })
+  .strict();
+
+const compatibleRawConfigSchema = rawConfigSchema
+  .extend({
+    rsc: z.coerce.boolean().optional(),
+    tsx: z.coerce.boolean().optional(),
+  })
+  .strict();
+
+export interface RawConfigCompatibilityResult {
+  config: z.infer<typeof rawConfigSchema>;
+  deprecatedKeys: string[];
+}
+
+export function parseRawConfigWithCompatibility(
+  input: unknown,
+): RawConfigCompatibilityResult {
+  const parsed = compatibleRawConfigSchema.parse(input);
+  const deprecatedKeys = DEPRECATED_CONFIG_KEYS.filter(
+    (key) => parsed[key] !== undefined,
+  );
+  const { rsc: _rsc, tsx: _tsx, ...normalized } = parsed;
+
+  return {
+    config: rawConfigSchema.parse(normalized),
+    deprecatedKeys,
+  };
+}
+
+const partialRawConfigSchema = rawConfigSchema.partial().extend({
+  tailwind: rawConfigSchema.shape.tailwind.partial().optional(),
+  aliases: rawConfigSchema.shape.aliases.partial().optional(),
+  registries: registryConfigSchema.optional(),
+});
 
 export const configSchema = rawConfigSchema.extend({
   resolvedPaths: z.object({
@@ -78,6 +143,15 @@ export const configSchema = rawConfigSchema.extend({
 });
 
 export const workspaceConfigSchema = z.record(configSchema);
+
+export function createPublicConfigJsonSchema() {
+  return {
+    ...z.toJSONSchema(publicConfigSchema),
+    $id: BEJAMAS_COMPONENTS_SCHEMA_URL,
+    title: "Bejamas Components Config",
+    description: "Configuration for Bejamas-managed components.json files.",
+  };
+}
 
 export const registryItemTypeSchema = z.enum([
   "registry:lib",
@@ -199,7 +273,10 @@ export const stylesSchema = z.array(
   }),
 );
 
-export const iconsSchema = z.record(z.string(), z.record(z.string(), z.string()));
+export const iconsSchema = z.record(
+  z.string(),
+  z.record(z.string(), z.string()),
+);
 
 export const registryBaseColorSchema = z.object({
   inlineColors: z.object({

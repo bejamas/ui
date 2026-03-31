@@ -24,7 +24,10 @@ import {
   reorganizeComponents,
   shouldReorganizeRegistryUiFiles,
 } from "@/src/utils/reorganize-components";
-import { buildPinnedShadcnInvocation } from "@/src/utils/shadcn-cli";
+import {
+  buildPinnedShadcnInvocation,
+  ensurePinnedShadcnExecPrefix,
+} from "@/src/utils/shadcn-cli";
 import { spinner } from "@/src/utils/spinner";
 import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
 
@@ -375,6 +378,7 @@ async function addComponents(
     ...process.env,
     REGISTRY_URL: resolveRegistryUrl(),
   };
+  await ensurePinnedShadcnExecPrefix();
   const shadcnArgs = buildShadcnAddArgs(packages, forwardedOptions);
   const invocation = buildPinnedShadcnInvocation(shadcnArgs);
 

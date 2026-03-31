@@ -1,7 +1,9 @@
 import path from "path";
 import { BUILTIN_REGISTRIES } from "@/src/registry/constants";
 import {
+  BEJAMAS_COMPONENTS_SCHEMA_URL,
   configSchema,
+  parseRawConfigWithCompatibility,
   rawConfigSchema,
   workspaceConfigSchema,
 } from "@/src/schema";
@@ -27,6 +29,22 @@ export const explorer = cosmiconfig("components", {
 });
 
 export type Config = z.infer<typeof configSchema>;
+const warnedDeprecatedConfigPaths = new Set<string>();
+
+function warnDeprecatedConfigKeys(componentPath: string, keys: string[]) {
+  if (keys.length === 0 || warnedDeprecatedConfigPaths.has(componentPath)) {
+    return;
+  }
+
+  warnedDeprecatedConfigPaths.add(componentPath);
+  process.stderr.write(
+    `${highlighter.warn(
+      `Deprecated components.json keys in ${componentPath}: ${keys.join(
+        ", ",
+      )}. Bejamas ignores these keys. Remove them and point $schema to ${BEJAMAS_COMPONENTS_SCHEMA_URL}.`,
+    )}\n`,
+  );
+}
 
 export async function getConfig(cwd: string) {
   const config = await getRawConfig(cwd);
@@ -60,9 +78,7 @@ export async function resolveConfigPaths(
 
   if (tsConfig.resultType === "failed") {
     throw new Error(
-      `Failed to load ${config.tsx ? "tsconfig" : "jsconfig"}.json. ${
-        tsConfig.message ?? ""
-      }`.trim(),
+      `Failed to load tsconfig.json or jsconfig.json. ${tsConfig.message ?? ""}`.trim(),
     );
   }
 
@@ -113,7 +129,10 @@ export async function getRawConfig(
       return null;
     }
 
-    const config = rawConfigSchema.parse(configResult.config);
+    const { config, deprecatedKeys } = parseRawConfigWithCompatibility(
+      configResult.config,
+    );
+    warnDeprecatedConfigKeys(configResult.filepath, deprecatedKeys);
 
     // Check if user is trying to override built-in registries
     if (config.registries) {
@@ -250,8 +269,6 @@ export function createConfig(partial?: DeepPartial<Config>): Config {
       baseColor: "",
       cssVariables: false,
     },
-    rsc: false,
-    tsx: true,
     aliases: {
       components: "",
       utils: "",

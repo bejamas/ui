@@ -7,8 +7,6 @@ function makeConfig(partial: Partial<Config>): Config {
   // Minimal stub that satisfies the shape we need in tests.
   return {
     style: "new-york",
-    rsc: false,
-    tsx: true,
     tailwind: {
       config: "",
       css: "",
@@ -109,7 +107,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
 
   const result = rewriteAstroImports(raw, config);
 
-  expect(result).not.toContain('@lucide/astro/icons/chevron-down');
+  expect(result).not.toContain("@lucide/astro/icons/chevron-down");
   expect(result).toContain("<svg");
   expect(result).toContain('class="size-4 text-muted-foreground"');
   expect(result).toContain('data-slot="select-icon"');

@@ -9,6 +9,7 @@ import {
   getStyleId,
   type DesignSystemConfig,
 } from "@bejamas/create-config/server";
+import { BEJAMAS_COMPONENTS_SCHEMA_URL } from "../src/schema";
 import { toManagedAstroFont } from "../src/utils/astro-fonts";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -196,12 +197,19 @@ async function assertProjectState(
   expectedConfig: DesignSystemConfig,
 ) {
   const componentsJson = await readJson<{
+    $schema?: string;
     style?: string;
     iconLibrary?: string;
     tailwind?: { css?: string };
+    rsc?: boolean;
+    tsx?: boolean;
   }>(configPath);
   const styleId = getStyleId(expectedConfig.style);
 
+  assert(
+    componentsJson.$schema === BEJAMAS_COMPONENTS_SCHEMA_URL,
+    `Expected ${configPath} to use $schema ${BEJAMAS_COMPONENTS_SCHEMA_URL}, received ${componentsJson.$schema}`,
+  );
   assert(
     componentsJson.style === styleId,
     `Expected ${configPath} to use style ${styleId}, received ${componentsJson.style}`,
@@ -209,6 +217,10 @@ async function assertProjectState(
   assert(
     componentsJson.iconLibrary === expectedConfig.iconLibrary,
     `Expected ${configPath} to use icon library ${expectedConfig.iconLibrary}, received ${componentsJson.iconLibrary}`,
+  );
+  assert(
+    componentsJson.rsc === undefined && componentsJson.tsx === undefined,
+    `Expected ${configPath} to omit deprecated rsc/tsx keys`,
   );
 
   const cssRelativePath = componentsJson.tailwind?.css;
@@ -380,7 +392,12 @@ async function getRegistryItemSource(
   const item = await readJson<{
     files?: Array<{ path: string; content: string }>;
   }>(
-    path.resolve(repoRoot, "apps/web/public/r/styles", styleId, `${itemName}.json`),
+    path.resolve(
+      repoRoot,
+      "apps/web/public/r/styles",
+      styleId,
+      `${itemName}.json`,
+    ),
   );
   const file = item.files?.find((entry) => entry.path === filePath);
   assert(
@@ -390,7 +407,11 @@ async function getRegistryItemSource(
   return file.content;
 }
 
-function extractRequiredSnippet(source: string, pattern: RegExp, label: string) {
+function extractRequiredSnippet(
+  source: string,
+  pattern: RegExp,
+  label: string,
+) {
   const match = source.match(pattern)?.[0];
   assert(match, `Expected source to include ${label}`);
   return match;
