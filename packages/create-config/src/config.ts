@@ -104,6 +104,15 @@ const STYLE_LOCKED_VALUES = {
   Record<DesignSystemConfig["style"], Partial<Pick<DesignSystemConfig, "radius">>>
 >;
 
+const SHARED_SHADCN_STYLE_VALUES = [
+  "vega",
+  "nova",
+  "lyra",
+  "maia",
+  "mira",
+  "luma",
+] as const satisfies readonly DesignSystemConfig["style"][];
+
 export function getThemesForBaseColor(baseColorName: string) {
   const baseColorNames = BASE_COLORS.map((baseColor) => baseColor.name);
 
@@ -126,6 +135,12 @@ export function getTheme(name: DesignSystemConfig["theme"]) {
 
 export function getStyle(name: DesignSystemConfig["style"]) {
   return STYLES.find((style) => style.name === name);
+}
+
+export function isSharedShadcnStyle(style: DesignSystemConfig["style"]) {
+  return SHARED_SHADCN_STYLE_VALUES.includes(
+    style as (typeof SHARED_SHADCN_STYLE_VALUES)[number],
+  );
 }
 
 export function getStyleId(style: DesignSystemConfig["style"]) {

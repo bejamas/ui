@@ -2,6 +2,7 @@ import {
   buildRegistryTheme,
   getFontValue,
   getHeadingFontValue,
+  isSharedShadcnStyle,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
 import type { ThemeStyles } from "../types/theme";
@@ -12,11 +13,13 @@ import {
   type ThemeOverrides,
 } from "./create-theme";
 import { defaultPresets } from "./presets";
+import { SHADOW_INPUT_KEYS } from "./theme-tokens";
 
 type ThemeMode = "light" | "dark";
 type ThemeStyleMap = Record<string, string>;
 
 const defaultThemeStyles = defaultPresets.default.styles;
+const SHADOW_INPUT_KEY_SET = new Set<string>(SHADOW_INPUT_KEYS);
 
 export interface ResolvedDesignSystemTheme {
   styles: ThemeStyles;
@@ -29,11 +32,21 @@ export function resolveDesignSystemTheme(
   config: DesignSystemConfig,
   overrides?: Partial<ThemeOverrides> | null,
 ): ResolvedDesignSystemTheme {
+  const includeGeneratedShadows = shouldIncludeGeneratedShadows(config.style);
   const registryTheme = buildRegistryTheme(config);
   const selectedFont = getFontValue(config.font);
-  const lightStyles = resolveThemeModeStyles("light", registryTheme.cssVars.light);
-  const darkStyles = resolveThemeModeStyles("dark", registryTheme.cssVars.dark);
+  const lightStyles = resolveThemeModeStyles("light", registryTheme.cssVars.light, {
+    includeGeneratedShadows,
+  });
+  const darkStyles = resolveThemeModeStyles("dark", registryTheme.cssVars.dark, {
+    includeGeneratedShadows,
+  });
   const sharedFontStyles = resolveSharedFontStyles(config);
+  const normalizedOverrides = resolveThemeOverrides(
+    config.style,
+    overrides,
+    includeGeneratedShadows,
+  );
   const styles = mergeThemeStyles(
     {
       light: {
@@ -45,7 +58,7 @@ export function resolveDesignSystemTheme(
         ...sharedFontStyles,
       },
     } as ThemeStyles,
-    overrides,
+    normalizedOverrides,
   );
 
   return {
@@ -60,9 +73,13 @@ export function buildDesignSystemThemeCss(
   config: DesignSystemConfig,
   overrides?: Partial<ThemeOverrides> | null,
 ) {
+  const includeGeneratedShadows = shouldIncludeGeneratedShadows(config.style);
+
   return applyThemeToCss({
     currentMode: "light",
     styles: resolveDesignSystemTheme(config, overrides).styles,
+  }, {
+    includeGeneratedShadows,
   }).replace(
     "html[data-theme=\"dark\"], html.dark {",
     "html[data-theme=\"dark\"], html.dark, .cn-menu-target.dark {",
@@ -92,13 +109,44 @@ export function buildDesignSystemThemeCssVars(
 function resolveThemeModeStyles(
   mode: ThemeMode,
   resolvedVars?: Record<string, string>,
+  options?: {
+    includeGeneratedShadows?: boolean;
+  },
 ): ThemeStyleMap {
+  const includeGeneratedShadows = options?.includeGeneratedShadows ?? true;
   const fallback = defaultThemeStyles[mode] ?? {};
 
   return {
-    ...fallback,
+    ...(includeGeneratedShadows ? fallback : omitShadowTokens(fallback)),
     ...(resolvedVars ?? {}),
   };
+}
+
+function resolveThemeOverrides(
+  style: DesignSystemConfig["style"],
+  overrides?: Partial<ThemeOverrides> | null,
+  includeGeneratedShadows = shouldIncludeGeneratedShadows(style),
+): ThemeOverrides {
+  const normalized = normalizeThemeOverrides(overrides);
+
+  if (includeGeneratedShadows) {
+    return normalized;
+  }
+
+  return {
+    light: omitShadowTokens(normalized.light),
+    dark: omitShadowTokens(normalized.dark),
+  };
+}
+
+function shouldIncludeGeneratedShadows(style: DesignSystemConfig["style"]) {
+  return !isSharedShadcnStyle(style);
+}
+
+function omitShadowTokens(styles?: Record<string, string>) {
+  return Object.fromEntries(
+    Object.entries(styles ?? {}).filter(([key]) => !SHADOW_INPUT_KEY_SET.has(key)),
+  ) as ThemeStyleMap;
 }
 
 function resolveSharedFontStyles(config: DesignSystemConfig): ThemeStyleMap {

@@ -16,10 +16,35 @@ export const COMMON_NON_COLOR_KEYS = [
   "spacing",
 ] as const satisfies ReadonlyArray<keyof ThemeStyleProps>;
 
+export const SHADOW_INPUT_KEYS = [
+  "shadow-color",
+  "shadow-opacity",
+  "shadow-blur",
+  "shadow-spread",
+  "shadow-offset-x",
+  "shadow-offset-y",
+] as const satisfies ReadonlyArray<keyof ThemeStyleProps>;
+
+export const SHADOW_OUTPUT_KEYS = [
+  "shadow-2xs",
+  "shadow-xs",
+  "shadow-sm",
+  "shadow",
+  "shadow-md",
+  "shadow-lg",
+  "shadow-xl",
+  "shadow-2xl",
+] as const;
+
 type CommonNonColorKey = (typeof COMMON_NON_COLOR_KEYS)[number];
+type ShadowInputKey = (typeof SHADOW_INPUT_KEYS)[number];
 
 function isCommonNonColorKey(key: string): key is CommonNonColorKey {
   return (COMMON_NON_COLOR_KEYS as readonly string[]).includes(key);
+}
+
+export function isShadowInputKey(key: string): key is ShadowInputKey {
+  return (SHADOW_INPUT_KEYS as readonly string[]).includes(key);
 }
 
 export function isThemeColorToken(key: string) {

@@ -48,12 +48,14 @@ describe("resolveDesignSystemTheme", () => {
     const registryTheme = buildRegistryTheme(curatedConfig);
 
     expect(registryTheme.cssVars.light?.primary).toBe(
-      "oklch(0.56 0.15 248.21)",
+      "oklch(0.4634 0.2647 264.76)",
     );
-    expect(registryTheme.cssVars.dark?.primary).toBe("oklch(0.56 0.15 248.21)");
-    expect(resolved.styles.light["chart-4"]).toBe("oklch(0.56 0.15 248.21)");
+    expect(registryTheme.cssVars.dark?.primary).toBe(
+      "oklch(0.4634 0.2647 264.76)",
+    );
+    expect(resolved.styles.light["chart-4"]).toBe("oklch(0.463 0.265 264.76)");
     expect(resolved.styles.dark["sidebar-primary"]).toBe(
-      "oklch(0.56 0.15 248.21)",
+      "oklch(0.4634 0.2647 264.76)",
     );
   });
 
@@ -123,6 +125,57 @@ describe("resolveDesignSystemTheme", () => {
     expect(css).not.toContain("html[data-menu-inverted] .cn-menu-target");
     expect(css).toContain("oklch(");
     expect(css).not.toContain("hsl(");
+  });
+
+  it("omits custom shadow vars for shared shadcn styles", () => {
+    const css = buildDesignSystemThemeCss({
+      ...baseConfig,
+      style: "luma",
+      theme: "blue",
+    });
+
+    expect(css).toContain("--primary:");
+    expect(css).not.toContain("--shadow-color:");
+    expect(css).not.toContain("--shadow-opacity:");
+    expect(css).toContain(
+      "--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);",
+    );
+  });
+
+  it("keeps generated shadow vars for Bejamas styles", () => {
+    const css = buildDesignSystemThemeCss(baseConfig);
+
+    expect(css).toContain("--shadow-color:");
+    expect(css).toContain("--shadow-md:");
+  });
+
+  it("ignores shadow overrides for shared shadcn styles", () => {
+    const css = buildDesignSystemThemeCss(
+      {
+        ...baseConfig,
+        style: "luma",
+      },
+      {
+        light: {
+          "shadow-color": "oklch(0.2 0.3 250)",
+          "shadow-opacity": "0.9",
+          "shadow-blur": "12px",
+          "shadow-spread": "4px",
+          "shadow-offset-x": "5px",
+          "shadow-offset-y": "8px",
+        },
+        dark: {
+          "shadow-color": "oklch(0.1 0.1 250)",
+          "shadow-opacity": "0.8",
+        },
+      },
+    );
+
+    expect(css).not.toContain("--shadow-color:");
+    expect(css).not.toContain("--shadow-opacity:");
+    expect(css).toContain(
+      "--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);",
+    );
   });
 
   it("treats default radius as style-linked for lyra and maia", () => {

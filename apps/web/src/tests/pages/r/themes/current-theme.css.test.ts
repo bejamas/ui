@@ -19,6 +19,7 @@ describe("current-theme.css", () => {
     );
     expect(response.headers.get("Vary")).toBe("Cookie");
     expect(css).toContain("--font-sans: Inter");
+    expect(css).toContain("--shadow-md:");
     expect(css).toContain("@layer components");
     expect(css).toContain(".cn-card");
     expect(css).not.toContain(".style-juno");
@@ -141,6 +142,10 @@ describe("current-theme.css", () => {
     expect(css).toContain("--font-sans: 'Inter Variable', sans-serif;");
     expect(css).toContain("--radius: 0.625rem;");
     expect(css).toContain(".cn-card");
+    expect(css).not.toContain("--shadow-color:");
+    expect(css).toContain(
+      "--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);",
+    );
     expect(css).not.toContain(".style-luma");
   });
 
