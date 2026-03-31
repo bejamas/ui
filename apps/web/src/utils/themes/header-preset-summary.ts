@@ -40,14 +40,17 @@ type CustomPresetLike = {
 };
 
 export function getPresetLabel(
-  config: Pick<DesignSystemConfig, "style" | "font">,
+  config: Pick<DesignSystemConfig, "style" | "font" | "fontHeading">,
 ) {
   const styleLabel =
     catalogs.styles.find((style) => style.name === config.style)?.title ??
     config.style;
+  const resolvedHeadingFont =
+    config.fontHeading === "inherit" ? config.font : config.fontHeading;
   const fontLabel =
-    catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ??
-    config.font;
+    catalogs.fonts.find(
+      (font) => font.name === `font-${resolvedHeadingFont}`,
+    )?.title ?? resolvedHeadingFont;
 
   return `${styleLabel} - ${fontLabel}`;
 }
