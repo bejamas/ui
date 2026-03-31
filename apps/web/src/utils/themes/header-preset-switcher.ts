@@ -96,6 +96,22 @@ const CURATED_HEADER_PRESET_DEFINITIONS = [
       rtlLanguage: "ar",
     },
   },
+  {
+    config: {
+      style: "nova",
+      baseColor: "neutral",
+      theme: "bejamas-sunflower",
+      iconLibrary: "lucide",
+      font: "instrument-sans",
+      fontHeading: "inherit",
+      radius: "default",
+      menuColor: "inverted",
+      menuAccent: "subtle",
+      template: "astro",
+      rtl: false,
+      rtlLanguage: "ar",
+    },
+  },
 ] as const satisfies readonly CuratedPresetDefinition[];
 
 function buildCuratedPresetOption(

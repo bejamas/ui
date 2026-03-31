@@ -11,7 +11,9 @@ describe("header preset switcher state", () => {
       "Juno - Inter",
       "Vega - Playfair Display",
       "Lyra - Geist Mono",
+      "Nova - Instrument Sans",
     ]);
+    expect(state.presets[3]?.id).toBe("b8EStl");
     expect(state.presets[0]?.createHref).toMatch(/^\/create\?preset=/);
   });
 
