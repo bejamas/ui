@@ -35,6 +35,12 @@ export const STYLES = [
     title: "Mira",
     description: "Compact and text-dense with smaller controls.",
   },
+  {
+    name: "luma",
+    id: "bejamas-luma",
+    title: "Luma",
+    description: "Fluid, luminous, and glassy.",
+  },
 ] as const;
 
 export type Style = (typeof STYLES)[number];

@@ -1,7 +1,9 @@
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
+  LEGACY_PRESET_STYLES,
   PRESET_STYLES,
   PRESET_THEMES,
+  SHARED_PRESET_STYLES,
 } from "@bejamas/create-config/browser";
 import { PRESET_STORAGE_KEY } from "./themes/preset-store";
 import { PRESET_COOKIE_NAME } from "./themes/theme-cookie";
@@ -76,9 +78,8 @@ export function buildCreateDocsRootPrepaintScript() {
   const cookieName = ${JSON.stringify(PRESET_COOKIE_NAME)};
   const storageKey = ${JSON.stringify(PRESET_STORAGE_KEY)};
   const allowedStyles = ${JSON.stringify(PRESET_STYLES)};
-  const sharedStyles = ${JSON.stringify(
-    PRESET_STYLES.filter((style) => style !== "juno"),
-  )};
+  const legacyStyles = ${JSON.stringify(LEGACY_PRESET_STYLES)};
+  const sharedStyles = ${JSON.stringify(SHARED_PRESET_STYLES)};
   const legacyThemes = ${JSON.stringify(PRESET_THEMES)};
   const BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   const VALID_VERSIONS = ["a", "b", "c"];
@@ -146,10 +147,8 @@ export function buildCreateDocsRootPrepaintScript() {
       return false;
     }
 
-    const decodedStyle = decodeFieldValue(code, STYLE_OFFSET, FIELD_BITS, allowedStyles);
     const decodedTheme = decodeFieldValue(code, THEME_OFFSET, FIELD_BITS, legacyThemes);
-
-    return decodedStyle === "juno" || !!decodedTheme?.startsWith("bejamas-");
+    return !!decodedTheme?.startsWith("bejamas-");
   };
   const decodePresetStyle = (code) => {
     if (!isPresetCode(code)) {
@@ -167,12 +166,12 @@ export function buildCreateDocsRootPrepaintScript() {
         code,
         STYLE_OFFSET,
         FIELD_BITS,
-        shouldDecodeLegacyBejamasB(code) ? allowedStyles : sharedStyles,
+        shouldDecodeLegacyBejamasB(code) ? legacyStyles : sharedStyles,
       );
     }
 
     if (version === "c") {
-      return decodeFieldValue(code, STYLE_OFFSET, FIELD_BITS, allowedStyles);
+      return decodeFieldValue(code, STYLE_OFFSET, FIELD_BITS, legacyStyles);
     }
 
     return null;

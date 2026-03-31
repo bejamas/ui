@@ -8,7 +8,7 @@ import {
 } from "../src/server";
 
 describe("preset codec versions", () => {
-  it("keeps shadcn a-codes compatible for shared styles", () => {
+  it("keeps shadcn a-codes decodable for shared styles", () => {
     expect(decodePreset("abVJxYW")).toEqual({
       menuColor: "default",
       menuAccent: "subtle",
@@ -20,7 +20,9 @@ describe("preset codec versions", () => {
       baseColor: "neutral",
       style: "maia",
     });
+  });
 
+  it("emits upstream-compatible b-codes for shared styles", () => {
     expect(
       encodePreset({
         style: "maia",
@@ -33,19 +35,19 @@ describe("preset codec versions", () => {
         menuAccent: "subtle",
         menuColor: "default",
       }),
-    ).toBe("abVJxYW");
+    ).toBe("b1ZOKped6");
   });
 
-  it("emits b-codes for bejamas-only styles", () => {
+  it("emits b-codes for bejamas-only themes", () => {
     const preset = encodePreset(DEFAULT_PRESET_CONFIG);
 
     expect(preset.startsWith("b")).toBe(true);
     expect(decodePreset(preset)).toEqual(DEFAULT_PRESET_CONFIG);
   });
 
-  it("emits a-codes for upstream-compatible styles", () => {
+  it("encodes and decodes the shared luma style with upstream ordering", () => {
     const preset = encodePreset({
-      style: "lyra",
+      style: "luma",
       baseColor: "neutral",
       theme: "neutral",
       iconLibrary: "lucide",
@@ -55,7 +57,7 @@ describe("preset codec versions", () => {
       menuColor: "default",
     });
 
-    expect(preset.startsWith("a")).toBe(true);
+    expect(preset).toBe("b1aIaoaxs");
     expect(decodePreset(preset)).toEqual({
       menuColor: "default",
       menuAccent: "subtle",
@@ -65,7 +67,8 @@ describe("preset codec versions", () => {
       iconLibrary: "lucide",
       theme: "neutral",
       baseColor: "neutral",
-      style: "lyra",
+      chartColor: "blue",
+      style: "luma",
     });
   });
 
@@ -166,10 +169,10 @@ describe("preset codec versions", () => {
         menuAccent: "subtle",
         menuColor: "default",
       }),
-    ).toBe("abVJxYW");
+    ).toBe("b1ZOKped6");
   });
 
-  it("round-trips translucent menu colors without changing older codes", () => {
+  it("round-trips translucent menu colors in shared b-codes", () => {
     const preset = encodePreset({
       style: "maia",
       baseColor: "neutral",
@@ -181,10 +184,12 @@ describe("preset codec versions", () => {
       menuColor: "default-translucent",
     });
 
-    expect(preset.startsWith("a")).toBe(true);
+    expect(preset.startsWith("b")).toBe(true);
+    expect(preset).toBe("b1ZOKped8");
     expect(decodePreset(preset)).toMatchObject({
       style: "maia",
       menuColor: "default-translucent",
+      chartColor: "blue",
     });
     expect(
       encodePreset({
@@ -197,7 +202,33 @@ describe("preset codec versions", () => {
         menuAccent: "subtle",
         menuColor: "default",
       }),
-    ).toBe("abVJxYW");
+    ).toBe("b1ZOKped6");
+  });
+
+  it("uses c-codes for juno with shared themes to avoid luma b-code collisions", () => {
+    const preset = encodePreset({
+      style: "juno",
+      baseColor: "neutral",
+      theme: "neutral",
+      iconLibrary: "lucide",
+      font: "inter",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+
+    expect(preset).toBe("c1VlIttI");
+    expect(decodePreset(preset)).toEqual({
+      style: "juno",
+      baseColor: "neutral",
+      theme: "neutral",
+      iconLibrary: "lucide",
+      font: "inter",
+      fontHeading: "inherit",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
   });
 
   it("keeps juno appended after shadcn styles", () => {
@@ -207,6 +238,7 @@ describe("preset codec versions", () => {
       "maia",
       "lyra",
       "mira",
+      "luma",
       "juno",
     ]);
   });

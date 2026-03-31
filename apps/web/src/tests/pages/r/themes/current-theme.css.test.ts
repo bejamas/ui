@@ -82,7 +82,7 @@ describe("current-theme.css", () => {
     expect(css).toContain("--font-heading: 'Playfair Display Variable', serif;");
   });
 
-  test("uses upstream-compatible a-codes when decoding create preset cookies", async () => {
+  test("decodes upstream-compatible a-codes from create preset cookies", async () => {
     const response = await GET({
       cookies: {
         get(name: string) {
@@ -117,6 +117,31 @@ describe("current-theme.css", () => {
 
     expect(css).toContain("--font-sans: 'IBM Plex Sans Variable', sans-serif;");
     expect(css).toContain("--font-heading: 'Merriweather Variable', serif;");
+  });
+
+  test("decodes shared luma b-codes from create preset cookies", async () => {
+    const preset = encodePreset({
+      style: "luma",
+      theme: "neutral",
+      font: "inter",
+    });
+    const response = await GET({
+      cookies: {
+        get(name: string) {
+          if (name !== "theme") {
+            return undefined;
+          }
+
+          return { value: preset };
+        },
+      } as unknown as AstroCookies,
+    });
+    const css = await response.text();
+
+    expect(css).toContain("--font-sans: 'Inter Variable', sans-serif;");
+    expect(css).toContain("--radius: 0.625rem;");
+    expect(css).toContain(".cn-card");
+    expect(css).not.toContain(".style-luma");
   });
 
   test("uses the style-linked default radius for create presets", async () => {

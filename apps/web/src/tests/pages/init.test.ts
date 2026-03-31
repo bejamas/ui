@@ -53,6 +53,23 @@ describe("/init", () => {
     ]);
   });
 
+  test("resolves luma to the shared style registry namespace", async () => {
+    const preset = encodePreset({
+      style: "luma",
+      font: "inter",
+      theme: "neutral",
+    });
+    const response = await GET({
+      url: new URL(`http://localhost:4322/init?preset=${preset}&template=astro`),
+    });
+    const item = (await response.json()) as { registryDependencies?: string[] };
+
+    expect(item.registryDependencies).toEqual([
+      "http://localhost:4322/r/styles/bejamas-luma/utils.json",
+      "http://localhost:4322/r/styles/bejamas-luma/font-inter.json",
+    ]);
+  });
+
   test("marks custom theme init payloads as non-cacheable", async () => {
     const preset = encodePreset({
       style: "vega",

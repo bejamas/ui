@@ -90,6 +90,7 @@ const STYLE_DEFAULT_RADII = {
   lyra: "none",
   maia: "large",
   mira: "default",
+  luma: "default",
 } as const satisfies Record<
   DesignSystemConfig["style"],
   DesignSystemConfig["radius"]

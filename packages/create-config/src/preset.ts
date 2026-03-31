@@ -14,15 +14,26 @@ export const PRESET_STYLES = [
   "maia",
   "lyra",
   "mira",
+  "luma",
   "juno",
 ] as const;
 
-const SHARED_PRESET_STYLES = [
+export const SHARED_PRESET_STYLES = [
   "nova",
   "vega",
   "maia",
   "lyra",
   "mira",
+  "luma",
+] as const;
+
+export const LEGACY_PRESET_STYLES = [
+  "nova",
+  "vega",
+  "maia",
+  "lyra",
+  "mira",
+  "juno",
 ] as const;
 
 export const PRESET_BASE_COLORS = [
@@ -198,7 +209,7 @@ const PRESET_FIELDS_B_LEGACY = [
   { key: "iconLibrary", values: PRESET_ICON_LIBRARIES, bits: 6 },
   { key: "theme", values: PRESET_THEMES, bits: 6 },
   { key: "baseColor", values: PRESET_BASE_COLORS, bits: 6 },
-  { key: "style", values: PRESET_STYLES, bits: 6 },
+  { key: "style", values: LEGACY_PRESET_STYLES, bits: 6 },
 ] as const satisfies readonly PresetFieldDefinition[];
 
 const PRESET_FIELDS_C = [
@@ -230,10 +241,9 @@ const PRESET_VERSION_C = {
   kind: "bejamas-v3",
 } as const satisfies PresetVersionDefinition;
 
-const PRESET_VERSIONS = [
-  PRESET_VERSION_A,
-  PRESET_VERSION_B_LEGACY,
+const PRESET_ENCODERS = [
   PRESET_VERSION_B_SHARED,
+  PRESET_VERSION_B_LEGACY,
   PRESET_VERSION_C,
 ] as const;
 
@@ -322,10 +332,6 @@ function isBejamasOnlyTheme(
   return !!value && value.startsWith("bejamas-");
 }
 
-function hasBejamasOnlyValues(config: Partial<PresetConfig>) {
-  return config.style === "juno" || isBejamasOnlyTheme(config.theme);
-}
-
 function resolveChartColorValue(
   config: Partial<PresetConfig>,
 ): (typeof PRESET_CHART_COLORS)[number] {
@@ -377,6 +383,13 @@ function canEncodeWithVersion(
   config: PresetConfig,
   version: PresetVersionDefinition,
 ) {
+  // Reserve legacy b-codes for Bejamas-only themes. Shared b-codes now follow
+  // upstream shadcn ordering, so using legacy b for shared themes would collide
+  // with upstream luma presets.
+  if (version.kind === "bejamas-v2" && !isBejamasOnlyTheme(config.theme)) {
+    return false;
+  }
+
   if (
     version.kind !== "shadcn-v2" &&
     hasValue(PRESET_CHART_COLORS, config.chartColor)
@@ -451,13 +464,13 @@ function shouldDecodeLegacyBejamasB(code: string) {
     return false;
   }
 
-  return hasBejamasOnlyValues(decoded);
+  return isBejamasOnlyTheme(decoded.theme);
 }
 
 export function encodePreset(config: Partial<PresetConfig>) {
   const merged = normalizePresetConfig(config);
 
-  for (const version of PRESET_VERSIONS) {
+  for (const version of PRESET_ENCODERS) {
     if (canEncodeWithVersion(merged, version)) {
       return encodePresetWithVersion(merged, version);
     }

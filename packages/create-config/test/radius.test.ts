@@ -13,6 +13,7 @@ describe("style-linked radius defaults", () => {
     expect(getStyleDefaultRadius("lyra")).toBe("none");
     expect(getStyleDefaultRadius("maia")).toBe("large");
     expect(getStyleDefaultRadius("mira")).toBe("default");
+    expect(getStyleDefaultRadius("luma")).toBe("default");
   });
 
   it("uses the style default only while radius remains in default mode", () => {

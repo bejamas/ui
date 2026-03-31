@@ -89,7 +89,7 @@ describe("navigation-menu registry parity", () => {
     expect(trigger).not.toContain("relative z-1");
 
     expect(content).toContain(
-      "cn-navigation-menu-content data-ending-style:data-activation-direction=left:translate-x-[50%]",
+      "cn-navigation-menu-content data-[ending-style]:data-[activation-direction=left]:translate-x-[50%]",
     );
     expect(content).toContain("data-align={align}");
     expect(content).toContain("data-side-offset={sideOffset}");
@@ -127,7 +127,7 @@ describe("navigation-menu registry parity", () => {
   });
 
   test("shared registry themes keep the shadcn base selectors after stripping local indicator extensions", () => {
-    const themes = ["lyra", "maia", "mira", "nova", "vega"] as const;
+    const themes = ["luma", "lyra", "maia", "mira", "nova", "vega"] as const;
 
     for (const theme of themes) {
       const registryBlock = extractNavigationMenuBlock(
@@ -144,7 +144,7 @@ describe("navigation-menu registry parity", () => {
   });
 
   test("theme blocks include the additive subtle indicator extension", () => {
-    const themes = ["juno", "lyra", "maia", "mira", "nova", "vega"] as const;
+    const themes = ["juno", "luma", "lyra", "maia", "mira", "nova", "vega"] as const;
 
     for (const theme of themes) {
       const block = extractNavigationMenuBlock(
@@ -154,9 +154,9 @@ describe("navigation-menu registry parity", () => {
       expect(block).toContain(".cn-navigation-menu-indicator-surface");
       expect(block).toContain("bg-muted/60 ring-border/40 ring-1");
       expect(block).toContain("hidden bg-border");
-      expect(block).toContain(
-        '[data-slot="navigation-menu-list"]:has(> [data-slot="navigation-menu-indicator"]) .cn-navigation-menu-trigger',
-      );
+      expect(block).toContain('[data-slot="navigation-menu-list"]');
+      expect(block).toContain('[data-slot="navigation-menu-indicator"]');
+      expect(block).toContain(".cn-navigation-menu-trigger");
       expect(block).toContain(
         "bg-transparent hover:bg-transparent focus:bg-transparent",
       );

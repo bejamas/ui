@@ -31,8 +31,9 @@ describe("style catalog defaults", () => {
     expect(STYLES.map((style) => style.name)).toContain("juno");
     expect(STYLES.map((style) => style.name)).toContain("maia");
     expect(STYLES.map((style) => style.name)).toContain("mira");
+    expect(STYLES.map((style) => style.name)).toContain("luma");
     expect(DEFAULT_DESIGN_SYSTEM_CONFIG.style).toBe("juno");
-    expect(PRESET_STYLES.indexOf("juno")).toBe(5);
+    expect(PRESET_STYLES.indexOf("juno")).toBe(6);
   });
 
   it("compiles the juno baseline style", async () => {
@@ -51,9 +52,10 @@ describe("style catalog defaults", () => {
     expect(globalCss).toContain(".cn-menu-translucent");
   });
 
-  it("compiles the vendored shadcn maia and mira styles", async () => {
+  it("compiles the vendored shadcn maia, mira, and luma styles", async () => {
     const maiaCss = await getCompiledStyleCss("maia");
     const miraCss = await getCompiledStyleCss("mira");
+    const lumaCss = await getCompiledStyleCss("luma");
     const maiaGlobalCss = await getCompiledGlobalStyleCss("maia");
 
     expect(maiaCss).toContain("@layer components");
@@ -63,6 +65,9 @@ describe("style catalog defaults", () => {
     expect(miraCss).toContain("@layer components");
     expect(miraCss).toContain(".style-mira");
     expect(miraCss).toContain(".cn-card");
+    expect(lumaCss).toContain("@layer components");
+    expect(lumaCss).toContain(".style-luma");
+    expect(lumaCss).toContain(".cn-card");
     expect(maiaGlobalCss).toContain("@layer components");
     expect(maiaGlobalCss).not.toContain(".style-maia");
     expect(maiaGlobalCss).toContain(".cn-card");
@@ -80,7 +85,7 @@ describe("style catalog defaults", () => {
   });
 
   it("keeps select popup motion in the shared component instead of theme overrides", () => {
-    for (const style of ["vega", "nova", "maia", "lyra", "mira"] as const) {
+    for (const style of ["vega", "nova", "maia", "lyra", "mira", "luma"] as const) {
       const selectContentBlock = getSelectContentBlock(getStyleCss(style));
 
       expect(selectContentBlock).not.toContain("data-open:animate-in");
@@ -154,7 +159,7 @@ describe("style catalog defaults", () => {
         "data-[side=inline-end]:slide-in-from-left-2",
       );
 
-      if (style === "juno" || style === "maia") {
+      if (style === "juno" || style === "maia" || style === "luma") {
         expect(tooltipArrowBlock).toContain("data-[side=left]:translate-x-[-1.5px]");
         expect(tooltipArrowBlock).toContain("data-[side=right]:translate-x-[1.5px]");
         expect(tooltipArrowLogicalBlock).toContain(

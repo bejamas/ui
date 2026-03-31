@@ -64,6 +64,17 @@ describe("create docs-root prepaint script", () => {
       "style-juno",
     );
   });
+
+  test("decodes shared luma b-codes from persisted preset sources", () => {
+    const root = runPrepaintScript({
+      storedPreset: encodePreset({
+        style: "luma",
+        theme: "neutral",
+      }),
+    });
+
+    expect(root.getAttribute(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE)).toBe("style-luma");
+  });
 });
 
 function runPrepaintScript(options: {
