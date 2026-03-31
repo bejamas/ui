@@ -149,7 +149,7 @@ function shouldRenderFontGroupLock(
       side="right"
       align="start"
       sideOffset={12}
-      class="create-picker-content !min-w-[10.5rem] !rounded-[18px] !border-white/10 !bg-[#0040a1] !p-1.25 !text-white !shadow-[0_20px_50px_rgba(0,0,0,0.32)] !ring-0 max-h-92 overflow-auto"
+      class={`create-picker-content !min-w-[10.5rem] !rounded-[18px] !border-white/10 !bg-[#0040a1] !p-1.25 !text-white !shadow-[0_20px_50px_rgba(0,0,0,0.32)] !ring-0 max-h-92 overflow-auto${name === "style" ? " !w-[286px]" : ""}`}
     >
       {
         groupedOptions.length > 0 ? (
