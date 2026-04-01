@@ -7,15 +7,14 @@
     ".": {
       "default": "./dist/index.js"
     },
-    "./tailwind.css": {
-      "style": "./src/tailwind.css"
-    }
+    "./tailwind.css": "./tailwind.css"
   },
   "bin": {
     "bejamas": "./dist/index.js"
   },
   "files": [
     "dist/",
+    "tailwind.css",
     "src/tailwind.css"
   ],
   "keywords": [
