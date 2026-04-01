@@ -3,7 +3,8 @@ import type { HTMLAttributes } from "astro/types";
 import { z } from "astro/zod";
 
 const linkHTMLAttributesSchema = z.record(
-  z.union([z.string(), z.number(), z.boolean(), z.undefined()])
+  z.string(),
+  z.union([z.string(), z.number(), z.boolean(), z.undefined()]),
 ) as z.Schema<
   Omit<HTMLAttributes<"a">, keyof AstroBuiltinAttributes | "children">
 >;
@@ -25,7 +26,7 @@ const navLinkSchema = z.object({
    * The value can be a string, or for multilingual sites, an object with values for each different locale. When using
    * the object form, the keys must be BCP-47 tags (e.g. en, fr, or zh-CN).
    */
-  label: z.union([z.string(), z.record(z.string())]),
+  label: z.union([z.string(), z.record(z.string(), z.string())]),
   /**
    * The link to the topic’s content which an be a relative link to local files or the full URL of an external page.
    *
@@ -39,7 +40,7 @@ const navLinkSchema = z.object({
 
 export const StarlightThemeBejamasConfigSchema = z.object({
   nav: z.array(navLinkSchema).optional(),
-  components: z.record(z.string()).optional(),
+  components: z.record(z.string(), z.string()).optional(),
 });
 
 export type StarlightThemeBejamasUserConfig = z.input<
