@@ -12,6 +12,7 @@ import { execa } from "execa";
 import fg from "fast-glob";
 import fs from "fs-extra";
 import prompts from "prompts";
+import * as tar from "tar";
 import { z } from "zod";
 
 export const TEMPLATES = {
@@ -23,7 +24,28 @@ export const TEMPLATES = {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function resolveLocalTemplatesDir() {
+const TEMPLATE_DIRNAME: Record<keyof typeof TEMPLATES, string> = {
+  astro: "astro",
+  "astro-monorepo": "monorepo-astro",
+  "astro-with-component-docs-monorepo": "monorepo-astro-with-docs",
+};
+
+const TEMPLATE_EXCLUDED_BASENAMES = new Set(["node_modules", ".astro"]);
+const DEFAULT_TEMPLATE_REPOSITORY = "bejamas/ui";
+const DEFAULT_TEMPLATE_REF = "main";
+
+type BejamasPackageMetadata = {
+  gitHead?: string;
+  version?: string;
+};
+
+function resolveLocalTemplatesDir(env: NodeJS.ProcessEnv = process.env) {
+  const override = env.BEJAMAS_LOCAL_TEMPLATES_DIR?.trim();
+
+  if (override) {
+    return path.resolve(override);
+  }
+
   for (const relativePath of [
     "../../../../templates",
     "../../../templates",
@@ -39,6 +61,158 @@ function resolveLocalTemplatesDir() {
 }
 
 const LOCAL_TEMPLATES_DIR = resolveLocalTemplatesDir();
+
+function resolvePackageMetadataPath() {
+  for (const relativePath of ["../package.json", "../../package.json"]) {
+    const candidate = path.resolve(__dirname, relativePath);
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return path.resolve(__dirname, "../package.json");
+}
+
+function readPackageMetadata(): BejamasPackageMetadata {
+  try {
+    return fs.readJsonSync(resolvePackageMetadataPath()) as BejamasPackageMetadata;
+  } catch {
+    return {};
+  }
+}
+
+const BEJAMAS_PACKAGE_METADATA = readPackageMetadata();
+
+function shouldCopyTemplateEntry(source: string) {
+  return !TEMPLATE_EXCLUDED_BASENAMES.has(path.basename(source));
+}
+
+async function copyTemplateIntoProject(
+  templateSource: string,
+  projectPath: string,
+) {
+  await fs.copy(templateSource, projectPath, {
+    filter: shouldCopyTemplateEntry,
+  });
+}
+
+export function resolveRemoteTemplateRefs(
+  metadata: Pick<BejamasPackageMetadata, "gitHead" | "version"> = BEJAMAS_PACKAGE_METADATA,
+  env: NodeJS.ProcessEnv = process.env,
+) {
+  const refs = [
+    env.BEJAMAS_TEMPLATE_REF?.trim(),
+    metadata.gitHead?.trim(),
+    metadata.version && !metadata.version.includes("-")
+      ? `bejamas@${metadata.version}`
+      : undefined,
+    DEFAULT_TEMPLATE_REF,
+  ].filter((ref): ref is string => Boolean(ref));
+
+  return [...new Set(refs)];
+}
+
+export function buildTemplateArchiveUrl(
+  ref: string,
+  repository = DEFAULT_TEMPLATE_REPOSITORY,
+) {
+  return `https://api.github.com/repos/${repository}/tarball/${encodeURIComponent(
+    ref,
+  )}`;
+}
+
+function getGitHubRequestHeaders(env: NodeJS.ProcessEnv = process.env) {
+  const headers: Record<string, string> = {
+    "User-Agent": `bejamas/${BEJAMAS_PACKAGE_METADATA.version ?? "dev"}`,
+  };
+
+  const token =
+    env.BEJAMAS_GITHUB_TOKEN?.trim() || env.GITHUB_TOKEN?.trim();
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
+}
+
+async function downloadTemplateArchive(ref: string, targetDir: string) {
+  const archiveUrl = buildTemplateArchiveUrl(ref);
+  const archivePath = path.join(targetDir, "repo.tar.gz");
+  const response = await fetch(archiveUrl, {
+    headers: getGitHubRequestHeaders(),
+    signal: AbortSignal.timeout(30_000),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `GitHub returned ${response.status} ${response.statusText} for ${ref}.`,
+    );
+  }
+
+  await fs.ensureDir(targetDir);
+  await fs.outputFile(archivePath, Buffer.from(await response.arrayBuffer()));
+  await tar.x({
+    cwd: targetDir,
+    file: archivePath,
+    strict: true,
+  });
+
+  const extractedEntries = (await fs.readdir(targetDir)).filter(
+    (entry) => entry !== "repo.tar.gz",
+  );
+  const extractedRoot = extractedEntries.find((entry) =>
+    fs.statSync(path.join(targetDir, entry)).isDirectory(),
+  );
+
+  if (!extractedRoot) {
+    throw new Error(`Downloaded archive for ${ref} did not extract correctly.`);
+  }
+
+  return path.join(targetDir, extractedRoot);
+}
+
+async function copyTemplateFromGitHub(
+  templateDirName: string,
+  projectPath: string,
+) {
+  const refs = resolveRemoteTemplateRefs();
+  const failures: string[] = [];
+
+  for (const ref of refs) {
+    const tempDir = path.join(
+      os.tmpdir(),
+      `bejamas-template-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+    );
+
+    try {
+      const extractedRoot = await downloadTemplateArchive(ref, tempDir);
+      const templateSource = path.join(extractedRoot, "templates", templateDirName);
+
+      if (!(await fs.pathExists(templateSource))) {
+        throw new Error(`Template templates/${templateDirName} was not found.`);
+      }
+
+      await copyTemplateIntoProject(templateSource, projectPath);
+
+      return ref;
+    } catch (error) {
+      failures.push(
+        `${ref}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    } finally {
+      await fs.remove(tempDir);
+    }
+  }
+
+  throw new Error(
+    [
+      `Unable to download templates/${templateDirName} from GitHub.`,
+      `Tried refs: ${refs.join(", ")}.`,
+      failures.join("\n"),
+    ].join("\n"),
+  );
+}
 
 async function applyLocalPackageOverrides(projectPath: string) {
   const bejamasPackageOverride = process.env.BEJAMAS_PACKAGE_OVERRIDE;
@@ -196,39 +370,23 @@ async function createProjectFromTemplate(
     `Creating a new project from template. This may take a few minutes.`,
   ).start();
 
-  const TEMPLATE_DIRNAME: Record<keyof typeof TEMPLATES, string> = {
-    astro: "astro",
-    "astro-monorepo": "monorepo-astro",
-    "astro-with-component-docs-monorepo": "monorepo-astro-with-docs",
-  };
-
   try {
     dotenv.config({ quiet: true });
-    const templatePath = path.join(
-      os.tmpdir(),
-      `bejamas-template-${Date.now()}`,
-    );
-    const templateSource = path.resolve(
-      LOCAL_TEMPLATES_DIR,
-      TEMPLATE_DIRNAME[options.templateKey],
-    );
+    const templateDirName = TEMPLATE_DIRNAME[options.templateKey];
+    const templateSource = path.resolve(LOCAL_TEMPLATES_DIR, templateDirName);
 
-    if (!(await fs.pathExists(templateSource))) {
-      throw new Error(`Local template not found: ${templateSource}`);
+    if (await fs.pathExists(templateSource)) {
+      await copyTemplateIntoProject(templateSource, projectPath);
+    } else {
+      createSpinner.text = `Downloading the ${highlighter.info(
+        options.templateKey,
+      )} template from GitHub.`;
+      await copyTemplateFromGitHub(templateDirName, projectPath);
     }
-
-    await fs.copy(templateSource, projectPath, {
-      filter: (source) => {
-        const basename = path.basename(source);
-        return basename !== "node_modules" && basename !== ".astro";
-      },
-    });
 
     await removeEmptyTemplateI18nDirs(projectPath);
 
     await applyLocalPackageOverrides(projectPath);
-
-    await fs.remove(templatePath);
 
     await execa(options.packageManager, ["install"], {
       cwd: projectPath,
