@@ -122,6 +122,10 @@ async function prepareLocalBejamasPackage(smokeRoot: string) {
 
   await fs.mkdir(srcDir, { recursive: true });
   await fs.copyFile(
+    path.resolve(packageRoot, "tailwind.css"),
+    path.resolve(localPackageRoot, "tailwind.css"),
+  );
+  await fs.copyFile(
     path.resolve(packageRoot, "src/tailwind.css"),
     path.resolve(srcDir, "tailwind.css"),
   );
@@ -133,9 +137,7 @@ async function prepareLocalBejamasPackage(smokeRoot: string) {
         version: "0.0.0-local",
         type: "module",
         exports: {
-          "./tailwind.css": {
-            style: "./src/tailwind.css",
-          },
+          "./tailwind.css": "./tailwind.css",
         },
       },
       null,
