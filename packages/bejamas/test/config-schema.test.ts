@@ -7,6 +7,7 @@ import {
   BEJAMAS_COMPONENTS_SCHEMA_URL,
   createPublicConfigJsonSchema,
   parseRawConfigWithCompatibility,
+  workspaceConfigSchema,
 } from "../src/schema";
 import { getRawConfig } from "../src/utils/get-config";
 
@@ -86,6 +87,43 @@ describe("components.json schema", () => {
       expect("rsc" in config).toBe(false);
       expect("tsx" in config).toBe(false);
     }
+  });
+
+  test("workspace config maps parse under zod v4", () => {
+    const result = workspaceConfigSchema.safeParse({
+      web: {
+        $schema: BEJAMAS_COMPONENTS_SCHEMA_URL,
+        style: "bejamas-juno",
+        tailwind: {
+          config: "tailwind.config.ts",
+          css: "src/styles/globals.css",
+          baseColor: "neutral",
+          cssVariables: true,
+          prefix: "",
+        },
+        aliases: {
+          components: "@/components",
+          utils: "@/lib/utils",
+        },
+        resolvedPaths: {
+          cwd: "/tmp/project",
+          tailwindConfig: "/tmp/project/tailwind.config.ts",
+          tailwindCss: "/tmp/project/src/styles/globals.css",
+          utils: "/tmp/project/src/lib/utils.ts",
+          components: "/tmp/project/src/components",
+          lib: "/tmp/project/src/lib",
+          hooks: "/tmp/project/src/hooks",
+          ui: "/tmp/project/src/ui",
+        },
+      },
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) {
+      throw result.error;
+    }
+
+    expect(result.data.web.style).toBe("bejamas-juno");
   });
 
   test("getRawConfig warns once per file for deprecated keys", async () => {

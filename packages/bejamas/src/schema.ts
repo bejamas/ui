@@ -142,7 +142,7 @@ export const configSchema = rawConfigSchema.extend({
   }),
 });
 
-export const workspaceConfigSchema = z.record(configSchema);
+export const workspaceConfigSchema = z.record(z.string(), configSchema);
 
 export function createPublicConfigJsonSchema() {
   return {
