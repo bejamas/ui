@@ -56,6 +56,7 @@ describe("components.json schema", () => {
 
     expect(checkedIn).toEqual(createPublicConfigJsonSchema());
     expect(checkedIn.$id).toBe(BEJAMAS_COMPONENTS_SCHEMA_URL);
+    expect(checkedIn.properties.style.enum).toContain("bejamas-luma");
     expect(checkedIn.properties).not.toHaveProperty("rsc");
     expect(checkedIn.properties).not.toHaveProperty("tsx");
     expect(checkedIn.properties.aliases.properties).toHaveProperty("docs");
