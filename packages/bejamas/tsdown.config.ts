@@ -7,4 +7,5 @@ export default defineConfig({
   sourcemap: true,
   minify: false,
   dts: false, // CLIs usually don't need types
+  noExternal: [/^@bejamas\/(?:create-config|semantic-icons|registry)(?:\/.*)?$/],
 });

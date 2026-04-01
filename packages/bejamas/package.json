@@ -46,12 +46,12 @@
   },
   "bugs": "https://github.com/bejamas/ui/issues",
   "devDependencies": {
+    "@bejamas/create-config": "workspace:*",
+    "@bejamas/semantic-icons": "workspace:*",
     "tsdown": "^0.15.2"
   },
   "dependencies": {
     "@antfu/ni": "^26.1.0",
-    "@bejamas/create-config": "workspace:*",
-    "@bejamas/semantic-icons": "workspace:*",
     "commander": "^14.0.1",
     "cosmiconfig": "^9.0.0",
     "dotenv": "^16.4.5",
