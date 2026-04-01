@@ -1,6 +1,7 @@
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
   LEGACY_PRESET_STYLES,
+  PRESET_VERSION_C_STYLES,
   PRESET_STYLES,
   PRESET_THEMES,
   SHARED_PRESET_STYLES,
@@ -79,6 +80,7 @@ export function buildCreateDocsRootPrepaintScript() {
   const storageKey = ${JSON.stringify(PRESET_STORAGE_KEY)};
   const allowedStyles = ${JSON.stringify(PRESET_STYLES)};
   const legacyStyles = ${JSON.stringify(LEGACY_PRESET_STYLES)};
+  const versionCStyles = ${JSON.stringify(PRESET_VERSION_C_STYLES)};
   const sharedStyles = ${JSON.stringify(SHARED_PRESET_STYLES)};
   const legacyThemes = ${JSON.stringify(PRESET_THEMES)};
   const BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -171,7 +173,7 @@ export function buildCreateDocsRootPrepaintScript() {
     }
 
     if (version === "c") {
-      return decodeFieldValue(code, STYLE_OFFSET, FIELD_BITS, legacyStyles);
+      return decodeFieldValue(code, STYLE_OFFSET, FIELD_BITS, versionCStyles);
     }
 
     return null;

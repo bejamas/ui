@@ -104,6 +104,56 @@ describe("preset codec versions", () => {
     });
   });
 
+  it("encodes luma with bejamas-only themes as stable c-codes", () => {
+    const bluePreset = encodePreset({
+      style: "luma",
+      baseColor: "neutral",
+      theme: "bejamas-blue",
+      iconLibrary: "lucide",
+      font: "inter",
+      fontHeading: "inherit",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+    const sunflowerPreset = encodePreset({
+      style: "luma",
+      baseColor: "neutral",
+      theme: "bejamas-sunflower",
+      iconLibrary: "lucide",
+      font: "inter",
+      fontHeading: "inherit",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+
+    expect(bluePreset).toBe("c1od3qvA");
+    expect(sunflowerPreset).toBe("c1oeCFRQ");
+    expect(decodePreset(bluePreset)).toEqual({
+      style: "luma",
+      baseColor: "neutral",
+      theme: "bejamas-blue",
+      iconLibrary: "lucide",
+      font: "inter",
+      fontHeading: "inherit",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+    expect(decodePreset(sunflowerPreset)).toEqual({
+      style: "luma",
+      baseColor: "neutral",
+      theme: "bejamas-sunflower",
+      iconLibrary: "lucide",
+      font: "inter",
+      fontHeading: "inherit",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+    });
+  });
+
   it("decodes and re-encodes modern shadcn b-codes with heading fonts", () => {
     expect(decodePreset("b4aRK5K0fb")).toEqual({
       style: "maia",
@@ -241,5 +291,13 @@ describe("preset codec versions", () => {
       "luma",
       "juno",
     ]);
+  });
+
+  it("throws instead of silently degrading unsupported preset values", () => {
+    expect(() =>
+      encodePreset({
+        style: "not-a-style" as (typeof PRESET_STYLES)[number],
+      }),
+    ).toThrow("Unsupported preset config");
   });
 });

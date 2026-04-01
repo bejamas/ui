@@ -149,6 +149,35 @@ describe("current-theme.css", () => {
     expect(css).not.toContain(".style-luma");
   });
 
+  test("decodes bejamas-theme luma c-codes from create preset cookies", async () => {
+    const preset = encodePreset({
+      style: "luma",
+      theme: "bejamas-blue",
+      font: "inter",
+    });
+    const response = await GET({
+      cookies: {
+        get(name: string) {
+          if (name !== "theme") {
+            return undefined;
+          }
+
+          return { value: preset };
+        },
+      } as unknown as AstroCookies,
+    });
+    const css = await response.text();
+
+    expect(css).toContain("--font-sans: 'Inter Variable', sans-serif;");
+    expect(css).toContain("--radius: 0.625rem;");
+    expect(css).toContain(".cn-card");
+    expect(css).not.toContain("--shadow-color:");
+    expect(css).toContain(
+      "--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);",
+    );
+    expect(css).not.toContain(".style-luma");
+  });
+
   test("uses the style-linked default radius for create presets", async () => {
     const preset = encodePreset({
       style: "lyra",

@@ -36,6 +36,11 @@ export const LEGACY_PRESET_STYLES = [
   "juno",
 ] as const;
 
+export const PRESET_VERSION_C_STYLES = [
+  ...LEGACY_PRESET_STYLES,
+  "luma",
+] as const;
+
 export const PRESET_BASE_COLORS = [
   "neutral",
   "stone",
@@ -213,7 +218,14 @@ const PRESET_FIELDS_B_LEGACY = [
 ] as const satisfies readonly PresetFieldDefinition[];
 
 const PRESET_FIELDS_C = [
-  ...PRESET_FIELDS_B_LEGACY,
+  { key: "menuColor", values: PRESET_MENU_COLORS, bits: 3 },
+  { key: "menuAccent", values: PRESET_MENU_ACCENTS, bits: 3 },
+  { key: "radius", values: PRESET_RADII, bits: 4 },
+  { key: "font", values: PRESET_FONTS, bits: 6 },
+  { key: "iconLibrary", values: PRESET_ICON_LIBRARIES, bits: 6 },
+  { key: "theme", values: PRESET_THEMES, bits: 6 },
+  { key: "baseColor", values: PRESET_BASE_COLORS, bits: 6 },
+  { key: "style", values: PRESET_VERSION_C_STYLES, bits: 6 },
   { key: "fontHeading", values: PRESET_FONT_HEADINGS, bits: 5 },
 ] as const satisfies readonly PresetFieldDefinition[];
 
@@ -476,7 +488,9 @@ export function encodePreset(config: Partial<PresetConfig>) {
     }
   }
 
-  return encodePresetWithVersion(merged, PRESET_VERSION_C);
+  throw new Error(
+    `Unsupported preset config: ${JSON.stringify(merged)}`,
+  );
 }
 
 export function decodePreset(code: string): PresetConfig | null {

@@ -57,4 +57,17 @@ describe("header preset switcher state", () => {
     expect(state.current.swatches.light.primary).toBeTruthy();
     expect(state.selectedPresetId).toBeNull();
   });
+
+  test("keeps luma selected when decoding bejamas-theme preset cookies", () => {
+    const state = buildHeaderPresetSwitcherState({
+      themeCookieValue: encodePreset({
+        style: "luma",
+        theme: "bejamas-blue",
+        font: "inter",
+      }),
+    });
+
+    expect(state.current.label).toBe("Luma - Inter");
+    expect(state.selectedPresetId).toBeNull();
+  });
 });

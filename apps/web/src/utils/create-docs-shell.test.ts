@@ -75,6 +75,17 @@ describe("create docs-root prepaint script", () => {
 
     expect(root.getAttribute(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE)).toBe("style-luma");
   });
+
+  test("decodes luma c-codes with bejamas-only themes from persisted preset sources", () => {
+    const root = runPrepaintScript({
+      cookiePreset: encodePreset({
+        style: "luma",
+        theme: "bejamas-blue",
+      }),
+    });
+
+    expect(root.getAttribute(CREATE_DOCS_ROOT_STYLE_ATTRIBUTE)).toBe("style-luma");
+  });
 });
 
 function runPrepaintScript(options: {
