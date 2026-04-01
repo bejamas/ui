@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.3.1
+
+### Patch Changes
+
+- [#106](https://github.com/bejamas/ui/pull/106) [`53d5e40`](https://github.com/bejamas/ui/commit/53d5e403d735556bda18e23bfdd41befb24cf85d) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Fix published `bejamas init` project creation by falling back to starter templates downloaded from the `bejamas/ui` GitHub repo when local bundled templates are unavailable, and make starter projects resolve `bejamas/tailwind.css` correctly by publishing a root CSS entrypoint and updating templates to depend on the current `0.3.x` package line.
+
 ## 0.3.0
 
 ### Minor Changes
