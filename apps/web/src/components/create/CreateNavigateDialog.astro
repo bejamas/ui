@@ -1,0 +1,93 @@
+---
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@bejamas/ui/components/command";
+import { CREATE_PREVIEW_COMMAND_VALUE } from "@/utils/create";
+import {
+  CREATE_PREVIEW_FALLBACK_LABEL,
+  KITCHEN_SINK_PAGES,
+} from "@/utils/kitchen-sink";
+
+const createPreviewKeywords = [
+  "create",
+  "preview",
+  "curated",
+  "overview",
+  "surface",
+];
+---
+
+<CommandDialog
+  id="create-navigate-dialog"
+  data-create-navigate-dialog
+  data-controller="create-navigate"
+  data-action="dialog:change->create-navigate#dialogChanged"
+  title="Navigate"
+  description="Jump the preview iframe to a component example without leaving `/create`."
+  class="p-3"
+>
+  <Command
+    data-create-navigate-command
+    label="Navigate preview targets"
+  >
+    <CommandInput
+      autofocus
+      placeholder="Search component examples..."
+      data-create-navigate-input
+    />
+
+    <CommandList class="max-h-[28rem]">
+      <CommandEmpty>No matching pages.</CommandEmpty>
+
+      <CommandGroup heading="Preview">
+        <CommandItem
+          value={CREATE_PREVIEW_COMMAND_VALUE}
+          label={CREATE_PREVIEW_FALLBACK_LABEL}
+          keywords={createPreviewKeywords}
+          data-create-preview-default
+          class="items-start px-3 py-3"
+        >
+          <span class="min-w-0 flex-1">
+            <span class="block text-sm font-medium leading-5">
+              {CREATE_PREVIEW_FALLBACK_LABEL}
+            </span>
+            <span class="mt-0.5 block text-sm leading-5 text-muted-foreground">
+              Return to the curated create overview surface.
+            </span>
+          </span>
+        </CommandItem>
+      </CommandGroup>
+
+      <CommandSeparator />
+
+      <CommandGroup heading="Component Examples">
+        {
+          KITCHEN_SINK_PAGES.map((page) => (
+            <CommandItem
+              value={page.id}
+              label={page.label}
+              keywords={[
+                page.description,
+                ...(page.js ? ["js", "javascript"] : []),
+              ]}
+              class="items-start px-3 py-3"
+            >
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm font-medium leading-5">
+                  {page.label}
+                </span>
+              </span>
+            </CommandItem>
+          ))
+        }
+      </CommandGroup>
+    </CommandList>
+  </Command>
+</CommandDialog>

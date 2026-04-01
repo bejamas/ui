@@ -1,6 +1,7 @@
 ---
 import "@/styles/blocks.css";
 import "@bejamas/ui/styles/globals.css";
+import { buildThemeChoiceBootstrapInlineScript } from "starlight-theme-bejamas/lib/theme-choice";
 
 interface Props {
   theme?: string;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const { theme = "current-theme", title } = Astro.props;
+const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 ---
 
 <html lang="en" class="bg-background">
@@ -15,43 +17,7 @@ const { theme = "current-theme", title } = Astro.props;
     <meta charset="utf-8" />
     <meta name="robots" content="noindex, nofollow" />
     {title && <title>{title}</title>}
-    <script is:inline>
-      const storageKey = "starlight-theme";
-      const parseTheme = (t) =>
-        t === "auto" || t === "dark" || t === "light" ? t : "auto";
-      const getPreferredColorScheme = () =>
-        matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-      const loadTheme = () => {
-        try {
-          return parseTheme(
-            typeof localStorage !== "undefined" &&
-              localStorage.getItem(storageKey),
-          );
-        } catch {
-          return "auto";
-        }
-      };
-      function applyTheme(theme) {
-        const effective = theme === "auto" ? getPreferredColorScheme() : theme;
-        document.documentElement.dataset.theme = effective;
-        // add class to body
-        document.documentElement.classList.remove("light", "dark");
-        document.documentElement.classList.add(effective);
-      }
-      // Initialize on load
-      applyTheme(loadTheme());
-      // Sync via storage events (parent <-> iframe)
-      window.addEventListener("storage", (event) => {
-        if (event.key === storageKey) applyTheme(loadTheme());
-      });
-      // React to system scheme while in 'auto'
-      matchMedia("(prefers-color-scheme: light)").addEventListener(
-        "change",
-        () => {
-          if (loadTheme() === "auto") applyTheme("auto");
-        },
-      );
-    </script>
+    <script is:inline set:html={themeChoiceBootstrapScript} />
   </head>
   <body class="antialiased bg-background">
     <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
@@ -61,18 +27,15 @@ const { theme = "current-theme", title } = Astro.props;
     <script>
       import {
         getCurrentMode,
-        getStoredPreset,
       } from "../utils/themes/preset-store.ts";
       import { syncGradientImages } from "../utils/themes/gradient-image-runtime.ts";
 
       const themeStorageKey = "starlight-theme";
-      const presetStorageKey = "theme-preset";
-
       const toMode = (value: unknown): "light" | "dark" =>
         value === "dark" ? "dark" : "light";
 
       function syncPreviewGradientImages(modeOverride?: "light" | "dark") {
-        const themeKey = getStoredPreset() || "default";
+        const themeKey = "default";
         const mode = modeOverride ?? toMode(getCurrentMode());
         syncGradientImages({ themeKey, mode });
       }
@@ -80,11 +43,7 @@ const { theme = "current-theme", title } = Astro.props;
       syncPreviewGradientImages();
 
       window.addEventListener("storage", (event) => {
-        if (
-          event.key === themeStorageKey ||
-          event.key === presetStorageKey ||
-          event.key === "theme"
-        ) {
+        if (event.key === themeStorageKey || event.key === "theme") {
           syncPreviewGradientImages();
         }
       });

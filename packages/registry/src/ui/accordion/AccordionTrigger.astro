@@ -1,0 +1,68 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"button"> {
+  class?: string;
+  /** Radix-like: render wrapper so the child can be the interactive element */
+  asChild?: boolean;
+}
+
+const { class: className = "", asChild = false, type = "button", ...rest } = Astro.props as Props;
+
+const triggerVariants = cva(
+  "cn-accordion-trigger group/accordion-trigger relative flex flex-1 items-start justify-between border border-transparent transition-all outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50",
+);
+---
+
+{
+  asChild ? (
+    <div class="flex">
+      <div
+        data-slot="accordion-trigger"
+        data-as-child
+        class={cn(triggerVariants(), className)}
+      >
+        <slot />
+      </div>
+    </div>
+  ) : (
+    <div class="flex">
+      <button
+        {...rest}
+        type={type}
+        data-slot="accordion-trigger"
+        class={cn(triggerVariants(), className)}
+      >
+        <slot />
+        {
+          Astro.slots.has("icon") ? (
+            <span
+              data-slot="accordion-trigger-icon"
+              class="cn-accordion-trigger-icon pointer-events-none shrink-0"
+            >
+              <slot name="icon" />
+            </span>
+          ) : (
+            <>
+              <SemanticIcon
+                name="chevron-down"
+                data-slot="accordion-trigger-icon"
+                class="cn-accordion-trigger-icon pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+                aria-hidden="true"
+              />
+              <SemanticIcon
+                name="chevron-up"
+                data-slot="accordion-trigger-icon"
+                class="cn-accordion-trigger-icon pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+                aria-hidden="true"
+              />
+            </>
+          )
+        }
+      </button>
+    </div>
+  )
+}

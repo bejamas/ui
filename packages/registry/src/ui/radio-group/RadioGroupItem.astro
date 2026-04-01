@@ -1,0 +1,42 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"span"> {
+  value: string;
+  class?: string;
+  disabled?: boolean;
+  id?: string;
+  "aria-invalid"?: boolean | "true" | "false";
+}
+
+const {
+  class: className = "",
+  id = "",
+  value,
+  disabled = false,
+  "aria-invalid": ariaInvalid,
+  ...rest
+} = Astro.props as Props;
+---
+
+<span
+  {...rest}
+  id={id}
+  data-slot="radio-group-item"
+  data-value={value}
+  data-disabled={disabled ? "true" : undefined}
+  aria-invalid={ariaInvalid}
+  class={cn(
+    "cn-radio-group-item group/radio-group-item peer relative aspect-square shrink-0 border outline-none after:absolute after:-inset-x-3 after:-inset-y-2 disabled:cursor-not-allowed disabled:opacity-50",
+    className,
+  )}
+>
+  <span
+    aria-hidden="true"
+    data-slot="radio-group-indicator"
+    class="cn-radio-group-indicator data-unchecked:hidden"
+  >
+    <span class="cn-radio-group-indicator-icon"></span>
+  </span>
+</span>

@@ -1,0 +1,50 @@
+---
+import { Badge } from "@bejamas/registry/ui/badge";
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+
+const lineItems = [
+  ["Starter workspace", "$24.00"],
+  ["Team seats", "$96.00"],
+  ["Priority support", "$32.00"],
+] as const;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <div class="flex items-center justify-between gap-3">
+      <div>
+        <CardTitle>Invoice #INV-2847</CardTitle>
+        <CardDescription>Due March 30, 2026</CardDescription>
+      </div>
+      <Badge>Unpaid</Badge>
+    </div>
+  </CardHeader>
+  <CardContent class="space-y-3">
+    {
+      lineItems.map(([label, value]) => (
+        <div class="flex items-center justify-between gap-3 text-sm">
+          <span class="text-muted-foreground">{label}</span>
+          <span class="font-medium tabular-nums">{value}</span>
+        </div>
+      ))
+    }
+    <div class="border-t border-border pt-3">
+      <div class="flex items-center justify-between gap-3">
+        <span class="font-medium">Total</span>
+        <span class="font-medium tabular-nums">$152.00</span>
+      </div>
+    </div>
+  </CardContent>
+  <CardFooter class="flex gap-2">
+    <Button variant="outline" class="flex-1">Download PDF</Button>
+    <Button class="flex-1">Pay invoice</Button>
+  </CardFooter>
+</Card>

@@ -1,0 +1,38 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"button"> {
+  class?: string;
+  size?: "sm" | "default" | "lg";
+}
+
+const {
+  class: className = "",
+  size = "default",
+  ...rest
+} = Astro.props as Props;
+---
+
+<button
+  {...rest}
+  type="button"
+  data-slot="select-trigger"
+  data-size={size}
+  class={cn(
+    "cn-select-trigger",
+    "flex w-fit items-center justify-between whitespace-nowrap outline-none",
+    "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+    "*:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center",
+    "[&_svg]:pointer-events-none [&_svg]:shrink-0",
+    className,
+  )}
+>
+  <slot />
+  <SemanticIcon
+    name="chevron-down"
+    class="cn-select-icon cn-select-trigger-icon pointer-events-none"
+    data-slot="select-icon"
+  />
+</button>

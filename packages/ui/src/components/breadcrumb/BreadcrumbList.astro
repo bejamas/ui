@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/breadcrumb/BreadcrumbList.astro directly.
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
@@ -13,15 +14,14 @@ const {
 } = Astro.props as Props;
 
 const listVariants = cva(
-  "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5",
+  "flex flex-wrap items-center wrap-break-word",
 );
 ---
 
 <ol
   {...rest}
   data-slot="breadcrumb-list"
-  class={cn(listVariants(), className)}
+  class={cn("text-muted-foreground gap-1.5 text-sm sm:gap-2.5", listVariants(), className)}
 >
   <slot />
 </ol>
-

@@ -1,0 +1,17 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+import { Textarea } from "../textarea";
+
+interface Props extends HTMLAttributes<"textarea"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<Textarea
+  data-slot="input-group-control"
+  class={cn("cn-input-group-textarea flex-1 resize-none", className)}
+  {...rest}
+/>

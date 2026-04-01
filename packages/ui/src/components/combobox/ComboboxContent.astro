@@ -1,7 +1,7 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/combobox/ComboboxContent.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
-import { cva } from "class-variance-authority";
 
 interface Props extends HTMLAttributes<"div"> {
   class?: string;
@@ -19,30 +19,6 @@ const {
   alignOffset = 0,
   ...rest
 } = Astro.props as Props;
-
-const contentVariants = cva(
-  [
-    "z-50 outline-hidden",
-    "bg-popover text-popover-foreground min-w-[var(--combobox-input-width,8rem)] overflow-hidden rounded-lg shadow-md ring-1 ring-foreground/10",
-    "data-[state=open]:animate-in data-[state=closed]:animate-out",
-    "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-    "origin-(--transform-origin)",
-    "*:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:shadow-none",
-    "[--tw-animation-fill-mode:both]",
-  ],
-  {
-    variants: {
-      side: {
-        top: "data-[side=top]:slide-in-from-bottom-2",
-        bottom: "data-[side=bottom]:slide-in-from-top-2",
-      },
-    },
-    defaultVariants: {
-      side: "bottom",
-    },
-  },
-);
 ---
 
 <div
@@ -53,7 +29,10 @@ const contentVariants = cva(
   data-side-offset={sideOffset}
   data-align-offset={alignOffset}
   hidden
-  class={cn(contentVariants({ side }), className)}
+  class={cn(
+    "bg-popover text-popover-foreground data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 ring-foreground/10 *:data-[slot=input-group]:bg-input/30 *:data-[slot=input-group]:border-input/30 max-h-72 min-w-36 overflow-hidden rounded-md shadow-md ring-1 duration-100 *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:shadow-none rounded-lg data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2 cn-menu-target cn-menu-translucent group/combobox-content relative w-[var(--anchor-width)] max-h-[var(--available-height)] max-w-[var(--available-width)] min-w-[max(8rem,var(--anchor-width))] origin-(--transform-origin)",
+    className,
+  )}
 >
   <slot />
 </div>

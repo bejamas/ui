@@ -1,0 +1,58 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/registry/lib/utils";
+import { Button } from "../button";
+
+type GroupButtonSize = "xs" | "sm" | "icon-xs" | "icon-sm";
+
+interface Props extends HTMLAttributes<"button"> {
+  size?: GroupButtonSize;
+  variant?:
+  | "default"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "destructive"
+  | "link";
+  type?: "button" | "submit" | "reset";
+  class?: string;
+}
+
+const {
+  size = "xs",
+  variant = "ghost",
+  type = "button",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const inputGroupButtonVariants = cva(
+  "cn-input-group-button flex items-center shadow-none",
+  {
+    variants: {
+      size: {
+        xs: "cn-input-group-button-size-xs",
+        sm: "cn-input-group-button-size-sm",
+        "icon-xs":
+          "cn-input-group-button-size-icon-xs",
+        "icon-sm": "cn-input-group-button-size-icon-sm",
+      },
+    },
+    defaultVariants: {
+      size: "xs",
+    },
+  },
+);
+---
+
+<Button
+  type={type}
+  data-size={size}
+  variant={variant}
+  data-slot="input-group-button"
+  class={cn(inputGroupButtonVariants({ size }), className)}
+  {...rest}
+>
+  <slot />
+</Button>

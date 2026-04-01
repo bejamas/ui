@@ -1,0 +1,190 @@
+---
+/**
+ * @component Button
+ * @title Button
+ * @description A clickable element for triggering actions or submitting forms.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2609-10438&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <div class="flex flex-wrap items-center gap-2 md:flex-row">
+ *   <Button>Button</Button>
+ *   <Button variant="outline" size="icon" aria-label="Submit">
+ *     <ArrowUpIcon />
+ *   </Button>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Button } from '@bejamas/ui/components/button';
+ * ---
+ *
+ * <Button>Click me</Button>
+ * ```
+ *
+ * ## Link
+ *
+ * You can use the `as` prop to render the component as an anchor.
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Button } from '@bejamas/ui/components/button';
+ * ---
+ *
+ * <Button as="a" href="https://bejamas.com">Click me</Button>
+ * ```
+ *
+ * @examples
+ *
+ * ### Variants
+ *
+ * <div class="flex flex-col items-start gap-8 sm:flex-row">
+ *   <Button variant="default">Default</Button>
+ *   <Button variant="secondary">Secondary</Button>
+ *   <Button variant="outline">Outline</Button>
+ *   <Button variant="ghost">Ghost</Button>
+ *   <Button variant="destructive">Destructive</Button>
+ * </div>
+ *
+ * ### Sizes
+ *
+ * <div class="flex flex-col items-start gap-8 sm:flex-row">
+ *   <div class="flex items-start gap-2">
+ *     <Button size="sm" variant="outline">
+ *       Small
+ *     </Button>
+ *     <Button size="icon-sm" aria-label="Submit" variant="outline">
+ *       <ArrowUpRightIcon />
+ *     </Button>
+ *   </div>
+ *   <div class="flex items-start gap-2">
+ *     <Button variant="outline">Default</Button>
+ *     <Button size="icon" aria-label="Submit" variant="outline">
+ *       <ArrowUpRightIcon />
+ *     </Button>
+ *   </div>
+ *   <div class="flex items-start gap-2">
+ *     <Button variant="outline" size="lg">
+ *       Large
+ *     </Button>
+ *     <Button size="icon-lg" aria-label="Submit" variant="outline">
+ *       <ArrowUpRightIcon />
+ *     </Button>
+ *   </div>
+ * </div>
+ *
+ * ### With badge
+ *
+ * <Button variant="default">
+ *   Click me
+ *   <Badge variant="secondary">Value</Badge>
+ * </Button>
+ *
+ * ### Destructive
+ *
+ * <Button variant="destructive">Click me</Button>
+ *
+ * ### Outline
+ *
+ * <Button variant="outline">Click me</Button>
+ *
+ * ### Secondary
+ *
+ * <Button variant="secondary">Click me</Button>
+ *
+ * ### Ghost
+ *
+ * <Button variant="ghost">Click me</Button>
+ *
+ * ### Link
+ *
+ * <Button variant="link">Click me</Button>
+ *
+ * ### Default
+ *
+ * <Button>Click me</Button>
+ *
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@bejamas/registry/lib/utils";
+
+const buttonVariants = cva(
+  "group/button inline-flex shrink-0 items-center justify-center whitespace-nowrap transition-all outline-none select-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "cn-button-variant-default",
+        destructive: "cn-button-variant-destructive",
+        outline: "cn-button-variant-outline",
+        secondary: "cn-button-variant-secondary",
+        ghost: "cn-button-variant-ghost",
+        link: "cn-button-variant-link",
+      },
+      size: {
+        default: "cn-button-size-default",
+        sm: "cn-button-size-sm",
+        lg: "cn-button-size-lg",
+        icon: "cn-button-size-icon",
+        "icon-sm": "cn-button-size-icon-sm",
+        "icon-lg": "cn-button-size-icon-lg",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+);
+
+type ButtonVariantProps = VariantProps<typeof buttonVariants>;
+
+type ButtonAsButton = {
+  as?: "button";
+} & HTMLAttributes<"button">;
+
+type ButtonAsAnchor = {
+  as: "a";
+} & HTMLAttributes<"a">;
+
+type ButtonOwnProps = ButtonVariantProps & {
+  // you can add custom props here
+};
+
+export type Props = (ButtonAsButton | ButtonAsAnchor) & ButtonOwnProps;
+
+const {
+  as: Tag = "button",
+  variant = "default",
+  size = "default",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+{
+  /*
+  TS can't reconcile our discriminated union props with a dynamic intrinsic Tag.
+  The public Props type *is* strict (href only allowed when as="a"),
+  but JSX wants an intersection of button+anchor attributes here.
+  We deliberately suppress this internal error and rely on Props for caller safety.
+*/
+}
+<!-- @ts-expect-error – union Props + dynamic Tag confuse JSX typing (see comment above) -->
+<Tag
+  data-slot="button"
+  data-variant={variant}
+  data-size={size}
+  class={cn(
+    "cn-button",
+    buttonVariants({ variant, size }),
+    className,
+  )}
+  {...rest}
+>
+  <slot />
+</Tag>

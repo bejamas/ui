@@ -3,6 +3,8 @@ import path from "node:path";
 import fg from "fast-glob";
 import { logger } from "@/src/utils/logger";
 import { Config, getConfig } from "@/src/utils/get-config";
+import { rewriteAstroIcons } from "@/src/utils/icon-transform";
+import { rewriteAstroMenus } from "@/src/utils/menu-transform";
 
 export function updateImportAliases(
   moduleSpecifier: string,
@@ -17,7 +19,10 @@ export function updateImportAliases(
   // This treats the remote as coming from a faux registry.
   let specifier = moduleSpecifier;
   if (isRemote && specifier.startsWith("@/")) {
-    specifier = specifier.replace(/^@\//, "@/registry/new-york/");
+    specifier = specifier.replace(
+      /^@\//,
+      `@/registry/${config.style || "bejamas-juno"}/`,
+    );
   }
 
   // Not a registry import.
@@ -99,7 +104,9 @@ export function rewriteAstroImports(content: string, config: Config) {
     return full.replace(specifier, next);
   });
 
-  return updated;
+  updated = rewriteAstroMenus(updated, config.menuColor);
+
+  return rewriteAstroIcons(updated, config.iconLibrary);
 }
 
 export async function fixAstroImports(cwd: string, isVerbose: boolean) {
@@ -132,4 +139,3 @@ export async function fixAstroImports(cwd: string, isVerbose: boolean) {
     }
   }
 }
-

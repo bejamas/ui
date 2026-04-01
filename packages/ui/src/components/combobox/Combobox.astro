@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/combobox/Combobox.astro directly.
 /**
  * @component Combobox
  * @title Combobox
@@ -128,7 +129,10 @@
  *
  * | Attribute | Element | Description |
  * |-----------|---------|-------------|
- * | `data-state` | combobox, combobox-content | Current state (`open` or `closed`) |
+ * | `data-open` | combobox, combobox-content | Present when the popup is open |
+ * | `data-closed` | combobox, combobox-content | Present when the popup is closed |
+ * | `data-side` | combobox-content | Resolved popup side |
+ * | `data-align` | combobox-content | Resolved popup alignment |
  * | `data-value` | combobox | Currently selected value |
  * | `data-selected` | combobox-item | Present when item is selected |
  * | `data-highlighted` | combobox-item | Present when item is focused/highlighted |
@@ -334,7 +338,7 @@ const {
   data-auto-highlight={autoHighlight !== undefined
     ? String(autoHighlight)
     : undefined}
-  class={cn("group/combobox relative inline-block", className)}
+  class={cn("", "group/combobox relative inline-block", className)}
 >
   <slot />
 </div>

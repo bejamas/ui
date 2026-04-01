@@ -1,0 +1,17 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"caption"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<caption data-slot="table-caption" class={cn("cn-table-caption", className)} {...rest}>
+  <slot />
+</caption>

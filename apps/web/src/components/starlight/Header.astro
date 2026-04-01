@@ -11,6 +11,7 @@ import options from "virtual:starlight-theme-bejamas/user-config";
 
 import { Button } from "virtual:starlight-theme-bejamas/components/button";
 import GitHubStarsButton from "@/components/GitHubStarsButton.astro";
+import HeaderPresetSwitcher from "@/components/starlight/HeaderPresetSwitcher.astro";
 
 /**
  * Render the `Search` component if Pagefind is enabled or the default search component has been overridden.
@@ -49,21 +50,25 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
     <div class="header-mobile-stars">
       <GitHubStarsButton />
     </div>
-    {shouldRenderSearch && (
-      <div class="header-desktop-search">
-        <Search />
-      </div>
-    )}
+    {
+      shouldRenderSearch && (
+        <div class="header-desktop-search">
+          <Search />
+        </div>
+      )
+    }
   </div>
   <div class="header-desktop-right print:hidden right-group">
     <GitHubStarsButton />
-    <div class="sl-flex social-icons">
-      <SocialIcons />
-    </div>
+    <HeaderPresetSwitcher />
     <ThemeSelect />
     <LanguageSelect />
   </div>
 </div>
+
+<script>
+  import "@/scripts/header-preset-switcher.ts";
+</script>
 
 <style>
   @layer bejamas {
@@ -102,6 +107,11 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
       display: none;
     }
 
+    .header-desktop-search {
+      align-items: center;
+      gap: 0.5rem;
+    }
+
     @media (min-width: 64rem) {
       .sl-bejamas-main-nav {
         display: block;
@@ -132,7 +142,7 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
 
     .right-group,
     .social-icons {
-      gap: 1rem;
+      gap: var(--sl-nav-gap);
       align-items: center;
     }
     .social-icons::after {

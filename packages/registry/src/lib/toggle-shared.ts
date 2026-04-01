@@ -1,0 +1,26 @@
+import { cva, type VariantProps } from "class-variance-authority";
+
+export const TOGGLE_VARIANTS = ["default", "outline"] as const;
+export const TOGGLE_SIZES = ["default", "sm", "lg"] as const;
+
+export type ToggleVariant = (typeof TOGGLE_VARIANTS)[number];
+export type ToggleSize = (typeof TOGGLE_SIZES)[number];
+
+export const toggleVariants = cva(
+  "cn-toggle group/toggle inline-flex items-center justify-center whitespace-nowrap outline-none hover:bg-muted focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "cn-toggle-variant-default",
+        outline: "cn-toggle-variant-outline",
+      },
+      size: {
+        default: "cn-toggle-size-default",
+        sm: "cn-toggle-size-sm",
+        lg: "cn-toggle-size-lg",
+      },
+    },
+  },
+);
+
+export type ToggleVariantProps = VariantProps<typeof toggleVariants>;

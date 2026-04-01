@@ -1,23 +1,13 @@
 import type { ThemeEditorState } from "../types/editor";
+import { COMMON_NON_COLOR_KEYS } from "./theme-tokens";
 
 // these are common between light and dark modes
 // we can assume that light mode's value will be used for dark mode as well
-export const COMMON_STYLES = [
-  "font-sans",
-  "font-serif",
-  "font-mono",
-  "radius",
-  "shadow-opacity",
-  "shadow-blur",
-  "shadow-spread",
-  "shadow-offset-x",
-  "shadow-offset-y",
-  "letter-spacing",
-  "spacing",
-];
+export const COMMON_STYLES = [...COMMON_NON_COLOR_KEYS];
 
 export const DEFAULT_FONT_SANS =
   "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'";
+export const DEFAULT_FONT_HEADING = DEFAULT_FONT_SANS;
 
 export const DEFAULT_FONT_SERIF =
   'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif';
@@ -61,6 +51,7 @@ export const defaultLightThemeStyles = {
   "sidebar-border": "oklch(0.922 0 0)",
   "sidebar-ring": "oklch(0.708 0 0)",
   "font-sans": DEFAULT_FONT_SANS,
+  "font-heading": DEFAULT_FONT_HEADING,
   "font-serif": DEFAULT_FONT_SERIF,
   "font-mono": DEFAULT_FONT_MONO,
 
@@ -77,7 +68,8 @@ export const defaultLightThemeStyles = {
   footer: "oklch(0.145 0 0)",
   "footer-foreground": "oklch(0.985 0 0)",
   "footer-primary": "oklch(0.985 0 0)",
-  "footer-border": "#2b2b2a",
+  "footer-primary-foreground": "oklch(0.145 0 0)",
+  "footer-border": "oklch(0.2887 0.0018 106.5112)",
 };
 
 // Default dark theme styles

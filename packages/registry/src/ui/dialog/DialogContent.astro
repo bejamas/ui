@@ -1,0 +1,41 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+import DialogClose from "./DialogClose.astro";
+import DialogOverlay from "./DialogOverlay.astro";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"div"> {
+  showCloseButton?: boolean;
+}
+
+const {
+  showCloseButton = true,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div data-slot="dialog-portal" class="cn-dialog-portal z-50 isolate absolute">
+  <DialogOverlay />
+  <div
+    data-slot="dialog-content"
+    hidden
+    class={cn(
+      "cn-dialog-content fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none",
+      className,
+    )}
+    {...rest}
+  >
+    <slot />
+    {
+      showCloseButton && (
+        <DialogClose>
+          <SemanticIcon name="x" />
+          <span class="sr-only">Close</span>
+        </DialogClose>
+      )
+    }
+  </div>
+</div>

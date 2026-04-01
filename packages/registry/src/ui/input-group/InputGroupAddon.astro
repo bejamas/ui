@@ -1,0 +1,49 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/registry/lib/utils";
+
+type Align = "inline-start" | "inline-end" | "block-start" | "block-end";
+
+interface Props extends HTMLAttributes<"div"> {
+  align?: Align;
+  class?: string;
+}
+
+const {
+  align = "inline-start",
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const addonVariants = cva(
+  "cn-input-group-addon flex cursor-text items-center justify-center select-none",
+  {
+    variants: {
+      align: {
+        "inline-start":
+          "cn-input-group-addon-align-inline-start order-first",
+        "inline-end":
+          "cn-input-group-addon-align-inline-end order-last",
+        "block-start":
+          "cn-input-group-addon-align-block-start order-first w-full justify-start",
+        "block-end":
+          "cn-input-group-addon-align-block-end order-last w-full justify-start",
+      },
+    },
+    defaultVariants: {
+      align: "inline-start",
+    },
+  },
+);
+---
+
+<div
+  {...rest}
+  role="group"
+  data-slot="input-group-addon"
+  data-align={align}
+  class={cn(addonVariants({ align }), className)}
+>
+  <slot />
+</div>

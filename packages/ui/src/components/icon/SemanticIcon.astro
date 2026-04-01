@@ -1,0 +1,36 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/icon/SemanticIcon.astro directly.
+import {
+  renderSemanticIconSvg,
+  type IconLibraryName,
+  type SemanticIconName,
+} from "@bejamas/semantic-icons";
+import { resolveActiveIconLibrary } from "@bejamas/ui/lib/icons";
+import { cn } from "@bejamas/ui/lib/utils";
+
+type Props = {
+  name: SemanticIconName;
+  library?: IconLibraryName;
+  class?: string;
+  "aria-hidden"?: "true" | "false";
+} & Record<string, string | number | boolean | undefined>;
+
+const {
+  name,
+  library: providedLibrary,
+  class: className = "",
+  "aria-hidden": ariaHidden = "true",
+  ...rest
+} = Astro.props as Props;
+
+const library = resolveActiveIconLibrary(Astro, providedLibrary);
+const markup = renderSemanticIconSvg(library, name, {
+  class: cn("", className),
+  "aria-hidden": ariaHidden,
+  "data-semantic-icon": name,
+  "data-icon-library": library,
+  ...rest,
+});
+---
+
+<Fragment set:html={markup} />

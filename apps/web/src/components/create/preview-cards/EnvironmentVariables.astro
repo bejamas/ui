@@ -1,0 +1,40 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+
+const variables = [
+  ["DATABASE_URL", "••••••••••••"],
+  ["NEXT_PUBLIC_API", "https://api.example.com"],
+  ["STRIPE_SECRET", "••••••••••••"],
+] as const;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>Environment Variables</CardTitle>
+    <CardDescription>Production · 8 variables</CardDescription>
+  </CardHeader>
+  <CardContent class="space-y-3">
+    {
+      variables.map(([name, value]) => (
+        <div class="rounded-lg border border-border px-3 py-2">
+          <div class="flex items-center justify-between gap-3">
+            <span class="font-mono text-xs font-medium">{name}</span>
+            <span class="font-mono text-xs text-muted-foreground">{value}</span>
+          </div>
+        </div>
+      ))
+    }
+  </CardContent>
+  <CardFooter class="gap-2">
+    <Button variant="outline" class="flex-1">Edit</Button>
+    <Button class="flex-1">Deploy</Button>
+  </CardFooter>
+</Card>

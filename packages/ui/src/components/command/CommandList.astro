@@ -1,0 +1,22 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/command/CommandList.astro directly.
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="command-list"
+  class={cn(
+    "no-scrollbar max-h-72 scroll-py-1 outline-none overflow-x-hidden overflow-y-auto",
+    className,
+  )}
+>
+  <slot />
+</div>

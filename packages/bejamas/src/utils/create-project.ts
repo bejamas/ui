@@ -1,5 +1,6 @@
 import os from "os";
 import path from "path";
+import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import { initOptionsSchema } from "@/src/commands/init";
 import { getPackageManager } from "@/src/utils/get-package-manager";
@@ -8,6 +9,7 @@ import { highlighter } from "@/src/utils/highlighter";
 import { logger } from "@/src/utils/logger";
 import { spinner } from "@/src/utils/spinner";
 import { execa } from "execa";
+import fg from "fast-glob";
 import fs from "fs-extra";
 import prompts from "prompts";
 import { z } from "zod";
@@ -18,8 +20,58 @@ export const TEMPLATES = {
   "astro-with-component-docs-monorepo": "astro-with-component-docs-monorepo",
 } as const;
 
-const MONOREPO_TEMPLATE_URL =
-  "https://codeload.github.com/bejamas/ui/tar.gz/main";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+function resolveLocalTemplatesDir() {
+  for (const relativePath of [
+    "../../../../templates",
+    "../../../templates",
+    "../../templates",
+  ]) {
+    const candidate = path.resolve(__dirname, relativePath);
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return path.resolve(__dirname, "../../../../templates");
+}
+
+const LOCAL_TEMPLATES_DIR = resolveLocalTemplatesDir();
+
+async function applyLocalPackageOverrides(projectPath: string) {
+  const bejamasPackageOverride = process.env.BEJAMAS_PACKAGE_OVERRIDE;
+
+  if (!bejamasPackageOverride) {
+    return;
+  }
+
+  const packageJsonPaths = await fg("**/package.json", {
+    cwd: projectPath,
+    absolute: true,
+    ignore: ["**/node_modules/**"],
+  });
+  const normalizedOverride = bejamasPackageOverride.replace(/\\/g, "/");
+
+  await Promise.all(
+    packageJsonPaths.map(async (packageJsonPath) => {
+      const packageJson = await fs.readJson(packageJsonPath);
+      let changed = false;
+
+      for (const field of ["dependencies", "devDependencies"] as const) {
+        if (packageJson[field]?.bejamas) {
+          packageJson[field].bejamas = `file:${normalizedOverride}`;
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+      }
+    }),
+  );
+}
 
 export async function createProject(
   options: Pick<
@@ -144,68 +196,38 @@ async function createProjectFromTemplate(
     `Creating a new project from template. This may take a few minutes.`,
   ).start();
 
-  const TEMPLATE_TAR_SUBPATH: Record<keyof typeof TEMPLATES, string> = {
-    astro: "ui-main/templates/astro",
-    "astro-monorepo": "ui-main/templates/monorepo-astro",
-    "astro-with-component-docs-monorepo":
-      "ui-main/templates/monorepo-astro-with-docs",
+  const TEMPLATE_DIRNAME: Record<keyof typeof TEMPLATES, string> = {
+    astro: "astro",
+    "astro-monorepo": "monorepo-astro",
+    "astro-with-component-docs-monorepo": "monorepo-astro-with-docs",
   };
 
   try {
-    // Load local .env if present to allow GITHUB_TOKEN/GH_TOKEN
     dotenv.config({ quiet: true });
     const templatePath = path.join(
       os.tmpdir(),
       `bejamas-template-${Date.now()}`,
     );
-    await fs.ensureDir(templatePath);
+    const templateSource = path.resolve(
+      LOCAL_TEMPLATES_DIR,
+      TEMPLATE_DIRNAME[options.templateKey],
+    );
 
-    // Auth via environment variables (.env supported)
-    const authToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-    const usedAuth = Boolean(authToken);
-    const headers: Record<string, string> = {
-      "User-Agent": "bejamas-cli",
-    };
-    if (authToken) {
-      headers["Authorization"] = `Bearer ${authToken}`;
+    if (!(await fs.pathExists(templateSource))) {
+      throw new Error(`Local template not found: ${templateSource}`);
     }
 
-    const response = await fetch(MONOREPO_TEMPLATE_URL, { headers });
-    if (!response.ok) {
-      if (
-        response.status === 401 ||
-        response.status === 403 ||
-        (!usedAuth && response.status === 404)
-      ) {
-        throw new Error(
-          "Unauthorized to access private template. Set GITHUB_TOKEN or GH_TOKEN (in .env or env) with repo access and try again.",
-        );
-      }
-      if (response.status === 404) {
-        throw new Error("Failed to download template: not found.");
-      }
-      throw new Error(
-        `Failed to download template: ${response.status} ${response.statusText}`,
-      );
-    }
+    await fs.copy(templateSource, projectPath, {
+      filter: (source) => {
+        const basename = path.basename(source);
+        return basename !== "node_modules" && basename !== ".astro";
+      },
+    });
 
-    const tarPath = path.resolve(templatePath, "template.tar.gz");
-    await fs.writeFile(tarPath, Buffer.from(await response.arrayBuffer()));
+    await removeEmptyTemplateI18nDirs(projectPath);
 
-    const tarSubpath = TEMPLATE_TAR_SUBPATH[options.templateKey];
-    const leafName = tarSubpath.split("/").pop() as string;
+    await applyLocalPackageOverrides(projectPath);
 
-    await execa("tar", [
-      "-xzf",
-      tarPath,
-      "-C",
-      templatePath,
-      "--strip-components=2",
-      tarSubpath,
-    ]);
-
-    const extractedPath = path.resolve(templatePath, leafName);
-    await fs.move(extractedPath, projectPath);
     await fs.remove(templatePath);
 
     await execa(options.packageManager, ["install"], {
@@ -239,4 +261,24 @@ async function createProjectFromTemplate(
     );
     handleError(error);
   }
+}
+
+async function removeEmptyTemplateI18nDirs(projectPath: string) {
+  const candidates = [
+    path.resolve(projectPath, "src/i18n"),
+    path.resolve(projectPath, "apps/web/src/i18n"),
+  ];
+
+  await Promise.all(
+    candidates.map(async (candidate) => {
+      if (!(await fs.pathExists(candidate))) {
+        return;
+      }
+
+      const entries = await fs.readdir(candidate);
+      if (entries.length === 0) {
+        await fs.remove(candidate);
+      }
+    }),
+  );
 }

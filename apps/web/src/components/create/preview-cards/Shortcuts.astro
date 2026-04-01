@@ -1,0 +1,29 @@
+---
+import { Card, CardContent, CardHeader, CardTitle } from "@bejamas/registry/ui/card";
+import { Kbd, KbdGroup } from "@bejamas/registry/ui/kbd";
+
+const shortcuts = [
+  ["Search docs", ["⌘", "K"]],
+  ["Open navigation", ["⌘", "P"]],
+  ["Create project", ["⇧", "↵"]],
+  ["Toggle theme", ["⌘", "J"]],
+] as const;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>Shortcuts</CardTitle>
+  </CardHeader>
+  <CardContent class="space-y-3">
+    {
+      shortcuts.map(([label, keys]) => (
+        <div class="flex items-center justify-between gap-3 text-sm">
+          <span>{label}</span>
+          <KbdGroup>
+            {keys.map((key) => <Kbd>{key}</Kbd>)}
+          </KbdGroup>
+        </div>
+      ))
+    }
+  </CardContent>
+</Card>

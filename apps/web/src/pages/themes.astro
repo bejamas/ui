@@ -1,15 +1,7 @@
 ---
-import { getCollection } from "astro:content";
 import cssSource from "@bejamas/ui/styles/globals.css?raw";
-import { defaultPresets } from "../utils/themes/presets";
-import { Label } from "@bejamas/ui/components/label";
 import { Button } from "@bejamas/ui/components/button";
-import { ArrowLeft, ArrowRight, CodeXml } from "@lucide/astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
-import PresetSwitcher from "../components/PresetSwitcher.astro";
-
-const docs = await getCollection("docs");
-const components = docs.filter((doc) => doc.id.startsWith("components/"));
 
 const isTextToken = (token: string) =>
   token === "foreground" || token.endsWith("-foreground");
@@ -152,54 +144,29 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
   })),
 }));
 ---
-
-<script>
-  import {
-    getCurrentMode,
-    getStoredPreset,
-  } from "../utils/themes/preset-store.ts";
-  import { syncGradientImages } from "../utils/themes/gradient-image-runtime.ts";
-
-  function syncThemeGradientImages() {
-    const themeKey = getStoredPreset() || "default";
-    syncGradientImages({ themeKey, mode: getCurrentMode() });
-  }
-
-  syncThemeGradientImages();
-  document.addEventListener("astro:after-swap", syncThemeGradientImages);
-</script>
-
-<script>
-  import "../utils/themes/apply-theme.ts";
-</script>
-
-<!-- Removed IndexedDB population; lean presets are used directly -->
 <StarlightPage
   hasSidebar={false}
   frontmatter={{ title: "Themes", template: "splash" }}
 >
-  <!-- {JSON.stringify(leanPresets)} -->
-  <div class="not-content max-w-384 mx-auto px-0 sm:px-6 md:px-8">
-    <div class="flex items-end gap-2">
-      <div>
-        <Label for="preset-switcher" class="mb-2 font-medium"
-          >Theme Presets</Label
-        >
-        <PresetSwitcher />
+  <div
+    class="not-content max-w-384 mx-auto px-0 sm:px-6 md:px-8"
+    data-page-scope="themes"
+  >
+    <div class="rounded-2xl border border-border bg-card p-6 text-left">
+      <p class="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+        Legacy Theme Presets
+      </p>
+      <h2 class="mt-3 text-2xl font-medium tracking-tight">
+        `/create` is now the active theming flow.
+      </h2>
+      <p class="mt-2 max-w-2xl text-sm text-muted-foreground">
+        The old preset switcher has been retired from the public docs shell.
+        Use `/create` to tune colors, radii, fonts, and styles against the live
+        docs preview.
+      </p>
+      <div class="mt-5">
+        <Button as="a" href="/create">Open /create</Button>
       </div>
-      <Button
-        variant="outline"
-        id="previous-preset"
-        size="icon"
-        aria-label="Previous preset"><ArrowLeft class="size-4" /></Button
-      >
-      <Button
-        variant="outline"
-        id="next-preset"
-        size="icon"
-        aria-label="Next preset"><ArrowRight class="size-4" /></Button
-      >
-      <!-- <Button variant="outline">Copy Code <CodeXml class="size-4" /></Button> -->
     </div>
   </div>
   <div
@@ -247,25 +214,25 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
 <style is:global>
   @reference "tailwindcss";
 
-  .sl-bejamas-docs-title {
+  :root:has([data-page-scope="themes"]) .sl-bejamas-docs-title {
     position: relative;
     z-index: 20;
   }
 
-  .content-panel {
+  :root:has([data-page-scope="themes"]) .content-panel {
     @apply text-center border-0 pt-14 pb-0;
   }
 
-  .content-panel h1 {
+  :root:has([data-page-scope="themes"]) .content-panel h1 {
     @apply text-5xl font-medium tracking-tight max-w-2xl text-balance mx-auto;
   }
 
-  .sl-container {
+  :root:has([data-page-scope="themes"]) .sl-container {
     @apply max-w-7xl;
   }
 
   @media (min-width: 48rem) {
-    .main-frame-splash {
+    :root:has([data-page-scope="themes"]) .main-frame-splash {
       --sl-splash-frame-top: calc(var(--spacing) * 18);
       --sl-splash-frame-inline: calc(var(--spacing) * 6);
     }
@@ -273,27 +240,6 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
 </style>
 
 <script>
-  import {
-    getStoredPreset,
-    setStoredPreset,
-    PRESET_CHANGE_EVENT,
-  } from "../utils/themes/preset-store.ts";
-  import { CUSTOM_PRESETS_CHANGE_EVENT } from "../utils/themes/custom-presets-store.ts";
-  import { defaultPresets } from "../utils/themes/presets";
-
-  // Build lean presets for UI updates
-  const PRESETS = Object.fromEntries(
-    Object.entries(defaultPresets).map(([key, p]) => [
-      key,
-      {
-        label: p.label ?? key,
-        styles: { light: p.styles?.light ?? {}, dark: p.styles?.dark ?? {} },
-      },
-    ]),
-  );
-
-  const PRESET_KEYS = Object.keys(defaultPresets);
-
   const THEMES_PAGE_INIT_KEY = "__bejamasThemesPageTokenCardsInit";
   const THEMES_PAGE_FRAME_KEY = "__bejamasThemesPageTokenCardsFrame";
 
@@ -323,52 +269,7 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
     });
   }
 
-  function getSwatches(key) {
-    const preset = PRESETS[key];
-    if (!preset) return undefined;
-    return {
-      primaryLight: preset.styles.light?.primary || "#000",
-      accentLight: preset.styles.light?.accent || "#666",
-      primaryDark: preset.styles.dark?.primary || "#fff",
-      accentDark: preset.styles.dark?.accent || "#888",
-    };
-  }
-
-  function bindPresetNavigationButtons() {
-    const previousPreset = document.getElementById("previous-preset");
-    const nextPreset = document.getElementById("next-preset");
-
-    if (previousPreset && !previousPreset.hasAttribute("data-themes-bound")) {
-      previousPreset.setAttribute("data-themes-bound", "true");
-      previousPreset.addEventListener("click", () => {
-        const current = getStoredPreset() || PRESET_KEYS[0];
-        const index = PRESET_KEYS.indexOf(current);
-        const currentIndex = index === -1 ? 0 : index;
-        const previousIndex =
-          (currentIndex - 1 + PRESET_KEYS.length) % PRESET_KEYS.length;
-        const key = PRESET_KEYS[previousIndex];
-        const preset = PRESETS[key];
-        setStoredPreset(key, getSwatches(key), preset?.label || key);
-      });
-    }
-
-    if (nextPreset && !nextPreset.hasAttribute("data-themes-bound")) {
-      nextPreset.setAttribute("data-themes-bound", "true");
-      nextPreset.addEventListener("click", () => {
-        const current = getStoredPreset() || PRESET_KEYS[0];
-        const index = PRESET_KEYS.indexOf(current);
-        const currentIndex = index === -1 ? 0 : index;
-        const nextIndex = (currentIndex + 1) % PRESET_KEYS.length;
-        const key = PRESET_KEYS[nextIndex];
-        const preset = PRESETS[key];
-        setStoredPreset(key, getSwatches(key), preset?.label || key);
-      });
-    }
-  }
-
   function initThemesPageTokenCards() {
-    bindPresetNavigationButtons();
-
     const windowWithState = window as Window & Record<string, unknown>;
     if (windowWithState[THEMES_PAGE_INIT_KEY]) {
       scheduleTokenCardRefresh();
@@ -376,14 +277,8 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
     }
     windowWithState[THEMES_PAGE_INIT_KEY] = true;
 
-    window.addEventListener(PRESET_CHANGE_EVENT, scheduleTokenCardRefresh);
     window.addEventListener("theme-toggle-changed", scheduleTokenCardRefresh);
-    window.addEventListener(
-      CUSTOM_PRESETS_CHANGE_EVENT,
-      scheduleTokenCardRefresh,
-    );
     document.addEventListener("astro:after-swap", () => {
-      bindPresetNavigationButtons();
       scheduleTokenCardRefresh();
     });
 

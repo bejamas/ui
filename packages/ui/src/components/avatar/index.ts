@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/avatar/index.ts directly.
 export { default as Avatar } from "./Avatar.astro";
 export { default as AvatarImage } from "./AvatarImage.astro";
 export { default as AvatarFallback } from "./AvatarFallback.astro";

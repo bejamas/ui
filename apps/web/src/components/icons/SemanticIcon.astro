@@ -1,0 +1,30 @@
+---
+import {
+  renderSemanticIconSvg,
+  type IconLibraryName,
+  type SemanticIconName,
+} from "@bejamas/semantic-icons";
+
+interface Props {
+  name: SemanticIconName;
+  library: IconLibraryName;
+  class?: string;
+  "aria-hidden"?: "true" | "false";
+}
+
+const {
+  name,
+  library,
+  class: className = "",
+  "aria-hidden": ariaHidden = "true",
+} = Astro.props as Props;
+
+const markup = renderSemanticIconSvg(library, name, {
+  class: className || undefined,
+  "aria-hidden": ariaHidden,
+  "data-semantic-icon": name,
+  "data-icon-library": library,
+});
+---
+
+<Fragment set:html={markup} />

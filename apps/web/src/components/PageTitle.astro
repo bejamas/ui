@@ -24,25 +24,14 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@bejamas/ui/components/collapsible";
-import {
-  Slider,
-  SliderTrack,
-  SliderRange,
-  SliderThumb,
-} from "@bejamas/ui/components/slider";
+import { Slider } from "@bejamas/ui/components/slider";
 import { Toggle } from "@bejamas/ui/components/toggle";
 import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@bejamas/ui/components/toggle-group";
 
-import {
-  ArrowRight,
-  ArrowLeft,
-  ChevronDown,
-  Copy,
-  Check,
-} from "@lucide/astro";
+import { ArrowRight, ArrowLeft, ChevronDown, Copy, Check } from "@lucide/astro";
 
 import MarkdownIcon from "./icons/Markdown.astro";
 
@@ -78,6 +67,8 @@ const currentUrl = Astro.url.href;
 const componentMatch = Astro.url.pathname.match(/^\/components\/([^/]+)\/?$/);
 const currentComponent = componentMatch ? componentMatch[1] : null;
 const showMarkdownActions = hasMarkdownSource(Astro.url.pathname);
+const prevHref = isRtl ? next?.href : prev?.href;
+const nextHref = isRtl ? prev?.href : next?.href;
 const prompt = PAGE_ACTION_PROMPT.replace("{url}", currentUrl);
 const encodedPrompt = encodeURIComponent(prompt);
 
@@ -103,88 +94,88 @@ const options: OptionsProps[] = [
   ]}
 >
   <div class="sl-bejamas-docs-title-main">
-    <div class="flex items-center">
-      <h1 id="_top" class="tracking-tight">
-        {Astro.locals.starlightRoute.entry.data.title}
-      </h1>
+    <h1 id="_top" class="tracking-tight cn-font-heading">
+      {entry.data.title}
+    </h1>
 
-      {
-        currentComponent && (
-          <Tooltip class="ml-4" delay={300}>
-            <TooltipTrigger asChild class="flex">
-              <a
-                href={`https://github.com/bejamas/ui/tree/main/packages/ui/src/components/${currentComponent}`}
-                class="text-muted-foreground flex items-center justify-center h-6 w-6"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="currentColor"
-                  viewBox="0 0 256 256"
+    {
+      (currentComponent || entry.data.figmaUrl) && (
+        <div class="sl-bejamas-docs-title-links">
+          {currentComponent && (
+            <Tooltip delay={300}>
+              <TooltipTrigger asChild class="flex">
+                <a
+                  href={`https://github.com/bejamas/ui/tree/main/packages/ui/src/components/${currentComponent}`}
+                  class="text-muted-foreground flex items-center justify-center h-6 w-6"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <path d="M216,104v8a56.06,56.06,0,0,1-48.44,55.47A39.8,39.8,0,0,1,176,192v40a8,8,0,0,1-8,8H104a8,8,0,0,1-8-8V216H72a40,40,0,0,1-40-40A24,24,0,0,0,8,152a8,8,0,0,1,0-16,40,40,0,0,1,40,40,24,24,0,0,0,24,24H96v-8a39.8,39.8,0,0,1,8.44-24.53A56.06,56.06,0,0,1,56,112v-8a58.14,58.14,0,0,1,7.69-28.32A59.78,59.78,0,0,1,69.07,28,8,8,0,0,1,76,24a59.75,59.75,0,0,1,48,24h24a59.75,59.75,0,0,1,48-24,8,8,0,0,1,6.93,4,59.74,59.74,0,0,1,5.37,47.68A58,58,0,0,1,216,104Z" />
-                </svg>
-              </a>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Open in GitHub</p>
-            </TooltipContent>
-          </Tooltip>
-        )
-      }
-      {
-        entry.data.figmaUrl && (
-          <Tooltip class="ml-2" delay={300}>
-            <TooltipTrigger asChild class="flex">
-              <a
-                href={entry.data.figmaUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center justify-center h-6 w-6"
-              >
-                <svg
-                  fill="none"
-                  height="20"
-                  viewBox="0 0 38 57"
-                  width="20"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="text-lg grayscale"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 256 256"
+                  >
+                    <path d="M216,104v8a56.06,56.06,0,0,1-48.44,55.47A39.8,39.8,0,0,1,176,192v40a8,8,0,0,1-8,8H104a8,8,0,0,1-8-8V216H72a40,40,0,0,1-40-40A24,24,0,0,0,8,152a8,8,0,0,1,0-16,40,40,0,0,1,40,40,24,24,0,0,0,24,24H96v-8a39.8,39.8,0,0,1,8.44-24.53A56.06,56.06,0,0,1,56,112v-8a58.14,58.14,0,0,1,7.69-28.32A59.78,59.78,0,0,1,69.07,28,8,8,0,0,1,76,24a59.75,59.75,0,0,1,48,24h24a59.75,59.75,0,0,1,48-24,8,8,0,0,1,6.93,4,59.74,59.74,0,0,1,5.37,47.68A58,58,0,0,1,216,104Z" />
+                  </svg>
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Open in GitHub</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {entry.data.figmaUrl && (
+            <Tooltip delay={300}>
+              <TooltipTrigger asChild class="flex">
+                <a
+                  href={entry.data.figmaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center justify-center h-6 w-6"
                 >
-                  <>
-                    <path
-                      d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z"
-                      fill="#1ABCFE"
-                    />
-                    <path
-                      d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z"
-                      fill="#0ACF83"
-                    />
-                    <path
-                      d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z"
-                      fill="#FF7262"
-                    />
-                    <path
-                      d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z"
-                      fill="#F24E1E"
-                    />
-                    <path
-                      d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z"
-                      fill="#A259FF"
-                    />
-                  </>
-                </svg>
-              </a>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Open in Figma</p>
-            </TooltipContent>
-          </Tooltip>
-        )
-      }
-    </div>
+                  <svg
+                    fill="none"
+                    height="20"
+                    viewBox="0 0 38 57"
+                    width="20"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="text-lg grayscale"
+                  >
+                    <>
+                      <path
+                        d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z"
+                        fill="#1ABCFE"
+                      />
+                      <path
+                        d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z"
+                        fill="#0ACF83"
+                      />
+                      <path
+                        d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z"
+                        fill="#FF7262"
+                      />
+                      <path
+                        d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z"
+                        fill="#F24E1E"
+                      />
+                      <path
+                        d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z"
+                        fill="#A259FF"
+                      />
+                    </>
+                  </svg>
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Open in Figma</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+      )
+    }
 
     {
       entry.data.description && (
@@ -250,30 +241,19 @@ const options: OptionsProps[] = [
             </DropdownMenuContent>
           </DropdownMenu>
         </ButtonGroup>
-        {prev && (
-          <Button
-            as="a"
-            href={isRtl ? next.href : prev.href}
-            variant="outline"
-            size="icon-sm"
-          >
+        {prevHref && (
+          <Button as="a" href={prevHref} variant="outline" size="icon-sm">
             <ArrowLeft class="size-3.5" />
           </Button>
         )}
-        {next && (
-          <Button
-            as="a"
-            href={isRtl ? prev.href : next.href}
-            variant="outline"
-            size="icon-sm"
-          >
+        {nextHref && (
+          <Button as="a" href={nextHref} variant="outline" size="icon-sm">
             <ArrowRight class="size-3.5" />
           </Button>
         )}
       </div>
     )
   }
-
 </div>
 
 <!-- Hidden component renders to ensure their scripts are included for MDX pages -->
@@ -282,9 +262,9 @@ const options: OptionsProps[] = [
     <DialogContent showCloseButton={false} />
   </Dialog>
   <Accordion>
-    <AccordionItem>
-      <AccordionTrigger />
-      <AccordionContent />
+    <AccordionItem value="page-title-script-item">
+      <AccordionTrigger>Accordion</AccordionTrigger>
+      <AccordionContent>Accordion script placeholder</AccordionContent>
     </AccordionItem>
   </Accordion>
   <Collapsible>
@@ -308,12 +288,7 @@ const options: OptionsProps[] = [
       </NavigationMenuItem>
     </NavigationMenuList>
   </NavigationMenu>
-  <Slider>
-    <SliderTrack>
-      <SliderRange />
-    </SliderTrack>
-    <SliderThumb />
-  </Slider>
+  <Slider />
   <Toggle />
   <ToggleGroup>
     <ToggleGroupItem value="left" aria-label="Align left">
@@ -341,10 +316,23 @@ const options: OptionsProps[] = [
       align-items: flex-start;
       gap: 1rem;
     }
+
     .sl-bejamas-docs-title-main {
+      display: flex;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 0.75rem 1rem;
       flex: 1 1 0%;
       min-width: 0;
     }
+
+    .sl-bejamas-docs-title-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.25rem;
+    }
+
     .sl-bejamas-docs-title-buttons {
       gap: 0.5rem;
       display: none;
@@ -373,15 +361,8 @@ const options: OptionsProps[] = [
       font-size: 1.875rem;
       line-height: 1.2;
       font-weight: 500;
-      color: var(--sl-color-white);
+      color: var(--foreground);
     }
-
-    /* @media (min-width: 50rem) {
-      h1 {
-        font-size: 1rem;
-        line-height: calc(2.5 / 2.25);
-      }
-    } */
   }
 </style>
 
@@ -405,7 +386,6 @@ const options: OptionsProps[] = [
       }
 
       const mdPath = `${currentPath}.md`;
-
       const res = await fetch(mdPath);
 
       if (!res.ok) {
@@ -413,14 +393,11 @@ const options: OptionsProps[] = [
       }
 
       const contentForClipboard = await res.text();
-
       await navigator.clipboard.writeText(contentForClipboard);
 
-      // Show success icon
       copyIcon?.classList.add("hidden");
       checkIcon?.classList.remove("hidden");
 
-      // Reset to copy icon after 2 seconds
       setTimeout(() => {
         copyIcon?.classList.remove("hidden");
         checkIcon?.classList.add("hidden");

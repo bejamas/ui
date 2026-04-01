@@ -12,29 +12,22 @@ export interface RegistryFile {
 export interface RegistryItem {
   name: string;
   type: string;
-  files: RegistryFile[];
+  files?: RegistryFile[];
   dependencies?: string[];
   devDependencies?: string[];
   registryDependencies?: string[];
 }
 
-/** Maps filename to subfolder/filename for path rewriting */
-export type PathRewriteMap = Map<string, string>;
-
-/**
- * Fetches a registry item JSON from the registry URL.
- */
 export async function fetchRegistryItem(
   componentName: string,
   registryUrl: string,
+  style = "bejamas-juno",
 ): Promise<RegistryItem | null> {
-  // Handle style-prefixed URLs (e.g., styles/new-york-v4/avatar.json)
-  const url = `${registryUrl}/styles/new-york-v4/${componentName}.json`;
+  const url = `${registryUrl}/styles/${style}/${componentName}.json`;
 
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      // Try without styles prefix as fallback
       const fallbackUrl = `${registryUrl}/${componentName}.json`;
       const fallbackResponse = await fetch(fallbackUrl);
       if (!fallbackResponse.ok) {
@@ -48,15 +41,13 @@ export async function fetchRegistryItem(
   }
 }
 
-/**
- * Extracts the subfolder name from registry file paths.
- * E.g., "components/ui/avatar/Avatar.astro" → "avatar"
- */
-export function getSubfolderFromPaths(files: RegistryFile[]): string | null {
-  // Only consider registry:ui files
-  const uiFiles = files.filter((f) => f.type === "registry:ui");
+export function getSubfolderFromPaths(files?: RegistryFile[]): string | null {
+  if (!files || files.length === 0) {
+    return null;
+  }
+
+  const uiFiles = files.filter((file) => file.type === "registry:ui");
   if (uiFiles.length < 2) {
-    // Single file components don't need subfolders
     return null;
   }
 
@@ -64,25 +55,19 @@ export function getSubfolderFromPaths(files: RegistryFile[]): string | null {
 
   for (const file of uiFiles) {
     const parts = file.path.split("/");
-    // Look for pattern: .../ui/<subfolder>/<filename>
     const uiIndex = parts.indexOf("ui");
     if (uiIndex !== -1 && parts.length > uiIndex + 2) {
-      // There's at least one folder after "ui" before the filename
       subfolders.add(parts[uiIndex + 1]);
     }
   }
 
-  // If all files share the same subfolder, use it
   if (subfolders.size === 1) {
     return Array.from(subfolders)[0];
   }
 
-  // Fallback: use the component name from the first file's parent directory
   if (uiFiles.length > 0) {
-    const firstPath = uiFiles[0].path;
-    const dirname = path.dirname(firstPath);
+    const dirname = path.dirname(uiFiles[0].path);
     const folderName = path.basename(dirname);
-    // Only use if it's not "ui" itself
     if (folderName && folderName !== "ui") {
       return folderName;
     }
@@ -91,9 +76,6 @@ export function getSubfolderFromPaths(files: RegistryFile[]): string | null {
   return null;
 }
 
-/**
- * Checks if a path exists.
- */
 async function pathExists(filePath: string): Promise<boolean> {
   try {
     await fs.access(filePath);
@@ -103,88 +85,151 @@ async function pathExists(filePath: string): Promise<boolean> {
   }
 }
 
-/**
- * Builds a map of path rewrites for components that will be reorganized.
- * Call this BEFORE shadcn runs to know how to rewrite output paths.
- */
-export async function buildPathRewriteMap(
-  components: string[],
-  uiDir: string,
-  registryUrl: string,
-): Promise<PathRewriteMap> {
-  const rewrites: PathRewriteMap = new Map();
+function resolveShadcnUiRelativePath(filePath: string, uiDir: string) {
+  const normalizedFilePath = filePath.replace(/^\/|\/$/g, "");
+  const lastTargetSegment = path.basename(uiDir.replace(/^\/|\/$/g, ""));
 
-  if (!uiDir || components.length === 0) {
-    return rewrites;
+  if (!lastTargetSegment) {
+    return path.basename(normalizedFilePath);
   }
 
-  for (const componentName of components) {
-    try {
-      const registryItem = await fetchRegistryItem(componentName, registryUrl);
-      if (!registryItem) continue;
+  const fileSegments = normalizedFilePath.split("/");
+  const commonDirIndex = fileSegments.findIndex(
+    (segment) => segment === lastTargetSegment,
+  );
 
-      const subfolder = getSubfolderFromPaths(registryItem.files);
-      if (!subfolder) continue;
-
-      // Get the UI files that will be reorganized
-      const uiFiles = registryItem.files.filter(
-        (f) => f.type === "registry:ui",
-      );
-
-      for (const file of uiFiles) {
-        const filename = path.basename(file.path);
-        // Map: "Avatar.astro" → "avatar/Avatar.astro"
-        rewrites.set(filename, `${subfolder}/${filename}`);
-      }
-    } catch {
-      // Ignore errors, just skip this component
-    }
+  if (commonDirIndex === -1) {
+    return fileSegments[fileSegments.length - 1];
   }
 
-  return rewrites;
+  return fileSegments.slice(commonDirIndex + 1).join("/");
 }
 
 /**
- * Rewrites file paths in shadcn output to reflect reorganized structure.
- * Replaces flat paths like "/ui/Avatar.astro" with "/ui/avatar/Avatar.astro"
+ * Current upstream shadcn workspace installs flatten `ui/foo/Bar.astro` when
+ * the resolved ui target ends in a segment like `components` instead of `ui`.
+ * We keep reorganization only for that compatibility case.
  */
-export function rewriteOutputPaths(
-  output: string,
-  rewrites: PathRewriteMap,
-): string {
-  let result = output;
+export function shouldReorganizeRegistryUiFiles(
+  files: RegistryFile[] | undefined,
+  uiDir: string,
+) {
+  if (!uiDir) {
+    return false;
+  }
 
-  for (const [filename, newPath] of rewrites) {
-    // Match paths ending with the filename (handles various path formats)
-    // e.g., "packages/ui/src/components/Avatar.astro" → "packages/ui/src/components/avatar/Avatar.astro"
-    const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const pattern = new RegExp(`(/[^/\\s]+)/${escapedFilename}(?=\\s|$|\\n)`, "g");
-    result = result.replace(pattern, `$1/${newPath}`);
+  const subfolder = getSubfolderFromPaths(files);
+  if (!subfolder) {
+    return false;
+  }
+
+  const uiFiles = files.filter((file) => file.type === "registry:ui");
+
+  return uiFiles.some((file) => {
+    const relativePath = resolveShadcnUiRelativePath(file.path, uiDir);
+    return !relativePath.includes("/");
+  });
+}
+
+export interface ReorganizeResult {
+  totalMoved: number;
+  movedFiles: string[];
+  skippedFiles: string[];
+}
+
+/**
+ * Reorganizes one multi-file registry:ui item from flat output into its
+ * expected subfolder. This is the filesystem-level compatibility shim.
+ */
+export async function reorganizeRegistryUiFiles(
+  files: RegistryFile[] | undefined,
+  uiDir: string,
+  verbose: boolean,
+  overwriteExisting = false,
+): Promise<ReorganizeResult> {
+  const result: ReorganizeResult = {
+    totalMoved: 0,
+    movedFiles: [],
+    skippedFiles: [],
+  };
+
+  if (!uiDir || !files || files.length === 0) {
+    return result;
+  }
+
+  const subfolder = getSubfolderFromPaths(files);
+  if (!subfolder) {
+    return result;
+  }
+
+  const uiFiles = files.filter((file) => file.type === "registry:ui");
+  const targetDir = path.join(uiDir, subfolder);
+
+  for (const file of uiFiles) {
+    const filename = path.basename(file.path);
+    const flatPath = path.join(uiDir, filename);
+    const targetPath = path.join(targetDir, filename);
+
+    if (!(await pathExists(flatPath))) {
+      continue;
+    }
+
+    if (await pathExists(targetPath)) {
+      if (overwriteExisting) {
+        await fs.mkdir(targetDir, { recursive: true });
+        await fs.unlink(targetPath);
+        await fs.rename(flatPath, targetPath);
+        result.totalMoved++;
+        result.movedFiles.push(`${subfolder}/${filename}`);
+
+        if (verbose) {
+          logger.info(
+            `[bejamas-ui] Replaced ${subfolder}/${filename} with the reinstalled version`,
+          );
+        }
+        continue;
+      }
+
+      try {
+        await fs.unlink(flatPath);
+        result.skippedFiles.push(`${subfolder}/${filename}`);
+        if (verbose) {
+          logger.info(
+            `[bejamas-ui] Removed flat duplicate: ${filename} (${subfolder}/${filename} exists)`,
+          );
+        }
+      } catch {
+        result.skippedFiles.push(`${subfolder}/${filename}`);
+      }
+      continue;
+    }
+
+    await fs.mkdir(targetDir, { recursive: true });
+    await fs.rename(flatPath, targetPath);
+    result.totalMoved++;
+    result.movedFiles.push(`${subfolder}/${filename}`);
+
+    if (verbose) {
+      logger.info(`[bejamas-ui] Moved ${filename} -> ${subfolder}/${filename}`);
+    }
   }
 
   return result;
 }
 
-export interface ReorganizeResult {
-  totalMoved: number;
-  movedFiles: string[]; // e.g., ["avatar/Avatar.astro", "avatar/index.ts"]
-  skippedFiles: string[]; // Files that already existed in subfolder (flat duplicate removed)
-}
-
-/**
- * Reorganizes multi-file components into correct subfolders.
- * Only moves files from FLAT location to subfolder.
- * Does NOT touch files already in subfolders.
- * E.g., moves `uiDir/Avatar.astro` to `uiDir/avatar/Avatar.astro`.
- * Returns info about moved files for display purposes.
- */
 export async function reorganizeComponents(
   components: string[],
   uiDir: string,
   registryUrl: string,
   verbose: boolean,
+  style = "bejamas-juno",
+  overwriteExisting = false,
 ): Promise<ReorganizeResult> {
-  const result: ReorganizeResult = { totalMoved: 0, movedFiles: [], skippedFiles: [] };
+  const result: ReorganizeResult = {
+    totalMoved: 0,
+    movedFiles: [],
+    skippedFiles: [],
+  };
 
   if (!uiDir || components.length === 0) {
     return result;
@@ -192,7 +237,11 @@ export async function reorganizeComponents(
 
   for (const componentName of components) {
     try {
-      const registryItem = await fetchRegistryItem(componentName, registryUrl);
+      const registryItem = await fetchRegistryItem(
+        componentName,
+        registryUrl,
+        style,
+      );
       if (!registryItem) {
         if (verbose) {
           logger.info(
@@ -202,76 +251,28 @@ export async function reorganizeComponents(
         continue;
       }
 
-      const subfolder = getSubfolderFromPaths(registryItem.files);
-      if (!subfolder) {
-        // Single-file component or no subfolder detected, skip
-        if (verbose) {
-          logger.info(
-            `[bejamas-ui] ${componentName} is single-file or has no subfolder, skipping`,
-          );
-        }
+      if (!shouldReorganizeRegistryUiFiles(registryItem.files, uiDir)) {
         continue;
       }
 
-      // Get the UI files that need to be moved
-      const uiFiles = registryItem.files.filter(
-        (f) => f.type === "registry:ui",
+      const componentResult = await reorganizeRegistryUiFiles(
+        registryItem.files,
+        uiDir,
+        verbose,
+        overwriteExisting,
       );
 
-      const targetDir = path.join(uiDir, subfolder);
-      let movedCount = 0;
+      result.totalMoved += componentResult.totalMoved;
+      result.movedFiles.push(...componentResult.movedFiles);
+      result.skippedFiles.push(...componentResult.skippedFiles);
 
-      for (const file of uiFiles) {
-        const filename = path.basename(file.path);
-        // Only look for files in FLAT location (directly in uiDir)
-        const flatPath = path.join(uiDir, filename);
-        const targetPath = path.join(targetDir, filename);
-
-        // Check if file exists in flat location
-        if (!(await pathExists(flatPath))) {
-          // Not in flat location, skip (may already be in subfolder)
-          continue;
-        }
-
-        // Check if target already exists (don't overwrite, but clean up flat duplicate)
-        if (await pathExists(targetPath)) {
-          // Target exists in subfolder - delete the flat duplicate shadcn just created
-          try {
-            await fs.unlink(flatPath);
-            result.skippedFiles.push(`${subfolder}/${filename}`);
-            if (verbose) {
-              logger.info(
-                `[bejamas-ui] Removed flat duplicate: ${filename} (${subfolder}/${filename} exists)`,
-              );
-            }
-          } catch {
-            // Flat file might not exist or already deleted, but still counts as skipped
-            result.skippedFiles.push(`${subfolder}/${filename}`);
-          }
-          continue;
-        }
-
-        // Create target directory if needed
-        await fs.mkdir(targetDir, { recursive: true });
-
-        // Move file from flat to subfolder
-        await fs.rename(flatPath, targetPath);
-        movedCount++;
-        result.totalMoved++;
-        result.movedFiles.push(`${subfolder}/${filename}`);
-
-        if (verbose) {
-          logger.info(`[bejamas-ui] Moved ${filename} → ${subfolder}/${filename}`);
-        }
-      }
-
-      if (movedCount > 0 && verbose) {
+      if (componentResult.totalMoved > 0 && verbose) {
+        const subfolder = getSubfolderFromPaths(registryItem.files);
         logger.info(
           `[bejamas-ui] Reorganized ${componentName} into ${subfolder}/`,
         );
       }
     } catch (err) {
-      // Non-fatal: log and continue with other components
       if (verbose) {
         logger.warn(
           `[bejamas-ui] Failed to reorganize ${componentName}: ${err}`,
@@ -282,4 +283,3 @@ export async function reorganizeComponents(
 
   return result;
 }
-

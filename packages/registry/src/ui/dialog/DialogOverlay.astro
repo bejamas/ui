@@ -1,0 +1,19 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  hidden
+  data-slot="dialog-overlay"
+  class={cn("cn-dialog-overlay fixed inset-0 isolate z-50", className)}
+  {...rest}
+>
+  <slot />
+</div>

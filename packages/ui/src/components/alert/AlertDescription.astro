@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/alert/AlertDescription.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -16,10 +17,9 @@ const {
   {...rest}
   data-slot="alert-description"
   class={cn(
-    "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
+    "text-muted-foreground text-sm text-balance md:text-pretty [&_p:not(:last-child)]:mb-4 col-start-2 grid justify-items-start gap-1 [&_p]:leading-relaxed [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground",
     className,
   )}
 >
   <slot />
 </div>
-

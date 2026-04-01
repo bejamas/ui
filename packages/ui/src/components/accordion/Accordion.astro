@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/accordion/Accordion.astro directly.
 /**
  * @component Accordion
  * @title Accordion
@@ -7,7 +8,7 @@
  *
  * @preview
  *
- * <Accordion class="w-full max-w-[420px] self-start mt-10" collapsible>
+ * <Accordion class="w-full max-w-[420px] self-start mt-10" defaultValue="accordion-item-1">
  *   <AccordionItem value="accordion-item-1">
  *     <AccordionTrigger>
  *       Is it accessible?
@@ -33,8 +34,8 @@
  * import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@bejamas/ui/components/accordion';
  * ---
  *
- * <Accordion class="w-full max-w-[420px] self-start">
- *   <AccordionItem open>
+ * <Accordion class="w-full max-w-[420px] self-start" defaultValue="accordion-item-1">
+ *   <AccordionItem value="accordion-item-1">
  *     <AccordionTrigger>
  *       Is it accessible?
  *     </AccordionTrigger>
@@ -56,7 +57,7 @@
  * | `accordion:change` | `{ value: string[] }` | Fired when expanded items change |
  *
  * ```astro nocollapse
- * <Accordion id="my-accordion" collapsible>
+ * <Accordion id="my-accordion">
  *   <AccordionItem value="item-1">
  *     <AccordionTrigger>Item 1</AccordionTrigger>
  *     <AccordionContent>Content 1</AccordionContent>
@@ -102,7 +103,7 @@
  *
  * ### Multiple choice accordion
  *
- * <Accordion class="w-full max-w-[420px] self-start" multiple>
+ * <Accordion class="w-full max-w-[420px] self-start" multiple defaultValue={["accordion-item-1"]}>
  *   <AccordionItem value="accordion-item-1">
  *     <AccordionTrigger>
  *       Is it accessible?
@@ -137,26 +138,30 @@ import type { HTMLAttributes } from "astro/types";
 interface Props extends HTMLAttributes<"div"> {
   class?: string;
   multiple?: boolean;
-  defaultValue?: string;
+  defaultValue?: string | string[];
   collapsible?: boolean;
 }
 
 const {
   class: className = "",
   multiple = false,
-  defaultValue = "",
-  collapsible = false,
+  defaultValue,
+  collapsible = true,
   ...rest
 } = Astro.props as Props;
+
+const rootDefaultValue = Array.isArray(defaultValue)
+  ? JSON.stringify(defaultValue)
+  : defaultValue;
 ---
 
 <div
   {...rest}
   data-slot="accordion"
-  data-multiple={multiple}
-  data-defaultValue={defaultValue}
-  data-collapsible={collapsible}
-  class={cn(className)}
+  data-multiple={multiple ? "true" : undefined}
+  data-default-value={rootDefaultValue}
+  data-collapsible={collapsible ? undefined : "false"}
+  class={cn("flex w-full flex-col", className)}
 >
   <slot />
 </div>
@@ -164,7 +169,7 @@ const {
 <script>
   import { createAccordion } from "@data-slot/accordion";
 
-  document
-    .querySelectorAll('[data-slot="accordion"]')
-    .forEach((el) => createAccordion(el));
+  document.querySelectorAll('[data-slot="accordion"]').forEach((el) => {
+    createAccordion(el);
+  });
 </script>

@@ -3,6 +3,7 @@ import {
   generatePaletteWithProgress,
   type ProgressEvent,
 } from "../../../lib/ai/palette-agent";
+import { NO_STORE_CACHE_CONTROL } from "../../../utils/http-cache";
 
 export const prerender = false;
 
@@ -52,7 +53,7 @@ export const POST: APIRoute = async ({ request }) => {
       status: 200,
       headers: {
         "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
+        "Cache-Control": NO_STORE_CACHE_CONTROL,
         Connection: "keep-alive",
       },
     });
@@ -64,7 +65,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": NO_STORE_CACHE_CONTROL,
+      },
     });
   }
 };

@@ -1,0 +1,55 @@
+---
+import type { CreateLockableParam } from "@/utils/create-sidebar";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props {
+  param: CreateLockableParam;
+  class?: string;
+}
+
+const { param, class: className = "" } = Astro.props as Props;
+---
+
+<button
+  type="button"
+  title="Lock"
+  aria-label="Lock"
+  data-create-lock-button
+  data-create-lock-param={param}
+  data-locked="false"
+  data-action="click->create-sidebar#toggleLock"
+  data-create-sidebar-lock-param-param={param}
+  class={cn(
+    "group/create-lock flex size-4 cursor-pointer items-center justify-center rounded opacity-0 ring-white/40 transition-opacity outline-none group-has-[:focus-visible]/picker:opacity-100 group-hover/picker:opacity-100 focus-visible:opacity-100 focus-visible:ring-1 data-[locked=true]:opacity-100 pointer-coarse:hidden text-white/80 hover:text-white",
+    className,
+  )}
+>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="size-4 group-data-[locked=true]/create-lock:hidden"
+    data-create-lock-icon="unlocked"
+    aria-hidden="true"
+  >
+    <rect x="5" y="11" width="14" height="10" rx="2" />
+    <path d="M9 11V8a3 3 0 0 1 5.34-1.86" />
+  </svg>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="hidden size-4 group-data-[locked=true]/create-lock:block"
+    data-create-lock-icon="locked"
+    aria-hidden="true"
+  >
+    <rect x="5" y="11" width="14" height="10" rx="2" />
+    <path d="M8 11V8a4 4 0 1 1 8 0v3" />
+  </svg>
+</button>

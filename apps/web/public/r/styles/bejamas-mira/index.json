@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "index",
+  "type": "registry:style",
+  "dependencies": [
+    "bejamas",
+    "class-variance-authority",
+    "@lucide/astro"
+  ],
+  "devDependencies": [
+    "shadcn",
+    "tw-animate-css"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "css": {
+    "@import \"tw-animate-css\"": {},
+    "@import \"bejamas/tailwind.css\"": {},
+    "@layer base": {
+      "*": {
+        "@apply border-border outline-ring/50": {}
+      },
+      "body": {
+        "@apply bg-background text-foreground": {}
+      }
+    }
+  },
+  "cssVars": {},
+  "files": [],
+  "meta": {
+    "styleId": "bejamas-juno"
+  }
+}

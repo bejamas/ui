@@ -1,0 +1,21 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"tfoot"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<tfoot
+  data-slot="table-footer"
+  class={cn("cn-table-footer", className)}
+  {...rest}
+>
+  <slot />
+</tfoot>

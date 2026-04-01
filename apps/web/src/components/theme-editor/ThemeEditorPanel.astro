@@ -10,7 +10,7 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuRadioItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@bejamas/ui/components/dropdown-menu";
@@ -165,7 +165,7 @@ const sectionTitles = [
   <!-- Preset Selector -->
   <div class="border-b border-border px-4 py-3 flex flex-col gap-2">
     <div class="flex gap-2">
-      <DropdownMenu class="flex-1">
+      <DropdownMenu class="flex-1" x-ref="presetMenu" defaultValue={presetKeys[0]}>
         <DropdownMenuTrigger
           variant="outline"
           size="sm"
@@ -197,9 +197,8 @@ const sectionTitles = [
           <DropdownMenuLabel>Built-in</DropdownMenuLabel>
           {
             presetKeys.map((key) => (
-              <DropdownMenuItem
-                data-value={key}
-                data-slot="dropdown-menu-item"
+              <DropdownMenuRadioItem
+                value={key}
                 class="gap-2"
               >
                 {/* Light mode swatches */}
@@ -225,7 +224,7 @@ const sectionTitles = [
                   />
                 </div>
                 <span class="truncate">{defaultPresets[key].label || key}</span>
-              </DropdownMenuItem>
+              </DropdownMenuRadioItem>
             ))
           }
         </DropdownMenuContent>
@@ -488,6 +487,7 @@ const sectionTitles = [
 
   <script>
     import Alpine from "alpinejs";
+    import { setThemeChoice } from "starlight-theme-bejamas/lib/theme-choice";
     import { applyThemeToElement } from "../../utils/themes/apply-theme";
     import {
       getStoredPreset,
@@ -508,7 +508,7 @@ const sectionTitles = [
       CUSTOM_PRESETS_CHANGE_EVENT,
       type CustomPreset,
     } from "../../utils/themes/custom-presets-store";
-    import type { ThemeStyleProps } from "../../utils/types/theme";
+    import type { ThemeStyleProps, ThemeStyles } from "../../utils/types/theme";
     import Prism from "prismjs";
     import "prismjs/components/prism-json";
     import "prismjs/components/prism-css";
@@ -532,7 +532,7 @@ const sectionTitles = [
 
       const mode = getCurrentMode();
       applyThemeToElement(
-        { styles: draft.workingStyles, currentMode: mode },
+        { styles: draft.workingStyles as ThemeStyles, currentMode: mode },
         document.documentElement,
         { skipModeClass: true },
       );
@@ -814,20 +814,23 @@ const sectionTitles = [
             },
 
             setupEventListeners() {
-              const dropdown = this.$refs.presetDropdown as
+              const dropdown = this.$refs.presetMenu as
                 | HTMLElement
                 | undefined;
-              dropdown?.addEventListener("click", (e) => {
-                const item = (e.target as HTMLElement).closest(
-                  '[data-slot="dropdown-menu-item"]',
-                );
-                if (item) {
-                  const id = (item as HTMLElement).dataset.value;
-                  if (id) {
-                    this.loadPreset(id);
-                  }
+              dropdown?.addEventListener("dropdown-menu:value-change", ((
+                e: CustomEvent<{ value: string | null; source: string }>,
+              ) => {
+                const id = e.detail?.value;
+                if (
+                  !id ||
+                  (e.detail.source !== "pointer" &&
+                    e.detail.source !== "keyboard")
+                ) {
+                  return;
                 }
-              });
+
+                this.loadPreset(id);
+              }) as EventListener);
 
               this.$el.addEventListener("color-change", ((e: CustomEvent) => {
                 const { token, value } = e.detail;
@@ -876,15 +879,9 @@ const sectionTitles = [
 
               Object.entries(allPresets).forEach(([id, preset]) => {
                 if (!preset.isCustom) {
-                  const item = document.createElement("div");
-                  item.setAttribute("role", "menuitem");
-                  item.setAttribute("tabindex", "0");
-                  item.setAttribute("data-slot", "dropdown-menu-item");
-                  item.setAttribute("data-value", id);
-                  item.className =
-                    "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
-                  item.textContent = preset.name || id;
-                  dropdown.appendChild(item);
+                  dropdown.appendChild(
+                    this.buildPresetDropdownItem(id, preset.name || id, preset),
+                  );
                 }
               });
 
@@ -904,43 +901,13 @@ const sectionTitles = [
                 dropdown.appendChild(customLabel);
 
                 customPresets.forEach(([id, preset]) => {
-                  const item = document.createElement("div");
-                  item.setAttribute("role", "menuitem");
-                  item.setAttribute("tabindex", "0");
-                  item.setAttribute("data-slot", "dropdown-menu-item");
-                  item.setAttribute("data-value", id);
-                  item.className =
-                    "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
-
-                  const lightStyles = preset.styles?.light || {};
-                  const darkStyles = preset.styles?.dark || {};
-
-                  const lightSwatches = document.createElement("div");
-                  lightSwatches.className =
-                    "flex -space-x-1 items-center dark:hidden";
-                  lightSwatches.innerHTML = `
-                  <div class="size-4 rounded-full" style="background: ${lightStyles.primary || "#888"}"></div>
-                  <div class="size-4 rounded-full" style="background: ${lightStyles.accent || "#888"}"></div>
-                `;
-                  item.appendChild(lightSwatches);
-
-                  const darkSwatches = document.createElement("div");
-                  darkSwatches.className =
-                    "hidden dark:flex -space-x-1 items-center";
-                  darkSwatches.innerHTML = `
-                  <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.primary || "#888"}"></div>
-                  <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.accent || "#888"}"></div>
-                `;
-                  item.appendChild(darkSwatches);
-
-                  const label = document.createElement("span");
-                  label.className = "truncate";
-                  label.textContent = preset.name || id;
-                  item.appendChild(label);
-
-                  dropdown.appendChild(item);
+                  dropdown.appendChild(
+                    this.buildPresetDropdownItem(id, preset.name || id, preset),
+                  );
                 });
               }
+
+              this.syncPresetDropdownSelection();
             },
 
             loadPreset(id: string) {
@@ -978,6 +945,7 @@ const sectionTitles = [
                 label.textContent = preset.name || id;
               }
 
+              this.syncPresetDropdownSelection();
               this.updatePresetSwatches();
 
               const deleteBtn = this.$refs.deletePreset as HTMLButtonElement;
@@ -1001,6 +969,67 @@ const sectionTitles = [
                 accentDark: preset.styles.dark?.accent || "#888",
               };
               setStoredPreset(id, swatches, preset.name || id);
+            },
+
+            buildPresetDropdownItem(id: string, label: string, preset: any) {
+              const item = document.createElement("div");
+              item.setAttribute("role", "menuitemradio");
+              item.setAttribute("tabindex", "0");
+              item.setAttribute("data-slot", "dropdown-menu-radio-item");
+              item.setAttribute("data-value", id);
+              item.className =
+                "group/dropdown-menu-item relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 pr-8 text-sm outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground";
+
+              const lightStyles = preset.styles?.light || {};
+              const darkStyles = preset.styles?.dark || {};
+
+              const lightSwatches = document.createElement("div");
+              lightSwatches.className = "flex -space-x-1 items-center dark:hidden";
+              lightSwatches.innerHTML = `
+                <div class="size-4 rounded-full" style="background: ${lightStyles.primary || "#888"}"></div>
+                <div class="size-4 rounded-full" style="background: ${lightStyles.accent || "#888"}"></div>
+              `;
+              item.appendChild(lightSwatches);
+
+              const darkSwatches = document.createElement("div");
+              darkSwatches.className = "hidden dark:flex -space-x-1 items-center";
+              darkSwatches.innerHTML = `
+                <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.primary || "#888"}"></div>
+                <div class="size-4 rounded-full border border-border" style="background: ${darkStyles.accent || "#888"}"></div>
+              `;
+              item.appendChild(darkSwatches);
+
+              const textLabel = document.createElement("span");
+              textLabel.className = "truncate";
+              textLabel.textContent = label;
+              item.appendChild(textLabel);
+
+              const indicator = document.createElement("span");
+              indicator.setAttribute(
+                "data-slot",
+                "dropdown-menu-radio-item-indicator",
+              );
+              indicator.setAttribute("aria-hidden", "true");
+              indicator.className =
+                "absolute right-2 flex items-center justify-center opacity-0 transition-opacity group-data-checked/dropdown-menu-item:opacity-100";
+              indicator.textContent = "✓";
+              item.appendChild(indicator);
+
+              return item;
+            },
+
+            syncPresetDropdownSelection() {
+              const dropdown = this.$refs.presetMenu as HTMLElement | undefined;
+              if (!dropdown) return;
+
+              dropdown.dispatchEvent(
+                new CustomEvent("dropdown-menu:set", {
+                  detail: {
+                    value: this.currentPresetId || null,
+                    source: "restore",
+                  },
+                }),
+              );
             },
 
             updatePresetSwatches() {
@@ -1095,31 +1124,7 @@ const sectionTitles = [
               });
 
               if (!fromExternal) {
-                localStorage.setItem("starlight-theme", mode);
-                document.documentElement.dataset.theme = mode;
-                document.documentElement.dataset.themeChoice = mode;
-                document.documentElement.classList.toggle(
-                  "dark",
-                  mode === "dark",
-                );
-
-                window.dispatchEvent(
-                  new CustomEvent("theme-toggle-changed", {
-                    detail: { theme: mode },
-                  }),
-                );
-
-                document
-                  .querySelectorAll<HTMLDivElement>(
-                    'starlight-theme-select [data-slot="tabs"]',
-                  )
-                  .forEach((tabsEl) => {
-                    tabsEl.dataset.defaultValue = mode;
-                    tabsEl.dataset.value = mode;
-                    tabsEl.dispatchEvent(
-                      new CustomEvent("tabs:set", { detail: { value: mode } }),
-                    );
-                  });
+                setThemeChoice(mode);
               }
 
               this.applyLivePreview();

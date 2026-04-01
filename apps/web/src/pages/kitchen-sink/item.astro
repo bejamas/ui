@@ -10,9 +10,13 @@ import {
   ItemMedia,
   ItemGroup,
   ItemSeparator,
-} from "@bejamas/ui/components/item";
-import { Button } from "@bejamas/ui/components/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@bejamas/ui/components/avatar";
+} from "@bejamas/registry/ui/item";
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@bejamas/registry/ui/avatar";
 import { FileIcon, EllipsisIcon } from "@lucide/astro";
 ---
 
@@ -21,105 +25,114 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
     <h1 class="text-3xl font-bold mb-10">Item</h1>
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
-    <KitchenSinkSection title="Basic">
-      <Item>
-        <ItemContent>
-          <ItemTitle>Project Update</ItemTitle>
-          <ItemDescription>Latest changes to the component library</ItemDescription>
-        </ItemContent>
-        <ItemActions>
-          <Button variant="outline" size="sm">View</Button>
-        </ItemActions>
-      </Item>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="With Icon">
-      <Item>
-        <ItemMedia>
-          <FileIcon class="size-5 text-muted-foreground" />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>README.md</ItemTitle>
-          <ItemDescription>Updated 2 hours ago</ItemDescription>
-        </ItemContent>
-      </Item>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="With Avatar">
-      <Item>
-        <ItemMedia>
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-            <AvatarFallback>TK</AvatarFallback>
-          </Avatar>
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>Thom Krupa</ItemTitle>
-          <ItemDescription>thom@bejamas.io</ItemDescription>
-        </ItemContent>
-      </Item>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="With Actions">
-      <Item>
-        <ItemContent>
-          <ItemTitle>Feature Request</ItemTitle>
-          <ItemDescription>Add dark mode toggle to navigation</ItemDescription>
-        </ItemContent>
-        <ItemActions>
-          <Button variant="outline" size="sm">Edit</Button>
-          <Button variant="ghost" size="icon" class="size-8">
-            <EllipsisIcon class="size-4" />
-          </Button>
-        </ItemActions>
-      </Item>
-    </KitchenSinkSection>
-
-    <KitchenSinkSection title="Variants">
-      <div class="space-y-3">
+      <KitchenSinkSection title="Basic">
         <Item>
           <ItemContent>
-            <ItemTitle>Default variant</ItemTitle>
-            <ItemDescription>Standard item style</ItemDescription>
+            <ItemTitle>Project Update</ItemTitle>
+            <ItemDescription
+              >Latest changes to the component library</ItemDescription
+            >
           </ItemContent>
+          <ItemActions>
+            <Button variant="outline" size="sm">View</Button>
+          </ItemActions>
         </Item>
-        <Item variant="outline">
-          <ItemContent>
-            <ItemTitle>Outline variant</ItemTitle>
-            <ItemDescription>With border styling</ItemDescription>
-          </ItemContent>
-        </Item>
-        <Item variant="muted">
-          <ItemContent>
-            <ItemTitle>Muted variant</ItemTitle>
-            <ItemDescription>Subtle background</ItemDescription>
-          </ItemContent>
-        </Item>
-      </div>
-    </KitchenSinkSection>
+      </KitchenSinkSection>
 
-    <KitchenSinkSection title="Small Size">
-      <div class="space-y-2">
-        <Item size="sm">
-          <ItemMedia><FileIcon class="size-4 text-muted-foreground" /></ItemMedia>
+      <KitchenSinkSection title="With Icon">
+        <Item>
+          <ItemMedia>
+            <FileIcon class="size-5 text-muted-foreground" />
+          </ItemMedia>
           <ItemContent>
-            <ItemTitle>index.ts</ItemTitle>
+            <ItemTitle>README.md</ItemTitle>
+            <ItemDescription>Updated 2 hours ago</ItemDescription>
           </ItemContent>
         </Item>
-        <Item size="sm">
-          <ItemMedia><FileIcon class="size-4 text-muted-foreground" /></ItemMedia>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="With Avatar">
+        <Item>
+          <ItemMedia>
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+              <AvatarFallback>TK</AvatarFallback>
+            </Avatar>
+          </ItemMedia>
           <ItemContent>
-            <ItemTitle>utils.ts</ItemTitle>
+            <ItemTitle>Thom Krupa</ItemTitle>
+            <ItemDescription>thom@bejamas.io</ItemDescription>
           </ItemContent>
         </Item>
-        <Item size="sm">
-          <ItemMedia><FileIcon class="size-4 text-muted-foreground" /></ItemMedia>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="With Actions">
+        <Item>
           <ItemContent>
-            <ItemTitle>types.ts</ItemTitle>
+            <ItemTitle>Feature Request</ItemTitle>
+            <ItemDescription>Add dark mode toggle to navigation</ItemDescription
+            >
           </ItemContent>
+          <ItemActions>
+            <Button variant="outline" size="sm">Edit</Button>
+            <Button variant="ghost" size="icon" class="size-8">
+              <EllipsisIcon class="size-4" />
+            </Button>
+          </ItemActions>
         </Item>
-      </div>
-    </KitchenSinkSection>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Variants">
+        <div class="space-y-3">
+          <Item>
+            <ItemContent>
+              <ItemTitle>Default variant</ItemTitle>
+              <ItemDescription>Standard item style</ItemDescription>
+            </ItemContent>
+          </Item>
+          <Item variant="outline">
+            <ItemContent>
+              <ItemTitle>Outline variant</ItemTitle>
+              <ItemDescription>With border styling</ItemDescription>
+            </ItemContent>
+          </Item>
+          <Item variant="muted">
+            <ItemContent>
+              <ItemTitle>Muted variant</ItemTitle>
+              <ItemDescription>Subtle background</ItemDescription>
+            </ItemContent>
+          </Item>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Small Size">
+        <div class="space-y-2">
+          <Item size="sm">
+            <ItemMedia
+              ><FileIcon class="size-4 text-muted-foreground" /></ItemMedia
+            >
+            <ItemContent>
+              <ItemTitle>index.ts</ItemTitle>
+            </ItemContent>
+          </Item>
+          <Item size="sm">
+            <ItemMedia
+              ><FileIcon class="size-4 text-muted-foreground" /></ItemMedia
+            >
+            <ItemContent>
+              <ItemTitle>utils.ts</ItemTitle>
+            </ItemContent>
+          </Item>
+          <Item size="sm">
+            <ItemMedia
+              ><FileIcon class="size-4 text-muted-foreground" /></ItemMedia
+            >
+            <ItemContent>
+              <ItemTitle>types.ts</ItemTitle>
+            </ItemContent>
+          </Item>
+        </div>
+      </KitchenSinkSection>
     </div>
 
     <KitchenSinkSection title="Item Group">
@@ -127,12 +140,17 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
         <Item>
           <ItemMedia>
             <Avatar>
-              <AvatarFallback class="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">NK</AvatarFallback>
+              <AvatarFallback
+                class="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                >NK</AvatarFallback
+              >
             </Avatar>
           </ItemMedia>
           <ItemContent>
             <ItemTitle>New comment on your post</ItemTitle>
-            <ItemDescription>Nick left a comment on "Getting Started"</ItemDescription>
+            <ItemDescription
+              >Nick left a comment on "Getting Started"</ItemDescription
+            >
           </ItemContent>
           <ItemActions>
             <span class="text-xs text-muted-foreground">2m ago</span>
@@ -142,7 +160,10 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
         <Item>
           <ItemMedia>
             <Avatar>
-              <AvatarFallback class="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">JD</AvatarFallback>
+              <AvatarFallback
+                class="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                >JD</AvatarFallback
+              >
             </Avatar>
           </ItemMedia>
           <ItemContent>
@@ -157,12 +178,17 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
         <Item>
           <ItemMedia>
             <Avatar>
-              <AvatarFallback class="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">AB</AvatarFallback>
+              <AvatarFallback
+                class="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300"
+                >AB</AvatarFallback
+              >
             </Avatar>
           </ItemMedia>
           <ItemContent>
             <ItemTitle>Deployment successful</ItemTitle>
-            <ItemDescription>Production build deployed to vercel</ItemDescription>
+            <ItemDescription
+              >Production build deployed to vercel</ItemDescription
+            >
           </ItemContent>
           <ItemActions>
             <span class="text-xs text-muted-foreground">1h ago</span>
@@ -172,7 +198,10 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
         <Item>
           <ItemMedia>
             <Avatar>
-              <AvatarFallback class="bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">TK</AvatarFallback>
+              <AvatarFallback
+                class="bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+                >TK</AvatarFallback
+              >
             </Avatar>
           </ItemMedia>
           <ItemContent>

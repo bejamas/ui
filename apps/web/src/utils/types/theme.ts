@@ -76,6 +76,7 @@ export const themeStylePropsSchema = z.object({
     .string()
     .describe("The color for focus rings within the sidebar."),
   "font-sans": z.string().describe("The preferred sans-serif font family."),
+  "font-heading": z.string().describe("The preferred heading font family."),
   "font-serif": z.string().describe("The preferred serif font family."),
   "font-mono": z.string().describe("The preferred monospace font family."),
   radius: z

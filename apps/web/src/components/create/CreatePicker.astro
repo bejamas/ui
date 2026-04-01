@@ -1,0 +1,305 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@bejamas/ui/components/dropdown-menu";
+import type {
+  CreateFontGroup,
+  CreatePickerGroup,
+  CreateLockableParam,
+  CreatePickerMarkerKind,
+  CreatePickerOption,
+  CreatePickerName,
+} from "@/utils/create-sidebar";
+import {
+  CREATE_PICKER_MARKERS,
+  CREATE_PICKER_GROUP_LABELS,
+  isCreateFontGroup,
+  decomposeMenuColor,
+} from "@/utils/create-sidebar";
+import CreateFontGroupLockButton from "./CreateFontGroupLockButton.astro";
+import CreateLockButton from "./CreateLockButton.astro";
+import CreatePickerMarker from "./CreatePickerMarker.astro";
+
+interface Props {
+  name: CreatePickerName;
+  label: string;
+  value: string;
+  options: CreatePickerOption[];
+  selectedOption?: CreatePickerOption;
+  markerKind?: CreatePickerMarkerKind;
+  lockable?: boolean;
+  lockParam?: CreateLockableParam;
+  disabled?: boolean;
+}
+
+const {
+  name,
+  label,
+  value,
+  options,
+  selectedOption: providedSelectedOption,
+  markerKind,
+  lockable = false,
+  lockParam,
+  disabled = false,
+} = Astro.props as Props;
+const selectedOption =
+  providedSelectedOption ??
+  options.find((option) => option.value === value) ??
+  options[0];
+const pickersWithoutItemMarkers = new Set(["menuColor", "menuAccent", "iconLibrary"]);
+const itemMarkerKind = pickersWithoutItemMarkers.has(name)
+  ? undefined
+  : CREATE_PICKER_MARKERS[name];
+const groupedPickerNames = new Set(["style", "font", "fontHeading", "menuColor"]);
+const ungroupedOptions = groupedPickerNames.has(name)
+  ? options.filter((option) => !option.group)
+  : [];
+const groupedOptions = groupedPickerNames.has(name)
+  ? (Object.entries(CREATE_PICKER_GROUP_LABELS)
+      .map(([group, groupLabel]) => ({
+        group,
+        label: groupLabel,
+        options: options.filter((option) => option.group === group),
+      }))
+      .filter((group) => group.options.length > 0) as CreatePickerGroup[])
+  : [];
+
+function shouldRenderFontGroupLock(
+  pickerName: CreatePickerName,
+  group: CreatePickerGroup["group"],
+): group is CreateFontGroup {
+  return pickerName === "font" && isCreateFontGroup(group);
+}
+---
+
+<div
+  class="group/picker relative"
+  data-controller="create-picker"
+  data-action="dropdown-menu:value-change->create-picker#valueChanged"
+  data-create-picker-name-value={name}
+  data-create-picker-marker-kind-value={markerKind}
+>
+  <DropdownMenu
+    defaultValue={name === "menuColor" ? decomposeMenuColor(selectedOption?.value ?? value).color : (selectedOption?.value ?? value)}
+    closeOnSelect={false}
+    data-create-picker={name}
+    class="block w-full"
+  >
+    <input
+      type="hidden"
+      name={name}
+      value={selectedOption?.value ?? value}
+      data-create-input
+      data-create-picker-target="input"
+    />
+
+    <DropdownMenuTrigger asChild class="w-full block">
+      <Button
+        type="button"
+        variant="outline"
+        disabled={disabled}
+        class="create-picker-trigger bg-transparent! hover:bg-white/[0.04]! border-0! shadow-none! flex w-full justify-between text-left h-auto! rounded-none! px-4! py-3!"
+        data-create-picker-trigger
+        data-create-picker-target="trigger"
+      >
+        <span class="min-w-0">
+          <span
+            class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38"
+            >{label}</span
+          >
+          <span
+            class="block truncate text-sm font-medium tracking-[-0.01em] text-white/90"
+            data-create-picker-current-label
+            data-create-picker-target="currentLabel"
+          >
+            {selectedOption?.label ?? value}
+          </span>
+        </span>
+
+        {markerKind && (
+          <span class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65">
+            <span
+              class="inline-flex items-center justify-center"
+              data-create-picker-current-marker
+              data-create-picker-target="currentMarker"
+            >
+              {
+                selectedOption && (
+                  <CreatePickerMarker
+                    kind={markerKind}
+                    value={selectedOption.markerValue ?? selectedOption.value}
+                    label={selectedOption.label}
+                    color={selectedOption.color}
+                    family={selectedOption.family}
+                  />
+                )
+              }
+            </span>
+          </span>
+        )}
+      </Button>
+    </DropdownMenuTrigger>
+
+    <DropdownMenuContent
+      data-create-picker-content={name}
+      side="right"
+      align="start"
+      sideOffset={12}
+      class={`create-picker-content !min-w-[10.5rem] !rounded-[18px] !border-white/10 !bg-[#0040a1] !p-1.25 !text-white !shadow-[0_20px_50px_rgba(0,0,0,0.32)] !ring-0 max-h-92 overflow-auto${name === "style" ? " !w-[286px]" : ""}`}
+    >
+      {
+        groupedOptions.length > 0 ? (
+          <>
+            {ungroupedOptions.length > 0 && (
+              <>
+                <DropdownMenuGroup>
+                  {ungroupedOptions.map((option) => {
+                    return (
+                      <DropdownMenuRadioItem
+                        value={option.value}
+                        disabled={option.disabled}
+                        class="group/picker-item create-picker-item !items-start !gap-2.5 !rounded-[12px] !pl-3 !pr-9 !py-2.5 !text-white/86 data-checked:!bg-white/[0.06] data-checked:!text-white/92 data-checked:**:[svg]:!text-white/92 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
+                        data-create-picker-item
+                      >
+                        <span class="min-w-0 flex-1">
+                          <span
+                            class="block truncate text-[14px] font-medium tracking-[-0.01em]"
+                            data-create-picker-item-label
+                          >
+                            {option.label}
+                          </span>
+                          {option.description && (
+                            <span class="mt-0.5 block text-[12px] leading-4 text-white/52">
+                              {option.description}
+                            </span>
+                          )}
+                        </span>
+                        {itemMarkerKind && (
+                          <span class="ml-auto mr-6 flex shrink-0 items-center pt-0.5">
+                            <span data-create-picker-item-marker>
+                              <CreatePickerMarker
+                                kind={itemMarkerKind}
+                                value={option.markerValue ?? option.value}
+                                label={option.label}
+                                color={option.color}
+                                family={option.family}
+                              />
+                            </span>
+                          </span>
+                        )}
+                      </DropdownMenuRadioItem>
+                    );
+                  })}
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator class="!my-1.5 !bg-white/8" />
+              </>
+            )}
+            {groupedOptions.map((group, index) => (
+              <>
+                {index > 0 && (
+                  <DropdownMenuSeparator class="!my-1.5 !bg-white/8" />
+                )}
+                <DropdownMenuLabel class="group/font-group flex items-center justify-between gap-2 !px-3 !pb-0.5 !pt-1.5 !text-[8px] !font-semibold !uppercase !tracking-[0.12em] !text-white/40">
+                  <span>{group.label}</span>
+                  {shouldRenderFontGroupLock(name, group.group) && (
+                    <CreateFontGroupLockButton group={group.group} />
+                  )}
+                </DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  {group.options.map((option) => {
+                    return (
+                      <DropdownMenuRadioItem
+                        value={option.value}
+                        disabled={option.disabled}
+                        class="group/picker-item create-picker-item !items-start !gap-2.5 !rounded-[12px] !pl-3 !pr-9 !py-2.5 !text-white/86 data-checked:!bg-white/[0.06] data-checked:!text-white/92 data-checked:**:[svg]:!text-white/92 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
+                        data-create-picker-item
+                      >
+                        <span class="min-w-0 flex-1">
+                          <span
+                            class="block truncate text-[14px] font-medium tracking-[-0.01em]"
+                            data-create-picker-item-label
+                          >
+                            {option.label}
+                          </span>
+                          {option.description && (
+                            <span class="mt-0.5 block text-[12px] leading-4 text-white/52">
+                              {option.description}
+                            </span>
+                          )}
+                        </span>
+                        {itemMarkerKind && (
+                          <span class="ml-auto mr-6 flex shrink-0 items-center pt-0.5">
+                            <span data-create-picker-item-marker>
+                              <CreatePickerMarker
+                                kind={itemMarkerKind}
+                                value={option.markerValue ?? option.value}
+                                label={option.label}
+                                color={option.color}
+                                family={option.family}
+                              />
+                            </span>
+                          </span>
+                        )}
+                      </DropdownMenuRadioItem>
+                    );
+                  })}
+                </DropdownMenuGroup>
+              </>
+            ))}
+          </>
+        ) : (
+          <div data-create-picker-items>
+            {options.map((option) => {
+              return (
+                <DropdownMenuRadioItem
+                  value={option.value}
+                  disabled={option.disabled}
+                  class="group/picker-item create-picker-item !gap-2.5 !rounded-[12px] !pl-3 !pr-9 !py-2 !text-[14px] !font-medium !text-white/86 data-checked:!bg-white/[0.06] data-checked:!text-white/92 data-checked:**:[svg]:!text-white/92 data-[highlighted]:!bg-white/[0.06] data-[highlighted]:!text-white/92 focus:**:!text-inherit"
+                  data-create-picker-item
+                >
+                  <span class="truncate" data-create-picker-item-label>
+                    {option.label}
+                  </span>
+                  {itemMarkerKind && (
+                    <span class="ml-auto mr-6 flex shrink-0 items-center">
+                      <span data-create-picker-item-marker>
+                        <CreatePickerMarker
+                          kind={itemMarkerKind}
+                          value={option.markerValue ?? option.value}
+                          label={option.label}
+                          color={option.color}
+                          family={option.family}
+                        />
+                      </span>
+                    </span>
+                  )}
+                </DropdownMenuRadioItem>
+              );
+            })}
+          </div>
+        )
+      }
+    </DropdownMenuContent>
+  </DropdownMenu>
+
+  {
+    lockable && lockParam && (
+      <CreateLockButton
+        param={lockParam}
+        class={
+          disabled
+            ? "absolute top-1/2 hidden -translate-y-1/2 " + (markerKind ? "right-10" : "right-3")
+            : "absolute top-1/2 -translate-y-1/2 " + (markerKind ? "right-10" : "right-3")
+        }
+      />
+    )
+  }
+</div>

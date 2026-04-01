@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/tabs/TabsList.astro directly.
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
@@ -8,15 +9,16 @@ export const tabsListVariants = cva(
   {
     variants: {
       variant: {
-        indicator: "rounded-lg border border-input bg-muted p-[2px]",
+        indicator: "rounded-lg bg-muted p-[2px] [--tabs-indicator-radius:calc(var(--radius)_-_2px)]",
         default: "rounded-lg bg-muted p-[3px]",
-        line: "rounded-none bg-transparent p-0 gap-1",
-        "line-animated": "rounded-none bg-transparent p-0 gap-1",
+        line: "rounded-none gap-1 bg-transparent p-0",
+        "line-animated":
+          "rounded-none gap-1 bg-transparent p-0",
       },
       size: {
-        default: "group-data-[orientation=horizontal]/tabs:h-9",
-        sm: "group-data-[orientation=horizontal]/tabs:h-8",
-        lg: "group-data-[orientation=horizontal]/tabs:h-10",
+        default: "group-data-horizontal/tabs:h-9",
+        sm: "group-data-horizontal/tabs:h-8",
+        lg: "group-data-horizontal/tabs:h-10",
       },
     },
     defaultVariants: {
@@ -44,14 +46,14 @@ const {
   role="tablist"
   data-slot="tabs-list"
   data-variant={variant}
-  class={cn(tabsListVariants({ variant, size }), className)}
+  class={cn("", tabsListVariants({ variant, size }), className)}
 >
   {
     variant === "indicator" && (
       <div
         aria-hidden="true"
         data-slot="tabs-indicator"
-        class="pointer-events-none absolute top-[var(--active-tab-top)] left-[var(--active-tab-left)] z-0 h-[var(--active-tab-height)] w-[var(--active-tab-width)] rounded-md bg-background shadow-sm transition-all duration-150 ease dark:border-input dark:bg-input/30"
+        class="gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium group-data-[variant=default]/tabs-list:data-active:shadow-sm group-data-[variant=line]/tabs-list:data-active:shadow-none [&_svg:not([class*='size-'])]:size-4 pointer-events-none absolute top-(--active-tab-top) left-(--active-tab-left) z-0 h-(--active-tab-height) w-(--active-tab-width) bg-background shadow-sm transition-all duration-150 ease dark:border-input dark:bg-input/30"
       />
     )
   }

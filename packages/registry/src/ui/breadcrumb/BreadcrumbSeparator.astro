@@ -1,0 +1,26 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"li"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<li
+  {...rest}
+  role="presentation"
+  aria-hidden="true"
+  data-slot="breadcrumb-separator"
+  class={cn("cn-breadcrumb-separator", className)}
+>
+  <slot>
+    <SemanticIcon name="chevron-right" class="cn-rtl-flip" />
+  </slot>
+</li>

@@ -1,0 +1,24 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/command/CommandSeparator.astro directly.
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  alwaysRender?: boolean;
+  class?: string;
+}
+
+const {
+  alwaysRender = false,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  role="separator"
+  data-slot="command-separator"
+  data-always-render={alwaysRender ? "true" : undefined}
+  class={cn("bg-border -mx-1 h-px w-auto", className)}
+/>

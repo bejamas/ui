@@ -1,0 +1,364 @@
+---
+import { Button } from "@bejamas/ui/components/button";
+import type { DesignSystemConfig } from "@bejamas/create-config/server";
+import {
+  CREATE_PICKER_LABELS,
+  CREATE_PICKER_MARKERS,
+  getCreatePickerOptions,
+  isCreatePickerDisabled,
+  getCreatePickerSelectedOption,
+} from "@/utils/create-sidebar";
+import CreateLockButton from "./CreateLockButton.astro";
+import CreatePicker from "./CreatePicker.astro";
+import CreatePickerMarker from "./CreatePickerMarker.astro";
+import CreateNavigateDialog from "./CreateNavigateDialog.astro";
+import CreateProjectDialog from "./CreateProjectDialog.astro";
+import CreateThemeListPanel from "./CreateThemeListPanel.astro";
+import CreatePalettePanel from "./CreatePalettePanel.astro";
+import CreateSidebarHeader from "./CreateSidebarHeader.astro";
+import {
+  getCreateThemeSeedOption,
+  type ThemeOverrides,
+} from "@/utils/themes/create-theme";
+
+interface Props {
+  config: DesignSystemConfig;
+  preset: string;
+  themeRef?: string | null;
+  themeOverrides?: ThemeOverrides | null;
+}
+
+const {
+  config,
+  preset,
+  themeRef = null,
+  themeOverrides = null,
+} = Astro.props as Props;
+const pickerOptions = getCreatePickerOptions(config);
+const themeOption = getCreateThemeSeedOption(config.baseColor, config.theme);
+const themeLabel = themeRef ? "Custom" : (themeOption?.label ?? config.theme);
+const themeSwatchColor =
+  themeOverrides?.light?.primary ?? themeOption?.color ?? "oklch(0.72 0 0)";
+
+const pickerGroups = [
+  ["style"],
+  ["baseColor"],
+  ["fontHeading", "font"],
+  ["iconLibrary", "radius"],
+  ["menuColor", "menuAccent"],
+] as const;
+
+const pickersWithMarkers = new Set(["style", "baseColor", "radius"]);
+---
+
+<aside
+  class="xl:sticky xl:top-[var(--create-page-inset)] xl:h-[var(--create-sidebar-height)] dark"
+  data-create-customizer-stable
+  data-controller="create-sidebar"
+  data-create-sidebar-panel-value="main"
+  data-create-sidebar-theme-mode-value="light"
+  data-create-sidebar-create-picker-outlet='[data-controller~="create-picker"]'
+>
+  <div
+    class="create-customizer create-sidebar-stripe-bg relative overflow-hidden border rounded-r-[22px] border-white/10 text-white shadow-[0_24px_70px_rgba(17,12,10,0.32)] xl:flex xl:h-full xl:flex-col"
+  >
+    <div class="bg-[#0040a1] ml-5 mb-0.5">
+      <CreateSidebarHeader title="Create" />
+    </div>
+
+    <form
+      class="relative xl:min-h-0 xl:flex-1 xl:overflow-hidden"
+      data-create-form
+      data-create-editor-target="form"
+    >
+      <input
+        type="hidden"
+        name="theme"
+        value={config.theme}
+        data-create-theme-input-hidden
+      />
+      <input
+        type="hidden"
+        name="themeRef"
+        value={themeRef ?? ""}
+        data-create-theme-ref-input
+      />
+
+      <div
+        class="create-panel-transition pl-5 [scrollbar-width:none]"
+        data-create-form-main
+        data-panel-state="active"
+        data-create-sidebar-target="mainPanel"
+      >
+        <div class="create-sidebar-scroll-fade before:hidden relative h-full">
+          {
+            pickerGroups.map((group, groupIndex) => (
+              <>
+                {groupIndex > 0 && <div class="h-4" />}
+
+                {groupIndex === 1 && (
+                  <div class="group/picker relative bg-[#0040a1]">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      class="create-picker-trigger bg-transparent! hover:bg-white/[0.04]! border-0! shadow-none! flex w-full justify-between text-left h-auto! rounded-none! px-4! py-3! mb-0.5"
+                      data-create-theme-trigger
+                      data-create-sidebar-target="themeTrigger"
+                      data-action="click->create-sidebar#showThemeList"
+                    >
+                      <span class="min-w-0">
+                        <span class="block text-[8px] font-medium uppercase tracking-[0.12em] text-white/38">
+                          Theme
+                        </span>
+                        <span
+                          class="block truncate text-sm font-medium tracking-[-0.01em] text-white/90"
+                          data-create-theme-current-label
+                        >
+                          {themeLabel}
+                        </span>
+                      </span>
+
+                      <span class="ml-2.5 flex shrink-0 items-center gap-1.5 text-white/65">
+                        <span
+                          class="inline-flex items-center justify-center"
+                          data-create-theme-current-marker
+                        >
+                          <CreatePickerMarker
+                            kind="swatch"
+                            value={config.theme}
+                            label={themeLabel}
+                            color={themeSwatchColor}
+                          />
+                        </span>
+                      </span>
+                    </Button>
+
+                    <CreateLockButton
+                      param="theme"
+                      class="absolute top-1/2 right-10 -translate-y-1/2"
+                    />
+                  </div>
+                )}
+
+                {group.map((picker) => (
+                  <div class="bg-[#0040a1] mb-0.5">
+                    <CreatePicker
+                      name={picker}
+                      label={CREATE_PICKER_LABELS[picker]}
+                      value={config[picker]}
+                      options={pickerOptions[picker]}
+                      selectedOption={getCreatePickerSelectedOption(
+                        picker,
+                        config,
+                      )}
+                      markerKind={
+                        pickersWithMarkers.has(picker)
+                          ? CREATE_PICKER_MARKERS[picker]
+                          : undefined
+                      }
+                      lockable
+                      lockParam={picker}
+                      disabled={isCreatePickerDisabled(picker, config)}
+                    />
+                  </div>
+                ))}
+              </>
+            ))
+          }
+        </div>
+      </div>
+
+      <CreateThemeListPanel
+        config={config}
+        themeRef={themeRef}
+        themeOverrides={themeOverrides}
+      />
+      <CreatePalettePanel
+        config={config}
+        themeRef={themeRef}
+        themeOverrides={themeOverrides}
+      />
+    </form>
+
+    <div class="create-customizer-actions bg-[#0040a1] ml-5 p-2.5 xl:shrink-0">
+      <CreateNavigateDialog />
+
+      <button
+        type="button"
+        class="create-customizer-action hidden w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
+        data-create-copy-preset
+        data-action="click->create-sidebar#copyPreset"
+      >
+        <span data-preset-code data-create-sidebar-target="presetCode">{`--preset ${preset}`}</span>
+      </button>
+
+      <div class="grid grid-cols-2 gap-2" data-actions-default data-create-sidebar-target="actionsDefault">
+        <Button
+          type="button"
+          variant="outline"
+          class="create-customizer-action rounded-[14px]"
+          data-create-randomize
+          data-action="click->create-sidebar#randomize"
+        >
+          Shuffle
+        </Button>
+
+        <CreateProjectDialog
+          config={config}
+          preset={preset}
+          themeRef={themeRef}
+        />
+      </div>
+      <div class="grid grid-cols-2 gap-2 hidden" data-actions-palette data-create-sidebar-target="actionsPalette">
+        <Button
+          type="button"
+          variant="outline"
+          class="flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
+          data-create-palette-cancel
+          data-action="click->create-sidebar#cancelPalette"
+        >
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          class="flex w-full items-center justify-center rounded-[14px] border border-white/8 bg-white/[0.02] px-3 py-2 text-[13px] font-medium text-white/92 transition-colors hover:bg-white/[0.05]"
+          data-create-palette-save
+          data-action="click->create-sidebar#savePalette"
+        >
+          Save
+        </Button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<style>
+  :global(.create-sidebar-scroll-fade::before),
+  :global(.create-sidebar-scroll-fade::after) {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  :global(.create-sidebar-scroll-fade::before) {
+    top: var(--create-sidebar-header-height);
+    height: 120px;
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(6px);
+    mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    background: linear-gradient(to bottom, #0040a1 0%, transparent 30%);
+  }
+
+  :global(.create-sidebar-scroll-fade::after) {
+    bottom: 0;
+    height: 60px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    mask-image: linear-gradient(to top, black 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+    background: linear-gradient(to top, #0040a1 0%, transparent 40%);
+  }
+
+  :global(.create-panel-transition) {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    transition:
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  :global(.create-panel-no-transition) {
+    transition: none !important;
+  }
+
+  :global(.create-panel-transition[data-panel-state="active"]) {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  :global(.create-panel-transition[data-panel-state="exiting"]) {
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Forward: exit slides left, enter from right */
+  :global(
+    .create-panel-transition[data-panel-state="exiting"][data-panel-direction="forward"]
+  ) {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(-8px);
+  }
+
+  :global(
+    .create-panel-transition[data-panel-state="entering"][data-panel-direction="forward"]
+  ) {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(8px);
+    pointer-events: none;
+  }
+
+  /* Back: exit slides right, enter from left */
+  :global(
+    .create-panel-transition[data-panel-state="exiting"][data-panel-direction="back"]
+  ) {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(8px);
+  }
+
+  :global(
+    .create-panel-transition[data-panel-state="entering"][data-panel-direction="back"]
+  ) {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(-8px);
+    pointer-events: none;
+  }
+
+  :global(.create-panel-transition[data-panel-state="inactive"]) {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.create-panel-transition) {
+      transition: none;
+    }
+  }
+
+  .create-customizer::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .create-sidebar-stripe-bg {
+    background-color: #0040a1;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 255, 255, 0.12) 3px,
+      rgba(255, 255, 255, 0.12) 5px
+    );
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+} from "@bejamas/registry/ui/item";
+
+const items = [
+  ["Edge Requests", "$1.83K", 67.34],
+  ["Fast Data Transfer", "$952.51", 52.18],
+  ["Monitoring data points", "$901.20", 89.42],
+  ["Web Analytics Events", "$603.71", 45.67],
+  ["ISR Writes", "524.52K / 2M", 26.23],
+  ["Function Duration", "5.11 GB Hrs / 1K", 5.11],
+] as const;
+
+function gauge(percentage: number) {
+  const normalizedPercentage = Math.min(Math.max(percentage, 0), 100);
+  const circumference = 2 * Math.PI * 42.5;
+  const strokePercent = (normalizedPercentage / 100) * circumference;
+
+  return {
+    circumference,
+    strokePercent,
+  };
+}
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle class="text-sm">5 days remaining in cycle</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <ItemGroup class="gap-0">
+      {
+        items.map(([name, value, percentage]) => {
+          const { circumference, strokePercent } = gauge(percentage);
+
+          return (
+            <Item size="xs" class="px-0 group-hover/item-group:bg-transparent">
+              <ItemMedia variant="icon" class="text-primary">
+                <svg
+                  aria-hidden="true"
+                  fill="none"
+                  height="16"
+                  width="16"
+                  stroke-width="2"
+                  viewBox="0 0 100 100"
+                  class="-rotate-90"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="42.5"
+                    stroke-width="12"
+                    stroke-dashoffset="0"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="opacity-20"
+                    stroke="currentColor"
+                    style={`stroke-dasharray:${circumference} ${circumference}`}
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="42.5"
+                    stroke-width="12"
+                    stroke-dashoffset="0"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="transition-all duration-300"
+                    stroke="currentColor"
+                    style={`stroke-dasharray:${strokePercent} ${circumference}`}
+                  />
+                </svg>
+              </ItemMedia>
+              <ItemContent class="min-w-0">
+                <ItemTitle class="truncate">{name}</ItemTitle>
+              </ItemContent>
+              <ItemActions>
+                <span class="font-mono text-xs font-medium text-muted-foreground tabular-nums">
+                  {value}
+                </span>
+              </ItemActions>
+            </Item>
+          );
+        })
+      }
+    </ItemGroup>
+  </CardContent>
+</Card>

@@ -1,13 +1,27 @@
 @import "tailwindcss";
-@source "../../../../apps/**/*.{ts,tsx,astro,mdx,md}";
-@source "../../../../components/**/*.{ts,tsx,astro,mdx,md}";
 @source "../**/*.{ts,tsx,astro,mdx,md}";
 
 @import "tw-animate-css";
+@import "bejamas/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-sans: var(--bejamas-font-family, ui-sans-serif, system-ui, sans-serif);
+  --font-heading: var(--font-heading);
+  --font-serif: var(
+    --bejamas-font-family-serif,
+    ui-serif,
+    Georgia,
+    Cambria,
+    serif
+  );
+  --font-mono: var(
+    --bejamas-font-family-mono,
+    ui-monospace,
+    SFMono-Regular,
+    monospace
+  );
   --radius-xs: calc(var(--radius) - 6px);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -15,6 +29,7 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -155,8 +170,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+  .cn-font-heading {
+    @apply font-heading;
+  }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 }
 

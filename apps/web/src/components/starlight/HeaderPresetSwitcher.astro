@@ -1,0 +1,336 @@
+---
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
+} from "@bejamas/registry/ui/dropdown-menu";
+import { Button } from "@bejamas/registry/ui/button";
+import { ChevronDownIcon } from "@lucide/astro";
+import { buildHeaderPresetSwitcherState } from "@/utils/themes/header-preset-switcher";
+
+const state = buildHeaderPresetSwitcherState({});
+---
+
+<header-preset-switcher
+  class="header-preset-switcher"
+  data-header-preset-switcher
+  data-current={JSON.stringify(state.current)}
+  data-presets={JSON.stringify(state.presets)}
+  data-selected-preset-id={state.selectedPresetId ?? ""}
+>
+  <DropdownMenu defaultValue={state.selectedPresetId ?? undefined}>
+    <DropdownMenuTrigger
+      variant="outline"
+      class="header-preset-switcher-trigger max-w-[11.75rem] min-w-0 justify-between gap-2 px-2.5 text-sm"
+      data-header-preset-trigger
+    >
+      <span class="flex min-w-0 items-center gap-2">
+        <span class="flex shrink-0 -space-x-1 items-center">
+          <span
+            class="size-3 rounded-full border border-background/80 dark:hidden"
+            data-current-swatch="light-primary"
+            style={`background:${state.current.swatches.light.primary}`}></span>
+          <span
+            class="size-3 rounded-full border border-background/80 dark:hidden"
+            data-current-swatch="light-accent"
+            style={`background:${state.current.swatches.light.accent}`}></span>
+          <span
+            class="hidden size-3 rounded-full border border-border dark:block"
+            data-current-swatch="dark-primary"
+            style={`background:${state.current.swatches.dark.primary}`}></span>
+          <span
+            class="hidden size-3 rounded-full border border-border dark:block"
+            data-current-swatch="dark-accent"
+            style={`background:${state.current.swatches.dark.accent}`}></span>
+        </span>
+        <span class="truncate text-left" data-current-label>
+          {state.current.label}
+        </span>
+      </span>
+      <ChevronDownIcon class="size-4 shrink-0 opacity-60" />
+    </DropdownMenuTrigger>
+
+    <DropdownMenuContent align="end" class="w-68" data-header-preset-content>
+      <DropdownMenuGroup>
+        <DropdownMenuLabel>Presets</DropdownMenuLabel>
+        {
+          state.presets.map((preset) => (
+            <DropdownMenuRadioItem
+              class="cursor-pointer gap-3 rounded-md px-3 py-2"
+              value={preset.id}
+              data-header-preset-id={preset.id}
+            >
+              <span class="flex shrink-0 -space-x-1 items-center">
+                <span
+                  class="size-3 rounded-full border border-background/80 dark:hidden"
+                  style={`background:${preset.swatches.light.primary}`}
+                />
+                <span
+                  class="size-3 rounded-full border border-background/80 dark:hidden"
+                  style={`background:${preset.swatches.light.accent}`}
+                />
+                <span
+                  class="hidden size-3 rounded-full border border-border dark:block"
+                  style={`background:${preset.swatches.dark.primary}`}
+                />
+                <span
+                  class="hidden size-3 rounded-full border border-border dark:block"
+                  style={`background:${preset.swatches.dark.accent}`}
+                />
+              </span>
+              <span class="truncate">{preset.label}</span>
+            </DropdownMenuRadioItem>
+          ))
+        }
+      </DropdownMenuGroup>
+
+      <DropdownMenuSeparator />
+
+      <Button
+        as="a"
+        href={state.current.createHref}
+        variant="ghost"
+        class="w-full justify-center"
+        data-create-your-own
+      >
+        Create your own
+      </Button>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</header-preset-switcher>
+
+<script is:inline>
+  (() => {
+    const script = document.currentScript;
+    const root = script?.previousElementSibling;
+
+    if (!(root instanceof HTMLElement) || !root.matches("[data-header-preset-switcher]")) {
+      return;
+    }
+
+    const parseJson = (value, fallback = null) => {
+      if (!value) {
+        return fallback;
+      }
+
+      try {
+        return JSON.parse(value);
+      } catch {
+        return fallback;
+      }
+    };
+
+    const readCookie = (name) => {
+      const match = document.cookie.match(
+        new RegExp(
+          `(?:^|; )${name.replace(/[$()*+.?[\\\\\\]^{|}]/g, "\\$&")}=([^;]*)`,
+        ),
+      );
+
+      return match ? decodeURIComponent(match[1]) : null;
+    };
+
+    const parseThemeCookie = (cookieValue) => {
+      if (!cookieValue) {
+        return null;
+      }
+
+      const parts = cookieValue.split("|");
+      const id = parts[0];
+      if (!id) {
+        return null;
+      }
+
+      if (parts.length >= 5) {
+        return {
+          id,
+          swatches: {
+            primaryLight: parts[1],
+            accentLight: parts[2],
+            primaryDark: parts[3],
+            accentDark: parts[4],
+          },
+          name: parts[5] || undefined,
+        };
+      }
+
+      return { id };
+    };
+
+    const isPresetCode = (value) => {
+      if (!value || value.length < 2 || value.length > 10) {
+        return false;
+      }
+
+      if (!["a", "b", "c"].includes(value[0])) {
+        return false;
+      }
+
+      return /^[A-Za-z0-9]+$/.test(value);
+    };
+
+    const buildCreateHref = (presetId, currentThemeRef) => {
+      const params = new URLSearchParams();
+
+      if (presetId) {
+        params.set("preset", presetId);
+      }
+
+      if (currentThemeRef) {
+        params.set("themeRef", currentThemeRef);
+      }
+
+      const query = params.toString();
+      return query ? `/create?${query}` : "/create";
+    };
+
+    const readStoredPreset = () => {
+      const themeCookie = readCookie("theme");
+      if (themeCookie) {
+        return parseThemeCookie(themeCookie);
+      }
+
+      try {
+        const presetId = localStorage.getItem("theme-preset");
+        return presetId ? { id: presetId } : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const getCustomPresets = () => {
+      try {
+        const stored = localStorage.getItem("bejamas-custom-presets");
+        if (!stored) {
+          return {};
+        }
+
+        const parsed = JSON.parse(stored);
+        return parsed?.presets ?? {};
+      } catch {
+        return {};
+      }
+    };
+
+    const updateSwatch = (name, color) => {
+      const swatch = root.querySelector(`[data-current-swatch="${name}"]`);
+      if (swatch instanceof HTMLElement) {
+        swatch.style.background = color;
+      }
+    };
+
+    const current = parseJson(root.dataset.current, null);
+    const presets = new Map(
+      (parseJson(root.dataset.presets, []) ?? []).map((preset) => [
+        preset.id,
+        preset,
+      ]),
+    );
+    const stored = readStoredPreset();
+    const themeRef = readCookie("theme-ref");
+    const customPresets = getCustomPresets();
+
+    let summary = current;
+    let selectedPresetId = root.dataset.selectedPresetId || "";
+
+    if (stored) {
+      const curatedPreset = themeRef ? null : presets.get(stored.id);
+      const customPreset = customPresets[stored.id] ?? null;
+
+      if (curatedPreset) {
+        summary = {
+          id: curatedPreset.id,
+          label: curatedPreset.label,
+          swatches: curatedPreset.swatches,
+          createHref: curatedPreset.createHref,
+          themeRef: null,
+        };
+        selectedPresetId = curatedPreset.id;
+      } else if (
+        current &&
+        stored.id === current.id &&
+        themeRef === (current.themeRef ?? null)
+      ) {
+        summary = current;
+        selectedPresetId = "";
+      } else if (stored.swatches) {
+        summary = {
+          id: stored.id,
+          label: stored.name || customPreset?.name || current?.label || stored.id,
+          swatches: {
+            light: {
+              primary: stored.swatches.primaryLight,
+              accent: stored.swatches.accentLight,
+            },
+            dark: {
+              primary: stored.swatches.primaryDark,
+              accent: stored.swatches.accentDark,
+            },
+          },
+          createHref: buildCreateHref(
+            isPresetCode(stored.id) ? stored.id : null,
+            themeRef,
+          ),
+          themeRef,
+        };
+        selectedPresetId = "";
+      } else if (customPreset?.styles) {
+        summary = {
+          id: stored.id,
+          label: customPreset.name,
+          swatches: {
+            light: {
+              primary:
+                customPreset.styles.light?.primary ??
+                current?.swatches?.light?.primary ??
+                "oklch(0.2 0 0)",
+              accent:
+                customPreset.styles.light?.accent ??
+                current?.swatches?.light?.accent ??
+                "oklch(0.7 0 0)",
+            },
+            dark: {
+              primary:
+                customPreset.styles.dark?.primary ??
+                current?.swatches?.dark?.primary ??
+                "oklch(0.98 0 0)",
+              accent:
+                customPreset.styles.dark?.accent ??
+                current?.swatches?.dark?.accent ??
+                "oklch(0.8 0 0)",
+            },
+          },
+          createHref: buildCreateHref(null, themeRef),
+          themeRef,
+        };
+        selectedPresetId = "";
+      }
+    }
+
+    if (!summary) {
+      return;
+    }
+
+    root.dataset.current = JSON.stringify(summary);
+    root.dataset.selectedPresetId = selectedPresetId;
+
+    const label = root.querySelector("[data-current-label]");
+    if (label) {
+      label.textContent = summary.label;
+    }
+
+    const createLink = root.querySelector("[data-create-your-own]");
+    if (createLink instanceof HTMLAnchorElement) {
+      createLink.href = summary.createHref;
+    }
+
+    updateSwatch("light-primary", summary.swatches.light.primary);
+    updateSwatch("light-accent", summary.swatches.light.accent);
+    updateSwatch("dark-primary", summary.swatches.dark.primary);
+    updateSwatch("dark-accent", summary.swatches.dark.accent);
+  })();
+</script>

@@ -18,8 +18,12 @@ import {
   parseThemeCookie,
   type ThemeSwatches,
 } from "../utils/themes/preset-store";
+import { PRIVATE_NO_STORE_CACHE_CONTROL } from "@/utils/http-cache";
 
 export const prerender = false;
+
+Astro.response.headers.set("Cache-Control", PRIVATE_NO_STORE_CACHE_CONTROL);
+Astro.response.headers.append("Vary", "Cookie");
 
 // Get lean presets for rendering
 const leanPresets = Object.fromEntries(

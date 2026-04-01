@@ -1,7 +1,14 @@
+---
+import { buildThemeChoiceBootstrapInlineScript } from "../lib/theme-choice";
+
+const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
+---
+
+<script is:inline set:html={themeChoiceBootstrapScript} />
+
 {/* This is intentionally inlined to avoid FOUC. */}
 <script is:inline>
   window.StarlightThemeProvider = (() => {
-    const storageKey = "starlight-theme";
     const themeMetaMedias = [
       "(prefers-color-scheme: light)",
       "(prefers-color-scheme: dark)",
@@ -14,12 +21,12 @@
       theme === "auto" || theme === "dark" || theme === "light"
         ? theme
         : "auto";
-    const getStoredThemeChoice = () =>
-      parseTheme(
-        typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
-      );
+    const getPreferredColorScheme = () =>
+      window.matchMedia("(prefers-color-scheme: light)").matches
+        ? "light"
+        : "dark";
 
-    const themeColors = (() => {
+    const readThemeColors = () => {
       const html = document.documentElement;
       const prevTheme = html.dataset.theme;
       const prevDark = html.classList.contains("dark");
@@ -45,7 +52,7 @@
       }
 
       return { light, dark };
-    })();
+    };
 
     function ensureThemeMeta(head, media) {
       const baseSelector = `meta[name="theme-color"][media="${media}"]`;
@@ -67,6 +74,7 @@
     }
 
     function syncThemeColor(theme) {
+      const themeColors = readThemeColors();
       const color = themeColors[theme];
       const head = document.head;
       if (!color || !head) return;
@@ -77,23 +85,25 @@
       });
     }
 
-    const themeChoice = getStoredThemeChoice();
     const effectiveTheme =
-      themeChoice === "auto"
-        ? window.matchMedia("(prefers-color-scheme: light)").matches
-          ? "light"
-          : "dark"
-        : themeChoice;
-    document.documentElement.dataset.theme = effectiveTheme;
-    document.documentElement.dataset.themeChoice = themeChoice;
-    document.documentElement.classList.toggle(
-      "dark",
-      effectiveTheme === "dark",
-    );
+      document.documentElement.dataset.theme === "light" ||
+      document.documentElement.dataset.theme === "dark"
+        ? document.documentElement.dataset.theme
+        : getPreferredColorScheme();
     syncThemeColor(effectiveTheme);
     return {
+      refreshThemeColors(theme) {
+        const themeChoice = parseTheme(
+          theme ?? document.documentElement.dataset.themeChoice,
+        );
+        const effectiveTheme =
+          themeChoice === "auto" ? getPreferredColorScheme() : themeChoice;
+        syncThemeColor(effectiveTheme);
+      },
       updatePickers(theme) {
-        const themeChoice = parseTheme(theme ?? getStoredThemeChoice());
+        const themeChoice = parseTheme(
+          theme ?? document.documentElement.dataset.themeChoice,
+        );
         document
           .querySelectorAll("starlight-theme-select")
           .forEach((picker) => {
@@ -110,19 +120,130 @@
                 new CustomEvent("select:set", { detail: { value: themeChoice } }),
               );
             }
-
-            /** @type {HTMLTemplateElement | null} */
-            const tmpl = document.querySelector(`#theme-icons`);
-            const newIcon =
-              tmpl && tmpl.content.querySelector("." + themeChoice);
-            if (newIcon) {
-              const oldIcon = picker.querySelector("svg.label-icon");
-              if (oldIcon) {
-                oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
-              }
-            }
           });
       },
     };
   })();
+</script>
+
+<script>
+  import { syncSemanticIconsInRoot } from "@bejamas/semantic-icons/browser";
+  import {
+    buildCurrentThemeStylesheetHref,
+    CURRENT_THEME_STYLESHEET_SELECTOR,
+  } from "../lib/theme-stylesheet";
+
+  const PRESET_CHANGE_EVENT = "bejamas:preset-change";
+  const SETUP_KEY = "__bejamasCurrentThemeStylesheetSync";
+  let reloadFrame = 0;
+  let reloadVersion = 0;
+  let pendingIconLibrary = null;
+
+  function syncDocumentIconLibrary() {
+    const renderedIcon = document.querySelector("[data-icon-library]");
+    const iconLibrary =
+      renderedIcon instanceof SVGElement
+        ? renderedIcon.dataset.iconLibrary
+        : document.documentElement.dataset.iconLibrary;
+
+    if (iconLibrary) {
+      document.documentElement.dataset.iconLibrary = iconLibrary;
+      syncSemanticIconsInRoot(document, iconLibrary);
+    }
+  }
+
+  function refreshCurrentThemeStylesheet() {
+    const links = Array.from(
+      document.head.querySelectorAll(CURRENT_THEME_STYLESHEET_SELECTOR),
+    ).filter(
+      (link): link is HTMLLinkElement => link instanceof HTMLLinkElement,
+    );
+    const currentLink = links.at(-1);
+
+    if (!currentLink) {
+      window.StarlightThemeProvider?.refreshThemeColors?.();
+      return;
+    }
+
+    reloadVersion += 1;
+
+    const replacement = currentLink.cloneNode(false) as HTMLLinkElement;
+    const sourceHref = currentLink.getAttribute("href") ?? currentLink.href;
+    replacement.href = buildCurrentThemeStylesheetHref(sourceHref, `${Date.now()}-${reloadVersion}`);
+
+    replacement.addEventListener(
+      "load",
+      () => {
+        links.forEach((link) => {
+          if (link !== replacement) {
+            link.remove();
+          }
+        });
+        if (pendingIconLibrary) {
+          document.documentElement.dataset.iconLibrary = pendingIconLibrary;
+          syncSemanticIconsInRoot(document, pendingIconLibrary);
+          pendingIconLibrary = null;
+        }
+        window.StarlightThemeProvider?.refreshThemeColors?.();
+      },
+      { once: true },
+    );
+
+    replacement.addEventListener(
+      "error",
+      () => {
+        replacement.remove();
+        if (pendingIconLibrary) {
+          document.documentElement.dataset.iconLibrary = pendingIconLibrary;
+          syncSemanticIconsInRoot(document, pendingIconLibrary);
+          pendingIconLibrary = null;
+        }
+        window.StarlightThemeProvider?.refreshThemeColors?.();
+      },
+      { once: true },
+    );
+
+    currentLink.after(replacement);
+  }
+
+  const scheduleCurrentThemeStylesheetRefresh = () => {
+    if (reloadFrame) {
+      return;
+    }
+
+    reloadFrame = requestAnimationFrame(() => {
+      reloadFrame = 0;
+      refreshCurrentThemeStylesheet();
+    });
+  };
+
+  if (!(SETUP_KEY in window)) {
+    window[SETUP_KEY] = true;
+    syncDocumentIconLibrary();
+
+    window.addEventListener("theme-toggle-changed", (event) => {
+      const themeChoice =
+        event instanceof CustomEvent && typeof event.detail?.themeChoice === "string"
+          ? event.detail.themeChoice
+          : undefined;
+
+      window.StarlightThemeProvider?.refreshThemeColors?.(themeChoice);
+    });
+
+    window.addEventListener(PRESET_CHANGE_EVENT, (event) => {
+      const presetChange = event;
+
+      pendingIconLibrary =
+        presetChange instanceof CustomEvent &&
+        typeof presetChange.detail?.iconLibrary === "string"
+          ? presetChange.detail.iconLibrary
+          : null;
+
+      scheduleCurrentThemeStylesheetRefresh();
+    });
+    document.addEventListener("astro:after-swap", () => {
+      window.StarlightThemeProvider?.refreshThemeColors?.();
+      syncDocumentIconLibrary();
+    });
+  }
 </script>

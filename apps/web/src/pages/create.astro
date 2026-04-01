@@ -1,0 +1,220 @@
+---
+import {
+  STYLES,
+  getCompiledStyleCss,
+} from "@bejamas/create-config/server";
+import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
+import { buildCreatePreviewUrl } from "@/utils/create";
+import { getDefaultCreateBootstrapState } from "@/utils/create-bootstrap";
+import { buildWindowAssignmentInlineScript } from "@/utils/inline-script";
+import CreateCustomizer from "@/components/create/CreateCustomizer.astro";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+const { config, preset } = getDefaultCreateBootstrapState();
+const previewUrl = buildCreatePreviewUrl(config, preset, {
+  previewTarget: null,
+  themeRef: null,
+});
+const compiledStyleCss = await getCompiledStyleCss(config.style);
+const styleCssByStyle = Object.fromEntries(
+  await Promise.all(
+    STYLES.map(async (style) => [
+      style.name,
+      await getCompiledStyleCss(style.name),
+    ]),
+  ),
+);
+const createPayloadScript = buildWindowAssignmentInlineScript(
+  "__BEJAMAS_CREATE__",
+  {
+    styleCssByStyle,
+  },
+);
+---
+
+<style is:global>
+  @import "../styles/globals.css";
+</style>
+<style
+  id="create-page-theme-css"
+  set:html={buildDesignSystemThemeCss(config)}
+></style>
+<style id="create-page-style-css" set:html={compiledStyleCss}></style>
+
+<StarlightPage
+  hasSidebar={false}
+  frontmatter={{
+    title: "Create",
+    description:
+      "Tune the design system, preview it live, and copy the Astro init command or shareable preset code.",
+    template: "splash",
+    tableOfContents: false,
+  }}
+>
+  <div
+    class:list={["not-content create-page-root"]}
+    data-page-scope="create"
+    data-create-pending
+    data-create-page
+    data-controller="create-editor"
+    data-action="create-picker:change->create-editor#handlePickerChange create-sidebar:toggle-lock->create-editor#handleToggleLock create-sidebar:toggle-font-group-lock->create-editor#handleToggleFontGroupLock create-sidebar:randomize->create-editor#handleRandomize create-sidebar:select-theme-seed->create-editor#handleSelectThemeSeed create-sidebar:open-palette->create-editor#handleOpenPalette create-sidebar:cancel-palette->create-editor#handleCancelPalette create-sidebar:save-palette->create-editor#handleSavePalette create-sidebar:color-change->create-editor#handleColorChange create-sidebar:import-theme->create-editor#handleThemeImport create-sidebar:open-navigate->create-editor#handleOpenNavigate create-sidebar:copy-preset->create-editor#handleCopyPreset create-project-dialog:open->create-editor#handleProjectDialogOpen create-project-dialog:package-manager-change->create-editor#handlePackageManagerChange create-project-dialog:monorepo-change->create-editor#handleMonorepoChange create-navigate:select-target->create-editor#handleNavigateSelectTarget message@window->create-editor#handleWindowMessage popstate@window->create-editor#handlePopstate pagehide@window->create-editor#handlePageHide theme-toggle-changed@window->create-editor#handleThemeToggle bejamas:preset-change@window->create-editor#handlePresetStoreChange astro:before-swap@document->create-editor#handleBeforeSwap keydown.meta+p@document->create-editor#openNavigateShortcut keydown.ctrl+p@document->create-editor#openNavigateShortcut"
+    data-create-editor-create-sidebar-outlet='[data-controller~="create-sidebar"]'
+    data-create-editor-create-project-dialog-outlet='[data-controller~="create-project-dialog"]'
+    data-create-editor-create-navigate-outlet='[data-controller~="create-navigate"]'
+  >
+    <main class="mx-auto flex max-w-full flex-col gap-6 px-0">
+      <div
+        class="grid gap-6 xl:min-h-[var(--create-preview-height)] xl:grid-cols-[240px_minmax(0,1fr)] xl:items-stretch"
+      >
+        <CreateCustomizer
+          config={config}
+          preset={preset}
+          themeRef={null}
+          themeOverrides={null}
+        />
+
+        <iframe
+          src={previewUrl}
+          title="Create preview"
+          class="min-h-[780px] w-full rounded-[24px] border border-border bg-background xl:h-[var(--create-preview-height)] xl:min-h-0"
+          data-create-editor-target="frame"
+          data-action="load->create-editor#handleFrameLoad"
+          data-preview-frame></iframe>
+      </div>
+    </main>
+  </div>
+</StarlightPage>
+
+<script is:inline set:html={createPayloadScript} />
+<script>
+  import "@/stimulus/create";
+</script>
+
+<style is:global>
+  @reference "tailwindcss";
+
+  .create-page-root {
+    --create-page-inset: var(--sl-content-pad-x);
+    --create-preview-height: calc(
+      100dvh - var(--sl-nav-height) - var(--create-page-inset)
+    );
+    --create-sidebar-height: var(--create-preview-height);
+  }
+
+  [data-create-page][data-create-pending] {
+    visibility: hidden;
+  }
+
+  :root:has([data-page-scope="create"]) .content-panel {
+    @apply border-0 pt-0 pb-0 first-of-type:hidden last:pl-0;
+  }
+
+  :root:has([data-page-scope="create"]) .content-panel h1 {
+    @apply text-5xl font-medium text-left;
+  }
+
+  :root:has([data-page-scope="create"]) .main-frame-splash::before,
+  :root:has([data-page-scope="create"]) .kudos {
+    display: none;
+  }
+
+  :root:has([data-page-scope="create"]) .sl-container {
+    @apply max-w-full;
+  }
+
+  :root:has([data-page-scope="create"]) .sl-markdown-content {
+    @apply mx-auto mt-0 max-w-full pt-0;
+  }
+
+  :root:has([data-page-scope="create"]) .main-frame {
+    padding-inline: 0;
+  }
+
+  :root:has([data-page-scope="create"]) .main-pane > main {
+    @apply pb-0;
+  }
+
+  :root:has([data-page-scope="create"]) footer.sl-flex {
+    @apply hidden;
+  }
+
+  :root[data-create-docs-themed] [data-create-customizer-stable],
+  :root[data-create-docs-themed] [data-create-picker-content] {
+    font-family: "Geist Variable", sans-serif;
+    --radius: 0.625rem;
+  }
+
+  :root[data-create-docs-themed] [data-create-customizer-stable] .cn-switch {
+    @apply !h-5 !w-8 !rounded-full !border-transparent !bg-white/15 !shadow-none;
+  }
+
+  [data-create-form-main] {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .create-customizer-actions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  :root[data-create-docs-themed]
+    [data-create-customizer-stable]
+    .cn-switch-thumb {
+    @apply !rounded-full !bg-[#171412] dark:!bg-[#171412] shadow-[0_1px_2px_rgba(0,0,0,0.34)];
+  }
+
+  :root[data-create-docs-themed]
+    [data-create-customizer-stable]
+    input:checked
+    ~ .cn-switch {
+    @apply !bg-white;
+  }
+
+  :root[data-create-docs-themed]
+    [data-create-customizer-stable]
+    input:checked
+    ~ .cn-switch-thumb {
+    @apply !bg-[#201b18];
+  }
+
+  :root[data-create-docs-themed]
+    [data-create-picker-content]
+    :is(
+      [data-slot="dropdown-menu-item"],
+      [data-slot="dropdown-menu-radio-item"]
+    )[data-highlighted] {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+  }
+
+  :root[data-create-docs-themed]
+    [data-create-picker-content]
+    :is(
+      [data-slot="dropdown-menu-item"],
+      [data-slot="dropdown-menu-radio-item"]
+    )[data-highlighted]
+    :is(
+      svg,
+      [data-create-picker-item-label],
+      [data-slot="dropdown-menu-shortcut"]
+    ) {
+    color: inherit !important;
+  }
+
+  :root[data-create-docs-themed] [data-create-picker-content] {
+    backdrop-filter: none !important;
+  }
+
+  :root[data-create-docs-themed] [data-create-picker-content]::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  :root[data-create-docs-themed]
+    [data-create-picker-content]
+    [data-slot="dropdown-menu-radio-item-indicator"] {
+    inset-block: 0 !important;
+  }
+</style>

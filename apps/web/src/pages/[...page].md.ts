@@ -1,7 +1,14 @@
 import {
+  getMarkdownRoutes,
   getMarkdownSource,
   transformMarkdown,
 } from "../utils/docsMarkdown";
+
+export function getStaticPaths() {
+  return getMarkdownRoutes().map((page) => ({
+    params: { page },
+  }));
+}
 
 export function GET({ params }: { params: { page?: string } }) {
   const source = getMarkdownSource(params.page ?? "");

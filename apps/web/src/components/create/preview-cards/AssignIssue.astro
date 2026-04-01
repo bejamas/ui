@@ -1,0 +1,49 @@
+---
+import { Avatar, AvatarFallback } from "@bejamas/registry/ui/avatar";
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import { Item, ItemContent, ItemDescription, ItemTitle } from "@bejamas/registry/ui/item";
+
+const reviewers = [
+  ["Ava", "Frontend systems"],
+  ["Mina", "Docs and content"],
+  ["Nico", "Registry maintenance"],
+] as const;
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle class="text-sm">Assign Issue</CardTitle>
+    <CardDescription class="text-sm">
+      Route issues to the teammate with the clearest ownership.
+    </CardDescription>
+  </CardHeader>
+  <CardContent class="space-y-3">
+    <div class="rounded-lg border border-border px-3 py-2">
+      <p class="font-medium">Keyboard navigation breaks inside command palette</p>
+      <p class="text-sm text-muted-foreground">Open since this morning · needs triage</p>
+    </div>
+    {
+      reviewers.map(([name, description]) => (
+        <Item variant="outline" size="sm">
+          <Avatar size="sm"><AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback></Avatar>
+          <ItemContent>
+            <ItemTitle>{name}</ItemTitle>
+            <ItemDescription>{description}</ItemDescription>
+          </ItemContent>
+        </Item>
+      ))
+    }
+  </CardContent>
+  <CardFooter class="gap-2">
+    <Button variant="outline" class="flex-1">Later</Button>
+    <Button class="flex-1">Assign owner</Button>
+  </CardFooter>
+</Card>

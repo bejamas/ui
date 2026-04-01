@@ -1,8 +1,6 @@
 {
-  "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "new-york",
-  "rsc": false,
-  "tsx": true,
+  "$schema": "https://ui.bejamas.com/schema.json",
+  "style": "bejamas-juno",
   "tailwind": {
     "config": "",
     "css": "src/styles/global.css",
@@ -14,7 +12,7 @@
   "aliases": {
     "components": "@/components",
     "utils": "@bejamas/ui/lib/utils",
-    "ui": "@bejamas/ui/components",
+    "ui": "@bejamas/registry/ui",
     "lib": "@bejamas/ui/lib",
     "hooks": "@bejamas/ui/hooks",
     "docs": "@/content/docs/components"

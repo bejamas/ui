@@ -1,0 +1,129 @@
+---
+import { Badge } from "@bejamas/registry/ui/badge";
+import { Button } from "@bejamas/registry/ui/button";
+import { ButtonGroup } from "@bejamas/registry/ui/button-group";
+import { Card, CardContent } from "@bejamas/registry/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@bejamas/registry/ui/dropdown-menu";
+import { Checkbox } from "@bejamas/registry/ui/checkbox";
+import { Field, FieldGroup } from "@bejamas/registry/ui/field";
+import { Input } from "@bejamas/registry/ui/input";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from "@bejamas/registry/ui/item";
+import { RadioGroup, RadioGroupItem } from "@bejamas/registry/ui/radio-group";
+import { Slider } from "@bejamas/registry/ui/slider";
+import { Switch } from "@bejamas/registry/ui/switch";
+import { Textarea } from "@bejamas/registry/ui/textarea";
+import SemanticIcon from "@/components/icons/SemanticIcon.astro";
+import type { IconLibraryName } from "@bejamas/create-config/server";
+
+interface Props {
+  iconLibrary: IconLibraryName;
+}
+
+const { iconLibrary } = Astro.props as Props;
+---
+
+<Card class="w-full">
+  <CardContent class="flex flex-col gap-6">
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-wrap gap-2">
+        <Button>Button</Button>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="outline">Outline</Button>
+        <Button variant="ghost">Ghost</Button>
+      </div>
+
+      <Item variant="outline">
+        <ItemContent>
+          <ItemTitle>Two-factor authentication</ItemTitle>
+        </ItemContent>
+        <ItemActions>
+          <Button size="sm" variant="secondary">Enable</Button>
+        </ItemActions>
+      </Item>
+    </div>
+
+    <Slider defaultValue={[75]} max={100} step={1} class="w-full" />
+
+    <FieldGroup>
+      <Field>
+        <div class="relative">
+          <Input placeholder="Name" />
+          <span
+            class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted-foreground"
+          >
+            <SemanticIcon library={iconLibrary} name="search" class="size-4" />
+          </span>
+        </div>
+      </Field>
+      <Field>
+        <Textarea rows={3} placeholder="Message" class="resize-none" />
+      </Field>
+    </FieldGroup>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <Badge>Badge</Badge>
+      <Badge variant="secondary">Secondary</Badge>
+      <Badge variant="outline">Outline</Badge>
+      <RadioGroup defaultValue="one" class="ml-auto flex gap-3">
+        <RadioGroupItem value="one" />
+        <RadioGroupItem value="two" />
+      </RadioGroup>
+      <div class="flex gap-3">
+        <Checkbox checked />
+        <Checkbox />
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <Button variant="outline">Alert Dialog</Button>
+      <ButtonGroup>
+        <Button variant="outline">Button Group</Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <SemanticIcon
+                library={iconLibrary}
+                name="chevron-up"
+                class="size-4"
+              />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" side="top" class="w-40">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
+              <DropdownMenuItem>Mute Conversation</DropdownMenuItem>
+              <DropdownMenuItem>Mark as Read</DropdownMenuItem>
+              <DropdownMenuItem>Block User</DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Conversation</DropdownMenuLabel>
+              <DropdownMenuItem>Share Conversation</DropdownMenuItem>
+              <DropdownMenuItem>Copy Conversation</DropdownMenuItem>
+              <DropdownMenuItem>Report Conversation</DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem class="text-destructive"
+              >Delete Conversation</DropdownMenuItem
+            >
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </ButtonGroup>
+      <Switch checked class="ml-auto" />
+    </div>
+  </CardContent>
+</Card>

@@ -1,5 +1,5 @@
 import path from "path";
-import { rawConfigSchema } from "shadcn/schema";
+import { BEJAMAS_COMPONENTS_SCHEMA_URL, rawConfigSchema } from "@/src/schema";
 import { Config, getConfig, resolveConfigPaths } from "@/src/utils/get-config";
 import { getPackageInfo } from "@/src/utils/get-package-info";
 import fg from "fast-glob";
@@ -236,8 +236,8 @@ export async function getProjectConfig(
   }
 
   const config: z.infer<typeof rawConfigSchema> = {
-    $schema: "https://ui.shadcn.com/schema.json",
-    style: "new-york",
+    $schema: BEJAMAS_COMPONENTS_SCHEMA_URL,
+    style: "bejamas-juno",
     tailwind: {
       config: projectInfo.tailwindConfigFile ?? "",
       baseColor: "zinc",

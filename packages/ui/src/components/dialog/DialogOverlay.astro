@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dialog/DialogOverlay.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -12,11 +13,7 @@ const { class: className = "", ...rest } = Astro.props as Props;
 <div
   hidden
   data-slot="dialog-overlay"
-  class={cn(
-    "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 bg-background/50 backdrop-blur-sm",
-    "duration-300 transition-discrete [--tw-animation-fill-mode:both]",
-    className,
-  )}
+  class={cn("data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs fixed inset-0 isolate z-50", className)}
   {...rest}
 >
   <slot />

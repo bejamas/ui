@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/field/index.ts directly.
 export { default as Field } from "./Field.astro";
 export { default as FieldContent } from "./FieldContent.astro";
 export { default as FieldDescription } from "./FieldDescription.astro";

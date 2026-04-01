@@ -2,6 +2,11 @@ import { getEntry } from "astro:content";
 import { generateThemeRegistryItemFromStyles } from "../../../utils/registry/themes";
 import { registryItemSchema } from "shadcn/schema";
 import { getSharedTheme, getCustomTheme } from "../../../lib/redis";
+import {
+  NO_STORE_CACHE_CONTROL,
+  SHARED_DYNAMIC_CACHE_CONTROL,
+  STATIC_ASSET_CACHE_CONTROL,
+} from "../../../utils/http-cache";
 
 // Disable prerendering to support dynamic shared themes from Redis
 export const prerender = false;
@@ -77,7 +82,7 @@ export async function GET({ params }: { params: { slug: string } }) {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json",
-          "Cache-Control": "public, max-age=3600, s-maxage=86400",
+          "Cache-Control": STATIC_ASSET_CACHE_CONTROL,
         },
       });
     }
@@ -142,8 +147,10 @@ export async function GET({ params }: { params: { slug: string } }) {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
-        // Shorter cache for dynamic themes
-        "Cache-Control": "public, max-age=300, s-maxage=3600",
+        "Cache-Control":
+          themeSource === "custom"
+            ? NO_STORE_CACHE_CONTROL
+            : SHARED_DYNAMIC_CACHE_CONTROL,
       },
     });
   } catch (e) {

@@ -1,8 +1,8 @@
-const docSources = import.meta.glob("/src/content/docs/**/*.{md,mdx}", {
-  eager: true,
-  import: "default",
-  query: "?raw",
-}) as Record<string, string>;
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const docSources = loadDocSources();
 
 const docsByRoute = new Map(
   Object.entries(docSources).map(([sourcePath, rawContent]) => [
@@ -17,6 +17,10 @@ export function normalizeDocsRoute(pathname: string) {
 
 export function getMarkdownSource(pathname: string) {
   return docsByRoute.get(normalizeDocsRoute(pathname));
+}
+
+export function getMarkdownRoutes() {
+  return Array.from(docsByRoute.keys());
 }
 
 export function hasMarkdownSource(pathname: string) {
@@ -65,6 +69,29 @@ export function transformMarkdown(content: string) {
   return `${title ? `# ${title}\n\n` : ""}${cleanContent.trim()}`;
 }
 
+export function resolveDocsRoot(options: {
+  importMetaUrl?: string;
+  cwd?: string;
+} = {}) {
+  const importMetaUrl = options.importMetaUrl ?? import.meta.url;
+  const cwd = options.cwd ?? process.cwd();
+  const candidates = [
+    fileURLToPath(new URL("../content/docs", importMetaUrl)),
+    path.resolve(cwd, "src/content/docs"),
+    path.resolve(cwd, "apps/web/src/content/docs"),
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
+      return candidate;
+    }
+  }
+
+  throw new Error(
+    `Unable to resolve docs content root. Checked: ${candidates.join(", ")}`,
+  );
+}
+
 function toRoutePath(sourcePath: string) {
   const relativePath = sourcePath.replace(/^\/src\/content\/docs\//, "");
   const withoutExtension = relativePath.replace(/\.(md|mdx)$/, "");
@@ -75,4 +102,45 @@ function toRoutePath(sourcePath: string) {
   }
 
   return withoutExtension;
+}
+
+function loadDocSources() {
+  if (typeof import.meta.glob === "function") {
+    return import.meta.glob("/src/content/docs/**/*.{md,mdx}", {
+      eager: true,
+      import: "default",
+      query: "?raw",
+    }) as Record<string, string>;
+  }
+
+  const docsRoot = resolveDocsRoot();
+  const collected: Record<string, string> = {};
+  const queue = [docsRoot];
+
+  while (queue.length > 0) {
+    const currentDir = queue.shift();
+    if (!currentDir) continue;
+
+    for (const entry of fs.readdirSync(currentDir, { withFileTypes: true })) {
+      const resolvedPath = path.join(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        queue.push(resolvedPath);
+        continue;
+      }
+
+      if (!/\.(md|mdx)$/.test(entry.name)) {
+        continue;
+      }
+
+      const relativePath = path
+        .relative(docsRoot, resolvedPath)
+        .split(path.sep)
+        .join("/");
+      const sourcePath = `/src/content/docs/${relativePath}`;
+
+      collected[sourcePath] = fs.readFileSync(resolvedPath, "utf8");
+    }
+  }
+
+  return collected;
 }

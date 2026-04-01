@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/table/index.ts directly.
 export { default as Table } from "./Table.astro";
 export { default as TableHeader } from "./TableHeader.astro";
 export { default as TableBody } from "./TableBody.astro";

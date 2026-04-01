@@ -1,0 +1,43 @@
+---
+import { Alert, AlertDescription, AlertTitle } from "@bejamas/registry/ui/alert";
+import { Button } from "@bejamas/registry/ui/button";
+import { Card, CardContent, CardFooter } from "@bejamas/registry/ui/card";
+import SemanticIcon from "@/components/icons/SemanticIcon.astro";
+import type { IconLibraryName } from "@bejamas/create-config/server";
+
+interface Props {
+  iconLibrary: IconLibraryName;
+}
+
+const { iconLibrary } = Astro.props as Props;
+---
+
+<Card class="w-full">
+  <CardContent class="space-y-4">
+    <Alert variant="destructive">
+      <SemanticIcon library={iconLibrary} name="alert-circle" class="size-4" />
+      <AlertTitle>Anomaly Alert</AlertTitle>
+      <AlertDescription>
+        Error rate is up 22% on the latest edge deployment.
+      </AlertDescription>
+    </Alert>
+    <div class="grid gap-3">
+      <div class="rounded-lg border border-border px-3 py-2 text-sm">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-muted-foreground">Impacted route</span>
+          <span class="font-mono">/api/install</span>
+        </div>
+      </div>
+      <div class="rounded-lg border border-border px-3 py-2 text-sm">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-muted-foreground">Started</span>
+          <span class="font-mono">8m ago</span>
+        </div>
+      </div>
+    </div>
+  </CardContent>
+  <CardFooter class="gap-2">
+    <Button variant="outline" class="flex-1">Dismiss</Button>
+    <Button class="flex-1">Open incident</Button>
+  </CardFooter>
+</Card>

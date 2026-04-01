@@ -1,0 +1,225 @@
+---
+/**
+ * @component DropdownMenu
+ * @title Dropdown Menu
+ * @description Action and selection menus with runtime-owned open, highlight, and committed selection state.
+ *
+ * @preview
+ * <DropdownMenu defaultValue="pro">
+ *   <DropdownMenuTrigger variant="outline">Open</DropdownMenuTrigger>
+ *   <DropdownMenuContent align="start">
+ *     <DropdownMenuLabel>Plans</DropdownMenuLabel>
+ *     <DropdownMenuGroup>
+ *       <DropdownMenuRadioItem value="starter">Starter</DropdownMenuRadioItem>
+ *       <DropdownMenuRadioItem value="pro">Pro</DropdownMenuRadioItem>
+ *     </DropdownMenuGroup>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import {
+ *   DropdownMenu,
+ *   DropdownMenuTrigger,
+ *   DropdownMenuContent,
+ *   DropdownMenuItem,
+ *   DropdownMenuRadioItem,
+ * } from '@bejamas/ui/components/dropdown-menu';
+ * ---
+ *
+ * <DropdownMenu>
+ *   <DropdownMenuTrigger variant="outline">Menu</DropdownMenuTrigger>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuItem>Item 1</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The dropdown menu emits custom events that you can listen to:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `dropdown-menu:open-change` | `{ open, previousOpen, source, reason }` | Fired on real open-state changes |
+ * | `dropdown-menu:change` | same detail | Deprecated alias for `dropdown-menu:open-change` |
+ * | `dropdown-menu:highlight-change` | `{ value, previousValue, item, previousItem, source }` | Fired when highlight changes |
+ * | `dropdown-menu:select` | `{ value, item, itemType, source, checked? }` | Cancelable user activation event fired before commit |
+ * | `dropdown-menu:value-change` | `{ value, previousValue, item, previousItem, source }` | Fired when radio selection commits |
+ * | `dropdown-menu:values-change` | `{ values, previousValues, changedValue, checked, item, source }` | Fired when checkbox selection commits |
+ *
+ * ```astro nocollapse
+ * <DropdownMenu id="my-dropdown" defaultValue="edit">
+ *   <DropdownMenuTrigger>Menu</DropdownMenuTrigger>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuRadioItem value="edit">Edit</DropdownMenuRadioItem>
+ *     <DropdownMenuRadioItem value="delete">Delete</DropdownMenuRadioItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ * ```
+ *
+ * ```js nocollapse
+ *   const dropdown = document.getElementById('my-dropdown');
+ *
+ *   dropdown.addEventListener('dropdown-menu:open-change', (e) => {
+ *     console.log('Is open:', e.detail.open);
+ *   });
+ *
+ *   dropdown.addEventListener('dropdown-menu:value-change', (e) => {
+ *     console.log('Selected:', e.detail.value);
+ *   });
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * You can control the dropdown menu programmatically by dispatching a `dropdown-menu:set` event:
+ *
+ * ```js nocollapse
+ * const dropdown = document.getElementById('my-dropdown');
+ *
+ * // Open the dropdown menu
+ * dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * // Commit radio selection
+ * dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
+ *   detail: { value: 'delete', source: 'restore' }
+ * }));
+ *
+ * // Commit checkbox selection
+ * dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
+ *   detail: { values: ['email', 'push'], source: 'restore' }
+ * }));
+ * ```
+ *
+ * ### Structural Wrappers
+ *
+ * `DropdownMenuPortal` and `DropdownMenuRadioGroup` are available for low-level authored markup.
+ * Most consumers should keep using `DropdownMenuContent` directly.
+ *
+ * ### Data Attributes
+ *
+ * The dropdown menu sets these data attributes that you can use for styling or querying state:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | dropdown-menu, dropdown-menu-content | Current state (`open` or `closed`) |
+ * | `data-value` | dropdown-menu | Current committed radio value |
+ * | `data-variant` | dropdown-menu-item | Visual variant (`default` or `destructive`) |
+ * | `data-side` | dropdown-menu-content | Computed position (`top`, `right`, `bottom`, or `left`) |
+ * | `data-align` | dropdown-menu-content | Alignment (`start`, `center`, or `end`) |
+ * | `data-highlighted` | menu items | Present when item is focused |
+ * | `data-checked` | radio and checkbox items | Present when item is committed as checked |
+ * | `data-disabled` | menu items | Present when item is disabled |
+ *
+ * @examples
+ *
+ * ### Action Menu
+ *
+ * <DropdownMenu>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="cn-dropdown-menu-trigger">Account</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+ *     <DropdownMenuGroup>
+ *       <DropdownMenuItem>Edit</DropdownMenuItem>
+ *       <DropdownMenuItem>Duplicate</DropdownMenuItem>
+ *     </DropdownMenuGroup>
+ *     <DropdownMenuSeparator />
+ *     <DropdownMenuItem>Delete</DropdownMenuItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * ### Single Select
+ *
+ * <DropdownMenu defaultValue="pro">
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="cn-dropdown-menu-trigger">Plan</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuRadioItem value="starter">Starter</DropdownMenuRadioItem>
+ *     <DropdownMenuRadioItem value="pro">Pro</DropdownMenuRadioItem>
+ *     <DropdownMenuRadioItem value="team">Team</DropdownMenuRadioItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ *
+ * ### Multi Select
+ *
+ * <DropdownMenu defaultValues={["email", "push"]} closeOnSelect={false}>
+ *   <Button variant="outline" data-slot="dropdown-menu-trigger" class="cn-dropdown-menu-trigger">Notifications</Button>
+ *   <DropdownMenuContent>
+ *     <DropdownMenuCheckboxItem value="email">Email</DropdownMenuCheckboxItem>
+ *     <DropdownMenuCheckboxItem value="sms">SMS</DropdownMenuCheckboxItem>
+ *     <DropdownMenuCheckboxItem value="push">Push</DropdownMenuCheckboxItem>
+ *   </DropdownMenuContent>
+ * </DropdownMenu>
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  defaultOpen?: boolean;
+  defaultValue?: string | null;
+  defaultValues?: string[];
+  closeOnClickOutside?: boolean;
+  closeOnEscape?: boolean;
+  closeOnSelect?: boolean;
+  lockScroll?: boolean;
+  highlightItemOnHover?: boolean;
+  class?: string;
+}
+
+const {
+  defaultOpen,
+  defaultValue,
+  defaultValues,
+  closeOnClickOutside,
+  closeOnEscape,
+  closeOnSelect,
+  lockScroll,
+  highlightItemOnHover,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const hasProp = (name: keyof Props) =>
+  Object.prototype.hasOwnProperty.call(Astro.props, name);
+const defaultValuesJson =
+  defaultValues !== undefined ? JSON.stringify(defaultValues) : undefined;
+---
+
+<div
+  {...rest}
+  data-slot="dropdown-menu"
+  data-default-open={hasProp("defaultOpen") ? String(!!defaultOpen) : undefined}
+  data-default-value={defaultValue ?? undefined}
+  data-default-values={defaultValuesJson}
+  data-close-on-click-outside={
+    hasProp("closeOnClickOutside") ? String(!!closeOnClickOutside) : undefined
+  }
+  data-close-on-escape={
+    hasProp("closeOnEscape") ? String(!!closeOnEscape) : undefined
+  }
+  data-close-on-select={
+    hasProp("closeOnSelect") ? String(!!closeOnSelect) : undefined
+  }
+  data-lock-scroll={hasProp("lockScroll") ? String(!!lockScroll) : undefined}
+  data-highlight-item-on-hover={
+    hasProp("highlightItemOnHover")
+      ? String(!!highlightItemOnHover)
+      : undefined
+  }
+  class={cn("cn-dropdown-menu", "relative inline-block", className)}
+>
+  <slot />
+</div>
+
+<script>
+  import { createDropdownMenu } from "@data-slot/dropdown-menu";
+  document
+    .querySelectorAll('[data-slot="dropdown-menu"]')
+    .forEach((el) => createDropdownMenu(el));
+</script>

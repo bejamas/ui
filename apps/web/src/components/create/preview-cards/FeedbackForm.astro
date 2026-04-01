@@ -1,0 +1,60 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import { Field, FieldLabel } from "@bejamas/registry/ui/field";
+import { RadioGroup, RadioGroupItem } from "@bejamas/registry/ui/radio-group";
+import { Textarea } from "@bejamas/registry/ui/textarea";
+---
+
+<Card class="w-full">
+  <CardHeader>
+    <CardTitle>Share feedback</CardTitle>
+    <CardDescription
+      >Tell us how this preset feels in a real workflow.</CardDescription
+    >
+  </CardHeader>
+  <CardContent class="space-y-4">
+    <Field class="space-y-3">
+      <FieldLabel>How polished does this feel?</FieldLabel>
+      <RadioGroup
+        name="polished"
+        defaultValue="good"
+        class="grid grid-cols-3 gap-3"
+      >
+        <label
+          class="rounded-lg border border-border px-3 py-2 text-center text-sm flex items-center gap-2"
+        >
+          <RadioGroupItem value="rough" />
+          Rough
+        </label>
+        <label
+          class="rounded-lg border border-border px-3 py-2 text-center text-sm flex items-center gap-2"
+        >
+          <RadioGroupItem value="good" />
+          Good
+        </label>
+        <label
+          class="rounded-lg border border-border px-3 py-2 text-center text-sm flex items-center gap-2"
+        >
+          <RadioGroupItem value="great" />
+          Great
+        </label>
+      </RadioGroup>
+    </Field>
+    <Textarea
+      rows={4}
+      placeholder="What would you tweak before shipping this?"
+      class="resize-none"
+    />
+  </CardContent>
+  <CardFooter>
+    <Button class="w-full">Send feedback</Button>
+  </CardFooter>
+</Card>

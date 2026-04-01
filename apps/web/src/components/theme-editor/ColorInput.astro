@@ -8,15 +8,16 @@ interface Props {
   token: string;
   label: string;
   value?: string;
+  variant?: "default" | "palette";
   class?: string;
 }
 
-const { token, label, value = "", class: className = "", ...rest } = Astro.props;
+const { token, label, value = "", variant = "default", class: className = "", ...rest } = Astro.props;
 ---
 
 <color-input
   {...rest}
-  class:list={["color-input-wrapper", className]}
+  class:list={["color-input-wrapper", variant === "palette" && "color-input-palette", className]}
   data-token={token}
   data-value={value}
 >
@@ -232,6 +233,27 @@ const { token, label, value = "", class: className = "", ...rest } = Astro.props
     font-family: ui-monospace, monospace;
     color: var(--muted-foreground);
     text-align: right;
+  }
+
+  /* Palette variant — large centered swatch */
+  .color-input-palette .color-input-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .color-input-palette .color-swatch {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+  }
+
+  .color-input-palette .color-label {
+    text-align: center;
+    font-size: 0.75rem;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
   }
 </style>
 

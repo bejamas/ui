@@ -1,0 +1,106 @@
+---
+/**
+ * @component Switch
+ * @title Switch
+ * @description A toggle control for switching between checked and unchecked states.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2509-4236&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @status stable
+ * @since 0.1.0
+ *
+ * @preview
+ *
+ * <div class="flex items-center gap-3">
+ *   <Switch id="notifications" />
+ *   <Label for="notifications">Enable notifications</Label>
+ * </div>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Switch } from '@bejamas/ui/components/switch';
+ * import { Label } from '@bejamas/ui/components/label';
+ * ---
+ *
+ * <div class="flex items-center gap-3">
+ *   <Switch id="notifications" />
+ *   <Label for="notifications">Enable notifications</Label>
+ * </div>
+ * ```
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"span"> {
+  class?: string;
+  id?: string;
+  size?: "sm" | "default";
+  checked?: boolean;
+  defaultChecked?: boolean;
+  name?: string;
+  value?: string;
+  uncheckedValue?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  "aria-invalid"?: boolean | "true" | "false";
+}
+
+const {
+  class: className = "",
+  id = "",
+  size = "default",
+  checked,
+  defaultChecked,
+  name,
+  value,
+  uncheckedValue,
+  disabled = false,
+  readOnly = false,
+  required = false,
+  "aria-invalid": ariaInvalid,
+  ...rest
+} = Astro.props as Props;
+
+const initialChecked = checked ?? defaultChecked ?? false;
+---
+
+<span
+  {...rest}
+  id={id}
+  data-slot="switch"
+  data-size={size}
+  data-default-checked={initialChecked ? "true" : undefined}
+  data-name={name}
+  data-value={value}
+  data-unchecked-value={uncheckedValue}
+  data-disabled={disabled ? "true" : undefined}
+  data-read-only={readOnly ? "true" : undefined}
+  data-required={required ? "true" : undefined}
+  data-checked={initialChecked ? "true" : undefined}
+  data-unchecked={initialChecked ? undefined : "true"}
+  aria-invalid={ariaInvalid}
+  class={cn(
+    "cn-switch peer group/switch relative inline-flex items-center transition-all outline-none after:absolute after:-inset-x-3 after:-inset-y-2 data-disabled:cursor-not-allowed data-disabled:opacity-50",
+    className,
+  )}
+>
+  <span
+    data-slot="switch-thumb"
+    data-checked={initialChecked ? "true" : undefined}
+    data-unchecked={initialChecked ? undefined : "true"}
+    data-disabled={disabled ? "true" : undefined}
+    data-readonly={readOnly ? "true" : undefined}
+    data-required={required ? "true" : undefined}
+    class="cn-switch-thumb pointer-events-none block ring-0 transition-transform"
+    aria-hidden="true"
+  ></span>
+</span>
+
+<script>
+  import { create } from "@data-slot/switch";
+
+  create();
+</script>

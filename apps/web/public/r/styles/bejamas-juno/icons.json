@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons",
+  "type": "registry:lib",
+  "files": [
+    {
+      "path": "lib/icons.ts",
+      "type": "registry:lib",
+      "content": "import type { IconLibraryName } from \"@bejamas/semantic-icons\";\n\ntype AstroLike = {\n  locals?: {\n    bejamasTheme?: {\n      iconLibrary?: IconLibraryName;\n    };\n  };\n};\n\nexport function resolveActiveIconLibrary(\n  astro: AstroLike,\n  explicitLibrary?: IconLibraryName,\n) {\n  return explicitLibrary ?? astro.locals?.bejamasTheme?.iconLibrary ?? \"lucide\";\n}\n"
+    }
+  ],
+  "dependencies": [
+    "@bejamas/semantic-icons"
+  ],
+  "registryDependencies": [
+    "index"
+  ]
+}

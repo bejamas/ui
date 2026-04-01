@@ -1,8 +1,8 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { StickySurface } from "@bejamas/ui/components/sticky-surface";
-import { Button } from "@bejamas/ui/components/button";
+import { StickySurface } from "@bejamas/registry/ui/sticky-surface";
+import { Button } from "@bejamas/registry/ui/button";
 ---
 
 <KitchenSinkLayout>
@@ -17,7 +17,9 @@ import { Button } from "@bejamas/ui/components/button";
           </div>
         </StickySurface>
         <div class="h-[800px] p-4">
-          <p class="text-sm text-muted-foreground">Scroll down to see the line effect appear below the header.</p>
+          <p class="text-sm text-muted-foreground">
+            Scroll down to see the line effect appear below the header.
+          </p>
         </div>
       </div>
     </KitchenSinkSection>
@@ -30,7 +32,9 @@ import { Button } from "@bejamas/ui/components/button";
           </div>
         </StickySurface>
         <div class="h-[800px] p-4">
-          <p class="text-sm text-muted-foreground">Scroll down to see the shadow appear on the header.</p>
+          <p class="text-sm text-muted-foreground">
+            Scroll down to see the shadow appear on the header.
+          </p>
         </div>
       </div>
     </KitchenSinkSection>
@@ -43,7 +47,9 @@ import { Button } from "@bejamas/ui/components/button";
           </div>
         </StickySurface>
         <div class="h-[800px] p-4">
-          <p class="text-sm text-muted-foreground">Scroll down to see the backdrop blur appear on the header.</p>
+          <p class="text-sm text-muted-foreground">
+            Scroll down to see the backdrop blur appear on the header.
+          </p>
         </div>
       </div>
     </KitchenSinkSection>
@@ -56,7 +62,9 @@ import { Button } from "@bejamas/ui/components/button";
           </div>
         </StickySurface>
         <div class="h-[800px] p-4">
-          <p class="text-sm text-muted-foreground">Scroll down to see both line and shadow effects.</p>
+          <p class="text-sm text-muted-foreground">
+            Scroll down to see both line and shadow effects.
+          </p>
         </div>
       </div>
     </KitchenSinkSection>
@@ -64,19 +72,31 @@ import { Button } from "@bejamas/ui/components/button";
     <KitchenSinkSection title="With observeStuck">
       <div class="overflow-y-auto max-h-[320px] w-full border rounded-lg">
         <StickySurface effects={["line", "elevate"]} observeStuck>
-          <div class="px-4 py-3 bg-background flex items-center justify-between">
+          <div
+            class="px-4 py-3 bg-background flex items-center justify-between"
+          >
             <h3 class="text-sm font-medium">Sticky Navigation</h3>
             <div class="flex items-center gap-2">
-              <Button variant="ghost" size="sm" class="group-[.is-stuck]/surface:opacity-0 transition-opacity">Log in</Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                class="group-[.is-stuck]/surface:opacity-0 transition-opacity"
+                >Log in</Button
+              >
               <Button size="sm">
                 <span class="group-[.is-stuck]/surface:hidden">Contact</span>
-                <span class="hidden group-[.is-stuck]/surface:inline">Get a demo</span>
+                <span class="hidden group-[.is-stuck]/surface:inline"
+                  >Get a demo</span
+                >
               </Button>
             </div>
           </div>
         </StickySurface>
         <div class="h-[800px] p-4">
-          <p class="text-sm text-muted-foreground">Scroll down to see the "Log in" button fade and "Contact" change to "Get a demo" when stuck.</p>
+          <p class="text-sm text-muted-foreground">
+            Scroll down to see the "Log in" button fade and "Contact" change to
+            "Get a demo" when stuck.
+          </p>
         </div>
       </div>
     </KitchenSinkSection>

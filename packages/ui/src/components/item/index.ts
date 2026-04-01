@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/item/index.ts directly.
 export { default as Item } from "./Item.astro";
 export { default as ItemGroup } from "./ItemGroup.astro";
 export { default as ItemSeparator } from "./ItemSeparator.astro";

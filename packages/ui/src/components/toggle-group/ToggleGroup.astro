@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/toggle-group/ToggleGroup.astro directly.
 /**
  * @component ToggleGroup
  * @title Toggle Group
@@ -63,6 +64,7 @@
  * | `data-state` | toggle-group-item | Current state: `on` or `off` |
  * | `data-disabled` | toggle-group | Present when group is disabled |
  * | `data-orientation` | toggle-group | Orientation: `horizontal` or `vertical` |
+ * | `data-spacing` | toggle-group | Gap value used by style packs |
  * | `data-variant` | toggle-group | Visual variant: `default` or `outline` |
  * | `data-size` | toggle-group | Size: `sm`, `default`, or `lg` |
  *
@@ -170,52 +172,54 @@ import { cn } from "@bejamas/ui/lib/utils";
 interface Props extends Omit<HTMLAttributes<"div">, "class"> {
   variant?: "default" | "outline";
   size?: "default" | "sm" | "lg";
+  spacing?: number;
   defaultValue?: string | string[];
   multiple?: boolean;
   orientation?: "horizontal" | "vertical";
   disabled?: boolean;
   class?: string;
+  style?: string;
 }
 
 const {
   variant = "default",
   size = "default",
+  spacing = 0,
   defaultValue,
   multiple = false,
   orientation = "horizontal",
   disabled = false,
   class: className = "",
+  style = "",
   ...rest
 } = Astro.props as Props;
 ---
 
 <div
   data-slot="toggle-group"
+  data-horizontal={orientation === "horizontal" ? "" : undefined}
   data-variant={variant}
+  data-spacing={String(spacing)}
   data-size={size}
   data-orientation={orientation}
+  data-vertical={orientation === "vertical" ? "" : undefined}
   data-disabled={disabled ? "true" : undefined}
   data-default-value={Array.isArray(defaultValue) ? defaultValue.join(",") : defaultValue}
   data-multiple={multiple ? "true" : undefined}
   class={cn(
-    "group/toggle-group flex w-fit items-center rounded-lg",
-    orientation === "vertical" && "flex-col",
+    "rounded-md data-[spacing=0]:data-[variant=outline]:shadow-xs",
+    "group/toggle-group flex w-fit flex-row items-center gap-[--spacing(var(--gap))] data-vertical:flex-col data-vertical:items-stretch",
     className
   )}
+  style={`--gap:${spacing};${style}`}
   {...rest}
 >
   <slot />
 </div>
 
 <script>
-  import { createToggleGroup } from "@data-slot/toggle-group";
+  import { createToggleGroup } from "@bejamas/ui/lib/toggle-group-controller";
   document.querySelectorAll<HTMLElement>('[data-slot="toggle-group"]').forEach((el) => {
-    const defaultValue = el.dataset.defaultValue;
-    createToggleGroup(el, {
-      multiple: el.dataset.multiple === "true",
-      orientation: el.dataset.orientation as "horizontal" | "vertical",
-      disabled: el.dataset.disabled === "true",
-      defaultValue: defaultValue?.includes(",") ? defaultValue.split(",") : defaultValue,
-    });
+    createToggleGroup(el);
   });
 </script>

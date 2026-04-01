@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/input-group/InputGroup.astro directly.
 /**
  * @component InputGroup
  * @title Input Group
@@ -79,11 +80,10 @@
  * | `size` | `"sm" \| "default" \| "lg"` | `"default"` |
  */
 import type { HTMLAttributes } from "astro/types";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
 interface Props extends HTMLAttributes<"div"> {
-  size?: VariantProps<typeof inputGroupVariants>["size"];
+  size?: "sm" | "default" | "lg";
   class?: string;
 }
 
@@ -92,23 +92,6 @@ const {
   class: className = "",
   ...rest
 } = Astro.props as Props;
-
-const inputGroupVariants = cva(
-  "border-input dark:bg-input/30 has-[:focus-visible]:border-ring has-[:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 has-disabled:bg-input/50 dark:has-disabled:bg-input/80 rounded-lg border transition-colors in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:ring-0 has-disabled:opacity-50 has-[:focus-visible]:ring-3 has-[[data-slot][aria-invalid=true]]:ring-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>textarea]:h-auto group/input-group relative flex w-full min-w-0 items-center outline-none",
-  {
-    variants: {
-      size: {
-        sm: "h-8 has-[>[data-align=block-end]]:[&>input[data-slot=input-group-control]]:pt-2 has-[>[data-align=block-start]]:[&>input[data-slot=input-group-control]]:pb-2 has-[>[data-align=inline-end]]:[&>[data-slot=input-group-control]]:pr-1.5 has-[>[data-align=inline-start]]:[&>[data-slot=input-group-control]]:pl-1.5",
-        default:
-          "h-9 has-[>[data-align=block-end]]:[&>input[data-slot=input-group-control]]:pt-2.5 has-[>[data-align=block-start]]:[&>input[data-slot=input-group-control]]:pb-2.5 has-[>[data-align=inline-end]]:[&>[data-slot=input-group-control]]:pr-1.5 has-[>[data-align=inline-start]]:[&>[data-slot=input-group-control]]:pl-1.5",
-        lg: "h-10 has-[>[data-align=block-end]]:[&>input[data-slot=input-group-control]]:pt-3 has-[>[data-align=block-start]]:[&>input[data-slot=input-group-control]]:pb-3 has-[>[data-align=inline-end]]:[&>[data-slot=input-group-control]]:pr-2 has-[>[data-align=inline-start]]:[&>[data-slot=input-group-control]]:pl-2",
-      },
-    },
-    defaultVariants: {
-      size: "default",
-    },
-  },
-);
 ---
 
 <div
@@ -116,7 +99,10 @@ const inputGroupVariants = cva(
   role="group"
   data-slot="input-group"
   data-size={size}
-  class={cn(inputGroupVariants({ size }), className)}
+  class={cn(
+    "group/input-group border-input dark:bg-input/30 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 h-9 rounded-md border shadow-xs transition-[color,box-shadow] in-data-[slot=combobox-content]:focus-within:border-inherit in-data-[slot=combobox-content]:focus-within:ring-0 has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot][aria-invalid=true]]:ring-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3 has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=inline-end]]:[&>input]:pr-1.5 has-[>[data-align=inline-start]]:[&>input]:pl-1.5 relative flex w-full min-w-0 items-center outline-none has-[>textarea]:h-auto",
+    className,
+  )}
 >
   <slot />
 </div>
@@ -129,13 +115,17 @@ const inputGroupVariants = cva(
     if (e.target.closest("button")) return;
     const root = addon.closest("[data-slot='input-group']");
     if (!root) return;
-    const input = root.querySelector("[data-slot='input-group-control']");
+    const input = root.querySelector(
+      "[data-input-group-control], [data-slot='input-group-control']",
+    );
     input?.focus();
   });
   // Disabled styling passthrough when any control is disabled
   document.querySelectorAll("[data-slot='input-group']").forEach((group) => {
     const updateDisabled = () => {
-      const ctrl = group.querySelector("[data-slot='input-group-control']");
+      const ctrl = group.querySelector(
+        "[data-input-group-control], [data-slot='input-group-control']",
+      );
       group.dataset.disabled = ctrl?.hasAttribute("disabled")
         ? "true"
         : "false";

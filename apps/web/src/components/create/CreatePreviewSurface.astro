@@ -1,0 +1,131 @@
+---
+import type { IconLibraryName } from "@bejamas/create-config/server";
+import ActivateAgentDialog from "@/components/create/preview-cards/ActivateAgentDialog.astro";
+import AnomalyAlert from "@/components/create/preview-cards/AnomalyAlert.astro";
+import AssignIssue from "@/components/create/preview-cards/AssignIssue.astro";
+import BookAppointment from "@/components/create/preview-cards/BookAppointment.astro";
+import CodespacesCard from "@/components/create/preview-cards/CodespacesCard.astro";
+import ContributionsActivity from "@/components/create/preview-cards/ContributionsActivity.astro";
+import Contributors from "@/components/create/preview-cards/Contributors.astro";
+import EnvironmentVariables from "@/components/create/preview-cards/EnvironmentVariables.astro";
+import FeedbackForm from "@/components/create/preview-cards/FeedbackForm.astro";
+import FileUpload from "@/components/create/preview-cards/FileUpload.astro";
+import GithubProfile from "@/components/create/preview-cards/GithubProfile.astro";
+import IconPreviewGrid from "@/components/create/preview-cards/IconPreviewGrid.astro";
+import InviteTeam from "@/components/create/preview-cards/InviteTeam.astro";
+import Invoice from "@/components/create/preview-cards/Invoice.astro";
+import NoTeamMembers from "@/components/create/preview-cards/NoTeamMembers.astro";
+import NotFound from "@/components/create/preview-cards/NotFound.astro";
+import ObservabilityCard from "@/components/create/preview-cards/ObservabilityCard.astro";
+import ReportBug from "@/components/create/preview-cards/ReportBug.astro";
+import ShippingAddress from "@/components/create/preview-cards/ShippingAddress.astro";
+import Shortcuts from "@/components/create/preview-cards/Shortcuts.astro";
+import SkeletonLoading from "@/components/create/preview-cards/SkeletonLoading.astro";
+import StyleOverview from "@/components/create/preview-cards/StyleOverview.astro";
+import UIElements from "@/components/create/preview-cards/UIElements.astro";
+import UsageCard from "@/components/create/preview-cards/UsageCard.astro";
+import WeeklyFitnessSummary from "@/components/create/preview-cards/WeeklyFitnessSummary.astro";
+
+interface Props {
+  iconLibrary?: IconLibraryName;
+  iconLibraryLabel?: string;
+  styleLabel?: string;
+  fontLabel?: string;
+  fontHeadingLabel?: string | null;
+  radiusLabel?: string;
+  menuColorLabel?: string;
+  menuInverted?: boolean;
+  menuTranslucent?: boolean;
+}
+
+const {
+  iconLibrary = "lucide",
+  iconLibraryLabel,
+  styleLabel,
+  fontLabel,
+  fontHeadingLabel = null,
+  radiusLabel,
+  menuColorLabel = "default",
+  menuInverted = false,
+  menuTranslucent = false,
+} = Astro.props as Props;
+---
+
+<div
+  data-create-preview-surface
+  class="min-h-screen bg-background text-foreground antialiased"
+>
+  <div class="overflow-x-auto overflow-y-hidden contain-[paint]">
+    <div
+      class="grid w-[2400px] grid-cols-7 items-start gap-4 bg-muted p-4 md:w-[3044px] md:gap-6 lg:gap-12 md:p-6 lg:p-12 dark:bg-background"
+      data-slot="capture-target"
+    >
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
+        <StyleOverview
+          styleLabel={styleLabel}
+          fontLabel={fontLabel}
+          fontHeadingLabel={fontHeadingLabel}
+          radiusLabel={radiusLabel}
+        />
+        <CodespacesCard
+          iconLibrary={iconLibrary}
+          menuColorLabel={menuColorLabel}
+          menuInverted={menuInverted}
+          menuTranslucent={menuTranslucent}
+        />
+        <Invoice />
+      </div>
+
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
+        <IconPreviewGrid
+          iconLibrary={iconLibrary}
+          iconLibraryLabel={iconLibraryLabel}
+        />
+        <UIElements iconLibrary={iconLibrary} />
+        <ObservabilityCard />
+        <!-- <Shortcuts /> -->
+      </div>
+
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
+        <EnvironmentVariables />
+        <InviteTeam iconLibrary={iconLibrary} />
+        <ActivateAgentDialog iconLibrary={iconLibrary} />
+      </div>
+
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
+        <SkeletonLoading />
+        <NoTeamMembers iconLibrary={iconLibrary} />
+        <ReportBug iconLibrary={iconLibrary} />
+        <!-- <Contributors /> -->
+      </div>
+
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
+        <FeedbackForm />
+        <BookAppointment iconLibrary={iconLibrary} />
+        <GithubProfile />
+      </div>
+
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
+        <AssignIssue />
+        <!-- <WeeklyFitnessSummary /> -->
+        <FileUpload />
+        <!-- <UsageCard /> -->
+        <!-- <ContributionsActivity /> -->
+      </div>
+
+      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
+        <AnomalyAlert iconLibrary={iconLibrary} />
+        <ShippingAddress />
+        <NotFound iconLibrary={iconLibrary} />
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  [data-create-preview-surface]
+    :is(input, textarea)[data-create-preview-placeholder]::placeholder {
+    color: var(--muted-foreground);
+    opacity: 1;
+  }
+</style>

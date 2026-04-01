@@ -1,0 +1,19 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/command/CommandShortcut.astro directly.
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"span"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<span
+  {...rest}
+  data-slot="command-shortcut"
+  class={cn("text-muted-foreground group-data-selected/command-item:text-foreground ml-auto text-xs tracking-widest", className)}
+>
+  <slot />
+</span>

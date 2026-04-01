@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
-import { Button } from "@bejamas/ui/components/button";
-import { ButtonGroup } from "@bejamas/ui/components/button-group";
+import { Button } from "@bejamas/registry/ui/button";
+import { ButtonGroup } from "@bejamas/registry/ui/button-group";
 import {
   Card,
   CardMedia,
@@ -10,30 +10,31 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@bejamas/ui/components/card";
-import { Date } from "@bejamas/ui/components/date";
+} from "@bejamas/registry/ui/card";
+import { Date } from "@bejamas/registry/ui/date";
 import {
   Avatar,
   AvatarImage,
   AvatarFallback,
   AvatarGroup,
-} from "@bejamas/ui/components/avatar";
-import { Badge } from "@bejamas/ui/components/badge";
-import { Input } from "@bejamas/ui/components/input";
-import { Textarea } from "@bejamas/ui/components/textarea";
-import { Label } from "@bejamas/ui/components/label";
+} from "@bejamas/registry/ui/avatar";
+import { Badge } from "@bejamas/registry/ui/badge";
+import { Input } from "@bejamas/registry/ui/input";
+import { Textarea } from "@bejamas/registry/ui/textarea";
+import { Label } from "@bejamas/registry/ui/label";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
+  SelectGroup,
   SelectItem,
-} from "@bejamas/ui/components/select";
+} from "@bejamas/registry/ui/select";
 import {
   Field,
   FieldLabel,
   FieldDescription,
-} from "@bejamas/ui/components/field";
+} from "@bejamas/registry/ui/field";
 import {
   InputGroup,
   InputGroupInput,
@@ -41,15 +42,10 @@ import {
   InputGroupAddon,
   InputGroupText,
   InputGroupTextarea,
-} from "@bejamas/ui/components/input-group";
-import { Kbd, KbdGroup } from "@bejamas/ui/components/kbd";
-import { Spinner } from "@bejamas/ui/components/spinner";
-import {
-  Slider,
-  SliderTrack,
-  SliderRange,
-  SliderThumb,
-} from "@bejamas/ui/components/slider";
+} from "@bejamas/registry/ui/input-group";
+import { Kbd, KbdGroup } from "@bejamas/registry/ui/kbd";
+import { Spinner } from "@bejamas/registry/ui/spinner";
+import { Slider } from "@bejamas/registry/ui/slider";
 import {
   Item,
   ItemContent,
@@ -57,20 +53,20 @@ import {
   ItemDescription,
   ItemActions,
   ItemMedia,
-} from "@bejamas/ui/components/item";
+} from "@bejamas/registry/ui/item";
 import {
   Tabs,
   TabsList,
   TabsTrigger,
   TabsContent,
-} from "@bejamas/ui/components/tabs";
+} from "@bejamas/registry/ui/tabs";
 import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent,
-} from "@bejamas/ui/components/hover-card";
-import { Marquee } from "@bejamas/ui/components/marquee";
-import { Checkbox } from "@bejamas/ui/components/checkbox";
+} from "@bejamas/registry/ui/hover-card";
+import { Marquee } from "@bejamas/registry/ui/marquee";
+import { Checkbox } from "@bejamas/registry/ui/checkbox";
 import {
   Dialog,
   DialogTrigger,
@@ -79,7 +75,7 @@ import {
   DialogDescription,
   DialogContent,
   DialogFooter,
-} from "@bejamas/ui/components/dialog";
+} from "@bejamas/registry/ui/dialog";
 import {
   Popover,
   PopoverTrigger,
@@ -87,7 +83,7 @@ import {
   PopoverHeader,
   PopoverTitle,
   PopoverDescription,
-} from "@bejamas/ui/components/popover";
+} from "@bejamas/registry/ui/popover";
 import {
   Combobox,
   ComboboxInput,
@@ -98,14 +94,14 @@ import {
   ComboboxGroup,
   ComboboxLabel,
   ComboboxSeparator,
-} from "@bejamas/ui/components/combobox";
-import { Separator } from "@bejamas/ui/components/separator";
+} from "@bejamas/registry/ui/combobox";
+import { Separator } from "@bejamas/registry/ui/separator";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@bejamas/ui/components/accordion";
+} from "@bejamas/registry/ui/accordion";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -114,7 +110,7 @@ import {
   NavigationMenuContent,
   NavigationMenuLink,
   NavigationMenuIndicator,
-} from "@bejamas/ui/components/navigation-menu";
+} from "@bejamas/registry/ui/navigation-menu";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -124,28 +120,28 @@ import {
   DropdownMenuGroup,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-} from "@bejamas/ui/components/dropdown-menu";
-import { Switch } from "@bejamas/ui/components/switch";
+} from "@bejamas/registry/ui/dropdown-menu";
+import { Switch } from "@bejamas/registry/ui/switch";
 import {
   Alert,
   AlertTitle,
   AlertDescription,
-} from "@bejamas/ui/components/alert";
+} from "@bejamas/registry/ui/alert";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@bejamas/ui/components/tooltip";
+} from "@bejamas/registry/ui/tooltip";
 import {
   ToggleGroup,
   ToggleGroupItem,
-} from "@bejamas/ui/components/toggle-group";
+} from "@bejamas/registry/ui/toggle-group";
 import {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbSeparator,
-} from "@bejamas/ui/components/breadcrumb";
+} from "@bejamas/registry/ui/breadcrumb";
 import {
   UploadIcon,
   SaveIcon,
@@ -222,7 +218,7 @@ const countries = [
   <!-- LEFT COLUMN -->
   <div class="space-y-6">
     <!-- Blog Post Card -->
-    <Card>
+    <Card class="pt-0">
       <CardMedia class="m-1">
         <Image
           src="https://gradient.bejamas.com/api/gradient.png?funkiness=30&contrast=0&w=748&h=500&seed=bejamas"
@@ -279,7 +275,6 @@ const countries = [
           <Button variant="outline">Figma Library</Button>
         </div>
       </CardContent>
-      <Separator />
       <CardFooter>
         <div class="flex items-center gap-2 flex-wrap justify-between w-full">
           <span class="text-sm text-muted-foreground">Categories</span>
@@ -438,15 +433,17 @@ const countries = [
         Industry <span class="text-muted-foreground">Optional</span>
       </FieldLabel>
       <Select>
-        <SelectTrigger id="industry">
+        <SelectTrigger id="industry" class="w-full">
           <SelectValue placeholder="Select one" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="technology">Technology</SelectItem>
-          <SelectItem value="design">Design</SelectItem>
-          <SelectItem value="marketing">Marketing</SelectItem>
-          <SelectItem value="finance">Finance</SelectItem>
-          <SelectItem value="healthcare">Healthcare</SelectItem>
+          <SelectGroup>
+            <SelectItem value="technology">Technology</SelectItem>
+            <SelectItem value="design">Design</SelectItem>
+            <SelectItem value="marketing">Marketing</SelectItem>
+            <SelectItem value="finance">Finance</SelectItem>
+            <SelectItem value="healthcare">Healthcare</SelectItem>
+          </SelectGroup>
         </SelectContent>
       </Select>
       <FieldDescription>
@@ -673,10 +670,8 @@ const countries = [
             </p>
           </div>
           <DialogFooter>
-            <Button variant="outline" data-slot="dialog-close" class="mt-4"
-              >Close</Button
-            >
-            <Button class="mt-4">Save changes</Button>
+            <Button variant="outline" data-slot="dialog-close">Close</Button>
+            <Button>Save changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -759,13 +754,7 @@ const countries = [
           >.
         </p>
       </div>
-      <Slider id="price-slider" defaultValue={[20, 80]} max={100}>
-        <SliderTrack>
-          <SliderRange />
-        </SliderTrack>
-        <SliderThumb />
-        <SliderThumb />
-      </Slider>
+      <Slider id="price-slider" defaultValue={[20, 80]} max={100} />
     </div>
 
     <!-- Item -->
@@ -850,7 +839,7 @@ const countries = [
             >Set the dimensions for the layer.</PopoverDescription
           >
         </PopoverHeader>
-        <div class="grid gap-3 mt-4">
+        <div class="grid gap-3">
           <div class="grid grid-cols-3 items-center gap-4">
             <Label class="text-right">Width</Label>
             <Input class="col-span-2" placeholder="100%" />
@@ -878,28 +867,46 @@ const countries = [
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
             <NavigationMenuContent align="center">
-              <div class="grid grid-cols-2 gap-2 w-[320px] p-2">
+              <div class="grid grid-cols-2 gap-2 w-[320px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Analytics</div>
-                  <div class="text-sm text-muted-foreground">
-                    Real-time insights
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-luma:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Automation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Workflow builders
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Automation</div>
-                  <div class="text-sm text-muted-foreground">
-                    Workflow builders
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-luma:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Automation</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Workflow builders
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Security</div>
-                  <div class="text-sm text-muted-foreground">
-                    Enterprise-grade
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-luma:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Security</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Enterprise-grade
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Integrations</div>
-                  <div class="text-sm text-muted-foreground">Connect tools</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-luma:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Integrations</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Connect tools
+                    </div>
+                  </div>
                 </NavigationMenuLink>
               </div>
             </NavigationMenuContent>
@@ -907,25 +914,45 @@ const countries = [
           <NavigationMenuItem value="resources">
             <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
             <NavigationMenuContent align="end">
-              <div class="grid grid-cols-2 gap-2 w-[320px] p-2">
+              <div class="grid grid-cols-2 gap-2 w-[320px]">
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Docs</div>
-                  <div class="text-sm text-muted-foreground">Get started</div>
-                </NavigationMenuLink>
-                <NavigationMenuLink href="#">
-                  <div class="font-medium">Blog</div>
-                  <div class="text-sm text-muted-foreground">
-                    Latest updates
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-luma:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Docs</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Get started
+                    </div>
                   </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Support</div>
-                  <div class="text-sm text-muted-foreground">Get help</div>
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-luma:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Blog</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Latest updates
+                    </div>
+                  </div>
                 </NavigationMenuLink>
                 <NavigationMenuLink href="#">
-                  <div class="font-medium">Guides</div>
-                  <div class="text-sm text-muted-foreground">
-                    Best practices
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-luma:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Support</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Get help
+                    </div>
+                  </div>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="#">
+                  <div
+                    class="flex flex-col gap-1 style-vega:text-sm style-nova:text-sm style-lyra:text-xs style-maia:text-sm style-luma:text-sm style-mira:text-xs"
+                  >
+                    <div class="leading-none font-medium">Guides</div>
+                    <div class="line-clamp-2 text-muted-foreground">
+                      Best practices
+                    </div>
                   </div>
                 </NavigationMenuLink>
               </div>

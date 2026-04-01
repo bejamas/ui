@@ -1,0 +1,95 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+import { cva } from "class-variance-authority";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+  size?: "sm" | "default" | "lg";
+  position?: "item-aligned" | "popper";
+  align?: "start" | "center" | "end";
+  alignOffset?: number;
+  side?: "top" | "bottom";
+  sideOffset?: number;
+}
+
+const {
+  class: className = "",
+  size = "default",
+  position = "item-aligned",
+  align = "center",
+  alignOffset = 0,
+  side = "bottom",
+  sideOffset = 4,
+  ...rest
+} = Astro.props as Props;
+
+const contentVariants = cva(
+  [
+    "group/select-content cn-select-content-logical cn-menu-target cn-menu-translucent relative isolate z-50",
+    "origin-(--transform-origin) overflow-x-hidden overflow-y-auto data-[align-trigger=true]:animate-none",
+  ],
+  {
+    variants: {
+      position: {
+        "item-aligned": "",
+        popper: "",
+      },
+      side: {
+        top: "",
+        bottom: "",
+      },
+    },
+    defaultVariants: {
+      position: "item-aligned",
+      side: "bottom",
+    },
+  },
+);
+---
+
+<div
+  {...rest}
+  hidden
+  data-slot="select-content"
+  data-size={size}
+  data-position={position}
+  data-align-trigger={position === "item-aligned"}
+  data-align={align}
+  data-align-offset={alignOffset}
+  data-side={side}
+  data-side-offset={sideOffset}
+  class={cn(
+    "cn-select-content",
+    contentVariants({ position, side }),
+    "max-h-(--available-height) w-(--anchor-width)",
+    className,
+  )}
+>
+  <div
+    data-slot="select-scroll-up-button"
+    class="cn-select-scroll-up-button top-0 w-full"
+    hidden
+  >
+    <slot name="scroll-up"
+      ><SemanticIcon name="chevron-up" class="size-4" /></slot
+    >
+  </div>
+  <div
+    data-slot="select-viewport"
+    data-position={position}
+    class="cn-select-viewport max-h-[var(--select-content-available-height,300px)] overflow-x-hidden overflow-y-auto"
+  >
+    <slot />
+  </div>
+  <div
+    data-slot="select-scroll-down-button"
+    class="cn-select-scroll-down-button bottom-0 w-full"
+    hidden
+  >
+    <slot name="scroll-down"
+      ><SemanticIcon name="chevron-down" class="size-4" /></slot
+    >
+  </div>
+</div>

@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/tooltip/Tooltip.astro directly.
 /**
  * @component Tooltip
  * @title Tooltip
@@ -81,39 +82,59 @@
  *
  * Use the `side` prop to control which side the tooltip appears on.
  *
- * <div class="flex gap-4 items-center justify-center py-8">
- *   <Tooltip>
- *     <TooltipTrigger asChild>
- *       <Button variant="outline">Left</Button>
- *     </TooltipTrigger>
- *     <TooltipContent side="left">
- *       <p>Tooltip on left</p>
- *     </TooltipContent>
- *   </Tooltip>
- *   <Tooltip>
- *     <TooltipTrigger asChild>
- *       <Button variant="outline">Top</Button>
- *     </TooltipTrigger>
- *     <TooltipContent side="top">
- *       <p>Tooltip on top</p>
- *     </TooltipContent>
- *   </Tooltip>
- *   <Tooltip>
- *     <TooltipTrigger asChild>
- *       <Button variant="outline">Bottom</Button>
- *     </TooltipTrigger>
- *     <TooltipContent side="bottom">
- *       <p>Tooltip on bottom</p>
- *     </TooltipContent>
- *   </Tooltip>
- *   <Tooltip>
- *     <TooltipTrigger asChild>
- *       <Button variant="outline">Right</Button>
- *     </TooltipTrigger>
- *     <TooltipContent side="right">
- *       <p>Tooltip on right</p>
- *     </TooltipContent>
- *   </Tooltip>
+ * <div class="grid gap-4 py-8">
+ *   <div class="flex gap-4 items-center justify-center">
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Left</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="left">
+ *         <p>Tooltip on left</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Top</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="top">
+ *         <p>Tooltip on top</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Bottom</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="bottom">
+ *         <p>Tooltip on bottom</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Right</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="right">
+ *         <p>Tooltip on right</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *   </div>
+ *   <div class="flex gap-4 items-center justify-center">
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Inline Start</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="inline-start">
+ *         <p>Tooltip on inline start</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *     <Tooltip>
+ *       <TooltipTrigger asChild>
+ *         <Button variant="outline">Inline End</Button>
+ *       </TooltipTrigger>
+ *       <TooltipContent side="inline-end">
+ *         <p>Tooltip on inline end</p>
+ *       </TooltipContent>
+ *     </Tooltip>
+ *   </div>
  * </div>
  *
  * ### Alignment options
@@ -257,15 +278,20 @@
  * }));
  * ```
  *
+ * The deprecated `{ value: boolean }` detail shape is still supported temporarily for compatibility, but new code should always use `{ open: boolean }`.
+ *
  * ### Data Attributes
  *
  * The tooltip sets these data attributes that you can use for styling or querying state:
  *
  * | Attribute | Element | Description |
  * |-----------|---------|-------------|
- * | `data-open` / `data-closed` | tooltip, tooltip-content, tooltip-positioner | Present while open/closed |
- * | `data-side` | tooltip-content, tooltip-positioner | Runtime side (`top`, `right`, `bottom`, or `left`) after collision handling |
- * | `data-align` | tooltip-content, tooltip-positioner | Runtime alignment (`start`, `center`, or `end`) |
+ * | `data-state` | tooltip, tooltip-content | Legacy `"open"` / `"closed"` compatibility shim. Prefer `data-open` / `data-closed`. |
+ * | `data-open` / `data-closed` | tooltip, tooltip-content, tooltip-positioner, tooltip-arrow | Present while open/closed |
+ * | `data-starting-style` / `data-ending-style` | tooltip-content | Present while opening or closing |
+ * | `data-instant` | tooltip, tooltip-content, tooltip-positioner, tooltip-arrow | Interaction reason: `"delay"`, `"focus"`, or `"dismiss"` |
+ * | `data-side` | tooltip-content, tooltip-positioner, tooltip-arrow | Runtime side (`top`, `right`, `bottom`, `left`, `inline-start`, or `inline-end`) after collision handling |
+ * | `data-align` | tooltip-content, tooltip-positioner, tooltip-arrow | Runtime alignment (`start`, `center`, or `end`) |
  * | `data-side-offset` | tooltip-content | Distance from trigger in pixels (default `4`) |
  * | `data-align-offset` | tooltip-content | Alignment-axis offset in pixels (default `0`) |
  */
@@ -292,7 +318,7 @@ const {
   data-slot="tooltip"
   data-delay={delay}
   data-skip-delay-duration={skipDelayDuration}
-  class={cn("inline-block", className)}
+  class={cn("", "inline-block", className)}
 >
   <slot />
 </div>

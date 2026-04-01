@@ -27,17 +27,8 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
               d="M0 69.5866C0 69.5866 14.3139 62.6137 28.6678 62.6137L39.4901 29.1204C39.8953 27.5007 41.0783 26.3999 42.4139 26.3999C43.7495 26.3999 44.9325 27.5007 45.3377 29.1204L56.1601 62.6137C73.1601 62.6137 84.8278 69.5866 84.8278 69.5866C84.8278 69.5866 60.5145 3.35233 60.467 3.21944C59.7692 1.2612 58.5911 0 57.0029 0H27.8274C26.2392 0 25.1087 1.2612 24.3634 3.21944C24.3108 3.34983 0 69.5866 0 69.5866Z"
               fill="#17191E"
             />
-          </svg> Astro <span class="font-serif relative inline-block pr-0.5"><div class="absolute top-0.5 lg:top-1 w-full pointer-events-none h-8 md:h-12 border-2 border-accent"><span class="absolute -left-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -left-2 -bottom-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -bottom-2 size-2 border-2 border-accent"></span></div>UI</span> library.`,
-      tagline: `
-        Copy-and-own code and 
-          <a
-            href="/docs/auto-generated-docs"
-            class="border-b border-muted-foreground/40 hover:text-foreground relative pb-0.5 hover:border-muted-foreground/80 transition-colors group"
-          >
-            auto-generated component docs
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform ease-in-out duration-200 lucide-arrow-up-right-icon lucide-arrow-up-right inline-block size-4"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-          </a> — scale content platforms instead of maintaining UI systems.
-      `,
+          </svg> Astro <span class="relative inline-block"><div class="absolute top-0.5 lg:top-1 w-full pointer-events-none h-8 md:h-12 border-2 border-accent"><span class="absolute -left-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -top-2 size-2 border-2 border-accent"></span><span class="absolute -left-2 -bottom-2 size-2 border-2 border-accent"></span><span class="absolute -right-2 -bottom-2 size-2 border-2 border-accent"></span></div>UI</span> library.`,
+      tagline: `The shadcn/ui approach you know, built natively for Astro — no framework runtime, full control, completely yours.`,
       actions: [
         {
           text: "Explore the docs",
@@ -54,7 +45,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     },
   }}
 >
-  <div class="max-w-384 mx-auto">
+  <div class="max-w-384 mx-auto" data-page-scope="home">
     <UiDemo />
     <!-- 
   <div
@@ -72,19 +63,19 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     </div>
     <UiDemo />
   </div> -->
-    <div
-      class="page-bg hidden md:block left-1 right-1 h-[calc(100%+var(--hero-height))] -mt-(--hero-height) pt-(--hero-height) absolute z-0 scroll-fade-out top-8 border border-b-0 rounded-t-3xl"
+    <!-- <div
+      class="page-bg hidden md:block left-1 right-1 h-[calc(100%+var(--hero-height))] -mt-(--hero-height) pt-(--hero-height) absolute z-0 scroll-fade-out top-0 border border-b-0 rounded-t-3xl"
       style={{
         "--hero-height": "365.5px",
       }}
     >
-    </div>
+    </div> -->
   </div>
 
   <style is:global>
     @reference "tailwindcss";
 
-    .hero h1 {
+    :root:has([data-page-scope="home"]) .hero h1 {
       letter-spacing: calc(var(--letter-spacing) - 0.025em);
       @apply text-3xl font-medium text-left text-balance block max-w-xl leading-[1.15];
     }
@@ -99,49 +90,49 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
       0px 1.18145px 0px rgba(5, 23, 41, 0.08);
   } */
 
-    :root:after {
+    :root:has([data-page-scope="home"]):after {
       left: calc(var(--spacing) * 6);
       /* border-left: 1px solid var(--border);
       border-right: 1px solid var(--border); */
     }
 
-    .kudos {
+    :root:has([data-page-scope="home"]) .kudos {
       display: none;
     }
 
-    .hero .copy {
+    :root:has([data-page-scope="home"]) .hero .copy {
       @apply items-start;
     }
 
-    .tagline {
+    :root:has([data-page-scope="home"]) .tagline {
       text-align: left;
       font-size: 1.1875rem;
       max-width: 50ch;
     }
 
     @media (min-width: 48rem) {
-      .hero h1 {
+      :root:has([data-page-scope="home"]) .hero h1 {
         @apply text-5xl;
       }
     }
 
-    .page-bg {
+    :root:has([data-page-scope="home"]) .page-bg {
       background-color: var(--sl-main-frame-inner-background);
     }
 
-    .content-panel:first-child {
+    :root:has([data-page-scope="home"]) .content-panel:first-child {
       @apply pt-0;
     }
 
-    .main-frame {
+    :root:has([data-page-scope="home"]) .main-frame {
       padding-inline: 0;
     }
 
-    .main-pane > main {
+    :root:has([data-page-scope="home"]) .main-pane > main {
       @apply pb-0 mb-0;
     }
 
-    .hero {
+    :root:has([data-page-scope="home"]) .hero {
       opacity: 1;
       transform-origin: left center;
 
@@ -149,26 +140,33 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
     }
 
     @media (min-width: 48rem) {
-      .main-pane > main {
+      :root:has([data-page-scope="home"]) .main-pane > main {
         padding: var(--sl-main-pad);
         padding-bottom: 0;
       }
     }
 
-    .sl-container {
+    :root:has([data-page-scope="home"]) .sl-container {
       @apply max-w-full;
     }
 
-    .sl-markdown-content {
+    :root:has([data-page-scope="home"]) .sl-markdown-content {
       @apply mx-auto max-w-full mt-0 pt-0 relative;
     }
 
-    .actions {
+    :root:has([data-page-scope="home"]) .actions {
       @apply justify-start;
     }
 
-    footer.sl-flex {
+    :root:has([data-page-scope="home"]) footer.sl-flex {
       @apply hidden;
+    }
+
+    @media (min-width: 48rem) {
+      :root:has([data-page-scope="home"]) .main-frame-splash {
+        --sl-splash-frame-top: calc(var(--spacing) * 18);
+        --sl-splash-frame-inline: calc(var(--spacing) * 6);
+      }
     }
   </style>
 </StarlightPage>

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toggle-group-controller",
+  "type": "registry:lib",
+  "files": [
+    {
+      "path": "lib/toggle-group-controller.ts",
+      "type": "registry:lib",
+      "content": "import {\n  createToggleGroup as createBaseToggleGroup,\n  type ToggleGroupController,\n  type ToggleGroupOptions,\n} from \"@data-slot/toggle-group\";\nimport {\n  TOGGLE_SIZES,\n  TOGGLE_VARIANTS,\n  toggleVariants,\n  type ToggleSize,\n  type ToggleVariant,\n} from \"./toggle-shared\";\n\ntype ToggleOrientation = \"horizontal\" | \"vertical\";\n\ninterface ToggleGroupControllerOptions extends ToggleGroupOptions {\n  size?: ToggleSize;\n  spacing?: number;\n  variant?: ToggleVariant;\n}\n\nfunction parseOrientation(value: string | undefined): ToggleOrientation {\n  return value === \"vertical\" ? \"vertical\" : \"horizontal\";\n}\n\nfunction parseVariant(value: string | undefined): ToggleVariant | null {\n  return TOGGLE_VARIANTS.includes(value as ToggleVariant)\n    ? (value as ToggleVariant)\n    : null;\n}\n\nfunction parseSize(value: string | undefined): ToggleSize | null {\n  return TOGGLE_SIZES.includes(value as ToggleSize)\n    ? (value as ToggleSize)\n    : null;\n}\n\nfunction parseSpacing(value: string | undefined): number {\n  const nextValue = Number(value);\n  return Number.isFinite(nextValue) ? nextValue : 0;\n}\n\nfunction setPresenceAttribute(\n  element: HTMLElement,\n  attribute: string,\n  active: boolean,\n) {\n  if (active) {\n    element.setAttribute(attribute, \"\");\n    return;\n  }\n\n  element.removeAttribute(attribute);\n}\n\nfunction syncRootAttributes(\n  root: HTMLElement,\n  orientation: ToggleOrientation,\n  spacing: number,\n) {\n  root.dataset.orientation = orientation;\n  root.dataset.spacing = String(spacing);\n  root.style.setProperty(\"--gap\", String(spacing));\n  setPresenceAttribute(root, \"data-horizontal\", orientation === \"horizontal\");\n  setPresenceAttribute(root, \"data-vertical\", orientation === \"vertical\");\n}\n\nfunction syncItemAttributes(\n  item: HTMLElement,\n  variant: ToggleVariant,\n  size: ToggleSize,\n  spacing: number,\n) {\n  const itemVariant = parseVariant(item.dataset.variant) ?? variant;\n  const itemSize = parseSize(item.dataset.size) ?? size;\n\n  item.dataset.variant = itemVariant;\n  item.dataset.size = itemSize;\n  item.dataset.spacing = String(spacing);\n\n  for (const className of toggleVariants({\n    variant: itemVariant,\n    size: itemSize,\n  }).split(/\\s+/)) {\n    if (className) {\n      item.classList.add(className);\n    }\n  }\n}\n\nexport function createToggleGroup(\n  root: HTMLElement,\n  options?: ToggleGroupControllerOptions,\n): ToggleGroupController {\n  const orientation = parseOrientation(\n    options?.orientation ?? root.dataset.orientation,\n  );\n  const variant = parseVariant(options?.variant ?? root.dataset.variant) ?? \"default\";\n  const size = parseSize(options?.size ?? root.dataset.size) ?? \"default\";\n  const spacing =\n    options?.spacing ?? parseSpacing(root.dataset.spacing ?? root.style.getPropertyValue(\"--gap\"));\n\n  syncRootAttributes(root, orientation, spacing);\n\n  root\n    .querySelectorAll<HTMLElement>('[data-slot=\"toggle-group-item\"]')\n    .forEach((item) => syncItemAttributes(item, variant, size, spacing));\n\n  return createBaseToggleGroup(root, {\n    ...options,\n    orientation,\n  });\n}\n"
+    }
+  ],
+  "dependencies": [
+    "@data-slot/toggle-group"
+  ],
+  "registryDependencies": [
+    "index"
+  ]
+}

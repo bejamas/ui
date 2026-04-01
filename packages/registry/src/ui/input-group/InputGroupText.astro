@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"span"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<span
+  {...rest}
+  data-slot="input-group-text"
+  class={cn(
+    "cn-input-group-text flex items-center [&_svg]:pointer-events-none",
+    className,
+  )}
+>
+  <slot />
+</span>

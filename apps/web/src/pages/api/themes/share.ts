@@ -1,8 +1,16 @@
 import type { APIRoute } from "astro";
 import { customAlphabet } from "nanoid";
-import { saveSharedTheme, themeExists, type SharedTheme } from "../../../lib/redis";
+import {
+  saveSharedTheme,
+  themeExists,
+  type SharedTheme,
+} from "../../../lib/redis";
+import { normalizeThemeOverrides } from "../../../utils/themes/create-theme";
+import { NO_STORE_CACHE_CONTROL } from "../../../utils/http-cache";
 
-const nanoid = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+const nanoid = customAlphabet(
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+);
 
 export const prerender = false;
 
@@ -25,7 +33,13 @@ async function generateUniqueId(): Promise<string> {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { name, styles, id, createdAt, shareId: existingShareId } = body as {
+    const {
+      name,
+      styles,
+      id,
+      createdAt,
+      shareId: existingShareId,
+    } = body as {
       name?: string;
       styles?: {
         light: Record<string, string>;
@@ -40,7 +54,10 @@ export const POST: APIRoute = async ({ request }) => {
     if (!name || typeof name !== "string") {
       return new Response(JSON.stringify({ error: "Theme name is required" }), {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": NO_STORE_CACHE_CONTROL,
+        },
       });
     }
 
@@ -49,19 +66,22 @@ export const POST: APIRoute = async ({ request }) => {
         JSON.stringify({ error: "Theme styles (light and dark) are required" }),
         {
           status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": NO_STORE_CACHE_CONTROL,
+          },
+        },
       );
     }
 
     // Reuse existing share ID if provided, otherwise generate a new one
-    const shortId = existingShareId || await generateUniqueId();
+    const shortId = existingShareId || (await generateUniqueId());
 
     // Prepare theme data
     const themeData: Omit<SharedTheme, "sharedAt" | "views"> = {
       id: id || `shared-${shortId}`,
       name,
-      styles,
+      styles: normalizeThemeOverrides(styles),
       createdAt: createdAt || new Date().toISOString(),
     };
 
@@ -75,8 +95,11 @@ export const POST: APIRoute = async ({ request }) => {
         }),
         {
           status: 503,
-          headers: { "Content-Type": "application/json" },
-        }
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": NO_STORE_CACHE_CONTROL,
+          },
+        },
       );
     }
 
@@ -92,8 +115,11 @@ export const POST: APIRoute = async ({ request }) => {
       }),
       {
         status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": NO_STORE_CACHE_CONTROL,
+        },
+      },
     );
   } catch (error) {
     console.error("Theme share error:", error);
@@ -103,7 +129,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": NO_STORE_CACHE_CONTROL,
+      },
     });
   }
 };

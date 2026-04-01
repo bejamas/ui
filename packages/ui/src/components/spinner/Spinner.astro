@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/spinner/Spinner.astro directly.
 /**
  * @component Spinner
  * @title Spinner
@@ -41,7 +42,7 @@
  *   data-slot="spinner"
  *   role="status"
  *   aria-label="Loading"
- *   class={cn("size-4 animate-spin", className)}
+ *   class={cn("cn-spinner", "size-4 animate-spin", className)}
  *   {...props}
  * />
  * ```
@@ -123,15 +124,16 @@
  */
 
 import { cn } from "@bejamas/ui/lib/utils";
-import { LoaderCircle as Loader2Icon } from "@lucide/astro";
+import SemanticIcon from "../icon/SemanticIcon.astro";
 
 const { class: className = "", ...props } = Astro.props;
 ---
 
-<Loader2Icon
+<SemanticIcon
+  name="loader-circle"
   data-slot="spinner"
   role="status"
   aria-label="Loading"
-  class={cn("size-4 animate-spin", className)}
+  class={cn("", "size-4 animate-spin", className)}
   {...props}
 />

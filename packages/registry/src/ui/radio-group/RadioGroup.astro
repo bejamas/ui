@@ -1,0 +1,81 @@
+---
+/**
+ * @component RadioGroup
+ * @title Radio Group
+ * @description A group of options where users can select exactly one choice.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2549-18817&t=YFStJ3V8fXEO8QD8-4
+ *
+ * @preview
+ *
+ * <RadioGroup name="plan" defaultValue="free">
+ *   <div class="flex items-center gap-2">
+ *     <RadioGroupItem value="free" id="free" />
+ *     <Label for="free">Free</Label>
+ *   </div>
+ *   <div class="flex items-center gap-2">
+ *     <RadioGroupItem value="pro" id="pro" />
+ *     <Label for="pro">Pro</Label>
+ *   </div>
+ * </RadioGroup>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import { RadioGroup, RadioGroupItem } from '@bejamas/ui/components/radio-group';
+ * import { Label } from '@bejamas/ui/components/label';
+ * ---
+ *
+ * <RadioGroup name="plan" defaultValue="free">
+ *   <div class="flex items-center gap-2">
+ *     <RadioGroupItem value="free" id="free" />
+ *     <Label for="free">Free</Label>
+ *   </div>
+ * </RadioGroup>
+ * ```
+ */
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+  defaultValue?: string;
+  name?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
+}
+
+const {
+  class: className = "",
+  defaultValue,
+  name,
+  disabled = false,
+  readOnly = false,
+  required = false,
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="radio-group"
+  data-default-value={defaultValue}
+  data-name={name}
+  data-disabled={disabled ? "true" : undefined}
+  data-read-only={readOnly ? "true" : undefined}
+  data-required={required ? "true" : undefined}
+  class={cn("cn-radio-group", className)}
+>
+  <slot />
+</div>
+
+<script>
+  import { createRadioGroup } from "@data-slot/radio-group";
+
+  document
+    .querySelectorAll('[data-slot="radio-group"]')
+    .forEach((el) => createRadioGroup(el));
+</script>

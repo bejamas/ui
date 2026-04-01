@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/carousel/Carousel.astro directly.
 /**
  * @component Carousel
  * @title Carousel
@@ -94,7 +95,7 @@ const defaultFadeY = "mask-y-from-80% mask-y-to-95%";
 <div
   {...rest}
   data-slot="carousel"
-  class={cn(
+  class={cn("", 
     carouselVariants({ axis, snapType, align }),
     fade && axis === "x" && defaultFadeX,
     fade && axis === "y" && defaultFadeY,

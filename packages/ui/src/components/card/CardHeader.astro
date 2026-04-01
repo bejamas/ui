@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/card/CardHeader.astro directly.
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
@@ -13,15 +14,14 @@ const {
 } = Astro.props as Props;
 
 const headerVariants = cva(
-  "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+  "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start has-data-[slot=card-action]:grid-cols-[1fr_auto]",
 );
 ---
 
 <div
   {...rest}
   data-slot="card-header"
-  class={cn(headerVariants(), className)}
+  class={cn("gap-1 rounded-t-xl px-6 group-data-[size=sm]/card:px-4 [.border-b]:pb-6 group-data-[size=sm]/card:[.border-b]:pb-4 gap-1.5", headerVariants(), className)}
 >
   <slot />
 </div>
-

@@ -1,0 +1,121 @@
+---
+import ArrowLeftIcon from "@lucide/astro/icons/arrow-left";
+import DownloadIcon from "@lucide/astro/icons/download";
+import SettingsIcon from "@lucide/astro/icons/settings";
+import CreateLockButton from "./CreateLockButton.astro";
+import {
+  getCreateThemeSeedGroups,
+  type ThemeOverrides,
+} from "@/utils/themes/create-theme";
+import ImportDialog from "@/components/theme-editor/ImportDialog.astro";
+import { Button } from "@bejamas/ui/components/button";
+import type { DesignSystemConfig } from "@bejamas/create-config/server";
+
+interface Props {
+  config: DesignSystemConfig;
+  themeRef?: string | null;
+  themeOverrides?: ThemeOverrides | null;
+}
+
+const { config, themeRef = null, themeOverrides = null } = Astro.props as Props;
+const themeSeedGroups = getCreateThemeSeedGroups(config.baseColor);
+---
+
+<section
+  hidden
+  class="create-panel-transition bg-[#0040a1] ml-5 space-y-3.5 xl:min-h-0 xl:flex xl:flex-1 xl:flex-col xl:overflow-hidden"
+  data-create-theme-list-panel
+  data-panel-state="inactive"
+  data-create-sidebar-target="themeListPanel"
+>
+  <div
+    style={{
+      "--create-sidebar-header-height": "0",
+    }}
+    class="create-sidebar-scroll-fade no-scrollbar overflow-auto gap-3 flex flex-col px-2.5 pb-2.5"
+  >
+    <div
+      class="flex items-center justify-between gap-2 sticky top-0 z-10 pt-2.5"
+    >
+      <Button
+        variant="outline"
+        size="sm"
+        type="button"
+        data-create-theme-list-back
+        class="backdrop-blur-md"
+        data-create-sidebar-target="themeListBackButton"
+        data-action="click->create-sidebar#backToMain"
+      >
+        <ArrowLeftIcon class="size-4 text-white/70" />
+        Back
+      </Button>
+
+      <Button
+        variant="ghost"
+        type="button"
+        size="sm"
+        data-create-theme-import
+        data-action="click->create-sidebar#openThemeImportDialog"
+      >
+        <DownloadIcon class="size-3 text-white/65" />
+        Import
+      </Button>
+    </div>
+
+    <div class="flex flex-col gap-2 pt-2" data-create-theme-seeds data-create-sidebar-target="themeSeedContainer">
+      {
+        themeSeedGroups.map((group) => (
+          <section
+            class="flex flex-col gap-2 pt-3"
+            data-create-theme-group={group.group}
+          >
+            <header class="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/38">
+              {group.label}
+            </header>
+            <div class="flex flex-col">
+              {group.options.map((option) => (
+                <button
+                  type="button"
+                  class:list={[
+                    "group/seed flex items-center gap-3 rounded-[12px] border px-3 py-2.5 text-left transition-colors",
+                    option.value === config.theme
+                      ? "border-white/16 bg-transparent text-white"
+                      : "border-white/0 bg-transparent text-white/78 hover:bg-white/[0.05]",
+                  ]}
+                  data-create-sidebar-target="themeOption"
+                  data-create-theme-option
+                  data-value={option.value}
+                  data-action="click->create-sidebar#selectThemeSeed"
+                  data-create-sidebar-theme-value-param={option.value}
+                  data-selected={option.value === config.theme ? "" : undefined}
+                >
+                  <span
+                    class="inline-flex size-6 shrink-0 rounded-full border border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]"
+                    style={`background:${option.color};`}
+                  />
+                  <span class="flex-1 truncate text-sm font-medium tracking-[-0.01em]">
+                    {option.label}
+                  </span>
+                  <span
+                    class="!hidden shrink-0 text-white/30 opacity-0 transition-opacity group-hover/seed:opacity-100 data-[selected]:opacity-100"
+                    data-create-palette-open
+                    data-value={option.value}
+                    data-action="click->create-sidebar#openPaletteEditor"
+                    data-create-sidebar-theme-value-param={option.value}
+                    data-selected={
+                      option.value === config.theme ? "" : undefined
+                    }
+                  >
+                    <SettingsIcon class="size-4" />
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+
+    <ImportDialog />
+  </div>
+</section>

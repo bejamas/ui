@@ -3,11 +3,20 @@
   "version": "0.2.12",
   "license": "MIT",
   "type": "module",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./tailwind.css": {
+      "style": "./src/tailwind.css"
+    }
+  },
   "bin": {
     "bejamas": "./dist/index.js"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "src/tailwind.css"
   ],
   "keywords": [
     "components",
@@ -25,6 +34,8 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
+    "generate:schema": "bun run scripts/generate-schema.ts",
+    "smoke:init:local": "bun run scripts/smoke-init-local.ts",
     "prepublishOnly": "bun run build",
     "test": "bun run build && bun test"
   },
@@ -39,6 +50,8 @@
   },
   "dependencies": {
     "@antfu/ni": "^26.1.0",
+    "@bejamas/create-config": "workspace:*",
+    "@bejamas/semantic-icons": "workspace:*",
     "commander": "^14.0.1",
     "cosmiconfig": "^9.0.0",
     "dotenv": "^16.4.5",
@@ -48,7 +61,7 @@
     "kleur": "^4.1.5",
     "ora": "^9.0.0",
     "prompts": "^2.4.2",
-    "shadcn": "3.8.5",
+    "shadcn": "4.1.1",
     "ts-morph": "^27.0.0",
     "tsconfig-paths": "^4.2.0",
     "zod": "^4.1.9"

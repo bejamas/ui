@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/navigation-menu/NavigationMenuViewport.astro directly.
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/ui/lib/utils";
 
@@ -10,25 +11,10 @@ const { class: className = "", ...rest } = Astro.props as Props;
 ---
 
 <div
-  data-slot="navigation-menu-viewport-positioner"
+  {...rest}
+  data-slot="navigation-menu-viewport"
   class={cn(
-    "isolate z-50 transition-[left,top] duration-250 ease data-ending-style:opacity-0",
+    "bg-popover text-popover-foreground data-open:animate-in data-closed:animate-out data-closed:zoom-out-90 data-open:zoom-in-90 ring-foreground/10 rounded-lg shadow ring-1 duration-100 relative size-full overflow-hidden",
+    className,
   )}
->
-  <div
-    {...rest}
-    data-slot="navigation-menu-viewport"
-    class={cn(
-      "bg-popover shadow-lg rounded-lg outline outline-border overflow-clip",
-      "w-(--viewport-width,0) h-(--viewport-height,0)",
-      "origin-(--transform-origin)",
-      "duration-250 ease data-instant:transition-[scale,opacity] transition-[width,height,transform,scale,opacity]",
-      "data-[state=open]:opacity-100 data-[state=open]:pointer-events-auto",
-      "data-instant:data-[state=open]:animate-in data-instant:data-[state=open]:fade-in data-instant:data-[state=open]:zoom-in-95",
-      "data-ending-style:opacity-0 data-ending-style:scale-90",
-      "will-change-[width,height,transform]",
-      className,
-    )}
-  >
-  </div>
-</div>
+></div>

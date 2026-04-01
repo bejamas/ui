@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/card/CardOverlay.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
@@ -19,7 +20,7 @@ const {
 <div
   {...rest}
   data-slot="card-overlay"
-  class={cn(
+  class={cn("", 
     "inset-0 absolute z-10 opacity-0 p-6 group-hover/card:opacity-100 transition-opacity duration-300 ease-out",
     variant === "glass"
       ? "bg-primary/70 backdrop-blur-sm text-primary-foreground"

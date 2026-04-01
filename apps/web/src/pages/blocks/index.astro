@@ -17,6 +17,7 @@ const blocks = await getCollection("blocks");
     template: "splash",
   }}
 >
+  <div data-page-scope="blocks-index" hidden></div>
   <BlocksNav />
 
   {
@@ -32,19 +33,19 @@ const blocks = await getCollection("blocks");
   <style is:global>
     @reference "tailwindcss";
 
-    .content-panel {
+    :root:has([data-page-scope="blocks-index"]) .content-panel {
       @apply text-center border-0 pt-30 pb-0 first:pt-10;
     }
 
-    .content-panel + .content-panel {
+    :root:has([data-page-scope="blocks-index"]) .content-panel + .content-panel {
       @apply pt-10;
     }
 
-    .content-panel h1 {
+    :root:has([data-page-scope="blocks-index"]) .content-panel h1 {
       @apply text-5xl font-medium text-left max-w-2xl text-balance mx-0;
     }
 
-    .sl-container {
+    :root:has([data-page-scope="blocks-index"]) .sl-container {
       @apply max-w-[1500px] mx-auto;
     }
   </style>

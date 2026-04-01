@@ -1,0 +1,129 @@
+---
+/**
+ * @component NativeSelect
+ * @title Native Select
+ * @description A styled native HTML select element with consistent design system integration.
+ *
+ * @preview
+ * <NativeSelect class="w-[200px]">
+ *   <NativeSelectOption value="">Select a fruit</NativeSelectOption>
+ *   <NativeSelectOption value="apple">Apple</NativeSelectOption>
+ *   <NativeSelectOption value="banana">Banana</NativeSelectOption>
+ *   <NativeSelectOption value="cherry">Cherry</NativeSelectOption>
+ * </NativeSelect>
+ *
+ * @usage
+ *
+ * ```astro nocollapse
+ * ---
+ * import {
+ *   NativeSelect,
+ *   NativeSelectOption,
+ *   NativeSelectOptGroup,
+ * } from '@bejamas/ui/components/native-select';
+ * ---
+ *
+ * <NativeSelect>
+ *   <NativeSelectOption value="">Select a fruit</NativeSelectOption>
+ *   <NativeSelectOption value="apple">Apple</NativeSelectOption>
+ *   <NativeSelectOption value="banana">Banana</NativeSelectOption>
+ * </NativeSelect>
+ * ```
+ *
+ * ### Native Select vs Select
+ *
+ * Use **NativeSelect** when you need standard browser form behavior — native validation, mobile-optimized pickers, and zero JavaScript. Use **Select** when you need a custom-styled dropdown with keyboard navigation, grouped items, and rich content.
+ *
+ * @examples
+ *
+ * ### With Groups
+ *
+ * <NativeSelect class="w-[200px]">
+ *   <NativeSelectOptGroup label="Fruits">
+ *     <NativeSelectOption value="apple">Apple</NativeSelectOption>
+ *     <NativeSelectOption value="banana">Banana</NativeSelectOption>
+ *   </NativeSelectOptGroup>
+ *   <NativeSelectOptGroup label="Vegetables">
+ *     <NativeSelectOption value="carrot">Carrot</NativeSelectOption>
+ *     <NativeSelectOption value="broccoli">Broccoli</NativeSelectOption>
+ *   </NativeSelectOptGroup>
+ * </NativeSelect>
+ *
+ * ### Sizes
+ *
+ * <div class="flex flex-col items-start gap-4 sm:flex-row">
+ *   <NativeSelect class="w-[180px]" size="sm">
+ *     <NativeSelectOption value="">Small (h-8)</NativeSelectOption>
+ *     <NativeSelectOption value="apple">Apple</NativeSelectOption>
+ *     <NativeSelectOption value="banana">Banana</NativeSelectOption>
+ *   </NativeSelect>
+ *   <NativeSelect class="w-[180px]" size="default">
+ *     <NativeSelectOption value="">Default (h-9)</NativeSelectOption>
+ *     <NativeSelectOption value="apple">Apple</NativeSelectOption>
+ *     <NativeSelectOption value="banana">Banana</NativeSelectOption>
+ *   </NativeSelect>
+ *   <NativeSelect class="w-[180px]" size="lg">
+ *     <NativeSelectOption value="">Large (h-10)</NativeSelectOption>
+ *     <NativeSelectOption value="apple">Apple</NativeSelectOption>
+ *     <NativeSelectOption value="banana">Banana</NativeSelectOption>
+ *   </NativeSelect>
+ * </div>
+ *
+ * ### Disabled
+ *
+ * <NativeSelect disabled class="w-[200px]">
+ *   <NativeSelectOption value="apple">Apple</NativeSelectOption>
+ *   <NativeSelectOption value="banana">Banana</NativeSelectOption>
+ * </NativeSelect>
+ *
+ * ### Invalid
+ *
+ * <NativeSelect aria-invalid="true" class="w-[200px]">
+ *   <NativeSelectOption value="">Select a fruit</NativeSelectOption>
+ *   <NativeSelectOption value="apple">Apple</NativeSelectOption>
+ *   <NativeSelectOption value="banana">Banana</NativeSelectOption>
+ * </NativeSelect>
+ *
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"select"> {
+  class?: string;
+  size?: "sm" | "default" | "lg";
+}
+
+const {
+  class: className = "",
+  size = "default",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  data-slot="native-select-wrapper"
+  data-size={size}
+  class={cn("cn-native-select-wrapper",
+    "group/native-select relative w-fit has-[select:disabled]:opacity-50",
+    className,
+  )}
+>
+  <select
+    data-slot="native-select"
+    data-size={size}
+    class={cn(
+      "cn-native-select w-full min-w-0 appearance-none outline-none select-none disabled:pointer-events-none disabled:cursor-not-allowed",
+    )}
+    {...rest}
+  >
+    <slot />
+  </select>
+  <SemanticIcon
+    name="chevron-down"
+    class="cn-native-select-icon pointer-events-none absolute select-none"
+    aria-hidden="true"
+    data-slot="native-select-icon"
+  />
+</div>

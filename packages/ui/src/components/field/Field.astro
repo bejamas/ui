@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/field/Field.astro directly.
 /**
  * @component Field
  * @title Field
@@ -388,13 +389,7 @@
  *     step={10}
  *     class="mt-2 w-full"
  *     aria-label="Price Range"
- *   >
- *     <SliderTrack>
- *       <SliderRange />
- *     </SliderTrack>
- *     <SliderThumb />
- *     <SliderThumb />
- *   </Slider>
+ *   />
  * </Field>
  *
  * ### Fieldset
@@ -493,13 +488,11 @@
  *   <FieldDescription>
  *     Yearly and lifetime plans offer significant savings.
  *   </FieldDescription>
- *   <RadioGroup>
+ *   <RadioGroup name="subscription-plan" defaultValue="monthly">
  *     <Field orientation="horizontal">
  *       <RadioGroupItem
- *         name="subscription-plan"
  *         value="monthly"
  *         id="plan-monthly"
- *         checked
  *       />
  *       <FieldLabel for="plan-monthly" class="font-normal">
  *         Monthly ($9.99/month)
@@ -546,7 +539,10 @@
  *     <FieldDescription>
  *       Select the compute environment for your cluster.
  *     </FieldDescription>
- *     <RadioGroup>
+ *     <RadioGroup
+ *       name="compute-environment"
+ *       defaultValue="kubernetes"
+ *     >
  *       <FieldLabel for="kubernetes-r2h">
  *         <Field orientation="horizontal">
  *           <FieldContent>
@@ -556,10 +552,8 @@
  *             </FieldDescription>
  *           </FieldContent>
  *           <RadioGroupItem
- *             name="compute-environment"
  *             value="kubernetes"
  *             id="kubernetes-r2h"
- *             checked
  *           />
  *         </Field>
  *       </FieldLabel>
@@ -572,7 +566,6 @@
  *             </FieldDescription>
  *           </FieldContent>
  *           <RadioGroupItem
- *             name="compute-environment"
  *             value="vm"
  *             id="vm-z4k"
  *           />
@@ -594,7 +587,7 @@
  *       Get notified when ChatGPT responds to requests that take time, like
  *       research or image generation.
  *     </FieldDescription>
- *     <FieldGroup data-slot="checkbox-group">
+ *     <FieldGroup data-slot="checkbox-group" class="">
  *       <Field orientation="horizontal">
  *         <Checkbox id="push" checked disabled />
  *         <FieldLabel for="push" class="font-normal">
@@ -610,7 +603,7 @@
  *       Get notified when tasks you've created have updates.
  *       <a href="#">Manage tasks</a>
  *     </FieldDescription>
- *     <FieldGroup data-slot="checkbox-group">
+ *     <FieldGroup data-slot="checkbox-group" class="">
  *       <Field orientation="horizontal">
  *         <Checkbox id="push-tasks" />
  *         <FieldLabel for="push-tasks" class="font-normal">
@@ -665,7 +658,7 @@ const {
   role="group"
   data-slot="field"
   data-orientation={orientation}
-  class={cn(fieldVariants({ orientation }), className)}
+  class={cn("data-[invalid=true]:text-destructive gap-3", fieldVariants({ orientation }), className)}
   {...rest}
 >
   <slot />

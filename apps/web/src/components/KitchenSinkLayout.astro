@@ -1,104 +1,86 @@
 ---
 import "@/styles/blocks.css";
 import "@bejamas/ui/styles/globals.css";
-import PresetSwitcher from "./PresetSwitcher.astro";
+import {
+  STYLES,
+  getCompiledStyleCss,
+} from "@bejamas/create-config/server";
+import {
+  buildThemeChoiceBootstrapInlineScript,
+} from "starlight-theme-bejamas/lib/theme-choice";
 import { Tabs, TabsList, TabsTrigger } from "@bejamas/ui/components/tabs";
 import { SunIcon, MoonIcon, LaptopIcon } from "@lucide/astro";
+import { buildWindowAssignmentInlineScript } from "@/utils/inline-script";
+import themeFontsStylesheet from "@/styles/theme-fonts.css?url";
+import { KITCHEN_SINK_PAGES as pages } from "@/utils/kitchen-sink";
 
 const { theme = "current-theme" } = Astro.props;
-
-const pages = [
-  { href: "/kitchen-sink/accordion", label: "Accordion", js: true },
-  { href: "/kitchen-sink/alert", label: "Alert" },
-  { href: "/kitchen-sink/avatar", label: "Avatar" },
-  { href: "/kitchen-sink/badge", label: "Badge" },
-  { href: "/kitchen-sink/breadcrumb", label: "Breadcrumb" },
-  { href: "/kitchen-sink/button", label: "Button" },
-  { href: "/kitchen-sink/button-group", label: "Button Group" },
-  { href: "/kitchen-sink/card", label: "Card" },
-  { href: "/kitchen-sink/carousel", label: "Carousel" },
-  { href: "/kitchen-sink/checkbox", label: "Checkbox" },
-  { href: "/kitchen-sink/collapsible", label: "Collapsible", js: true },
-  { href: "/kitchen-sink/combobox", label: "Combobox", js: true },
-  { href: "/kitchen-sink/date", label: "Date" },
-  { href: "/kitchen-sink/dialog", label: "Dialog", js: true },
-  { href: "/kitchen-sink/dropdown-menu", label: "Dropdown Menu", js: true },
-  { href: "/kitchen-sink/forms-actions", label: "Forms + Actions" },
-  { href: "/kitchen-sink/hover-card", label: "Hover Card", js: true },
-  { href: "/kitchen-sink/input", label: "Input" },
-  { href: "/kitchen-sink/input-group", label: "Input Group" },
-  { href: "/kitchen-sink/item", label: "Item" },
-  { href: "/kitchen-sink/kbd", label: "Kbd" },
-  { href: "/kitchen-sink/label", label: "Label" },
-  { href: "/kitchen-sink/link-group", label: "Link Group" },
-  { href: "/kitchen-sink/marquee", label: "Marquee" },
-  { href: "/kitchen-sink/native-select", label: "Native Select" },
-  { href: "/kitchen-sink/navigation-menu", label: "Navigation Menu", js: true },
-  { href: "/kitchen-sink/popover", label: "Popover", js: true },
-  { href: "/kitchen-sink/radio-group", label: "Radio Group" },
-  { href: "/kitchen-sink/select", label: "Select", js: true },
-  { href: "/kitchen-sink/separator", label: "Separator" },
-  { href: "/kitchen-sink/skeleton", label: "Skeleton" },
-  { href: "/kitchen-sink/slider", label: "Slider", js: true },
-  { href: "/kitchen-sink/spinner", label: "Spinner" },
-  { href: "/kitchen-sink/sticky-surface", label: "Sticky Surface" },
-  { href: "/kitchen-sink/switch", label: "Switch" },
-  { href: "/kitchen-sink/tabs", label: "Tabs", js: true },
-  { href: "/kitchen-sink/textarea", label: "Textarea" },
-  { href: "/kitchen-sink/toggle", label: "Toggle", js: true },
-  { href: "/kitchen-sink/toggle-group", label: "Toggle Group", js: true },
-  { href: "/kitchen-sink/tooltip", label: "Tooltip", js: true },
-];
-
 const currentPath = Astro.url.pathname.replace(/\/$/, "");
+const createStyleCssByStyle = Object.fromEntries(
+  await Promise.all(
+    STYLES.map(async (style) => [
+      style.name,
+      await getCompiledStyleCss(style.name),
+    ]),
+  ),
+);
+const createPreviewPayloadScript = buildWindowAssignmentInlineScript(
+  "__BEJAMAS_CREATE_PREVIEW__",
+  {
+    styleCssByStyle: createStyleCssByStyle,
+  },
+);
+const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 ---
 
-<html lang="en" class="bg-background">
+<html lang="en" dir="ltr" class="bg-background">
   <head>
     <meta charset="utf-8" />
     <meta name="robots" content="noindex, nofollow" />
     <script is:inline>
-      const storageKey = "starlight-theme";
-      const parseTheme = (t) =>
-        t === "auto" || t === "dark" || t === "light" ? t : "auto";
-      const getPreferredColorScheme = () =>
-        matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-      const loadTheme = () => {
-        try {
-          return parseTheme(
-            typeof localStorage !== "undefined" &&
-              localStorage.getItem(storageKey),
-          );
-        } catch {
-          return "auto";
-        }
-      };
-      function applyTheme(theme) {
-        const effective = theme === "auto" ? getPreferredColorScheme() : theme;
-        document.documentElement.dataset.theme = effective;
-        document.documentElement.classList.remove("light", "dark");
-        document.documentElement.classList.add(effective);
+      if (new URLSearchParams(window.location.search).get("embed") === "create") {
+        document.documentElement.dataset.createEmbed = "true";
+        document.documentElement.dataset.createPreviewPending = "true";
       }
-      // Initialize on load
-      applyTheme(loadTheme());
-      // Sync via storage events (parent <-> iframe)
-      window.addEventListener("storage", (event) => {
-        if (event.key === storageKey) applyTheme(loadTheme());
-      });
-      // React to system scheme while in 'auto'
-      matchMedia("(prefers-color-scheme: light)").addEventListener(
-        "change",
-        () => {
-          if (loadTheme() === "auto") applyTheme("auto");
-        },
-      );
     </script>
+    <script is:inline set:html={themeChoiceBootstrapScript} />
+    <link rel="stylesheet" href={themeFontsStylesheet} />
+    <style id="create-theme-css"></style>
+    <style id="create-style-css"></style>
+    <style is:global>
+      :root[data-create-embed] body {
+        background: var(--background);
+      }
+
+      :root[data-create-embed][data-create-preview-pending] body {
+        visibility: hidden;
+      }
+
+      :root[data-create-embed] [data-kitchen-sink-shell] {
+        display: block;
+      }
+
+      :root[data-create-embed] [data-kitchen-sink-shell] > aside {
+        display: none;
+      }
+
+      :root[data-create-embed] [data-kitchen-sink-main] {
+        min-height: 100vh;
+        padding: 0;
+      }
+
+      :root[data-create-embed] [data-kitchen-sink-panel] {
+        border: 0;
+        border-radius: 0;
+        min-height: 100vh;
+      }
+    </style>
   </head>
   <body class="antialiased bg-muted/30">
     <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
 
-    <div class="flex min-h-screen">
-      <aside class="w-56 shrink-0 sticky top-0 h-screen overflow-y-auto">
+    <div class="flex min-h-screen" data-kitchen-sink-shell>
+      <aside class="sticky top-0 h-screen w-56 shrink-0 overflow-y-auto">
         <div class="p-4">
           <a
             href="/kitchen-sink"
@@ -108,30 +90,22 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
           </a>
         </div>
 
-        <div class="px-4 pb-4 flex flex-col gap-2">
-          <PresetSwitcher />
+        <div class="flex flex-col gap-2 px-4 pb-4">
           <ks-theme-select>
-            <Tabs class="ks-theme-tabs" id="ks-theme-tabs">
+            <Tabs
+              class="ks-theme-tabs"
+              id="ks-theme-tabs"
+              data-theme-choice-tabs
+              data-theme-tabs-preloaded
+            >
               <TabsList class="w-full">
-                <TabsTrigger
-                  value="light"
-                  class="ks-theme-tab"
-                  title="Light theme"
-                >
+                <TabsTrigger value="light" class="ks-theme-tab" title="Light theme">
                   <SunIcon class="size-4" />
                 </TabsTrigger>
-                <TabsTrigger
-                  value="dark"
-                  class="ks-theme-tab"
-                  title="Dark theme"
-                >
+                <TabsTrigger value="dark" class="ks-theme-tab" title="Dark theme">
                   <MoonIcon class="size-4" />
                 </TabsTrigger>
-                <TabsTrigger
-                  value="auto"
-                  class="ks-theme-tab"
-                  title="Auto (system)"
-                >
+                <TabsTrigger value="auto" class="ks-theme-tab" title="Auto (system)">
                   <LaptopIcon class="size-4" />
                 </TabsTrigger>
               </TabsList>
@@ -145,7 +119,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
               <a
                 href={href}
                 class:list={[
-                  "px-3 py-2 rounded-md text-sm transition-colors flex items-center",
+                  "flex items-center rounded-md px-3 py-2 text-sm transition-colors",
                   currentPath === href
                     ? "bg-muted text-foreground font-medium"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
@@ -153,7 +127,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
               >
                 {label}
                 {js && (
-                  <span class="ml-auto text-[10px] font-medium text-muted-foreground/70 border border-border/60 rounded px-1 py-0.5 leading-none">
+                  <span class="ml-auto rounded border border-border/60 px-1 py-0.5 text-[10px] leading-none font-medium text-muted-foreground/70">
                     JS
                   </span>
                 )}
@@ -163,86 +137,161 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
         </nav>
       </aside>
 
-      <main class="flex-1 min-w-0 pr-3 py-3">
-        <div class="bg-background rounded-2xl border border-border">
+      <main class="min-w-0 flex-1 py-3 pr-3" data-kitchen-sink-main>
+        <div class="rounded-2xl border border-border bg-background" data-kitchen-sink-panel>
           <slot />
         </div>
       </main>
     </div>
+
+    <script is:inline set:html={createPreviewPayloadScript} />
+    <script>
+      if (new URLSearchParams(window.location.search).get("embed") === "create") {
+        const body = document.body;
+        body.dataset.controller = [body.dataset.controller, "create-preview"]
+          .filter(Boolean)
+          .join(" ");
+        body.dataset.action = [
+          body.dataset.action,
+          "message@window->create-preview#receiveMessage",
+          "keydown.meta+p@document->create-preview#openNavigateShortcut",
+          "keydown.ctrl+p@document->create-preview#openNavigateShortcut",
+        ]
+          .filter(Boolean)
+          .join(" ");
+        import("@/stimulus/create");
+      }
+    </script>
+    <script>
+      (() => {
+        const picker = document.currentScript?.previousElementSibling;
+
+        if (!(picker instanceof HTMLElement)) {
+          return;
+        }
+
+        const tabsRoot = picker.querySelector('[data-slot="tabs"]');
+        if (!(tabsRoot instanceof HTMLElement)) {
+          return;
+        }
+
+        const parseThemeChoice = (value) =>
+          value === "light" || value === "dark" || value === "auto"
+            ? value
+            : "auto";
+
+        const themeChoice = parseThemeChoice(
+          document.documentElement.dataset.themeChoice,
+        );
+        const themeChoiceIndex =
+          themeChoice === "light" ? "0" : themeChoice === "dark" ? "1" : "2";
+
+        tabsRoot.dataset.defaultValue = themeChoice;
+        tabsRoot.dataset.value = themeChoice;
+        tabsRoot.dataset.themeChoiceIndex = themeChoiceIndex;
+      })();
+    </script>
+    <script>
+      import {
+        getThemeChoiceFromRoot,
+        parseStoredThemeChoice,
+        setThemeChoice,
+        syncThemeChoiceControls,
+      } from "starlight-theme-bejamas/lib/theme-choice";
+
+      class KsThemeSelect extends HTMLElement {
+        private tabsEl: HTMLDivElement | null = null;
+
+        private onTabsChange = (event: Event) => {
+          const value = (event as CustomEvent<{ value?: unknown }>).detail?.value;
+          if (typeof value !== "string") return;
+
+          const nextTheme = parseStoredThemeChoice(value);
+          const currentTheme = getThemeChoiceFromRoot(document.documentElement);
+          if (nextTheme === currentTheme) return;
+
+          setThemeChoice(nextTheme);
+        };
+
+        connectedCallback() {
+          this.tabsEl = this.querySelector<HTMLDivElement>('[data-slot="tabs"]');
+          syncThemeChoiceControls(
+            getThemeChoiceFromRoot(document.documentElement),
+            this,
+          );
+
+          if (this.tabsEl?.hasAttribute("data-theme-tabs-preloaded")) {
+            requestAnimationFrame(() => {
+              this.tabsEl?.removeAttribute("data-theme-tabs-preloaded");
+            });
+          }
+
+          this.tabsEl?.addEventListener("tabs:change", this.onTabsChange);
+        }
+
+        disconnectedCallback() {
+          this.tabsEl?.removeEventListener("tabs:change", this.onTabsChange);
+          this.tabsEl = null;
+        }
+      }
+
+      if (!customElements.get("ks-theme-select")) {
+        customElements.define("ks-theme-select", KsThemeSelect);
+      }
+    </script>
+
+    <style>
+      .ks-theme-tabs {
+        gap: 0;
+      }
+
+      .ks-theme-tab[data-state="active"] {
+        color: var(--foreground);
+      }
+
+      .ks-theme-tab[data-state="inactive"] {
+        color: var(--muted-foreground);
+      }
+
+      .ks-theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-indicator"],
+      .ks-theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-trigger"] {
+        transition: none;
+      }
+
+      .ks-theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-list"] {
+        position: relative;
+      }
+
+      .ks-theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-trigger"] {
+        color: var(--muted-foreground);
+      }
+
+      .ks-theme-tabs[data-theme-tabs-preloaded][data-value="light"]
+        [data-slot="tabs-trigger"][data-value="light"],
+      .ks-theme-tabs[data-theme-tabs-preloaded][data-value="dark"]
+        [data-slot="tabs-trigger"][data-value="dark"],
+      .ks-theme-tabs[data-theme-tabs-preloaded][data-value="auto"]
+        [data-slot="tabs-trigger"][data-value="auto"] {
+        color: var(--foreground);
+      }
+
+      .ks-theme-tabs[data-theme-tabs-preloaded] [data-slot="tabs-indicator"] {
+        top: 2px;
+        bottom: 2px;
+        height: calc(100% - 4px);
+        width: calc((100% - 4px) / 3);
+        left: 2px;
+      }
+
+      .ks-theme-tabs[data-theme-tabs-preloaded][data-theme-choice-index="1"]
+        [data-slot="tabs-indicator"] {
+        left: calc(2px + ((100% - 4px) / 3));
+      }
+
+      .ks-theme-tabs[data-theme-tabs-preloaded][data-theme-choice-index="2"]
+        [data-slot="tabs-indicator"] {
+        left: calc(2px + (((100% - 4px) / 3) * 2));
+      }
+    </style>
   </body>
 </html>
-
-<script>
-  type Theme = "auto" | "dark" | "light";
-  const storageKey = "starlight-theme";
-
-  const parseTheme = (theme: unknown): Theme =>
-    theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
-
-  const loadTheme = (): Theme =>
-    parseTheme(
-      typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
-    );
-
-  function storeTheme(theme: Theme): void {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem(
-        storageKey,
-        theme === "light" || theme === "dark" ? theme : "",
-      );
-    }
-  }
-
-  const getPreferredColorScheme = (): Theme =>
-    matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-
-  function onThemeChange(theme: Theme): void {
-    const resolved = theme === "auto" ? getPreferredColorScheme() : theme;
-    document.documentElement.dataset.theme = resolved;
-    document.documentElement.classList.remove("light", "dark");
-    document.documentElement.classList.add(resolved);
-    storeTheme(theme);
-    window.dispatchEvent(
-      new CustomEvent("theme-toggle-changed", { detail: { theme: resolved } }),
-    );
-    document
-      .querySelector<HTMLDivElement>("#ks-theme-tabs")
-      ?.dispatchEvent(
-        new CustomEvent("tabs:set", { detail: { value: theme } }),
-      );
-  }
-
-  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
-    if (loadTheme() === "auto") onThemeChange("auto");
-  });
-
-  class KsThemeSelect extends HTMLElement {
-    connectedCallback() {
-      const currentTheme = loadTheme();
-      onThemeChange(currentTheme);
-
-      const el = document.querySelector("#ks-theme-tabs");
-      el?.addEventListener("tabs:change", (e: any) => {
-        onThemeChange(parseTheme(e.detail.value));
-      });
-    }
-  }
-
-  if (!customElements.get("ks-theme-select")) {
-    customElements.define("ks-theme-select", KsThemeSelect);
-  }
-</script>
-
-<style>
-  .ks-theme-tabs {
-    gap: 0;
-  }
-
-  .ks-theme-tab[data-state="active"] {
-    color: var(--foreground);
-  }
-
-  .ks-theme-tab[data-state="inactive"] {
-    color: var(--muted-foreground);
-  }
-</style>

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "breadcrumb",
+  "type": "registry:ui",
+  "files": [
+    {
+      "path": "ui/breadcrumb/Breadcrumb.astro",
+      "type": "registry:ui",
+      "content": "---\n/**\n * @component Breadcrumb\n * @title Breadcrumb\n * @description A navigation path showing the user's location in the site hierarchy with links to parent pages.\n * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2543-3603&t=YFStJ3V8fXEO8QD8-4\n *\n * @preview\n *\n * <Breadcrumb>\n *   <BreadcrumbList>\n *     <BreadcrumbItem><a class=\"hover:text-foreground transition-colors\" href=\"/\">Home</a></BreadcrumbItem>\n *     <BreadcrumbSeparator />\n *     <BreadcrumbItem><a class=\"hover:text-foreground transition-colors\" href=\"/docs\">Docs</a></BreadcrumbItem>\n *     <BreadcrumbSeparator />\n *     <BreadcrumbItem><span class=\"text-foreground font-normal\" aria-current=\"page\">Page</span></BreadcrumbItem>\n *   </BreadcrumbList>\n * </Breadcrumb>\n *\n * @usage\n *\n * ```astro nocollapse\n * ---\n * import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbSeparator } from '@bejamas/ui/components/breadcrumb';\n * ---\n *\n * <Breadcrumb>\n *   <BreadcrumbList>\n *     <BreadcrumbItem><a href=\"/\">Home</a></BreadcrumbItem>\n *     <BreadcrumbSeparator />\n *     <BreadcrumbItem><span aria-current=\"page\">Page</span></BreadcrumbItem>\n *   </BreadcrumbList>\n * </Breadcrumb>\n * ```\n *\n * @examples\n *\n * ### Custom separator\n *\n *  <Breadcrumb>\n *    <BreadcrumbList>\n *       <BreadcrumbItem><a class=\"hover:text-foreground transition-colors\" href=\"/\">Home</a></BreadcrumbItem>\n *       <BreadcrumbSeparator>\n *         <SlashIcon />\n *       </BreadcrumbSeparator>\n *       <BreadcrumbItem><a class=\"hover:text-foreground transition-colors\" href=\"/docs\">Docs</a></BreadcrumbItem>\n *       <BreadcrumbSeparator>\n *         <SlashIcon />\n *       </BreadcrumbSeparator>\n *       <BreadcrumbItem><span class=\"text-foreground font-normal\" aria-current=\"page\">Page</span></BreadcrumbItem>\n *   </BreadcrumbList>\n * </Breadcrumb>\n */\n\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"nav\"> {\n  class?: string;\n}\n\nconst {\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<nav\n  {...rest}\n  aria-label=\"breadcrumb\"\n  data-slot=\"breadcrumb\"\n  class={cn(\"\", className)}\n>\n  <slot />\n</nav>\n\n"
+    },
+    {
+      "path": "ui/breadcrumb/BreadcrumbItem.astro",
+      "type": "registry:ui",
+      "content": "---\nimport { cva } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"li\"> {\n  class?: string;\n}\n\nconst {\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n\nconst itemVariants = cva(\"inline-flex items-center\");\n---\n\n<li\n  {...rest}\n  data-slot=\"breadcrumb-item\"\n  class={cn(\"gap-1\", itemVariants(), className)}\n>\n  <slot />\n</li>\n"
+    },
+    {
+      "path": "ui/breadcrumb/BreadcrumbList.astro",
+      "type": "registry:ui",
+      "content": "---\nimport { cva } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"ol\"> {\n  class?: string;\n}\n\nconst {\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n\nconst listVariants = cva(\n  \"flex flex-wrap items-center wrap-break-word\",\n);\n---\n\n<ol\n  {...rest}\n  data-slot=\"breadcrumb-list\"\n  class={cn(\"text-muted-foreground gap-1.5 text-xs/relaxed\", listVariants(), className)}\n>\n  <slot />\n</ol>\n"
+    },
+    {
+      "path": "ui/breadcrumb/BreadcrumbSeparator.astro",
+      "type": "registry:ui",
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\nimport SemanticIcon from \"../icon/SemanticIcon.astro\";\n\ninterface Props extends HTMLAttributes<\"li\"> {\n  class?: string;\n}\n\nconst {\n  class: className = \"\",\n  ...rest\n} = Astro.props as Props;\n---\n\n<li\n  {...rest}\n  role=\"presentation\"\n  aria-hidden=\"true\"\n  data-slot=\"breadcrumb-separator\"\n  class={cn(\"[&>svg]:size-3.5\", className)}\n>\n  <slot>\n    <SemanticIcon name=\"chevron-right\" class=\"\" />\n  </slot>\n</li>\n"
+    },
+    {
+      "path": "ui/breadcrumb/index.ts",
+      "type": "registry:ui",
+      "content": "export { default as Breadcrumb } from \"./Breadcrumb.astro\";\nexport { default as BreadcrumbList } from \"./BreadcrumbList.astro\";\nexport { default as BreadcrumbItem } from \"./BreadcrumbItem.astro\";\nexport { default as BreadcrumbSeparator } from \"./BreadcrumbSeparator.astro\";\n\n"
+    }
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "index",
+    "utils"
+  ]
+}

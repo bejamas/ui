@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  data-slot="field-title"
+  class={cn(
+    "cn-field-title",
+    "flex w-fit items-center leading-snug",
+    className,
+  )}
+  {...rest}
+>
+  <slot />
+</div>

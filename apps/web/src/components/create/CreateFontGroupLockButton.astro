@@ -1,0 +1,53 @@
+---
+import type { CreateFontGroup } from "@/utils/create-sidebar";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props {
+  group: CreateFontGroup;
+  class?: string;
+}
+
+const { group, class: className = "" } = Astro.props as Props;
+---
+
+<button
+  type="button"
+  title="Lock font group"
+  aria-label="Lock font group"
+  data-create-font-group-lock-button
+  data-create-font-group={group}
+  data-locked="false"
+  data-action="click->create-sidebar#toggleFontGroupLock"
+  data-create-sidebar-font-group-param={group}
+  class={cn(
+    "group/create-lock flex size-3.5 cursor-pointer items-center justify-center rounded opacity-0 ring-white/40 transition-opacity outline-none group-hover/font-group:opacity-100 group-has-[:focus-visible]/font-group:opacity-100 focus-visible:opacity-100 focus-visible:ring-1 data-[locked=true]:opacity-100 pointer-coarse:hidden text-white/60 hover:text-white",
+    className,
+  )}
+>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="size-3.5 group-data-[locked=true]/create-lock:hidden"
+    aria-hidden="true"
+  >
+    <rect x="5" y="11" width="14" height="10" rx="2" />
+    <path d="M9 11V8a3 3 0 0 1 5.34-1.86" />
+  </svg>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="hidden size-3.5 group-data-[locked=true]/create-lock:block"
+    aria-hidden="true"
+  >
+    <rect x="5" y="11" width="14" height="10" rx="2" />
+    <path d="M8 11V8a4 4 0 1 1 8 0v3" />
+  </svg>
+</button>

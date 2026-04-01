@@ -1,0 +1,25 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/command/CommandEmpty.astro directly.
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  hidden?: boolean;
+  class?: string;
+}
+
+const {
+  hidden = true,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  hidden={hidden}
+  data-slot="command-empty"
+  class={cn("py-6 text-center text-sm", className)}
+>
+  <slot />
+</div>

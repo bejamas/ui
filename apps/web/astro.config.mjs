@@ -13,10 +13,45 @@ import { posthog } from "./src/utils/posthog";
 import alpinejs from "@astrojs/alpinejs";
 
 const isVercel = process.env.VERCEL === "1";
+const DYNAMIC_HTML_ROUTE_COMPONENTS = new Set([
+  "src/pages/kitchen-sink/forms-actions.astro",
+  "src/pages/t/[id].astro",
+]);
+const DYNAMIC_ENDPOINT_COMPONENTS = new Set([
+  "src/pages/init.ts",
+  "src/pages/r/themes/current-theme.css.ts",
+  "src/pages/r/themes/[slug].json.ts",
+]);
+const staticFirstRoutes = {
+  name: "static-first-routes",
+  hooks: {
+    "astro:route:setup"({ route }) {
+      if (!route.component.startsWith("src/pages/")) {
+        return;
+      }
+
+      if (
+        route.component.startsWith("src/pages/api/") ||
+        DYNAMIC_HTML_ROUTE_COMPONENTS.has(route.component) ||
+        DYNAMIC_ENDPOINT_COMPONENTS.has(route.component)
+      ) {
+        route.prerender = false;
+        return;
+      }
+
+      route.prerender = true;
+    },
+  },
+};
 
 export default defineConfig({
   trailingSlash: "never",
   output: "server",
+  experimental: {
+    queuedRendering: {
+      enabled: true,
+    },
+  },
   site: "https://ui.bejamas.com",
   redirects: {
     "/docs": "/docs/introduction",
@@ -44,10 +79,10 @@ export default defineConfig({
       }),
     },
   },
-  prefetch: {
-    defaultStrategy: "viewport",
-    prefetchAll: true,
-  },
+  // prefetch: {
+  //   defaultStrategy: "viewport",
+  //   prefetchAll: true,
+  // },
   integrations: [
     starlight({
       favicon: "/favicon.ico",
@@ -58,19 +93,25 @@ export default defineConfig({
           nav: [
             { label: "Docs", href: "/docs/introduction" },
             { label: "Components", href: "/components" },
-            { label: "Themes", href: "/themes" },
+            { label: "Create", href: "/create" },
           ],
           components: {
-            button: "@bejamas/ui/components/button",
-            select: "@bejamas/ui/components/select",
+            button: "@bejamas/registry/ui/button",
+            select: "@bejamas/registry/ui/select",
+            Head: "./src/components/starlight/Head.astro",
             Header: "./src/components/starlight/Header.astro",
+            Hero: "./src/components/starlight/Hero.astro",
+            Search: "./src/components/starlight/Search.astro",
             ThemeSelect: "./src/components/ThemeSwitcher.astro",
             PageTitle: "./src/components/PageTitle.astro",
           },
         }),
       ],
       components: {
+        Head: "./src/components/starlight/Head.astro",
         Header: "./src/components/starlight/Header.astro",
+        Hero: "./src/components/starlight/Hero.astro",
+        Search: "./src/components/starlight/Search.astro",
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
         PageTitle: "./src/components/PageTitle.astro",
       },
@@ -101,7 +142,7 @@ export default defineConfig({
           ],
         },
       ],
-      customCss: ["./src/styles/globals.css"],
+      customCss: ["./src/styles/theme-fonts.css", "./src/styles/globals.css"],
       logo: {
         alt: "bejamas/ui",
         light: "./src/assets/logo-3.svg",
@@ -114,6 +155,7 @@ export default defineConfig({
           attrs: {
             href: "/r/themes/current-theme.css",
             rel: "stylesheet",
+            "data-current-theme-stylesheet": "",
           },
         },
         {
@@ -237,6 +279,7 @@ export default defineConfig({
       ],
     }),
     alpinejs(),
+    staticFirstRoutes,
   ],
   vite: {
     plugins: [tailwindcss()],

@@ -1,10 +1,12 @@
 import path from "path";
 import { BUILTIN_REGISTRIES } from "@/src/registry/constants";
 import {
+  BEJAMAS_COMPONENTS_SCHEMA_URL,
   configSchema,
+  parseRawConfigWithCompatibility,
   rawConfigSchema,
   workspaceConfigSchema,
-} from "shadcn/schema";
+} from "@/src/schema";
 import { getProjectInfo } from "@/src/utils/get-project-info";
 import { highlighter } from "@/src/utils/highlighter";
 import { resolveImport } from "@/src/utils/resolve-import";
@@ -27,6 +29,22 @@ export const explorer = cosmiconfig("components", {
 });
 
 export type Config = z.infer<typeof configSchema>;
+const warnedDeprecatedConfigPaths = new Set<string>();
+
+function warnDeprecatedConfigKeys(componentPath: string, keys: string[]) {
+  if (keys.length === 0 || warnedDeprecatedConfigPaths.has(componentPath)) {
+    return;
+  }
+
+  warnedDeprecatedConfigPaths.add(componentPath);
+  process.stderr.write(
+    `${highlighter.warn(
+      `Deprecated components.json keys in ${componentPath}: ${keys.join(
+        ", ",
+      )}. Bejamas ignores these keys. Remove them and point $schema to ${BEJAMAS_COMPONENTS_SCHEMA_URL}.`,
+    )}\n`,
+  );
+}
 
 export async function getConfig(cwd: string) {
   const config = await getRawConfig(cwd);
@@ -37,7 +55,9 @@ export async function getConfig(cwd: string) {
 
   // Set default icon library if not provided.
   if (!config.iconLibrary) {
-    config.iconLibrary = config.style === "new-york" ? "radix" : "lucide";
+    config.iconLibrary = config.style?.startsWith("new-york")
+      ? "radix"
+      : "lucide";
   }
 
   return await resolveConfigPaths(cwd, config);
@@ -58,9 +78,7 @@ export async function resolveConfigPaths(
 
   if (tsConfig.resultType === "failed") {
     throw new Error(
-      `Failed to load ${config.tsx ? "tsconfig" : "jsconfig"}.json. ${
-        tsConfig.message ?? ""
-      }`.trim(),
+      `Failed to load tsconfig.json or jsconfig.json. ${tsConfig.message ?? ""}`.trim(),
     );
   }
 
@@ -111,7 +129,10 @@ export async function getRawConfig(
       return null;
     }
 
-    const config = rawConfigSchema.parse(configResult.config);
+    const { config, deprecatedKeys } = parseRawConfigWithCompatibility(
+      configResult.config,
+    );
+    warnDeprecatedConfigKeys(configResult.filepath, deprecatedKeys);
 
     // Check if user is trying to override built-in registries
     if (config.registries) {
@@ -214,8 +235,8 @@ export function findCommonRoot(cwd: string, resolvedPath: string) {
 
 // TODO: Cache this call.
 export async function getTargetStyleFromConfig(cwd: string, fallback: string) {
-  const projectInfo = await getProjectInfo(cwd);
-  return projectInfo?.tailwindVersion === "v4" ? "new-york-v4" : fallback;
+  await getProjectInfo(cwd);
+  return fallback;
 }
 
 type DeepPartial<T> = {
@@ -248,8 +269,6 @@ export function createConfig(partial?: DeepPartial<Config>): Config {
       baseColor: "",
       cssVariables: false,
     },
-    rsc: false,
-    tsx: true,
     aliases: {
       components: "",
       utils: "",

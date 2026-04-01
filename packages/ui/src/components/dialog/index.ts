@@ -1,3 +1,4 @@
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dialog/index.ts directly.
 export { default as Dialog } from "./Dialog.astro";
 export { default as DialogTitle } from "./DialogTitle.astro";
 export { default as DialogDescription } from "./DialogDescription.astro";

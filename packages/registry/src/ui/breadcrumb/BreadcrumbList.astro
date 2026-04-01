@@ -1,0 +1,26 @@
+---
+import { cva } from "class-variance-authority";
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"ol"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+
+const listVariants = cva(
+  "flex flex-wrap items-center wrap-break-word",
+);
+---
+
+<ol
+  {...rest}
+  data-slot="breadcrumb-list"
+  class={cn("cn-breadcrumb-list", listVariants(), className)}
+>
+  <slot />
+</ol>

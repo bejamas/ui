@@ -1,10 +1,11 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/dialog/DialogContent.astro directly.
 import { cn } from "@bejamas/ui/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
 import DialogClose from "./DialogClose.astro";
 import DialogOverlay from "./DialogOverlay.astro";
-import { X } from "@lucide/astro";
+import SemanticIcon from "../icon/SemanticIcon.astro";
 
 interface Props extends HTMLAttributes<"div"> {
   showCloseButton?: boolean;
@@ -23,8 +24,7 @@ const {
     data-slot="dialog-content"
     hidden
     class={cn(
-      "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-250 ease outline-none sm:max-w-lg",
-      "transition-discrete [--tw-animation-fill-mode:both]",
+      "bg-background data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/10 grid max-w-[calc(100%-2rem)] gap-6 rounded-xl p-6 text-sm ring-1 duration-100 sm:max-w-md fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none",
       className,
     )}
     {...rest}
@@ -32,8 +32,8 @@ const {
     <slot />
     {
       showCloseButton && (
-        <DialogClose class="absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-offset-2 focus:outline-hidden focus:outline-none focus:ring-0 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4">
-          <X />
+        <DialogClose>
+          <SemanticIcon name="x" />
           <span class="sr-only">Close</span>
         </DialogClose>
       )

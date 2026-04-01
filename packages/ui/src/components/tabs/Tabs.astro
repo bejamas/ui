@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/tabs/Tabs.astro directly.
 /**
  * @component Tabs
  * @title Tabs
@@ -287,7 +288,10 @@ const {
   data-slot="tabs"
   data-orientation={orientation}
   data-default-value={defaultValue}
+  data-horizontal={orientation === "horizontal" ? "true" : undefined}
+  data-vertical={orientation === "vertical" ? "true" : undefined}
   class={cn(
+    "gap-2",
     "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
     className,
   )}

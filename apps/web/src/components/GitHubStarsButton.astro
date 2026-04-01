@@ -1,6 +1,6 @@
 ---
-import { Button } from "@bejamas/ui/components/button";
-import { Skeleton } from "@bejamas/ui/components/skeleton";
+import { Button } from "@bejamas/registry/ui/button";
+import { Skeleton } from "@bejamas/registry/ui/skeleton";
 import { GithubIcon } from "@lucide/astro";
 import GitHubLink from "./GitHubLink.astro";
 
@@ -19,10 +19,122 @@ const githubUrl = "https://github.com/bejamas/ui";
   target="_blank"
   rel="noopener noreferrer"
   class:list={["gap-1.5 w-16", className]}
+  data-github-stars-button
   aria-label="View GitHub repository stars"
 >
   <GithubIcon class="size-4" />
   <GitHubLink server:defer>
-    <Skeleton class="w-8.5 h-5 rounded-sm" slot="fallback" />
+    <span
+      class="w-8.5 items-center flex justify-center text-center"
+      data-github-stars-display
+      slot="fallback"
+    >
+      <Skeleton class="w-8.5 h-5 rounded-sm" />
+    </span>
   </GitHubLink>
 </Button>
+
+<script is:inline>
+  (() => {
+    const script = document.currentScript;
+    const button = script?.previousElementSibling;
+
+    if (!(button instanceof HTMLElement) || !button.matches("[data-github-stars-button]")) {
+      return;
+    }
+
+    const STORAGE_KEY = "bejamas:github-stars";
+    const MAX_AGE = 1000 * 60 * 60 * 24;
+
+    const readCache = () => {
+      const read = (storage) => {
+        try {
+          const raw = storage.getItem(STORAGE_KEY);
+          if (!raw) {
+            return null;
+          }
+
+          const parsed = JSON.parse(raw);
+          if (
+            !parsed ||
+            typeof parsed.value !== "string" ||
+            !parsed.value ||
+            typeof parsed.timestamp !== "number"
+          ) {
+            return null;
+          }
+
+          if (Date.now() - parsed.timestamp > MAX_AGE) {
+            return null;
+          }
+
+          return parsed.value;
+        } catch {
+          return null;
+        }
+      };
+
+      return read(localStorage) || read(sessionStorage);
+    };
+
+    const writeCache = (value) => {
+      const payload = JSON.stringify({
+        value,
+        timestamp: Date.now(),
+      });
+
+      try {
+        localStorage.setItem(STORAGE_KEY, payload);
+      } catch {}
+
+      try {
+        sessionStorage.setItem(STORAGE_KEY, payload);
+      } catch {}
+    };
+
+    const applyCachedValue = () => {
+      const cachedValue = readCache();
+      if (!cachedValue) {
+        return;
+      }
+
+      const display = button.querySelector("[data-github-stars-display]");
+      if (!(display instanceof HTMLElement)) {
+        return;
+      }
+
+      display.textContent = cachedValue;
+      display.dataset.githubStarsState = "cached";
+    };
+
+    const syncLiveValue = () => {
+      const liveValue = button
+        .querySelector("[data-github-stars-value]")
+        ?.getAttribute("data-github-stars-value");
+
+      if (!liveValue) {
+        return false;
+      }
+
+      writeCache(liveValue);
+      return true;
+    };
+
+    applyCachedValue();
+
+    if (syncLiveValue()) {
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      if (syncLiveValue()) {
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(button, {
+      childList: true,
+      subtree: true,
+    });
+  })();
+</script>

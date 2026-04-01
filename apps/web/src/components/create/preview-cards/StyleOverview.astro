@@ -1,0 +1,84 @@
+---
+import { Badge } from "@bejamas/registry/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@bejamas/registry/ui/tooltip";
+
+interface Props {
+  styleLabel?: string;
+  fontLabel?: string;
+  fontHeadingLabel?: string | null;
+  radiusLabel?: string;
+}
+
+const {
+  styleLabel,
+  fontLabel,
+  fontHeadingLabel = null,
+  radiusLabel = "default",
+} = Astro.props as Props;
+
+const overviewTokens = [
+  "--background",
+  "--foreground",
+  "--card",
+  "--popover",
+  "--primary",
+  "--secondary",
+  "--muted",
+  "--accent",
+  "--destructive",
+  "--border",
+  "--input",
+  "--ring",
+] as const;
+
+const summary =
+  [
+    styleLabel,
+    fontHeadingLabel && fontHeadingLabel !== fontLabel
+      ? fontHeadingLabel
+      : fontLabel,
+  ]
+    .filter(Boolean)
+    .join(" - ") || "Juno - Inter";
+---
+
+<Card class="w-full">
+  <CardHeader class="gap-0">
+    <CardTitle class="text-2xl font-medium" data-create-style-font-summary>
+      {summary}
+    </CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div class="grid grid-cols-3 gap-3 sm:grid-cols-4 xl:grid-cols-6">
+      {
+        overviewTokens.map((token) => (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div class="flex flex-col items-center gap-2">
+                <div
+                  class="relative aspect-square w-full rounded-lg bg-(--color) after:absolute after:inset-0 after:rounded-lg after:border after:border-border after:mix-blend-darken dark:after:mix-blend-lighten"
+                  style={{ "--color": `var(${token})` }}
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{token}</p>
+            </TooltipContent>
+          </Tooltip>
+        ))
+      }
+    </div>
+  </CardContent>
+</Card>

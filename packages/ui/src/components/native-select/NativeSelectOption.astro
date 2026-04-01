@@ -1,4 +1,5 @@
 ---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/native-select/NativeSelectOption.astro directly.
 import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"option"> {}
@@ -6,4 +7,4 @@ interface Props extends HTMLAttributes<"option"> {}
 const { ...rest } = Astro.props as Props;
 ---
 
-<option data-slot="native-select-option" {...rest}><slot /></option>
+<option data-slot="native-select-option" {...rest} class=""><slot /></option>

@@ -49,10 +49,8 @@
   }
 
   :root {
-    --sl-font: "Inter Variable", sans-serif;
-    --sl-font-mono: "Geist Mono", monospace;
-
-    --radius: 0.5rem;
+    --sl-font: var(--font-sans);
+    --sl-font-mono: var(--font-mono);
 
     --sl-color-text-accent: var(--accent-foreground);
 
@@ -74,8 +72,7 @@
 
     --sl-color-gray-2: var(--input);
 
-    --default-font-family: "Inter Variable", sans-serif;
-    --font-sans: "Inter Variable", sans-serif;
+    --default-font-family: var(--font-sans);
 
     --sl-color-bg: var(--background);
     --sl-color-fg: var(--foreground);
@@ -107,6 +104,7 @@
     --ec-frm-inlBtnBgHoverOrFocusOpa: 1;
     --ec-frm-trmIcon: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBMaWNlbnNlOiBNSVQuIE1hZGUgYnkgcGhvc3Bob3I6IGh0dHBzOi8vZ2l0aHViLmNvbS9waG9zcGhvci1pY29ucy9waG9zcGhvci1pY29ucyAtLT4KPHN2ZyBmaWxsPSIjMDAwMDAwIiB3aWR0aD0iMThweCIgaGVpZ2h0PSIxOHB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgaWQ9IkZsYXQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTExNy4zMTQ5NCwxMzMuOTc5NDlsLTcyLDY0YTguMDAwMTgsOC4wMDAxOCwwLDAsMS0xMC42Mjk4OC0xMS45NTlMOTkuOTU4NSwxMjgsMzQuNjg1MDYsNjkuOTc5NDlhOC4wMDAxOCw4LjAwMDE4LDAsMCwxLDEwLjYyOTg4LTExLjk1OWw3Miw2NGE4LjAwMDU0LDguMDAwNTQsMCwwLDEsMCwxMS45NTlaTTIxNS45OTQxNCwxODRoLTk2YTgsOCwwLDAsMCwwLDE2aDk2YTgsOCwwLDEsMCwwLTE2WiIvPgo8L3N2Zz4=);
     --ecGtrBrdWd: 5px;
+    --sl-nav-gap: calc(var(--spacing) * 2);
   }
 
   @media (min-width: 50em) {
@@ -284,15 +282,6 @@
     padding-inline: 0.5rem;
   }
 
-  site-search button {
-    --tw-shadow: var(--shadow-sm);
-    box-shadow:
-      var(--tw-inset-shadow), var(--tw-inset-ring-shadow),
-      var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    border-radius: calc(var(--radius) - 2px);
-    max-width: calc(var(--spacing) * 50);
-  }
-
   .expressive-code .frame {
     box-shadow: none;
   }
@@ -419,21 +408,6 @@
   .sl-markdown-content a:not(:where(.not-content *)) {
     text-decoration: underline;
     text-underline-offset: 4px;
-  }
-
-  button[data-open-modal] {
-    border-color: var(--border);
-    color: var(--foreground);
-    box-shadow: none;
-    background-color: var(--background);
-    height: calc(var(--spacing) * 9);
-  }
-
-  button[data-open-modal] kbd {
-    background-color: var(--muted);
-    color: var(--muted-foreground);
-    border-radius: calc(var(--radius) - 4px);
-    gap: 0;
   }
 
   .tablist-wrapper ~ [role="tabpanel"] {

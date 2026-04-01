@@ -1,0 +1,260 @@
+import { z } from "zod";
+import { BASE_COLORS } from "./catalog/base-colors";
+import { bodyFonts, headingFonts } from "./catalog/fonts";
+import { STYLES } from "./catalog/styles";
+import { THEMES } from "./catalog/themes";
+import {
+  DEFAULT_PRESET_CONFIG,
+  PRESET_ICON_LIBRARIES,
+  PRESET_MENU_ACCENTS,
+  PRESET_MENU_COLORS,
+  PRESET_RADII,
+  type PresetConfig,
+} from "./preset";
+
+export const TEMPLATE_VALUES = [
+  "astro",
+  "astro-monorepo",
+  "astro-with-component-docs-monorepo",
+] as const;
+
+export type TemplateValue = (typeof TEMPLATE_VALUES)[number];
+export const RTL_LANGUAGE_VALUES = ["ar", "fa", "he"] as const;
+export const APP_LANGUAGE_VALUES = ["en", ...RTL_LANGUAGE_VALUES] as const;
+export const DEFAULT_LANGUAGE = "en" as const;
+
+export type RtlLanguageValue = (typeof RTL_LANGUAGE_VALUES)[number];
+export type AppLanguageValue = (typeof APP_LANGUAGE_VALUES)[number];
+
+const FONT_VALUES = bodyFonts.map((font) => font.name.replace("font-", "")) as [
+  string,
+  ...string[],
+];
+const FONT_HEADING_VALUES = ["inherit", ...FONT_VALUES] as const;
+
+export type FontValue = (typeof FONT_VALUES)[number];
+export type FontHeadingValue = (typeof FONT_HEADING_VALUES)[number];
+
+export const designSystemConfigSchema = z
+  .object({
+    style: z.enum(STYLES.map((style) => style.name) as [string, ...string[]]),
+    baseColor: z.enum(
+      BASE_COLORS.map((color) => color.name) as [string, ...string[]],
+    ),
+    theme: z.enum(THEMES.map((theme) => theme.name) as [string, ...string[]]),
+    iconLibrary: z.enum(PRESET_ICON_LIBRARIES),
+    font: z.enum(FONT_VALUES),
+    fontHeading: z.enum(FONT_HEADING_VALUES).default("inherit"),
+    radius: z.enum(PRESET_RADII),
+    menuAccent: z.enum(PRESET_MENU_ACCENTS),
+    menuColor: z.enum(PRESET_MENU_COLORS),
+    template: z.enum(TEMPLATE_VALUES).default("astro"),
+    rtl: z.boolean().default(false),
+    rtlLanguage: z.enum(RTL_LANGUAGE_VALUES).default("ar"),
+  })
+  .superRefine((config, context) => {
+    if (
+      !getThemesForBaseColor(config.baseColor).some(
+        (theme) => theme.name === config.theme,
+      )
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: `Theme "${config.theme}" is not available for base color "${config.baseColor}".`,
+        path: ["theme"],
+      });
+    }
+  });
+
+export type DesignSystemConfig = z.infer<typeof designSystemConfigSchema>;
+
+export const DEFAULT_DESIGN_SYSTEM_CONFIG: DesignSystemConfig = {
+  ...DEFAULT_PRESET_CONFIG,
+  template: "astro",
+  rtl: false,
+  rtlLanguage: "ar",
+};
+
+const RADIUS_VALUES = {
+  default: "0.625rem",
+  none: "0",
+  small: "0.45rem",
+  medium: "0.625rem",
+  large: "0.875rem",
+} as const satisfies Record<DesignSystemConfig["radius"], string>;
+
+const STYLE_DEFAULT_RADII = {
+  juno: "default",
+  vega: "default",
+  nova: "default",
+  lyra: "none",
+  maia: "large",
+  mira: "default",
+  luma: "default",
+} as const satisfies Record<
+  DesignSystemConfig["style"],
+  DesignSystemConfig["radius"]
+>;
+
+const STYLE_LOCKED_VALUES = {
+  lyra: {
+    radius: "none",
+  },
+} as const satisfies Partial<
+  Record<DesignSystemConfig["style"], Partial<Pick<DesignSystemConfig, "radius">>>
+>;
+
+const SHARED_SHADCN_STYLE_VALUES = [
+  "vega",
+  "nova",
+  "lyra",
+  "maia",
+  "mira",
+  "luma",
+] as const satisfies readonly DesignSystemConfig["style"][];
+
+export function getThemesForBaseColor(baseColorName: string) {
+  const baseColorNames = BASE_COLORS.map((baseColor) => baseColor.name);
+
+  return THEMES.filter((theme) => {
+    if (theme.name === baseColorName) {
+      return true;
+    }
+
+    return !baseColorNames.includes(theme.name);
+  });
+}
+
+export function getBaseColor(name: DesignSystemConfig["baseColor"]) {
+  return BASE_COLORS.find((color) => color.name === name);
+}
+
+export function getTheme(name: DesignSystemConfig["theme"]) {
+  return THEMES.find((theme) => theme.name === name);
+}
+
+export function getStyle(name: DesignSystemConfig["style"]) {
+  return STYLES.find((style) => style.name === name);
+}
+
+export function isSharedShadcnStyle(style: DesignSystemConfig["style"]) {
+  return SHARED_SHADCN_STYLE_VALUES.includes(
+    style as (typeof SHARED_SHADCN_STYLE_VALUES)[number],
+  );
+}
+
+export function getStyleId(style: DesignSystemConfig["style"]) {
+  return `bejamas-${style}`;
+}
+
+export function getStyleDefaultRadius(style: DesignSystemConfig["style"]) {
+  return STYLE_DEFAULT_RADII[style as keyof typeof STYLE_DEFAULT_RADII];
+}
+
+export function getStyleLockedConfig(style: DesignSystemConfig["style"]) {
+  return STYLE_LOCKED_VALUES[style as keyof typeof STYLE_LOCKED_VALUES] ?? {};
+}
+
+export function getLockedStyleValue<
+  Key extends keyof ReturnType<typeof getStyleLockedConfig>,
+>(
+  style: DesignSystemConfig["style"],
+  key: Key,
+) {
+  return getStyleLockedConfig(style)[key];
+}
+
+export function isStyleOptionLocked(
+  style: DesignSystemConfig["style"],
+  key: keyof Pick<DesignSystemConfig, "radius">,
+) {
+  return getLockedStyleValue(style, key) !== undefined;
+}
+
+export function normalizeDesignSystemConfig(config: DesignSystemConfig) {
+  const normalizedFontHeading =
+    config.fontHeading === config.font ? "inherit" : config.fontHeading;
+  const normalizedMenuAccent =
+    config.menuAccent === "bold" && isTranslucentMenuColor(config.menuColor)
+      ? "subtle"
+      : config.menuAccent;
+
+  return {
+    ...config,
+    fontHeading: normalizedFontHeading,
+    menuAccent: normalizedMenuAccent,
+    ...getStyleLockedConfig(config.style),
+  };
+}
+
+export function resolveEffectiveRadius(
+  style: DesignSystemConfig["style"],
+  radius: DesignSystemConfig["radius"],
+) {
+  const lockedRadius = getLockedStyleValue(style, "radius");
+  if (lockedRadius) {
+    return lockedRadius;
+  }
+
+  return radius === "default" ? getStyleDefaultRadius(style) : radius;
+}
+
+export function getRadiusValue(radius: DesignSystemConfig["radius"]) {
+  return RADIUS_VALUES[radius];
+}
+
+export function isInvertedMenuColor(
+  menuColor: DesignSystemConfig["menuColor"],
+) {
+  return (
+    menuColor === "inverted" || menuColor === "inverted-translucent"
+  );
+}
+
+export function isTranslucentMenuColor(
+  menuColor: DesignSystemConfig["menuColor"],
+) {
+  return (
+    menuColor === "default-translucent" ||
+    menuColor === "inverted-translucent"
+  );
+}
+
+export function getFontValue(name: FontValue) {
+  return bodyFonts.find((font) => font.name === `font-${name}`);
+}
+
+export function getHeadingFontValue(
+  name: Exclude<FontHeadingValue, "inherit">,
+) {
+  return headingFonts.find((font) => font.name === `font-heading-${name}`);
+}
+
+export function getInheritedHeadingFontValue(font: FontValue) {
+  return `var(${getFontValue(font)?.font.variable ?? "--font-sans"})`;
+}
+
+export function getFontPackageName(name: FontValue) {
+  return `@fontsource-variable/${name}`;
+}
+
+export function getDocumentLanguage(
+  config: Pick<DesignSystemConfig, "rtl" | "rtlLanguage">,
+): AppLanguageValue {
+  return config.rtl ? config.rtlLanguage : DEFAULT_LANGUAGE;
+}
+
+export function getDocumentDirection(config: Pick<DesignSystemConfig, "rtl">) {
+  return config.rtl ? "rtl" : "ltr";
+}
+
+export function mergeDesignSystemConfig(
+  partial?: Partial<DesignSystemConfig> & Partial<PresetConfig>,
+) {
+  return normalizeDesignSystemConfig(
+    designSystemConfigSchema.parse({
+      ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+      ...partial,
+    }),
+  );
+}

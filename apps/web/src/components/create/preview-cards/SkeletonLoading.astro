@@ -1,0 +1,22 @@
+---
+import { Card, CardContent } from "@bejamas/registry/ui/card";
+import { Skeleton } from "@bejamas/registry/ui/skeleton";
+---
+
+<Card class="w-full">
+  <CardContent class="space-y-6">
+    <div class="flex items-center gap-4">
+      <Skeleton class="size-12 rounded-full" />
+      <div class="grid flex-1 gap-2">
+        <Skeleton class="h-4 w-1/2" />
+        <Skeleton class="h-4 w-2/3" />
+      </div>
+    </div>
+    <Skeleton class="aspect-[4/3] w-full rounded-xl" />
+    <div class="grid gap-2">
+      <Skeleton class="h-4 w-full" />
+      <Skeleton class="h-4 w-11/12" />
+      <Skeleton class="h-4 w-2/3" />
+    </div>
+  </CardContent>
+</Card>

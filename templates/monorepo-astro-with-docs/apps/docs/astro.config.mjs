@@ -1,14 +1,30 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 
 import starlightThemeBejamas from "starlight-theme-bejamas";
 
+// bejamas:astro-fonts:start
+/** @type {NonNullable<import("astro/config").AstroUserConfig["fonts"]>} */
+const BEJAMAS_ASTRO_FONTS = [
+  {
+    provider: fontProviders.fontsource(),
+    name: "Geist",
+    cssVariable: "--font-sans",
+    subsets: ["latin"],
+  },
+];
+// bejamas:astro-fonts:end
+
 // https://astro.build/config
 export default defineConfig({
+  fonts: BEJAMAS_ASTRO_FONTS,
   integrations: [
     starlight({
+      components: {
+        Head: "./src/components/Head.astro",
+      },
       plugins: [
         starlightThemeBejamas({
           nav: [
