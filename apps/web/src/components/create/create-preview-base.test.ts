@@ -51,6 +51,9 @@ describe("create preview base layer", () => {
     const preferences = read(
       "apps/web/src/components/create/preview-cards/Preferences.astro",
     );
+    const observabilityCard = read(
+      "apps/web/src/components/create/preview-cards/ObservabilityCard.astro",
+    );
     const previewController = read(
       "apps/web/src/stimulus/controllers/create_preview_controller.ts",
     );
@@ -137,8 +140,16 @@ describe("create preview base layer", () => {
     expect(preferences).toContain("@bejamas/registry/ui/select");
     expect(preferences).toContain("@bejamas/registry/ui/switch");
     expect(preferences).toContain("FieldSeparator");
+    expect(observabilityCard).toContain(
+      "https://gradient.bejamas.com/presets/bejamas/marine.png",
+    );
+    expect(observabilityCard).not.toContain("/api/gradient.png");
     expect(previewController).toContain("[data-create-style-font-summary]");
+    expect(previewController).toContain("import { syncGradientImages }");
     expect(previewController).toContain("syncMenuSurfaceElements(");
+    expect(previewController).toContain(
+      "syncGradientImages({ theme: config.theme });",
+    );
     expect(previewController).toContain(
       "[data-create-menu-preview], .cn-menu-target, [data-menu-translucent]",
     );
@@ -159,6 +170,10 @@ describe("create preview base layer", () => {
     const card = read("packages/registry/src/ui/card/Card.astro");
 
     expect(card).toContain('class={cn("cn-card"');
+    expect(card).toContain(
+      "https://gradient.bejamas.com/presets/bejamas/marine.png",
+    );
+    expect(card).not.toContain("/api/gradient.png");
     expect(card).not.toContain("bg-card overflow-clip text-card-foreground");
     expect(card).not.toContain("rounded-xl ring-1 ring-border py-6 shadow-sm");
   });

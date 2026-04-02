@@ -4,6 +4,7 @@ import {
   CREATE_THEME_GROUP_LABELS,
   emptyThemeOverrides,
   formatThemeTokenLabel,
+  getCreateThemeImagePreset,
   getCreateThemeSeedGroups,
   getCreateThemeSeedOption,
   hasThemeOverrides,
@@ -113,5 +114,25 @@ describe("create theme helpers", () => {
       color: "oklch(91.98% 0.1905 128.5)",
       group: "bejamas",
     });
+  });
+
+  test("builds preset image metadata for built-in theme seeds", () => {
+    expect(getCreateThemeImagePreset("bejamas-blue")).toEqual({
+      value: "bejamas-blue",
+      label: "Marine",
+      slug: "marine",
+      group: "bejamas",
+      url: "https://gradient.bejamas.com/presets/bejamas/marine.png",
+    });
+
+    expect(getCreateThemeImagePreset("amber")).toEqual({
+      value: "amber",
+      label: "Amber",
+      slug: "amber",
+      group: "tailwind",
+      url: "https://gradient.bejamas.com/presets/tailwind/amber.png",
+    });
+
+    expect(getCreateThemeImagePreset("custom-theme-42")).toBeNull();
   });
 });

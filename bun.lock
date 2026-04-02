@@ -107,7 +107,7 @@
     },
     "packages/bejamas": {
       "name": "bejamas",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "bin": {
         "bejamas": "./dist/index.js",
       },
@@ -154,23 +154,23 @@
       "version": "0.1.0",
       "dependencies": {
         "@bejamas/semantic-icons": "workspace:*",
-        "@data-slot/accordion": "^0.2.165",
-        "@data-slot/collapsible": "^0.2.165",
-        "@data-slot/combobox": "^0.2.165",
-        "@data-slot/command": "^0.2.165",
-        "@data-slot/dialog": "^0.2.165",
-        "@data-slot/dropdown-menu": "^0.2.165",
-        "@data-slot/hover-card": "^0.2.165",
-        "@data-slot/navigation-menu": "^0.2.165",
-        "@data-slot/popover": "^0.2.165",
-        "@data-slot/radio-group": "^0.2.165",
-        "@data-slot/select": "^0.2.165",
-        "@data-slot/slider": "^0.2.165",
-        "@data-slot/switch": "^0.2.165",
-        "@data-slot/tabs": "^0.2.165",
-        "@data-slot/toggle": "^0.2.165",
-        "@data-slot/toggle-group": "^0.2.165",
-        "@data-slot/tooltip": "^0.2.165",
+        "@data-slot/accordion": "^0.2.166",
+        "@data-slot/collapsible": "^0.2.166",
+        "@data-slot/combobox": "^0.2.166",
+        "@data-slot/command": "^0.2.166",
+        "@data-slot/dialog": "^0.2.166",
+        "@data-slot/dropdown-menu": "^0.2.166",
+        "@data-slot/hover-card": "^0.2.166",
+        "@data-slot/navigation-menu": "^0.2.166",
+        "@data-slot/popover": "^0.2.166",
+        "@data-slot/radio-group": "^0.2.166",
+        "@data-slot/select": "^0.2.166",
+        "@data-slot/slider": "^0.2.166",
+        "@data-slot/switch": "^0.2.166",
+        "@data-slot/tabs": "^0.2.166",
+        "@data-slot/toggle": "^0.2.166",
+        "@data-slot/toggle-group": "^0.2.166",
+        "@data-slot/tooltip": "^0.2.166",
         "@lucide/astro": "^0.540.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -423,41 +423,41 @@
 
     "@dabh/diagnostics": ["@dabh/diagnostics@2.0.8", "", { "dependencies": { "@so-ric/colorspace": "^1.1.6", "enabled": "2.0.x", "kuler": "^2.0.0" } }, "sha512-R4MSXTVnuMzGD7bzHdW2ZhhdPC/igELENcq5IjEverBvq5hn1SXCWcsi6eSsdWP0/Ur+SItRRjAktmdoX/8R/Q=="],
 
-    "@data-slot/accordion": ["@data-slot/accordion@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-Fse1TXzBRPmjCB1M1IzKQkRtmEYVRsAMPeygN7XYcdJNJGjnNXN8jvOTmnuBEQUDp/fjSD3SGiIIXscm7csD3g=="],
+    "@data-slot/accordion": ["@data-slot/accordion@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-MViSr1Nikj5PqL8aFTQMonG/9SHXYskWK0DTc8OyUvLBg5x2mwTQVTwlPxy114ZH4BMOAYlTXpZ+XuvOrDgH9Q=="],
 
-    "@data-slot/collapsible": ["@data-slot/collapsible@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-W8A3nMx7fo9zEVNgwm/uN5zYqrpp7K+ME1JudCu4Lfq67dwSsFl4imUpuTBrYcXoxOgvnEzDaQNDHHj6Vhnc3A=="],
+    "@data-slot/collapsible": ["@data-slot/collapsible@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-C1QhlaGVkV0OhB5Xa7bj/U4SZLbtMaotgZgxoq/3FXmtFbkEzU1dvumNdYWs5+6Wnwb4Pr+KfJdxfVBN1ofT1w=="],
 
-    "@data-slot/combobox": ["@data-slot/combobox@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-uHwWPawdlr4PfOLOCyxi1rBhNLj6KQqFyoXUJrjgVGX4/7EypOQLjlxKg9EA5Yrp1Qi3W88ltQa3dHyxOS4L/A=="],
+    "@data-slot/combobox": ["@data-slot/combobox@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-BPF4WKfTFeiksrlp8kyU7g3iEuICY9EBoWzrrzDWmq8di3nDI3phAO2f42M6xG7JSNf6Rvu9K8IsXzOyZk5DXA=="],
 
-    "@data-slot/command": ["@data-slot/command@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-/ZboEXzbip5Qga3d7V3zaOU83KutoMV9x1IE+VV7ndhhdkbCgYTGeSJUcjbxg7hid0ajaTd7qDW0aGLHQOHFgQ=="],
+    "@data-slot/command": ["@data-slot/command@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-+RRwXkjspJeD7gHYgVUXxvF/CkGFJS6OvRauUNhxvbaMxdCLf3KkOinFv/RKtzRFaOEEkjpanFy/DrO9agy3Cw=="],
 
-    "@data-slot/core": ["@data-slot/core@0.2.165", "", {}, "sha512-qAUCLUt0jhiTnk9p0z9+0oSKQIfWVW5ZwZYVAK0T6rVwNpiuApzX73yJMu2hfCJlkDx6OTOR0av6TUWIuVAn+Q=="],
+    "@data-slot/core": ["@data-slot/core@0.2.166", "", {}, "sha512-/DuzMFIqiefdjheX5fMhaqs4YPp0/t+/pN9EgnB2jLSDk8384WkBCPGq76T/Ypb0MjVlHFiexKDnx9+k+bdcjw=="],
 
-    "@data-slot/dialog": ["@data-slot/dialog@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-FxDudqWdbbHn3c4IQkBdmBNDR3xIHgbMGGGQs+htRSv1c1zw8n6f3F+v6yi0JwsSRUTAq5llAhqIO+jHyzTOcg=="],
+    "@data-slot/dialog": ["@data-slot/dialog@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-ioMkbfCMVt4x8VrNEa0V32ncs57Q3GEVqEn+uDUBoOU6Qyv2q1ebI0IMkK/54kSeUHut7FilECGUJzuvc7TJAQ=="],
 
-    "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-jSfbRQu0OD0CzV4Zwxm6hVe6c2m8aAOzmbOQuizwVZ5btsDPvJ9egt4mV99vcyGNAjqfuLuPVQFCwBiTdvMEnQ=="],
+    "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-8U9jUWlufUmHf75+w/10GHVNDc9XjfJCjVKuBWhkFbTFq68ROCzb+g/DugI/uXxz08qZWmky4nQK9kStjlet5A=="],
 
-    "@data-slot/hover-card": ["@data-slot/hover-card@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-1CiOYOQTU5L+Aqmd/GTcvGIQhyfhDUKKh5vBeXkU8s0ZJ5ZJmdbCMyxNEoRLBUF7X7E9GTuczVPjHZv27uzJmQ=="],
+    "@data-slot/hover-card": ["@data-slot/hover-card@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-ravzEp74MzWDNY83y4nPoBpScEmzRsV1QnXS6+SB4fypUIfB7OiVwlEUQ0NfCM5CgqDFrx3nZsmUzqcJRxQKxA=="],
 
-    "@data-slot/navigation-menu": ["@data-slot/navigation-menu@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-xnO3aD88yEptCjwXq+UDRTGKf9w2CZhw/kGhugP+15kIqlmIjT25A1rqzfk5t+xNo2UegXqfQ5+ptfiUKiBCBw=="],
+    "@data-slot/navigation-menu": ["@data-slot/navigation-menu@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-1yttL2tjMFsvQ4dfNMqC6MG5yABI7DGgK2Un89NGEXAG37uPmai5/KTf+68VO9gQhhLlmUkmvokyIFBFoBkF/A=="],
 
-    "@data-slot/popover": ["@data-slot/popover@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-DBCc+dJHcJmR5tXCiYVEYK3HH6b8Z4MjHWQBeDpUuHOWRyjsh3GdMd6UnBr8O/+E2h2LdWsp9Z4rDtJZNFV1pw=="],
+    "@data-slot/popover": ["@data-slot/popover@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-NW35Efz0oEquMec1X4y/nVxTGOYPWEkcoErN3/wtj7QqRZtpyJnQMP2rxm59+il9kvUIdUCAgtWl9CyIg55CXw=="],
 
-    "@data-slot/radio-group": ["@data-slot/radio-group@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-Ilfl3qhU0xfrWikQFNSwDzlWx7UdUURK0XuY9/8cEHnhEaZSMy5I5Y+bJB/NSsu03MKMo94lprl5q13rYnfrZQ=="],
+    "@data-slot/radio-group": ["@data-slot/radio-group@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-0CDJD3e+ap2o7REO5KPj8hkB75V/d3okiCaUmg3bDo+xzOkIxJ1qnif/I4QG5rRok9QBOcDjLYoyfY2Zjm9cVg=="],
 
-    "@data-slot/select": ["@data-slot/select@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-OfhUY06Zdc1vpGuGw/6BTgIgrr0N1+bijpnO/DAhjjIQB+Bvhf9v0fUy7PGvTnsbQooNKgCAxfzekvn6SA9Mzw=="],
+    "@data-slot/select": ["@data-slot/select@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-8HVsjcs9LqjXfYRfK7SiuTuZirjx5DQWbSrrdifynWOwif0C9eXYrah6FR5kla9jr2/CsaoUEBlHHVsNnosNqg=="],
 
-    "@data-slot/slider": ["@data-slot/slider@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-q8to8nVjp/efxKMJ/7/aaaM5GnqUhLmIc/hjwM3IL1rnHZPAILkPq/zi5m0gsdIjj+bksWkozr8MZm6UoxrDeQ=="],
+    "@data-slot/slider": ["@data-slot/slider@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-VuQmb1+xn9X05vSDvaz4PIbvH23K0U1azLgwUyOeUyr8WSCxcUObTbvpEPcXyGsQQySt9GEO5bX3qYLdgaMyWA=="],
 
-    "@data-slot/switch": ["@data-slot/switch@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-FUzLSqiMuXThV34ALHa0bXyNeaQqBFyETKaMgmG+R15TNFM5lVvG2OFjsT0+XeZC35BwZHc0OR0PL4gclFn6ww=="],
+    "@data-slot/switch": ["@data-slot/switch@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-2AipHTGEiCfCOCGjKzlo2jAJ9hEN8+YbI90PrLLG8Q71TB8kNRWSdvE6hJhRzLJI0Ymdi89bVvd/DGEN38JVtA=="],
 
-    "@data-slot/tabs": ["@data-slot/tabs@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-QGfG6mcJabj3APqMWnOMz40fCumuWlRwAfpWMVWUySyJgasi12th/hkATBGxCVRR4cwFLsARNCMXqChE7idZCw=="],
+    "@data-slot/tabs": ["@data-slot/tabs@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-nM+kE5IgZeyX+fUq+LUiDQrbB1F47WcLtmwTngVShsMJcjFUJPrLI8snadcWJ2xD34yi6Jeq3X7iNFjK9tYfXQ=="],
 
-    "@data-slot/toggle": ["@data-slot/toggle@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-mFH3HN7jVL4Va5+VI+cBBtpAOfeyHpdD76Xa6vAHzvDEkCHTOK8dVsgdTWwh9UGdmpAr3b5jE3jQ7y0ghs1Ylw=="],
+    "@data-slot/toggle": ["@data-slot/toggle@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-L9ejpPH75UA8zdbr1wb3DYF/nD7h+VdyyvYgJjGzjQ6J65O5s6qn8jEbPHQPlSQwyjoHyqMWvNoU359j648+BA=="],
 
-    "@data-slot/toggle-group": ["@data-slot/toggle-group@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-fMAfrTfN06fJiLBjxIGXk3GYI/1lqWZfmeTTItiQ9LofSTS8G02dxl/7c/wuo0jqrqkmQmAJ64dp7nJoe1EHCg=="],
+    "@data-slot/toggle-group": ["@data-slot/toggle-group@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-5kUqPIcZ5xnuZ9spwu2ceTT5qoIgzMHtx+Uu/5NdgFEUGzTTodhLc4wxgatsjCGJfSB0jJRoRC87R7BevHanTA=="],
 
-    "@data-slot/tooltip": ["@data-slot/tooltip@0.2.165", "", { "dependencies": { "@data-slot/core": "0.2.165" } }, "sha512-gMJoagPtvJ4WWyQsFTpiRgdH/fwNc8DNPPsVPL+62tBnOfY33XvnL8lsK3sH3wZ0qEYJNVxdyYhi2ejpLZFfOQ=="],
+    "@data-slot/tooltip": ["@data-slot/tooltip@0.2.166", "", { "dependencies": { "@data-slot/core": "0.2.166" } }, "sha512-tpt0oqhiMhp0AeTG23S0iW27SGrRcaUZt0h3IK7H6z/a1LwCItl+8PUqqaSaHKUKlOc4oyccES4ZxlsOxW1jvA=="],
 
     "@dependents/detective-less": ["@dependents/detective-less@5.0.1", "", { "dependencies": { "gonzales-pe": "^4.3.0", "node-source-walk": "^7.0.1" } }, "sha512-Y6+WUMsTFWE5jb20IFP4YGa5IrGY/+a/FbOSjDF/wz9gepU2hwCYSXRHP/vPwBvwcY3SVMASt4yXxbXNXigmZQ=="],
 

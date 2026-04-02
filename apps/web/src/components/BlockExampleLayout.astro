@@ -26,50 +26,46 @@ const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 
     <script>
       import {
-        getCurrentMode,
+        getStoredPreset,
+        PRESET_CHANGE_EVENT,
+        PRESET_STORAGE_KEY,
       } from "../utils/themes/preset-store.ts";
-      import { syncGradientImages } from "../utils/themes/gradient-image-runtime.ts";
+      import {
+        resolveGradientThemeFromPresetId,
+        syncGradientImages,
+      } from "../utils/themes/gradient-image-runtime.ts";
 
-      const themeStorageKey = "starlight-theme";
-      const toMode = (value: unknown): "light" | "dark" =>
-        value === "dark" ? "dark" : "light";
+      function syncPreviewGradientImages(themeOverride?: string | null) {
+        const theme =
+          themeOverride ?? resolveGradientThemeFromPresetId(getStoredPreset());
+        if (!theme) {
+          return;
+        }
 
-      function syncPreviewGradientImages(modeOverride?: "light" | "dark") {
-        const themeKey = "default";
-        const mode = modeOverride ?? toMode(getCurrentMode());
-        syncGradientImages({ themeKey, mode });
+        syncGradientImages({ theme });
       }
 
       syncPreviewGradientImages();
 
       window.addEventListener("storage", (event) => {
-        if (event.key === themeStorageKey || event.key === "theme") {
-          syncPreviewGradientImages();
+        if (event.key === PRESET_STORAGE_KEY) {
+          syncPreviewGradientImages(
+            resolveGradientThemeFromPresetId(event.newValue),
+          );
         }
       });
 
-      window.addEventListener("theme-toggle-changed", (event) => {
-        const eventTheme = (event as CustomEvent<{ theme?: unknown }>).detail
-          ?.theme;
-        const mode =
-          eventTheme === "light" || eventTheme === "dark"
-            ? eventTheme
-            : undefined;
-        syncPreviewGradientImages(mode);
-      });
-
-      const prefersLight = matchMedia("(prefers-color-scheme: light)");
-      prefersLight.addEventListener("change", () => {
-        syncPreviewGradientImages();
-      });
-
-      const observer = new MutationObserver(() => {
-        syncPreviewGradientImages();
-      });
-
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["data-theme", "class"],
+      window.addEventListener(PRESET_CHANGE_EVENT, (event) => {
+        const detail = (
+          event as CustomEvent<{ key?: unknown; preset?: { theme?: unknown } }>
+        ).detail;
+        const theme =
+          typeof detail?.preset?.theme === "string"
+            ? detail.preset.theme
+            : resolveGradientThemeFromPresetId(
+                typeof detail?.key === "string" ? detail.key : null,
+              );
+        syncPreviewGradientImages(theme);
       });
 
       document.addEventListener("astro:after-swap", () => {

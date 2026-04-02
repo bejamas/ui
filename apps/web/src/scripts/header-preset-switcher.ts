@@ -4,6 +4,10 @@ import {
   getStoredPresetWithSwatches,
 } from "@/utils/themes/preset-store";
 import { getCustomPresets } from "@/utils/themes/custom-presets-store";
+import {
+  resolveGradientThemeFromPresetId,
+  syncGradientImages,
+} from "@/utils/themes/gradient-image-runtime";
 import { THEME_REF_COOKIE_NAME } from "@/utils/themes/theme-cookie";
 import {
   type HeaderPresetOption as PresetOption,
@@ -127,6 +131,9 @@ class HeaderPresetSwitcherElement extends HTMLElement {
 
     this.renderCurrent(next.summary);
     this.syncSelectedPreset(next.selectedPresetId);
+    syncGradientImages({
+      theme: resolveGradientThemeFromPresetId(next.summary.id),
+    });
   }
 
   renderCurrent(summary: CurrentSummary) {

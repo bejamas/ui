@@ -69,8 +69,15 @@ describe("header preset switcher", () => {
     expect(scriptSource).toContain(
       'import { getCustomPresets } from "@/utils/themes/custom-presets-store";',
     );
+    expect(scriptSource).toContain(
+      'import {\n  resolveGradientThemeFromPresetId,\n  syncGradientImages,\n} from "@/utils/themes/gradient-image-runtime";',
+    );
     expect(scriptSource).toContain("resolveHeaderPresetSelection({");
     expect(scriptSource).toContain("applyDocsPreset({");
+    expect(scriptSource).toContain("syncGradientImages({");
+    expect(scriptSource).toContain(
+      "theme: resolveGradientThemeFromPresetId(next.summary.id)",
+    );
     expect(scriptSource).not.toContain("window.history.pushState");
     expect(scriptSource).not.toContain("window.location.assign");
   });

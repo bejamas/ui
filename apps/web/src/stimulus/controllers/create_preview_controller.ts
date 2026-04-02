@@ -10,6 +10,7 @@ import { resolveCreateBootstrapState } from "@/utils/create-bootstrap";
 import { getCreatePreviewCopy } from "@/utils/create-preview-i18n";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
 import { type ThemeOverrides } from "@/utils/themes/create-theme";
+import { syncGradientImages } from "@/utils/themes/gradient-image-runtime";
 import { syncMenuSurfaceElements } from "@/utils/themes/menu-color-state";
 import type {
   CreateConfig,
@@ -77,7 +78,9 @@ export default class extends Controller<HTMLElement> {
     await this.applyPreviewConfig(
       result.config,
       result.themeOverrides,
-      window.__BEJAMAS_CREATE_PREVIEW__?.styleCssByStyle?.[result.config.style] ?? "",
+      window.__BEJAMAS_CREATE_PREVIEW__?.styleCssByStyle?.[
+        result.config.style
+      ] ?? "",
     );
   }
 
@@ -126,8 +129,8 @@ export default class extends Controller<HTMLElement> {
     );
     this.setText(
       "[data-create-font-label]",
-      catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ??
-        config.font,
+      catalogs.fonts.find((font) => font.name === `font-${config.font}`)
+        ?.title ?? config.font,
     );
     this.setText(
       "[data-create-style-font-summary]",
@@ -151,6 +154,7 @@ export default class extends Controller<HTMLElement> {
       ),
       config.menuColor,
     );
+    syncGradientImages({ theme: config.theme });
 
     this.showPreviewSurface();
     this.clearPendingState();
@@ -161,8 +165,8 @@ export default class extends Controller<HTMLElement> {
       catalogs.styles.find((style) => style.name === config.style)?.title ??
       config.style;
     const fontLabel =
-      catalogs.fonts.find((font) => font.name === `font-${config.font}`)?.title ??
-      config.font;
+      catalogs.fonts.find((font) => font.name === `font-${config.font}`)
+        ?.title ?? config.font;
     const headingFontLabel =
       config.fontHeading === "inherit"
         ? null
@@ -239,16 +243,24 @@ export default class extends Controller<HTMLElement> {
   }
 
   private showPreviewSurface() {
-    const surface = document.querySelector<HTMLElement>("[data-create-preview-surface]");
-    const invalid = document.querySelector<HTMLElement>("[data-create-preview-invalid]");
+    const surface = document.querySelector<HTMLElement>(
+      "[data-create-preview-surface]",
+    );
+    const invalid = document.querySelector<HTMLElement>(
+      "[data-create-preview-invalid]",
+    );
 
     surface?.classList.remove("hidden");
     invalid?.classList.add("hidden");
   }
 
   private showInvalidState() {
-    const surface = document.querySelector<HTMLElement>("[data-create-preview-surface]");
-    const invalid = document.querySelector<HTMLElement>("[data-create-preview-invalid]");
+    const surface = document.querySelector<HTMLElement>(
+      "[data-create-preview-surface]",
+    );
+    const invalid = document.querySelector<HTMLElement>(
+      "[data-create-preview-invalid]",
+    );
 
     surface?.classList.add("hidden");
     invalid?.classList.remove("hidden");

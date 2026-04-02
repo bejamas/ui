@@ -1,4 +1,5 @@
 import {
+  getTheme,
   getThemesForBaseColor,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
@@ -35,6 +36,14 @@ export type CreateThemeSeedOptionGroup = {
   group: CreateThemeSeedGroup;
   label: (typeof CREATE_THEME_GROUP_LABELS)[CreateThemeSeedGroup];
   options: CreateThemeSeedOption[];
+};
+
+export type CreateThemeImagePreset = {
+  value: DesignSystemConfig["theme"];
+  label: string;
+  slug: string;
+  group: CreateThemeSeedGroup;
+  url: string;
 };
 
 const CURATED_THEME_VALUES = [
@@ -228,6 +237,31 @@ export function getCreateThemeSeedOption(
   return getCreateThemeSeedOptions(baseColor).find(
     (option) => option.value === theme,
   );
+}
+
+export function getCreateThemeImagePreset(
+  theme: DesignSystemConfig["theme"] | string,
+): CreateThemeImagePreset | null {
+  const themeDefinition = getTheme(theme as DesignSystemConfig["theme"]);
+  if (!themeDefinition) {
+    return null;
+  }
+
+  const value = themeDefinition.name as DesignSystemConfig["theme"];
+  const label = themeDefinition.title ?? themeDefinition.name;
+  const group = getCreateThemeSeedGroup(value);
+  const slug = label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return {
+    value,
+    label,
+    slug,
+    group,
+    url: `https://gradient.bejamas.com/presets/${group}/${slug}.png`,
+  };
 }
 
 export function formatThemeTokenLabel(token: keyof ThemeStyleProps) {

@@ -10,5 +10,9 @@ describe("UiDemo", () => {
     expect(source).not.toContain("RegistrySurface");
     expect(source).toContain("@bejamas/registry/ui/button");
     expect(source).toContain("@bejamas/registry/ui/card");
+    expect(source).toContain(
+      "https://gradient.bejamas.com/presets/bejamas/marine.png",
+    );
+    expect(source).not.toContain("/api/gradient.png");
   });
 });

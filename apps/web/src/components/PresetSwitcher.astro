@@ -21,7 +21,6 @@ const leanPresets = Object.fromEntries(
     },
   ]),
 );
-
 ---
 
 <preset-switcher-wrapper data-presets={JSON.stringify(leanPresets)}>
@@ -134,7 +133,10 @@ const leanPresets = Object.fromEntries(
     getEditingPresetDraft,
     CUSTOM_PRESETS_CHANGE_EVENT,
   } from "../utils/themes/custom-presets-store.ts";
-  import { syncGradientImages } from "../utils/themes/gradient-image-runtime.ts";
+  import {
+    resolveGradientThemeFromPresetId,
+    syncGradientImages,
+  } from "../utils/themes/gradient-image-runtime.ts";
 
   type PresetType = {
     label: string;
@@ -154,13 +156,16 @@ const leanPresets = Object.fromEntries(
     };
   }
 
-  function updateGradientImageCacheKey(
-    themeKey: string,
-    modeOverride?: "light" | "dark",
-  ) {
-    if (!themeKey || typeof document === "undefined") return;
-    const mode = modeOverride ?? getCurrentMode();
-    syncGradientImages({ themeKey, mode });
+  function syncPresetGradientImages(themeOverride?: string | null) {
+    if (typeof document === "undefined") return;
+
+    const theme =
+      themeOverride ?? resolveGradientThemeFromPresetId(getStoredPreset());
+    if (!theme) {
+      return;
+    }
+
+    syncGradientImages({ theme });
   }
 
   function applyPresetTheme(key: string) {
@@ -228,7 +233,9 @@ const leanPresets = Object.fromEntries(
   }
 
   function syncDropdownValue(wrapper: Element, key: string) {
-    const dropdown = wrapper.querySelector<HTMLElement>('[data-slot="dropdown-menu"]');
+    const dropdown = wrapper.querySelector<HTMLElement>(
+      '[data-slot="dropdown-menu"]',
+    );
     dropdown?.dispatchEvent(
       new CustomEvent("dropdown-menu:set", {
         detail: {
@@ -325,12 +332,16 @@ const leanPresets = Object.fromEntries(
 
     // Listen for preset changes from other sources (e.g., BrowserHero)
     window.addEventListener(PRESET_CHANGE_EVENT, ((e: CustomEvent) => {
-      const key = e.detail?.key;
+      const key = typeof e.detail?.key === "string" ? e.detail.key : null;
+      const theme =
+        typeof e.detail?.preset?.theme === "string"
+          ? e.detail.preset.theme
+          : resolveGradientThemeFromPresetId(key);
       if (key) {
         syncAllDropdowns(key);
         applyPresetTheme(key);
-        updateGradientImageCacheKey(key);
       }
+      syncPresetGradientImages(theme);
     }) as EventListener);
 
     // Listen for custom presets changes
@@ -347,22 +358,7 @@ const leanPresets = Object.fromEntries(
       if (e.key === "theme-preset" && e.newValue) {
         applyPresetTheme(e.newValue);
         syncAllDropdowns(e.newValue);
-        updateGradientImageCacheKey(e.newValue);
-      }
-    });
-
-    // Re-apply preset when theme mode changes (light/dark toggle)
-    window.addEventListener("theme-toggle-changed", (event) => {
-      const current = getStoredPreset() || Object.keys(PRESETS)[0];
-      if (current) {
-        applyPresetTheme(current);
-        const eventTheme = (event as CustomEvent<{ theme?: unknown }>).detail
-          ?.theme;
-        const mode =
-          eventTheme === "light" || eventTheme === "dark"
-            ? eventTheme
-            : undefined;
-        updateGradientImageCacheKey(current, mode);
+        syncPresetGradientImages(resolveGradientThemeFromPresetId(e.newValue));
       }
     });
 
@@ -372,8 +368,8 @@ const leanPresets = Object.fromEntries(
       if (current) {
         applyPresetTheme(current);
         syncAllDropdowns(current);
-        updateGradientImageCacheKey(current);
       }
+      syncPresetGradientImages();
       // Re-render custom themes after page swap
       document
         .querySelectorAll("preset-switcher-wrapper")
@@ -386,12 +382,17 @@ const leanPresets = Object.fromEntries(
   // Custom element for each PresetSwitcher instance
   class PresetSwitcherWrapper extends HTMLElement {
     onValueChange = (event: Event) => {
-      const detail = (event as CustomEvent<{
-        value: string | null;
-        source: string;
-      }>).detail;
+      const detail = (
+        event as CustomEvent<{
+          value: string | null;
+          source: string;
+        }>
+      ).detail;
       const key = detail?.value;
-      if (!key || (detail.source !== "pointer" && detail.source !== "keyboard")) {
+      if (
+        !key ||
+        (detail.source !== "pointer" && detail.source !== "keyboard")
+      ) {
         return;
       }
 
@@ -444,13 +445,16 @@ const leanPresets = Object.fromEntries(
       if (initial) {
         applyPresetTheme(initial);
         syncAllDropdowns(initial);
-        updateGradientImageCacheKey(initial);
       }
+      syncPresetGradientImages(resolveGradientThemeFromPresetId(initial));
       this.addEventListener("dropdown-menu:value-change", this.onValueChange);
     }
 
     disconnectedCallback() {
-      this.removeEventListener("dropdown-menu:value-change", this.onValueChange);
+      this.removeEventListener(
+        "dropdown-menu:value-change",
+        this.onValueChange,
+      );
     }
   }
 

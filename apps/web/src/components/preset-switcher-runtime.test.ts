@@ -2,7 +2,10 @@ import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import path from "node:path";
 
-const presetSwitcherFile = path.resolve(import.meta.dir, "./PresetSwitcher.astro");
+const presetSwitcherFile = path.resolve(
+  import.meta.dir,
+  "./PresetSwitcher.astro",
+);
 const presetSwitcherIslandFile = path.resolve(
   import.meta.dir,
   "./PresetSwitcherIsland.astro",
@@ -13,9 +16,11 @@ describe("preset switcher dropdown runtime", () => {
     const source = fs.readFileSync(presetSwitcherFile, "utf8");
     const islandSource = fs.readFileSync(presetSwitcherIslandFile, "utf8");
 
-    expect(source).toContain('value={key}');
+    expect(source).toContain("value={key}");
     expect(source).toContain("<DropdownMenuRadioItem");
-    expect(source).toContain('this.addEventListener("dropdown-menu:value-change", this.onValueChange);');
+    expect(source).toContain(
+      'this.addEventListener("dropdown-menu:value-change", this.onValueChange);',
+    );
     expect(source).toContain('data-value="${key}"');
     expect(source).toContain('data-slot="dropdown-menu-radio-item"');
     expect(source).toContain('data-slot="dropdown-menu-radio-item-indicator"');
@@ -25,17 +30,36 @@ describe("preset switcher dropdown runtime", () => {
     expect(source).not.toContain('content?.addEventListener("click"');
     expect(source).not.toContain('content?.addEventListener("keydown"');
 
-    expect(islandSource).toContain('value={key}');
+    expect(islandSource).toContain("value={key}");
     expect(islandSource).toContain("<DropdownMenuRadioItem");
-    expect(islandSource).toContain('this.addEventListener("dropdown-menu:value-change", this.onValueChange);');
+    expect(islandSource).toContain(
+      'this.addEventListener("dropdown-menu:value-change", this.onValueChange);',
+    );
     expect(islandSource).toContain('data-value="${key}"');
     expect(islandSource).toContain('data-slot="dropdown-menu-radio-item"');
-    expect(islandSource).toContain('data-slot="dropdown-menu-radio-item-indicator"');
+    expect(islandSource).toContain(
+      'data-slot="dropdown-menu-radio-item-indicator"',
+    );
     expect(islandSource).toContain('new CustomEvent("dropdown-menu:set", {');
-    expect(islandSource).toContain("setStoredPreset(key, swatches, preset.label);");
+    expect(islandSource).toContain(
+      "setStoredPreset(key, swatches, preset.label);",
+    );
     expect(islandSource).not.toContain("data-selected");
-    expect(islandSource).not.toContain('data-slot="dropdown-menu-item-indicator"');
+    expect(islandSource).not.toContain(
+      'data-slot="dropdown-menu-item-indicator"',
+    );
     expect(islandSource).not.toContain('content?.addEventListener("click"');
     expect(islandSource).not.toContain('content?.addEventListener("keydown"');
+  });
+
+  test("syncs gradient images from decoded built-in preset themes", () => {
+    const source = fs.readFileSync(presetSwitcherFile, "utf8");
+
+    expect(source).toContain("resolveGradientThemeFromPresetId");
+    expect(source).toContain("syncGradientImages({ theme });");
+    expect(source).toContain("e.detail?.preset?.theme");
+    expect(source).not.toContain("theme-toggle-changed");
+    expect(source).not.toContain("themeKey");
+    expect(source).not.toContain("modeOverride");
   });
 });
