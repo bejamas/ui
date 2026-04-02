@@ -9,16 +9,20 @@ import ContributionsActivity from "@/components/create/preview-cards/Contributio
 import Contributors from "@/components/create/preview-cards/Contributors.astro";
 import EnvironmentVariables from "@/components/create/preview-cards/EnvironmentVariables.astro";
 import FeedbackForm from "@/components/create/preview-cards/FeedbackForm.astro";
+import Faq from "@/components/create/preview-cards/Faq.astro";
 import FileUpload from "@/components/create/preview-cards/FileUpload.astro";
 import GithubProfile from "@/components/create/preview-cards/GithubProfile.astro";
 import IconPreviewGrid from "@/components/create/preview-cards/IconPreviewGrid.astro";
 import InviteTeam from "@/components/create/preview-cards/InviteTeam.astro";
 import Invoice from "@/components/create/preview-cards/Invoice.astro";
+import KitchenIsland from "@/components/create/preview-cards/KitchenIsland.astro";
 import NoTeamMembers from "@/components/create/preview-cards/NoTeamMembers.astro";
 import NotFound from "@/components/create/preview-cards/NotFound.astro";
 import ObservabilityCard from "@/components/create/preview-cards/ObservabilityCard.astro";
+import Preferences from "@/components/create/preview-cards/Preferences.astro";
 import ReportBug from "@/components/create/preview-cards/ReportBug.astro";
 import ShippingAddress from "@/components/create/preview-cards/ShippingAddress.astro";
+import SidebarNav from "@/components/create/preview-cards/SidebarNav.astro";
 import Shortcuts from "@/components/create/preview-cards/Shortcuts.astro";
 import SkeletonLoading from "@/components/create/preview-cards/SkeletonLoading.astro";
 import StyleOverview from "@/components/create/preview-cards/StyleOverview.astro";
@@ -82,21 +86,29 @@ const {
           iconLibraryLabel={iconLibraryLabel}
         />
         <UIElements iconLibrary={iconLibrary} />
+        <KitchenIsland />
         <ObservabilityCard />
         <!-- <Shortcuts /> -->
       </div>
 
-      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
-        <EnvironmentVariables />
-        <InviteTeam iconLibrary={iconLibrary} />
-        <ActivateAgentDialog iconLibrary={iconLibrary} />
-      </div>
+      <div
+        class="col-span-2 grid grid-cols-2 items-start gap-4 md:gap-6 lg:gap-12"
+      >
+        <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
+          <EnvironmentVariables />
+          <SidebarNav />
+          <Faq />
+          <ActivateAgentDialog iconLibrary={iconLibrary} />
+        </div>
 
-      <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
-        <SkeletonLoading />
-        <NoTeamMembers iconLibrary={iconLibrary} />
-        <ReportBug iconLibrary={iconLibrary} />
-        <!-- <Contributors /> -->
+        <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">
+          <InviteTeam iconLibrary={iconLibrary} />
+          <SkeletonLoading />
+          <Preferences iconLibrary={iconLibrary} />
+          <NoTeamMembers iconLibrary={iconLibrary} />
+          <ReportBug iconLibrary={iconLibrary} />
+          <!-- <Contributors /> -->
+        </div>
       </div>
 
       <div class="flex flex-col gap-4 md:gap-6 lg:gap-12">

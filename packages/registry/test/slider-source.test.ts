@@ -13,7 +13,9 @@ describe("registry slider source", () => {
     const slider = read("src/ui/slider/Slider.astro");
     const barrel = read("src/ui/slider/index.ts");
 
-    expect(barrel).toContain('export { default as Slider } from "./Slider.astro";');
+    expect(barrel).toContain(
+      'export { default as Slider } from "./Slider.astro";',
+    );
     expect(barrel).not.toContain("SliderTrack");
     expect(barrel).not.toContain("SliderRange");
     expect(barrel).not.toContain("SliderThumb");
@@ -33,7 +35,17 @@ describe("registry slider source", () => {
     expect(slider).toContain(
       'class="cn-slider-thumb block shrink-0 select-none disabled:pointer-events-none disabled:opacity-50"',
     );
-    expect(slider).toContain(": [min, max];");
+    expect(slider).toContain("defaultValue={50}");
+    expect(slider).not.toContain("defaultValue={[50]}");
+    expect(slider).toContain("type SliderValue = number | [number, number];");
+    expect(slider).toContain("value?: SliderValue;");
+    expect(slider).toContain("defaultValue?: SliderValue;");
+    expect(slider).toContain(
+      "const resolvedValue = value ?? defaultValue ?? min;",
+    );
+    expect(slider).toContain(
+      "const thumbCount = Array.isArray(resolvedValue) ? 2 : 1;",
+    );
     expect(slider).not.toContain("SliderTrack");
     expect(slider).not.toContain("SliderRange");
     expect(slider).not.toContain("SliderThumb");

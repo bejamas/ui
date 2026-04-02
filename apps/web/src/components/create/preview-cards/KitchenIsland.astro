@@ -1,0 +1,235 @@
+---
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemGroup,
+  ItemTitle,
+} from "@bejamas/registry/ui/item";
+import { Slider } from "@bejamas/registry/ui/slider";
+import { Switch } from "@bejamas/registry/ui/switch";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@bejamas/registry/ui/toggle-group";
+---
+
+<Card class="w-full" data-kitchen-island data-kitchen-island-enabled="true">
+  <CardHeader>
+    <CardTitle>Kitchen Island</CardTitle>
+    <CardDescription>Hue Color Ambient</CardDescription>
+    <CardAction>
+      <Switch data-kitchen-island-switch defaultChecked />
+    </CardAction>
+  </CardHeader>
+  <CardContent class="flex flex-col gap-4">
+    <div
+      data-kitchen-island-controls
+      class="flex flex-col gap-4 transition-opacity"
+    >
+      <div class="flex flex-col gap-2">
+        <span class="sr-only">Scenes</span>
+        <ToggleGroup
+          defaultValue="cooking"
+          variant="outline"
+          spacing={1}
+          class="flex-wrap"
+        >
+          <ToggleGroupItem value="cooking">Cooking</ToggleGroupItem>
+          <ToggleGroupItem value="dining">Dining</ToggleGroupItem>
+          <ToggleGroupItem value="nightlight">Nightlight</ToggleGroupItem>
+          <ToggleGroupItem value="focus">Focus</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
+      <ItemGroup class="gap-2">
+        <Item size="sm" variant="outline">
+          <ItemContent class="min-w-28 pr-4">
+            <ItemTitle>Brightness</ItemTitle>
+          </ItemContent>
+          <ItemActions class="flex-1">
+            <Slider
+              data-kitchen-island-slider="brightness"
+              defaultValue={90}
+              max={100}
+              class="w-full"
+            />
+          </ItemActions>
+        </Item>
+
+        <Item size="sm" variant="outline">
+          <ItemContent class="min-w-28 pr-4">
+            <ItemTitle>Color Temp</ItemTitle>
+          </ItemContent>
+          <ItemActions class="flex-1">
+            <Slider
+              data-kitchen-island-slider="color-temp"
+              defaultValue={70}
+              max={100}
+              class="w-full"
+            />
+          </ItemActions>
+        </Item>
+
+        <Item size="sm" variant="outline">
+          <ItemContent class="min-w-28 pr-4">
+            <ItemTitle>Volume</ItemTitle>
+          </ItemContent>
+          <ItemActions class="flex-1">
+            <Slider
+              data-kitchen-island-slider="volume"
+              defaultValue={30}
+              max={100}
+              class="w-full"
+            />
+          </ItemActions>
+        </Item>
+
+        <Item size="sm" variant="outline">
+          <ItemContent class="min-w-28 pr-4">
+            <ItemTitle>Fade</ItemTitle>
+          </ItemContent>
+          <ItemActions class="flex-1">
+            <Slider
+              data-kitchen-island-slider="fade"
+              defaultValue={0}
+              max={100}
+              class="w-full"
+            />
+          </ItemActions>
+        </Item>
+      </ItemGroup>
+    </div>
+  </CardContent>
+</Card>
+
+<script>
+  const SCENES = {
+    cooking: {
+      brightness: 90,
+      "color-temp": 70,
+      volume: 30,
+      fade: 0,
+    },
+    dining: {
+      brightness: 50,
+      "color-temp": 40,
+      volume: 20,
+      fade: 60,
+    },
+    nightlight: {
+      brightness: 15,
+      "color-temp": 20,
+      volume: 0,
+      fade: 80,
+    },
+    focus: {
+      brightness: 100,
+      "color-temp": 85,
+      volume: 0,
+      fade: 0,
+    },
+  };
+
+  function setSliderValue(slider, value) {
+    slider.dispatchEvent(
+      new CustomEvent("slider:set", {
+        detail: { value },
+      }),
+    );
+  }
+
+  function syncScene(root, scene) {
+    const values = SCENES[scene];
+    if (!values) {
+      return;
+    }
+
+    Object.entries(values).forEach(([key, value]) => {
+      const slider = root.querySelector(
+        `[data-kitchen-island-slider="${key}"]`,
+      );
+
+      if (slider instanceof HTMLElement) {
+        setSliderValue(slider, value);
+      }
+    });
+  }
+
+  function syncEnabledState(root, enabled) {
+    const controls = root.querySelector("[data-kitchen-island-controls]");
+
+    if (!(controls instanceof HTMLElement)) {
+      return;
+    }
+
+    root.setAttribute(
+      "data-kitchen-island-enabled",
+      enabled ? "true" : "false",
+    );
+
+    if (enabled) {
+      controls.removeAttribute("inert");
+      return;
+    }
+
+    controls.setAttribute("inert", "");
+  }
+
+  document.querySelectorAll("[data-kitchen-island]").forEach((root) => {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    if (root.dataset.kitchenIslandInitialized === "true") {
+      return;
+    }
+
+    root.dataset.kitchenIslandInitialized = "true";
+
+    const sceneGroup = root.querySelector('[data-slot="toggle-group"]');
+    const switchRoot = root.querySelector("[data-kitchen-island-switch]");
+
+    if (
+      !(sceneGroup instanceof HTMLElement) ||
+      !(switchRoot instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const initialEnabled =
+      switchRoot.hasAttribute("data-checked") ||
+      switchRoot.getAttribute("aria-checked") === "true";
+
+    syncEnabledState(root, initialEnabled);
+
+    sceneGroup.addEventListener("toggle-group:change", (event) => {
+      const scene = event.detail?.value?.[0];
+
+      if (typeof scene === "string") {
+        syncScene(root, scene);
+      }
+    });
+
+    switchRoot.addEventListener("switch:change", (event) => {
+      syncEnabledState(root, Boolean(event.detail?.checked));
+    });
+  });
+</script>
+
+<style is:global>
+  [data-kitchen-island][data-kitchen-island-enabled="false"]
+    [data-kitchen-island-controls] {
+    opacity: 0.55;
+    pointer-events: none;
+    user-select: none;
+  }
+</style>

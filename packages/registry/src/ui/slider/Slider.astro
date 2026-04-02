@@ -7,7 +7,7 @@
  *
  * @preview
  *
- * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} />
+ * <Slider class="w-full max-w-sm" defaultValue={50} max={100} />
  *
  * @usage
  *
@@ -16,7 +16,7 @@
  * import { Slider } from '@bejamas/ui/components/slider';
  * ---
  *
- * <Slider defaultValue={[50]} max={100} />
+ * <Slider defaultValue={50} max={100} />
  * ```
  *
  * @examples
@@ -32,20 +32,20 @@
  * Set orientation to vertical for a vertical slider.
  *
  * <div class="h-48">
- *   <Slider class="h-full" orientation="vertical" defaultValue={[50]} max={100} />
+ *   <Slider class="h-full" orientation="vertical" defaultValue={50} max={100} />
  * </div>
  *
  * ### Disabled
  *
  * Disable the slider to prevent interaction.
  *
- * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} disabled />
+ * <Slider class="w-full max-w-sm" defaultValue={50} max={100} disabled />
  *
  * ### Step
  *
  * Set a custom step increment.
  *
- * <Slider class="w-full max-w-sm" defaultValue={[50]} max={100} step={10} />
+ * <Slider class="w-full max-w-sm" defaultValue={50} max={100} step={10} />
  *
  * @api
  *
@@ -59,7 +59,7 @@
  * | `slider:commit` | `{ value: number \| [number, number] }` | Fired when value is committed (pointer up or keyboard blur) |
  *
  * ```astro nocollapse
- * <Slider id="my-slider" defaultValue={[50]} max={100} />
+ * <Slider id="my-slider" defaultValue={50} max={100} />
  * ```
  *
  * ```js nocollapse
@@ -106,10 +106,12 @@
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/registry/lib/utils";
 
+type SliderValue = number | [number, number];
+
 interface Props extends HTMLAttributes<"div"> {
   class?: string;
-  value?: number[];
-  defaultValue?: number[];
+  value?: SliderValue;
+  defaultValue?: SliderValue;
   min?: number;
   max?: number;
   step?: number;
@@ -129,22 +131,22 @@ const {
   ...rest
 } = Astro.props as Props;
 
-const resolvedValues =
-  Array.isArray(value) && value.length > 0
-    ? value
-    : Array.isArray(defaultValue) && defaultValue.length > 0
-      ? defaultValue
-      : [min, max];
+const resolvedValue = value ?? defaultValue ?? min;
+const defaultValueAttribute = Array.isArray(resolvedValue)
+  ? resolvedValue.join(",")
+  : String(resolvedValue);
+const thumbCount = Array.isArray(resolvedValue) ? 2 : 1;
 ---
 
 <div
   {...rest}
   data-slot="slider"
-  data-default-value={resolvedValues.join(",")}
+  data-default-value={defaultValueAttribute}
   data-min={min}
   data-max={max}
   data-step={step}
   data-orientation={orientation}
+  data-thumb-alignment="edge"
   data-disabled={disabled ? "true" : undefined}
   class={cn("data-horizontal:w-full data-vertical:h-full", className)}
 >
@@ -163,7 +165,7 @@ const resolvedValues =
       </div>
     </div>
     {
-      resolvedValues.map((_, index) => (
+      Array.from({ length: thumbCount }, (_, index) => (
         <div
           data-slot="slider-thumb"
           data-index={index}
@@ -179,8 +181,9 @@ const resolvedValues =
 
   document.querySelectorAll('[data-slot="slider"]').forEach((el) => {
     const element = el as HTMLElement;
-    // Don't pass defaultValue in options - let library read from data-default-value
-    // attribute directly. The library handles single vs range values correctly.
+
+    // Don't pass defaultValue in options - let the library read from
+    // data-default-value directly so single and range sliders stay aligned.
     createSlider(element, {
       min: Number(element.dataset.min) || 0,
       max: Number(element.dataset.max) || 100,

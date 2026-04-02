@@ -12,7 +12,7 @@ import { Label } from "@bejamas/registry/ui/label";
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic Slider">
         <Label>Basic Slider (default value: 50)</Label>
-        <Slider class="w-full" defaultValue={[50]} max={100} />
+        <Slider class="w-full" defaultValue={50} max={100} />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Range Slider">
@@ -23,23 +23,28 @@ import { Label } from "@bejamas/registry/ui/label";
       <KitchenSinkSection title="Vertical Slider">
         <Label>Vertical Slider</Label>
         <div class="h-48">
-          <Slider class="h-full" orientation="vertical" defaultValue={[50]} max={100} />
+          <Slider
+            class="h-full"
+            orientation="vertical"
+            defaultValue={50}
+            max={100}
+          />
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Disabled Slider">
         <Label>Disabled Slider</Label>
-        <Slider class="w-full" defaultValue={[50]} max={100} disabled />
+        <Slider class="w-full" defaultValue={50} max={100} disabled />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Step Slider">
         <Label>Step Slider (step: 10)</Label>
-        <Slider class="w-full" defaultValue={[50]} max={100} step={10} />
+        <Slider class="w-full" defaultValue={50} max={100} step={10} />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Custom Min/Max">
         <Label>Custom Min/Max (min: -50, max: 50, value: 0)</Label>
-        <Slider class="w-full" defaultValue={[0]} min={-50} max={50} />
+        <Slider class="w-full" defaultValue={0} min={-50} max={50} />
       </KitchenSinkSection>
     </div>
   </section>

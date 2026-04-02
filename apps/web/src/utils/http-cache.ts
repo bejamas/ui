@@ -3,7 +3,7 @@ export const STATIC_ASSET_CACHE_CONTROL =
 export const SHARED_DYNAMIC_CACHE_CONTROL =
   "public, max-age=0, s-maxage=300, stale-while-revalidate=3600";
 export const SHORT_SHARED_CACHE_CONTROL =
-  "public, max-age=0, s-maxage=60, stale-while-revalidate=300";
+  "public, max-age=0, s-maxage=10, stale-while-revalidate=300";
 export const PRIVATE_NO_STORE_CACHE_CONTROL = "private, no-store";
 export const NO_STORE_CACHE_CONTROL = "no-store";
 

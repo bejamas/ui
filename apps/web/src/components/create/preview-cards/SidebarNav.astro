@@ -1,0 +1,132 @@
+---
+import {
+  DropdownMenuCheckboxItem,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@bejamas/registry/ui/dropdown-menu";
+
+const overviewSections = [
+  {
+    title: "Overview",
+    items: [
+      { label: "Dashboard", value: "dashboard" },
+      { label: "Transactions", value: "transactions" },
+      { label: "Investments", value: "investments" },
+    ],
+  },
+  {
+    title: "Planning",
+    items: [
+      { label: "Goals", value: "goals" },
+      { label: "Budget", value: "budget" },
+      { label: "Reports", value: "reports" },
+      { label: "Documents", value: "documents" },
+    ],
+  },
+] as const;
+
+const accountSections = [
+  {
+    title: "Account",
+    items: [
+      { label: "Profile", value: "profile", kind: "item" },
+      { label: "Billing", value: "billing", kind: "item" },
+      { label: "Security", value: "security", kind: "item" },
+    ],
+  },
+  {
+    title: "Preferences",
+    items: [
+      {
+        label: "Email",
+        value: "email-updates",
+        kind: "checkbox",
+        defaultChecked: true,
+      },
+      {
+        label: "Push",
+        value: "push-alerts",
+        kind: "checkbox",
+        defaultChecked: true,
+      },
+      {
+        label: "Digest",
+        value: "weekly-digest",
+        kind: "checkbox",
+      },
+      {
+        label: "Announcements",
+        value: "product-announcements",
+        kind: "checkbox",
+      },
+    ],
+  },
+] as const;
+
+const menus = [
+  {
+    sections: overviewSections,
+    labelId: "preview-menu-overview",
+    highlightedValue: "dashboard",
+  },
+  {
+    sections: accountSections,
+    labelId: "preview-menu-account",
+    highlightedValue: "billing",
+  },
+] as const;
+---
+
+<div class="mx-auto grid w-full max-w-[26rem] grid-cols-2 items-start gap-2">
+  {
+    menus.map((menu) => (
+      <div
+        data-slot="dropdown-menu-content"
+        data-create-menu-preview
+        inert
+        aria-hidden="true"
+        class="cn-dropdown-menu-content cn-dropdown-menu-content-logical cn-menu-target cn-menu-translucent min-w-0 w-full"
+      >
+        {menu.sections.map((section, sectionIndex) => (
+          <>
+            {sectionIndex > 0 && <DropdownMenuSeparator />}
+            <DropdownMenuGroup>
+              <DropdownMenuLabel
+                id={sectionIndex === 0 ? menu.labelId : undefined}
+              >
+                {section.title}
+              </DropdownMenuLabel>
+              {section.items.map((item) =>
+                item.kind === "checkbox" ? (
+                  <DropdownMenuCheckboxItem
+                    value={item.value}
+                    defaultChecked={item.defaultChecked}
+                    data-checked={item.defaultChecked ? "" : undefined}
+                    data-highlighted={
+                      item.value === menu.highlightedValue ? "" : undefined
+                    }
+                    class="data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[highlighted]:**:text-accent-foreground"
+                  >
+                    {item.label}
+                  </DropdownMenuCheckboxItem>
+                ) : (
+                  <DropdownMenuItem
+                    value={item.value}
+                    data-highlighted={
+                      item.value === menu.highlightedValue ? "" : undefined
+                    }
+                    class="data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground not-data-[variant=destructive]:data-[highlighted]:**:text-accent-foreground"
+                  >
+                    {item.label}
+                  </DropdownMenuItem>
+                ),
+              )}
+            </DropdownMenuGroup>
+          </>
+        ))}
+      </div>
+    ))
+  }
+</div>

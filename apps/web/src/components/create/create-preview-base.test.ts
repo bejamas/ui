@@ -9,15 +9,12 @@ describe("create preview base layer", () => {
     const previewSurface = read(
       "apps/web/src/components/create/CreatePreviewSurface.astro",
     );
-    const columnMatches = previewSurface.match(
-      /<div class="flex flex-col gap-4 md:gap-6">/g,
-    );
 
     expect(previewSurface).toContain('data-slot="capture-target"');
     expect(previewSurface).toContain("grid-cols-7");
     expect(previewSurface).toContain("w-[2400px]");
     expect(previewSurface).toContain("md:w-[3044px]");
-    expect(columnMatches?.length).toBe(7);
+    expect(previewSurface).toContain("col-span-2 grid grid-cols-2");
     expect(previewSurface).not.toContain("@bejamas/ui/components/");
   });
 
@@ -44,6 +41,16 @@ describe("create preview base layer", () => {
     const iconGrid = read(
       "apps/web/src/components/create/preview-cards/IconPreviewGrid.astro",
     );
+    const kitchenIsland = read(
+      "apps/web/src/components/create/preview-cards/KitchenIsland.astro",
+    );
+    const sidebarNav = read(
+      "apps/web/src/components/create/preview-cards/SidebarNav.astro",
+    );
+    const faq = read("apps/web/src/components/create/preview-cards/Faq.astro");
+    const preferences = read(
+      "apps/web/src/components/create/preview-cards/Preferences.astro",
+    );
     const previewController = read(
       "apps/web/src/stimulus/controllers/create_preview_controller.ts",
     );
@@ -52,13 +59,17 @@ describe("create preview base layer", () => {
     expect(previewSurface).toContain("import CodespacesCard");
     expect(previewSurface).toContain("import Invoice");
     expect(previewSurface).toContain("import IconPreviewGrid");
+    expect(previewSurface).toContain("import KitchenIsland");
     expect(previewSurface).toContain("import UIElements");
     expect(previewSurface).toContain("import ObservabilityCard");
     expect(previewSurface).toContain("import Shortcuts");
     expect(previewSurface).toContain("import EnvironmentVariables");
     expect(previewSurface).toContain("import InviteTeam");
+    expect(previewSurface).toContain("import SidebarNav");
+    expect(previewSurface).toContain("import Faq");
     expect(previewSurface).toContain("import ActivateAgentDialog");
     expect(previewSurface).toContain("import SkeletonLoading");
+    expect(previewSurface).toContain("import Preferences");
     expect(previewSurface).toContain("import NoTeamMembers");
     expect(previewSurface).toContain("import ReportBug");
     expect(previewSurface).toContain("import Contributors");
@@ -96,6 +107,36 @@ describe("create preview base layer", () => {
     expect(iconGrid).toContain('"shopping-bag"');
     expect(iconGrid).toContain('"settings"');
     expect(iconGrid).not.toContain("IconPlaceholder");
+    expect(kitchenIsland).toContain("<ToggleGroup");
+    expect(kitchenIsland).toContain("<Slider");
+    expect(kitchenIsland).toContain("<Switch");
+    expect(kitchenIsland).toContain("toggle-group:change");
+    expect(kitchenIsland).toContain("switch:change");
+    expect(kitchenIsland).toContain('new CustomEvent("slider:set"');
+    expect(kitchenIsland).not.toContain("detail: { value: [value] }");
+    expect(kitchenIsland).not.toContain("use client");
+    expect(kitchenIsland).not.toContain("useState");
+    expect(kitchenIsland).not.toContain("onValueChange");
+    expect(sidebarNav).toContain("@bejamas/registry/ui/dropdown-menu");
+    expect(sidebarNav).toContain("<DropdownMenuCheckboxItem");
+    expect(sidebarNav).toContain("<DropdownMenuItem");
+    expect(sidebarNav).toContain('data-slot="dropdown-menu-content"');
+    expect(sidebarNav).toContain("max-w-[26rem]");
+    expect(sidebarNav).toContain("cn-menu-target");
+    expect(sidebarNav).toContain("data-create-menu-preview");
+    expect(sidebarNav).toContain("inert");
+    expect(sidebarNav).toContain("data-highlighted");
+    expect(sidebarNav).toContain("data-checked");
+    expect(sidebarNav).toContain('kind: "checkbox"');
+    expect(sidebarNav).toContain("defaultChecked: true");
+    expect(sidebarNav).not.toContain("@bejamas/registry/ui/sidebar");
+    expect(sidebarNav).not.toContain("IconPlaceholder");
+    expect(faq).toContain("@bejamas/registry/ui/accordion");
+    expect(faq).toContain("@bejamas/registry/ui/tabs");
+    expect(preferences).toContain("CardAction");
+    expect(preferences).toContain("@bejamas/registry/ui/select");
+    expect(preferences).toContain("@bejamas/registry/ui/switch");
+    expect(preferences).toContain("FieldSeparator");
     expect(previewController).toContain("[data-create-style-font-summary]");
     expect(previewController).toContain("syncMenuSurfaceElements(");
     expect(previewController).toContain(
@@ -357,6 +398,13 @@ describe("create preview base layer", () => {
     expect(slider).toContain(
       'class="cn-slider-thumb block shrink-0 select-none disabled:pointer-events-none disabled:opacity-50"',
     );
+    expect(slider).toContain("type SliderValue = number | [number, number];");
+    expect(slider).toContain(
+      "const resolvedValue = value ?? defaultValue ?? min;",
+    );
+    expect(slider).toContain(
+      "const thumbCount = Array.isArray(resolvedValue) ? 2 : 1;",
+    );
     expect(slider).not.toContain("SliderTrack");
     expect(slider).not.toContain("SliderRange");
     expect(slider).not.toContain("SliderThumb");
@@ -364,7 +412,9 @@ describe("create preview base layer", () => {
 
   it("keeps switch and radio-group visuals mostly in the style layer", () => {
     const switchFile = read("packages/registry/src/ui/switch/Switch.astro");
-    const radioGroup = read("packages/registry/src/ui/radio-group/RadioGroup.astro");
+    const radioGroup = read(
+      "packages/registry/src/ui/radio-group/RadioGroup.astro",
+    );
     const radioItem = read(
       "packages/registry/src/ui/radio-group/RadioGroupItem.astro",
     );
@@ -384,15 +434,15 @@ describe("create preview base layer", () => {
     );
     expect(switchFile).not.toContain("window.__bejamasSwitchSync");
     expect(radioGroup).toContain('data-slot="radio-group"');
-    expect(radioGroup).toContain('data-default-value={defaultValue}');
-    expect(radioGroup).toContain('data-name={name}');
+    expect(radioGroup).toContain("data-default-value={defaultValue}");
+    expect(radioGroup).toContain("data-name={name}");
     expect(radioGroup).toContain(
       'import { create } from "@data-slot/radio-group";',
     );
     expect(radioGroup).toContain("create();");
     expect(radioGroup).not.toContain('role="radiogroup"');
     expect(radioItem).toContain('data-slot="radio-group-indicator"');
-    expect(radioItem).toContain('data-value={value}');
+    expect(radioItem).toContain("data-value={value}");
     expect(radioItem).toContain("cn-radio-group-indicator-icon");
     expect(radioItem).not.toContain("border-input text-primary");
     expect(radioItem).not.toContain('type="radio"');

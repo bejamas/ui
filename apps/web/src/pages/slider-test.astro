@@ -11,7 +11,7 @@ import { Label } from "@bejamas/ui/components/label";
     <!-- Basic Slider -->
     <div class="space-y-4">
       <Label>Basic Slider (default value: 50)</Label>
-      <Slider class="w-full" defaultValue={[50]} max={100} />
+      <Slider class="w-full" defaultValue={50} max={100} />
     </div>
 
     <!-- Range Slider (Two Thumbs) -->
@@ -24,26 +24,31 @@ import { Label } from "@bejamas/ui/components/label";
     <div class="space-y-4">
       <Label>Vertical Slider</Label>
       <div class="h-48">
-        <Slider class="h-full" orientation="vertical" defaultValue={[50]} max={100} />
+        <Slider
+          class="h-full"
+          orientation="vertical"
+          defaultValue={50}
+          max={100}
+        />
       </div>
     </div>
 
     <!-- Disabled Slider -->
     <div class="space-y-4">
       <Label>Disabled Slider</Label>
-      <Slider class="w-full" defaultValue={[50]} max={100} disabled />
+      <Slider class="w-full" defaultValue={50} max={100} disabled />
     </div>
 
     <!-- Step Slider -->
     <div class="space-y-4">
       <Label>Step Slider (step: 10)</Label>
-      <Slider class="w-full" defaultValue={[50]} max={100} step={10} />
+      <Slider class="w-full" defaultValue={50} max={100} step={10} />
     </div>
 
     <!-- Custom Min/Max -->
     <div class="space-y-4">
       <Label>Custom Min/Max (min: -50, max: 50, value: 0)</Label>
-      <Slider class="w-full" defaultValue={[0]} min={-50} max={50} />
+      <Slider class="w-full" defaultValue={0} min={-50} max={50} />
     </div>
   </section>
 </BlockExampleLayout>
