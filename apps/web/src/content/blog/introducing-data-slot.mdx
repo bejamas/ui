@@ -1,0 +1,115 @@
+---
+title: "How we handle interactive components in Astro without reaching for React"
+description: "data-slot is a set of tiny, accessible, framework-agnostic JavaScript packages that handle behavior so you don't have to."
+publishDate: 2026-03-30
+updatedDate: 2026-03-30
+authors:
+  - name: "Mojtaba Seyedi"
+    role: "Content Writer"
+    avatar: "https://cdn.sanity.io/images/34ent8ly/production/f7e1550a6e7234c5c5c22faa584e4ab34313668c-512x512.png"
+excerpt: "data-slot is a set of tiny, accessible, framework-agnostic JavaScript packages that handle behavior so you don't have to."
+---
+
+Astro is a great fit for teams that want to ship fast, lean sites. Server-first, zero JS by default, full control over what goes to the browser. It's a compelling stack until you need a dialog.
+
+Not because dialogs are hard to build. Because building them _correctly_ is a different problem. Focus trapping, keyboard navigation, ARIA roles, escape-to-close, backdrop handling - these are the details that separate a component that looks right from one that actually works for every user.
+
+<video
+  src="https://cdn.sanity.io/files/34ent8ly/production/40502c27dd4b8d7be4821f48de399d4ce8e417b5.mp4"
+  class="w-full rounded-xl"
+  controls
+/>
+
+This is the moment most Astro projects quietly add React.
+
+We didn't want to do that. So we built something instead.
+
+## The gap
+
+When we started building [bejamas/ui](/) - an open-source UI component library for Astro - most components were straightforward. Cards, buttons, badges, typography. Pure HTML and Tailwind CSS. No JavaScript needed.
+
+But some components can't be CSS-only. Dialogs, accordions, tabs - they need behavior. And that behavior needs to be accessible, or it's not really done.
+
+The options on the table weren't great:
+
+- **Radix UI, Headless UI** - excellent libraries, React-only
+- **Custom vanilla JS per component** - fragile, hard to maintain, accessibility is easy to get wrong
+- **Web Components** - possible, but heavy for small interactive primitives
+
+None of these fit well with what Astro projects actually look like.
+
+## What we built
+
+[@data-slot](https://data-slot.com/) is a collection of headless, framework-agnostic JavaScript packages - one per UI pattern. Each package is tiny, unstyled, and focused on a single job: take a plain HTML element and wire up the behavior it needs.
+
+At the time of writing, there are 15 packages in total, covering the interactive patterns you'll actually reach for.
+
+| Package | Size | Description |
+| --- | --- | --- |
+| @data-slot/navigation-menu | 10.3 KB | Dropdown navigation menus |
+| @data-slot/core | 5.8 KB | Shared utilities |
+| @data-slot/dropdown-menu | 4.8 KB | Action menus, kbd nav |
+| @data-slot/command | 4.7 KB | Command palette, ranked search |
+| @data-slot/select | 4.5 KB | Dropdown select, form-ready |
+| @data-slot/combobox | 4.5 KB | Autocomplete input |
+| @data-slot/accordion | 3.5 KB | Collapsible sections |
+| @data-slot/slider | 3.4 KB | Single/range value sliders |
+| @data-slot/tooltip | 2.7 KB | Hover/focus tooltips |
+| @data-slot/tabs | 2.3 KB | Tabbed interfaces, kbd nav |
+| @data-slot/popover | 2.0 KB | Anchored floating content |
+| @data-slot/dialog | 1.9 KB | Modal dialogs, focus trap |
+| @data-slot/switch | 1.8 KB | Form-ready on/off switch |
+| @data-slot/alert-dialog | 1.8 KB | Blocking confirmation dialogs |
+| @data-slot/collapsible | 1.6 KB | Simple show/hide toggle |
+
+The largest package is 10.3 KB. Most are under 4 KB. You only install what you need.
+
+## How to use it
+
+Install only the packages you need:
+
+```sh
+bun add @data-slot/tabs
+
+bun add @data-slot/dialog
+```
+
+Mark your HTML with `data-slot` attributes:
+
+```html nocollapse
+<div data-slot="tabs" data-default-value="one">
+  <div data-slot="tabs-list">
+    <button data-slot="tabs-trigger" data-value="one">Tab One</button>
+    <button data-slot="tabs-trigger" data-value="two">Tab Two</button>
+  </div>
+  <div data-slot="tabs-content" data-value="one">Content One</div>
+  <div data-slot="tabs-content" data-value="two">Content Two</div>
+</div>
+```
+
+Then call `create()` to bind the behavior:
+
+```js nocollapse
+import { create } from "@data-slot/tabs";
+
+// Auto-discover and bind all [data-slot="tabs"] elements
+const controllers = create();
+
+// Or target a specific element
+import { createTabs } from "@data-slot/tabs";
+const tabs = createTabs(element);
+```
+
+That's it. Keyboard navigation, ARIA attributes, focus management - all handled. You keep full control over markup and styling.
+
+## Why this pattern works well with Astro
+
+Astro components are server-rendered by default. @data-slot fits cleanly into that model - components render as real HTML first, JavaScript enhances them after. Progressive enhancement with no special configuration.
+
+Because each package is small and independent, you only ship behavior for what you actually use. A project with no dialogs sends no dialog JavaScript to the browser.
+
+And because behavior lives in a versioned package rather than inlined into component files, accessibility fixes and improvements propagate through a regular dependency update - not a manual find-and-replace across your codebase.
+
+## Try it
+
+Go to [**data-slot.com**](https://data-slot.com/) and give it a try. Also, if you want a full Astro component library built on top of `@data-slot`, check out [**bejamas/ui**](/).

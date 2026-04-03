@@ -1,0 +1,92 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { Date } from "@bejamas/ui/components/date";
+
+import BlogByline from "@/components/blog/BlogByline.astro";
+import * as blogComponents from "@/components/blog/mdx-components";
+
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+
+  return posts.map((post) => ({
+    params: { slug: post.id },
+  }));
+}
+
+const slug = Astro.params.slug;
+
+if (!slug) {
+  throw new Error("Missing blog slug.");
+}
+
+const entry = await getEntry("blog", slug);
+
+if (!entry) {
+  throw new Error(`Blog entry not found for slug: ${slug}`);
+}
+
+const { Content } = await render(entry);
+---
+
+<StarlightPage
+  hasSidebar={false}
+  frontmatter={{
+    title: entry.data.title,
+    description: entry.data.description,
+    tableOfContents: false,
+    lastUpdated: entry.data.updatedDate ?? entry.data.publishDate,
+  }}
+>
+  <div data-page-scope="blog-post" hidden></div>
+  <div class="blog-header not-content">
+    <p class="text-sm text-muted-foreground">
+      Published <Date date={entry.data.publishDate} format="long" />
+    </p>
+    <h1 class="blog-title tracking-tight">{entry.data.title}</h1>
+    {entry.data.description && (
+      <p class="blog-description text-muted-foreground">{entry.data.description}</p>
+    )}
+    <BlogByline authors={entry.data.authors} />
+  </div>
+  <Content components={blogComponents} />
+</StarlightPage>
+
+<style is:global>
+  :root:has([data-page-scope="blog-post"]) .sl-container {
+    max-width: 42rem;
+  }
+
+  :root:has([data-page-scope="blog-post"]) .content-panel:first-of-type {
+    display: none;
+  }
+
+  :root:has([data-page-scope="blog-post"]) .content-panel {
+    padding: 0;
+    padding-top: calc(var(--spacing) * 16);
+  }
+
+  .blog-title {
+    font-size: 1.875rem;
+    line-height: 1.2;
+    font-weight: 500;
+    color: var(--foreground);
+    text-wrap: balance;
+    margin-top: calc(var(--spacing) * 3);
+  }
+
+  @media (min-width: 50rem) {
+    .blog-title {
+      font-size: 2.25rem;
+    }
+  }
+
+  .blog-description {
+    text-wrap: balance;
+    margin-top: calc(var(--spacing) * 4);
+    max-width: 52ch;
+  }
+</style>

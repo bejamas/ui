@@ -1,0 +1,55 @@
+---
+import { Date } from "@bejamas/ui/components/date";
+
+import type { BlogEntry } from "@/utils/blog";
+import { getBlogHref, hasDistinctUpdatedDate } from "@/utils/blog";
+
+import BlogAuthorChip from "./BlogAuthorChip.astro";
+
+const { entry } = Astro.props as { entry: BlogEntry };
+const href = getBlogHref(entry.id);
+const summary = entry.data.excerpt ?? entry.data.description;
+const showUpdatedDate = hasDistinctUpdatedDate(
+  entry.data.publishDate,
+  entry.data.updatedDate,
+);
+---
+
+<article class="not-content rounded-2xl border border-border/70 bg-card/40 p-6">
+  <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+    <span>
+      Published <Date date={entry.data.publishDate} format="long" />
+    </span>
+    {
+      showUpdatedDate && entry.data.updatedDate && (
+        <span>
+          Updated <Date date={entry.data.updatedDate} format="long" />
+        </span>
+      )
+    }
+  </div>
+
+  <h2 class="mt-4 text-2xl font-medium tracking-tight text-foreground">
+    <a href={href} class="underline-offset-4 hover:underline">
+      {entry.data.title}
+    </a>
+  </h2>
+
+  <p class="mt-3 max-w-[60ch] text-base leading-7 text-muted-foreground">
+    {summary}
+  </p>
+
+  <div class="mt-5 flex flex-wrap gap-3">
+    {
+      entry.data.authors.map((author) => (
+        <BlogAuthorChip author={author} linkAuthor={false} size="sm" />
+      ))
+    }
+  </div>
+
+  <div class="mt-6">
+    <a href={href} class="text-sm font-medium underline-offset-4 hover:underline">
+      Read post
+    </a>
+  </div>
+</article>

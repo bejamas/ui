@@ -93,6 +93,7 @@ export default defineConfig({
           nav: [
             { label: "Docs", href: "/docs/introduction" },
             { label: "Components", href: "/components" },
+            { label: "Blog", href: "/blog" },
             { label: "Create", href: "/create" },
           ],
           components: {
