@@ -3,9 +3,13 @@ import { getCollection } from "astro:content";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import { Date } from "@bejamas/ui/components/date";
 
-import { sortBlogEntries, getBlogHref } from "@/utils/blog";
+import { filterVisibleBlogEntries, sortBlogEntries, getBlogHref } from "@/utils/blog";
 
-const posts = sortBlogEntries(await getCollection("blog"));
+const posts = sortBlogEntries(
+  filterVisibleBlogEntries(await getCollection("blog"), {
+    includeDrafts: import.meta.env.DEV,
+  }),
+);
 ---
 
 <StarlightPage

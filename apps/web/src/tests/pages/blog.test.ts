@@ -65,6 +65,7 @@ describe("blog source wiring", () => {
     expect(source).toContain("loader: glob({");
     expect(source).toContain('pattern: "**/*.{md,mdx}"');
     expect(source).toContain('base: "src/content/blog"');
+    expect(source).toContain("draft: z.boolean().default(false)");
     expect(source).toContain("publishDate: z.coerce.date()");
     expect(source).toContain("updatedDate: z.coerce.date().optional()");
     expect(source).toContain("authors: z.array(");
@@ -76,6 +77,8 @@ describe("blog source wiring", () => {
     const source = fs.readFileSync(blogIndexPageFile, "utf8");
 
     expect(source).toContain('getCollection("blog")');
+    expect(source).toContain("filterVisibleBlogEntries");
+    expect(source).toContain("includeDrafts: import.meta.env.DEV");
     expect(source).toContain("sortBlogEntries");
     expect(source).toContain("getBlogHref");
   });
@@ -86,6 +89,8 @@ describe("blog source wiring", () => {
 
     expect(pageSource).toContain("export const prerender = true;");
     expect(pageSource).toContain('getCollection("blog")');
+    expect(pageSource).toContain("filterVisibleBlogEntries");
+    expect(pageSource).toContain("includeDrafts: import.meta.env.DEV");
     expect(pageSource).toContain('getEntry("blog", slug)');
     expect(pageSource).toContain("await render(entry)");
     expect(pageSource).toContain("<BlogByline");
@@ -112,6 +117,7 @@ describe("blog source wiring", () => {
     expect(source).toContain(
       'title: "How to build real interactive UIs with bejamas/ui and data-slot"',
     );
+    expect(source).toContain("draft: true");
     expect(source).toContain("publishDate: 2026-04-04");
     expect(source).toContain('name: "Thom Krupa"');
     expect(source).toContain('name: "Mojtaba Seyedi"');

@@ -1,0 +1,323 @@
+---
+title: "How to build real interactive UIs with bejamas/ui and data-slot"
+description: "A guide to runtime-owned state, Stimulus and Alpine integration, and coordinating multiple UI surfaces with bejamas/ui and data-slot."
+draft: true
+publishDate: 2026-04-04
+updatedDate: 2026-04-04
+authors:
+  - name: "Thom Krupa"
+    role: "Co-founder"
+    avatar: "https://cdn.sanity.io/images/34ent8ly/production/1699401246513c2c318dffd600dcc31b098c8780-512x512.png"
+  - name: "Mojtaba Seyedi"
+    role: "Content Writer"
+    avatar: "https://cdn.sanity.io/images/34ent8ly/production/f7e1550a6e7234c5c5c22faa584e4ab34313668c-512x512.png"
+excerpt: "A guide to runtime-owned state, Stimulus and Alpine integration, and coordinating multiple UI surfaces with bejamas/ui and data-slot."
+---
+
+import {
+  Tabs as DocsTabs,
+  TabItem as DocsTabItem,
+} from "@astrojs/starlight/components";
+import BlogPreviewShell from "@/components/blog/BlogPreviewShell.astro";
+import RuntimeTabsDemo from "@/components/blog/demos/RuntimeTabsDemo.astro";
+import StimulusStateBridgeDemo from "@/components/blog/demos/StimulusStateBridgeDemo.astro";
+import AlpineToggleGroupDemo from "@/components/blog/demos/AlpineToggleGroupDemo.astro";
+
+Real interactive UI usually means more than one surface reacts to the same user action. A selected tab might update a summary card, a saved preference, an analytics event, or a URL parameter. That is the point where clear state ownership matters more than the primitive itself.
+
+In this stack, the cleanest model is to keep the boundaries explicit:
+
+- `bejamas/ui` owns markup and styling.
+- `@data-slot` owns primitive interaction state and emits events when that state changes.
+- Your app layer only owns derived, persisted, or cross-cutting state.
+
+## The model
+
+`bejamas/ui` components render the HTML structure you actually want to ship. `@data-slot` attaches the behavior for patterns like tabs, select, dialog, toggle, and combobox. That behavior includes the primitive's internal state, keyboard interactions, ARIA attributes, and DOM updates.
+
+The important consequence is that the primitive should stay in charge of its own open, selected, and active values. If another part of the page needs to react to that value, listen to the primitive's committed events and derive what you need from there.
+
+That gives you one clear contract:
+
+| Layer | Owns |
+| --- | --- |
+| `bejamas/ui` | Markup, composition, styling |
+| `@data-slot` | Primitive interaction state, accessibility, emitted events |
+| App layer | Derived UI, persistence, URL state, server mutations, cross-surface coordination |
+
+## Which framework should own the glue
+
+The best fit depends on how much derived state you need and how much of the page is already server-rendered.
+
+### Stimulus
+
+Stimulus is the best default when a page is mostly server-rendered and one primitive event needs to update multiple nearby surfaces. A controller can own a stable subtree, listen to custom events like `select:change` or `tabs:change`, keep a small derived value, and update sibling DOM without taking over the primitive's state machine.
+
+This repo already uses Stimulus in exactly that role for larger HTML-first flows.
+
+### Alpine
+
+Alpine fits well when the page only needs local reactive glue. If a primitive event should change a badge label, a preview note, or a couple of classes, Alpine's `x-data` layer is often enough. The key is the same: Alpine mirrors derived state, not the primitive's internal active state.
+
+### Plain scripts
+
+For isolated enhancements, plain scripts are still a good option. If one `tabs:change` listener updates one summary panel, you may not need a framework at all.
+
+## State ownership rules
+
+1. Let the primitive own open, selected, and active state that belongs to the component itself.
+2. Move state into Stimulus or Alpine only when another surface needs a derived view of that state.
+3. Use runtime events to move state outward: `tabs:change`, `select:change`, `toggle:change`, and similar events are the handoff point.
+4. Use programmatic control events to move state inward: `tabs:set`, `select:set`, and `toggle:set` tell the primitive to restore or sync to an external value.
+5. Do not create split-brain state. If both your framework and `@data-slot` try to own the same selected value, one of them will eventually fall out of sync.
+
+The practical rule is simple: the app can remember or summarize state, but the primitive should still be the one applying it to its own DOM contract.
+
+## Demo 1: Runtime events without a framework
+
+This example stays at the smallest useful layer. Tabs own the selected value. A plain script listens to `tabs:change`, updates a separate summary card, and supports restore buttons through `tabs:set`.
+
+<BlogPreviewShell>
+  <RuntimeTabsDemo />
+</BlogPreviewShell>
+
+<DocsTabs syncKey="interactive-ui-runtime">
+  <DocsTabItem label="Markup">
+
+```astro title="RuntimeTabsDemo.astro" showLineNumbers nocollapse
+---
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@bejamas/ui/components/tabs";
+---
+
+<div class="flex gap-2">
+  <Button type="button" data-runtime-tabs-set="draft">Restore draft</Button>
+  <Button type="button" data-runtime-tabs-set="publish">Jump to publish</Button>
+</div>
+
+<Tabs id="workflow-tabs" defaultValue="draft">
+  <TabsList>
+    <TabsTrigger value="draft">Draft</TabsTrigger>
+    <TabsTrigger value="review">Review</TabsTrigger>
+    <TabsTrigger value="publish">Publish</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="draft">Draft stage</TabsContent>
+  <TabsContent value="review">Review stage</TabsContent>
+  <TabsContent value="publish">Publish stage</TabsContent>
+</Tabs>
+
+<div data-runtime-summary>
+  <p data-runtime-tabs-label>Runtime-owned selected state</p>
+  <p data-runtime-tabs-note></p>
+</div>
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="Script">
+
+```ts title="runtime-tabs.ts" showLineNumbers nocollapse
+const tabs = document.getElementById("workflow-tabs");
+const label = document.querySelector("[data-runtime-tabs-label]");
+const note = document.querySelector("[data-runtime-tabs-note]");
+
+tabs?.addEventListener("tabs:change", (event) => {
+  const { value } = (event as CustomEvent<{ value: string }>).detail;
+
+  if (value === "review") {
+    label!.textContent = "Derived UI can follow committed changes";
+    note!.textContent =
+      "Listen to tabs:change and update separate UI after the primitive commits.";
+  }
+});
+
+document.querySelectorAll("[data-runtime-tabs-set]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const value = (button as HTMLButtonElement).dataset.runtimeTabsSet;
+    if (!value) return;
+
+    tabs?.dispatchEvent(new CustomEvent("tabs:set", { detail: { value } }));
+  });
+});
+```
+
+  </DocsTabItem>
+</DocsTabs>
+
+The important part is not the script itself. It is the ownership boundary: tabs still own the active item, and the rest of the page reacts after the runtime emits a change.
+
+## Demo 2: Stimulus for derived, multi-surface state
+
+Stimulus becomes useful when a committed primitive event should update several pieces of UI in one server-rendered subtree. Here the controller listens to `select:change`, stores a small derived value in a Stimulus value, updates a checklist, and restores the primitive with `select:set` when the app asks for it.
+
+<BlogPreviewShell>
+  <StimulusStateBridgeDemo />
+</BlogPreviewShell>
+
+<DocsTabs syncKey="interactive-ui-stimulus">
+  <DocsTabItem label="Markup">
+
+```astro title="StimulusStateBridgeDemo.astro" showLineNumbers nocollapse
+---
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@bejamas/ui/components/select";
+---
+
+<section
+  data-controller="blog-state-bridge"
+  data-blog-state-bridge-pattern-value="local"
+>
+  <Select
+    data-blog-state-bridge-target="select"
+    defaultValue="local"
+    data-action="select:change->blog-state-bridge#patternChanged"
+  >
+    <SelectTrigger>
+      <SelectValue />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="local">Local</SelectItem>
+      <SelectItem value="shared">Shared</SelectItem>
+      <SelectItem value="persisted">Persisted</SelectItem>
+    </SelectContent>
+  </Select>
+
+  <button
+    type="button"
+    data-action="click->blog-state-bridge#restore"
+    data-blog-state-bridge-pattern-param="persisted"
+  >
+    Restore persisted
+  </button>
+
+  <p data-blog-state-bridge-target="title"></p>
+  <p data-blog-state-bridge-target="summary"></p>
+
+  <script>
+    import "@/stimulus/blog";
+  </script>
+</section>
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="Controller">
+
+```ts title="blog_state_bridge_controller.ts" showLineNumbers nocollapse
+import { Controller } from "@hotwired/stimulus";
+
+export default class extends Controller<HTMLElement> {
+  static targets = ["select", "title", "summary"];
+  static values = { pattern: String };
+
+  declare readonly selectTarget: HTMLElement;
+  declare readonly titleTarget: HTMLElement;
+  declare readonly summaryTarget: HTMLElement;
+  declare patternValue: string;
+
+  connect() {
+    this.renderPattern(this.currentPattern);
+  }
+
+  patternValueChanged(value: string) {
+    this.renderPattern(this.normalizePattern(value));
+  }
+
+  patternChanged(event: Event) {
+    const { value } = (event as CustomEvent<{ value: string }>).detail;
+    this.patternValue = this.normalizePattern(value);
+  }
+
+  restore(
+    event: Event & {
+      params: { pattern?: string };
+    },
+  ) {
+    const pattern = this.normalizePattern(event.params.pattern);
+
+    this.patternValue = pattern;
+    this.selectTarget.dispatchEvent(
+      new CustomEvent("select:set", {
+        detail: { value: pattern },
+      }),
+    );
+  }
+}
+```
+
+  </DocsTabItem>
+  <DocsTabItem label="Bootstrap">
+
+```ts title="stimulus/blog.ts" showLineNumbers nocollapse
+import { Application } from "@hotwired/stimulus";
+import BlogStateBridgeController from "@/stimulus/controllers/blog_state_bridge_controller";
+
+const application = Application.start();
+
+application.register("blog-state-bridge", BlogStateBridgeController);
+```
+
+  </DocsTabItem>
+</DocsTabs>
+
+This is the Stimulus sweet spot: one controller owns a subtree, listens to stable custom events, and updates several derived surfaces after the primitive has already settled on the committed value.
+
+## Demo 3: Alpine for local reactive glue
+
+Alpine is a good fit when the page only needs a small reactive layer close to the markup. In this example, `ToggleGroup` still owns which item is on. Alpine only mirrors the selected density into local state so a badge, note, and preview list can react.
+
+<BlogPreviewShell>
+  <AlpineToggleGroupDemo />
+</BlogPreviewShell>
+
+```astro title="AlpineToggleGroupDemo.astro" showLineNumbers nocollapse
+---
+import { ToggleGroup, ToggleGroupItem } from "@bejamas/ui/components/toggle-group";
+---
+
+<section
+  x-data='{
+    density: "balanced",
+    labels: { calm: "Calm", balanced: "Balanced", dense: "Dense" },
+    notes: {
+      calm: "Use Alpine for a little local glue around stable markup.",
+      balanced: "Mirror the primitive event into nearby reactive UI.",
+      dense: "Do not re-implement the primitive selection logic.",
+    },
+  }'
+>
+  <ToggleGroup
+    variant="outline"
+    defaultValue="balanced"
+    x-on:toggle-group:change="density = ($event.detail.value[0] || 'balanced')"
+  >
+    <ToggleGroupItem value="calm">Calm</ToggleGroupItem>
+    <ToggleGroupItem value="balanced">Balanced</ToggleGroupItem>
+    <ToggleGroupItem value="dense">Dense</ToggleGroupItem>
+  </ToggleGroup>
+
+  <p x-text="labels[density]"></p>
+  <p x-text="notes[density]"></p>
+</section>
+```
+
+Alpine works well here because the extra state is strictly local. It changes copy and classes inside one small area, while the primitive still owns the selected toggle item.
+
+## A practical rule of thumb
+
+When you build with `bejamas/ui` and `@data-slot`, start by asking one question:
+
+> Does this state belong to the primitive, or does the rest of the app need to remember and react to it?
+
+If it belongs to the primitive, keep it there. If the rest of the app needs it, listen to the primitive's committed event, derive what you need, and restore through `tabs:set`, `select:set`, `toggle:set`, or the matching runtime event when external state needs to flow back in.
+
+That approach keeps the DOM contract clear, keeps framework state smaller, and makes interactive UI easier to reason about as the page grows beyond a single component.

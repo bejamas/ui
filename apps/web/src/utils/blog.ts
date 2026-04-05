@@ -3,8 +3,23 @@ import type { CollectionEntry } from "astro:content";
 export type BlogEntry = CollectionEntry<"blog">;
 export type BlogAuthor = BlogEntry["data"]["authors"][number];
 
+interface BlogVisibilityOptions {
+  includeDrafts?: boolean;
+}
+
 export function getBlogHref(slug: string) {
   return `/blog/${slug}`;
+}
+
+export function filterVisibleBlogEntries<T extends { data: { draft?: boolean } }>(
+  entries: readonly T[],
+  options: BlogVisibilityOptions = {},
+) {
+  if (options.includeDrafts) {
+    return [...entries];
+  }
+
+  return entries.filter((entry) => !entry.data.draft);
 }
 
 export function sortBlogEntries<T extends { data: { publishDate: Date } }>(
