@@ -10,8 +10,12 @@ interface Props {
 const { authors } = Astro.props as Props;
 ---
 
-<div class="not-content mt-6 mb-8">
-  <div class="flex flex-wrap gap-3">
-    {authors.map((author) => <BlogAuthorChip author={author} showRole={true} />)}
+<div class="not-content mt-6 mb-10">
+  <div class="flex flex-wrap gap-6">
+    {
+      authors.map((author) => (
+        <BlogAuthorChip author={author} showRole={true} />
+      ))
+    }
   </div>
 </div>

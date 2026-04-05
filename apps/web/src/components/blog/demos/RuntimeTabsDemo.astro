@@ -1,0 +1,147 @@
+---
+import { Badge } from "@bejamas/ui/components/badge";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@bejamas/ui/components/tabs";
+
+import EventLog from "@/components/EventLog.astro";
+---
+
+<section id="blog-runtime-tabs-demo-root" class="w-full max-w-4xl space-y-4">
+  <div class="flex flex-wrap gap-2">
+    <Button type="button" variant="outline" size="sm" data-runtime-tabs-set="draft">
+      Restore draft
+    </Button>
+    <Button type="button" variant="outline" size="sm" data-runtime-tabs-set="review">
+      Jump to review
+    </Button>
+    <Button type="button" variant="outline" size="sm" data-runtime-tabs-set="publish">
+      Jump to publish
+    </Button>
+  </div>
+
+  <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+    <div class="space-y-4">
+      <Tabs id="blog-runtime-tabs-demo" defaultValue="draft" class="w-full">
+        <TabsList class="w-full justify-start overflow-x-auto">
+          <TabsTrigger value="draft">Draft</TabsTrigger>
+          <TabsTrigger value="review">Review</TabsTrigger>
+          <TabsTrigger value="publish">Publish</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="draft" class="rounded-lg border p-4">
+          <p class="text-sm font-medium text-foreground">Draft stage</p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            The primitive owns which tab is active. The rest of the page only reacts
+            after that state changes.
+          </p>
+        </TabsContent>
+
+        <TabsContent value="review" class="rounded-lg border p-4">
+          <p class="text-sm font-medium text-foreground">Review stage</p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            A committed tab change can update adjacent summaries, analytics, or a
+            preview surface without re-implementing tabs state in another runtime.
+          </p>
+        </TabsContent>
+
+        <TabsContent value="publish" class="rounded-lg border p-4">
+          <p class="text-sm font-medium text-foreground">Publish stage</p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            Programmatic restore still flows through the tabs runtime. You ask the
+            primitive to switch state instead of toggling classes yourself.
+          </p>
+        </TabsContent>
+      </Tabs>
+
+      <div class="rounded-lg border bg-card p-4">
+        <p class="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          Derived summary
+        </p>
+        <div class="mt-3 flex items-center gap-2">
+          <Badge variant="secondary" data-runtime-tabs-badge>Draft</Badge>
+          <span class="text-sm font-medium text-foreground" data-runtime-tabs-label>
+            Runtime-owned selected state
+          </span>
+        </div>
+        <p class="mt-3 text-sm text-muted-foreground" data-runtime-tabs-note>
+          Keep the active value inside the tabs primitive until another surface
+          actually needs it.
+        </p>
+      </div>
+    </div>
+
+    <EventLog id="blog-runtime-tabs-event-log" class="mt-0 min-h-[12rem] w-full" />
+  </div>
+</section>
+
+<script>
+  {
+    const runtimeTabsDetails = {
+      draft: {
+        badge: "Draft",
+        label: "Runtime-owned selected state",
+        note: "Keep the active value inside the tabs primitive until another surface actually needs it.",
+      },
+      review: {
+        badge: "Review",
+        label: "Derived UI can follow committed changes",
+        note: "Listen to tabs:change and update separate UI after the primitive has already committed the selection.",
+      },
+      publish: {
+        badge: "Publish",
+        label: "Restore with tabs:set",
+        note: "When the app needs to restore state, dispatch tabs:set and let the primitive update its own DOM contract.",
+      },
+    } as const;
+
+    const root = document.getElementById("blog-runtime-tabs-demo-root");
+    const tabs = document.getElementById("blog-runtime-tabs-demo");
+    const badge = root?.querySelector("[data-runtime-tabs-badge]");
+    const label = root?.querySelector("[data-runtime-tabs-label]");
+    const note = root?.querySelector("[data-runtime-tabs-note]");
+    const eventLog = document.getElementById("blog-runtime-tabs-event-log") as
+      | (HTMLPreElement & { _log?: (message: string) => void })
+      | null;
+
+    const render = (value: string) => {
+      const detail =
+        runtimeTabsDetails[value as keyof typeof runtimeTabsDetails] ??
+        runtimeTabsDetails.draft;
+
+      if (badge) badge.textContent = detail.badge;
+      if (label) label.textContent = detail.label;
+      if (note) note.textContent = detail.note;
+    };
+
+    render("draft");
+
+    tabs?.addEventListener("tabs:change", (event: Event) => {
+      const { value } = (event as CustomEvent<{ value: string }>).detail;
+      render(value);
+      eventLog?._log?.(`tabs:change → value: "${value}"`);
+    });
+
+    root
+      ?.querySelectorAll<HTMLButtonElement>("[data-runtime-tabs-set]")
+      .forEach((button) => {
+        button.addEventListener("click", () => {
+          const value = button.dataset.runtimeTabsSet;
+          if (!value) {
+            return;
+          }
+
+          tabs?.dispatchEvent(
+            new CustomEvent("tabs:set", {
+              detail: { value },
+            }),
+          );
+          eventLog?._log?.(`tabs:set → value: "${value}"`);
+        });
+      });
+  }
+</script>

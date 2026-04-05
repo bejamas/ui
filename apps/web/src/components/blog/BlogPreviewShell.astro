@@ -1,0 +1,26 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props as Props;
+---
+
+<div
+  data-blog-preview-shell
+  class:list={[
+    "not-content sl-bejamas-component-preview flex justify-center px-6 py-12 md:px-10 lg:px-12 border border-border rounded-t-lg min-h-[24rem] items-center",
+    className,
+  ]}
+>
+  <slot />
+</div>
+
+<style>
+  :global(:root:has([data-page-scope="blog-post"]) [data-blog-preview-shell]) {
+    width: min(72rem, calc(100vw - 2rem));
+    max-width: none;
+    margin-left: calc(50% - min(36rem, calc((100vw - 2rem) / 2)));
+    margin-right: calc(50% - min(36rem, calc((100vw - 2rem) / 2)));
+  }
+</style>

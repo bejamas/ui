@@ -1,0 +1,60 @@
+---
+title: "February 2026 — The Refresh"
+description: "Combobox, Hover Card, Field, Avatar Group, a new homepage, and a wave of animation improvements."
+publishDate: 2026-02-28
+authors:
+  - name: "Thom Krupa"
+    role: "Co-founder"
+    avatar: "https://cdn.sanity.io/images/34ent8ly/production/1699401246513c2c318dffd600dcc31b098c8780-512x512.png"
+excerpt: "Combobox, Hover Card, Field, Avatar Group, a new homepage, and a wave of animation improvements."
+---
+
+February had three threads running in parallel: new components, a significant animation pass across existing ones, and a homepage redesign that better communicates what the library actually is.
+
+## Four new components
+
+**[Combobox](/components/combobox):** autocomplete input built on `@data-slot/combobox`. Supports filtering, keyboard navigation, and custom option rendering. Works as a form field.
+
+**[Hover Card](/components/hover-card):** a popover that appears on hover, designed for previewing linked content without navigating away. Useful for user profiles, link previews, and inline definitions.
+
+**[Field](/components/field):** a form field wrapper that composes a label, input, helper text, and error message into a single component. Handles the layout and ARIA wiring so you don't have to repeat it across every form.
+
+**[Avatar Group](/components/avatar-group):** stacked user avatars for "assigned to" or "liked by" UI. Handles overlap, max display count, and overflow labeling.
+
+## Animation improvements
+
+Dialog, Popover, Dropdown Menu, Select, and Tooltip all got smoother open and close animations this month. The main changes:
+
+- Enter/exit transitions are now coordinated: elements fade and scale in the same direction they anchor to
+- Popups that have already been opened ("warmed up") skip the enter animation on re-open, which removes the jarring re-trigger on hover components
+- Tooltip fills its icon trigger when the tooltip is active, giving clearer visual feedback
+
+These were all small fixes individually, but together they make interactions feel noticeably more polished.
+
+## New homepage
+
+The homepage was rebuilt from scratch. The previous version was mostly text. The new one leads with a live demo that shows components being installed and rendered in real time.
+
+Image optimization was added at the same time: all cover images and component previews now go through Astro's image pipeline, which shaved meaningful bytes off the initial load.
+
+## Docs generator upgrades
+
+Three additions to the docs generator:
+
+**Console previews:** Astro console output is now captured and displayed inline in docs pages, so readers can see what a component logs without running it themselves.
+
+**`nopreview` support:** fenced Astro code blocks can now opt out of auto-injected previews with a `nopreview` tag. Useful for fragments that don't render in isolation.
+
+**Fenced Astro block previews:** any fenced `astro` block outside of an `@examples` section now gets a live preview automatically. Previously only `@examples` blocks were previewed.
+
+## Size improvements
+
+Sizing tokens were audited and applied consistently across components. Components that previously had hardcoded pixel sizes now respond to the size scale, which makes it easier to build dense or spacious layouts without fighting the defaults.
+
+## Fixes
+
+- **Safari zoom fix:** inputs now use `font-size: 1rem` as their base, which prevents iOS Safari from zooming the viewport when a field is focused
+- **Accordion:** markup simplified; fewer wrapper elements, cleaner DOM output
+- **Focus rings:** improved across interactive components for better keyboard navigation visibility
+- **Toggle Group:** border radius on first and last items in vertical orientation now rounds correctly
+- **Popover:** initial state handled correctly so it doesn't flash open on page load

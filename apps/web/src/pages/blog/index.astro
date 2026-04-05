@@ -14,32 +14,35 @@ const posts = sortBlogEntries(await getCollection("blog"));
     title: "Blog",
     description:
       "Notes on building Astro-first UI, content workflows, and the primitives behind bejamas/ui.",
-    tableOfContents: false,
+    template: "splash",
   }}
 >
   <div data-page-scope="blog-index" hidden></div>
   <div class="not-content mb-8">
     <h1 class="text-3xl font-medium tracking-tight">Blog</h1>
     <p class="mt-3 text-muted-foreground text-balance">
-      Notes on building Astro-first UI, content workflows, and the primitives behind bejamas/ui.
+      Notes on building Astro-first UI, content workflows, and the primitives
+      behind bejamas/ui.
     </p>
   </div>
   <div class="not-content">
-    {posts.map((post) => (
-      <a href={getBlogHref(post.id)} class="blog-list-item group block py-6">
-        <p class="text-sm text-muted-foreground">
-          <Date date={post.data.publishDate} format="long" />
-        </p>
-        <h2 class="mt-1 text-lg font-medium tracking-tight text-foreground group-hover:underline underline-offset-4">
-          {post.data.title}
-        </h2>
-        {(post.data.excerpt ?? post.data.description) && (
-          <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
-            {post.data.excerpt ?? post.data.description}
+    {
+      posts.map((post) => (
+        <a href={getBlogHref(post.id)} class="blog-list-item group block py-6">
+          <p class="text-sm text-muted-foreground">
+            <Date date={post.data.publishDate} format="long" />
           </p>
-        )}
-      </a>
-    ))}
+          <h2 class="mt-1 text-lg font-medium tracking-tight text-foreground group-hover:underline underline-offset-4">
+            {post.data.title}
+          </h2>
+          {(post.data.excerpt ?? post.data.description) && (
+            <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {post.data.excerpt ?? post.data.description}
+            </p>
+          )}
+        </a>
+      ))
+    }
   </div>
 </StarlightPage>
 
@@ -55,6 +58,11 @@ const posts = sortBlogEntries(await getCollection("blog"));
   :root:has([data-page-scope="blog-index"]) .content-panel {
     padding: 0;
     padding-top: calc(var(--spacing) * 16);
+  }
+
+  :root:has([data-page-scope="blog-index"]) .main-frame-splash {
+    --sl-splash-frame-top: calc(var(--spacing) * 18);
+    --sl-splash-frame-inline: calc(var(--spacing) * 6);
   }
 
   .blog-list-item + .blog-list-item {

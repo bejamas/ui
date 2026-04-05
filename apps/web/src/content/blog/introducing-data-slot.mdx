@@ -1,18 +1,21 @@
 ---
 title: "How we handle interactive components in Astro without reaching for React"
-description: "data-slot is a set of tiny, accessible, framework-agnostic JavaScript packages that handle behavior so you don't have to."
+description: "data-slot is a set of headless JavaScript packages that attach interactive behavior to HTML marked with data-slot attributes."
 publishDate: 2026-03-30
 updatedDate: 2026-03-30
 authors:
   - name: "Mojtaba Seyedi"
     role: "Content Writer"
     avatar: "https://cdn.sanity.io/images/34ent8ly/production/f7e1550a6e7234c5c5c22faa584e4ab34313668c-512x512.png"
-excerpt: "data-slot is a set of tiny, accessible, framework-agnostic JavaScript packages that handle behavior so you don't have to."
+  - name: "Thom Krupa"
+    role: "Co-founder"
+    avatar: "https://cdn.sanity.io/images/34ent8ly/production/1699401246513c2c318dffd600dcc31b098c8780-512x512.png"
+excerpt: "data-slot is a set of headless JavaScript packages that attach interactive behavior to HTML marked with data-slot attributes."
 ---
 
-Astro is a great fit for teams that want to ship fast, lean sites. Server-first, zero JS by default, full control over what goes to the browser. It's a compelling stack until you need a dialog.
+Astro renders HTML on the server by default and lets you opt into client-side JavaScript where it is needed. That model works especially well for content-heavy sites and design systems built around static markup.
 
-Not because dialogs are hard to build. Because building them _correctly_ is a different problem. Focus trapping, keyboard navigation, ARIA roles, escape-to-close, backdrop handling - these are the details that separate a component that looks right from one that actually works for every user.
+Interactive patterns still need behavior in the browser. Dialogs, tabs, accordions, comboboxes, and similar components rely on focus management, keyboard interactions, state updates, and WAI-ARIA attributes to work correctly.
 
 <video
   src="https://cdn.sanity.io/files/34ent8ly/production/40502c27dd4b8d7be4821f48de399d4ce8e417b5.mp4"
@@ -20,49 +23,29 @@ Not because dialogs are hard to build. Because building them _correctly_ is a di
   controls
 />
 
-This is the moment most Astro projects quietly add React.
+In `bejamas/ui`, we wanted to keep authoring those components in Astro and HTML while still reusing a consistent interaction layer.
 
-We didn't want to do that. So we built something instead.
+## The problem we were solving
 
-## The gap
+When we started building [bejamas/ui](/), many components were straightforward: cards, buttons, badges, typography, and other presentational primitives that can be rendered as HTML and styled with CSS.
 
-When we started building [bejamas/ui](/) - an open-source UI component library for Astro - most components were straightforward. Cards, buttons, badges, typography. Pure HTML and Tailwind CSS. No JavaScript needed.
+Other components need more than markup and styling. Dialogs, accordions, tabs, popovers, selects, and comboboxes also need a behavior layer that handles interaction and accessibility requirements.
 
-But some components can't be CSS-only. Dialogs, accordions, tabs - they need behavior. And that behavior needs to be accessible, or it's not really done.
+There are several ways to approach that:
 
-The options on the table weren't great:
+- **Headless component libraries** can provide mature interaction patterns, but they are often coupled to a specific component model or framework.
+- **Per-component vanilla JavaScript** keeps control local, but it also means each primitive owns its own focus, keyboard, and ARIA logic.
+- **Web Components** are another valid option, with their own authoring, composition, and distribution model.
 
-- **Radix UI, Headless UI** - excellent libraries, React-only
-- **Custom vanilla JS per component** - fragile, hard to maintain, accessibility is easy to get wrong
-- **Web Components** - possible, but heavy for small interactive primitives
-
-None of these fit well with what Astro projects actually look like.
+For this project, we wanted the interaction layer to attach to the HTML we were already rendering in Astro components.
 
 ## What we built
 
-[@data-slot](https://data-slot.com/) is a collection of headless, framework-agnostic JavaScript packages - one per UI pattern. Each package is tiny, unstyled, and focused on a single job: take a plain HTML element and wire up the behavior it needs.
+[@data-slot](https://data-slot.com/) is a set of headless JavaScript packages, each focused on a single UI pattern. The packages are unstyled and work by attaching behavior to HTML marked with `data-slot` attributes.
 
-At the time of writing, there are 15 packages in total, covering the interactive patterns you'll actually reach for.
+That matches how `bejamas/ui` is structured. The Astro component owns markup, composition, and styling. The `@data-slot/*` package owns the interaction logic for the pattern.
 
-| Package | Size | Description |
-| --- | --- | --- |
-| @data-slot/navigation-menu | 10.3 KB | Dropdown navigation menus |
-| @data-slot/core | 5.8 KB | Shared utilities |
-| @data-slot/dropdown-menu | 4.8 KB | Action menus, kbd nav |
-| @data-slot/command | 4.7 KB | Command palette, ranked search |
-| @data-slot/select | 4.5 KB | Dropdown select, form-ready |
-| @data-slot/combobox | 4.5 KB | Autocomplete input |
-| @data-slot/accordion | 3.5 KB | Collapsible sections |
-| @data-slot/slider | 3.4 KB | Single/range value sliders |
-| @data-slot/tooltip | 2.7 KB | Hover/focus tooltips |
-| @data-slot/tabs | 2.3 KB | Tabbed interfaces, kbd nav |
-| @data-slot/popover | 2.0 KB | Anchored floating content |
-| @data-slot/dialog | 1.9 KB | Modal dialogs, focus trap |
-| @data-slot/switch | 1.8 KB | Form-ready on/off switch |
-| @data-slot/alert-dialog | 1.8 KB | Blocking confirmation dialogs |
-| @data-slot/collapsible | 1.6 KB | Simple show/hide toggle |
-
-The largest package is 10.3 KB. Most are under 4 KB. You only install what you need.
+In this repo, that includes patterns such as tabs, dialog, accordion, combobox, select, tooltip, dropdown menu, navigation menu, popover, slider, switch, radio group, toggle, toggle group, and hover card.
 
 ## How to use it
 
@@ -100,16 +83,26 @@ import { createTabs } from "@data-slot/tabs";
 const tabs = createTabs(element);
 ```
 
-That's it. Keyboard navigation, ARIA attributes, focus management - all handled. You keep full control over markup and styling.
+The runtime reads the `data-slot` structure, applies the state and ARIA attributes required by the pattern, and wires up keyboard and pointer interactions. Markup and styling stay in your Astro component.
+
+## Declarative markup, imperative binding
+
+One accurate way to describe the model is: declarative in markup, imperative at startup. The HTML declares the component structure and any initial state through `data-slot` attributes such as `data-default-value`. The JavaScript layer is an explicit activation step: `create()` discovers matching roots, or `createTabs(element)` binds a specific element.
+
+That split is the rationale. It keeps the DOM contract visible in the markup, keeps styling in CSS, and avoids coupling the interaction layer to a framework-specific component runtime. In practice, this fits best in HTML-first environments where the DOM already exists and one layer clearly owns it: Astro components, server-rendered pages, plain scripts, Stimulus controllers, or Alpine-driven UI. Stimulus is a natural match when a controller already owns a subtree and initializes behavior on connect. Alpine also fits when it is used for local state around server-rendered HTML. The important constraint is that `@data-slot` should enhance a stable markup structure rather than compete with another renderer for the same subtree.
 
 ## Why this pattern works well with Astro
 
-Astro components are server-rendered by default. @data-slot fits cleanly into that model - components render as real HTML first, JavaScript enhances them after. Progressive enhancement with no special configuration.
+Astro components render as HTML first. `@data-slot` fits that model by enhancing existing elements after they reach the browser, instead of requiring a separate client-side component tree.
 
-Because each package is small and independent, you only ship behavior for what you actually use. A project with no dialogs sends no dialog JavaScript to the browser.
+Because packages are split by pattern, you only ship the behavior you import. If a page does not use dialog or tabs, it does not need those runtimes.
 
-And because behavior lives in a versioned package rather than inlined into component files, accessibility fixes and improvements propagate through a regular dependency update - not a manual find-and-replace across your codebase.
+The same separation also makes maintenance more predictable. Interaction logic lives in versioned packages instead of being duplicated across multiple component implementations.
+
+## Where this shows up in bejamas/ui
+
+In `bejamas/ui`, interactive components are still authored as Astro components. The library controls the HTML structure and styling, while `@data-slot` packages provide the behavior for patterns such as dialogs, tabs, comboboxes, selects, navigation menus, tooltips, and switches.
 
 ## Try it
 
-Go to [**data-slot.com**](https://data-slot.com/) and give it a try. Also, if you want a full Astro component library built on top of `@data-slot`, check out [**bejamas/ui**](/).
+For the current package catalog and live demos, go to [**data-slot.com**](https://data-slot.com/). If you want an Astro component library built on top of those packages, check out [**bejamas/ui**](/).

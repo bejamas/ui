@@ -1,0 +1,99 @@
+---
+import { Badge } from "@bejamas/ui/components/badge";
+import { ToggleGroup, ToggleGroupItem } from "@bejamas/ui/components/toggle-group";
+
+import EventLog from "@/components/EventLog.astro";
+
+const alpineState = JSON.stringify({
+  density: "balanced",
+  labels: {
+    calm: "Calm",
+    balanced: "Balanced",
+    dense: "Dense",
+  },
+  notes: {
+    calm: "Use Alpine when you want a little local glue around stable, server-rendered markup.",
+    balanced:
+      "Mirror the primitive event into a small reactive object and let Alpine update nearby text or classes.",
+    dense:
+      "Keep Alpine focused on derived display state instead of re-implementing the primitive's selection logic.",
+  },
+});
+---
+
+<section
+  id="blog-alpine-toggle-demo"
+  class="w-full max-w-4xl space-y-4"
+  x-data={alpineState}
+>
+  <div class="space-y-1">
+    <p class="text-sm font-medium text-foreground">Tune the preview density</p>
+    <p class="max-w-[38ch] text-sm text-muted-foreground">
+      Alpine mirrors <code class="rounded bg-muted px-1 py-0.5 text-xs">toggle-group:change</code>
+      into local state and leaves the primitive in charge of selection.
+    </p>
+  </div>
+
+  <ToggleGroup
+    variant="outline"
+    defaultValue="balanced"
+    x-on:toggle-group:change="density = ($event.detail.value[0] || 'balanced')"
+  >
+    <ToggleGroupItem value="calm">Calm</ToggleGroupItem>
+    <ToggleGroupItem value="balanced">Balanced</ToggleGroupItem>
+    <ToggleGroupItem value="dense">Dense</ToggleGroupItem>
+  </ToggleGroup>
+
+  <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+    <div class="space-y-4">
+      <div class="rounded-lg border bg-card p-4">
+        <div class="flex items-center gap-2">
+          <p class="text-sm font-medium text-foreground">Local Alpine state</p>
+          <Badge variant="secondary" x-text="labels[density]">Balanced</Badge>
+        </div>
+        <p class="mt-3 text-sm text-muted-foreground" x-text="notes[density]">
+          Mirror the primitive event into a small reactive object and let Alpine
+          update nearby text or classes.
+        </p>
+      </div>
+
+      <div class="rounded-lg border p-4">
+        <p class="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          Preview list
+        </p>
+        <div
+          class="mt-4 flex flex-col transition-all"
+          x-bind:class="density === 'calm' ? 'gap-4' : density === 'dense' ? 'gap-2' : 'gap-3'"
+        >
+          <div class="rounded-md border px-3 py-2 text-sm">
+            Document the runtime contract in the markup.
+          </div>
+          <div class="rounded-md border px-3 py-2 text-sm">
+            Mirror only the summary state that belongs to this view.
+          </div>
+          <div class="rounded-md border px-3 py-2 text-sm">
+            Let the primitive keep its own active item.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <EventLog id="blog-alpine-toggle-log" class="mt-0 min-h-[12rem] w-full" />
+  </div>
+</section>
+
+<script>
+  {
+    const root = document.getElementById("blog-alpine-toggle-demo");
+    const group = root?.querySelector('[data-slot="toggle-group"]');
+    const eventLog = document.getElementById("blog-alpine-toggle-log") as
+      | (HTMLPreElement & { _log?: (message: string) => void })
+      | null;
+
+    group?.addEventListener("toggle-group:change", (event: Event) => {
+      const values = (event as CustomEvent<{ value: string[] }>).detail.value;
+      const density = values[0] ?? "balanced";
+      eventLog?._log?.(`toggle-group:change → value: "${density}"`);
+    });
+  }
+</script>

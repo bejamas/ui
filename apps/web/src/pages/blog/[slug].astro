@@ -6,7 +6,6 @@ import { Date } from "@bejamas/ui/components/date";
 import BlogByline from "@/components/blog/BlogByline.astro";
 import * as blogComponents from "@/components/blog/mdx-components";
 
-
 export const prerender = true;
 
 export async function getStaticPaths() {
@@ -39,17 +38,31 @@ const { Content } = await render(entry);
     description: entry.data.description,
     tableOfContents: false,
     lastUpdated: entry.data.updatedDate ?? entry.data.publishDate,
+    template: "splash",
   }}
 >
   <div data-page-scope="blog-post" hidden></div>
-  <div class="blog-header not-content">
+  <a
+    href="/blog"
+    class="not-content inline-block mb-12 no-underline text-sm text-muted-foreground hover:text-foreground"
+    >← Blog</a
+  >
+  <div class="not-content">
     <p class="text-sm text-muted-foreground">
       Published <Date date={entry.data.publishDate} format="long" />
     </p>
-    <h1 class="blog-title tracking-tight">{entry.data.title}</h1>
-    {entry.data.description && (
-      <p class="blog-description text-muted-foreground">{entry.data.description}</p>
-    )}
+    <h1
+      class="text-3xl min-[50rem]:text-4xl leading-tight font-medium text-foreground text-balance mt-4 tracking-tight"
+    >
+      {entry.data.title}
+    </h1>
+    {
+      entry.data.description && (
+        <p class="text-balance mt-4 max-w-[52ch] text-muted-foreground">
+          {entry.data.description}
+        </p>
+      )
+    }
     <BlogByline authors={entry.data.authors} />
   </div>
   <Content components={blogComponents} />
@@ -69,24 +82,26 @@ const { Content } = await render(entry);
     padding-top: calc(var(--spacing) * 16);
   }
 
-  .blog-title {
-    font-size: 1.875rem;
-    line-height: 1.2;
-    font-weight: 500;
-    color: var(--foreground);
-    text-wrap: balance;
-    margin-top: calc(var(--spacing) * 3);
+  :root:has([data-page-scope="blog-post"]) .main-frame-splash {
+    --sl-splash-frame-top: calc(var(--spacing) * 18);
+    --sl-splash-frame-inline: calc(var(--spacing) * 6);
   }
 
-  @media (min-width: 50rem) {
-    .blog-title {
-      font-size: 2.25rem;
-    }
+  :root:has([data-page-scope="blog-post"]) .sl-markdown-content {
+    --sl-content-gap-y: 1.25rem;
   }
 
-  .blog-description {
-    text-wrap: balance;
-    margin-top: calc(var(--spacing) * 4);
-    max-width: 52ch;
+  :root:has([data-page-scope="blog-post"])
+    .sl-markdown-content
+    h2:not(:where(.not-content *)) {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--sl-color-gray-6);
+  }
+
+  :root:has([data-page-scope="blog-post"])
+    .sl-markdown-content
+    h3:not(:where(.not-content *)) {
+    margin-top: 2rem;
   }
 </style>

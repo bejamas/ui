@@ -16,7 +16,9 @@ const showUpdatedDate = hasDistinctUpdatedDate(
 ---
 
 <article class="not-content rounded-2xl border border-border/70 bg-card/40 p-6">
-  <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+  <div
+    class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"
+  >
     <span>
       Published <Date date={entry.data.publishDate} format="long" />
     </span>
@@ -29,7 +31,7 @@ const showUpdatedDate = hasDistinctUpdatedDate(
     }
   </div>
 
-  <h2 class="mt-4 text-2xl font-medium tracking-tight text-foreground">
+  <h2 class="mt-6 text-2xl font-medium tracking-tight text-foreground">
     <a href={href} class="underline-offset-4 hover:underline">
       {entry.data.title}
     </a>
@@ -48,7 +50,10 @@ const showUpdatedDate = hasDistinctUpdatedDate(
   </div>
 
   <div class="mt-6">
-    <a href={href} class="text-sm font-medium underline-offset-4 hover:underline">
+    <a
+      href={href}
+      class="text-sm font-medium underline-offset-4 hover:underline"
+    >
       Read post
     </a>
   </div>

@@ -40,16 +40,16 @@ const textClass = size === "sm" ? "text-sm" : "text-sm";
         <AvatarFallback>{initials}</AvatarFallback>
       </Avatar>
       <span class="min-w-0">
-        <span class:list={["block truncate font-medium text-foreground", textClass]}>
+        <span
+          class:list={["block truncate font-medium text-foreground", textClass]}
+        >
           {author.name}
         </span>
-        {
-          showRole && author.role && (
-            <span class="block truncate text-xs text-muted-foreground">
-              {author.role}
-            </span>
-          )
-        }
+        {showRole && author.role && (
+          <span class="block truncate text-xs text-muted-foreground">
+            {author.role}
+          </span>
+        )}
       </span>
     </a>
   ) : (
@@ -61,16 +61,16 @@ const textClass = size === "sm" ? "text-sm" : "text-sm";
         <AvatarFallback>{initials}</AvatarFallback>
       </Avatar>
       <span class="min-w-0">
-        <span class:list={["block truncate font-medium text-foreground", textClass]}>
+        <span
+          class:list={["block truncate font-medium text-foreground", textClass]}
+        >
           {author.name}
         </span>
-        {
-          showRole && author.role && (
-            <span class="block truncate text-xs text-muted-foreground">
-              {author.role}
-            </span>
-          )
-        }
+        {showRole && author.role && (
+          <span class="block truncate text-xs text-muted-foreground">
+            {author.role}
+          </span>
+        )}
       </span>
     </div>
   )
