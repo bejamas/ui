@@ -171,6 +171,40 @@ import SemanticIcon from "../icon/SemanticIcon.astro";
   expect(result).toContain('data-slot="select-icon"');
 });
 
+test("rewrites command and dialog icons to selected non-lucide svg markup", () => {
+  const config = makeConfig({
+    iconLibrary: "tabler",
+    aliases: {
+      components: "@workspace/ui/components",
+      utils: "@workspace/ui/lib/utils",
+    },
+  });
+
+  const raw = `---
+import { cn } from "@/lib/utils";
+import { SearchIcon } from "@lucide/astro";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+---
+
+<div class={cn("flex", className)}>
+  <SearchIcon class="size-4 opacity-50" data-slot="command-input-icon" />
+  <SemanticIcon name="x" class="size-4" data-slot="dialog-close-icon" />
+</div>
+`;
+
+  const result = rewriteAstroImports(raw, config);
+
+  expect(result).not.toContain("@lucide/astro");
+  expect(result).not.toContain("SearchIcon");
+  expect(result).not.toContain("SemanticIcon");
+  expect(result).toContain("<svg");
+  expect(result).toContain('data-slot="command-input-icon"');
+  expect(result).toContain('data-slot="dialog-close-icon"');
+  expect(result).toContain('class="size-4 opacity-50"');
+  expect(result).toContain('class="size-4"');
+  expect(result).toContain('stroke="currentColor"');
+});
+
 test("rewrites menu placeholders for translucent menu output", () => {
   const config = makeConfig({
     menuColor: "default-translucent",

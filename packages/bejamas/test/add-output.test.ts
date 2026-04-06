@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { Command } from "commander";
 import {
+  ensureTrailingNewline,
   extractOptionsForShadcn,
   formatSkippedFilesHeading,
   hasInspectionFlags,
@@ -122,6 +123,15 @@ describe("add output helpers", () => {
   test("keeps overwrite guidance when overwrite was not requested", () => {
     expect(formatSkippedFilesHeading(1, false)).toBe(
       "Skipped 1 file: (files might be identical, use --overwrite to overwrite)",
+    );
+  });
+
+  test("normalizes captured shadcn output before replaying failures", () => {
+    expect(ensureTrailingNewline("Something went wrong")).toBe(
+      "Something went wrong\n",
+    );
+    expect(ensureTrailingNewline("Already has newline\n")).toBe(
+      "Already has newline\n",
     );
   });
 });

@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 import {
   buildRegistryBaseCss,
   buildRegistryBaseItem,
+  buildStyleIndexItem,
   buildRegistryStyleCss,
 } from "../src/server";
 
@@ -72,5 +73,48 @@ describe("registry base item", () => {
       "font-heading-playfair-display",
     ]);
     expect(baseItem.docs).toContain("Heading font family");
+  });
+
+  it("installs only the selected icon package from base config", () => {
+    const lucideItem = buildRegistryBaseItem({
+      style: "juno",
+      font: "inter",
+      fontHeading: "inherit",
+      iconLibrary: "lucide",
+      baseColor: "neutral",
+      theme: "neutral",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+      template: "astro",
+      rtl: false,
+      rtlLanguage: "ar",
+    });
+    const tablerItem = buildRegistryBaseItem({
+      style: "juno",
+      font: "inter",
+      fontHeading: "inherit",
+      iconLibrary: "tabler",
+      baseColor: "neutral",
+      theme: "neutral",
+      radius: "default",
+      menuAccent: "subtle",
+      menuColor: "default",
+      template: "astro",
+      rtl: false,
+      rtlLanguage: "ar",
+    });
+
+    expect(lucideItem.dependencies).toContain("@lucide/astro");
+    expect(tablerItem.dependencies).toContain("@iconify-json/tabler");
+    expect(tablerItem.dependencies).not.toContain("@lucide/astro");
+  });
+
+  it("keeps the style index free of hard-coded icon packages", () => {
+    const styleItem = buildStyleIndexItem("juno");
+
+    expect(styleItem.dependencies).toContain("bejamas");
+    expect(styleItem.dependencies).toContain("class-variance-authority");
+    expect(styleItem.dependencies).not.toContain("@lucide/astro");
   });
 });

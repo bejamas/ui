@@ -7,6 +7,7 @@ import {
   getDocumentLanguage,
   getFontValue,
   getStyleId,
+  ICON_LIBRARIES,
   type DesignSystemConfig,
 } from "@bejamas/create-config/server";
 import {
@@ -25,6 +26,10 @@ const MANAGED_TAILWIND_IMPORTS = new Set([
   SHADCN_TAILWIND_IMPORT,
   BEJAMAS_TAILWIND_IMPORT,
 ]);
+const MANAGED_ICON_PACKAGES = new Set(
+  ICON_LIBRARIES.map((library) => library.packageName),
+);
+const FALLBACK_ICON_PACKAGE_VERSION = "latest";
 const TEMPLATE_APP_UI_IMPORT = 'import { appUi } from "@/i18n/ui";';
 
 type TemplateI18nVariant = "astro" | "monorepo";
@@ -668,6 +673,85 @@ async function patchCssFileManagedTailwindImport(filepath: string) {
   await fs.writeFile(filepath, next, "utf8");
 }
 
+function getSelectedIconPackageName(config: DesignSystemConfig) {
+  return ICON_LIBRARIES.find((library) => library.name === config.iconLibrary)
+    ?.packageName;
+}
+
+async function patchPackageJsonIconDependency(
+  filepath: string,
+  config: DesignSystemConfig,
+) {
+  const selectedIconPackage = getSelectedIconPackageName(config);
+
+  if (!selectedIconPackage) {
+    return;
+  }
+
+  const packageJson = await fs.readJson(filepath);
+  let targetField: "dependencies" | "devDependencies" | null = null;
+  let changed = false;
+
+  for (const field of ["dependencies", "devDependencies"] as const) {
+    const dependencies = packageJson[field];
+
+    if (!dependencies) {
+      continue;
+    }
+
+    for (const iconPackage of MANAGED_ICON_PACKAGES) {
+      if (!dependencies[iconPackage]) {
+        continue;
+      }
+
+      targetField ??= field;
+
+      if (iconPackage === selectedIconPackage) {
+        continue;
+      }
+
+      delete dependencies[iconPackage];
+      changed = true;
+    }
+  }
+
+  if (!targetField) {
+    return;
+  }
+
+  const alreadyHasSelectedPackage =
+    packageJson.dependencies?.[selectedIconPackage] ||
+    packageJson.devDependencies?.[selectedIconPackage];
+
+  if (!alreadyHasSelectedPackage) {
+    packageJson[targetField] ??= {};
+    packageJson[targetField][selectedIconPackage] =
+      FALLBACK_ICON_PACKAGE_VERSION;
+    changed = true;
+  }
+
+  if (changed) {
+    await fs.writeJson(filepath, packageJson, { spaces: 2 });
+  }
+}
+
+async function syncPackageIconDependencies(
+  projectPath: string,
+  config: DesignSystemConfig,
+) {
+  const packageJsonFiles = await fg("**/package.json", {
+    cwd: projectPath,
+    absolute: true,
+    ignore: ["**/node_modules/**", "**/dist/**", "**/.astro/**"],
+  });
+
+  await Promise.all(
+    packageJsonFiles.map((filepath) =>
+      patchPackageJsonIconDependency(filepath, config),
+    ),
+  );
+}
+
 export async function syncManagedTailwindCss(projectPath: string) {
   const componentJsonFiles = await fg("**/components.json", {
     cwd: projectPath,
@@ -839,6 +923,7 @@ export async function applyDesignSystemToProject(
       patchCssFileWithTheme(filepath, config, options.themeVars),
     ),
   );
+  await syncPackageIconDependencies(projectPath, config);
   await Promise.all(
     [
       path.resolve(projectPath, "src/i18n/ui.ts"),

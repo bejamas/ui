@@ -159,6 +159,19 @@ export function formatSkippedFilesHeading(
   return `Skipped ${count} ${noun}: (files might be identical, use --overwrite to overwrite)`;
 }
 
+export function ensureTrailingNewline(output: string) {
+  return output.endsWith("\n") ? output : `${output}\n`;
+}
+
+export function writeCapturedShadcnOutput(stdout: string, stderr: string) {
+  if (stdout) {
+    process.stdout.write(ensureTrailingNewline(stdout));
+  }
+  if (stderr) {
+    process.stderr.write(ensureTrailingNewline(stderr));
+  }
+}
+
 interface SubfolderMapResult {
   uniqueMap: Map<string, string>;
   sharedFilenames: Set<string>;
@@ -415,12 +428,7 @@ async function addComponents(
     }
 
     if (inspectionMode) {
-      if (stdout) {
-        process.stdout.write(stdout.endsWith("\n") ? stdout : `${stdout}\n`);
-      }
-      if (stderr) {
-        process.stderr.write(stderr.endsWith("\n") ? stderr : `${stderr}\n`);
-      }
+      writeCapturedShadcnOutput(stdout, stderr);
     }
 
     const parsed = inspectionMode
@@ -428,8 +436,8 @@ async function addComponents(
       : parseShadcnOutput(stdout, stderr);
 
     if (result.exitCode !== 0) {
-      if (result.stderr) {
-        logger.error(result.stderr);
+      if (!inspectionMode) {
+        writeCapturedShadcnOutput(stdout, stderr);
       }
       process.exit(result.exitCode);
     }
