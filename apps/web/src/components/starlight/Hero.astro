@@ -35,7 +35,7 @@ const starlightVariantToBejamasVariant = {
   primary: "default",
   secondary: "secondary",
   minimal: "outline",
-};
+} as const;
 
 const shuffleCount = 0;
 const formattedShuffleCount = formatShuffleCount(shuffleCount);
@@ -74,9 +74,12 @@ const formattedShuffleCount = formatShuffleCount(shuffleCount);
           }) => (
             <Button
               {href}
-              variant={starlightVariantToBejamasVariant[variant]}
+              variant={
+                starlightVariantToBejamasVariant[
+                  variant as keyof typeof starlightVariantToBejamasVariant
+                ] ?? "default"
+              }
               as="a"
-              icon={icon?.name}
               class:list={[className]}
               {...attrs}
             >

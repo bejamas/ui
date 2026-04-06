@@ -186,7 +186,7 @@ function getLangFromPath(path: string): string {
               <button
                 type="button"
                 class="text-xs px-2 py-1 rounded-md bg-secondary hover:bg-secondary/80"
-                on:click={`navigator.clipboard.writeText(${JSON.stringify(f.code)})`}
+                onclick={`navigator.clipboard.writeText(${JSON.stringify(f.code)})`}
               >
                 Copy
               </button>

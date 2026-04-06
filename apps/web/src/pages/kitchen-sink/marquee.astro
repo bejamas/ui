@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Marquee } from "@bejamas/registry/ui/marquee";
+import { Marquee as MarqueeComponent } from "@bejamas/registry/ui/marquee";
 ---
 
 <KitchenSinkLayout>
@@ -9,7 +9,7 @@ import { Marquee } from "@bejamas/registry/ui/marquee";
     <h1 class="text-3xl font-bold mb-10">Marquee</h1>
 
     <KitchenSinkSection title="Left (Default)">
-      <Marquee>
+      <MarqueeComponent>
         <img
           src="/demo/logo/sonos.svg"
           alt="Sonos"
@@ -40,11 +40,11 @@ import { Marquee } from "@bejamas/registry/ui/marquee";
           alt="OpenAI"
           class="dark:invert h-5 self-center mx-10"
         />
-      </Marquee>
+      </MarqueeComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Right">
-      <Marquee direction="right">
+      <MarqueeComponent direction="right">
         <img
           src="/demo/logo/sonos.svg"
           alt="Sonos"
@@ -75,12 +75,12 @@ import { Marquee } from "@bejamas/registry/ui/marquee";
           alt="OpenAI"
           class="dark:invert h-5 self-center mx-10"
         />
-      </Marquee>
+      </MarqueeComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Vertical">
       <div class="flex gap-6 h-60">
-        <Marquee direction="top">
+        <MarqueeComponent direction="top">
           <div
             class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center"
           >
@@ -123,8 +123,8 @@ import { Marquee } from "@bejamas/registry/ui/marquee";
               class="dark:invert h-5"
             />
           </div>
-        </Marquee>
-        <Marquee direction="bottom">
+        </MarqueeComponent>
+        <MarqueeComponent direction="bottom">
           <div
             class="bg-muted rounded-lg p-4 mx-2 my-2 flex items-center justify-center"
           >
@@ -167,7 +167,7 @@ import { Marquee } from "@bejamas/registry/ui/marquee";
               class="dark:invert h-5"
             />
           </div>
-        </Marquee>
+        </MarqueeComponent>
       </div>
     </KitchenSinkSection>
 
@@ -175,7 +175,7 @@ import { Marquee } from "@bejamas/registry/ui/marquee";
       <div class="space-y-6">
         <div>
           <p class="text-sm text-muted-foreground mb-2">Fast (15s)</p>
-          <Marquee time={15}>
+          <MarqueeComponent time={15}>
             <img
               src="/demo/logo/sonos.svg"
               alt="Sonos"
@@ -206,11 +206,11 @@ import { Marquee } from "@bejamas/registry/ui/marquee";
               alt="OpenAI"
               class="dark:invert h-5 self-center mx-10"
             />
-          </Marquee>
+          </MarqueeComponent>
         </div>
         <div>
           <p class="text-sm text-muted-foreground mb-2">Slow (60s)</p>
-          <Marquee time={60}>
+          <MarqueeComponent time={60}>
             <img
               src="/demo/logo/sonos.svg"
               alt="Sonos"
@@ -241,13 +241,13 @@ import { Marquee } from "@bejamas/registry/ui/marquee";
               alt="OpenAI"
               class="dark:invert h-5 self-center mx-10"
             />
-          </Marquee>
+          </MarqueeComponent>
         </div>
       </div>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Solid Variant">
-      <Marquee variant="solid">
+      <MarqueeComponent variant="solid">
         <img
           src="/demo/logo/sonos.svg"
           alt="Sonos"
@@ -278,7 +278,7 @@ import { Marquee } from "@bejamas/registry/ui/marquee";
           alt="OpenAI"
           class="dark:invert h-5 self-center mx-10"
         />
-      </Marquee>
+      </MarqueeComponent>
     </KitchenSinkSection>
   </section>
 </KitchenSinkLayout>

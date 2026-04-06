@@ -2,7 +2,6 @@ import { Controller } from "@hotwired/stimulus";
 import {
   hasCreateLockableParam,
   isCreateFontGroup,
-  type CreateFontGroup,
   type CreateLockableParam,
 } from "@/utils/create-sidebar";
 import {
@@ -20,6 +19,7 @@ import {
 import type CreatePickerController from "@/stimulus/controllers/create_picker_controller";
 import type {
   ColorInputElement,
+  CreateConfig,
   CreateSidebarPanel,
   CreateSidebarRenderState,
 } from "@/stimulus/types/create";

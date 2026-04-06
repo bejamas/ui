@@ -1,5 +1,5 @@
 ---
-import ArrowLeftIcon from "@lucide/astro/icons/arrow-left";
+import { ArrowLeft as ArrowLeftIcon } from "@lucide/astro";
 import { resolveDesignSystemTheme } from "@/utils/themes/design-system-adapter";
 import {
   CREATE_THEME_TOKEN_SECTIONS,
@@ -16,7 +16,7 @@ interface Props {
   themeOverrides?: ThemeOverrides | null;
 }
 
-const { config, themeRef = null, themeOverrides = null } = Astro.props as Props;
+const { config, themeOverrides = null } = Astro.props as Props;
 const resolvedTheme = resolveDesignSystemTheme(config, themeOverrides).styles;
 ---
 

@@ -3,14 +3,13 @@ import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import {
-  Dialog,
+  Dialog as DialogComponent,
   DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
 } from "@bejamas/registry/ui/dialog";
 import { Button } from "@bejamas/registry/ui/button";
 import { Input } from "@bejamas/registry/ui/input";
@@ -23,7 +22,7 @@ import { Label } from "@bejamas/registry/ui/label";
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <Dialog>
+        <DialogComponent>
           <DialogTrigger asChild>
             <Button variant="outline">Open Dialog</Button>
           </DialogTrigger>
@@ -41,11 +40,11 @@ import { Label } from "@bejamas/registry/ui/label";
               <Button data-slot="dialog-close">Close</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </DialogComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Form">
-        <Dialog>
+        <DialogComponent>
           <DialogTrigger asChild>
             <Button variant="outline">Edit Profile</Button>
           </DialogTrigger>
@@ -75,11 +74,11 @@ import { Label } from "@bejamas/registry/ui/label";
               <Button data-slot="dialog-close">Save changes</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </DialogComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Confirmation (Destructive)">
-        <Dialog>
+        <DialogComponent>
           <DialogTrigger asChild>
             <Button variant="destructive">Delete Account</Button>
           </DialogTrigger>
@@ -98,7 +97,7 @@ import { Label } from "@bejamas/registry/ui/label";
               >
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </DialogComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="No Close Button">
@@ -106,7 +105,7 @@ import { Label } from "@bejamas/registry/ui/label";
           Dialog without the default X close button — user must click a footer
           button.
         </p>
-        <Dialog>
+        <DialogComponent>
           <DialogTrigger asChild>
             <Button variant="outline">Open (no X)</Button>
           </DialogTrigger>
@@ -127,11 +126,11 @@ import { Label } from "@bejamas/registry/ui/label";
               <Button data-slot="dialog-close">I Agree</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </DialogComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Scrollable Content">
-        <Dialog>
+        <DialogComponent>
           <DialogTrigger asChild>
             <Button variant="outline">Open Long Dialog</Button>
           </DialogTrigger>
@@ -188,7 +187,7 @@ import { Label } from "@bejamas/registry/ui/label";
               <Button data-slot="dialog-close">I understand</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </DialogComponent>
       </KitchenSinkSection>
     </div>
 
@@ -196,7 +195,7 @@ import { Label } from "@bejamas/registry/ui/label";
       <p class="text-sm text-muted-foreground">
         Open and close the dialog and check the output for events.
       </p>
-      <Dialog id="event-dialog">
+      <DialogComponent id="event-dialog">
         <DialogTrigger asChild>
           <Button variant="outline">Event Dialog</Button>
         </DialogTrigger>
@@ -211,7 +210,7 @@ import { Label } from "@bejamas/registry/ui/label";
             <Button data-slot="dialog-close">Close</Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </DialogComponent>
       <EventLog id="dialog-event-output" />
       <script>
         {
@@ -230,7 +229,7 @@ import { Label } from "@bejamas/registry/ui/label";
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Programmatic Control">
-      <Dialog id="programmatic-dialog">
+      <DialogComponent id="programmatic-dialog">
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Programmatic Dialog</DialogTitle>
@@ -242,7 +241,7 @@ import { Label } from "@bejamas/registry/ui/label";
             <Button data-slot="dialog-close">Close</Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </DialogComponent>
       <div class="flex flex-wrap gap-2">
         <button
           id="open-dialog-btn"

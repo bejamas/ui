@@ -8,11 +8,9 @@ import starlightThemeBejamas from "starlight-theme-bejamas";
 import vercel from "@astrojs/vercel";
 import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
-import { posthog } from "./src/utils/posthog";
 
 import alpinejs from "@astrojs/alpinejs";
 
-const isVercel = process.env.VERCEL === "1";
 const DYNAMIC_HTML_ROUTE_COMPONENTS = new Set([
   "src/pages/kitchen-sink/forms-actions.astro",
   "src/pages/t/[id].astro",
@@ -22,6 +20,7 @@ const DYNAMIC_ENDPOINT_COMPONENTS = new Set([
   "src/pages/r/themes/current-theme.css.ts",
   "src/pages/r/themes/[slug].json.ts",
 ]);
+/** @type {import("astro").AstroIntegration} */
 const staticFirstRoutes = {
   name: "static-first-routes",
   hooks: {

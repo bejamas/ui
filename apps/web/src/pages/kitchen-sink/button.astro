@@ -1,14 +1,13 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Button } from "@bejamas/registry/ui/button";
+import { Button as ButtonComponent } from "@bejamas/registry/ui/button";
 import { Spinner } from "@bejamas/registry/ui/spinner";
 import {
   MailIcon,
   PlusIcon,
   ChevronRightIcon,
   DownloadIcon,
-  TrashIcon,
   SettingsIcon,
   SearchIcon,
   HeartIcon,
@@ -22,98 +21,98 @@ import {
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Variants">
         <div class="flex items-center gap-2 flex-wrap">
-          <Button>Default</Button>
-          <Button variant="secondary">Secondary</Button>
-          <Button variant="outline">Outline</Button>
-          <Button variant="ghost">Ghost</Button>
-          <Button variant="destructive">Destructive</Button>
-          <Button variant="link">Link</Button>
+          <ButtonComponent>Default</ButtonComponent>
+          <ButtonComponent variant="secondary">Secondary</ButtonComponent>
+          <ButtonComponent variant="outline">Outline</ButtonComponent>
+          <ButtonComponent variant="ghost">Ghost</ButtonComponent>
+          <ButtonComponent variant="destructive">Destructive</ButtonComponent>
+          <ButtonComponent variant="link">Link</ButtonComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Sizes">
         <div class="flex items-center gap-2 flex-wrap">
-          <Button size="sm">Small</Button>
-          <Button size="default">Default</Button>
-          <Button size="lg">Large</Button>
+          <ButtonComponent size="sm">Small</ButtonComponent>
+          <ButtonComponent size="default">Default</ButtonComponent>
+          <ButtonComponent size="lg">Large</ButtonComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Icons">
         <div class="flex items-center gap-2 flex-wrap">
-          <Button>
+          <ButtonComponent>
             <MailIcon />
             Login with Email
-          </Button>
-          <Button variant="secondary">
+          </ButtonComponent>
+          <ButtonComponent variant="secondary">
             <PlusIcon />
             Create New
-          </Button>
-          <Button variant="outline">
+          </ButtonComponent>
+          <ButtonComponent variant="outline">
             Next
             <ChevronRightIcon />
-          </Button>
-          <Button variant="ghost">
+          </ButtonComponent>
+          <ButtonComponent variant="ghost">
             <DownloadIcon />
             Download
-          </Button>
+          </ButtonComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Icon Only">
         <div class="flex items-center gap-2 flex-wrap">
-          <Button size="icon-sm" variant="outline" aria-label="Search">
+          <ButtonComponent size="icon-sm" variant="outline" aria-label="Search">
             <SearchIcon />
-          </Button>
-          <Button size="icon" variant="outline" aria-label="Settings">
+          </ButtonComponent>
+          <ButtonComponent size="icon" variant="outline" aria-label="Settings">
             <SettingsIcon />
-          </Button>
-          <Button size="icon-lg" variant="outline" aria-label="Favorite">
+          </ButtonComponent>
+          <ButtonComponent size="icon-lg" variant="outline" aria-label="Favorite">
             <HeartIcon />
-          </Button>
+          </ButtonComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="As Link">
         <div class="flex items-center gap-2 flex-wrap">
-          <Button as="a" href="#button-link">Default Link</Button>
-          <Button as="a" href="#button-link" variant="outline"
-            >Outline Link</Button
+          <ButtonComponent as="a" href="#button-link">Default Link</ButtonComponent>
+          <ButtonComponent as="a" href="#button-link" variant="outline"
+            >Outline Link</ButtonComponent
           >
-          <Button as="a" href="#button-link" variant="ghost">Ghost Link</Button>
+          <ButtonComponent as="a" href="#button-link" variant="ghost">Ghost Link</ButtonComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Disabled">
         <div class="flex items-center gap-2 flex-wrap">
-          <Button disabled>Default</Button>
-          <Button disabled variant="secondary">Secondary</Button>
-          <Button disabled variant="outline">Outline</Button>
-          <Button disabled variant="destructive">Destructive</Button>
+          <ButtonComponent disabled>Default</ButtonComponent>
+          <ButtonComponent disabled variant="secondary">Secondary</ButtonComponent>
+          <ButtonComponent disabled variant="outline">Outline</ButtonComponent>
+          <ButtonComponent disabled variant="destructive">Destructive</ButtonComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Loading">
         <div class="flex items-center gap-2 flex-wrap">
-          <Button disabled>
+          <ButtonComponent disabled>
             <Spinner />
             Please wait
-          </Button>
-          <Button disabled variant="secondary">
+          </ButtonComponent>
+          <ButtonComponent disabled variant="secondary">
             <Spinner />
             Loading...
-          </Button>
-          <Button disabled variant="outline">
+          </ButtonComponent>
+          <ButtonComponent disabled variant="outline">
             <Spinner />
             Saving
-          </Button>
+          </ButtonComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Full Width">
         <div class="flex flex-col gap-2 max-w-sm">
-          <Button class="w-full">Full Width Button</Button>
-          <Button class="w-full" variant="outline">Full Width Outline</Button>
+          <ButtonComponent class="w-full">Full Width Button</ButtonComponent>
+          <ButtonComponent class="w-full" variant="outline">Full Width Outline</ButtonComponent>
         </div>
       </KitchenSinkSection>
     </div>

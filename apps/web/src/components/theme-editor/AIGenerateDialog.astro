@@ -10,7 +10,7 @@ import {
 } from "@bejamas/ui/components/dialog";
 import { Label } from "@bejamas/ui/components/label";
 import { Textarea } from "@bejamas/ui/components/textarea";
-import { ImagePlus, Loader2, Sparkles } from "@lucide/astro";
+import { ImagePlus, LoaderCircle, Sparkles } from "@lucide/astro";
 ---
 
 <Dialog id="ai-generate-dialog">
@@ -78,7 +78,7 @@ import { ImagePlus, Loader2, Sparkles } from "@lucide/astro";
         id="ai-status"
       >
         <span id="ai-status-icon" class="flex items-center justify-center">
-          <Loader2 class="size-4 animate-spin" />
+          <LoaderCircle class="size-4 animate-spin" />
         </span>
         <span id="ai-status-text">Generating palette...</span>
       </div>

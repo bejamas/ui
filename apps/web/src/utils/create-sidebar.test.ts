@@ -78,9 +78,9 @@ describe("create sidebar helpers", () => {
       style: "juno",
     });
 
-    expect(options.template.map((option) => option.value)).toEqual(
-      TEMPLATE_VALUES,
-    );
+    expect(options.template.map((option) => option.value)).toEqual([
+      ...TEMPLATE_VALUES,
+    ]);
   });
 
   it("exposes the supported RTL language options", () => {

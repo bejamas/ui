@@ -12,7 +12,6 @@ import {
   DropdownMenuContent,
   DropdownMenuRadioItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
 } from "@bejamas/ui/components/dropdown-menu";
 import { Input } from "@bejamas/ui/components/input";
 import { Label } from "@bejamas/ui/components/label";
@@ -27,7 +26,6 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-  TabsContent,
 } from "@bejamas/ui/components/tabs";
 import {
   Tooltip,
@@ -538,9 +536,9 @@ const sectionTitles = [
       );
     };
 
-    const getPanelInstance = () => {
+    const getPanelInstance = (): Record<string, any> | null => {
       const el = document.getElementById("theme-editor-panel");
-      return el ? Alpine.$data(el) : null;
+      return el ? (Alpine.$data(el) as Record<string, any>) : null;
     };
 
     const setupGlobalHandlers = () => {
@@ -653,6 +651,9 @@ const sectionTitles = [
       });
     };
 
+    const defineAlpineComponent = (component: Alpine.AlpineComponent<any>) =>
+      component;
+
     document.addEventListener("alpine:init", () => {
       if ((window as any).__themeEditorPanelData) return;
       (window as any).__themeEditorPanelData = true;
@@ -662,7 +663,7 @@ const sectionTitles = [
       Alpine.data(
         "themeEditorPanel",
         (sectionTitles: string[]) =>
-          ({
+          defineAlpineComponent({
             isOpen: false,
             isDragging: false,
             dragOffset: { x: 0, y: 0 },
@@ -701,10 +702,10 @@ const sectionTitles = [
               this.setupEventListeners();
               this.loadInitialState();
 
-              this.boundKeydown = (e) => this.handleKeydown(e);
+              this.boundKeydown = (e: KeyboardEvent) => this.handleKeydown(e);
               document.addEventListener("keydown", this.boundKeydown);
 
-              this.boundPresetChange = (e) =>
+              this.boundPresetChange = (e: Event) =>
                 this.handleExternalPresetChange(e);
               window.addEventListener(
                 PRESET_CHANGE_EVENT,
@@ -717,7 +718,8 @@ const sectionTitles = [
                 this.boundCustomPresetChange,
               );
 
-              this.boundThemeChange = (e) => this.handleExternalThemeChange(e);
+              this.boundThemeChange = (e: Event) =>
+                this.handleExternalThemeChange(e);
               window.addEventListener(
                 "theme-toggle-changed",
                 this.boundThemeChange,
@@ -791,7 +793,7 @@ const sectionTitles = [
                 this.$el.style.transition = "none";
               });
 
-              this.boundMouseMove = (e) => {
+              this.boundMouseMove = (e: MouseEvent) => {
                 if (!this.isDragging) return;
                 const x = e.clientX - this.dragOffset.x;
                 const y = e.clientY - this.dragOffset.y;
@@ -1046,9 +1048,10 @@ const sectionTitles = [
 
             updateColorInputs() {
               const styles = this.workingStyles[this.currentMode];
-              this.$el
-                .querySelectorAll<HTMLElement>("color-input")
-                .forEach((input) => {
+              const inputs = this.$el.querySelectorAll(
+                "color-input",
+              ) as NodeListOf<HTMLElement>;
+              inputs.forEach((input) => {
                   const token = input.dataset.token;
                   if (!token) return;
                   const value = styles[token as keyof typeof styles];
@@ -1056,12 +1059,12 @@ const sectionTitles = [
                   (input as any).setColor?.(resolved);
 
                   if (!(input as any).setColor) {
-                    const swatch = input.querySelector<HTMLElement>(
+                    const swatch = input.querySelector(
                       '[data-slot="swatch"]',
-                    );
-                    const textInput = input.querySelector<HTMLInputElement>(
+                    ) as HTMLElement | null;
+                    const textInput = input.querySelector(
                       '[data-slot="text-input"]',
-                    );
+                    ) as HTMLInputElement | null;
                     if (swatch) swatch.style.background = resolved;
                     if (textInput) textInput.value = resolved;
                   }
@@ -1299,7 +1302,7 @@ const sectionTitles = [
                 | "hex";
 
               const convertedStyles = convertStyleColors(
-                toThemeStyleValues(this.workingStyles as ThemeStyleProps),
+                toThemeStyleValues(this.workingStyles),
                 format,
               );
 
@@ -1370,19 +1373,20 @@ const sectionTitles = [
               trigger?.click();
             },
 
-            handleExportJsonCopy() {
+            async handleExportJsonCopy() {
               const codeEl =
                 this.currentExportType === "json"
                   ? this.getExportCodeJson()
                   : this.getExportCodeCss();
               if (!codeEl) return;
 
-              this.copyToClipboard(codeEl.textContent || "");
-              this.showToast(
-                this.currentExportType === "json"
-                  ? "JSON copied to clipboard"
-                  : "CSS copied to clipboard",
-              );
+              if (await this.copyToClipboard(codeEl.textContent || "")) {
+                this.showToast(
+                  this.currentExportType === "json"
+                    ? "JSON copied to clipboard"
+                    : "CSS copied to clipboard",
+                );
+              }
             },
 
             setExportType(type: "json" | "css") {
@@ -1743,15 +1747,19 @@ const sectionTitles = [
               }
             },
 
-            copyToClipboard(text: string) {
-              navigator.clipboard.writeText(text).catch(() => {
-                const textarea = document.createElement("textarea");
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textarea);
-              });
+            async copyToClipboard(text: string) {
+              if (!navigator.clipboard) {
+                this.showToast("Clipboard access is not available");
+                return false;
+              }
+
+              try {
+                await navigator.clipboard.writeText(text);
+                return true;
+              } catch {
+                this.showToast("Unable to copy to clipboard");
+                return false;
+              }
             },
 
             showToast(message: string) {
@@ -1892,7 +1900,7 @@ const sectionTitles = [
 
               preview.innerHTML = this.aiImages
                 .map(
-                  (img, i) => `
+                  (img: { data: string; mediaType: string }, i: number) => `
                 <div class="relative size-16 overflow-hidden rounded-md border border-border">
                   <img class="h-full w-full object-cover" src="data:${img.mediaType};base64,${img.data}" alt="Reference ${i + 1}" />
                   <button type="button" class="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground" data-ai-remove="${i}">×</button>
@@ -1954,7 +1962,6 @@ const sectionTitles = [
                 status,
                 statusText,
                 reasoning,
-                reasoningContent,
                 generateBtn,
               } = elements;
 
@@ -2145,7 +2152,7 @@ const sectionTitles = [
                 }
               }
             },
-          }) as unknown as object,
+          }),
       );
     });
   </script>

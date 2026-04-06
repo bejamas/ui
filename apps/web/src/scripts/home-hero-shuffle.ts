@@ -4,6 +4,7 @@ import {
   decodePreset,
   encodePreset,
   isPresetCode,
+  type PresetConfig,
 } from "@bejamas/create-config/browser";
 import { createRandomDesignSystemConfig } from "@/utils/create-sidebar";
 import {
@@ -74,7 +75,7 @@ class HeroShuffleControlElement extends HTMLElement {
     this.button?.setAttribute("disabled", "");
 
     const config = createRandomDesignSystemConfig(getCurrentConfig());
-    const presetId = encodePreset(config);
+    const presetId = encodePreset(config as Partial<PresetConfig>);
     const styles = resolveDesignSystemTheme(config).styles;
 
     applyDocsPreset({

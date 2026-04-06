@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { StickySurface } from "@bejamas/registry/ui/sticky-surface";
+import { StickySurface as StickySurfaceComponent } from "@bejamas/registry/ui/sticky-surface";
 import { Button } from "@bejamas/registry/ui/button";
 ---
 
@@ -11,11 +11,11 @@ import { Button } from "@bejamas/registry/ui/button";
 
     <KitchenSinkSection title="Line Effect">
       <div class="overflow-y-auto max-h-[320px] w-full border rounded-lg">
-        <StickySurface effects={["line"]}>
+        <StickySurfaceComponent effects={["line"]}>
           <div class="px-4 py-3 bg-background">
             <h3 class="text-sm font-medium">Line Effect Header</h3>
           </div>
-        </StickySurface>
+        </StickySurfaceComponent>
         <div class="h-[800px] p-4">
           <p class="text-sm text-muted-foreground">
             Scroll down to see the line effect appear below the header.
@@ -26,11 +26,11 @@ import { Button } from "@bejamas/registry/ui/button";
 
     <KitchenSinkSection title="Elevate Effect">
       <div class="overflow-y-auto max-h-[320px] w-full border rounded-lg">
-        <StickySurface effects={["elevate"]}>
+        <StickySurfaceComponent effects={["elevate"]}>
           <div class="px-4 py-3 bg-background">
             <h3 class="text-sm font-medium">Elevate Effect Header</h3>
           </div>
-        </StickySurface>
+        </StickySurfaceComponent>
         <div class="h-[800px] p-4">
           <p class="text-sm text-muted-foreground">
             Scroll down to see the shadow appear on the header.
@@ -41,11 +41,11 @@ import { Button } from "@bejamas/registry/ui/button";
 
     <KitchenSinkSection title="Backdrop Effect">
       <div class="overflow-y-auto max-h-[320px] w-full border rounded-lg">
-        <StickySurface effects={["backdrop"]}>
+        <StickySurfaceComponent effects={["backdrop"]}>
           <div class="px-4 py-3">
             <h3 class="text-sm font-medium">Backdrop Effect Header</h3>
           </div>
-        </StickySurface>
+        </StickySurfaceComponent>
         <div class="h-[800px] p-4">
           <p class="text-sm text-muted-foreground">
             Scroll down to see the backdrop blur appear on the header.
@@ -56,11 +56,11 @@ import { Button } from "@bejamas/registry/ui/button";
 
     <KitchenSinkSection title="Combined Effects">
       <div class="overflow-y-auto max-h-[320px] w-full border rounded-lg">
-        <StickySurface effects={["line", "elevate"]}>
+        <StickySurfaceComponent effects={["line", "elevate"]}>
           <div class="px-4 py-3 bg-background">
             <h3 class="text-sm font-medium">Line + Elevate Header</h3>
           </div>
-        </StickySurface>
+        </StickySurfaceComponent>
         <div class="h-[800px] p-4">
           <p class="text-sm text-muted-foreground">
             Scroll down to see both line and shadow effects.
@@ -71,7 +71,7 @@ import { Button } from "@bejamas/registry/ui/button";
 
     <KitchenSinkSection title="With observeStuck">
       <div class="overflow-y-auto max-h-[320px] w-full border rounded-lg">
-        <StickySurface effects={["line", "elevate"]} observeStuck>
+        <StickySurfaceComponent effects={["line", "elevate"]} observeStuck>
           <div
             class="px-4 py-3 bg-background flex items-center justify-between"
           >
@@ -91,7 +91,7 @@ import { Button } from "@bejamas/registry/ui/button";
               </Button>
             </div>
           </div>
-        </StickySurface>
+        </StickySurfaceComponent>
         <div class="h-[800px] p-4">
           <p class="text-sm text-muted-foreground">
             Scroll down to see the "Log in" button fade and "Contact" change to

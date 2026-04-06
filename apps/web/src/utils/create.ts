@@ -117,7 +117,7 @@ export function parseCreateSearchParams(
 
   return {
     success: true as const,
-    data: normalizeDesignSystemConfig(result.data),
+    data: normalizeDesignSystemConfig(result.data) as DesignSystemConfig,
     preset: preservedPreset,
   };
 }
@@ -140,7 +140,7 @@ export function resolveCreatePreviewTarget(searchParams: URLSearchParams) {
 }
 
 export function buildCreatePreviewUrl(
-  config: DesignSystemConfig,
+  _config: DesignSystemConfig,
   preset: string,
   options: {
     previewTarget?: string | null;

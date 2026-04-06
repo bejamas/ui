@@ -1,13 +1,14 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
-import { getCollection, getEntry, render } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import BlockPreview from "@/components/BlockPreview.astro";
 import BlocksNav from "@/components/BlocksNav.astro";
 
 export const prerender = true;
 
 const block = await getEntry("blocks", Astro.params.slug);
+const blockItems = block?.data.items ?? [];
 
 export async function getStaticPaths() {
   const blocks = await getCollection("blocks");
@@ -18,7 +19,7 @@ export async function getStaticPaths() {
 }
 ---
 
-<script src="//unpkg.com/alpinejs" defer></script>
+<script is:inline src="//unpkg.com/alpinejs" defer></script>
 
 <StarlightPage
   hasSidebar={true}
@@ -31,13 +32,11 @@ export async function getStaticPaths() {
   <BlocksNav />
 
   {
-    block.data.items.map((item) => (
-      <section class="text-left not-content space-y-20">
-        {block.data.items.map((item) => (
-          <BlockPreview item={item} />
-        ))}
-      </section>
-    ))
+    <section class="text-left not-content space-y-20">
+      {blockItems.map((item) => (
+        <BlockPreview item={item} />
+      ))}
+    </section>
   }
 </StarlightPage>
 

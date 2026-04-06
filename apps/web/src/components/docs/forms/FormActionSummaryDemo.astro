@@ -96,15 +96,18 @@ import { Textarea } from "@bejamas/ui/components/textarea";
   const roots = document.querySelectorAll('[data-form-demo="contact-summary"]');
   const SUBMIT_MIN_DELAY_MS = 800;
 
-  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const wait = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
   const fieldLabels = {
     name: "Name",
     email: "Email",
     message: "Message",
-  };
+  } as const;
+  type FieldName = keyof typeof fieldLabels;
+  const fieldNames = Object.keys(fieldLabels) as FieldName[];
 
-  const setInvalid = (el, invalid) => {
+  const setInvalid = (el: Element | null | undefined, invalid: boolean) => {
     if (!(el instanceof HTMLElement)) return;
 
     if (invalid) {
@@ -115,7 +118,7 @@ import { Textarea } from "@bejamas/ui/components/textarea";
     delete el.dataset.invalid;
   };
 
-  const setAriaInvalid = (el, invalid) => {
+  const setAriaInvalid = (el: Element | null | undefined, invalid: boolean) => {
     if (
       !(
         el instanceof HTMLInputElement ||
@@ -156,7 +159,7 @@ import { Textarea } from "@bejamas/ui/components/textarea";
     if (!(form instanceof HTMLFormElement)) return;
 
     const fieldEntries = Object.fromEntries(
-      Object.keys(fieldLabels).map((name) => [
+      fieldNames.map((name) => [
         name,
         {
           wrapper: root.querySelector(`[data-field="${name}"]`),
@@ -164,9 +167,16 @@ import { Textarea } from "@bejamas/ui/components/textarea";
           control: form.querySelector(`[name="${name}"]`),
         },
       ]),
-    );
+    ) as Record<
+      FieldName,
+      {
+        wrapper: Element | null;
+        error: Element | null;
+        control: Element | null;
+      }
+    >;
 
-    const setSubmitting = (submitting) => {
+    const setSubmitting = (submitting: boolean) => {
       if (submitButton instanceof HTMLButtonElement) {
         submitButton.disabled = submitting;
       }
@@ -195,7 +205,7 @@ import { Textarea } from "@bejamas/ui/components/textarea";
     };
 
     const clearState = () => {
-      Object.keys(fieldLabels).forEach((name) => {
+      fieldNames.forEach((name) => {
         const entry = fieldEntries[name];
 
         if (entry?.error instanceof HTMLElement) {
@@ -276,10 +286,13 @@ import { Textarea } from "@bejamas/ui/components/textarea";
 
       if (result.error) {
         if (isInputError(result.error)) {
-          const summaryItems = [];
+          const summaryItems: string[] = [];
+          const fields = (
+            result.error as { fields: Partial<Record<FieldName, string[]>> }
+          ).fields;
 
-          Object.keys(fieldLabels).forEach((name) => {
-            const message = result.error.fields[name]?.[0];
+          fieldNames.forEach((name) => {
+            const message = fields[name]?.[0];
             const entry = fieldEntries[name];
 
             if (!message) return;
@@ -352,7 +365,7 @@ import { Textarea } from "@bejamas/ui/components/textarea";
           return;
         }
 
-        const entry = fieldEntries[target.name];
+        const entry = fieldEntries[target.name as FieldName];
         if (!entry) return;
 
         if (entry.error instanceof HTMLElement) {

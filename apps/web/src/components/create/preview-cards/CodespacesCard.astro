@@ -1,5 +1,4 @@
 ---
-import { Badge } from "@bejamas/registry/ui/badge";
 import { Button } from "@bejamas/registry/ui/button";
 import {
   DropdownMenu,
@@ -14,7 +13,6 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
   CardTitle,
 } from "@bejamas/registry/ui/card";
 import {
@@ -33,12 +31,7 @@ interface Props {
   menuTranslucent?: boolean;
 }
 
-const {
-  iconLibrary,
-  menuColorLabel,
-  menuInverted = false,
-  menuTranslucent = false,
-} = Astro.props as Props;
+const { iconLibrary } = Astro.props as Props;
 ---
 
 <Card class="w-full">

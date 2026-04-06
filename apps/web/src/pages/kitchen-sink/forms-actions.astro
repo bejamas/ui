@@ -204,10 +204,13 @@ const serverFieldErrors =
 <script>
   import { actions, isInputError } from "astro:actions";
 
-  const form = document.getElementById("client-action-form");
+  const form = document.getElementById(
+    "client-action-form",
+  ) as HTMLFormElement | null;
   const status = document.getElementById("client-status");
   const generalError = document.getElementById("client-general-error");
-  const fieldNames = ["name", "email", "message"];
+  const fieldNames = ["name", "email", "message"] as const;
+  type FieldName = (typeof fieldNames)[number];
   const SUBMIT_MIN_DELAY_MS = 800;
   const submitButton = form?.querySelector("[data-submit-button]");
   const resetButton = form?.querySelector("[data-reset-button]");
@@ -218,9 +221,10 @@ const serverFieldErrors =
       ? submitLabel.textContent || "Submit with script"
       : "Submit with script";
 
-  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const wait = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
-  const setInvalid = (el, invalid) => {
+  const setInvalid = (el: Element | null | undefined, invalid: boolean) => {
     if (!(el instanceof HTMLElement)) return;
 
     if (invalid) {
@@ -231,7 +235,7 @@ const serverFieldErrors =
     delete el.dataset.invalid;
   };
 
-  const setAriaInvalid = (el, invalid) => {
+  const setAriaInvalid = (el: Element | null | undefined, invalid: boolean) => {
     if (
       !(
         el instanceof HTMLInputElement ||
@@ -250,7 +254,14 @@ const serverFieldErrors =
     el.removeAttribute("aria-invalid");
   };
 
-  const fieldEntries = {
+  const fieldEntries: Record<
+    FieldName,
+    {
+      wrapper: Element | null | undefined;
+      error: Element | null | undefined;
+      control: Element | null | undefined;
+    }
+  > = {
     name: {
       wrapper: form?.querySelector('[data-field="name"]'),
       error: form?.querySelector('[data-error-for="name"]'),
@@ -284,7 +295,7 @@ const serverFieldErrors =
     if (status) status.textContent = "";
   };
 
-  const setSubmitting = (submitting) => {
+  const setSubmitting = (submitting: boolean) => {
     if (submitButton instanceof HTMLButtonElement) {
       submitButton.disabled = submitting;
     }
@@ -333,7 +344,7 @@ const serverFieldErrors =
 
     if (result.error) {
       if (isInputError(result.error)) {
-        const fields = result.error.fields;
+        const fields = result.error.fields as Partial<Record<FieldName, string[]>>;
 
         fieldNames.forEach((name) => {
           const entry = fieldEntries[name];
@@ -354,7 +365,7 @@ const serverFieldErrors =
       return;
     }
 
-    form.reset();
+    if (form instanceof HTMLFormElement) form.reset();
     if (status) status.textContent = result.data.message;
   });
 
@@ -375,7 +386,8 @@ const serverFieldErrors =
         return;
       }
 
-      const entry = fieldEntries[target.name];
+      const fieldName = target.name as FieldName;
+      const entry = fieldEntries[fieldName];
       if (!entry) return;
 
       if (entry.error) {

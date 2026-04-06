@@ -3,7 +3,7 @@ import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import {
-  Accordion,
+  Accordion as AccordionComponent,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
@@ -21,7 +21,7 @@ import {
     <h1 class="text-3xl font-bold mb-10">Accordion</h1>
 
     <KitchenSinkSection title="Basic (Default Single)">
-      <Accordion>
+      <AccordionComponent>
         <AccordionItem value="item-1">
           <AccordionTrigger>Is it accessible?</AccordionTrigger>
           <AccordionContent>
@@ -40,14 +40,14 @@ import {
             Yes. It uses CSS animations for smooth open/close transitions.
           </AccordionContent>
         </AccordionItem>
-      </Accordion>
+      </AccordionComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Multiple">
       <p class="text-sm text-muted-foreground">
         Multiple items can be open at the same time.
       </p>
-      <Accordion multiple defaultValue={["item-1", "item-3"]}>
+      <AccordionComponent multiple defaultValue={["item-1", "item-3"]}>
         <AccordionItem value="item-1">
           <AccordionTrigger>First section</AccordionTrigger>
           <AccordionContent>
@@ -69,11 +69,11 @@ import {
             simultaneously.
           </AccordionContent>
         </AccordionItem>
-      </Accordion>
+      </AccordionComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Default Open">
-      <Accordion defaultValue="item-2">
+      <AccordionComponent defaultValue="item-2">
         <AccordionItem value="item-1">
           <AccordionTrigger>Item 1</AccordionTrigger>
           <AccordionContent>
@@ -92,14 +92,14 @@ import {
             This item is not open by default.
           </AccordionContent>
         </AccordionItem>
-      </Accordion>
+      </AccordionComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Non-collapsible">
       <p class="text-sm text-muted-foreground">
         One item must always remain open.
       </p>
-      <Accordion defaultValue="item-1" collapsible={false}>
+      <AccordionComponent defaultValue="item-1" collapsible={false}>
         <AccordionItem value="item-1">
           <AccordionTrigger>Always one open</AccordionTrigger>
           <AccordionContent>
@@ -119,7 +119,7 @@ import {
             Try clicking the active trigger again — it stays open.
           </AccordionContent>
         </AccordionItem>
-      </Accordion>
+      </AccordionComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="In a Card">
@@ -128,7 +128,7 @@ import {
           <CardTitle>FAQ</CardTitle>
         </CardHeader>
         <CardContent>
-          <Accordion>
+          <AccordionComponent>
             <AccordionItem value="faq-1">
               <AccordionTrigger>How do I get started?</AccordionTrigger>
               <AccordionContent>
@@ -148,7 +148,7 @@ import {
                 Yes, all components are fully typed with TypeScript.
               </AccordionContent>
             </AccordionItem>
-          </Accordion>
+          </AccordionComponent>
         </CardContent>
       </Card>
     </KitchenSinkSection>
@@ -157,7 +157,7 @@ import {
       <p class="text-sm text-muted-foreground">
         Open/close items and check the output for accordion:change events.
       </p>
-      <Accordion id="event-accordion">
+      <AccordionComponent id="event-accordion">
         <AccordionItem value="event-1">
           <AccordionTrigger>Event Item 1</AccordionTrigger>
           <AccordionContent>Content for event testing item 1.</AccordionContent>
@@ -166,7 +166,7 @@ import {
           <AccordionTrigger>Event Item 2</AccordionTrigger>
           <AccordionContent>Content for event testing item 2.</AccordionContent>
         </AccordionItem>
-      </Accordion>
+      </AccordionComponent>
       <EventLog id="accordion-event-output" />
       <script>
         {
@@ -187,7 +187,7 @@ import {
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Programmatic Control">
-      <Accordion id="programmatic-accordion">
+      <AccordionComponent id="programmatic-accordion">
         <AccordionItem value="prog-1">
           <AccordionTrigger>Programmatic Item 1</AccordionTrigger>
           <AccordionContent>Content for programmatic item 1.</AccordionContent>
@@ -196,7 +196,7 @@ import {
           <AccordionTrigger>Programmatic Item 2</AccordionTrigger>
           <AccordionContent>Content for programmatic item 2.</AccordionContent>
         </AccordionItem>
-      </Accordion>
+      </AccordionComponent>
       <div class="flex flex-wrap gap-2">
         <button
           id="open-prog-1"

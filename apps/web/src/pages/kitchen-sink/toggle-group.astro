@@ -3,20 +3,20 @@ import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import {
-  ToggleGroup,
+  ToggleGroup as ToggleGroupComponent,
   ToggleGroupItem,
 } from "@bejamas/registry/ui/toggle-group";
 import {
   BoldIcon,
   ItalicIcon,
   UnderlineIcon,
-  AlignLeftIcon,
-  AlignCenterIcon,
-  AlignRightIcon,
   AlignVerticalJustifyStartIcon,
   AlignVerticalJustifyCenterIcon,
   AlignVerticalJustifyEndIcon,
 } from "@lucide/astro";
+import AlignLeftIcon from "@/components/icons/AlignLeftIcon.astro";
+import AlignCenterIcon from "@/components/icons/AlignCenterIcon.astro";
+import AlignRightIcon from "@/components/icons/AlignRightIcon.astro";
 ---
 
 <KitchenSinkLayout>
@@ -24,7 +24,7 @@ import {
     <h1 class="text-3xl font-bold mb-10">Toggle Group</h1>
 
     <KitchenSinkSection title="Basic Single Selection (default variant)">
-      <ToggleGroup defaultValue="center">
+      <ToggleGroupComponent defaultValue="center">
         <ToggleGroupItem value="left" aria-label="Align left">
           <AlignLeftIcon />
         </ToggleGroupItem>
@@ -34,11 +34,11 @@ import {
         <ToggleGroupItem value="right" aria-label="Align right">
           <AlignRightIcon />
         </ToggleGroupItem>
-      </ToggleGroup>
+      </ToggleGroupComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Outline Variant">
-      <ToggleGroup variant="outline" defaultValue="center">
+      <ToggleGroupComponent variant="outline" defaultValue="center">
         <ToggleGroupItem value="left" aria-label="Align left">
           <AlignLeftIcon />
         </ToggleGroupItem>
@@ -48,12 +48,12 @@ import {
         <ToggleGroupItem value="right" aria-label="Align right">
           <AlignRightIcon />
         </ToggleGroupItem>
-      </ToggleGroup>
+      </ToggleGroupComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Outline Variant RTL">
       <div dir="rtl" class="w-fit">
-        <ToggleGroup multiple defaultValue={["bold"]} variant="outline">
+        <ToggleGroupComponent multiple defaultValue={["bold"]} variant="outline">
           <ToggleGroupItem value="bold" aria-label="Toggle bold">
             <BoldIcon />
           </ToggleGroupItem>
@@ -63,7 +63,7 @@ import {
           <ToggleGroupItem value="underline" aria-label="Toggle underline">
             <UnderlineIcon />
           </ToggleGroupItem>
-        </ToggleGroup>
+        </ToggleGroupComponent>
       </div>
     </KitchenSinkSection>
 
@@ -71,7 +71,7 @@ import {
       <p class="text-sm text-muted-foreground">
         Multiple items can be selected simultaneously
       </p>
-      <ToggleGroup multiple defaultValue={["bold", "italic"]} variant="outline">
+      <ToggleGroupComponent multiple defaultValue={["bold", "italic"]} variant="outline">
         <ToggleGroupItem value="bold" aria-label="Toggle bold">
           <BoldIcon />
         </ToggleGroupItem>
@@ -81,14 +81,14 @@ import {
         <ToggleGroupItem value="underline" aria-label="Toggle underline">
           <UnderlineIcon />
         </ToggleGroupItem>
-      </ToggleGroup>
+      </ToggleGroupComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Sizes">
       <div class="flex flex-col gap-4">
         <div class="flex items-center gap-4">
           <span class="text-sm text-muted-foreground w-16">Small:</span>
-          <ToggleGroup size="sm" variant="outline" defaultValue="center">
+          <ToggleGroupComponent size="sm" variant="outline" defaultValue="center">
             <ToggleGroupItem value="left" aria-label="Align left">
               <AlignLeftIcon />
             </ToggleGroupItem>
@@ -98,11 +98,11 @@ import {
             <ToggleGroupItem value="right" aria-label="Align right">
               <AlignRightIcon />
             </ToggleGroupItem>
-          </ToggleGroup>
+          </ToggleGroupComponent>
         </div>
         <div class="flex items-center gap-4">
           <span class="text-sm text-muted-foreground w-16">Default:</span>
-          <ToggleGroup size="default" variant="outline" defaultValue="center">
+          <ToggleGroupComponent size="default" variant="outline" defaultValue="center">
             <ToggleGroupItem value="left" aria-label="Align left">
               <AlignLeftIcon />
             </ToggleGroupItem>
@@ -112,11 +112,11 @@ import {
             <ToggleGroupItem value="right" aria-label="Align right">
               <AlignRightIcon />
             </ToggleGroupItem>
-          </ToggleGroup>
+          </ToggleGroupComponent>
         </div>
         <div class="flex items-center gap-4">
           <span class="text-sm text-muted-foreground w-16">Large:</span>
-          <ToggleGroup size="lg" variant="outline" defaultValue="center">
+          <ToggleGroupComponent size="lg" variant="outline" defaultValue="center">
             <ToggleGroupItem value="left" aria-label="Align left">
               <AlignLeftIcon />
             </ToggleGroupItem>
@@ -126,7 +126,7 @@ import {
             <ToggleGroupItem value="right" aria-label="Align right">
               <AlignRightIcon />
             </ToggleGroupItem>
-          </ToggleGroup>
+          </ToggleGroupComponent>
         </div>
       </div>
     </KitchenSinkSection>
@@ -135,7 +135,7 @@ import {
       <div class="flex gap-8">
         <div class="space-y-2">
           <p class="text-sm text-muted-foreground">Default variant</p>
-          <ToggleGroup orientation="vertical" defaultValue="middle">
+          <ToggleGroupComponent orientation="vertical" defaultValue="middle">
             <ToggleGroupItem value="top" aria-label="Align top">
               <AlignVerticalJustifyStartIcon />
             </ToggleGroupItem>
@@ -145,11 +145,11 @@ import {
             <ToggleGroupItem value="bottom" aria-label="Align bottom">
               <AlignVerticalJustifyEndIcon />
             </ToggleGroupItem>
-          </ToggleGroup>
+          </ToggleGroupComponent>
         </div>
         <div class="space-y-2">
           <p class="text-sm text-muted-foreground">Outline variant</p>
-          <ToggleGroup
+          <ToggleGroupComponent
             orientation="vertical"
             variant="outline"
             defaultValue="middle"
@@ -163,14 +163,14 @@ import {
             <ToggleGroupItem value="bottom" aria-label="Align bottom">
               <AlignVerticalJustifyEndIcon />
             </ToggleGroupItem>
-          </ToggleGroup>
+          </ToggleGroupComponent>
         </div>
       </div>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Disabled">
       <div class="flex gap-4">
-        <ToggleGroup disabled defaultValue="center">
+        <ToggleGroupComponent disabled defaultValue="center">
           <ToggleGroupItem value="left" aria-label="Align left">
             <AlignLeftIcon />
           </ToggleGroupItem>
@@ -180,8 +180,8 @@ import {
           <ToggleGroupItem value="right" aria-label="Align right">
             <AlignRightIcon />
           </ToggleGroupItem>
-        </ToggleGroup>
-        <ToggleGroup disabled variant="outline" defaultValue="center">
+        </ToggleGroupComponent>
+        <ToggleGroupComponent disabled variant="outline" defaultValue="center">
           <ToggleGroupItem value="left" aria-label="Align left">
             <AlignLeftIcon />
           </ToggleGroupItem>
@@ -191,7 +191,7 @@ import {
           <ToggleGroupItem value="right" aria-label="Align right">
             <AlignRightIcon />
           </ToggleGroupItem>
-        </ToggleGroup>
+        </ToggleGroupComponent>
       </div>
     </KitchenSinkSection>
 
@@ -199,7 +199,7 @@ import {
       <p class="text-sm text-muted-foreground">
         Click the toggles and check the output for toggle-group:change events
       </p>
-      <ToggleGroup
+      <ToggleGroupComponent
         id="event-toggle-group"
         variant="outline"
         defaultValue="center"
@@ -213,7 +213,7 @@ import {
         <ToggleGroupItem value="right" aria-label="Align right">
           <AlignRightIcon />
         </ToggleGroupItem>
-      </ToggleGroup>
+      </ToggleGroupComponent>
       <EventLog id="toggle-group-event-output" />
       <script>
         {
@@ -234,7 +234,7 @@ import {
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Programmatic Control">
-      <ToggleGroup id="programmatic-toggle-group" variant="outline">
+      <ToggleGroupComponent id="programmatic-toggle-group" variant="outline">
         <ToggleGroupItem value="left" aria-label="Align left">
           <AlignLeftIcon />
         </ToggleGroupItem>
@@ -244,7 +244,7 @@ import {
         <ToggleGroupItem value="right" aria-label="Align right">
           <AlignRightIcon />
         </ToggleGroupItem>
-      </ToggleGroup>
+      </ToggleGroupComponent>
       <div class="flex items-center gap-2">
         <button
           id="set-left-btn"
@@ -311,7 +311,7 @@ import {
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Multiple Selection with Programmatic Control">
-      <ToggleGroup id="multi-programmatic" multiple variant="outline">
+      <ToggleGroupComponent id="multi-programmatic" multiple variant="outline">
         <ToggleGroupItem value="bold" aria-label="Toggle bold">
           <BoldIcon />
         </ToggleGroupItem>
@@ -321,7 +321,7 @@ import {
         <ToggleGroupItem value="underline" aria-label="Toggle underline">
           <UnderlineIcon />
         </ToggleGroupItem>
-      </ToggleGroup>
+      </ToggleGroupComponent>
       <div class="flex items-center gap-2">
         <button
           id="set-all-btn"

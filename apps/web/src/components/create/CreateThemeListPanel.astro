@@ -1,8 +1,9 @@
 ---
-import ArrowLeftIcon from "@lucide/astro/icons/arrow-left";
-import DownloadIcon from "@lucide/astro/icons/download";
-import SettingsIcon from "@lucide/astro/icons/settings";
-import CreateLockButton from "./CreateLockButton.astro";
+import {
+  ArrowLeft as ArrowLeftIcon,
+  Download as DownloadIcon,
+  Settings as SettingsIcon,
+} from "@lucide/astro";
 import {
   getCreateThemeSeedGroups,
   type ThemeOverrides,
@@ -17,7 +18,7 @@ interface Props {
   themeOverrides?: ThemeOverrides | null;
 }
 
-const { config, themeRef = null, themeOverrides = null } = Astro.props as Props;
+const { config } = Astro.props as Props;
 const themeSeedGroups = getCreateThemeSeedGroups(config.baseColor);
 ---
 

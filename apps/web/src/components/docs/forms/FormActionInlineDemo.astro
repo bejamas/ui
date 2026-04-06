@@ -74,12 +74,14 @@ import { Textarea } from "@bejamas/ui/components/textarea";
   import { actions, isInputError } from "astro:actions";
 
   const roots = document.querySelectorAll('[data-form-demo="contact-inline"]');
-  const fieldNames = ["name", "email", "message"];
+  const fieldNames = ["name", "email", "message"] as const;
+  type FieldName = (typeof fieldNames)[number];
   const SUBMIT_MIN_DELAY_MS = 800;
 
-  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const wait = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
-  const setInvalid = (el, invalid) => {
+  const setInvalid = (el: Element | null | undefined, invalid: boolean) => {
     if (!(el instanceof HTMLElement)) return;
 
     if (invalid) {
@@ -90,7 +92,7 @@ import { Textarea } from "@bejamas/ui/components/textarea";
     delete el.dataset.invalid;
   };
 
-  const setAriaInvalid = (el, invalid) => {
+  const setAriaInvalid = (el: Element | null | undefined, invalid: boolean) => {
     if (
       !(
         el instanceof HTMLInputElement ||
@@ -136,9 +138,16 @@ import { Textarea } from "@bejamas/ui/components/textarea";
           control: form.querySelector(`[name="${name}"]`),
         },
       ]),
-    );
+    ) as Record<
+      FieldName,
+      {
+        wrapper: Element | null;
+        error: Element | null;
+        control: Element | null;
+      }
+    >;
 
-    const setSubmitting = (submitting) => {
+    const setSubmitting = (submitting: boolean) => {
       if (submitButton instanceof HTMLButtonElement) {
         submitButton.disabled = submitting;
       }
@@ -210,7 +219,7 @@ import { Textarea } from "@bejamas/ui/components/textarea";
 
       if (result.error) {
         if (isInputError(result.error)) {
-          const fields = result.error.fields;
+          const fields = result.error.fields as Partial<Record<FieldName, string[]>>;
 
           fieldNames.forEach((name) => {
             const entry = fieldEntries[name];
@@ -261,7 +270,7 @@ import { Textarea } from "@bejamas/ui/components/textarea";
           return;
         }
 
-        const entry = fieldEntries[target.name];
+        const entry = fieldEntries[target.name as FieldName];
         if (!entry) return;
 
         if (entry.error instanceof HTMLElement) {
