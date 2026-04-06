@@ -139,7 +139,9 @@ import {
     },
   };
 
-  function setSliderValue(slider, value) {
+  type KitchenIslandScene = keyof typeof SCENES;
+
+  function setSliderValue(slider: HTMLElement, value: number) {
     slider.dispatchEvent(
       new CustomEvent("slider:set", {
         detail: { value },
@@ -147,7 +149,7 @@ import {
     );
   }
 
-  function syncScene(root, scene) {
+  function syncScene(root: HTMLElement, scene: KitchenIslandScene) {
     const values = SCENES[scene];
     if (!values) {
       return;
@@ -164,7 +166,7 @@ import {
     });
   }
 
-  function syncEnabledState(root, enabled) {
+  function syncEnabledState(root: HTMLElement, enabled: boolean) {
     const controls = root.querySelector("[data-kitchen-island-controls]");
 
     if (!(controls instanceof HTMLElement)) {
@@ -212,15 +214,17 @@ import {
     syncEnabledState(root, initialEnabled);
 
     sceneGroup.addEventListener("toggle-group:change", (event) => {
-      const scene = event.detail?.value?.[0];
+      const customEvent = event as CustomEvent<{ value?: string[] }>;
+      const scene = customEvent.detail?.value?.[0];
 
-      if (typeof scene === "string") {
-        syncScene(root, scene);
+      if (typeof scene === "string" && scene in SCENES) {
+        syncScene(root, scene as KitchenIslandScene);
       }
     });
 
     switchRoot.addEventListener("switch:change", (event) => {
-      syncEnabledState(root, Boolean(event.detail?.checked));
+      const customEvent = event as CustomEvent<{ checked?: boolean }>;
+      syncEnabledState(root, Boolean(customEvent.detail?.checked));
     });
   });
 </script>

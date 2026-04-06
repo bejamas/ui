@@ -3,7 +3,7 @@ import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import {
-  Tabs,
+  Tabs as TabsComponent,
   TabsList,
   TabsTrigger,
   TabsContent,
@@ -26,7 +26,7 @@ import { Label } from "@bejamas/registry/ui/label";
     <h1 class="text-3xl font-bold mb-10">Tabs</h1>
 
     <KitchenSinkSection title="Basic">
-      <Tabs defaultValue="password">
+      <TabsComponent defaultValue="password">
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="password">Password</TabsTrigger>
@@ -47,11 +47,11 @@ import { Label } from "@bejamas/registry/ui/label";
             Configure your application settings and preferences.
           </p>
         </TabsContent>
-      </Tabs>
+      </TabsComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Animated Indicator (Default)">
-      <Tabs defaultValue="overview">
+      <TabsComponent defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -72,11 +72,11 @@ import { Label } from "@bejamas/registry/ui/label";
             Generated reports and downloadable data.
           </p>
         </TabsContent>
-      </Tabs>
+      </TabsComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Shadcn Default Variant">
-      <Tabs defaultValue="default-overview">
+      <TabsComponent defaultValue="default-overview">
         <TabsList variant="default">
           <TabsTrigger value="default-overview">Overview</TabsTrigger>
           <TabsTrigger value="default-analytics">Analytics</TabsTrigger>
@@ -97,11 +97,11 @@ import { Label } from "@bejamas/registry/ui/label";
             Reports content for shadcn default variant.
           </p>
         </TabsContent>
-      </Tabs>
+      </TabsComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Shadcn Line Variant">
-      <Tabs defaultValue="line-overview">
+      <TabsComponent defaultValue="line-overview">
         <TabsList variant="line">
           <TabsTrigger value="line-overview">Overview</TabsTrigger>
           <TabsTrigger value="line-analytics">Analytics</TabsTrigger>
@@ -122,11 +122,11 @@ import { Label } from "@bejamas/registry/ui/label";
             Reports content for shadcn line variant.
           </p>
         </TabsContent>
-      </Tabs>
+      </TabsComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Animated Line Variant">
-      <Tabs defaultValue="line-animated-overview">
+      <TabsComponent defaultValue="line-animated-overview">
         <TabsList variant="line-animated">
           <TabsTrigger value="line-animated-overview">Overview</TabsTrigger>
           <TabsTrigger value="line-animated-analytics">Analytics</TabsTrigger>
@@ -147,35 +147,35 @@ import { Label } from "@bejamas/registry/ui/label";
             Reports content for animated line variant.
           </p>
         </TabsContent>
-      </Tabs>
+      </TabsComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Variants Alignment">
       <div class="flex flex-wrap items-start gap-6">
-        <Tabs defaultValue="align-indicator-overview">
+        <TabsComponent defaultValue="align-indicator-overview">
           <TabsList>
             <TabsTrigger value="align-indicator-overview">Overview</TabsTrigger>
             <TabsTrigger value="align-indicator-analytics"
               >Analytics</TabsTrigger
             >
           </TabsList>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs defaultValue="align-default-overview">
+        <TabsComponent defaultValue="align-default-overview">
           <TabsList variant="default">
             <TabsTrigger value="align-default-overview">Overview</TabsTrigger>
             <TabsTrigger value="align-default-analytics">Analytics</TabsTrigger>
           </TabsList>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs defaultValue="align-line-overview">
+        <TabsComponent defaultValue="align-line-overview">
           <TabsList variant="line">
             <TabsTrigger value="align-line-overview">Overview</TabsTrigger>
             <TabsTrigger value="align-line-analytics">Analytics</TabsTrigger>
           </TabsList>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs defaultValue="align-line-animated-overview">
+        <TabsComponent defaultValue="align-line-animated-overview">
           <TabsList variant="line-animated">
             <TabsTrigger value="align-line-animated-overview">
               Overview
@@ -184,13 +184,13 @@ import { Label } from "@bejamas/registry/ui/label";
               Analytics
             </TabsTrigger>
           </TabsList>
-        </Tabs>
+        </TabsComponent>
       </div>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Content Animations">
       <div class="space-y-6">
-        <Tabs defaultValue="fade-overview">
+        <TabsComponent defaultValue="fade-overview">
           <TabsList variant="default">
             <TabsTrigger value="fade-overview">Overview</TabsTrigger>
             <TabsTrigger value="fade-analytics">Analytics</TabsTrigger>
@@ -211,9 +211,9 @@ import { Label } from "@bejamas/registry/ui/label";
               Reports content with fade transition.
             </p>
           </TabsContent>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs defaultValue="slide-overview">
+        <TabsComponent defaultValue="slide-overview">
           <TabsList variant="default">
             <TabsTrigger value="slide-overview">Overview</TabsTrigger>
             <TabsTrigger value="slide-analytics">Analytics</TabsTrigger>
@@ -234,13 +234,13 @@ import { Label } from "@bejamas/registry/ui/label";
               Reports content with slide transition.
             </p>
           </TabsContent>
-        </Tabs>
+        </TabsComponent>
       </div>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Direction Content Animation">
       <div class="space-y-6">
-        <Tabs defaultValue="direction-overview">
+        <TabsComponent defaultValue="direction-overview">
           <TabsList variant="default">
             <TabsTrigger value="direction-overview">Overview</TabsTrigger>
             <TabsTrigger value="direction-analytics">Analytics</TabsTrigger>
@@ -261,9 +261,9 @@ import { Label } from "@bejamas/registry/ui/label";
               Direction attribute comes from data-slot tabs runtime.
             </p>
           </TabsContent>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs
+        <TabsComponent
           defaultValue="direction-profile"
           orientation="vertical"
           class="w-full max-w-xl"
@@ -312,13 +312,13 @@ import { Label } from "@bejamas/registry/ui/label";
               </p>
             </TabsContent>
           </div>
-        </Tabs>
+        </TabsComponent>
       </div>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Vertical Variants">
       <div class="space-y-6">
-        <Tabs
+        <TabsComponent
           defaultValue="indicator-profile"
           orientation="vertical"
           class="w-full max-w-xl"
@@ -364,9 +364,9 @@ import { Label } from "@bejamas/registry/ui/label";
               </p>
             </TabsContent>
           </div>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs
+        <TabsComponent
           defaultValue="default-profile"
           orientation="vertical"
           class="w-full max-w-xl"
@@ -412,9 +412,9 @@ import { Label } from "@bejamas/registry/ui/label";
               </p>
             </TabsContent>
           </div>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs
+        <TabsComponent
           defaultValue="line-profile"
           orientation="vertical"
           class="w-full max-w-xl"
@@ -457,9 +457,9 @@ import { Label } from "@bejamas/registry/ui/label";
               </p>
             </TabsContent>
           </div>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs
+        <TabsComponent
           defaultValue="line-animated-profile"
           orientation="vertical"
           class="w-full max-w-xl"
@@ -511,13 +511,13 @@ import { Label } from "@bejamas/registry/ui/label";
               </p>
             </TabsContent>
           </div>
-        </Tabs>
+        </TabsComponent>
       </div>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Sizes">
       <div class="space-y-5">
-        <Tabs defaultValue="sm-account">
+        <TabsComponent defaultValue="sm-account">
           <div class="flex flex-wrap items-center gap-2">
             <TabsList size="sm">
               <TabsTrigger value="sm-account" class="text-xs px-2">
@@ -535,9 +535,9 @@ import { Label } from "@bejamas/registry/ui/label";
           <TabsContent value="sm-password">
             <p class="text-xs text-muted-foreground p-3">Small tabs content.</p>
           </TabsContent>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs defaultValue="md-account">
+        <TabsComponent defaultValue="md-account">
           <div class="flex flex-wrap items-center gap-2">
             <TabsList size="default">
               <TabsTrigger value="md-account">Account</TabsTrigger>
@@ -553,9 +553,9 @@ import { Label } from "@bejamas/registry/ui/label";
               Default tabs content.
             </p>
           </TabsContent>
-        </Tabs>
+        </TabsComponent>
 
-        <Tabs defaultValue="lg-account">
+        <TabsComponent defaultValue="lg-account">
           <div class="flex flex-wrap items-center gap-2">
             <TabsList size="lg">
               <TabsTrigger value="lg-account" class="text-base px-4">
@@ -575,12 +575,12 @@ import { Label } from "@bejamas/registry/ui/label";
               Large tabs content.
             </p>
           </TabsContent>
-        </Tabs>
+        </TabsComponent>
       </div>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="With Cards">
-      <Tabs defaultValue="account-card">
+      <TabsComponent defaultValue="account-card">
         <TabsList class="w-full">
           <TabsTrigger value="account-card" class="flex-1">Account</TabsTrigger>
           <TabsTrigger value="password-card" class="flex-1"
@@ -631,11 +631,11 @@ import { Label } from "@bejamas/registry/ui/label";
             </CardFooter>
           </Card>
         </TabsContent>
-      </Tabs>
+      </TabsComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Disabled Tab">
-      <Tabs defaultValue="active-1">
+      <TabsComponent defaultValue="active-1">
         <TabsList>
           <TabsTrigger value="active-1">Active</TabsTrigger>
           <TabsTrigger value="disabled-tab" disabled>Disabled</TabsTrigger>
@@ -656,11 +656,11 @@ import { Label } from "@bejamas/registry/ui/label";
             Second active tab content.
           </p>
         </TabsContent>
-      </Tabs>
+      </TabsComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Many Tabs (Overflow)">
-      <Tabs defaultValue="tab-1">
+      <TabsComponent defaultValue="tab-1">
         <TabsList
           class="w-full max-w-[20rem] justify-start overflow-x-auto [&>[data-slot=tabs-trigger]]:flex-none"
         >
@@ -707,14 +707,14 @@ import { Label } from "@bejamas/registry/ui/label";
             Sunday content
           </p></TabsContent
         >
-      </Tabs>
+      </TabsComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Event Testing">
       <p class="text-sm text-muted-foreground">
         Switch tabs and check the output for tabs:change events.
       </p>
-      <Tabs id="event-tabs" defaultValue="event-tab-1">
+      <TabsComponent id="event-tabs" defaultValue="event-tab-1">
         <TabsList>
           <TabsTrigger value="event-tab-1">Tab 1</TabsTrigger>
           <TabsTrigger value="event-tab-2">Tab 2</TabsTrigger>
@@ -735,7 +735,7 @@ import { Label } from "@bejamas/registry/ui/label";
             Tab 3 content
           </p></TabsContent
         >
-      </Tabs>
+      </TabsComponent>
       <EventLog id="tabs-event-output" />
       <script>
         {
@@ -754,7 +754,7 @@ import { Label } from "@bejamas/registry/ui/label";
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Programmatic Control">
-      <Tabs id="programmatic-tabs" defaultValue="prog-tab-1">
+      <TabsComponent id="programmatic-tabs" defaultValue="prog-tab-1">
         <TabsList>
           <TabsTrigger value="prog-tab-1">Tab 1</TabsTrigger>
           <TabsTrigger value="prog-tab-2">Tab 2</TabsTrigger>
@@ -775,7 +775,7 @@ import { Label } from "@bejamas/registry/ui/label";
             Programmatic tab 3
           </p></TabsContent
         >
-      </Tabs>
+      </TabsComponent>
       <div class="flex flex-wrap gap-2">
         <button
           id="set-tab-1"

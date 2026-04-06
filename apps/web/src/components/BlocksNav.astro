@@ -33,7 +33,7 @@ const currentBlock = Astro.url.pathname.split("/").pop();
             }
           >
             {block.data.label}{" "}
-            <span class="text-muted-foreground">{block.data.items.length}</span>
+            <span class="text-muted-foreground">{block.data.items?.length ?? 0}</span>
           </Button>
         </li>
       ))

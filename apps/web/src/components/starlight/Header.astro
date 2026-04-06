@@ -24,7 +24,8 @@ const shouldRenderSearch =
  * Render the `nav` items if they are defined.
  */
 
-const shouldRenderNav = options.nav && options.nav.length > 0;
+const navItems = options.nav ?? [];
+const shouldRenderNav = navItems.length > 0;
 ---
 
 <div class="header">
@@ -34,7 +35,7 @@ const shouldRenderNav = options.nav && options.nav.length > 0;
       shouldRenderNav && (
         <nav class="sl-bejamas-main-nav">
           <ul class="gap-1 flex items-center">
-            {options.nav.map((item) => (
+            {navItems.map((item) => (
               <li>
                 <Button as="a" variant="ghost" href={item.href}>
                   {item.label}

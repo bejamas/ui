@@ -2,7 +2,7 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
-import { Toggle } from "@bejamas/registry/ui/toggle";
+import { Toggle as ToggleComponent } from "@bejamas/registry/ui/toggle";
 import {
   BoldIcon,
   ItalicIcon,
@@ -18,103 +18,103 @@ import {
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic Toggle (default variant)">
         <div class="flex items-center gap-2">
-          <Toggle aria-label="Toggle bold">
+          <ToggleComponent aria-label="Toggle bold">
             <BoldIcon />
-          </Toggle>
-          <Toggle aria-label="Toggle italic">
+          </ToggleComponent>
+          <ToggleComponent aria-label="Toggle italic">
             <ItalicIcon />
-          </Toggle>
-          <Toggle aria-label="Toggle underline">
+          </ToggleComponent>
+          <ToggleComponent aria-label="Toggle underline">
             <UnderlineIcon />
-          </Toggle>
+          </ToggleComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Outline Variant">
         <div class="flex items-center gap-2">
-          <Toggle variant="outline" aria-label="Toggle bold">
+          <ToggleComponent variant="outline" aria-label="Toggle bold">
             <BoldIcon />
-          </Toggle>
-          <Toggle variant="outline" aria-label="Toggle italic">
+          </ToggleComponent>
+          <ToggleComponent variant="outline" aria-label="Toggle italic">
             <ItalicIcon />
-          </Toggle>
-          <Toggle variant="outline" aria-label="Toggle underline">
+          </ToggleComponent>
+          <ToggleComponent variant="outline" aria-label="Toggle underline">
             <UnderlineIcon />
-          </Toggle>
+          </ToggleComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Text">
         <div class="flex items-center gap-2">
-          <Toggle variant="outline" aria-label="Toggle bookmark">
+          <ToggleComponent variant="outline" aria-label="Toggle bookmark">
             <BookmarkIcon />
             Bookmark
-          </Toggle>
-          <Toggle variant="outline" aria-label="Toggle italic">
+          </ToggleComponent>
+          <ToggleComponent variant="outline" aria-label="Toggle italic">
             <ItalicIcon />
             Italic
-          </Toggle>
+          </ToggleComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Sizes">
         <div class="flex items-center gap-2">
-          <Toggle size="sm" variant="outline" aria-label="Toggle bold">
+          <ToggleComponent size="sm" variant="outline" aria-label="Toggle bold">
             <BoldIcon />
-          </Toggle>
-          <Toggle size="default" variant="outline" aria-label="Toggle bold">
+          </ToggleComponent>
+          <ToggleComponent size="default" variant="outline" aria-label="Toggle bold">
             <BoldIcon />
-          </Toggle>
-          <Toggle size="lg" variant="outline" aria-label="Toggle bold">
+          </ToggleComponent>
+          <ToggleComponent size="lg" variant="outline" aria-label="Toggle bold">
             <BoldIcon />
-          </Toggle>
+          </ToggleComponent>
         </div>
         <div class="flex items-center gap-2">
-          <Toggle size="sm" variant="outline" aria-label="Toggle bookmark">
+          <ToggleComponent size="sm" variant="outline" aria-label="Toggle bookmark">
             <BookmarkIcon />
             Small
-          </Toggle>
-          <Toggle size="default" variant="outline" aria-label="Toggle bookmark">
+          </ToggleComponent>
+          <ToggleComponent size="default" variant="outline" aria-label="Toggle bookmark">
             <BookmarkIcon />
             Default
-          </Toggle>
-          <Toggle size="lg" variant="outline" aria-label="Toggle bookmark">
+          </ToggleComponent>
+          <ToggleComponent size="lg" variant="outline" aria-label="Toggle bookmark">
             <BookmarkIcon />
             Large
-          </Toggle>
+          </ToggleComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Default Pressed">
         <div class="flex items-center gap-2">
-          <Toggle defaultPressed aria-label="Toggle bold">
+          <ToggleComponent defaultPressed aria-label="Toggle bold">
             <BoldIcon />
-          </Toggle>
-          <Toggle defaultPressed variant="outline" aria-label="Toggle italic">
+          </ToggleComponent>
+          <ToggleComponent defaultPressed variant="outline" aria-label="Toggle italic">
             <ItalicIcon />
-          </Toggle>
+          </ToggleComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Disabled">
         <div class="flex items-center gap-2">
-          <Toggle disabled aria-label="Toggle bold">
+          <ToggleComponent disabled aria-label="Toggle bold">
             <BoldIcon />
-          </Toggle>
-          <Toggle disabled variant="outline" aria-label="Toggle italic">
+          </ToggleComponent>
+          <ToggleComponent disabled variant="outline" aria-label="Toggle italic">
             <ItalicIcon />
-          </Toggle>
-          <Toggle disabled defaultPressed aria-label="Toggle underline">
+          </ToggleComponent>
+          <ToggleComponent disabled defaultPressed aria-label="Toggle underline">
             <UnderlineIcon />
-          </Toggle>
-          <Toggle
+          </ToggleComponent>
+          <ToggleComponent
             disabled
             defaultPressed
             variant="outline"
             aria-label="Toggle bookmark"
           >
             <BookmarkIcon />
-          </Toggle>
+          </ToggleComponent>
         </div>
       </KitchenSinkSection>
 
@@ -125,16 +125,16 @@ import {
           > to fill icons when pressed
         </p>
         <div class="flex items-center gap-2">
-          <Toggle variant="outline" aria-label="Toggle bookmark">
+          <ToggleComponent variant="outline" aria-label="Toggle bookmark">
             <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />
-          </Toggle>
-          <Toggle
+          </ToggleComponent>
+          <ToggleComponent
             variant="outline"
             defaultPressed
             aria-label="Toggle bookmark filled"
           >
             <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />
-          </Toggle>
+          </ToggleComponent>
         </div>
       </KitchenSinkSection>
     </div>
@@ -143,10 +143,10 @@ import {
       <p class="text-sm text-muted-foreground">
         Click the toggle and check the output for toggle:change events
       </p>
-      <Toggle id="event-toggle" variant="outline" aria-label="Toggle test">
+      <ToggleComponent id="event-toggle" variant="outline" aria-label="Toggle test">
         <BoldIcon />
         Click me
-      </Toggle>
+      </ToggleComponent>
       <EventLog id="toggle-event-output" />
       <script>
         {
@@ -166,13 +166,13 @@ import {
 
     <KitchenSinkSection title="Programmatic Control">
       <div class="flex items-center gap-4">
-        <Toggle
+        <ToggleComponent
           id="programmatic-toggle"
           variant="outline"
           aria-label="Programmatic toggle"
         >
           <BoldIcon />
-        </Toggle>
+        </ToggleComponent>
         <button
           id="set-on-btn"
           class="px-3 py-1 text-sm border rounded-lg hover:bg-muted"

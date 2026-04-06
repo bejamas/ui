@@ -20,6 +20,7 @@ import {
 import type CreatePickerController from "@/stimulus/controllers/create_picker_controller";
 import type {
   ColorInputElement,
+  CreateConfig,
   CreateSidebarPanel,
   CreateSidebarRenderState,
 } from "@/stimulus/types/create";

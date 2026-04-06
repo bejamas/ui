@@ -116,15 +116,16 @@ export const themeStylesSchema = z.object({
   dark: themeStylePropsSchema,
 });
 
-export type ThemeStyleProps = z.infer<typeof themeStylePropsSchema>;
-export type ThemeStyles = z.infer<typeof themeStylesSchema>;
+export type StrictThemeStyleProps = z.infer<typeof themeStylePropsSchema>;
+export type ThemeStyleProps = Partial<StrictThemeStyleProps>;
+export type ThemeStyles = {
+  light: ThemeStyleProps;
+  dark: ThemeStyleProps;
+};
 
 export type ThemePreset = {
-  source?: "SAVED" | "BUILT_IN";
+  source?: "SAVED" | "BUILT_IN" | "AI";
   createdAt?: string;
   label?: string;
-  styles: {
-    light: Partial<ThemeStyleProps>;
-    dark: Partial<ThemeStyleProps>;
-  };
+  styles: ThemeStyles;
 };

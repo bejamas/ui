@@ -9,7 +9,6 @@ import { buildThemeChoiceBootstrapInlineScript } from "starlight-theme-bejamas/l
 import CreatePreviewSurface from "@/components/create/CreatePreviewSurface.astro";
 import { buildDesignSystemThemeCss } from "@/utils/themes/design-system-adapter";
 import { getCreatePickerSelectedOption } from "@/utils/create-sidebar";
-import { getCreatePreviewCopy } from "@/utils/create-preview-i18n";
 import { getDefaultCreateBootstrapState } from "@/utils/create-bootstrap";
 import { buildWindowAssignmentInlineScript } from "@/utils/inline-script";
 import themeFontsStylesheet from "@/styles/theme-fonts.css?url";
@@ -19,7 +18,6 @@ const compiledStyleCss = await getCompiledStyleCss(config.style);
 const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 const currentRadiusLabel =
   getCreatePickerSelectedOption("radius", config)?.label ?? config.radius;
-const previewCopy = getCreatePreviewCopy("en");
 const styleCssByStyle = Object.fromEntries(
   await Promise.all(
     catalogs.styles.map(async (style) => [
@@ -88,7 +86,6 @@ const previewPayloadScript = buildWindowAssignmentInlineScript(
         }
         menuInverted={isInvertedMenuColor(config.menuColor)}
         menuTranslucent={isTranslucentMenuColor(config.menuColor)}
-        copy={previewCopy}
       />
     </div>
     <div

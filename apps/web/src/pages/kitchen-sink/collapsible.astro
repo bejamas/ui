@@ -3,7 +3,7 @@ import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import {
-  Collapsible,
+  Collapsible as CollapsibleComponent,
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@bejamas/registry/ui/collapsible";
@@ -17,7 +17,7 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <Collapsible class="w-[340px] space-y-2">
+        <CollapsibleComponent class="w-[340px] space-y-2">
           <div class="flex items-center justify-between space-x-4 px-4">
             <h4 class="text-sm font-semibold">
               @thomkrupa starred 3 repositories
@@ -40,11 +40,11 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
               @bejamas/icons
             </div>
           </CollapsibleContent>
-        </Collapsible>
+        </CollapsibleComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Default Open">
-        <Collapsible open class="w-[340px] space-y-2">
+        <CollapsibleComponent open class="w-[340px] space-y-2">
           <div class="flex items-center justify-between space-x-4 px-4">
             <h4 class="text-sm font-semibold">
               @thomkrupa starred 3 repositories
@@ -67,12 +67,12 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
               @bejamas/icons
             </div>
           </CollapsibleContent>
-        </Collapsible>
+        </CollapsibleComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="File Tree">
         <div class="w-[280px] border rounded-lg p-2">
-          <Collapsible open>
+          <CollapsibleComponent open>
             <CollapsibleTrigger
               class="flex items-center gap-1 w-full px-2 py-1 text-sm hover:bg-muted rounded"
             >
@@ -80,7 +80,7 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
               <span class="font-medium">src</span>
             </CollapsibleTrigger>
             <CollapsibleContent class="ml-4">
-              <Collapsible open>
+              <CollapsibleComponent open>
                 <CollapsibleTrigger
                   class="flex items-center gap-1 w-full px-2 py-1 text-sm hover:bg-muted rounded"
                 >
@@ -98,8 +98,8 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
                     Dialog.tsx
                   </div>
                 </CollapsibleContent>
-              </Collapsible>
-              <Collapsible>
+              </CollapsibleComponent>
+              <CollapsibleComponent>
                 <CollapsibleTrigger
                   class="flex items-center gap-1 w-full px-2 py-1 text-sm hover:bg-muted rounded"
                 >
@@ -114,19 +114,19 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
                     helpers.ts
                   </div>
                 </CollapsibleContent>
-              </Collapsible>
+              </CollapsibleComponent>
               <div class="px-2 py-1 text-sm text-muted-foreground">
                 index.ts
               </div>
             </CollapsibleContent>
-          </Collapsible>
+          </CollapsibleComponent>
         </div>
       </KitchenSinkSection>
     </div>
 
     <KitchenSinkSection title="Content Animation Variants">
       <div class="grid gap-6 md:grid-cols-2">
-        <Collapsible class="space-y-2">
+        <CollapsibleComponent class="space-y-2">
           <div class="flex items-center justify-between space-x-4 px-2">
             <h4 class="text-sm font-semibold">None (Default)</h4>
             <CollapsibleTrigger asChild>
@@ -140,9 +140,9 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
               No entry or exit animation.
             </div>
           </CollapsibleContent>
-        </Collapsible>
+        </CollapsibleComponent>
 
-        <Collapsible class="space-y-2">
+        <CollapsibleComponent class="space-y-2">
           <div class="flex items-center justify-between space-x-4 px-2">
             <h4 class="text-sm font-semibold">Slide</h4>
             <CollapsibleTrigger asChild>
@@ -156,12 +156,12 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
               Presence-based transition with panel-height animation.
             </div>
           </CollapsibleContent>
-        </Collapsible>
+        </CollapsibleComponent>
       </div>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Hidden Until Found">
-      <Collapsible hiddenUntilFound class="w-[520px] max-w-full space-y-2">
+      <CollapsibleComponent hiddenUntilFound class="w-[520px] max-w-full space-y-2">
         <div class="flex items-center justify-between space-x-4 px-2">
           <h4 class="text-sm font-semibold">Find-in-page support</h4>
           <CollapsibleTrigger asChild>
@@ -180,12 +180,12 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
             saturnalia-collapsible-token
           </div>
         </CollapsibleContent>
-      </Collapsible>
+      </CollapsibleComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Event Testing">
       <div class="flex flex-col gap-4">
-        <Collapsible id="event-collapsible" class="w-[340px] space-y-2">
+        <CollapsibleComponent id="event-collapsible" class="w-[340px] space-y-2">
           <div class="flex items-center justify-between space-x-4 px-4">
             <h4 class="text-sm font-semibold">Toggle me</h4>
             <CollapsibleTrigger asChild>
@@ -200,7 +200,7 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
               Content revealed!
             </div>
           </CollapsibleContent>
-        </Collapsible>
+        </CollapsibleComponent>
         <EventLog id="collapsible-event-log" />
       </div>
       <script>
@@ -221,7 +221,7 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
 
     <KitchenSinkSection title="Programmatic Control">
       <div class="flex flex-col gap-4">
-        <Collapsible id="programmatic-collapsible" class="w-[340px] space-y-2">
+        <CollapsibleComponent id="programmatic-collapsible" class="w-[340px] space-y-2">
           <div class="flex items-center justify-between space-x-4 px-4">
             <h4 class="text-sm font-semibold">Controlled</h4>
             <CollapsibleTrigger asChild>
@@ -236,7 +236,7 @@ import { ChevronsUpDownIcon } from "@lucide/astro";
               Programmatically toggled content
             </div>
           </CollapsibleContent>
-        </Collapsible>
+        </CollapsibleComponent>
         <div class="flex gap-2">
           <Button id="collapsible-open" variant="outline" size="sm">Open</Button
           >

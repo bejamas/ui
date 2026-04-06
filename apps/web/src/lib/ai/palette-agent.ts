@@ -1,5 +1,5 @@
 import { OPENAI_API_KEY } from "astro:env/server";
-import { generateText, generateObject } from "ai";
+import { generateText, generateObject, stepCountIs } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "astro/zod";
 
@@ -180,7 +180,7 @@ export async function generatePalette(
             searchContextSize: "medium",
           }),
         },
-        maxSteps: 5,
+        stopWhen: stepCountIs(5),
         providerOptions: {
           openai: {
             reasoningSummary: "auto",
@@ -292,7 +292,7 @@ export async function generatePaletteWithProgress(
             searchContextSize: "medium",
           }),
         },
-        maxSteps: 5,
+        stopWhen: stepCountIs(5),
         providerOptions: {
           openai: {
             reasoningSummary: "auto",

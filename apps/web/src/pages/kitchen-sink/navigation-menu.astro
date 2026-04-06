@@ -3,7 +3,7 @@ import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import {
-  NavigationMenu,
+  NavigationMenu as NavigationMenuComponent,
   NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuTrigger,
@@ -53,7 +53,7 @@ const components = [
     <h1 class="text-3xl font-bold mb-10">Navigation Menu</h1>
 
     <KitchenSinkSection title="fulldev/ui">
-      <NavigationMenu>
+      <NavigationMenuComponent>
         <NavigationMenuList class="flex-wrap gap-1">
           <NavigationMenuItem value="getting-started">
             <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
@@ -144,7 +144,7 @@ const components = [
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Basic">
@@ -152,7 +152,7 @@ const components = [
         Two-item nav with simple grid content. Tests basic open/close and
         viewport animation.
       </p>
-      <NavigationMenu>
+      <NavigationMenuComponent>
         <NavigationMenuList>
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
@@ -201,7 +201,7 @@ const components = [
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem value="resources" align="center">
+          <NavigationMenuItem value="resources">
             <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
             <NavigationMenuContent>
               <div class="grid grid-cols-2 gap-2 w-[380px]">
@@ -249,14 +249,14 @@ const components = [
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="With Icons">
       <p class="text-sm text-muted-foreground">
         Links with leading Lucide icons in a vertical layout.
       </p>
-      <NavigationMenu>
+      <NavigationMenuComponent>
         <NavigationMenuList>
           <NavigationMenuItem value="features">
             <NavigationMenuTrigger>Features</NavigationMenuTrigger>
@@ -310,14 +310,14 @@ const components = [
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Featured Card">
       <p class="text-sm text-muted-foreground">
         Hero-style layout with a large featured link alongside smaller links.
       </p>
-      <NavigationMenu>
+      <NavigationMenuComponent>
         <NavigationMenuList>
           <NavigationMenuItem value="getting-started">
             <NavigationMenuTrigger>Getting Started</NavigationMenuTrigger>
@@ -369,7 +369,7 @@ const components = [
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="With Simple Links (navigationMenuTriggerStyle)">
@@ -379,7 +379,7 @@ const components = [
           >navigationMenuTriggerStyle()</code
         >.
       </p>
-      <NavigationMenu>
+      <NavigationMenuComponent>
         <NavigationMenuList>
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
@@ -402,7 +402,7 @@ const components = [
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Alignment Variations">
@@ -419,9 +419,9 @@ const components = [
           <span class="text-xs text-muted-foreground"
             >align="start" (default)</span
           >
-          <NavigationMenu>
+          <NavigationMenuComponent>
             <NavigationMenuList>
-              <NavigationMenuItem value="start-demo" align="start">
+              <NavigationMenuItem value="start-demo">
                 <NavigationMenuTrigger>Start Aligned</NavigationMenuTrigger>
                 <NavigationMenuContent align="start">
                   <div class="w-[250px]">
@@ -449,13 +449,13 @@ const components = [
                 </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
-          </NavigationMenu>
+          </NavigationMenuComponent>
         </div>
         <div class="space-y-2">
           <span class="text-xs text-muted-foreground">align="center"</span>
-          <NavigationMenu>
+          <NavigationMenuComponent>
             <NavigationMenuList>
-              <NavigationMenuItem value="center-demo" align="center">
+              <NavigationMenuItem value="center-demo">
                 <NavigationMenuTrigger>Center Aligned</NavigationMenuTrigger>
                 <NavigationMenuContent align="center">
                   <div class="w-[250px]">
@@ -483,13 +483,13 @@ const components = [
                 </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
-          </NavigationMenu>
+          </NavigationMenuComponent>
         </div>
         <div class="space-y-2">
           <span class="text-xs text-muted-foreground">align="end"</span>
-          <NavigationMenu>
+          <NavigationMenuComponent>
             <NavigationMenuList>
-              <NavigationMenuItem value="end-demo" align="end">
+              <NavigationMenuItem value="end-demo">
                 <NavigationMenuTrigger>End Aligned</NavigationMenuTrigger>
                 <NavigationMenuContent align="end">
                   <div class="w-[250px]">
@@ -517,7 +517,7 @@ const components = [
                 </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
-          </NavigationMenu>
+          </NavigationMenuComponent>
         </div>
       </div>
     </KitchenSinkSection>
@@ -529,7 +529,7 @@ const components = [
         > — content renders inline with its own border/shadow instead of the animated
         viewport container.
       </p>
-      <NavigationMenu viewport={false}>
+      <NavigationMenuComponent viewport={false}>
         <NavigationMenuList>
           <NavigationMenuItem value="menu-a">
             <NavigationMenuTrigger>Menu A</NavigationMenuTrigger>
@@ -551,7 +551,7 @@ const components = [
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="With Indicator">
@@ -563,7 +563,7 @@ const components = [
       <div class="space-y-6">
         <div class="space-y-2">
           <span class="text-xs text-muted-foreground">With indicator</span>
-          <NavigationMenu>
+          <NavigationMenuComponent>
             <NavigationMenuList>
               <NavigationMenuItem value="ind-products">
                 <NavigationMenuTrigger>Products</NavigationMenuTrigger>
@@ -594,13 +594,13 @@ const components = [
               </NavigationMenuItem>
               <NavigationMenuIndicator />
             </NavigationMenuList>
-          </NavigationMenu>
+          </NavigationMenuComponent>
         </div>
         <div class="space-y-2">
           <span class="text-xs text-muted-foreground"
             >Without indicator (for comparison)</span
           >
-          <NavigationMenu>
+          <NavigationMenuComponent>
             <NavigationMenuList>
               <NavigationMenuItem value="no-ind-products">
                 <NavigationMenuTrigger>Products</NavigationMenuTrigger>
@@ -630,7 +630,7 @@ const components = [
                 </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
-          </NavigationMenu>
+          </NavigationMenuComponent>
         </div>
       </div>
     </KitchenSinkSection>
@@ -645,7 +645,7 @@ const components = [
           <span class="text-xs text-muted-foreground"
             >Slow: delayOpen=300 delayClose=500</span
           >
-          <NavigationMenu delayOpen={300} delayClose={500}>
+          <NavigationMenuComponent delayOpen={300} delayClose={500}>
             <NavigationMenuList>
               <NavigationMenuItem value="slow-a">
                 <NavigationMenuTrigger>Slow Open</NavigationMenuTrigger>
@@ -666,13 +666,13 @@ const components = [
                 </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
-          </NavigationMenu>
+          </NavigationMenuComponent>
         </div>
         <div class="space-y-2">
           <span class="text-xs text-muted-foreground"
             >Instant: delayOpen=0 delayClose=0</span
           >
-          <NavigationMenu delayOpen={0} delayClose={0}>
+          <NavigationMenuComponent delayOpen={0} delayClose={0}>
             <NavigationMenuList>
               <NavigationMenuItem value="instant-a">
                 <NavigationMenuTrigger>Instant Open</NavigationMenuTrigger>
@@ -693,7 +693,7 @@ const components = [
                 </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
-          </NavigationMenu>
+          </NavigationMenuComponent>
         </div>
       </div>
     </KitchenSinkSection>
@@ -703,7 +703,7 @@ const components = [
         <code class="text-xs bg-muted px-1 py-0.5 rounded">openOnFocus</code> — menu
         opens when trigger receives keyboard focus. Tab through to test.
       </p>
-      <NavigationMenu openOnFocus>
+      <NavigationMenuComponent openOnFocus>
         <NavigationMenuList>
           <NavigationMenuItem value="focus-products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
@@ -760,7 +760,7 @@ const components = [
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Different Content Sizes">
@@ -768,7 +768,7 @@ const components = [
         Multiple items with varying content widths. Tests viewport resize
         animation as you hover between items.
       </p>
-      <NavigationMenu>
+      <NavigationMenuComponent>
         <NavigationMenuList>
           <NavigationMenuItem value="narrow">
             <NavigationMenuTrigger>Narrow</NavigationMenuTrigger>
@@ -919,7 +919,7 @@ const components = [
           </NavigationMenuItem>
           <NavigationMenuIndicator />
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Different Content Heights">
@@ -927,7 +927,7 @@ const components = [
         Items with varying content heights. Tests viewport height resize
         animation as you hover between items.
       </p>
-      <NavigationMenu>
+      <NavigationMenuComponent>
         <NavigationMenuList>
           <NavigationMenuItem value="short">
             <NavigationMenuTrigger>Short</NavigationMenuTrigger>
@@ -946,7 +946,7 @@ const components = [
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem value="medium" align="center">
+          <NavigationMenuItem value="medium">
             <NavigationMenuTrigger>Medium</NavigationMenuTrigger>
             <NavigationMenuContent>
               <div class="w-[300px]">
@@ -983,7 +983,7 @@ const components = [
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem value="tall" align="center">
+          <NavigationMenuItem value="tall">
             <NavigationMenuTrigger>Tall</NavigationMenuTrigger>
             <NavigationMenuContent>
               <div class="w-[300px]">
@@ -1058,7 +1058,7 @@ const components = [
           </NavigationMenuItem>
           <NavigationMenuIndicator />
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Event Handling">
@@ -1067,7 +1067,7 @@ const components = [
           >navigation-menu:change</code
         > events and logs them below.
       </p>
-      <NavigationMenu id="event-nav-menu">
+      <NavigationMenuComponent id="event-nav-menu">
         <NavigationMenuList>
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
@@ -1097,7 +1097,7 @@ const components = [
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
       <EventLog id="nav-event-output" />
       <script>
         {
@@ -1123,7 +1123,7 @@ const components = [
           >navigation-menu:set</code
         > to open/close items externally.
       </p>
-      <NavigationMenu id="programmatic-nav-menu">
+      <NavigationMenuComponent id="programmatic-nav-menu">
         <NavigationMenuList>
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
@@ -1180,7 +1180,7 @@ const components = [
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenuComponent>
       <div class="flex gap-2 mt-2">
         <button
           id="nav-open-products"

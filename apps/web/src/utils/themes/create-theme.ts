@@ -282,5 +282,7 @@ export function createThemeName(config: DesignSystemConfig) {
 function getCreateThemeSeedGroup(
   theme: DesignSystemConfig["theme"],
 ): CreateThemeSeedGroup {
-  return CURATED_THEME_VALUES.includes(theme) ? "bejamas" : "tailwind";
+  return (CURATED_THEME_VALUES as readonly string[]).includes(theme)
+    ? "bejamas"
+    : "tailwind";
 }

@@ -5,7 +5,7 @@ import EventLog from "@/components/EventLog.astro";
 import { Label } from "@bejamas/registry/ui/label";
 import { Button } from "@bejamas/registry/ui/button";
 import {
-  Combobox,
+  Combobox as ComboboxComponent,
   ComboboxInput,
   ComboboxContent,
   ComboboxList,
@@ -51,7 +51,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         <p class="text-sm text-muted-foreground">
           Basic combobox with framework list, filtering, and keyboard nav
         </p>
-        <Combobox class="w-[250px]">
+        <ComboboxComponent class="w-[250px]">
           <ComboboxInput placeholder="Select framework..." />
           <ComboboxContent>
             <ComboboxList>
@@ -63,7 +63,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Sizing (Match Button)">
@@ -73,7 +73,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </p>
         <div class="space-y-3">
           <div class="flex items-center gap-2">
-            <Combobox class="w-[220px]">
+            <ComboboxComponent class="w-[220px]">
               <ComboboxInput size="default" placeholder="Default (h-9)" />
               <ComboboxContent>
                 <ComboboxList>
@@ -82,12 +82,12 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                   <ComboboxItem value="nuxt-default">Nuxt</ComboboxItem>
                 </ComboboxList>
               </ComboboxContent>
-            </Combobox>
+            </ComboboxComponent>
             <Button variant="outline">Default</Button>
           </div>
 
           <div class="flex items-center gap-2">
-            <Combobox class="w-[220px]">
+            <ComboboxComponent class="w-[220px]">
               <ComboboxInput size="sm" placeholder="Small (h-8)" />
               <ComboboxContent>
                 <ComboboxList>
@@ -96,12 +96,12 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                   <ComboboxItem value="nuxt-sm">Nuxt</ComboboxItem>
                 </ComboboxList>
               </ComboboxContent>
-            </Combobox>
+            </ComboboxComponent>
             <Button size="sm" variant="outline">Small</Button>
           </div>
 
           <div class="flex items-center gap-2">
-            <Combobox class="w-[220px]">
+            <ComboboxComponent class="w-[220px]">
               <ComboboxInput size="lg" placeholder="Large (h-10)" />
               <ComboboxContent>
                 <ComboboxList>
@@ -110,7 +110,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                   <ComboboxItem value="nuxt-lg">Nuxt</ComboboxItem>
                 </ComboboxList>
               </ComboboxContent>
-            </Combobox>
+            </ComboboxComponent>
             <Button size="lg" variant="outline">Large</Button>
           </div>
         </div>
@@ -121,7 +121,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           showClear on ComboboxInput — clear button appears after selection,
           hides chevron
         </p>
-        <Combobox class="w-[250px]">
+        <ComboboxComponent class="w-[250px]">
           <ComboboxInput placeholder="Select framework..." showClear />
           <ComboboxContent>
             <ComboboxList>
@@ -133,12 +133,12 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Default Value">
         <p class="text-sm text-muted-foreground">Pre-selected value: "astro"</p>
-        <Combobox defaultValue="astro" class="w-[250px]">
+        <ComboboxComponent defaultValue="astro" class="w-[250px]">
           <ComboboxInput placeholder="Select framework..." />
           <ComboboxContent>
             <ComboboxList>
@@ -150,14 +150,14 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Auto Highlight">
         <p class="text-sm text-muted-foreground">
           First visible item is auto-highlighted as user types
         </p>
-        <Combobox autoHighlight class="w-[250px]">
+        <ComboboxComponent autoHighlight class="w-[250px]">
           <ComboboxInput placeholder="Start typing..." />
           <ComboboxContent>
             <ComboboxList>
@@ -169,7 +169,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Custom Items">
@@ -177,7 +177,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           Rich content with Item, ItemContent, ItemTitle, ItemDescription inside
           ComboboxItem
         </p>
-        <Combobox id="custom-items-combobox" class="w-[300px]">
+        <ComboboxComponent id="custom-items-combobox" class="w-[300px]">
           <ComboboxInput placeholder="Select country..." />
           <ComboboxContent>
             <ComboboxList>
@@ -344,7 +344,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               </ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
         <script>
           const customItemsCb = document.getElementById(
             "custom-items-combobox",
@@ -366,7 +366,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         <p class="text-sm text-muted-foreground">
           Grouped items with ComboboxGroup, ComboboxLabel, ComboboxSeparator
         </p>
-        <Combobox class="w-[250px]">
+        <ComboboxComponent class="w-[250px]">
           <ComboboxInput placeholder="Select framework..." />
           <ComboboxContent>
             <ComboboxList>
@@ -389,14 +389,14 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               </ComboboxGroup>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Scrollable (Many Items)">
         <p class="text-sm text-muted-foreground">
           Long list of countries — tests scroll behavior and max-h-72 overflow
         </p>
-        <Combobox class="w-[250px]">
+        <ComboboxComponent class="w-[250px]">
           <ComboboxInput placeholder="Select country..." />
           <ComboboxContent>
             <ComboboxList>
@@ -423,14 +423,14 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="usa">United States</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Disabled Combobox">
         <p class="text-sm text-muted-foreground">
           Entire combobox is disabled — input is not interactable
         </p>
-        <Combobox disabled class="w-[250px]">
+        <ComboboxComponent disabled class="w-[250px]">
           <ComboboxInput placeholder="Disabled..." disabled />
           <ComboboxContent>
             <ComboboxList>
@@ -438,7 +438,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="nextjs">Next.js</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Disabled Items">
@@ -446,7 +446,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           Mix of enabled/disabled items — disabled items can't be selected,
           skipped in keyboard nav
         </p>
-        <Combobox class="w-[250px]">
+        <ComboboxComponent class="w-[250px]">
           <ComboboxInput placeholder="Select framework..." />
           <ComboboxContent>
             <ComboboxList>
@@ -462,14 +462,14 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Invalid/Error State">
         <p class="text-sm text-muted-foreground">
           aria-invalid="true" on ComboboxInput — red ring styling
         </p>
-        <Combobox class="w-[250px]">
+        <ComboboxComponent class="w-[250px]">
           <ComboboxInput placeholder="Required field..." aria-invalid="true" />
           <ComboboxContent>
             <ComboboxList>
@@ -479,14 +479,14 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="No Trigger Arrow">
         <p class="text-sm text-muted-foreground">
           showTrigger={false} — clean input without chevron, still functions as combobox
         </p>
-        <Combobox class="w-[250px]">
+        <ComboboxComponent class="w-[250px]">
           <ComboboxInput placeholder="Type to search..." showTrigger={false} />
           <ComboboxContent>
             <ComboboxList>
@@ -498,7 +498,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Input Group">
@@ -506,7 +506,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           Add an addon to the combobox by using InputGroupAddon inside a manual
           InputGroup with data-slot="combobox-input"
         </p>
-        <Combobox class="w-[280px]">
+        <ComboboxComponent class="w-[280px]">
           <InputGroup>
             <InputGroupAddon class="pl-3">
               <GlobeIcon />
@@ -582,7 +582,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               </ComboboxGroup>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
     </div>
 
@@ -593,7 +593,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
       <div class="flex flex-wrap gap-8">
         <div class="space-y-2">
           <Label>Side: bottom (default)</Label>
-          <Combobox class="w-[200px]">
+          <ComboboxComponent class="w-[200px]">
             <ComboboxInput placeholder="Opens below" />
             <ComboboxContent side="bottom">
               <ComboboxList>
@@ -602,11 +602,11 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                 <ComboboxItem value="option3">Option 3</ComboboxItem>
               </ComboboxList>
             </ComboboxContent>
-          </Combobox>
+          </ComboboxComponent>
         </div>
         <div class="space-y-2">
           <Label>Side: top</Label>
-          <Combobox class="w-[200px]">
+          <ComboboxComponent class="w-[200px]">
             <ComboboxInput placeholder="Opens above" />
             <ComboboxContent side="top">
               <ComboboxList>
@@ -615,11 +615,11 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                 <ComboboxItem value="option3">Option 3</ComboboxItem>
               </ComboboxList>
             </ComboboxContent>
-          </Combobox>
+          </ComboboxComponent>
         </div>
         <div class="space-y-2">
           <Label>Align: center</Label>
-          <Combobox class="w-[200px]">
+          <ComboboxComponent class="w-[200px]">
             <ComboboxInput placeholder="Centered" />
             <ComboboxContent align="center">
               <ComboboxList>
@@ -628,11 +628,11 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                 <ComboboxItem value="option3">Option 3</ComboboxItem>
               </ComboboxList>
             </ComboboxContent>
-          </Combobox>
+          </ComboboxComponent>
         </div>
         <div class="space-y-2">
           <Label>Align: end</Label>
-          <Combobox class="w-[200px]">
+          <ComboboxComponent class="w-[200px]">
             <ComboboxInput placeholder="End aligned" />
             <ComboboxContent align="end">
               <ComboboxList>
@@ -641,7 +641,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                 <ComboboxItem value="option3">Option 3</ComboboxItem>
               </ComboboxList>
             </ComboboxContent>
-          </Combobox>
+          </ComboboxComponent>
         </div>
       </div>
     </KitchenSinkSection>
@@ -651,7 +651,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         Console logging for combobox:change, combobox:open-change,
         combobox:input-change
       </p>
-      <Combobox id="event-combobox" class="w-[250px]">
+      <ComboboxComponent id="event-combobox" class="w-[250px]">
         <ComboboxInput placeholder="Check console..." />
         <ComboboxContent>
           <ComboboxList>
@@ -661,7 +661,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
             <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
           </ComboboxList>
         </ComboboxContent>
-      </Combobox>
+      </ComboboxComponent>
       <EventLog id="combobox-event-output" />
       <script>
         {
@@ -702,7 +702,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         Buttons to set value, clear, open, and close
       </p>
       <div class="flex flex-col gap-4">
-        <Combobox id="programmatic-combobox" class="w-[250px]">
+        <ComboboxComponent id="programmatic-combobox" class="w-[250px]">
           <ComboboxInput placeholder="Control me..." />
           <ComboboxContent>
             <ComboboxList>
@@ -712,7 +712,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
         <div class="flex flex-wrap gap-2">
           <button
             id="cb-set-astro"
@@ -804,7 +804,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
             <div class="space-y-4 py-4">
               <div class="space-y-2">
                 <Label>Framework</Label>
-                <Combobox class="w-full">
+                <ComboboxComponent class="w-full">
                   <ComboboxInput placeholder="Search frameworks..." />
                   <ComboboxContent>
                     <ComboboxList>
@@ -816,11 +816,11 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                       <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
                     </ComboboxList>
                   </ComboboxContent>
-                </Combobox>
+                </ComboboxComponent>
               </div>
               <div class="space-y-2">
                 <Label>Version</Label>
-                <Combobox class="w-full">
+                <ComboboxComponent class="w-full">
                   <ComboboxInput placeholder="Search versions..." />
                   <ComboboxContent>
                     <ComboboxList>
@@ -831,7 +831,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                       <ComboboxItem value="rc">Release Candidate</ComboboxItem>
                     </ComboboxList>
                   </ComboboxContent>
-                </Combobox>
+                </ComboboxComponent>
               </div>
             </div>
             <DialogFooter>
@@ -847,7 +847,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
           Button trigger with ComboboxInput inside ComboboxContent — like a
           searchable select
         </p>
-        <Combobox class="w-[250px]">
+        <ComboboxComponent class="w-[250px]">
           <ComboboxTrigger>
             <ComboboxValue placeholder="Select country..." />
           </ComboboxTrigger>
@@ -900,7 +900,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
               >
             </ComboboxList>
           </ComboboxContent>
-        </Combobox>
+        </ComboboxComponent>
       </KitchenSinkSection>
     </div>
 
@@ -925,7 +925,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
         </div>
         <div class="space-y-2">
           <Label>Framework</Label>
-          <Combobox name="framework" class="w-full">
+          <ComboboxComponent name="framework" class="w-full">
             <ComboboxInput placeholder="Select framework..." />
             <ComboboxContent>
               <ComboboxList>
@@ -937,7 +937,7 @@ import ChevronDownIcon from "@lucide/astro/icons/chevron-down";
                 <ComboboxItem value="sveltekit">SvelteKit</ComboboxItem>
               </ComboboxList>
             </ComboboxContent>
-          </Combobox>
+          </ComboboxComponent>
         </div>
         <Button type="submit">Submit</Button>
       </form>

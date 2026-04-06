@@ -56,7 +56,7 @@ export const legacy_getShadowMap = (themeEditorState: ThemeEditorState) => {
   const styles = {
     ...defaultThemeState.styles[mode],
     ...themeEditorState.styles[mode],
-  };
+  } as Record<string, string>;
 
   const shadowColor = styles["shadow-color"];
   const borderColor = styles["border"] || shadowColor;
@@ -146,7 +146,7 @@ export const getShadowMap = (
   const styles = {
     ...defaultThemeState.styles[mode],
     ...themeEditorState.styles[mode],
-  };
+  } as Record<string, string>;
 
   const shadowColor = styles["shadow-color"];
   const borderColor = styles["border"] || shadowColor;

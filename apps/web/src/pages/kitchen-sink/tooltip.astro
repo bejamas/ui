@@ -3,7 +3,7 @@ import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import {
-  Tooltip,
+  Tooltip as TooltipComponent,
   TooltipTrigger,
   TooltipContent,
 } from "@bejamas/registry/ui/tooltip";
@@ -27,155 +27,155 @@ import {
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <Tooltip>
+        <TooltipComponent>
           <TooltipTrigger asChild>
             <Button variant="outline">Hover me</Button>
           </TooltipTrigger>
           <TooltipContent>
             <p>This is a tooltip</p>
           </TooltipContent>
-        </Tooltip>
+        </TooltipComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Sides">
         <div class="grid gap-4 py-8">
           <div class="flex items-center gap-4 flex-wrap justify-center">
-            <Tooltip>
+            <TooltipComponent>
               <TooltipTrigger asChild>
                 <Button variant="outline">Left</Button>
               </TooltipTrigger>
               <TooltipContent side="left">
                 <p>Tooltip on left</p>
               </TooltipContent>
-            </Tooltip>
-            <Tooltip>
+            </TooltipComponent>
+            <TooltipComponent>
               <TooltipTrigger asChild>
                 <Button variant="outline">Top</Button>
               </TooltipTrigger>
               <TooltipContent side="top">
                 <p>Tooltip on top</p>
               </TooltipContent>
-            </Tooltip>
-            <Tooltip>
+            </TooltipComponent>
+            <TooltipComponent>
               <TooltipTrigger asChild>
                 <Button variant="outline">Bottom</Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
                 <p>Tooltip on bottom</p>
               </TooltipContent>
-            </Tooltip>
-            <Tooltip>
+            </TooltipComponent>
+            <TooltipComponent>
               <TooltipTrigger asChild>
                 <Button variant="outline">Right</Button>
               </TooltipTrigger>
               <TooltipContent side="right">
                 <p>Tooltip on right</p>
               </TooltipContent>
-            </Tooltip>
+            </TooltipComponent>
           </div>
           <div class="flex items-center gap-4 flex-wrap justify-center">
-            <Tooltip>
+            <TooltipComponent>
               <TooltipTrigger asChild>
                 <Button variant="outline">Inline Start</Button>
               </TooltipTrigger>
               <TooltipContent side="inline-start">
                 <p>Tooltip on inline start</p>
               </TooltipContent>
-            </Tooltip>
-            <Tooltip>
+            </TooltipComponent>
+            <TooltipComponent>
               <TooltipTrigger asChild>
                 <Button variant="outline">Inline End</Button>
               </TooltipTrigger>
               <TooltipContent side="inline-end">
                 <p>Tooltip on inline end</p>
               </TooltipContent>
-            </Tooltip>
+            </TooltipComponent>
           </div>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Alignment">
         <div class="flex items-center gap-4 flex-wrap">
-          <Tooltip>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button variant="outline">Start</Button>
             </TooltipTrigger>
             <TooltipContent align="start">
               <p>Aligned to start</p>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip>
+          </TooltipComponent>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button variant="outline">Center</Button>
             </TooltipTrigger>
             <TooltipContent align="center">
               <p>Aligned to center</p>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip>
+          </TooltipComponent>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button variant="outline">End</Button>
             </TooltipTrigger>
             <TooltipContent align="end">
               <p>Aligned to end</p>
             </TooltipContent>
-          </Tooltip>
+          </TooltipComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Delay">
         <div class="flex items-center gap-4 flex-wrap">
-          <Tooltip delay={0}>
+          <TooltipComponent delay={0}>
             <TooltipTrigger asChild>
               <Button variant="outline">No delay</Button>
             </TooltipTrigger>
             <TooltipContent>
               <p>Instant tooltip (0ms)</p>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip delay={500}>
+          </TooltipComponent>
+          <TooltipComponent delay={500}>
             <TooltipTrigger asChild>
               <Button variant="outline">500ms delay</Button>
             </TooltipTrigger>
             <TooltipContent>
               <p>Delayed tooltip (500ms)</p>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip delay={1000}>
+          </TooltipComponent>
+          <TooltipComponent delay={1000}>
             <TooltipTrigger asChild>
               <Button variant="outline">1s delay</Button>
             </TooltipTrigger>
             <TooltipContent>
               <p>Slow tooltip (1000ms)</p>
             </TooltipContent>
-          </Tooltip>
+          </TooltipComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Positioning Options">
         <div class="flex items-center gap-4 flex-wrap">
-          <Tooltip>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button variant="outline">sideOffset=12</Button>
             </TooltipTrigger>
             <TooltipContent sideOffset={12}>
               <p>More distance from trigger</p>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip>
+          </TooltipComponent>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button variant="outline">alignOffset=16</Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" align="start" alignOffset={16}>
               <p>Shifted on the alignment axis</p>
             </TooltipContent>
-          </Tooltip>
+          </TooltipComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="On Icon Buttons">
         <div class="flex items-center gap-2">
-          <Tooltip>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button size="icon" variant="outline" aria-label="Add new">
                 <PlusIcon />
@@ -184,8 +184,8 @@ import {
             <TooltipContent>
               <p>Add new</p>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip>
+          </TooltipComponent>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button size="icon" variant="outline" aria-label="Settings">
                 <SettingsIcon />
@@ -194,8 +194,8 @@ import {
             <TooltipContent>
               <p>Settings</p>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip>
+          </TooltipComponent>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button size="icon" variant="outline" aria-label="Copy">
                 <CopyIcon />
@@ -204,8 +204,8 @@ import {
             <TooltipContent>
               <p>Copy to clipboard</p>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip>
+          </TooltipComponent>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button size="icon" variant="destructive" aria-label="Delete">
                 <TrashIcon />
@@ -214,13 +214,13 @@ import {
             <TooltipContent>
               <p>Delete</p>
             </TooltipContent>
-          </Tooltip>
+          </TooltipComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Kbd">
         <div class="flex items-center gap-2">
-          <Tooltip>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button size="icon" variant="outline" aria-label="Bold">
                 <BoldIcon />
@@ -230,8 +230,8 @@ import {
               <p>Bold</p>
               <Kbd>⌘B</Kbd>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip>
+          </TooltipComponent>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button size="icon" variant="outline" aria-label="Italic">
                 <ItalicIcon />
@@ -241,8 +241,8 @@ import {
               <p>Italic</p>
               <Kbd>⌘I</Kbd>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip>
+          </TooltipComponent>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button size="icon" variant="outline" aria-label="Underline">
                 <UnderlineIcon />
@@ -252,8 +252,8 @@ import {
               <p>Underline</p>
               <Kbd>⌘U</Kbd>
             </TooltipContent>
-          </Tooltip>
-          <Tooltip>
+          </TooltipComponent>
+          <TooltipComponent>
             <TooltipTrigger asChild>
               <Button size="icon" variant="outline" aria-label="Save">
                 <BookmarkIcon />
@@ -263,7 +263,7 @@ import {
               <p>Save</p>
               <Kbd>⌘S</Kbd>
             </TooltipContent>
-          </Tooltip>
+          </TooltipComponent>
         </div>
       </KitchenSinkSection>
     </div>
@@ -272,14 +272,14 @@ import {
       <p class="text-sm text-muted-foreground">
         Hover the button and check the output for tooltip open/close events.
       </p>
-      <Tooltip id="event-tooltip">
+      <TooltipComponent id="event-tooltip">
         <TooltipTrigger asChild>
           <Button variant="outline">Hover for events</Button>
         </TooltipTrigger>
         <TooltipContent>
           <p>Event tooltip</p>
         </TooltipContent>
-      </Tooltip>
+      </TooltipComponent>
       <EventLog id="tooltip-event-output" />
       <script>
         {
@@ -298,14 +298,14 @@ import {
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Programmatic Control">
-      <Tooltip id="programmatic-tooltip">
+      <TooltipComponent id="programmatic-tooltip">
         <TooltipTrigger asChild>
           <Button variant="outline">Controlled Tooltip</Button>
         </TooltipTrigger>
         <TooltipContent>
           <p>Programmatically controlled</p>
         </TooltipContent>
-      </Tooltip>
+      </TooltipComponent>
       <div class="flex flex-wrap gap-2">
         <button
           id="show-tooltip-btn"

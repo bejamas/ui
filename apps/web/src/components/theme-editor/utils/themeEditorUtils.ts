@@ -1,4 +1,4 @@
-import type { ThemeStyleProps } from "../../../utils/types/theme";
+import type { ThemeStyles } from "../../../utils/types/theme";
 import { colorFormatter } from "../../../utils/themes/color-converter";
 import { normalizeThemeTokenValue } from "../../../utils/themes/theme-tokens";
 
@@ -169,7 +169,7 @@ export const buildCliCommand = (args: {
 };
 
 export const toThemeStyleValues = (
-  styles: ThemeStyleProps,
+  styles: ThemeStyles,
 ): ThemeStyleValues => ({
   light: styles.light as Record<string, string>,
   dark: styles.dark as Record<string, string>,

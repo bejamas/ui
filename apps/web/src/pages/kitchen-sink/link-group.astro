@@ -2,7 +2,7 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import {
-  LinkGroup,
+  LinkGroup as LinkGroupComponent,
   LinkGroupTitle,
   LinkGroupList,
   LinkGroupItem,
@@ -15,7 +15,7 @@ import {
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <LinkGroup>
+        <LinkGroupComponent>
           <LinkGroupTitle>Company</LinkGroupTitle>
           <LinkGroupList>
             <LinkGroupItem>
@@ -31,11 +31,11 @@ import {
               <a href="#">Contact</a>
             </LinkGroupItem>
           </LinkGroupList>
-        </LinkGroup>
+        </LinkGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Without Title">
-        <LinkGroup>
+        <LinkGroupComponent>
           <LinkGroupList>
             <LinkGroupItem>
               <a href="#">Documentation</a>
@@ -50,11 +50,11 @@ import {
               <a href="#">Support</a>
             </LinkGroupItem>
           </LinkGroupList>
-        </LinkGroup>
+        </LinkGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Custom Styling">
-        <LinkGroup>
+        <LinkGroupComponent>
           <LinkGroupTitle class="text-primary">Resources</LinkGroupTitle>
           <LinkGroupList>
             <LinkGroupItem>
@@ -78,14 +78,14 @@ import {
               >Showcase</a
             >
           </LinkGroupItem>
-        </LinkGroup>
+        </LinkGroupComponent>
       </KitchenSinkSection>
     </div>
   </section>
 
   <KitchenSinkSection title="Footer Layout">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-      <LinkGroup>
+      <LinkGroupComponent>
         <LinkGroupTitle>Product</LinkGroupTitle>
         <LinkGroupList>
           <LinkGroupItem>
@@ -101,8 +101,8 @@ import {
             <a href="#">Changelog</a>
           </LinkGroupItem>
         </LinkGroupList>
-      </LinkGroup>
-      <LinkGroup>
+      </LinkGroupComponent>
+      <LinkGroupComponent>
         <LinkGroupTitle>Company</LinkGroupTitle>
         <LinkGroupList>
           <LinkGroupItem>
@@ -118,8 +118,8 @@ import {
             <a href="#">Press</a>
           </LinkGroupItem>
         </LinkGroupList>
-      </LinkGroup>
-      <LinkGroup>
+      </LinkGroupComponent>
+      <LinkGroupComponent>
         <LinkGroupTitle>Resources</LinkGroupTitle>
         <LinkGroupList>
           <LinkGroupItem>
@@ -135,8 +135,8 @@ import {
             <a href="#">Community</a>
           </LinkGroupItem>
         </LinkGroupList>
-      </LinkGroup>
-      <LinkGroup>
+      </LinkGroupComponent>
+      <LinkGroupComponent>
         <LinkGroupTitle>Legal</LinkGroupTitle>
         <LinkGroupList>
           <LinkGroupItem>
@@ -152,7 +152,7 @@ import {
             <a href="#">Licenses</a>
           </LinkGroupItem>
         </LinkGroupList>
-      </LinkGroup>
+      </LinkGroupComponent>
     </div>
   </KitchenSinkSection>
 </KitchenSinkLayout>

@@ -23,7 +23,7 @@ const blocks = await getCollection("blocks");
   {
     blocks.map((block) => (
       <section class="text-left not-content space-y-20">
-        {block.data.items.map((item) => (
+        {(block.data.items ?? []).map((item) => (
           <BlockPreview item={item} />
         ))}
       </section>

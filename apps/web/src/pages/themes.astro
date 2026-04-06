@@ -261,7 +261,7 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
   }
 
   function scheduleTokenCardRefresh() {
-    const windowWithState = window as Window & Record<string, unknown>;
+    const windowWithState = window as unknown as Window & Record<string, unknown>;
     if (windowWithState[THEMES_PAGE_FRAME_KEY]) return;
     windowWithState[THEMES_PAGE_FRAME_KEY] = requestAnimationFrame(() => {
       windowWithState[THEMES_PAGE_FRAME_KEY] = undefined;
@@ -270,7 +270,7 @@ const sections: ThemeSection[] = rawSections.map((section) => ({
   }
 
   function initThemesPageTokenCards() {
-    const windowWithState = window as Window & Record<string, unknown>;
+    const windowWithState = window as unknown as Window & Record<string, unknown>;
     if (windowWithState[THEMES_PAGE_INIT_KEY]) {
       scheduleTokenCardRefresh();
       return;

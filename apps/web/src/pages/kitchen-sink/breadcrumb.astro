@@ -2,7 +2,7 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import {
-  Breadcrumb,
+  Breadcrumb as BreadcrumbComponent,
   BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbSeparator,
@@ -16,7 +16,7 @@ import { SlashIcon, EllipsisIcon } from "@lucide/astro";
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <Breadcrumb>
+        <BreadcrumbComponent>
           <BreadcrumbList>
             <BreadcrumbItem><a href="#">Home</a></BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -28,11 +28,11 @@ import { SlashIcon, EllipsisIcon } from "@lucide/astro";
               ></BreadcrumbItem
             >
           </BreadcrumbList>
-        </Breadcrumb>
+        </BreadcrumbComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Custom Separator">
-        <Breadcrumb>
+        <BreadcrumbComponent>
           <BreadcrumbList>
             <BreadcrumbItem><a href="#">Home</a></BreadcrumbItem>
             <BreadcrumbSeparator
@@ -48,11 +48,11 @@ import { SlashIcon, EllipsisIcon } from "@lucide/astro";
               ></BreadcrumbItem
             >
           </BreadcrumbList>
-        </Breadcrumb>
+        </BreadcrumbComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Collapsed (Ellipsis)">
-        <Breadcrumb>
+        <BreadcrumbComponent>
           <BreadcrumbList>
             <BreadcrumbItem><a href="#">Home</a></BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -70,11 +70,11 @@ import { SlashIcon, EllipsisIcon } from "@lucide/astro";
               ></BreadcrumbItem
             >
           </BreadcrumbList>
-        </Breadcrumb>
+        </BreadcrumbComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Long Path">
-        <Breadcrumb>
+        <BreadcrumbComponent>
           <BreadcrumbList>
             <BreadcrumbItem><a href="#">Home</a></BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -90,7 +90,7 @@ import { SlashIcon, EllipsisIcon } from "@lucide/astro";
               ></BreadcrumbItem
             >
           </BreadcrumbList>
-        </Breadcrumb>
+        </BreadcrumbComponent>
       </KitchenSinkSection>
     </div>
   </section>

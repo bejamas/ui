@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Badge } from "@bejamas/registry/ui/badge";
+import { Badge as BadgeComponent } from "@bejamas/registry/ui/badge";
 import { CheckIcon, XIcon, AlertTriangleIcon, InfoIcon } from "@lucide/astro";
 ---
 
@@ -12,80 +12,80 @@ import { CheckIcon, XIcon, AlertTriangleIcon, InfoIcon } from "@lucide/astro";
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Variants">
         <div class="flex items-center gap-2 flex-wrap">
-          <Badge>Default</Badge>
-          <Badge variant="secondary">Secondary</Badge>
-          <Badge variant="destructive">Destructive</Badge>
-          <Badge variant="outline">Outline</Badge>
+          <BadgeComponent>Default</BadgeComponent>
+          <BadgeComponent variant="secondary">Secondary</BadgeComponent>
+          <BadgeComponent variant="destructive">Destructive</BadgeComponent>
+          <BadgeComponent variant="outline">Outline</BadgeComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Pill Shape">
         <div class="flex items-center gap-2 flex-wrap">
-          <Badge class="rounded-full">Default</Badge>
-          <Badge variant="secondary" class="rounded-full">Secondary</Badge>
-          <Badge variant="destructive" class="rounded-full">Destructive</Badge>
-          <Badge variant="outline" class="rounded-full">Outline</Badge>
+          <BadgeComponent class="rounded-full">Default</BadgeComponent>
+          <BadgeComponent variant="secondary" class="rounded-full">Secondary</BadgeComponent>
+          <BadgeComponent variant="destructive" class="rounded-full">Destructive</BadgeComponent>
+          <BadgeComponent variant="outline" class="rounded-full">Outline</BadgeComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Icons">
         <div class="flex items-center gap-2 flex-wrap">
-          <Badge>
+          <BadgeComponent>
             <CheckIcon class="size-3" />
             Success
-          </Badge>
-          <Badge variant="destructive">
+          </BadgeComponent>
+          <BadgeComponent variant="destructive">
             <XIcon class="size-3" />
             Error
-          </Badge>
-          <Badge variant="secondary">
+          </BadgeComponent>
+          <BadgeComponent variant="secondary">
             <AlertTriangleIcon class="size-3" />
             Warning
-          </Badge>
-          <Badge variant="outline">
+          </BadgeComponent>
+          <BadgeComponent variant="outline">
             <InfoIcon class="size-3" />
             Info
-          </Badge>
+          </BadgeComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="As Link">
         <div class="flex items-center gap-2 flex-wrap">
           <a href="#badge-link">
-            <Badge>Clickable Badge</Badge>
+            <BadgeComponent>Clickable Badge</BadgeComponent>
           </a>
           <a href="#badge-link">
-            <Badge variant="outline">Link Badge</Badge>
+            <BadgeComponent variant="outline">Link Badge</BadgeComponent>
           </a>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Counter Badges">
         <div class="flex items-center gap-3 flex-wrap">
-          <Badge>1</Badge>
-          <Badge variant="secondary">24</Badge>
-          <Badge variant="destructive">99+</Badge>
-          <Badge variant="outline">0</Badge>
+          <BadgeComponent>1</BadgeComponent>
+          <BadgeComponent variant="secondary">24</BadgeComponent>
+          <BadgeComponent variant="destructive">99+</BadgeComponent>
+          <BadgeComponent variant="outline">0</BadgeComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Custom Colors">
         <div class="flex items-center gap-2 flex-wrap">
-          <Badge
+          <BadgeComponent
             class="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800"
-            >Info</Badge
+            >Info</BadgeComponent
           >
-          <Badge
+          <BadgeComponent
             class="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 hover:bg-amber-200 dark:hover:bg-amber-800"
-            >Warning</Badge
+            >Warning</BadgeComponent
           >
-          <Badge
+          <BadgeComponent
             class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800"
-            >Success</Badge
+            >Success</BadgeComponent
           >
-          <Badge
+          <BadgeComponent
             class="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 hover:bg-purple-200 dark:hover:bg-purple-800"
-            >New</Badge
+            >New</BadgeComponent
           >
         </div>
       </KitchenSinkSection>

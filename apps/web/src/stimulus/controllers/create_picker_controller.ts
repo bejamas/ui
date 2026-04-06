@@ -207,7 +207,7 @@ export default class extends Controller<HTMLElement> {
         return;
       }
 
-      const disabled = Boolean(option.disabled);
+      const disabled = "disabled" in option && Boolean(option.disabled);
       item.toggleAttribute("data-disabled", disabled);
       item.setAttribute("tabindex", disabled ? "-1" : "0");
 

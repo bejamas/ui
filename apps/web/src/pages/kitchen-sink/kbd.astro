@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Kbd, KbdGroup } from "@bejamas/registry/ui/kbd";
+import { Kbd as KbdComponent, KbdGroup } from "@bejamas/registry/ui/kbd";
 import { Button } from "@bejamas/registry/ui/button";
 import {
   Tooltip,
@@ -17,12 +17,12 @@ import {
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
         <div class="flex items-center gap-3 flex-wrap">
-          <Kbd>⌘</Kbd>
-          <Kbd>⇧</Kbd>
-          <Kbd>⌥</Kbd>
-          <Kbd>⌃</Kbd>
-          <Kbd>Ctrl</Kbd>
-          <Kbd>Enter</Kbd>
+          <KbdComponent>⌘</KbdComponent>
+          <KbdComponent>⇧</KbdComponent>
+          <KbdComponent>⌥</KbdComponent>
+          <KbdComponent>⌃</KbdComponent>
+          <KbdComponent>Ctrl</KbdComponent>
+          <KbdComponent>Enter</KbdComponent>
         </div>
       </KitchenSinkSection>
 
@@ -30,29 +30,29 @@ import {
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <span class="text-sm text-muted-foreground w-16">Copy</span>
-            <KbdGroup><Kbd>⌘</Kbd><Kbd>C</Kbd></KbdGroup>
+            <KbdGroup><KbdComponent>⌘</KbdComponent><KbdComponent>C</KbdComponent></KbdGroup>
           </div>
           <div class="flex items-center gap-2">
             <span class="text-sm text-muted-foreground w-16">Paste</span>
-            <KbdGroup><Kbd>⌘</Kbd><Kbd>V</Kbd></KbdGroup>
+            <KbdGroup><KbdComponent>⌘</KbdComponent><KbdComponent>V</KbdComponent></KbdGroup>
           </div>
           <div class="flex items-center gap-2">
             <span class="text-sm text-muted-foreground w-16">Palette</span>
-            <KbdGroup><Kbd>⌘</Kbd><Kbd>⇧</Kbd><Kbd>P</Kbd></KbdGroup>
+            <KbdGroup><KbdComponent>⌘</KbdComponent><KbdComponent>⇧</KbdComponent><KbdComponent>P</KbdComponent></KbdGroup>
           </div>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="In Context">
         <p class="text-sm text-muted-foreground">
-          Press <Kbd>⌘</Kbd><Kbd>K</Kbd> to open the command palette.
+          Press <KbdComponent>⌘</KbdComponent><KbdComponent>K</KbdComponent> to open the command palette.
         </p>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="In Button">
         <div class="flex items-center gap-3">
-          <Button variant="outline">Accept <Kbd>⏎</Kbd></Button>
-          <Button variant="outline">Save <Kbd>⌘</Kbd><Kbd>S</Kbd></Button>
+          <Button variant="outline">Accept <KbdComponent>⏎</KbdComponent></Button>
+          <Button variant="outline">Save <KbdComponent>⌘</KbdComponent><KbdComponent>S</KbdComponent></Button>
         </div>
       </KitchenSinkSection>
 
@@ -63,7 +63,7 @@ import {
           </TooltipTrigger>
           <TooltipContent>
             <span class="flex items-center gap-2"
-              >Save <KbdGroup><Kbd>⌘</Kbd><Kbd>S</Kbd></KbdGroup></span
+              >Save <KbdGroup><KbdComponent>⌘</KbdComponent><KbdComponent>S</KbdComponent></KbdGroup></span
             >
           </TooltipContent>
         </Tooltip>

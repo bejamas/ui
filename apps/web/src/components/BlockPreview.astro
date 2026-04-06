@@ -8,19 +8,16 @@ const item = Astro.props.item;
 ---
 
 <div x-data="{ size: 'desktop' }">
-  <Tabs>
+  <Tabs defaultValue="preview">
     <div class="flex justify-between mb-3 items-center">
-      <TabsList class="space-x-0.5">
+      <TabsList size="sm" variant="default" class="space-x-0.5">
         <TabsTrigger
-          size="sm"
-          aria-selected="true"
-          variant="ghost"
+          value="preview"
           class="aria-selected:bg-primary aria-selected:text-primary-foreground h-8 px-2.5"
           >Preview</TabsTrigger
         >
         <TabsTrigger
-          size="sm"
-          variant="ghost"
+          value="source"
           class="aria-selected:bg-primary aria-selected:text-primary-foreground h-8 px-2.5"
           >Source</TabsTrigger
         >
@@ -65,13 +62,13 @@ const item = Astro.props.item;
         </button>
       </div>
     </div>
-    <TabsContent>
+    <TabsContent value="preview">
       <iframe
         src={item.href}
         class="w-full h-full min-h-[800px] border border-border rounded-2xl data-[size='desktop']:max-w-full data-[size='tablet']:max-w-3xl data-[size='smartphone']:max-w-sm"
         :data-size="size"></iframe>
     </TabsContent>
-    <TabsContent hidden>
+    <TabsContent value="source">
       <Source href={item.href} />
     </TabsContent>
   </Tabs>
