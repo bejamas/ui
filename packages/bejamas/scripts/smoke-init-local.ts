@@ -368,6 +368,51 @@ async function assertFileDoesNotContain(
   );
 }
 
+async function assertFileContains(
+  projectRoot: string,
+  relativePath: string,
+  snippet: string,
+) {
+  const absolutePath = path.resolve(projectRoot, relativePath);
+  const content = await fs.readFile(absolutePath, "utf8");
+
+  assert(
+    content.includes(snippet),
+    `Expected ${absolutePath} to include ${snippet}`,
+  );
+}
+
+async function assertPackageDependencies(
+  projectRoot: string,
+  relativePackageJson: string,
+  expectedDependencies: string[],
+  absentDependencies: string[],
+) {
+  const packageJsonPath = path.resolve(projectRoot, relativePackageJson);
+  const packageJson = await readJson<{
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+  }>(packageJsonPath);
+  const allDependencies = {
+    ...(packageJson.dependencies ?? {}),
+    ...(packageJson.devDependencies ?? {}),
+  };
+
+  for (const dependency of expectedDependencies) {
+    assert(
+      allDependencies[dependency],
+      `Expected ${packageJsonPath} to include ${dependency}`,
+    );
+  }
+
+  for (const dependency of absentDependencies) {
+    assert(
+      !allDependencies[dependency],
+      `Expected ${packageJsonPath} to avoid ${dependency}`,
+    );
+  }
+}
+
 async function assertFilesMissing(
   projectRoot: string,
   relativePaths: string[],
@@ -469,20 +514,6 @@ async function assertTabsSourceMatchesStyle(
   }
 }
 
-async function readStreamText(
-  stream: NodeJS.ReadableStream | null | undefined,
-) {
-  if (!stream) {
-    return "";
-  }
-
-  let output = "";
-  for await (const chunk of stream) {
-    output += chunk.toString();
-  }
-  return output;
-}
-
 async function waitForChildExit(
   child: ReturnType<typeof execa>,
   timeoutMs: number,
@@ -493,10 +524,16 @@ async function waitForChildExit(
   ]);
 }
 
+function hasChildExited(child: ReturnType<typeof execa>) {
+  return child.exitCode !== null && child.exitCode !== undefined;
+}
+
 async function assertAstroProjectBootsWithoutFontErrors(
   projectRoot: string,
   port: number,
 ) {
+  let stdout = "";
+  let stderr = "";
   const child = execa(
     "bun",
     ["run", "dev", "--host", "127.0.0.1", "--port", String(port)],
@@ -509,15 +546,34 @@ async function assertAstroProjectBootsWithoutFontErrors(
       reject: false,
       stdout: "pipe",
       stderr: "pipe",
+      detached: true,
     },
   );
+  child.stdout?.on("data", (chunk) => {
+    stdout += chunk.toString();
+  });
+  child.stderr?.on("data", (chunk) => {
+    stderr += chunk.toString();
+  });
+
+  const killChild = (signal: NodeJS.Signals) => {
+    if (!child.pid) {
+      return;
+    }
+
+    try {
+      process.kill(-child.pid, signal);
+    } catch {
+      child.kill(signal);
+    }
+  };
 
   try {
     const url = `http://127.0.0.1:${port}/`;
     let response: Response | null = null;
 
     for (let attempt = 0; attempt < 30; attempt += 1) {
-      if (child.exitCode !== undefined) {
+      if (hasChildExited(child)) {
         break;
       }
 
@@ -536,10 +592,6 @@ async function assertAstroProjectBootsWithoutFontErrors(
     }
 
     if (!response?.ok) {
-      const [stdout, stderr] = await Promise.all([
-        readStreamText(child.stdout),
-        readStreamText(child.stderr),
-      ]);
       throw new Error(
         `Expected Astro dev server at ${url} to respond with 200.\nstdout:\n${stdout}\nstderr:\n${stderr}`,
       );
@@ -551,10 +603,10 @@ async function assertAstroProjectBootsWithoutFontErrors(
       `Expected ${url} to render without FontFamilyNotFound`,
     );
   } finally {
-    child.kill("SIGTERM");
+    killChild("SIGTERM");
     const exited = await waitForChildExit(child, 2_000);
-    if (exited === undefined && child.exitCode === undefined) {
-      child.kill("SIGKILL");
+    if (exited === undefined && !hasChildExited(child)) {
+      killChild("SIGKILL");
       await waitForChildExit(child, 2_000);
     }
   }
@@ -758,14 +810,37 @@ async function main() {
     childEnv,
   );
 
+  console.log("[smoke] Adding command to astro project");
+  await run(
+    "bun",
+    [cliEntry, "add", "command", "--yes"],
+    astroProjectRoot,
+    childEnv,
+  );
+
   await assertFilesExist(astroProjectRoot, [
     "src/ui/tabs/Tabs.astro",
     "src/ui/tabs/index.ts",
+    "src/ui/command/Command.astro",
+    "src/ui/command/CommandDialog.astro",
+    "src/ui/command/CommandInput.astro",
+    "src/ui/dialog/DialogContent.astro",
+    "src/ui/dialog/index.ts",
   ]);
   await assertFilesExist(monorepoProjectRoot, [
     "packages/ui/src/components/tabs/Tabs.astro",
     "packages/ui/src/components/tabs/index.ts",
   ]);
+  await assertFilesMissing(astroProjectRoot, [
+    "src/ui/icon/SemanticIcon.astro",
+    "src/lib/icons.ts",
+  ]);
+  await assertPackageDependencies(
+    astroProjectRoot,
+    "package.json",
+    ["@data-slot/command", "@data-slot/dialog", "@iconify-json/tabler"],
+    ["@bejamas/semantic-icons", "@lucide/astro"],
+  );
   await assertProjectState(
     astroProjectRoot,
     path.resolve(astroProjectRoot, "components.json"),
@@ -785,6 +860,41 @@ async function main() {
     monorepoProjectRoot,
     "packages/ui/src/components/tabs/TabsList.astro",
     "cn-tabs-",
+  );
+  await assertFileDoesNotContain(
+    astroProjectRoot,
+    "src/ui/command/CommandInput.astro",
+    "@lucide/astro",
+  );
+  await assertFileDoesNotContain(
+    astroProjectRoot,
+    "src/ui/command/CommandInput.astro",
+    "SearchIcon",
+  );
+  await assertFileContains(
+    astroProjectRoot,
+    "src/ui/command/CommandInput.astro",
+    'data-slot="command-input-icon"',
+  );
+  await assertFileContains(
+    astroProjectRoot,
+    "src/ui/command/CommandInput.astro",
+    "<svg",
+  );
+  await assertFileDoesNotContain(
+    astroProjectRoot,
+    "src/ui/dialog/DialogContent.astro",
+    "SemanticIcon",
+  );
+  await assertFileDoesNotContain(
+    astroProjectRoot,
+    "src/ui/dialog/DialogContent.astro",
+    "@bejamas/semantic-icons",
+  );
+  await assertFileContains(
+    astroProjectRoot,
+    "src/ui/dialog/DialogContent.astro",
+    "<svg",
   );
 
   const astroTabsBeforeSwitch = await readProjectFile(

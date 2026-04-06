@@ -1,5 +1,5 @@
 ---
-// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/icon/SemanticIcon.astro directly.
+// Generated from packages/registry/src/ui. Do not edit packages/ui/src/components/icon/SemanticIcon.astro directly.
 import {
   renderSemanticIconSvg,
   type IconLibraryName,
@@ -25,7 +25,7 @@ const {
 
 const library = resolveActiveIconLibrary(Astro, providedLibrary);
 const markup = renderSemanticIconSvg(library, name, {
-  class: cn("", className),
+  class: cn("cn-semantic-icon", className),
   "aria-hidden": ariaHidden,
   "data-semantic-icon": name,
   "data-icon-library": library,

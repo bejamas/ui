@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fonts } from "../src/catalog/fonts";
 import {
@@ -7,6 +7,9 @@ import {
   buildStyleItem,
   buildStyleTokenMap,
   buildFontItem,
+  getTemplateItemNames,
+  normalizeDependenciesForInstall,
+  normalizeRegistryDependenciesForInstall,
   transformRegistrySource,
 } from "../scripts/build-web-style-registry";
 
@@ -108,5 +111,44 @@ describe("style registry build", () => {
     expect(tabsIndicator).toContain(
       "[--tabs-indicator-radius:calc(var(--radius)_-_2px)]",
     );
+  });
+
+  it("keeps internal semantic icon runtime out of public install registry", async () => {
+    const itemNames = await getTemplateItemNames();
+    const dialog = JSON.parse(
+      read("apps/web/public/r/styles/bejamas-juno/dialog.json"),
+    ) as { registryDependencies?: string[] };
+    const command = JSON.parse(
+      read("apps/web/public/r/styles/bejamas-juno/command.json"),
+    ) as { dependencies?: string[] };
+
+    expect(itemNames).not.toContain("icon");
+    expect(itemNames).not.toContain("icons");
+    expect(
+      normalizeRegistryDependenciesForInstall("dialog", ["index", "icon", "utils"]),
+    ).toEqual(["index", "utils"]);
+    expect(
+      normalizeDependenciesForInstall([
+        "@data-slot/command",
+        "@lucide/astro",
+        "@bejamas/semantic-icons",
+      ]),
+    ).toEqual(["@data-slot/command"]);
+
+    expect(
+      existsSync(
+        path.resolve(repoRoot, "apps/web/public/r/styles/bejamas-juno/icon.json"),
+      ),
+    ).toBe(false);
+    expect(
+      existsSync(
+        path.resolve(repoRoot, "apps/web/public/r/styles/bejamas-juno/icons.json"),
+      ),
+    ).toBe(false);
+    expect(dialog.registryDependencies).not.toContain("icon");
+    expect(command.dependencies).not.toContain("@lucide/astro");
+    expect(
+      read("apps/web/public/r/styles/bejamas-juno/command.json"),
+    ).not.toContain("@bejamas/semantic-icons");
   });
 });

@@ -35,6 +35,10 @@ const packageRoot = path.resolve(import.meta.dir, "..");
 const registryRoot = path.resolve(repoRoot, "packages/registry");
 const styleRegistryRoot = path.resolve(repoRoot, "apps/web/public/r/styles");
 const registryLibRoot = path.resolve(registryRoot, "src/lib");
+const uiPackageInternalRegistryFiles = [
+  "ui/icon/SemanticIcon.astro",
+  "ui/icon/index.ts",
+];
 const defaultOutputRoot = path.resolve(packageRoot, "src");
 const packageJsonPath = path.resolve(packageRoot, "package.json");
 
@@ -209,6 +213,21 @@ export async function buildGeneratedUiOutput(
         withGeneratedBanner(outputPath, rewritten, `${styleId} style registry`),
       );
     }
+  }
+
+  for (const registryPath of uiPackageInternalRegistryFiles) {
+    const sourcePath = path.resolve(registryRoot, "src", registryPath);
+    const outputPath = resolveOutputPath(registryPath, roots);
+    const content = await fs.readFile(sourcePath, "utf8");
+
+    files.set(
+      outputPath,
+      withGeneratedBanner(
+        outputPath,
+        rewriteArtifactContentForUiPackage(content),
+        "packages/registry/src/ui",
+      ),
+    );
   }
 
   for (const registryLibFile of await walk(registryLibRoot)) {

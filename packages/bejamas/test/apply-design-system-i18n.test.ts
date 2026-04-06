@@ -94,6 +94,22 @@ describe("applyDesignSystemToProject RTL template i18n", () => {
     ).not.toContain('from "@/i18n/ui"');
   });
 
+  test("replaces template icon dependency with the selected icon package", async () => {
+    const projectPath = await createTempProject("astro");
+
+    await applyDesignSystemToProject(projectPath, {
+      ...baseConfig,
+      iconLibrary: "tabler",
+    });
+
+    const packageJson = await fs.readJson(
+      path.resolve(projectPath, "package.json"),
+    );
+
+    expect(packageJson.dependencies["@iconify-json/tabler"]).toBe("latest");
+    expect(packageJson.dependencies["@lucide/astro"]).toBeUndefined();
+  });
+
   test("creates template i18n and rewires a fresh Astro starter when RTL is enabled", async () => {
     const projectPath = await createTempProject("astro");
 
