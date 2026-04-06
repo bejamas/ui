@@ -1,6 +1,5 @@
 import type { ThemePreset } from "../types/theme";
 import { defaultPresets } from "./presets";
-import { PRESET_CHANGE_EVENT } from "./preset-store";
 
 export const CUSTOM_PRESETS_KEY = "bejamas-custom-presets";
 export const EDITING_PRESET_KEY = "bejamas-editing-preset";

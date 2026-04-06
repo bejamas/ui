@@ -1,14 +1,14 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
-import { getCollection, getEntry, render } from "astro:content";
+import { getCollection } from "astro:content";
 import BlockPreview from "@/components/BlockPreview.astro";
 import BlocksNav from "@/components/BlocksNav.astro";
 
 const blocks = await getCollection("blocks");
 ---
 
-<script src="//unpkg.com/alpinejs" defer></script>
+<script is:inline src="//unpkg.com/alpinejs" defer></script>
 
 <StarlightPage
   hasSidebar={true}

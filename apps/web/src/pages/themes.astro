@@ -3,9 +3,6 @@ import cssSource from "@bejamas/ui/styles/globals.css?raw";
 import { Button } from "@bejamas/ui/components/button";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
-const isTextToken = (token: string) =>
-  token === "foreground" || token.endsWith("-foreground");
-
 // Load CSS variables from the UI package at build-time (via Vite raw import)
 
 function extractThemeBlock(css: string) {

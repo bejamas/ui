@@ -12,7 +12,6 @@ import {
   DropdownMenuContent,
   DropdownMenuRadioItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
 } from "@bejamas/ui/components/dropdown-menu";
 import { Input } from "@bejamas/ui/components/input";
 import { Label } from "@bejamas/ui/components/label";
@@ -27,7 +26,6 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-  TabsContent,
 } from "@bejamas/ui/components/tabs";
 import {
   Tooltip,
@@ -1375,19 +1373,20 @@ const sectionTitles = [
               trigger?.click();
             },
 
-            handleExportJsonCopy() {
+            async handleExportJsonCopy() {
               const codeEl =
                 this.currentExportType === "json"
                   ? this.getExportCodeJson()
                   : this.getExportCodeCss();
               if (!codeEl) return;
 
-              this.copyToClipboard(codeEl.textContent || "");
-              this.showToast(
-                this.currentExportType === "json"
-                  ? "JSON copied to clipboard"
-                  : "CSS copied to clipboard",
-              );
+              if (await this.copyToClipboard(codeEl.textContent || "")) {
+                this.showToast(
+                  this.currentExportType === "json"
+                    ? "JSON copied to clipboard"
+                    : "CSS copied to clipboard",
+                );
+              }
             },
 
             setExportType(type: "json" | "css") {
@@ -1748,15 +1747,19 @@ const sectionTitles = [
               }
             },
 
-            copyToClipboard(text: string) {
-              navigator.clipboard.writeText(text).catch(() => {
-                const textarea = document.createElement("textarea");
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textarea);
-              });
+            async copyToClipboard(text: string) {
+              if (!navigator.clipboard) {
+                this.showToast("Clipboard access is not available");
+                return false;
+              }
+
+              try {
+                await navigator.clipboard.writeText(text);
+                return true;
+              } catch {
+                this.showToast("Unable to copy to clipboard");
+                return false;
+              }
             },
 
             showToast(message: string) {
@@ -1959,7 +1962,6 @@ const sectionTitles = [
                 status,
                 statusText,
                 reasoning,
-                reasoningContent,
                 generateBtn,
               } = elements;
 

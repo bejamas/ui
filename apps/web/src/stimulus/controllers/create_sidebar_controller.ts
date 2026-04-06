@@ -2,7 +2,6 @@ import { Controller } from "@hotwired/stimulus";
 import {
   hasCreateLockableParam,
   isCreateFontGroup,
-  type CreateFontGroup,
   type CreateLockableParam,
 } from "@/utils/create-sidebar";
 import {

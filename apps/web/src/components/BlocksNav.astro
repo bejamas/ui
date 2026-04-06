@@ -1,7 +1,5 @@
 ---
-import { getCollection, getEntry, render } from "astro:content";
-import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
-import BlockPreview from "@/components/BlockPreview.astro";
+import { getCollection } from "astro:content";
 import { Button } from "@bejamas/ui/components/button";
 
 const blocks = await getCollection("blocks");

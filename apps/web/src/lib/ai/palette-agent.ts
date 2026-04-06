@@ -1,5 +1,5 @@
 import { OPENAI_API_KEY } from "astro:env/server";
-import { generateText, generateObject, stepCountIs } from "ai";
+import { generateText, Output, stepCountIs } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "astro/zod";
 
@@ -222,9 +222,9 @@ export async function generatePalette(
     }
   }
 
-  const result = await generateObject({
+  const result = await generateText({
     model: openai("gpt-5.2"),
-    schema: paletteOutputSchema,
+    output: Output.object({ schema: paletteOutputSchema }),
     system: SYSTEM_PROMPT,
     messages: [
       {
@@ -240,8 +240,8 @@ export async function generatePalette(
   });
 
   return {
-    palette: result.object,
-    reasoning: result.object.reasoning || contextInfo || undefined,
+    palette: result.output,
+    reasoning: result.output.reasoning || contextInfo || undefined,
     sources,
   };
 }
@@ -363,9 +363,9 @@ export async function generatePaletteWithProgress(
     }
   }
 
-  const result = await generateObject({
+  const result = await generateText({
     model: openai("gpt-5.2"),
-    schema: paletteOutputSchema,
+    output: Output.object({ schema: paletteOutputSchema }),
     system: SYSTEM_PROMPT,
     messages: [
       {
@@ -383,8 +383,8 @@ export async function generatePaletteWithProgress(
   onProgress({ type: "generating", message: "Finalizing colors..." });
 
   const finalResult = {
-    palette: result.object,
-    reasoning: result.object.reasoning || contextInfo || undefined,
+    palette: result.output,
+    reasoning: result.output.reasoning || contextInfo || undefined,
     sources,
   };
 

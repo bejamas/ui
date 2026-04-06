@@ -16,7 +16,7 @@ describe("docs markdown export", () => {
   });
 
   test("returns markdown for known docs routes", async () => {
-    const response = await GET({
+    const response = GET({
       params: { page: "docs/cli" },
     });
 
@@ -31,7 +31,7 @@ describe("docs markdown export", () => {
   });
 
   test("returns 404 for unknown docs routes", async () => {
-    const response = await GET({
+    const response = GET({
       params: { page: "docs/does-not-exist" },
     });
 

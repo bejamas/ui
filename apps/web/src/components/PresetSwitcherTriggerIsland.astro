@@ -5,19 +5,8 @@
  * This component reads the theme cookie server-side to render the correct
  * initial swatches without client-side flicker.
  */
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from "@bejamas/ui/components/dropdown-menu";
-import { Button } from "@bejamas/ui/components/button";
 import { defaultPresets } from "../utils/themes/presets";
-import {
-  parseThemeCookie,
-  type ThemeSwatches,
-} from "../utils/themes/preset-store";
+import { parseThemeCookie } from "../utils/themes/preset-store";
 import { PRIVATE_NO_STORE_CACHE_CONTROL } from "@/utils/http-cache";
 
 export const prerender = false;
@@ -39,13 +28,11 @@ const leanPresets = Object.fromEntries(
 // Parse the theme cookie server-side
 const themeCookie = Astro.cookies.get("theme")?.value;
 let currentThemeId = "default";
-let currentSwatches: ThemeSwatches | undefined;
 let currentLabel = "Default";
 
 if (themeCookie) {
   const parsed = parseThemeCookie(decodeURIComponent(themeCookie));
   currentThemeId = parsed.id;
-  currentSwatches = parsed.swatches;
 
   // Try to get label from cookie name, then built-in presets, then fallback
   if (parsed.name) {
@@ -65,19 +52,6 @@ if (themeCookie) {
     }
   }
 }
-
-// Get current swatches - use cookie swatches if available, otherwise use preset
-const builtInPreset = leanPresets[currentThemeId];
-const primaryLightColor =
-  currentSwatches?.primaryLight ??
-  builtInPreset?.styles.light.primary ??
-  "#000";
-const accentLightColor =
-  currentSwatches?.accentLight ?? builtInPreset?.styles.light.accent ?? "#666";
-const primaryDarkColor =
-  currentSwatches?.primaryDark ?? builtInPreset?.styles.dark.primary ?? "#fff";
-const accentDarkColor =
-  currentSwatches?.accentDark ?? builtInPreset?.styles.dark.accent ?? "#888";
 ---
 
 <>

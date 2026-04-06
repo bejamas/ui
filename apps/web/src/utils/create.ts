@@ -140,7 +140,7 @@ export function resolveCreatePreviewTarget(searchParams: URLSearchParams) {
 }
 
 export function buildCreatePreviewUrl(
-  config: DesignSystemConfig,
+  _config: DesignSystemConfig,
   preset: string,
   options: {
     previewTarget?: string | null;

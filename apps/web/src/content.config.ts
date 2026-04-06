@@ -3,7 +3,6 @@ import { z } from "astro/zod";
 import { docsLoader } from "@astrojs/starlight/loaders";
 import { docsSchema } from "@astrojs/starlight/schema";
 import { file } from "astro/loaders";
-import { themeStylePropsSchema } from "./utils/types/theme";
 
 const blocks = defineCollection({
   loader: file("src/content/docs/blocks.json"),

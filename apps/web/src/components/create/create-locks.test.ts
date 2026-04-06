@@ -8,7 +8,6 @@ const fontGroupLockButtonFile = path.resolve(
   import.meta.dir,
   "./CreateFontGroupLockButton.astro",
 );
-const themeListPanelFile = path.resolve(import.meta.dir, "./CreateThemeListPanel.astro");
 const customizerFile = path.resolve(import.meta.dir, "./CreateCustomizer.astro");
 const sidebarHeaderFile = path.resolve(import.meta.dir, "./CreateSidebarHeader.astro");
 
