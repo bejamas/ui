@@ -47,14 +47,14 @@ describe("shuffle utilities", () => {
     expect(source).toContain(
       'import { getShuffleCount, incrementShuffleCount } from "../../lib/redis";',
     );
+    expect(source).toContain("SHORT_SHARED_CACHE_CONTROL");
+    expect(source).toContain("NO_STORE_CACHE_CONTROL");
     expect(source).toContain("export const GET: APIRoute = async () => {");
     expect(source).toContain("const count = await getShuffleCount();");
-    expect(source).toContain(
-      '"Cache-Control": "private, max-age=60, stale-while-revalidate=300"',
-    );
+    expect(source).toContain('"Cache-Control": SHORT_SHARED_CACHE_CONTROL');
     expect(source).toContain("export const POST: APIRoute = async () => {");
     expect(source).toContain("const count = await incrementShuffleCount();");
-    expect(source).toContain('"Cache-Control": "no-store"');
+    expect(source).toContain('"Cache-Control": NO_STORE_CACHE_CONTROL');
     expect(source).toContain("JSON.stringify({ count })");
   });
 });

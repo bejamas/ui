@@ -6,10 +6,13 @@ export interface ApplyDocsPresetOptions {
   label: string;
   swatches: ThemeSwatches;
   themeRef?: string | null;
+  optimisticThemeCss?: string;
 }
 
 const PENDING_THEME_STYLESHEET_SELECTOR =
   "link[data-pending-current-theme-stylesheet]";
+const OPTIMISTIC_THEME_STYLESHEET_SELECTOR =
+  "style[data-optimistic-current-theme-stylesheet]";
 
 let stylesheetSwapToken = 0;
 let cancelPendingThemeStylesheetSwap: (() => void) | null = null;
@@ -21,6 +24,38 @@ function getAnimationFrame() {
 
   return (callback: FrameRequestCallback) =>
     window.setTimeout(() => callback(performance.now()), 0);
+}
+
+function syncOptimisticCurrentThemeStylesheet(css?: string) {
+  const existing = document.querySelector<HTMLStyleElement>(
+    OPTIMISTIC_THEME_STYLESHEET_SELECTOR,
+  );
+
+  if (!css) {
+    existing?.remove();
+    return;
+  }
+
+  const stylesheet = existing ?? document.createElement("style");
+  stylesheet.setAttribute("data-optimistic-current-theme-stylesheet", "");
+  stylesheet.textContent = css;
+
+  if (existing) {
+    return;
+  }
+
+  const currentStylesheet = Array.from(
+    document.querySelectorAll<HTMLLinkElement>(
+      "link[data-current-theme-stylesheet]",
+    ),
+  ).at(-1);
+
+  if (currentStylesheet) {
+    currentStylesheet.insertAdjacentElement("afterend", stylesheet);
+    return;
+  }
+
+  document.head.append(stylesheet);
 }
 
 export function refreshCurrentThemeStylesheet() {
@@ -120,6 +155,7 @@ export function applyDocsPreset(options: ApplyDocsPresetOptions) {
     options.label,
     options.themeRef ?? null,
   );
+  syncOptimisticCurrentThemeStylesheet(options.optimisticThemeCss);
 
   return refreshCurrentThemeStylesheet();
 }
