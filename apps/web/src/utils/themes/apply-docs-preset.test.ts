@@ -85,11 +85,49 @@ class FakeStyleElement extends FakeElementBase {
   textContent: string | null = "";
 }
 
+class FakeStyleDeclaration {
+  private properties = new Map<string, string>();
+
+  setProperty(name: string, value: string) {
+    this.properties.set(name, value);
+  }
+
+  removeProperty(name: string) {
+    this.properties.delete(name);
+  }
+
+  getPropertyValue(name: string) {
+    return this.properties.get(name) ?? "";
+  }
+}
+
+class FakeClassList {
+  private tokens = new Set<string>();
+
+  add(...tokens: string[]) {
+    tokens.forEach((token) => this.tokens.add(token));
+  }
+
+  remove(...tokens: string[]) {
+    tokens.forEach((token) => this.tokens.delete(token));
+  }
+
+  contains(token: string) {
+    return this.tokens.has(token);
+  }
+}
+
 class FakeDocumentElement {
   private attributes = new Map<string, string>();
+  style = new FakeStyleDeclaration();
+  classList = new FakeClassList();
 
   setAttribute(name: string, value: string) {
     this.attributes.set(name, value);
+  }
+
+  getAttribute(name: string) {
+    return this.attributes.get(name) ?? null;
   }
 
   removeAttribute(name: string) {
@@ -324,6 +362,8 @@ describe("refreshCurrentThemeStylesheet", () => {
     const optimisticStylesheet =
       document.querySelector<FakeStyleElement>(OPTIMISTIC_SELECTOR);
 
+    expect(pendingStylesheet).not.toBeNull();
+    expect(optimisticStylesheet).not.toBeNull();
     expect(document.querySelector(ACTIVE_SELECTOR)).toBe(currentStylesheet);
     expect(optimisticStylesheet?.textContent).toBe(
       [
@@ -334,10 +374,13 @@ describe("refreshCurrentThemeStylesheet", () => {
     expect(document.documentElement.hasAttribute(OPTIMISTIC_ATTRIBUTE)).toBe(
       true,
     );
+    expect(
+      document.documentElement.style.getPropertyValue("--font-sans"),
+    ).toBe("Test Sans");
     expect(document.querySelectorAll("*")).toEqual([
       currentStylesheet,
-      pendingStylesheet,
-      optimisticStylesheet,
+      pendingStylesheet as FakeLinkElement,
+      optimisticStylesheet as FakeStyleElement,
     ]);
 
     pendingStylesheet?.dispatchEvent(new Event("error"));
@@ -351,6 +394,50 @@ describe("refreshCurrentThemeStylesheet", () => {
     expect(document.documentElement.hasAttribute(OPTIMISTIC_ATTRIBUTE)).toBe(
       true,
     );
+    expect(
+      document.documentElement.style.getPropertyValue("--font-sans"),
+    ).toBe("Test Sans");
+  });
+
+  test("overwrites stale inline theme variables with optimistic CSS variables", async () => {
+    const document = globalThis.document as unknown as FakeDocument;
+    appendActiveStylesheet(document);
+    document.documentElement.setAttribute("data-theme", "dark");
+    document.documentElement.style.setProperty("--font-sans", "Old Sans");
+    document.documentElement.style.setProperty("--primary", "old-primary");
+
+    const refreshPromise = applyDocsPreset({
+      id: "inline-preset",
+      label: "Inline preset",
+      swatches: {
+        primaryLight: "oklch(0.2 0 0)",
+        accentLight: "oklch(0.7 0 0)",
+        primaryDark: "oklch(0.98 0 0)",
+        accentDark: "oklch(0.8 0 0)",
+      },
+      optimisticThemeCss: [
+        "html:root {",
+        "  --font-sans: New Sans;",
+        "  --primary: light-primary;",
+        "}",
+        "",
+        'html[data-theme="dark"], html.dark, .cn-menu-target.dark {',
+        "  --primary: dark-primary;",
+        "}",
+      ].join("\n"),
+    });
+
+    expect(document.documentElement.style.getPropertyValue("--font-sans")).toBe(
+      "New Sans",
+    );
+    expect(document.documentElement.style.getPropertyValue("--primary")).toBe(
+      "dark-primary",
+    );
+
+    document
+      .querySelector<FakeLinkElement>(PENDING_SELECTOR)
+      ?.dispatchEvent(new Event("error"));
+    await refreshPromise;
   });
 
   test("replaces or clears stale optimistic theme CSS on later preset applies", async () => {

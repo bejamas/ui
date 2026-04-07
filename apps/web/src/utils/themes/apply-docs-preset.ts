@@ -43,6 +43,60 @@ function scopeOptimisticCurrentThemeCss(css: string) {
     );
 }
 
+function parseCssVariables(cssBlock: string) {
+  const variables = new Map<string, string>();
+  const variablePattern = /--([A-Za-z0-9-_]+)\s*:\s*([^;]+);/g;
+
+  for (const match of cssBlock.matchAll(variablePattern)) {
+    const [, name, value] = match;
+    if (name && value) {
+      variables.set(`--${name}`, value.trim());
+    }
+  }
+
+  return variables;
+}
+
+function getCssBlock(css: string, selector: string) {
+  const start = css.indexOf(selector);
+  if (start === -1) {
+    return "";
+  }
+
+  const blockStart = css.indexOf("{", start);
+  const blockEnd = css.indexOf("}", blockStart);
+  if (blockStart === -1 || blockEnd === -1) {
+    return "";
+  }
+
+  return css.slice(blockStart + 1, blockEnd);
+}
+
+function isCurrentThemeDark() {
+  const root = document.documentElement;
+  const hasDarkThemeAttr = root.getAttribute("data-theme") === "dark";
+  return hasDarkThemeAttr || root.classList.contains("dark");
+}
+
+function syncOptimisticCurrentThemeInlineStyles(css: string) {
+  // The hidden legacy theme editor owns inline theme variables, which outrank
+  // both the refreshed link and the optimistic style.
+  const root = document.documentElement;
+  const rootVariables = parseCssVariables(getCssBlock(css, "html:root"));
+  const darkVariables = isCurrentThemeDark()
+    ? parseCssVariables(
+        getCssBlock(
+          css,
+          'html[data-theme="dark"], html.dark, .cn-menu-target.dark',
+        ),
+      )
+    : new Map<string, string>();
+
+  for (const [name, value] of [...rootVariables, ...darkVariables]) {
+    root.style.setProperty(name, value);
+  }
+}
+
 function syncOptimisticCurrentThemeStylesheet(css?: string) {
   const existing = document.querySelector<HTMLStyleElement>(
     OPTIMISTIC_THEME_STYLESHEET_SELECTOR,
@@ -55,6 +109,7 @@ function syncOptimisticCurrentThemeStylesheet(css?: string) {
   }
 
   document.documentElement.setAttribute(OPTIMISTIC_THEME_ATTRIBUTE, "");
+  syncOptimisticCurrentThemeInlineStyles(css);
 
   const stylesheet = existing ?? document.createElement("style");
   stylesheet.setAttribute("data-optimistic-current-theme-stylesheet", "");
