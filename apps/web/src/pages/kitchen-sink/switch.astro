@@ -1,8 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import EventLog from "@/components/EventLog.astro";
-import { Switch } from "@bejamas/registry/ui/switch";
+import { Switch as SwitchComponent } from "@bejamas/registry/ui/switch";
 import { Label } from "@bejamas/registry/ui/label";
 import { Button } from "@bejamas/registry/ui/button";
 ---
@@ -14,14 +13,14 @@ import { Button } from "@bejamas/registry/ui/button";
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
         <div class="flex items-center gap-2">
-          <Switch id="basic-switch" />
+          <SwitchComponent id="basic-switch" />
           <Label for="basic-switch">Airplane Mode</Label>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Default Checked">
         <div class="flex items-center gap-2">
-          <Switch id="checked-switch" defaultChecked />
+          <SwitchComponent id="checked-switch" defaultChecked />
           <Label for="checked-switch">Enabled by default</Label>
         </div>
       </KitchenSinkSection>
@@ -29,13 +28,13 @@ import { Button } from "@bejamas/registry/ui/button";
       <KitchenSinkSection title="Disabled">
         <div class="space-y-3">
           <div class="flex items-center gap-2">
-            <Switch id="disabled-off" disabled />
+            <SwitchComponent id="disabled-off" disabled />
             <Label for="disabled-off" class="text-muted-foreground"
               >Disabled (off)</Label
             >
           </div>
           <div class="flex items-center gap-2">
-            <Switch id="disabled-on" disabled defaultChecked />
+            <SwitchComponent id="disabled-on" disabled defaultChecked />
             <Label for="disabled-on" class="text-muted-foreground"
               >Disabled (on)</Label
             >
@@ -45,7 +44,7 @@ import { Button } from "@bejamas/registry/ui/button";
 
       <KitchenSinkSection title="With Description">
         <div class="flex items-start gap-3">
-          <Switch id="desc-switch" class="mt-0.5" />
+          <SwitchComponent id="desc-switch" class="mt-0.5" />
           <div>
             <Label for="desc-switch">Marketing emails</Label>
             <p class="text-sm text-muted-foreground">
@@ -67,7 +66,7 @@ import { Button } from "@bejamas/registry/ui/button";
               Receive push notifications
             </p>
           </div>
-          <Switch id="setting-notifications" defaultChecked />
+          <SwitchComponent id="setting-notifications" defaultChecked />
         </div>
         <div class="flex items-center justify-between p-4">
           <div>
@@ -76,14 +75,14 @@ import { Button } from "@bejamas/registry/ui/button";
               Play sound for notifications
             </p>
           </div>
-          <Switch id="setting-sound" />
+          <SwitchComponent id="setting-sound" />
         </div>
         <div class="flex items-center justify-between p-4">
           <div>
             <Label for="setting-location" class="font-medium">Location</Label>
             <p class="text-sm text-muted-foreground">Allow location access</p>
           </div>
-          <Switch id="setting-location" />
+          <SwitchComponent id="setting-location" />
         </div>
         <div class="flex items-center justify-between p-4">
           <div>
@@ -92,7 +91,7 @@ import { Button } from "@bejamas/registry/ui/button";
               Share usage data for improvements
             </p>
           </div>
-          <Switch id="setting-analytics" defaultChecked />
+          <SwitchComponent id="setting-analytics" defaultChecked />
         </div>
       </div>
     </KitchenSinkSection>
@@ -104,11 +103,11 @@ import { Button } from "@bejamas/registry/ui/button";
       >
         <div class="flex items-center justify-between">
           <Label for="form-dark-mode">Dark mode</Label>
-          <Switch id="form-dark-mode" name="darkMode" value="on" />
+          <SwitchComponent id="form-dark-mode" name="darkMode" value="on" />
         </div>
         <div class="flex items-center justify-between">
           <Label for="form-auto-save">Auto-save</Label>
-          <Switch
+          <SwitchComponent
             id="form-auto-save"
             name="autoSave"
             value="on"

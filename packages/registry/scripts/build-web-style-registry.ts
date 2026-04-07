@@ -41,6 +41,11 @@ const preservedTokens = new Set([
   "cn-menu-target",
   "cn-menu-translucent",
 ]);
+const internalIconRegistryItems = new Set(["icon", "icons"]);
+const installerRewrittenIconDependencies = new Set([
+  "@bejamas/semantic-icons",
+  "@lucide/astro",
+]);
 const templateCache = new Map<string, RegistryItem>();
 const fileContentCache = new Map<string, string>();
 
@@ -376,6 +381,38 @@ export function buildBaseStyleCssObject() {
   };
 }
 
+export function normalizeRegistryDependenciesForInstall(
+  itemName: string,
+  registryDependencies?: string[],
+) {
+  const dependencies =
+    itemName === "index"
+      ? (registryDependencies ?? [])
+      : ["index", ...(registryDependencies ?? [])];
+
+  return Array.from(
+    new Set(
+      dependencies.filter(
+        (dependency) => !internalIconRegistryItems.has(dependency),
+      ),
+    ),
+  );
+}
+
+export function normalizeDependenciesForInstall(dependencies?: string[]) {
+  if (!dependencies) {
+    return dependencies;
+  }
+
+  return Array.from(
+    new Set(
+      dependencies.filter(
+        (dependency) => !installerRewrittenIconDependencies.has(dependency),
+      ),
+    ),
+  );
+}
+
 async function readJson<T>(filepath: string) {
   return JSON.parse(await fs.readFile(filepath, "utf8")) as T;
 }
@@ -538,9 +575,10 @@ export async function buildStyleItem(style: Style) {
     $schema: schemaUrl,
     name: "index",
     type: "registry:style",
-    dependencies: Array.from(
-      new Set(["bejamas", ...(template.dependencies ?? [])]),
-    ),
+    dependencies: normalizeDependenciesForInstall([
+      "bejamas",
+      ...(template.dependencies ?? []),
+    ]),
     files: [],
     cssVars: {},
     css: buildBaseStyleCssObject(),
@@ -574,10 +612,11 @@ async function buildRegistryItem(name: string, style: Style, tokenMap: TokenMap)
     ...template,
     $schema: schemaUrl,
     files,
-    registryDependencies:
-      name === "index"
-        ? template.registryDependencies
-        : Array.from(new Set(["index", ...(template.registryDependencies ?? [])])),
+    dependencies: normalizeDependenciesForInstall(template.dependencies),
+    registryDependencies: normalizeRegistryDependenciesForInstall(
+      name,
+      template.registryDependencies,
+    ),
   } satisfies RegistryItem;
 }
 
@@ -629,10 +668,11 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
   }
 }
 
-async function getTemplateItemNames() {
+export async function getTemplateItemNames() {
   return (await listJsonFiles(templateStyleDir))
     .filter((filename) => filename !== "index.json")
     .map((filename) => filename.replace(/\.json$/, ""))
+    .filter((name) => !internalIconRegistryItems.has(name))
     .sort();
 }
 

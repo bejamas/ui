@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { RadioGroup, RadioGroupItem } from "@bejamas/registry/ui/radio-group";
+import { RadioGroup as RadioGroupComponent, RadioGroupItem } from "@bejamas/registry/ui/radio-group";
 import { Label } from "@bejamas/registry/ui/label";
 import { Button } from "@bejamas/registry/ui/button";
 ---
@@ -12,7 +12,7 @@ import { Button } from "@bejamas/registry/ui/button";
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <RadioGroup defaultValue="default">
+        <RadioGroupComponent defaultValue="default">
           <div class="flex items-center space-x-2">
             <RadioGroupItem value="default" id="r1" />
             <Label for="r1">Default</Label>
@@ -25,11 +25,11 @@ import { Button } from "@bejamas/registry/ui/button";
             <RadioGroupItem value="compact" id="r3" />
             <Label for="r3">Compact</Label>
           </div>
-        </RadioGroup>
+        </RadioGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Default Selected">
-        <RadioGroup defaultValue="option-2">
+        <RadioGroupComponent defaultValue="option-2">
           <div class="flex items-center space-x-2">
             <RadioGroupItem value="option-1" id="rs1" />
             <Label for="rs1">Option 1</Label>
@@ -42,11 +42,11 @@ import { Button } from "@bejamas/registry/ui/button";
             <RadioGroupItem value="option-3" id="rs3" />
             <Label for="rs3">Option 3</Label>
           </div>
-        </RadioGroup>
+        </RadioGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Descriptions">
-        <RadioGroup defaultValue="free">
+        <RadioGroupComponent defaultValue="free">
           <div class="flex items-start space-x-2">
             <RadioGroupItem value="free" id="rd1" class="mt-1" />
             <div>
@@ -74,11 +74,11 @@ import { Button } from "@bejamas/registry/ui/button";
               </p>
             </div>
           </div>
-        </RadioGroup>
+        </RadioGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Disabled">
-        <RadioGroup defaultValue="enabled">
+        <RadioGroupComponent defaultValue="enabled">
           <div class="flex items-center space-x-2">
             <RadioGroupItem value="enabled" id="rdi1" />
             <Label for="rdi1">Enabled option</Label>
@@ -93,11 +93,11 @@ import { Button } from "@bejamas/registry/ui/button";
             <RadioGroupItem value="another" id="rdi3" />
             <Label for="rdi3">Another enabled option</Label>
           </div>
-        </RadioGroup>
+        </RadioGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Horizontal">
-        <RadioGroup defaultValue="left" class="flex flex-row gap-4">
+        <RadioGroupComponent defaultValue="left" class="flex flex-row gap-4">
           <div class="flex items-center space-x-2">
             <RadioGroupItem value="left" id="rh1" />
             <Label for="rh1">Left</Label>
@@ -110,7 +110,7 @@ import { Button } from "@bejamas/registry/ui/button";
             <RadioGroupItem value="right" id="rh3" />
             <Label for="rh3">Right</Label>
           </div>
-        </RadioGroup>
+        </RadioGroupComponent>
       </KitchenSinkSection>
     </div>
 
@@ -121,7 +121,7 @@ import { Button } from "@bejamas/registry/ui/button";
       >
         <div class="space-y-3">
           <Label>Payment Method</Label>
-          <RadioGroup name="payment" defaultValue="credit-card">
+          <RadioGroupComponent name="payment" defaultValue="credit-card">
             <div class="flex items-center space-x-2">
               <RadioGroupItem value="credit-card" id="rf1" />
               <Label for="rf1">Credit Card</Label>
@@ -134,7 +134,7 @@ import { Button } from "@bejamas/registry/ui/button";
               <RadioGroupItem value="bank-transfer" id="rf3" />
               <Label for="rf3">Bank Transfer</Label>
             </div>
-          </RadioGroup>
+          </RadioGroupComponent>
         </div>
         <Button type="submit">Continue</Button>
       </form>

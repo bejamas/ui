@@ -21,7 +21,7 @@ export async function readStaticStyleRegistryItem(style: string, name: string) {
 }
 
 export async function readStaticStyleRegistryIndex(style: string) {
-  return readStaticStyleRegistryJson(path.join("styles", style, "index.json"));
+  return readStaticRegistryJson(path.join("styles", style, "index.json"));
 }
 
 export async function readStaticStyleRegistryStyles() {

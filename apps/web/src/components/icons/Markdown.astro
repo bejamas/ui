@@ -10,9 +10,10 @@ const { className, ...props } = Astro.props as Props;
 ---
 
 <svg
+  {...props}
   stroke-linejoin="round"
   viewBox="0 0 22 16"
-  class={cn("size-4", props.className)}
+  class={cn("size-4", className)}
 >
   <path
     fill-rule="evenodd"

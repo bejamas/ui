@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.3.2
+
+### Patch Changes
+
+- [#110](https://github.com/bejamas/ui/pull/110) [`381e825`](https://github.com/bejamas/ui/commit/381e82549381f19a8c9714d1ba0d715fd79a63fa) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Fix interactive component installs so internal semantic icon registry items are not installed as user dependencies. Components added through `bejamas add` now rely on the icon library selected during init, and shadcn failure output is surfaced when dependency installation fails.
+
 ## 0.3.1
 
 ### Patch Changes

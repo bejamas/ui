@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Spinner } from "@bejamas/registry/ui/spinner";
+import { Spinner as SpinnerComponent } from "@bejamas/registry/ui/spinner";
 import { Button } from "@bejamas/registry/ui/button";
 import { Badge } from "@bejamas/registry/ui/badge";
 ---
@@ -12,30 +12,30 @@ import { Badge } from "@bejamas/registry/ui/badge";
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <Spinner />
+        <SpinnerComponent />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Sizes">
         <div class="flex items-center gap-4">
-          <Spinner class="size-3" />
-          <Spinner />
-          <Spinner class="size-6" />
-          <Spinner class="size-8" />
+          <SpinnerComponent class="size-3" />
+          <SpinnerComponent />
+          <SpinnerComponent class="size-6" />
+          <SpinnerComponent class="size-8" />
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="In Button">
         <div class="flex items-center gap-3 flex-wrap">
           <Button disabled>
-            <Spinner class="size-4" />
+            <SpinnerComponent class="size-4" />
             Loading...
           </Button>
           <Button disabled variant="outline">
-            <Spinner class="size-4" />
+            <SpinnerComponent class="size-4" />
             Please wait
           </Button>
           <Button disabled variant="secondary">
-            <Spinner class="size-4" />
+            <SpinnerComponent class="size-4" />
             Processing
           </Button>
         </div>
@@ -44,15 +44,15 @@ import { Badge } from "@bejamas/registry/ui/badge";
       <KitchenSinkSection title="In Badge">
         <div class="flex items-center gap-3 flex-wrap">
           <Badge>
-            <Spinner class="size-3" />
+            <SpinnerComponent class="size-3" />
             Syncing
           </Badge>
           <Badge variant="secondary">
-            <Spinner class="size-3" />
+            <SpinnerComponent class="size-3" />
             Updating
           </Badge>
           <Badge variant="outline">
-            <Spinner class="size-3" />
+            <SpinnerComponent class="size-3" />
             Processing
           </Badge>
         </div>
@@ -60,9 +60,9 @@ import { Badge } from "@bejamas/registry/ui/badge";
 
       <KitchenSinkSection title="Custom Color">
         <div class="flex items-center gap-4">
-          <Spinner class="text-blue-500" />
-          <Spinner class="text-green-500" />
-          <Spinner class="text-destructive" />
+          <SpinnerComponent class="text-blue-500" />
+          <SpinnerComponent class="text-green-500" />
+          <SpinnerComponent class="text-destructive" />
         </div>
       </KitchenSinkSection>
     </div>

@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Date } from "@bejamas/registry/ui/date";
+import { Date as DateComponent } from "@bejamas/registry/ui/date";
 ---
 
 <KitchenSinkLayout>
@@ -10,42 +10,42 @@ import { Date } from "@bejamas/registry/ui/date";
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Short Format">
-        <Date format="short" datetime="2025-06-13" />
+        <DateComponent format="short" datetime="2025-06-13" />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Full Format">
-        <Date format="full" datetime="2025-06-13" />
+        <DateComponent format="full" datetime="2025-06-13" />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Long Format (Default)">
-        <Date datetime="2025-06-13" />
+        <DateComponent datetime="2025-06-13" />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Time">
-        <Date format="long" includeTime datetime="2025-06-13T14:30:00" />
+        <DateComponent format="long" includeTime datetime="2025-06-13T14:30:00" />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Time Only">
-        <Date format="time" datetime="2025-06-13T14:30:00" />
+        <DateComponent format="time" datetime="2025-06-13T14:30:00" />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Custom Locale">
         <div class="space-y-2">
           <div class="flex items-center gap-3">
             <span class="text-sm text-muted-foreground w-10">fr-FR</span>
-            <Date datetime="2025-06-13" locale="fr-FR" />
+            <DateComponent datetime="2025-06-13" locale="fr-FR" />
           </div>
           <div class="flex items-center gap-3">
             <span class="text-sm text-muted-foreground w-10">de-DE</span>
-            <Date datetime="2025-06-13" locale="de-DE" />
+            <DateComponent datetime="2025-06-13" locale="de-DE" />
           </div>
           <div class="flex items-center gap-3">
             <span class="text-sm text-muted-foreground w-10">ja-JP</span>
-            <Date datetime="2025-06-13" locale="ja-JP" />
+            <DateComponent datetime="2025-06-13" locale="ja-JP" />
           </div>
           <div class="flex items-center gap-3">
             <span class="text-sm text-muted-foreground w-10">pl-PL</span>
-            <Date datetime="2025-06-13" locale="pl-PL" />
+            <DateComponent datetime="2025-06-13" locale="pl-PL" />
           </div>
         </div>
       </KitchenSinkSection>

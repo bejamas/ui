@@ -23,8 +23,11 @@ export async function GET({ params }: { params: { slug: string } }) {
     }
 
     const generated = applyThemeToCss({
-      currentMode: entry.data.mode,
-      styles: entry.data.styles,
+      currentMode: "light",
+      styles: {
+        light: entry.data.styles.light ?? {},
+        dark: entry.data.styles.dark ?? {},
+      },
     });
 
     const registryItem = generated;

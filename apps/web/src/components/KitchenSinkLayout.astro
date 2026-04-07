@@ -175,7 +175,7 @@ const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
           return;
         }
 
-        const parseThemeChoice = (value) =>
+        const parseThemeChoice = (value: string | undefined) =>
           value === "light" || value === "dark" || value === "auto"
             ? value
             : "auto";

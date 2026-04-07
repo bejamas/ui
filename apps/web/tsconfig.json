@@ -1,9 +1,10 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"],
+  "exclude": ["dist", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
+    "types": ["bun-types"],
     "paths": {
       "@/*": ["./src/*"],
       "@bejamas/registry/*": ["../../packages/registry/src/*"],

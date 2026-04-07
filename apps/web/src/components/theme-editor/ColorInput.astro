@@ -265,9 +265,7 @@ const { token, label, value = "", variant = "default", class: className = "", ..
     private currentValue: string;
     private swatch: HTMLElement | null;
     private nativePicker: HTMLInputElement | null;
-    private textWrapper: HTMLElement | null;
     private textInput: HTMLInputElement | null;
-    private sliders: HTMLElement | null;
     private sliderL: HTMLInputElement | null;
     private sliderC: HTMLInputElement | null;
     private sliderH: HTMLInputElement | null;
@@ -281,9 +279,7 @@ const { token, label, value = "", variant = "default", class: className = "", ..
       this.currentValue = this.dataset.value || "";
       this.swatch = null;
       this.nativePicker = null;
-      this.textWrapper = null;
       this.textInput = null;
-      this.sliders = null;
       this.sliderL = null;
       this.sliderC = null;
       this.sliderH = null;
@@ -295,9 +291,7 @@ const { token, label, value = "", variant = "default", class: className = "", ..
     connectedCallback() {
       this.swatch = this.querySelector('[data-slot="swatch"]');
       this.nativePicker = this.querySelector('[data-slot="native-picker"]');
-      this.textWrapper = this.querySelector('[data-slot="text-wrapper"]');
       this.textInput = this.querySelector('[data-slot="text-input"]');
-      this.sliders = this.querySelector('[data-slot="sliders"]');
       this.sliderL = this.querySelector('[data-channel="l"]');
       this.sliderC = this.querySelector('[data-channel="c"]');
       this.sliderH = this.querySelector('[data-channel="h"]');

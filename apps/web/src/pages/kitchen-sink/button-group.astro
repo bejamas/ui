@@ -2,7 +2,7 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import {
-  ButtonGroup,
+  ButtonGroup as ButtonGroupComponent,
   ButtonGroupSeparator,
   ButtonGroupText,
 } from "@bejamas/registry/ui/button-group";
@@ -11,11 +11,11 @@ import {
   BoldIcon,
   ItalicIcon,
   UnderlineIcon,
-  AlignLeftIcon,
-  AlignCenterIcon,
-  AlignRightIcon,
   ChevronDownIcon,
 } from "@lucide/astro";
+import AlignLeftIcon from "@/components/icons/AlignLeftIcon.astro";
+import AlignCenterIcon from "@/components/icons/AlignCenterIcon.astro";
+import AlignRightIcon from "@/components/icons/AlignRightIcon.astro";
 ---
 
 <KitchenSinkLayout>
@@ -24,43 +24,43 @@ import {
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Horizontal (Default)">
-        <ButtonGroup>
+        <ButtonGroupComponent>
           <Button variant="outline">Left</Button>
           <Button variant="outline">Center</Button>
           <Button variant="outline">Right</Button>
-        </ButtonGroup>
+        </ButtonGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Vertical">
-        <ButtonGroup orientation="vertical">
+        <ButtonGroupComponent orientation="vertical">
           <Button variant="outline">Top</Button>
           <Button variant="outline">Middle</Button>
           <Button variant="outline">Bottom</Button>
-        </ButtonGroup>
+        </ButtonGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Sizes">
         <div class="space-y-4">
-          <ButtonGroup>
+          <ButtonGroupComponent>
             <Button variant="outline" size="sm">Small</Button>
             <Button variant="outline" size="sm">Group</Button>
             <Button variant="outline" size="sm">Here</Button>
-          </ButtonGroup>
-          <ButtonGroup>
+          </ButtonGroupComponent>
+          <ButtonGroupComponent>
             <Button variant="outline">Default</Button>
             <Button variant="outline">Group</Button>
             <Button variant="outline">Here</Button>
-          </ButtonGroup>
-          <ButtonGroup>
+          </ButtonGroupComponent>
+          <ButtonGroupComponent>
             <Button variant="outline" size="lg">Large</Button>
             <Button variant="outline" size="lg">Group</Button>
             <Button variant="outline" size="lg">Here</Button>
-          </ButtonGroup>
+          </ButtonGroupComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Icons">
-        <ButtonGroup>
+        <ButtonGroupComponent>
           <Button variant="outline" size="icon"
             ><BoldIcon class="size-4" /></Button
           >
@@ -70,33 +70,33 @@ import {
           <Button variant="outline" size="icon"
             ><UnderlineIcon class="size-4" /></Button
           >
-        </ButtonGroup>
+        </ButtonGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Split Button">
-        <ButtonGroup>
+        <ButtonGroupComponent>
           <Button variant="secondary">Save</Button>
           <ButtonGroupSeparator />
           <Button variant="secondary" size="icon"
             ><ChevronDownIcon class="size-4" /></Button
           >
-        </ButtonGroup>
+        </ButtonGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Text">
-        <ButtonGroup>
+        <ButtonGroupComponent>
           <ButtonGroupText>
             <BoldIcon class="size-4" />
             Formatting
           </ButtonGroupText>
           <Button variant="outline">Enable</Button>
           <Button variant="outline">Disable</Button>
-        </ButtonGroup>
+        </ButtonGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Nested">
-        <ButtonGroup>
-          <ButtonGroup>
+        <ButtonGroupComponent>
+          <ButtonGroupComponent>
             <Button variant="outline" size="icon"
               ><AlignLeftIcon class="size-4" /></Button
             >
@@ -106,8 +106,8 @@ import {
             <Button variant="outline" size="icon"
               ><AlignRightIcon class="size-4" /></Button
             >
-          </ButtonGroup>
-          <ButtonGroup>
+          </ButtonGroupComponent>
+          <ButtonGroupComponent>
             <Button variant="outline" size="icon"
               ><BoldIcon class="size-4" /></Button
             >
@@ -117,13 +117,13 @@ import {
             <Button variant="outline" size="icon"
               ><UnderlineIcon class="size-4" /></Button
             >
-          </ButtonGroup>
-        </ButtonGroup>
+          </ButtonGroupComponent>
+        </ButtonGroupComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="RTL">
         <div dir="rtl" class="flex flex-col items-end gap-4">
-          <ButtonGroup>
+          <ButtonGroupComponent>
             <Button variant="outline" size="icon"
               ><BoldIcon class="size-4" /></Button
             >
@@ -133,19 +133,19 @@ import {
             <Button variant="outline" size="icon"
               ><UnderlineIcon class="size-4" /></Button
             >
-          </ButtonGroup>
-          <ButtonGroup>
+          </ButtonGroupComponent>
+          <ButtonGroupComponent>
             <Button variant="outline">Start</Button>
             <Button variant="outline">Middle</Button>
             <Button variant="outline">End</Button>
-          </ButtonGroup>
-          <ButtonGroup>
+          </ButtonGroupComponent>
+          <ButtonGroupComponent>
             <Button variant="secondary">Primary</Button>
             <ButtonGroupSeparator />
             <Button variant="secondary" size="icon">
               <ChevronDownIcon class="size-4" />
             </Button>
-          </ButtonGroup>
+          </ButtonGroupComponent>
         </div>
       </KitchenSinkSection>
     </div>

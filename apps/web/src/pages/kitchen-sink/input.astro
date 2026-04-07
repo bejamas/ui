@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Input } from "@bejamas/registry/ui/input";
+import { Input as InputComponent } from "@bejamas/registry/ui/input";
 import { Label } from "@bejamas/registry/ui/label";
 import { Button } from "@bejamas/registry/ui/button";
 ---
@@ -12,13 +12,13 @@ import { Button } from "@bejamas/registry/ui/button";
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Default">
-        <Input placeholder="Type something..." />
+        <InputComponent placeholder="Type something..." />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Label">
         <div class="space-y-2 max-w-sm">
           <Label for="email-input">Email</Label>
-          <Input id="email-input" type="email" placeholder="you@example.com" />
+          <InputComponent id="email-input" type="email" placeholder="you@example.com" />
         </div>
       </KitchenSinkSection>
     </div>
@@ -27,11 +27,11 @@ import { Button } from "@bejamas/registry/ui/button";
       <div class="grid gap-4 max-w-sm">
         <div class="space-y-2">
           <Label for="input-email">Email</Label>
-          <Input id="input-email" type="email" placeholder="you@example.com" />
+          <InputComponent id="input-email" type="email" placeholder="you@example.com" />
         </div>
         <div class="space-y-2">
           <Label for="input-password">Password</Label>
-          <Input
+          <InputComponent
             id="input-password"
             type="password"
             placeholder="Enter password"
@@ -39,15 +39,15 @@ import { Button } from "@bejamas/registry/ui/button";
         </div>
         <div class="space-y-2">
           <Label for="input-number">Number</Label>
-          <Input id="input-number" type="number" placeholder="42" />
+          <InputComponent id="input-number" type="number" placeholder="42" />
         </div>
         <div class="space-y-2">
           <Label for="input-search">Search</Label>
-          <Input id="input-search" type="search" placeholder="Search..." />
+          <InputComponent id="input-search" type="search" placeholder="Search..." />
         </div>
         <div class="space-y-2">
           <Label for="input-date">Date</Label>
-          <Input id="input-date" type="date" />
+          <InputComponent id="input-date" type="date" />
         </div>
       </div>
     </KitchenSinkSection>
@@ -57,7 +57,7 @@ import { Button } from "@bejamas/registry/ui/button";
         <div class="space-y-2">
           <Label for="input-size-sm">Small (h-8)</Label>
           <div class="flex items-center gap-2">
-            <Input
+            <InputComponent
               id="input-size-sm"
               size="sm"
               placeholder="Small input"
@@ -69,7 +69,7 @@ import { Button } from "@bejamas/registry/ui/button";
         <div class="space-y-2">
           <Label for="input-size-default">Default (h-9)</Label>
           <div class="flex items-center gap-2">
-            <Input
+            <InputComponent
               id="input-size-default"
               size="default"
               placeholder="Default input"
@@ -81,7 +81,7 @@ import { Button } from "@bejamas/registry/ui/button";
         <div class="space-y-2">
           <Label for="input-size-lg">Large (h-10)</Label>
           <div class="flex items-center gap-2">
-            <Input
+            <InputComponent
               id="input-size-lg"
               size="lg"
               placeholder="Large input"
@@ -97,21 +97,21 @@ import { Button } from "@bejamas/registry/ui/button";
       <KitchenSinkSection title="File Upload">
         <div class="space-y-2 max-w-sm">
           <Label for="input-file">Upload file</Label>
-          <Input id="input-file" type="file" />
+          <InputComponent id="input-file" type="file" />
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Disabled">
         <div class="space-y-2 max-w-sm">
-          <Input disabled placeholder="Disabled input" />
-          <Input disabled value="Disabled with value" />
+          <InputComponent disabled placeholder="Disabled input" />
+          <InputComponent disabled value="Disabled with value" />
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Invalid / Error">
         <div class="space-y-2 max-w-sm">
           <Label for="input-invalid">Email</Label>
-          <Input
+          <InputComponent
             id="input-invalid"
             type="email"
             aria-invalid="true"
@@ -125,7 +125,7 @@ import { Button } from "@bejamas/registry/ui/button";
 
       <KitchenSinkSection title="With Button">
         <div class="flex gap-2 max-w-sm">
-          <Input type="email" placeholder="Enter your email" />
+          <InputComponent type="email" placeholder="Enter your email" />
           <Button>Subscribe</Button>
         </div>
       </KitchenSinkSection>
@@ -138,11 +138,11 @@ import { Button } from "@bejamas/registry/ui/button";
       >
         <div class="space-y-2">
           <Label for="form-name">Name</Label>
-          <Input id="form-name" name="name" placeholder="Your name" required />
+          <InputComponent id="form-name" name="name" placeholder="Your name" required />
         </div>
         <div class="space-y-2">
           <Label for="form-email">Email</Label>
-          <Input
+          <InputComponent
             id="form-email"
             name="email"
             type="email"
@@ -152,7 +152,7 @@ import { Button } from "@bejamas/registry/ui/button";
         </div>
         <div class="space-y-2">
           <Label for="form-age">Age</Label>
-          <Input id="form-age" name="age" type="number" placeholder="25" />
+          <InputComponent id="form-age" name="age" type="number" placeholder="25" />
         </div>
         <Button type="submit">Submit</Button>
       </form>

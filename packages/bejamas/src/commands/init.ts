@@ -405,6 +405,9 @@ export async function runInit(
       REGISTRY_URL: resolveRegistryUrl(),
     };
     const initUrl = buildInitUrl(designConfig, options.themeRef);
+    const themeVars = options.themeRef
+      ? ((await fetchInitThemeVars(initUrl)) ?? undefined)
+      : undefined;
     const shouldReinstall = shouldReinstallExistingComponents(options);
     const reinstallComponents = shouldReinstall
       ? await getInstalledUiComponents(options.cwd)
@@ -441,6 +444,10 @@ export async function runInit(
       await syncAstroManagedFontCss(options.cwd, managedFont.cssVariable);
       await cleanupAstroFontPackages(options.cwd);
     }
+
+    await applyDesignSystemToProject(options.cwd, designConfig, {
+      themeVars,
+    });
 
     if (reinstallComponents.length > 0) {
       const config = await getConfig(options.cwd);

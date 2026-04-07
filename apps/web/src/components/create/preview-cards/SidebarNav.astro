@@ -99,13 +99,21 @@ const menus = [
                 {section.title}
               </DropdownMenuLabel>
               {section.items.map((item) =>
-                item.kind === "checkbox" ? (
+                "kind" in item && item.kind === "checkbox" ? (
                   <DropdownMenuCheckboxItem
                     value={item.value}
-                    defaultChecked={item.defaultChecked}
-                    data-checked={item.defaultChecked ? "" : undefined}
+                    defaultChecked={
+                      "defaultChecked" in item ? item.defaultChecked : false
+                    }
+                    data-checked={
+                      "defaultChecked" in item && item.defaultChecked
+                        ? ""
+                        : undefined
+                    }
                     data-highlighted={
-                      item.value === menu.highlightedValue ? "" : undefined
+                      item.value === (menu.highlightedValue as string)
+                        ? ""
+                        : undefined
                     }
                     class="data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[highlighted]:**:text-accent-foreground"
                   >

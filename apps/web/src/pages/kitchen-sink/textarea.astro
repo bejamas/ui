@@ -1,7 +1,7 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Textarea } from "@bejamas/registry/ui/textarea";
+import { Textarea as TextareaComponent } from "@bejamas/registry/ui/textarea";
 import { Label } from "@bejamas/registry/ui/label";
 import { Button } from "@bejamas/registry/ui/button";
 ---
@@ -12,30 +12,30 @@ import { Button } from "@bejamas/registry/ui/button";
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <Textarea placeholder="Type your message here..." />
+        <TextareaComponent placeholder="Type your message here..." />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Label">
         <div class="space-y-2">
           <Label for="ta-label">Your message</Label>
-          <Textarea id="ta-label" placeholder="Type your message here..." />
+          <TextareaComponent id="ta-label" placeholder="Type your message here..." />
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Disabled">
-        <Textarea disabled placeholder="This textarea is disabled..." />
+        <TextareaComponent disabled placeholder="This textarea is disabled..." />
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Invalid / Error">
         <div class="space-y-2">
-          <Textarea aria-invalid="true" placeholder="Required field..." />
+          <TextareaComponent aria-invalid="true" placeholder="Required field..." />
           <p class="text-sm text-destructive">This field is required.</p>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Button">
         <div class="space-y-2">
-          <Textarea placeholder="Type your message here..." />
+          <TextareaComponent placeholder="Type your message here..." />
           <Button>Send message</Button>
         </div>
       </KitchenSinkSection>
@@ -43,7 +43,7 @@ import { Button } from "@bejamas/registry/ui/button";
 
     <KitchenSinkSection title="Character Count">
       <div class="max-w-lg space-y-2">
-        <Textarea
+        <TextareaComponent
           id="ta-counter"
           placeholder="Type something..."
           maxlength="500"
@@ -82,7 +82,7 @@ import { Button } from "@bejamas/registry/ui/button";
         </div>
         <div class="space-y-2">
           <Label for="tf-message">Message</Label>
-          <Textarea
+          <TextareaComponent
             id="tf-message"
             name="message"
             placeholder="Type your message here..."

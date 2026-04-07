@@ -2,7 +2,7 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import {
-  Item,
+  Item as ItemComponent,
   ItemContent,
   ItemTitle,
   ItemDescription,
@@ -26,7 +26,7 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <Item>
+        <ItemComponent>
           <ItemContent>
             <ItemTitle>Project Update</ItemTitle>
             <ItemDescription
@@ -36,11 +36,11 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
           <ItemActions>
             <Button variant="outline" size="sm">View</Button>
           </ItemActions>
-        </Item>
+        </ItemComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Icon">
-        <Item>
+        <ItemComponent>
           <ItemMedia>
             <FileIcon class="size-5 text-muted-foreground" />
           </ItemMedia>
@@ -48,11 +48,11 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
             <ItemTitle>README.md</ItemTitle>
             <ItemDescription>Updated 2 hours ago</ItemDescription>
           </ItemContent>
-        </Item>
+        </ItemComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Avatar">
-        <Item>
+        <ItemComponent>
           <ItemMedia>
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="User" />
@@ -63,11 +63,11 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
             <ItemTitle>Thom Krupa</ItemTitle>
             <ItemDescription>thom@bejamas.io</ItemDescription>
           </ItemContent>
-        </Item>
+        </ItemComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Actions">
-        <Item>
+        <ItemComponent>
           <ItemContent>
             <ItemTitle>Feature Request</ItemTitle>
             <ItemDescription>Add dark mode toggle to navigation</ItemDescription
@@ -79,65 +79,65 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
               <EllipsisIcon class="size-4" />
             </Button>
           </ItemActions>
-        </Item>
+        </ItemComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Variants">
         <div class="space-y-3">
-          <Item>
+          <ItemComponent>
             <ItemContent>
               <ItemTitle>Default variant</ItemTitle>
               <ItemDescription>Standard item style</ItemDescription>
             </ItemContent>
-          </Item>
-          <Item variant="outline">
+          </ItemComponent>
+          <ItemComponent variant="outline">
             <ItemContent>
               <ItemTitle>Outline variant</ItemTitle>
               <ItemDescription>With border styling</ItemDescription>
             </ItemContent>
-          </Item>
-          <Item variant="muted">
+          </ItemComponent>
+          <ItemComponent variant="muted">
             <ItemContent>
               <ItemTitle>Muted variant</ItemTitle>
               <ItemDescription>Subtle background</ItemDescription>
             </ItemContent>
-          </Item>
+          </ItemComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Small Size">
         <div class="space-y-2">
-          <Item size="sm">
+          <ItemComponent size="sm">
             <ItemMedia
               ><FileIcon class="size-4 text-muted-foreground" /></ItemMedia
             >
             <ItemContent>
               <ItemTitle>index.ts</ItemTitle>
             </ItemContent>
-          </Item>
-          <Item size="sm">
+          </ItemComponent>
+          <ItemComponent size="sm">
             <ItemMedia
               ><FileIcon class="size-4 text-muted-foreground" /></ItemMedia
             >
             <ItemContent>
               <ItemTitle>utils.ts</ItemTitle>
             </ItemContent>
-          </Item>
-          <Item size="sm">
+          </ItemComponent>
+          <ItemComponent size="sm">
             <ItemMedia
               ><FileIcon class="size-4 text-muted-foreground" /></ItemMedia
             >
             <ItemContent>
               <ItemTitle>types.ts</ItemTitle>
             </ItemContent>
-          </Item>
+          </ItemComponent>
         </div>
       </KitchenSinkSection>
     </div>
 
     <KitchenSinkSection title="Item Group">
       <ItemGroup class="max-w-md">
-        <Item>
+        <ItemComponent>
           <ItemMedia>
             <Avatar>
               <AvatarFallback
@@ -155,9 +155,9 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
           <ItemActions>
             <span class="text-xs text-muted-foreground">2m ago</span>
           </ItemActions>
-        </Item>
+        </ItemComponent>
         <ItemSeparator />
-        <Item>
+        <ItemComponent>
           <ItemMedia>
             <Avatar>
               <AvatarFallback
@@ -173,9 +173,9 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
           <ItemActions>
             <span class="text-xs text-muted-foreground">15m ago</span>
           </ItemActions>
-        </Item>
+        </ItemComponent>
         <ItemSeparator />
-        <Item>
+        <ItemComponent>
           <ItemMedia>
             <Avatar>
               <AvatarFallback
@@ -193,9 +193,9 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
           <ItemActions>
             <span class="text-xs text-muted-foreground">1h ago</span>
           </ItemActions>
-        </Item>
+        </ItemComponent>
         <ItemSeparator />
-        <Item>
+        <ItemComponent>
           <ItemMedia>
             <Avatar>
               <AvatarFallback
@@ -211,7 +211,7 @@ import { FileIcon, EllipsisIcon } from "@lucide/astro";
           <ItemActions>
             <span class="text-xs text-muted-foreground">3h ago</span>
           </ItemActions>
-        </Item>
+        </ItemComponent>
       </ItemGroup>
     </KitchenSinkSection>
   </section>

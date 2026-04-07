@@ -4,7 +4,7 @@ import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
 import EventLog from "@/components/EventLog.astro";
 import { Button } from "@bejamas/registry/ui/button";
 import {
-  HoverCard,
+  HoverCard as HoverCardComponent,
   HoverCardTrigger,
   HoverCardContent,
 } from "@bejamas/registry/ui/hover-card";
@@ -29,7 +29,7 @@ import {
 
     <div class="grid md:grid-cols-2 gap-x-8 gap-y-12">
       <KitchenSinkSection title="Basic">
-        <HoverCard>
+        <HoverCardComponent>
           <HoverCardTrigger asChild>
             <Button variant="link">Hover Here</Button>
           </HoverCardTrigger>
@@ -40,11 +40,11 @@ import {
               Joined December 2021
             </div>
           </HoverCardContent>
-        </HoverCard>
+        </HoverCardComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="With Avatar">
-        <HoverCard>
+        <HoverCardComponent>
           <HoverCardTrigger asChild>
             <Button variant="link">@thomkrupa</Button>
           </HoverCardTrigger>
@@ -69,109 +69,109 @@ import {
               </div>
             </div>
           </HoverCardContent>
-        </HoverCard>
+        </HoverCardComponent>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Timing Variants">
         <div class="flex flex-wrap items-center gap-3">
-          <HoverCard delay={0} closeDelay={0}>
+          <HoverCardComponent delay={0} closeDelay={0}>
             <HoverCardTrigger asChild>
               <Button variant="outline">No delay</Button>
             </HoverCardTrigger>
             <HoverCardContent>Opens and closes immediately.</HoverCardContent>
-          </HoverCard>
+          </HoverCardComponent>
 
-          <HoverCard delay={150} closeDelay={100}>
+          <HoverCardComponent delay={150} closeDelay={100}>
             <HoverCardTrigger asChild>
               <Button variant="outline">Fast</Button>
             </HoverCardTrigger>
             <HoverCardContent>Quick open/close timing.</HoverCardContent>
-          </HoverCard>
+          </HoverCardComponent>
 
-          <HoverCard delay={700} closeDelay={300}>
+          <HoverCardComponent delay={700} closeDelay={300}>
             <HoverCardTrigger asChild>
               <Button variant="outline">Default</Button>
             </HoverCardTrigger>
             <HoverCardContent
               >Default timing from the behavior package.</HoverCardContent
             >
-          </HoverCard>
+          </HoverCardComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Side Variants">
         <div class="flex flex-wrap items-center gap-3 py-8">
-          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+          <HoverCardComponent delay={10} closeDelay={80} skipDelayDuration={0}>
             <HoverCardTrigger asChild>
               <Button variant="outline">Left</Button>
             </HoverCardTrigger>
             <HoverCardContent side="left"
               >Positioned to the left.</HoverCardContent
             >
-          </HoverCard>
+          </HoverCardComponent>
 
-          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+          <HoverCardComponent delay={10} closeDelay={80} skipDelayDuration={0}>
             <HoverCardTrigger asChild>
               <Button variant="outline">Top</Button>
             </HoverCardTrigger>
             <HoverCardContent side="top"
               >Positioned above the trigger.</HoverCardContent
             >
-          </HoverCard>
+          </HoverCardComponent>
 
-          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+          <HoverCardComponent delay={10} closeDelay={80} skipDelayDuration={0}>
             <HoverCardTrigger asChild>
               <Button variant="outline">Bottom</Button>
             </HoverCardTrigger>
             <HoverCardContent side="bottom"
               >Positioned below the trigger.</HoverCardContent
             >
-          </HoverCard>
+          </HoverCardComponent>
 
-          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+          <HoverCardComponent delay={10} closeDelay={80} skipDelayDuration={0}>
             <HoverCardTrigger asChild>
               <Button variant="outline">Right</Button>
             </HoverCardTrigger>
             <HoverCardContent side="right"
               >Positioned to the right.</HoverCardContent
             >
-          </HoverCard>
+          </HoverCardComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Alignment Variants">
         <div class="flex flex-wrap items-center gap-4">
-          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+          <HoverCardComponent delay={10} closeDelay={80} skipDelayDuration={0}>
             <HoverCardTrigger asChild>
               <Button variant="outline">Start</Button>
             </HoverCardTrigger>
             <HoverCardContent side="bottom" align="start">
               Start aligned content.
             </HoverCardContent>
-          </HoverCard>
+          </HoverCardComponent>
 
-          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+          <HoverCardComponent delay={10} closeDelay={80} skipDelayDuration={0}>
             <HoverCardTrigger asChild>
               <Button variant="outline">Center</Button>
             </HoverCardTrigger>
             <HoverCardContent side="bottom" align="center">
               Center aligned content.
             </HoverCardContent>
-          </HoverCard>
+          </HoverCardComponent>
 
-          <HoverCard delay={10} closeDelay={80} skipDelayDuration={0}>
+          <HoverCardComponent delay={10} closeDelay={80} skipDelayDuration={0}>
             <HoverCardTrigger asChild>
               <Button variant="outline">End</Button>
             </HoverCardTrigger>
             <HoverCardContent side="bottom" align="end">
               End aligned content.
             </HoverCardContent>
-          </HoverCard>
+          </HoverCardComponent>
         </div>
       </KitchenSinkSection>
 
       <KitchenSinkSection title="Rich Content">
-        <HoverCard delay={120} closeDelay={120}>
+        <HoverCardComponent delay={120} closeDelay={120}>
           <HoverCardTrigger asChild>
             <a
               href="https://github.com/bejamas"
@@ -206,7 +206,7 @@ import {
               </Button>
             </div>
           </HoverCardContent>
-        </HoverCard>
+        </HoverCardComponent>
       </KitchenSinkSection>
     </div>
 
@@ -214,12 +214,12 @@ import {
       <p class="text-sm text-muted-foreground">
         Hover the trigger and check event output for open/close and reason.
       </p>
-      <HoverCard id="event-hover-card" delay={100} closeDelay={100}>
+      <HoverCardComponent id="event-hover-card" delay={100} closeDelay={100}>
         <HoverCardTrigger asChild>
           <Button variant="outline">Hover for events</Button>
         </HoverCardTrigger>
         <HoverCardContent>Event test card</HoverCardContent>
-      </HoverCard>
+      </HoverCardComponent>
       <EventLog id="hover-card-event-output" />
       <script>
         {
@@ -240,13 +240,13 @@ import {
     </KitchenSinkSection>
 
     <KitchenSinkSection title="Programmatic Control">
-      <HoverCard id="programmatic-hover-card" delay={0} closeDelay={0}>
+      <HoverCardComponent id="programmatic-hover-card" delay={0} closeDelay={0}>
         <HoverCardTrigger asChild>
           <Button variant="outline">Controlled Hover Card</Button>
         </HoverCardTrigger>
         <HoverCardContent>Controlled through external buttons.</HoverCardContent
         >
-      </HoverCard>
+      </HoverCardComponent>
       <div class="flex flex-wrap gap-2">
         <button
           id="hover-card-open-btn"
@@ -301,14 +301,14 @@ import {
             </DialogDescription>
           </DialogHeader>
           <div class="py-4">
-            <HoverCard>
+            <HoverCardComponent>
               <HoverCardTrigger asChild>
                 <Button variant="link">Hover inside dialog</Button>
               </HoverCardTrigger>
               <HoverCardContent class="w-64">
                 The hover card is rendered while the dialog is open.
               </HoverCardContent>
-            </HoverCard>
+            </HoverCardComponent>
           </div>
         </DialogContent>
       </Dialog>
