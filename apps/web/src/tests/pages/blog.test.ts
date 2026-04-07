@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import path from "node:path";
+import { isBlogPostPathname, resolveOgConfig } from "../../route-middleware";
 
 const astroConfigFile = path.resolve(
   import.meta.dir,
@@ -10,8 +11,14 @@ const contentConfigFile = path.resolve(
   import.meta.dir,
   "../../content.config.ts",
 );
-const blogIndexPageFile = path.resolve(import.meta.dir, "../../pages/blog/index.astro");
-const blogSlugPageFile = path.resolve(import.meta.dir, "../../pages/blog/[slug].astro");
+const blogIndexPageFile = path.resolve(
+  import.meta.dir,
+  "../../pages/blog/index.astro",
+);
+const blogSlugPageFile = path.resolve(
+  import.meta.dir,
+  "../../pages/blog/[slug].astro",
+);
 const blogBylineFile = path.resolve(
   import.meta.dir,
   "../../components/blog/BlogByline.astro",
@@ -108,7 +115,9 @@ describe("blog source wiring", () => {
     expect(source).toContain("publishDate: 2026-03-30");
     expect(source).toContain('name: "Mojtaba Seyedi"');
     expect(source).toContain("## The problem we were solving");
-    expect(source).not.toContain("possible, but heavy for small interactive primitives");
+    expect(source).not.toContain(
+      "possible, but heavy for small interactive primitives",
+    );
   });
 
   test("seeds the interactive UI guide with the planned metadata and structure", () => {
@@ -123,7 +132,9 @@ describe("blog source wiring", () => {
     expect(source).toContain('name: "Mojtaba Seyedi"');
     expect(source).toContain("## The model");
     expect(source).toContain("## State ownership rules");
-    expect(source).toContain("## Demo 2: Stimulus for derived, multi-surface state");
+    expect(source).toContain(
+      "## Demo 2: Stimulus for derived, multi-surface state",
+    );
     expect(source).toContain("tabs:set");
     expect(source).toContain("select:set");
     expect(source).toContain("toggle:set");
@@ -155,14 +166,53 @@ describe("blog source wiring", () => {
     expect(source).toContain("width: min(72rem, calc(100vw - 2rem))");
   });
 
+  test("marks blog post OG images as title-only without changing the blog index", () => {
+    expect(isBlogPostPathname("/blog/introducing-data-slot")).toBe(true);
+    expect(isBlogPostPathname("/blog")).toBe(false);
+    expect(isBlogPostPathname("/blog/")).toBe(false);
+    expect(isBlogPostPathname("/docs/introduction")).toBe(false);
+
+    const blogPostConfig = resolveOgConfig({
+      pathname: "/blog/introducing-data-slot",
+      url: "https://ui.bejamas.com/blog/introducing-data-slot",
+      entryTitle: "Title",
+      entryDescription: "Description",
+      siteTitle: "bejamas/ui",
+    });
+    const blogIndexConfig = resolveOgConfig({
+      pathname: "/blog",
+      url: "https://ui.bejamas.com/blog",
+      entryTitle: "Blog",
+      entryDescription: "Description",
+      siteTitle: "bejamas/ui",
+    });
+    const docsConfig = resolveOgConfig({
+      pathname: "/docs/introduction",
+      url: "https://ui.bejamas.com/docs/introduction",
+      entryTitle: "Docs",
+      entryDescription: "Description",
+      siteTitle: "bejamas/ui",
+    });
+
+    expect(blogPostConfig?.path).toBe("/api/og/text");
+    expect(blogPostConfig?.params.get("hideDescription")).toBe("1");
+    expect(blogIndexConfig?.params.has("hideDescription")).toBe(false);
+    expect(docsConfig?.params.has("hideDescription")).toBe(false);
+  });
+
   test("keeps the Stimulus demo isolated to the blog bootstrap", () => {
     const demoSource = fs.readFileSync(stimulusDemoFile, "utf8");
     const bootstrapSource = fs.readFileSync(blogStimulusBootstrapFile, "utf8");
-    const controllerSource = fs.readFileSync(blogStimulusControllerFile, "utf8");
+    const controllerSource = fs.readFileSync(
+      blogStimulusControllerFile,
+      "utf8",
+    );
 
     expect(demoSource).toContain('data-controller="blog-state-bridge"');
     expect(demoSource).toContain('import "@/stimulus/blog";');
-    expect(bootstrapSource).toContain('application.register("blog-state-bridge"');
+    expect(bootstrapSource).toContain(
+      'application.register("blog-state-bridge"',
+    );
     expect(controllerSource).toContain("static values = {");
     expect(controllerSource).toContain("patternValueChanged");
     expect(controllerSource).toContain('new CustomEvent("select:set"');

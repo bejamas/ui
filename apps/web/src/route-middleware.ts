@@ -81,7 +81,14 @@ const upsertMetaTag = (
   });
 };
 
-const resolveOgConfig = ({
+export const isBlogPostPathname = (pathname: string): boolean => {
+  const normalizedPathname = pathname.replace(/\/{2,}/g, "/");
+  return (
+    normalizedPathname.startsWith("/blog/") && normalizedPathname !== "/blog/"
+  );
+};
+
+export const resolveOgConfig = ({
   pathname,
   url,
   entryTitle,
@@ -97,7 +104,11 @@ const resolveOgConfig = ({
 
   return {
     path: "/api/og/text",
-    params: buildTextParams({ entryTitle, entryDescription }),
+    params: buildTextParams({
+      entryTitle,
+      entryDescription,
+      hideDescription: isBlogPostPathname(pathname),
+    }),
   };
 };
 
@@ -122,14 +133,19 @@ const buildTextParams = ({
   entryTitle,
   entryDescription,
   siteTitle,
+  hideDescription,
 }: {
   entryTitle: string;
   entryDescription: string;
   siteTitle?: string;
+  hideDescription?: boolean;
 }): URLSearchParams => {
   const params = new URLSearchParams();
   params.set("title", entryTitle);
   params.set("description", entryDescription);
+  if (hideDescription) {
+    params.set("hideDescription", "1");
+  }
   if (siteTitle) {
     params.set("siteTitle", siteTitle);
   }
