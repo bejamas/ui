@@ -7,6 +7,7 @@ import {
 const ACTIVE_SELECTOR = "link[data-current-theme-stylesheet]";
 const PENDING_SELECTOR = "link[data-pending-current-theme-stylesheet]";
 const OPTIMISTIC_SELECTOR = "style[data-optimistic-current-theme-stylesheet]";
+const OPTIMISTIC_ATTRIBUTE = "data-optimistic-current-theme";
 
 type Listener = (event: Event) => void;
 
@@ -84,9 +85,26 @@ class FakeStyleElement extends FakeElementBase {
   textContent: string | null = "";
 }
 
+class FakeDocumentElement {
+  private attributes = new Map<string, string>();
+
+  setAttribute(name: string, value: string) {
+    this.attributes.set(name, value);
+  }
+
+  removeAttribute(name: string) {
+    this.attributes.delete(name);
+  }
+
+  hasAttribute(name: string) {
+    return this.attributes.has(name);
+  }
+}
+
 class FakeDocument {
   elements: FakeElement[] = [];
   cookie = "";
+  documentElement = new FakeDocumentElement();
 
   head = {
     append: (element: FakeElement) => this.append(element),
@@ -296,7 +314,10 @@ describe("refreshCurrentThemeStylesheet", () => {
         primaryDark: "oklch(0.98 0 0)",
         accentDark: "oklch(0.8 0 0)",
       },
-      optimisticThemeCss: "html:root { --font-sans: Test Sans; }",
+      optimisticThemeCss: [
+        "html:root { --font-sans: Test Sans; }",
+        'html[data-theme="dark"], html.dark, .cn-menu-target.dark { --primary: Test Primary; }',
+      ].join("\n\n"),
     });
     const pendingStylesheet =
       document.querySelector<FakeLinkElement>(PENDING_SELECTOR);
@@ -305,7 +326,13 @@ describe("refreshCurrentThemeStylesheet", () => {
 
     expect(document.querySelector(ACTIVE_SELECTOR)).toBe(currentStylesheet);
     expect(optimisticStylesheet?.textContent).toBe(
-      "html:root { --font-sans: Test Sans; }",
+      [
+        "html:root[data-optimistic-current-theme] { --font-sans: Test Sans; }",
+        'html[data-optimistic-current-theme][data-theme="dark"], html[data-optimistic-current-theme].dark, html[data-optimistic-current-theme] .cn-menu-target.dark { --primary: Test Primary; }',
+      ].join("\n\n"),
+    );
+    expect(document.documentElement.hasAttribute(OPTIMISTIC_ATTRIBUTE)).toBe(
+      true,
     );
     expect(document.querySelectorAll("*")).toEqual([
       currentStylesheet,
@@ -320,6 +347,9 @@ describe("refreshCurrentThemeStylesheet", () => {
     expect(document.querySelector(PENDING_SELECTOR)).toBeNull();
     expect(document.querySelector(OPTIMISTIC_SELECTOR)).toBe(
       optimisticStylesheet,
+    );
+    expect(document.documentElement.hasAttribute(OPTIMISTIC_ATTRIBUTE)).toBe(
+      true,
     );
   });
 
@@ -359,7 +389,10 @@ describe("refreshCurrentThemeStylesheet", () => {
 
     expect(optimisticStylesheets).toHaveLength(1);
     expect(optimisticStylesheets[0]?.textContent).toBe(
-      "html:root { --font-sans: Second Sans; }",
+      "html:root[data-optimistic-current-theme] { --font-sans: Second Sans; }",
+    );
+    expect(document.documentElement.hasAttribute(OPTIMISTIC_ATTRIBUTE)).toBe(
+      true,
     );
 
     document
@@ -379,6 +412,9 @@ describe("refreshCurrentThemeStylesheet", () => {
     });
 
     expect(document.querySelector(OPTIMISTIC_SELECTOR)).toBeNull();
+    expect(document.documentElement.hasAttribute(OPTIMISTIC_ATTRIBUTE)).toBe(
+      false,
+    );
 
     document
       .querySelector<FakeLinkElement>(PENDING_SELECTOR)

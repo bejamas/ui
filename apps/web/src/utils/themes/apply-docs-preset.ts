@@ -11,6 +11,7 @@ export interface ApplyDocsPresetOptions {
 
 const PENDING_THEME_STYLESHEET_SELECTOR =
   "link[data-pending-current-theme-stylesheet]";
+const OPTIMISTIC_THEME_ATTRIBUTE = "data-optimistic-current-theme";
 const OPTIMISTIC_THEME_STYLESHEET_SELECTOR =
   "style[data-optimistic-current-theme-stylesheet]";
 
@@ -26,19 +27,38 @@ function getAnimationFrame() {
     window.setTimeout(() => callback(performance.now()), 0);
 }
 
+function scopeOptimisticCurrentThemeCss(css: string) {
+  return css
+    .replaceAll(
+      "html:root {",
+      `html:root[${OPTIMISTIC_THEME_ATTRIBUTE}] {`,
+    )
+    .replaceAll(
+      'html[data-theme="dark"], html.dark, .cn-menu-target.dark {',
+      [
+        `html[${OPTIMISTIC_THEME_ATTRIBUTE}][data-theme="dark"],`,
+        `html[${OPTIMISTIC_THEME_ATTRIBUTE}].dark,`,
+        `html[${OPTIMISTIC_THEME_ATTRIBUTE}] .cn-menu-target.dark {`,
+      ].join(" "),
+    );
+}
+
 function syncOptimisticCurrentThemeStylesheet(css?: string) {
   const existing = document.querySelector<HTMLStyleElement>(
     OPTIMISTIC_THEME_STYLESHEET_SELECTOR,
   );
 
   if (!css) {
+    document.documentElement.removeAttribute(OPTIMISTIC_THEME_ATTRIBUTE);
     existing?.remove();
     return;
   }
 
+  document.documentElement.setAttribute(OPTIMISTIC_THEME_ATTRIBUTE, "");
+
   const stylesheet = existing ?? document.createElement("style");
   stylesheet.setAttribute("data-optimistic-current-theme-stylesheet", "");
-  stylesheet.textContent = css;
+  stylesheet.textContent = scopeOptimisticCurrentThemeCss(css);
 
   if (existing) {
     return;
