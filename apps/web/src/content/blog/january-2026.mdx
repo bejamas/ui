@@ -1,0 +1,45 @@
+---
+title: "January 2026 — Building Blocks"
+description: "Six new components, a preset switcher, and CLI improvements."
+publishDate: 2026-01-31
+authors:
+  - name: "Thom Krupa"
+    role: "Co-founder"
+    avatar: "https://cdn.sanity.io/images/34ent8ly/production/1699401246513c2c318dffd600dcc31b098c8780-512x512.png"
+excerpt: "Six new components, a preset switcher, and CLI improvements."
+---
+
+January was mostly about filling in gaps: components that were obviously missing, and quality-of-life improvements to the CLI and docs.
+
+## Six new components
+
+**[Tooltip](/components/tooltip):** hover and focus tooltips, keyboard accessible, anchored with `@data-slot/tooltip`. Supports all four sides with configurable delay.
+
+**[Skeleton](/components/skeleton):** loading placeholder that matches your border radius and color tokens. Drop it in anywhere you're waiting on data.
+
+**[Collapsible](/components/collapsible):** a simple show/hide toggle built on `@data-slot/collapsible`. Useful for FAQs, filter panels, anything that needs to expand without a full accordion.
+
+**[Dropdown Menu](/components/dropdown-menu):** action menu with keyboard navigation, submenus, separators, and checkable items. Uses `@data-slot/dropdown-menu`.
+
+**[Navigation Menu](/components/navigation-menu):** accessible mega-menu for site headers. Built on `@data-slot/navigation-menu`, supports grouped links, descriptions, and custom trigger content.
+
+**[Slider](/components/slider):** single-value and range sliders built on `@data-slot/slider`. Default value works correctly out of the box.
+
+## Preset Switcher
+
+Theme presets are now surfaced in the header as a tab strip. Switch between presets to quickly evaluate how a design looks in different styles.
+
+## CLI improvements
+
+Several fixes landed this month that make the `bejamas` CLI more reliable in real projects:
+
+- **`docs:check`:** new command that validates your component docs against the registry. Catches missing exports and broken references before you deploy.
+- **Multi-file registry support:** components split across multiple files now install correctly in monorepo setups.
+- **Auto-generated docs:** the CLI can now generate documentation pages directly from component source files, pulling usage blocks and API tables without manual authoring.
+- **Barrel import fixes:** component names are now consistently PascalCase in generated barrel imports, fixing tree-shaking issues in some bundlers.
+
+## Docs polish
+
+- Code blocks in component pages are now collapsible. Long examples fold by default, expanding on click.
+- The Starlight theme got improved codeblock styling (better terminal aesthetics) and tighter pagination spacing.
+- The GitHub link in the header is now dynamic, pointing to the correct source file for the component you're viewing.

@@ -1,0 +1,120 @@
+---
+import { Badge } from "@bejamas/ui/components/badge";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@bejamas/ui/components/select";
+
+import EventLog from "@/components/EventLog.astro";
+---
+
+<section
+  class="w-full max-w-4xl space-y-4"
+  data-controller="blog-state-bridge"
+  data-blog-state-bridge-pattern-value="local"
+>
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div class="space-y-1">
+      <p class="text-sm font-medium text-foreground">Choose a state boundary</p>
+      <p class="max-w-[38ch] text-sm text-muted-foreground">
+        Stimulus listens to one primitive event and derives the rest of the UI in
+        the same server-rendered subtree.
+      </p>
+    </div>
+
+    <Select
+      data-blog-state-bridge-target="select"
+      defaultValue="local"
+      data-action="select:change->blog-state-bridge#patternChanged"
+    >
+      <SelectTrigger class="min-w-44">
+        <SelectValue placeholder="Pick a pattern" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="local">Local</SelectItem>
+        <SelectItem value="shared">Shared</SelectItem>
+        <SelectItem value="persisted">Persisted</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+
+  <div class="flex flex-wrap gap-2">
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      data-action="click->blog-state-bridge#restore"
+      data-blog-state-bridge-pattern-param="local"
+    >
+      Restore local
+    </Button>
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      data-action="click->blog-state-bridge#restore"
+      data-blog-state-bridge-pattern-param="shared"
+    >
+      Restore shared
+    </Button>
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      data-action="click->blog-state-bridge#restore"
+      data-blog-state-bridge-pattern-param="persisted"
+    >
+      Restore persisted
+    </Button>
+  </div>
+
+  <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+    <div class="rounded-lg border bg-card p-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <p class="text-sm font-medium text-foreground" data-blog-state-bridge-target="title">
+          Local runtime state
+        </p>
+        <Badge variant="secondary" data-blog-state-bridge-target="badge">
+          local
+        </Badge>
+      </div>
+
+      <p
+        class="mt-3 max-w-[52ch] text-sm text-muted-foreground"
+        data-blog-state-bridge-target="summary"
+      >
+        The primitive owns open, selected, and active state. The controller only
+        derives adjacent UI after the runtime commits a change.
+      </p>
+
+      <ul class="mt-4 space-y-2 text-sm text-muted-foreground">
+        <li data-blog-state-bridge-target="checklistOne">
+          Keep the selected value inside the primitive when no other surface needs
+          it.
+        </li>
+        <li data-blog-state-bridge-target="checklistTwo">
+          Mirror only the summary or CTA text that depends on that selection.
+        </li>
+      </ul>
+
+      <p class="mt-4 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        Next step
+      </p>
+      <p class="mt-2 text-sm text-foreground" data-blog-state-bridge-target="nextStep">
+        If the rest of the page does not care, stop at the primitive.
+      </p>
+    </div>
+
+    <div data-blog-state-bridge-target="logContainer">
+      <EventLog id="blog-state-bridge-log" class="mt-0 min-h-[12rem] w-full" />
+    </div>
+  </div>
+
+  <script>
+    import "@/stimulus/blog";
+  </script>
+</section>

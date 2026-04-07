@@ -1,0 +1,67 @@
+---
+title: "March 2026 — Create"
+description: "A new Create workflow, shadcn v4 support, heading fonts, Stimulus.js migration, and prehydration fixes."
+publishDate: 2026-03-31
+authors:
+  - name: "Thom Krupa"
+    role: "Co-founder"
+    avatar: "https://cdn.sanity.io/images/34ent8ly/production/1699401246513c2c318dffd600dcc31b098c8780-512x512.png"
+excerpt: "A new Create workflow, shadcn v4 support, heading fonts, Stimulus.js migration, and prehydration fixes."
+---
+
+March was the heaviest month yet. The Create workflow shipped as a standalone product surface, the theme system got heading font support and two new presets, and a significant chunk of the UI was migrated to Stimulus.js to solve a class of prehydration bugs that had been accumulating since the theme editor launched.
+
+## Create workflow
+
+[/create](/create) is a visual `bejamas init` companion. Pick your colors, fonts, and radius, browse or shuffle through presets, and get a ready-to-run init command. No flags, no guessing.
+
+The preset system uses the same encoding as [shadcn/create](https://ui.shadcn.com/create). If you have a preset code from shadcn, paste it into the URL on our page and it just works — all shadcn styles are included. The difference is that everything here outputs Astro-native components, no React required.
+
+## shadcn v4 support
+
+The CLI now handles both shadcn v3 and v4 init flows. If you're on v4, it uses the new init path. If you're on v3, it falls back to non-interactive mode with the init and add commands.
+
+v3 is pinned to `3.8.5` for stability. This specific version is the last one before shadcn changed how it handles component output, and we're not ready to chase that change yet.
+
+## Navigation menu
+
+The [Navigation Menu](/components/navigation-menu) got a significant update this month:
+
+- Indicator bar now animates between active items
+- Opening and closing animations are closer to shadcn/base-ui behavior
+- The Astro registry surface was aligned with the base-ui API so imports are consistent
+
+## Heading font
+
+The theme now has a separate heading font slot. Set it independently from your body font, useful for editorial designs that pair a display typeface with a readable body font.
+
+The heading font variable flows through `h1`–`h6` automatically. You can also override it per-component using a CSS variable.
+
+## Luma style and Bejamas preset
+
+Two new additions to the preset library:
+
+**Luma:** a color style built around luminance-based tones rather than hue. It produces cleaner neutral palettes that work well as a base for accent colors. Adapted from [shadcn/ui](https://ui.shadcn.com), alongside the existing Vega and Mira presets.
+
+**Bejamas preset:** the bejamas/ui brand colors and radius as an installable preset. Useful as a reference for what the defaults are trying to achieve.
+
+## Stimulus.js migration
+
+The sidebar and create flow were ported from Alpine to Stimulus. The driving reason was prehydration: Alpine's reactivity model made it difficult to guarantee that the correct visual state was painted before the framework booted, which caused flash-of-unstyled-content on slow connections.
+
+Stimulus controllers run synchronously on connect, which means styles can be applied in a predictable way during the first paint. The migration also made the controller boundaries clearer: each controller owns exactly the DOM it needs.
+
+## Static build and caching
+
+More pages are now pre-rendered at build time instead of rendered on-demand. Server islands (the parts that need to be dynamic) now have explicit cache headers, which reduces origin load significantly.
+
+## Prehydration fixes
+
+Several components were painting incorrect state before JavaScript booted:
+
+- **Theme tabs:** active tab and indicator position are now painted server-side
+- **Nav controls:** theme and preset buttons in the header now show the correct state before JS runs
+- **Preset summaries:** custom and shuffled preset display names are pre-computed and injected into the HTML, not computed on the client
+- **Editor bootstrap:** the create workflow now pre-paints the correct style before the editor initializes
+
+Together these eliminated the most visible layout shifts in the UI.

@@ -13,6 +13,14 @@ const blocksSlugPageFile = path.resolve(
   "../../pages/blocks/[slug].astro",
 );
 const createPageFile = path.resolve(import.meta.dir, "../../pages/create.astro");
+const blogIndexPageFile = path.resolve(
+  import.meta.dir,
+  "../../pages/blog/index.astro",
+);
+const blogSlugPageFile = path.resolve(
+  import.meta.dir,
+  "../../pages/blog/[slug].astro",
+);
 const sharedThemePageFile = path.resolve(
   import.meta.dir,
   "../../pages/t/[id].astro",
@@ -41,6 +49,14 @@ describe("page style scoping", () => {
 
     expect(createSource).toContain('data-page-scope="create"');
     expect(createSource).toContain(':root:has([data-page-scope="create"]) .content-panel');
+
+    const blogIndexSource = fs.readFileSync(blogIndexPageFile, "utf8");
+    expect(blogIndexSource).toContain('data-page-scope="blog-index"');
+    expect(blogIndexSource).toContain(':root:has([data-page-scope="blog-index"]) .sl-container');
+
+    const blogSlugSource = fs.readFileSync(blogSlugPageFile, "utf8");
+    expect(blogSlugSource).toContain('data-page-scope="blog-post"');
+    expect(blogSlugSource).toContain(':root:has([data-page-scope="blog-post"]) .sl-container');
 
     expect(sharedThemeSource).not.toContain('data-page-scope="shared-theme"');
     expect(sharedThemeSource).not.toContain(".sl-bejamas-docs-title");
