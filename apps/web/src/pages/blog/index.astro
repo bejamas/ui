@@ -3,11 +3,18 @@ import { getCollection } from "astro:content";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import { Date } from "@bejamas/ui/components/date";
 
-import { filterVisibleBlogEntries, sortBlogEntries, getBlogHref } from "@/utils/blog";
+import BlogDraftBadge from "@/components/blog/BlogDraftBadge.astro";
+import {
+  filterVisibleBlogEntries,
+  sortBlogEntries,
+  getBlogHref,
+  shouldIncludeDraftBlogEntries,
+} from "@/utils/blog";
 
+const showDrafts = shouldIncludeDraftBlogEntries({ isDev: import.meta.env.DEV });
 const posts = sortBlogEntries(
   filterVisibleBlogEntries(await getCollection("blog"), {
-    includeDrafts: import.meta.env.DEV,
+    includeDrafts: showDrafts,
   }),
 );
 ---
@@ -36,9 +43,12 @@ const posts = sortBlogEntries(
           <p class="text-sm text-muted-foreground">
             <Date date={post.data.publishDate} format="long" />
           </p>
-          <h2 class="mt-1 text-lg font-medium tracking-tight text-foreground group-hover:underline underline-offset-4">
-            {post.data.title}
-          </h2>
+          <div class="mt-1 flex flex-wrap items-center gap-3">
+            <h2 class="text-lg font-medium tracking-tight text-foreground group-hover:underline underline-offset-4">
+              {post.data.title}
+            </h2>
+            {post.data.draft && <BlogDraftBadge />}
+          </div>
           {(post.data.excerpt ?? post.data.description) && (
             <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
               {post.data.excerpt ?? post.data.description}

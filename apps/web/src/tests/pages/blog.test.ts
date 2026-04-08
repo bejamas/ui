@@ -23,6 +23,10 @@ const blogBylineFile = path.resolve(
   import.meta.dir,
   "../../components/blog/BlogByline.astro",
 );
+const blogDraftBadgeFile = path.resolve(
+  import.meta.dir,
+  "../../components/blog/BlogDraftBadge.astro",
+);
 const firstPostFile = path.resolve(
   import.meta.dir,
   "../../content/blog/introducing-data-slot.mdx",
@@ -55,6 +59,10 @@ const blogStimulusControllerFile = path.resolve(
   import.meta.dir,
   "../../stimulus/controllers/blog_state_bridge_controller.ts",
 );
+const routeMiddlewareFile = path.resolve(
+  import.meta.dir,
+  "../../route-middleware.ts",
+);
 
 describe("blog source wiring", () => {
   test("adds blog to the main nav and keeps blog pages out of the dynamic route allowlist", () => {
@@ -85,7 +93,8 @@ describe("blog source wiring", () => {
 
     expect(source).toContain('getCollection("blog")');
     expect(source).toContain("filterVisibleBlogEntries");
-    expect(source).toContain("includeDrafts: import.meta.env.DEV");
+    expect(source).toContain("shouldIncludeDraftBlogEntries");
+    expect(source).toContain("includeDrafts: showDrafts");
     expect(source).toContain("sortBlogEntries");
     expect(source).toContain("getBlogHref");
   });
@@ -97,13 +106,27 @@ describe("blog source wiring", () => {
     expect(pageSource).toContain("export const prerender = true;");
     expect(pageSource).toContain('getCollection("blog")');
     expect(pageSource).toContain("filterVisibleBlogEntries");
-    expect(pageSource).toContain("includeDrafts: import.meta.env.DEV");
+    expect(pageSource).toContain("shouldIncludeDraftBlogEntries");
+    expect(pageSource).toContain("includeDrafts: showDrafts");
     expect(pageSource).toContain('getEntry("blog", slug)');
     expect(pageSource).toContain("await render(entry)");
     expect(pageSource).toContain("<BlogByline");
 
     expect(bylineSource).toContain("authors.map((author)");
     expect(pageSource).toContain("Published");
+  });
+
+  test("renders a visible draft badge and noindexes preview blog pages", () => {
+    const indexSource = fs.readFileSync(blogIndexPageFile, "utf8");
+    const pageSource = fs.readFileSync(blogSlugPageFile, "utf8");
+    const badgeSource = fs.readFileSync(blogDraftBadgeFile, "utf8");
+    const routeMiddlewareSource = fs.readFileSync(routeMiddlewareFile, "utf8");
+
+    expect(indexSource).toContain("<BlogDraftBadge");
+    expect(pageSource).toContain("<BlogDraftBadge");
+    expect(badgeSource).toContain("Draft");
+    expect(routeMiddlewareSource).toContain("shouldNoindexBlogPage(pathname)");
+    expect(routeMiddlewareSource).toContain('"robots", "noindex, nofollow"');
   });
 
   test("seeds the first local MDX post with the planned metadata", () => {

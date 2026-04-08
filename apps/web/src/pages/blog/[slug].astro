@@ -4,14 +4,21 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import { Date } from "@bejamas/ui/components/date";
 
 import BlogByline from "@/components/blog/BlogByline.astro";
+import BlogDraftBadge from "@/components/blog/BlogDraftBadge.astro";
 import * as blogComponents from "@/components/blog/mdx-components";
-import { filterVisibleBlogEntries } from "@/utils/blog";
+import {
+  filterVisibleBlogEntries,
+  shouldIncludeDraftBlogEntries,
+} from "@/utils/blog";
 
 export const prerender = true;
 
 export async function getStaticPaths() {
+  const showDrafts = shouldIncludeDraftBlogEntries({
+    isDev: import.meta.env.DEV,
+  });
   const posts = filterVisibleBlogEntries(await getCollection("blog"), {
-    includeDrafts: import.meta.env.DEV,
+    includeDrafts: showDrafts,
   });
 
   return posts.map((post) => ({
@@ -51,9 +58,12 @@ const { Content } = await render(entry);
     >← Blog</a
   >
   <div class="not-content">
-    <p class="text-sm text-muted-foreground">
-      Published <Date date={entry.data.publishDate} format="long" />
-    </p>
+    <div class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+      <p>
+        Published <Date date={entry.data.publishDate} format="long" />
+      </p>
+      {entry.data.draft && <BlogDraftBadge />}
+    </div>
     <h1
       class="text-3xl min-[50rem]:text-4xl leading-tight font-medium text-foreground text-balance mt-4 tracking-tight"
     >

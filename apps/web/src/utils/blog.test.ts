@@ -4,6 +4,8 @@ import {
   filterVisibleBlogEntries,
   getAuthorInitials,
   hasDistinctUpdatedDate,
+  shouldIncludeDraftBlogEntries,
+  shouldNoindexBlogPage,
   sortBlogEntries,
 } from "./blog";
 
@@ -42,6 +44,34 @@ describe("blog utils", () => {
         (entry) => entry.id,
       ),
     ).toEqual(["published", "draft"]);
+  });
+
+  test("includes draft posts in dev and preview builds", () => {
+    expect(shouldIncludeDraftBlogEntries()).toBe(false);
+    expect(shouldIncludeDraftBlogEntries({ isDev: true })).toBe(true);
+    expect(
+      shouldIncludeDraftBlogEntries({ env: { VERCEL_ENV: "preview" } }),
+    ).toBe(true);
+    expect(
+      shouldIncludeDraftBlogEntries({ env: { VERCEL_TARGET_ENV: "preview" } }),
+    ).toBe(true);
+  });
+
+  test("marks preview blog pages as noindex", () => {
+    expect(shouldNoindexBlogPage("/blog", { VERCEL_ENV: "preview" })).toBe(
+      true,
+    );
+    expect(
+      shouldNoindexBlogPage("/blog/introducing-data-slot", {
+        VERCEL_ENV: "preview",
+      }),
+    ).toBe(true);
+    expect(
+      shouldNoindexBlogPage("/docs/introduction", { VERCEL_ENV: "preview" }),
+    ).toBe(false);
+    expect(shouldNoindexBlogPage("/blog", { VERCEL_ENV: "production" })).toBe(
+      false,
+    );
   });
 
   test("builds initials from the first two name parts", () => {
