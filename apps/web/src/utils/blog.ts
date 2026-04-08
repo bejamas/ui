@@ -2,13 +2,46 @@ import type { CollectionEntry } from "astro:content";
 
 export type BlogEntry = CollectionEntry<"blog">;
 export type BlogAuthor = BlogEntry["data"]["authors"][number];
+type BlogEnvironment = Record<string, string | undefined>;
 
 interface BlogVisibilityOptions {
   includeDrafts?: boolean;
 }
 
+interface DraftEnvironmentOptions {
+  isDev?: boolean;
+  env?: BlogEnvironment;
+}
+
 export function getBlogHref(slug: string) {
   return `/blog/${slug}`;
+}
+
+export function isVercelPreviewEnvironment(env: BlogEnvironment = process.env) {
+  return env.VERCEL_ENV === "preview" || env.VERCEL_TARGET_ENV === "preview";
+}
+
+export function shouldIncludeDraftBlogEntries(
+  options: DraftEnvironmentOptions = {},
+) {
+  const { isDev = false, env = process.env } = options;
+  return isDev || isVercelPreviewEnvironment(env);
+}
+
+export function isBlogPathname(pathname: string) {
+  const normalizedPathname =
+    pathname.replace(/\/{2,}/g, "/").replace(/\/$/, "") || "/";
+
+  return (
+    normalizedPathname === "/blog" || normalizedPathname.startsWith("/blog/")
+  );
+}
+
+export function shouldNoindexBlogPage(
+  pathname: string,
+  env: BlogEnvironment = process.env,
+) {
+  return isVercelPreviewEnvironment(env) && isBlogPathname(pathname);
 }
 
 export function filterVisibleBlogEntries<T extends { data: { draft?: boolean } }>(

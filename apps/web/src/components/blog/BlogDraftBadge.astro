@@ -1,0 +1,21 @@
+---
+import { Badge } from "@bejamas/ui/components/badge";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props as Props;
+---
+
+<Badge
+  variant="outline"
+  shape="pill"
+  size="sm"
+  class:list={[
+    "border-border/80 bg-muted/40 font-medium uppercase tracking-[0.14em]",
+    className,
+  ]}
+>
+  Draft
+</Badge>

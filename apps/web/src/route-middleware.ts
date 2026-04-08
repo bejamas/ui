@@ -1,4 +1,5 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
+import { shouldNoindexBlogPage } from "./utils/blog";
 
 export const onRequest = defineRouteMiddleware((context) => {
   const { entry, siteTitle, head } = context.locals.starlightRoute;
@@ -13,6 +14,10 @@ export const onRequest = defineRouteMiddleware((context) => {
   upsertMetaTag(head, "name", "twitter:title", entryTitle);
   if (entryDescription) {
     upsertMetaTag(head, "name", "twitter:description", entryDescription);
+  }
+
+  if (shouldNoindexBlogPage(pathname)) {
+    upsertMetaTag(head, "name", "robots", "noindex, nofollow");
   }
 
   // Skip homepage (uses static OG image).
