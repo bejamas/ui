@@ -19,6 +19,10 @@ const alpineState = JSON.stringify({
       "Keep Alpine focused on derived display state instead of re-implementing the primitive's selection logic.",
   },
 });
+const alpineToggleGroupProps = {
+  "x-on:toggle-group:change":
+    "density = ($event.detail.value[0] || 'balanced')",
+};
 ---
 
 <section
@@ -37,7 +41,7 @@ const alpineState = JSON.stringify({
   <ToggleGroup
     variant="outline"
     defaultValue="balanced"
-    x-on:toggle-group:change="density = ($event.detail.value[0] || 'balanced')"
+    {...alpineToggleGroupProps}
   >
     <ToggleGroupItem value="calm">Calm</ToggleGroupItem>
     <ToggleGroupItem value="balanced">Balanced</ToggleGroupItem>
