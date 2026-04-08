@@ -114,7 +114,9 @@ export default {
               fontWeight: 500,
               letterSpacing: "-0.03em",
               lineHeight: 1.05,
-              lineClamp: layout.titleLineClamp,
+              ...(typeof layout.titleLineClamp === "number"
+                ? { lineClamp: layout.titleLineClamp }
+                : {}),
               textWrap: "balance",
               wordBreak: "break-word",
             }}
