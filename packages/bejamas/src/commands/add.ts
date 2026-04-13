@@ -2,6 +2,7 @@ import path from "node:path";
 import { Command } from "commander";
 import { execa } from "execa";
 import prompts from "prompts";
+import { STYLES } from "@bejamas/create-config/server";
 
 import {
   syncAstroManagedFontCss,
@@ -29,12 +30,38 @@ import {
   ensurePinnedShadcnExecPrefix,
 } from "@/src/utils/shadcn-cli";
 import { spinner } from "@/src/utils/spinner";
-import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
+import {
+  buildStyleScopedRegistryUrl,
+  resolveRegistryUrl,
+} from "@/src/utils/ui-base-url";
 
 interface ParsedOutput {
   created: string[];
   updated: string[];
   skipped: string[];
+}
+
+const DEFAULT_REGISTRY_STYLE = "bejamas-juno";
+const styleNameToId = new Map(STYLES.map((style) => [style.name, style.id]));
+const knownStyleIds = new Set(STYLES.map((style) => style.id));
+
+export function resolveRegistryStyle(style?: string | null) {
+  const normalizedStyle = style?.trim();
+
+  if (!normalizedStyle) {
+    return DEFAULT_REGISTRY_STYLE;
+  }
+
+  if (knownStyleIds.has(normalizedStyle)) {
+    return normalizedStyle;
+  }
+
+  const mappedStyleId = styleNameToId.get(normalizedStyle);
+  if (mappedStyleId) {
+    return mappedStyleId;
+  }
+
+  return DEFAULT_REGISTRY_STYLE;
 }
 
 // Derive only the user-provided flags for shadcn to avoid losing options.
@@ -386,10 +413,15 @@ async function addComponents(
   isVerbose: boolean,
   isSilent: boolean,
   inspectionMode: boolean,
+  style: string,
 ): Promise<ParsedOutput> {
+  const shadcnRegistryUrl = buildStyleScopedRegistryUrl(
+    resolveRegistryUrl(),
+    style,
+  );
   const env = {
     ...process.env,
-    REGISTRY_URL: resolveRegistryUrl(),
+    REGISTRY_URL: shadcnRegistryUrl,
   };
   await ensurePinnedShadcnExecPrefix();
   const shadcnArgs = buildShadcnAddArgs(packages, forwardedOptions);
@@ -397,6 +429,7 @@ async function addComponents(
 
   if (isVerbose) {
     logger.info(`[bejamas-ui] ${invocation.cmd} ${invocation.args.join(" ")}`);
+    logger.info(`[bejamas-ui] shadcn registry: ${shadcnRegistryUrl}`);
   }
 
   const registrySpinner = spinner("Checking registry.", { silent: isSilent });
@@ -554,7 +587,7 @@ export const add = new Command()
       );
     }
 
-    const activeStyle = uiConfig?.style || config?.style || "bejamas-juno";
+    const activeStyle = resolveRegistryStyle(uiConfig?.style || config?.style);
     const totalComponents = componentsToAdd.length;
 
     for (let index = 0; index < componentsToAdd.length; index += 1) {
@@ -583,6 +616,7 @@ export const add = new Command()
         verbose,
         isSilent,
         inspectionMode,
+        activeStyle,
       );
 
       if (!inspectionMode) {

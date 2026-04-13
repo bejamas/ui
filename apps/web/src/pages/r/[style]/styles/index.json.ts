@@ -1,26 +1,21 @@
-import { STYLES } from "@bejamas/create-config/browser";
-import {
-  jsonResponse,
-  readStaticStyleRegistryIndex,
-} from "@/utils/create-registry";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { STYLES } from "@bejamas/create-config/server";
+import { jsonResponse } from "@/utils/create-registry";
 import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
-import {
-  resolveRegistryStyleId,
-  SUPPORTED_REGISTRY_STYLE_IDS,
-} from "@/utils/registry-style-compat";
 
 export const prerender = true;
 
+const staticStylesRoot = path.resolve(process.cwd(), "public/r/styles");
+
 export function getStaticPaths() {
-  return SUPPORTED_REGISTRY_STYLE_IDS.map((style) => ({
-    params: { style },
+  return STYLES.map((style) => ({
+    params: { style: style.id },
   }));
 }
 
 export async function GET({ params }: { params: { style: string } }) {
-  const styleId = resolveRegistryStyleId(params.style);
-  const style = STYLES.find((entry) => entry.id === styleId);
-
+  const style = STYLES.find((entry) => entry.id === params.style);
   if (!style) {
     return jsonResponse(
       { error: "Style not found." },
@@ -32,12 +27,14 @@ export async function GET({ params }: { params: { style: string } }) {
   }
 
   try {
-    return jsonResponse(await readStaticStyleRegistryIndex(styleId), {
+    const filepath = path.resolve(staticStylesRoot, "index.json");
+    const payload = JSON.parse(await fs.readFile(filepath, "utf8"));
+    return jsonResponse(payload, {
       headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
     });
   } catch {
     return jsonResponse(
-      { error: "Registry style not found." },
+      { error: "Registry styles not found." },
       {
         status: 404,
         headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
