@@ -1,28 +1,24 @@
-import { readdir } from "node:fs/promises";
+import fs from "node:fs/promises";
 import path from "node:path";
 import {
   buildFontRegistryItem,
   buildUtilsRegistryItem,
   STYLES,
 } from "@bejamas/create-config/server";
-import {
-  jsonResponse,
-  readStaticRegistryItem,
-  readStaticStyleRegistryItem,
-} from "@/utils/create-registry";
+import { jsonResponse } from "@/utils/create-registry";
 import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
+import { REQUESTED_STYLE_IDS } from "@/utils/registry-style-compat";
 
 export const prerender = true;
 
 const staticStylesRoot = path.resolve(process.cwd(), "public/r/styles");
-const requestedStyleIds = Array.from(
-  new Set(["new-york", "new-york-v4", ...STYLES.map((style) => style.id)]),
-);
+const staticRegistryRoot = path.resolve(process.cwd(), "public/r");
+const requestedStyleIds = REQUESTED_STYLE_IDS;
 
 export async function getStaticPaths() {
   const paths = await Promise.all(
     STYLES.map(async (style) => {
-      const filenames = await readdir(path.join(staticStylesRoot, style.id));
+      const filenames = await fs.readdir(path.join(staticStylesRoot, style.id));
       const names = filenames
         .filter((filename) => filename.endsWith(".json"))
         .map((filename) => filename.slice(0, -".json".length));
@@ -59,7 +55,8 @@ export async function GET({
   }
 
   try {
-    const item = await readStaticStyleRegistryItem(style.id, params.name);
+    const filepath = path.resolve(staticStylesRoot, style.id, `${params.name}.json`);
+    const item = JSON.parse(await fs.readFile(filepath, "utf8"));
     return jsonResponse(item, {
       headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
     });
@@ -79,7 +76,8 @@ export async function GET({
   }
 
   try {
-    const item = await readStaticRegistryItem(params.name);
+    const filepath = path.resolve(staticRegistryRoot, `${params.name}.json`);
+    const item = JSON.parse(await fs.readFile(filepath, "utf8"));
     return jsonResponse(item, {
       headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
     });

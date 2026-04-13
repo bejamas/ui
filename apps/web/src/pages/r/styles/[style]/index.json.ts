@@ -4,17 +4,22 @@ import {
   readStaticStyleRegistryIndex,
 } from "@/utils/create-registry";
 import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
+import {
+  resolveRegistryStyleId,
+  SUPPORTED_REGISTRY_STYLE_IDS,
+} from "@/utils/registry-style-compat";
 
 export const prerender = true;
 
 export function getStaticPaths() {
-  return STYLES.map((style) => ({
-    params: { style: style.id },
+  return SUPPORTED_REGISTRY_STYLE_IDS.map((style) => ({
+    params: { style },
   }));
 }
 
 export async function GET({ params }: { params: { style: string } }) {
-  const style = STYLES.find((entry) => entry.id === params.style);
+  const styleId = resolveRegistryStyleId(params.style);
+  const style = STYLES.find((entry) => entry.id === styleId);
 
   if (!style) {
     return jsonResponse(
@@ -27,7 +32,7 @@ export async function GET({ params }: { params: { style: string } }) {
   }
 
   try {
-    return jsonResponse(await readStaticStyleRegistryIndex(style.id), {
+    return jsonResponse(await readStaticStyleRegistryIndex(styleId), {
       headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
     });
   } catch {

@@ -6,7 +6,7 @@ import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
 
 export const prerender = true;
 
-const colorsDir = path.resolve(process.cwd(), "public/r/colors");
+const staticColorsRoot = path.resolve(process.cwd(), "public/r/colors");
 
 export function getStaticPaths() {
   return STYLES.flatMap((style) =>
@@ -35,7 +35,7 @@ export async function GET({
     );
   }
 
-  const filepath = path.resolve(colorsDir, `${params.name}.json`);
+  const filepath = path.resolve(staticColorsRoot, `${params.name}.json`);
 
   try {
     const payload = JSON.parse(await fs.readFile(filepath, "utf8"));

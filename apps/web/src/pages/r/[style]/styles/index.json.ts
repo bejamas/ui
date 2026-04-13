@@ -1,11 +1,12 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import { STYLES } from "@bejamas/create-config/server";
-import {
-  jsonResponse,
-  readStaticStyleRegistryStyles,
-} from "@/utils/create-registry";
+import { jsonResponse } from "@/utils/create-registry";
 import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
 
 export const prerender = true;
+
+const staticStylesRoot = path.resolve(process.cwd(), "public/r/styles");
 
 export function getStaticPaths() {
   return STYLES.map((style) => ({
@@ -26,7 +27,9 @@ export async function GET({ params }: { params: { style: string } }) {
   }
 
   try {
-    return jsonResponse(await readStaticStyleRegistryStyles(), {
+    const filepath = path.resolve(staticStylesRoot, "index.json");
+    const payload = JSON.parse(await fs.readFile(filepath, "utf8"));
+    return jsonResponse(payload, {
       headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
     });
   } catch {

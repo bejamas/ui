@@ -165,7 +165,7 @@ describe("static rendering boundary", () => {
       "export const prerender = true;",
     );
     expect(scopedStyleRegistryIndexSource).toContain(
-      "readStaticStyleRegistryStyles",
+      'path.resolve(process.cwd(), "public/r/styles")',
     );
     expect(scopedStyleRegistryIndexSource).toContain(
       "STATIC_ASSET_CACHE_CONTROL",
