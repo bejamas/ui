@@ -5,6 +5,10 @@ function normalizeUrl(url: string) {
   return url.trim().replace(/\/+$/, "");
 }
 
+function normalizePathSegment(segment: string) {
+  return segment.trim().replace(/^\/+|\/+$/g, "");
+}
+
 function deriveUiBaseUrlFromRegistryUrl(registryUrl: string) {
   const normalizedRegistryUrl = normalizeUrl(registryUrl);
   return normalizedRegistryUrl.endsWith("/r")
@@ -34,6 +38,17 @@ export function resolveRegistryUrl(env: NodeJS.ProcessEnv = process.env) {
   }
 
   return DEFAULT_REGISTRY_URL;
+}
+
+export function buildStyleScopedRegistryUrl(
+  registryUrl: string,
+  style: string,
+) {
+  const normalizedStyle = normalizePathSegment(style);
+
+  return normalizedStyle
+    ? `${normalizeUrl(registryUrl)}/${normalizedStyle}`
+    : normalizeUrl(registryUrl);
 }
 
 export function buildUiUrl(

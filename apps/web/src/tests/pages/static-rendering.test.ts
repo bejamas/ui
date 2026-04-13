@@ -38,6 +38,18 @@ const styleRegistryItemRouteFile = path.resolve(
   import.meta.dir,
   "../../pages/r/styles/[style]/[name].json.ts",
 );
+const scopedColorRegistryRouteFile = path.resolve(
+  import.meta.dir,
+  "../../pages/r/[style]/colors/[name].json.ts",
+);
+const scopedStyleRegistryIndexRouteFile = path.resolve(
+  import.meta.dir,
+  "../../pages/r/[style]/styles/index.json.ts",
+);
+const scopedStyleRegistryItemRouteFile = path.resolve(
+  import.meta.dir,
+  "../../pages/r/[style]/styles/[requestedStyle]/[name].json.ts",
+);
 const themeStylesheetRouteFile = path.resolve(
   import.meta.dir,
   "../../pages/r/themes/[slug].css.ts",
@@ -110,6 +122,18 @@ describe("static rendering boundary", () => {
       styleRegistryItemRouteFile,
       "utf8",
     );
+    const scopedColorRegistrySource = fs.readFileSync(
+      scopedColorRegistryRouteFile,
+      "utf8",
+    );
+    const scopedStyleRegistryIndexSource = fs.readFileSync(
+      scopedStyleRegistryIndexRouteFile,
+      "utf8",
+    );
+    const scopedStyleRegistrySource = fs.readFileSync(
+      scopedStyleRegistryItemRouteFile,
+      "utf8",
+    );
     const themeStylesheetSource = fs.readFileSync(
       themeStylesheetRouteFile,
       "utf8",
@@ -132,6 +156,31 @@ describe("static rendering boundary", () => {
     expect(styleRegistrySource).toContain("export const prerender = true;");
     expect(styleRegistrySource).toContain("STATIC_ASSET_CACHE_CONTROL");
     expect(styleRegistrySource).not.toContain("fileURLToPath");
+    expect(scopedColorRegistrySource).toContain(
+      'path.resolve(process.cwd(), "public/r/colors")',
+    );
+    expect(scopedColorRegistrySource).toContain("export const prerender = true;");
+    expect(scopedColorRegistrySource).toContain("STATIC_ASSET_CACHE_CONTROL");
+    expect(scopedStyleRegistryIndexSource).toContain(
+      "export const prerender = true;",
+    );
+    expect(scopedStyleRegistryIndexSource).toContain(
+      "readStaticStyleRegistryStyles",
+    );
+    expect(scopedStyleRegistryIndexSource).toContain(
+      "STATIC_ASSET_CACHE_CONTROL",
+    );
+    expect(scopedStyleRegistrySource).toContain(
+      'path.resolve(process.cwd(), "public/r/styles")',
+    );
+    expect(scopedStyleRegistrySource).toContain(
+      "export const prerender = true;",
+    );
+    expect(scopedStyleRegistrySource).toContain(
+      "STATIC_ASSET_CACHE_CONTROL",
+    );
+    expect(scopedStyleRegistrySource).toContain("requestedStyleIds");
+    expect(scopedStyleRegistrySource).not.toContain("fileURLToPath");
     expect(themeStylesheetSource).toContain("export const prerender = true;");
     expect(themeStylesheetSource).toContain("STATIC_ASSET_CACHE_CONTROL");
     expect(blockRouteSource).toContain("export const prerender = true;");

@@ -5,6 +5,7 @@ import {
   extractOptionsForShadcn,
   formatSkippedFilesHeading,
   hasInspectionFlags,
+  resolveRegistryStyle,
 } from "../src/commands/add";
 
 function createAddLikeCommand() {
@@ -133,5 +134,12 @@ describe("add output helpers", () => {
     expect(ensureTrailingNewline("Already has newline\n")).toBe(
       "Already has newline\n",
     );
+  });
+
+  test("normalizes supported Bejamas styles and falls back for upstream styles", () => {
+    expect(resolveRegistryStyle("bejamas-juno")).toBe("bejamas-juno");
+    expect(resolveRegistryStyle("vega")).toBe("bejamas-vega");
+    expect(resolveRegistryStyle("new-york-v4")).toBe("bejamas-juno");
+    expect(resolveRegistryStyle(undefined)).toBe("bejamas-juno");
   });
 });

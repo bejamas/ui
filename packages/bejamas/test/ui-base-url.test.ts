@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import {
+  buildStyleScopedRegistryUrl,
   DEFAULT_REGISTRY_URL,
   DEFAULT_UI_BASE_URL,
   resolveRegistryUrl,
@@ -30,5 +31,14 @@ describe("CLI UI URL resolution", () => {
 
     expect(resolveRegistryUrl(env)).toBe("http://localhost:4322/r");
     expect(resolveUiBaseUrl(env)).toBe("http://localhost:4322");
+  });
+
+  test("builds a style-scoped registry URL for shadcn installs", () => {
+    expect(
+      buildStyleScopedRegistryUrl("https://ui.bejamas.com/r/", "bejamas-juno"),
+    ).toBe("https://ui.bejamas.com/r/bejamas-juno");
+    expect(
+      buildStyleScopedRegistryUrl("https://ui.bejamas.com/r", "/bejamas-vega/"),
+    ).toBe("https://ui.bejamas.com/r/bejamas-vega");
   });
 });
