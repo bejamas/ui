@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { GET as getStyleIndex } from "../../pages/r/styles/[style]/index.json.ts";
 import { GET as getStyleItem } from "../../pages/r/styles/[style]/[name].json.ts";
+import { resolveRegistryRoot } from "../../utils/create-registry";
 import { rewriteLegacyStyleRegistryUrl } from "../../utils/style-registry-aliases";
 
 const middlewareFile = path.resolve(import.meta.dir, "../../middleware.ts");
@@ -36,6 +37,20 @@ describe("style registry aliases", () => {
 
     expect(source).toContain("rewriteLegacyStyleRegistryUrl(context.url)");
     expect(source).toContain("return next(rewrittenUrl);");
+  });
+
+  test("resolves the source registry root when prerender code runs from built output", () => {
+    const builtModuleUrl = new URL(
+      "../../../dist/server/chunks/create-registry.fake.mjs",
+      import.meta.url,
+    ).href;
+
+    expect(
+      resolveRegistryRoot({
+        importMetaUrl: builtModuleUrl,
+        cwd: appRoot,
+      }),
+    ).toBe(path.join(appRoot, "public/r"));
   });
 
   test("prerenders style registry paths for the legacy alias", async () => {
