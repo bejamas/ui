@@ -18,6 +18,7 @@ const BEJAMAS_ASTRO_FONTS = [
 // https://astro.build/config
 export default defineConfig({
   fonts: BEJAMAS_ASTRO_FONTS,
+  integrations: [],
   vite: {
     plugins: [tailwindcss()],
   },
