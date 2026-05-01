@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.3.3
+
+### Patch Changes
+
+- [#119](https://github.com/bejamas/ui/pull/119) [`6e60f44`](https://github.com/bejamas/ui/commit/6e60f447872639527909dfd7b72c2f0a01a35aba) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Fix Astro starter templates to use an `@lucide/astro` release compatible with Astro 6 so `bejamas init --template astro` no longer fails npm dependency resolution.
+
 ## 0.3.2
 
 ### Patch Changes
