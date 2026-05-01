@@ -46,10 +46,10 @@ export function buildCreateProjectCommand(options: {
   themeRef?: string | null;
 }) {
   const runners: Record<CreateProjectPackageManager, string> = {
-    pnpm: "pnpm dlx bejamas init",
-    npm: "npx bejamas init",
-    yarn: "yarn dlx bejamas init",
-    bun: "bunx bejamas init",
+    pnpm: "pnpm dlx bejamas@latest init",
+    npm: "npx bejamas@latest init",
+    yarn: "yarn dlx bejamas@latest init",
+    bun: "bunx bejamas@latest init",
   };
 
   return [
