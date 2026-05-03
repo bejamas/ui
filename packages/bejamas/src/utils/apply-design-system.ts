@@ -563,6 +563,15 @@ export function transformDesignSystemCss(
   config: DesignSystemConfig,
   themeVars?: ThemeVars,
 ) {
+  const themed = transformDesignSystemThemeCss(source, config, themeVars);
+  return transformDesignSystemFontCss(themed, config);
+}
+
+export function transformDesignSystemThemeCss(
+  source: string,
+  config: DesignSystemConfig,
+  themeVars?: ThemeVars,
+) {
   const effectiveThemeVars = themeVars ?? buildRegistryTheme(config).cssVars;
   const rootVars = {
     ...Object.fromEntries(
@@ -575,7 +584,6 @@ export function transformDesignSystemCss(
   const darkVars = {
     ...(effectiveThemeVars.dark ?? {}),
   };
-  const font = getFontValue(config.font);
   const tailwindImport = resolveManagedTailwindImport(source);
   let next = stripLegacyCreateBlock(source);
 
@@ -590,6 +598,18 @@ export function transformDesignSystemCss(
     ".dark",
     buildCssVarBlock(".dark", darkVars),
   );
+  return compactCss(next);
+}
+
+export function transformDesignSystemFontCss(
+  source: string,
+  config: Pick<DesignSystemConfig, "font">,
+) {
+  const font = getFontValue(config.font);
+  const tailwindImport = resolveManagedTailwindImport(source);
+  let next = stripLegacyCreateBlock(source);
+
+  next = upsertImports(next, [tailwindImport]);
   next = upsertThemeInlineFont(next, font?.font.variable);
 
   if (font) {
@@ -638,6 +658,8 @@ async function patchComponentsJson(
     style: getStyleId(config.style),
     iconLibrary: config.iconLibrary,
     rtl: config.rtl,
+    menuColor: config.menuColor,
+    menuAccent: config.menuAccent,
     tailwind: {
       ...(current.tailwind ?? {}),
       baseColor: config.baseColor,
@@ -648,6 +670,13 @@ async function patchComponentsJson(
   await fs.writeJson(filepath, next, { spaces: 2 });
 }
 
+async function patchComponentsJsonWithTheme(
+  filepath: string,
+  config: DesignSystemConfig,
+) {
+  await patchComponentsJson(filepath, config);
+}
+
 async function patchCssFileWithTheme(
   filepath: string,
   config: DesignSystemConfig,
@@ -655,6 +684,16 @@ async function patchCssFileWithTheme(
 ) {
   const current = await fs.readFile(filepath, "utf8");
   const next = transformDesignSystemCss(current, config, themeVars);
+  await fs.writeFile(filepath, next, "utf8");
+}
+
+async function patchCssFileWithThemeOnly(
+  filepath: string,
+  config: DesignSystemConfig,
+  themeVars?: ThemeVars,
+) {
+  const current = await fs.readFile(filepath, "utf8");
+  const next = transformDesignSystemThemeCss(current, config, themeVars);
   await fs.writeFile(filepath, next, "utf8");
 }
 
@@ -944,6 +983,52 @@ export async function applyDesignSystemToProject(
     ].map((filepath) => patchStarterPageFile(filepath, config)),
   );
 
+  await syncDesignSystemFontsInProject(projectPath, config);
+}
+
+export async function applyDesignSystemThemeToProject(
+  projectPath: string,
+  config: DesignSystemConfig,
+  options: {
+    themeVars?: ThemeVars;
+  } = {},
+) {
+  const componentJsonFiles = await fg("**/components.json", {
+    cwd: projectPath,
+    ignore: ["**/node_modules/**", "**/dist/**", "**/.astro/**"],
+  });
+  const cssFiles = new Set<string>();
+
+  for (const relativePath of componentJsonFiles) {
+    const absolutePath = path.resolve(projectPath, relativePath);
+    await patchComponentsJsonWithTheme(absolutePath, config);
+
+    const json = await fs.readJson(absolutePath);
+    const cssPath = json?.tailwind?.css;
+    if (typeof cssPath === "string" && cssPath.length > 0) {
+      cssFiles.add(path.resolve(path.dirname(absolutePath), cssPath));
+    }
+  }
+
+  await Promise.all(
+    Array.from(cssFiles).map((filepath) =>
+      patchCssFileWithThemeOnly(filepath, config, options.themeVars),
+    ),
+  );
+  await syncPackageIconDependencies(projectPath, config);
+}
+
+export async function applyDesignSystemFontToProject(
+  projectPath: string,
+  config: DesignSystemConfig,
+) {
+  await syncDesignSystemFontsInProject(projectPath, config);
+}
+
+export async function syncDesignSystemFontsInProject(
+  projectPath: string,
+  config: Pick<DesignSystemConfig, "font" | "fontHeading">,
+) {
   const managedFonts = [
     toManagedAstroFont(config.font),
     config.fontHeading !== "inherit"
@@ -960,6 +1045,7 @@ export async function applyDesignSystemToProject(
       managedFonts,
       managedFont.cssVariable,
     );
+    await syncAstroManagedFontCss(projectPath, managedFont.cssVariable);
     await cleanupAstroFontPackages(projectPath);
   }
 }

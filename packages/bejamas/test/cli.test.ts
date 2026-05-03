@@ -47,6 +47,7 @@ test("shows help with --help", async () => {
   expect(stderr).toBe("");
   expect(stdout).toContain("bejamas");
   expect(stdout).toMatch(/Usage|Commands/i);
+  expect(stdout).toContain("apply");
   expect(stdout).toContain("info");
   expect(stdout).toContain("docs");
   expect(stdout).toContain("docs:build");
@@ -69,6 +70,16 @@ test("shows inspection flags in add help", async () => {
   expect(stdout).toContain("--dry-run");
   expect(stdout).toContain("--diff");
   expect(stdout).toContain("--view");
+});
+
+test("shows apply preset flags in apply help", async () => {
+  const { stdout, stderr, exitCode } = await runCli(["apply", "--help"]);
+
+  expect(exitCode).toBe(0);
+  expect(stderr).toBe("");
+  expect(stdout).toContain("--preset");
+  expect(stdout).toContain("--only");
+  expect(stdout).toContain("--cwd");
 });
 
 test("shows wrapper flags in docs help", async () => {

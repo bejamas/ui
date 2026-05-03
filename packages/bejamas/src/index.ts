@@ -7,6 +7,7 @@ import { docs } from "@/src/commands/docs";
 import { docsBuild } from "@/src/commands/docs-build";
 import { docsCheck } from "@/src/commands/docs-check";
 import { add } from "@/src/commands/add";
+import { apply } from "@/src/commands/apply";
 import { info } from "@/src/commands/info";
 
 const require = createRequire(import.meta.url);
@@ -22,6 +23,7 @@ const program = new Command()
 
 program.addCommand(init);
 program.addCommand(add);
+program.addCommand(apply);
 program.addCommand(info);
 program.addCommand(docs);
 program.addCommand(docsBuild);

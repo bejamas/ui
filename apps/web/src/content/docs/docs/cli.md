@@ -9,6 +9,7 @@ The `bejamas` CLI is a thin Astro-first wrapper over shadcn. Use it for:
 
 - **`init`**: scaffold Astro (single app or monorepo).
 - **`add`**: install from registries with short names.
+- **`apply`**: switch an existing app to a different preset.
 - **`info`**: show the current project and config summary from shadcn.
 - **`docs`**: fetch docs, examples, and API links for components.
 - **`docs:build`**: generate MDX docs from `.astro` comments.
@@ -30,7 +31,7 @@ npx bejamas@latest --help
 
 Create an Astro app or monorepo, wire Tailwind v4, tokens, base styles, and components.json.
 
-You can also switch an existing app to a different preset by rerunning `init --preset`. Installed UI components are reconfigured to the new preset automatically; use `--no-reinstall` to opt out.
+You can also switch an existing app to a different preset by rerunning `init --preset`, but new projects should use `apply`. Installed UI components are reconfigured to the new preset automatically when applying the full preset.
 
 Starter templates are English-only by default. Use `--rtl --lang <ar|fa|he>` when you want the CLI to add the template i18n/RTL wiring.
 
@@ -49,7 +50,23 @@ Base tokens & CSS variables
 
 components.json (Bejamas schema)
 
-Compatibility note: Bejamas runs exact `shadcn` v4.1.1 for managed CLI commands. Bejamas still preserves its custom `init` behavior, including preset switching, style support, and `init --base-color`.
+Compatibility note: Bejamas runs exact `shadcn` v4.6.0 for managed CLI commands. Bejamas still preserves its custom `init` behavior, including preset switching, style support, and `init --base-color`.
+
+### apply <preset>
+
+Apply a Bejamas preset to an existing project.
+
+#### Usage
+
+```bash
+npx bejamas apply --preset <encoded-preset>
+npx bejamas apply <encoded-preset>
+npx bejamas apply <encoded-preset> --only theme
+npx bejamas apply <encoded-preset> --only font
+npx bejamas apply <encoded-preset> --only theme,font
+```
+
+Full apply updates the design system and re-installs detected UI components. Partial apply keeps installed component files in place and updates only the selected theme and/or font wiring.
 
 ### add <name>
 

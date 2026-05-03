@@ -906,13 +906,12 @@ async function main() {
     "packages/ui/src/components/tabs/TabsList.astro",
   );
 
-  console.log("[smoke] Switching astro project to a new preset");
+  console.log("[smoke] Applying a new preset to astro project");
   await run(
     "bun",
     [
       cliEntry,
-      "init",
-      "--force",
+      "apply",
       "--yes",
       "--preset",
       astroSwitchPreset,
@@ -923,13 +922,12 @@ async function main() {
     childEnv,
   );
 
-  console.log("[smoke] Switching astro-monorepo project to a new preset");
+  console.log("[smoke] Applying a new preset to astro-monorepo project");
   await run(
     "bun",
     [
       cliEntry,
-      "init",
-      "--force",
+      "apply",
       "--yes",
       "--preset",
       monorepoSwitchPreset,

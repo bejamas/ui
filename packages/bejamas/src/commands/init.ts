@@ -18,14 +18,9 @@ import { clearRegistryContext } from "@/src/registry/context";
 import { preFlightInit } from "@/src/preflights/preflight-init";
 import {
   applyDesignSystemToProject,
-  syncAstroManagedFontCss,
+  syncDesignSystemFontsInProject,
   syncManagedTailwindCss,
 } from "@/src/utils/apply-design-system";
-import {
-  cleanupAstroFontPackages,
-  syncAstroFontsInProject,
-  toManagedAstroFont,
-} from "@/src/utils/astro-fonts";
 import { fixAstroImports } from "@/src/utils/astro-imports";
 import { TEMPLATES, createProject } from "@/src/utils/create-project";
 import * as ERRORS from "@/src/utils/errors";
@@ -107,7 +102,7 @@ function buildThemeVarsFromRegistryItem(item: RegistryItem | null) {
   return item?.cssVars ?? null;
 }
 
-async function fetchInitThemeVars(initUrl: string) {
+export async function fetchInitThemeVars(initUrl: string) {
   const response = await fetch(initUrl);
   if (!response.ok) {
     return null;
@@ -400,75 +395,66 @@ export async function runInit(
   }
 
   try {
-    const env = {
-      ...process.env,
-      REGISTRY_URL: resolveRegistryUrl(),
-    };
-    const initUrl = buildInitUrl(designConfig, options.themeRef);
-    const themeVars = options.themeRef
-      ? ((await fetchInitThemeVars(initUrl)) ?? undefined)
-      : undefined;
-    const shouldReinstall = shouldReinstallExistingComponents(options);
-    const reinstallComponents = shouldReinstall
-      ? await getInstalledUiComponents(options.cwd)
-      : [];
-    const forwardedOptions = ensureShadcnReinstallFlag(
-      options.forwardedOptions ?? [],
-      shouldReinstall,
-    );
-
-    await runShadcnCommand({
-      cwd: options.cwd,
-      args: ["init", initUrl, ...reinstallComponents, ...forwardedOptions],
-      env,
-    });
-
-    await syncManagedTailwindCss(options.cwd);
-
-    const managedFonts = [
-      toManagedAstroFont(designConfig.font),
-      designConfig.fontHeading !== "inherit"
-        ? toManagedAstroFont(`font-heading-${designConfig.fontHeading}`)
-        : null,
-    ].filter((font): font is NonNullable<typeof font> => font !== null);
-    const managedFont = managedFonts.find(
-      (font) => font.cssVariable !== "--font-heading",
-    );
-
-    if (managedFonts.length > 0 && managedFont) {
-      await syncAstroFontsInProject(
-        options.cwd,
-        managedFonts,
-        managedFont.cssVariable,
-      );
-      await syncAstroManagedFontCss(options.cwd, managedFont.cssVariable);
-      await cleanupAstroFontPackages(options.cwd);
-    }
-
-    await applyDesignSystemToProject(options.cwd, designConfig, {
-      themeVars,
-    });
-
-    if (reinstallComponents.length > 0) {
-      const config = await getConfig(options.cwd);
-      const uiDir = config?.resolvedPaths.ui ?? "";
-      const activeStyle = config?.style ?? "bejamas-juno";
-
-      if (uiDir) {
-        await reorganizeComponents(
-          reinstallComponents,
-          uiDir,
-          resolveRegistryUrl(),
-          false,
-          activeStyle,
-          true,
-        );
-      }
-
-      await fixAstroImports(options.cwd, false);
-    }
+    return await runExistingProjectInit(options, designConfig);
   } catch {
     // shadcn already printed the detailed error to stdio, avoid double-reporting
     process.exit(1);
   }
+}
+
+export async function runExistingProjectInit(
+  options: z.infer<typeof initOptionsSchema> & {
+    forwardedOptions?: string[];
+  },
+  designConfig: DesignSystemConfig = resolveDesignSystemConfig(options),
+) {
+  const env = {
+    ...process.env,
+    REGISTRY_URL: resolveRegistryUrl(),
+  };
+  const initUrl = buildInitUrl(designConfig, options.themeRef);
+  const themeVars = options.themeRef
+    ? ((await fetchInitThemeVars(initUrl)) ?? undefined)
+    : undefined;
+  const shouldReinstall = shouldReinstallExistingComponents(options);
+  const reinstallComponents = shouldReinstall
+    ? await getInstalledUiComponents(options.cwd)
+    : [];
+  const forwardedOptions = ensureShadcnReinstallFlag(
+    options.forwardedOptions ?? [],
+    shouldReinstall,
+  );
+
+  await runShadcnCommand({
+    cwd: options.cwd,
+    args: ["init", initUrl, ...reinstallComponents, ...forwardedOptions],
+    env,
+  });
+
+  await syncManagedTailwindCss(options.cwd);
+  await syncDesignSystemFontsInProject(options.cwd, designConfig);
+  await applyDesignSystemToProject(options.cwd, designConfig, {
+    themeVars,
+  });
+
+  if (reinstallComponents.length > 0) {
+    const config = await getConfig(options.cwd);
+    const uiDir = config?.resolvedPaths.ui ?? "";
+    const activeStyle = config?.style ?? "bejamas-juno";
+
+    if (uiDir) {
+      await reorganizeComponents(
+        reinstallComponents,
+        uiDir,
+        resolveRegistryUrl(),
+        false,
+        activeStyle,
+        true,
+      );
+    }
+
+    await fixAstroImports(options.cwd, false);
+  }
+
+  return await getConfig(options.cwd);
 }
