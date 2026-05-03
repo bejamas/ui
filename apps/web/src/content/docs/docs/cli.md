@@ -10,6 +10,7 @@ The `bejamas` CLI is a thin Astro-first wrapper over shadcn. Use it for:
 - **`init`**: scaffold Astro (single app or monorepo).
 - **`add`**: install from registries with short names.
 - **`apply`**: switch an existing app to a different preset.
+- **`preset`**: decode, share, open, or resolve Bejamas preset codes.
 - **`info`**: show the current project and config summary from shadcn.
 - **`docs`**: fetch docs, examples, and API links for components.
 - **`docs:build`**: generate MDX docs from `.astro` comments.
@@ -85,6 +86,23 @@ npx bejamas add @shadcn/button
 Namespaced form `@namespace/name` targets a specific registry.
 
 --dry-run shows what would be written.
+
+### preset
+
+Manage Bejamas preset codes.
+
+#### Usage
+
+```bash
+npx bejamas preset decode <encoded-preset>
+npx bejamas preset decode <encoded-preset> --json
+npx bejamas preset url <encoded-preset>
+npx bejamas preset open <encoded-preset>
+npx bejamas preset resolve
+npx bejamas preset resolve --json
+```
+
+`preset resolve` reads the current `components.json`, design-system CSS, and Astro managed font wiring to produce the nearest Bejamas preset code. In a monorepo, run it with `-c <workspace>`.
 
 ### info
 
