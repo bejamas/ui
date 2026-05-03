@@ -1,9 +1,9 @@
 ---
-title: "Why use bejamas/ui if shadcn/ui works with Astro?"
+title: "How bejamas/ui ships 5× less JavaScript than shadcn/ui"
 description: "A three-way benchmark comparing Astro + b/ui, Astro + shadcn/ui, and Next.js + shadcn/ui on the same marketing page."
 draft: true
-publishDate: 2026-04-07
-updatedDate: 2026-04-07
+publishDate: 2026-05-04
+updatedDate: 2026-05-04
 authors:
   - name: "Thom Krupa"
     role: "Co-founder"
@@ -48,9 +48,17 @@ The page includes:
 - A contact form with two selects, three inputs, one checkbox, and labels
 - A footer with a separator and link columns
 
+Below is the exact marketing page used for the benchmark. You can also interact with the live demo here: [astro-bui.vercel.app](https://astro-bui.vercel.app/)
+
+<video
+  src="https://cdn.sanity.io/files/34ent8ly/production/f2563b61d6c1408a8c7ce9b7a3ba4d60d87cbc4a.mp4"
+  class="w-full rounded-xl"
+  controls
+/>
+
 Across the page, the benchmark uses 13 component types: `NavigationMenu`, `Select`, `HoverCard`, `Tooltip`, `Tabs`, `Accordion`, `Button`, `Card`, `Badge`, `Input`, `Label`, `Checkbox`, and `Separator`.
 
-The Astro + `shadcn/ui` version is intentionally not a straw man. Static components such as buttons and cards are server-rendered where possible, while interactive sections hydrate as separate `client:load` islands. That isolates the cost of React and Radix without Next.js overhead.
+The Astro + shadcn/ui version is designed to be a fair comparison, not a worst-case scenario. Static components such as buttons and cards are server-rendered where possible, while interactive sections hydrate as separate `client:load` islands. This way, what you see in the numbers is the cost of React and Radix alone, not Next.js on top of it.
 
 ## The result
 
@@ -63,6 +71,14 @@ In the tables below, `b/ui` means Astro + `bejamas/ui`, `Astro shadcn` means Ast
 | JS files | **7** | 19 | 10 |
 | vs b/ui, gzip | **1x** | 5.3x more | 9.6x more |
 | Zero-JS types | 7 of 13 | 3 of 13 | 0 of 13 |
+
+The difference is easier to understand visually:
+
+<img
+  src="https://cdn.sanity.io/images/34ent8ly/production/29fb820c7720b680112b8231b38c204398f8a99b-1536x1024.png"
+  alt="Component bundle size breakdown"
+  class="w-full rounded-xl"
+/>
 
 The Next.js number is useful because many teams know `shadcn/ui` through Next.js. But the more important comparison is the middle column.
 
@@ -83,13 +99,27 @@ In the benchmark, the Astro + `shadcn/ui` version includes:
 - Individual hydrated islands for navigation menu, select, tabs, accordion, tooltip, and hover card behavior
 - Astro's island runtime
 
+<img
+  src="https://cdn.sanity.io/images/34ent8ly/production/4f9c6838eac160e799cb4127f56b970a486c0822-1402x1122.png"
+  alt="Heavy vs light stack comparison"
+  class="w-full rounded-xl"
+/>
+
 That is why the Astro + `shadcn/ui` version lands around 120 KB gzip even though the page is statically rendered and the islands are split per section.
+
+The following breakdown shows exactly where that 120 KB comes from:
+
+<img
+  src="https://cdn.sanity.io/images/34ent8ly/production/28f781c8ec9571403acc3cac24f001d985b04fd6-1536x1024.png"
+  alt="JavaScript bundle comparison infographic"
+  class="w-full rounded-xl"
+/>
 
 ## What b/ui changes
 
 `bejamas/ui` keeps the same broad authoring model people like in `shadcn/ui`: own the component code, style with Tailwind, and compose primitives directly in your app.
 
-The implementation model is different. Components are authored as Astro components and render HTML first. Interactive components attach behavior through `@data-slot` packages instead of hydrating a React tree.
+The implementation model is different. Components are authored as Astro components and render HTML first. Interactive components attach behavior through [`@data-slot` packages](https://ui.bejamas.com/blog/introducing-data-slot) instead of hydrating a React tree.
 
 That means static components stay static:
 
@@ -105,6 +135,12 @@ That means static components stay static:
 
 In Astro + `bejamas/ui`, 7 of 13 component types ship no JavaScript. Interactive components still ship JavaScript, but only the small behavior module for that pattern.
 
+<img
+  src="https://cdn.sanity.io/images/34ent8ly/production/7bbdd554706f1afa05484539ad8e976aca48a0f6-1378x1142.png"
+  alt="JavaScript bundle comparison infographic"
+  class="w-full rounded-xl"
+/>
+
 The benchmark breakdown for Astro + `bejamas/ui` was:
 
 | Interactive module | Gzipped JS |
@@ -117,6 +153,12 @@ The benchmark breakdown for Astro + `bejamas/ui` was:
 | Accordion | 1.17 KB |
 | Shared Astro runtime | 4.70 KB |
 | Total | **22.80 KB** |
+
+<img
+  src="https://cdn.sanity.io/images/34ent8ly/production/df918f01ddca4dff14f72764acf982cc698d4482-1464x1074.png"
+  alt="JavaScript bundle comparison infographic"
+  class="w-full rounded-xl"
+/>
 
 The important detail is not just that the bundle is smaller. It is that the bundle matches the actual behavior on the page.
 
@@ -146,3 +188,11 @@ So why use `bejamas/ui` if `shadcn/ui` works with Astro?
 Because the goal is not just to run shadcn-style components inside Astro. The goal is to keep the Astro-native performance model all the way through the component layer.
 
 `bejamas/ui` is for teams that want component ownership, Tailwind styling, and familiar composition without carrying a React runtime for content-first Astro pages. The benchmark gives that tradeoff a concrete shape: the same page, the same component categories, and 22.80 KB of gzipped JavaScript instead of 119.88 KB or 219.22 KB.
+
+## See the benchmark for yourself
+
+All three implementations, build outputs, measurement scripts, and performance results are available in the benchmark repository.
+
+That includes bundle analysis, Lighthouse scores, code coverage data, and Core Web Vitals measurements so you can inspect the results firsthand.
+
+[Explore the benchmark on GitHub](https://github.com/bejamas/ui-benchmark).
