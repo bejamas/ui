@@ -7,8 +7,8 @@ import {
 import { extractPassthroughArgs } from "../src/utils/shadcn-command";
 
 describe("pinned shadcn invocation", () => {
-  test("uses an isolated exact shadcn@4.1.1 npm exec invocation", () => {
-    expect(PINNED_SHADCN_VERSION).toBe("4.1.1");
+  test("uses an isolated exact shadcn@4.6.0 npm exec invocation", () => {
+    expect(PINNED_SHADCN_VERSION).toBe("4.6.0");
     expect(buildPinnedShadcnInvocation(["info"])).toEqual({
       cmd: process.platform === "win32" ? "npm.cmd" : "npm",
       args: [
@@ -16,7 +16,7 @@ describe("pinned shadcn invocation", () => {
         "--yes",
         "--prefix",
         PINNED_SHADCN_EXEC_PREFIX,
-        "--package=shadcn@4.1.1",
+        "--package=shadcn@4.6.0",
         "--",
         "shadcn",
         "info",

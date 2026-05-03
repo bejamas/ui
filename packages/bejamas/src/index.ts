@@ -7,7 +7,9 @@ import { docs } from "@/src/commands/docs";
 import { docsBuild } from "@/src/commands/docs-build";
 import { docsCheck } from "@/src/commands/docs-check";
 import { add } from "@/src/commands/add";
+import { apply } from "@/src/commands/apply";
 import { info } from "@/src/commands/info";
+import { preset } from "@/src/commands/preset";
 
 const require = createRequire(import.meta.url);
 const pkg = require("../package.json");
@@ -22,6 +24,8 @@ const program = new Command()
 
 program.addCommand(init);
 program.addCommand(add);
+program.addCommand(apply);
+program.addCommand(preset);
 program.addCommand(info);
 program.addCommand(docs);
 program.addCommand(docsBuild);
