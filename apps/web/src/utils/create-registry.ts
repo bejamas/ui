@@ -1,13 +1,36 @@
+import fs from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const registryRoot = path.resolve(__dirname, "../../public/r");
+export function resolveRegistryRoot(
+  options: {
+    importMetaUrl?: string;
+    cwd?: string;
+  } = {},
+) {
+  const importMetaUrl = options.importMetaUrl ?? import.meta.url;
+  const cwd = options.cwd ?? process.cwd();
+  const candidates = [
+    path.resolve(cwd, "public/r"),
+    path.resolve(cwd, "apps/web/public/r"),
+    fileURLToPath(new URL("../../public/r", importMetaUrl)),
+    fileURLToPath(new URL("../../client/r", importMetaUrl)),
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
+      return candidate;
+    }
+  }
+
+  throw new Error(
+    `Unable to resolve registry root. Checked: ${candidates.join(", ")}`,
+  );
+}
 
 async function readStaticRegistryJson(relativePath: string) {
-  const filepath = path.resolve(registryRoot, relativePath);
+  const filepath = path.resolve(resolveRegistryRoot(), relativePath);
   const contents = await readFile(filepath, "utf8");
   return JSON.parse(contents);
 }

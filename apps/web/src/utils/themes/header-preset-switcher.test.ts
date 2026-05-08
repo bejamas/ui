@@ -8,12 +8,19 @@ describe("header preset switcher state", () => {
 
     expect(state.current.label).toBe("Juno - Inter");
     expect(state.presets.map((preset) => preset.label)).toEqual([
-      "Juno - Inter",
-      "Vega - Playfair Display",
+      "Juno - Public Sans",
+      "Nova - Merriweather",
+      "Vega - Space Grotesk",
+      "Luma - Montserrat",
       "Lyra - Geist Mono",
-      "Nova - Instrument Sans",
     ]);
-    expect(state.presets[3]?.id).toBe("b8EStl");
+    expect(state.presets.map((preset) => preset.id)).toEqual([
+      "c2WNn9RMO",
+      "b4YFDQACWW",
+      "c6FTeuysS",
+      "c6aKQ9BCK",
+      "bwR6bIG",
+    ]);
     expect(state.presets[0]?.createHref).toMatch(/^\/create\?preset=/);
   });
 

@@ -6,15 +6,30 @@ import {
   readStaticStyleRegistryItem,
 } from "@/utils/create-registry";
 import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
+import {
+  LEGACY_STYLE_REGISTRY_IDS,
+  resolveStyleRegistryId,
+} from "@/utils/style-registry-aliases";
 
 export const prerender = true;
 
-const staticStylesRoot = path.resolve(process.cwd(), "public/r/styles");
+const styleRouteIds = [
+  ...new Set([
+    ...STYLES.map((style) => style.id),
+    ...LEGACY_STYLE_REGISTRY_IDS,
+  ]),
+];
+
+const resolveStaticStylesRoot = () =>
+  path.resolve(process.cwd(), "public/r/styles");
 
 export async function getStaticPaths() {
   const paths = await Promise.all(
-    STYLES.map(async (style) => {
-      const filenames = await readdir(path.join(staticStylesRoot, style.id));
+    styleRouteIds.map(async (styleId) => {
+      const resolvedStyleId = resolveStyleRegistryId(styleId);
+      const filenames = await readdir(
+        path.join(resolveStaticStylesRoot(), resolvedStyleId),
+      );
 
       return filenames
         .filter(
@@ -22,7 +37,7 @@ export async function getStaticPaths() {
         )
         .map((filename) => ({
           params: {
-            style: style.id,
+            style: styleId,
             name: filename.slice(0, -".json".length),
           },
         }));
@@ -37,7 +52,8 @@ export async function GET({
 }: {
   params: { style: string; name: string };
 }) {
-  const style = STYLES.find((entry) => entry.id === params.style);
+  const styleId = resolveStyleRegistryId(params.style);
+  const style = STYLES.find((entry) => entry.id === styleId);
   if (!style) {
     return jsonResponse(
       { error: "Style not found." },
@@ -59,7 +75,7 @@ export async function GET({
   }
 
   try {
-    const item = await readStaticStyleRegistryItem(style.id, params.name);
+    const item = await readStaticStyleRegistryItem(styleId, params.name);
     return jsonResponse(item, {
       headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
     });

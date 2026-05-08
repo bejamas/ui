@@ -1,5 +1,19 @@
 # bejamas
 
+## 0.4.0
+
+### Minor Changes
+
+- [#121](https://github.com/bejamas/ui/pull/121) [`cab232e`](https://github.com/bejamas/ui/commit/cab232e8ae59a1c2ab8513208e4f948a3c675718) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Add a Bejamas-native `apply` command for preset switching, including partial `--only theme`, `--only font`, and `--only theme,font` support, and bump the managed shadcn runner to 4.6.0.
+
+- [#121](https://github.com/bejamas/ui/pull/121) [`1ad30c7`](https://github.com/bejamas/ui/commit/1ad30c7bd83274769dd099361c538d3506dc52cf) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Add the native `bejamas preset` command for decoding preset codes, creating preset URLs, opening presets, and resolving the active project preset.
+
+## 0.3.3
+
+### Patch Changes
+
+- [#119](https://github.com/bejamas/ui/pull/119) [`6e60f44`](https://github.com/bejamas/ui/commit/6e60f447872639527909dfd7b72c2f0a01a35aba) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Fix Astro starter templates to use an `@lucide/astro` release compatible with Astro 6 so `bejamas init --template astro` no longer fails npm dependency resolution.
+
 ## 0.3.2
 
 ### Patch Changes

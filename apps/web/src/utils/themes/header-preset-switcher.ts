@@ -1,11 +1,8 @@
 import {
   DEFAULT_DESIGN_SYSTEM_CONFIG,
-  DEFAULT_PRESET_CONFIG,
   decodePreset,
-  encodePreset,
   isPresetCode,
   type DesignSystemConfig,
-  type PresetConfig,
 } from "@bejamas/create-config/server";
 import { type ThemeOverrides } from "./create-theme";
 import { getThemeOverridesByRef } from "./create-theme.server";
@@ -29,100 +26,29 @@ export interface HeaderPresetSwitcherState {
   selectedPresetId: string | null;
 }
 
-type CuratedPresetDefinition = {
-  config: DesignSystemConfig;
-};
+const CURATED_HEADER_PRESET_CODES = [
+  "c2WNn9RMO",
+  "b4YFDQACWW",
+  "c6FTeuysS",
+  "c6aKQ9BCK",
+  "bwR6bIG",
+] as const;
 
-function toPresetConfig(config: DesignSystemConfig): Partial<PresetConfig> {
-  return {
-    style: config.style,
-    baseColor: config.baseColor,
-    theme: config.theme,
-    iconLibrary: config.iconLibrary,
-    font: config.font,
-    fontHeading: config.fontHeading,
-    radius: config.radius,
-    menuAccent: config.menuAccent,
-    menuColor: config.menuColor,
-  } as Partial<PresetConfig>;
-}
+function buildCuratedPresetOption(presetId: string): HeaderPresetOption {
+  const decoded = decodePreset(presetId);
+  if (!decoded) {
+    throw new Error(`Invalid curated header preset: ${presetId}`);
+  }
 
-const CURATED_HEADER_PRESET_DEFINITIONS = [
-  {
-    config: {
-      style: "juno",
-      baseColor: "neutral",
-      theme: "blue",
-      iconLibrary: "lucide",
-      font: "inter",
-      fontHeading: "inherit",
-      radius: "default",
-      menuColor: "default-translucent",
-      menuAccent: "subtle",
-      template: "astro",
-      rtl: false,
-      rtlLanguage: "ar",
-    },
-  },
-  {
-    config: {
-      style: "vega",
-      baseColor: "olive",
-      theme: "amber",
-      iconLibrary: "lucide",
-      font: "playfair-display",
-      fontHeading: "inherit",
-      radius: "default",
-      menuColor: "default",
-      menuAccent: "subtle",
-      template: "astro",
-      rtl: false,
-      rtlLanguage: "ar",
-    },
-  },
-  {
-    config: {
-      style: "lyra",
-      baseColor: "zinc",
-      theme: "cyan",
-      iconLibrary: "lucide",
-      font: "geist-mono",
-      fontHeading: "inherit",
-      radius: "default",
-      menuColor: "default",
-      menuAccent: "subtle",
-      template: "astro",
-      rtl: false,
-      rtlLanguage: "ar",
-    },
-  },
-  {
-    config: {
-      style: "nova",
-      baseColor: "neutral",
-      theme: "bejamas-sunflower",
-      iconLibrary: "lucide",
-      font: "instrument-sans",
-      fontHeading: "inherit",
-      radius: "default",
-      menuColor: "inverted",
-      menuAccent: "subtle",
-      template: "astro",
-      rtl: false,
-      rtlLanguage: "ar",
-    },
-  },
-] as const satisfies readonly CuratedPresetDefinition[];
-
-function buildCuratedPresetOption(
-  definition: CuratedPresetDefinition,
-): HeaderPresetOption {
-  const presetId = encodePreset(toPresetConfig(definition.config));
-  const resolved = resolveDesignSystemTheme(definition.config);
+  const config = {
+    ...DEFAULT_DESIGN_SYSTEM_CONFIG,
+    ...decoded,
+  } satisfies DesignSystemConfig;
+  const resolved = resolveDesignSystemTheme(config);
 
   return {
     id: presetId,
-    label: getPresetLabel(definition.config),
+    label: getPresetLabel(config),
     swatches: getSwatchesFromStyles(resolved.styles),
     createHref: buildCreateHref(presetId, null),
     themeRef: null,
@@ -163,20 +89,17 @@ export function buildHeaderPresetSwitcherState(options: {
   themeRef?: string | null;
   themeOverrides?: Partial<ThemeOverrides> | null;
 }): HeaderPresetSwitcherState {
-  const presets = CURATED_HEADER_PRESET_DEFINITIONS.map(
-    buildCuratedPresetOption,
-  );
+  const presets = CURATED_HEADER_PRESET_CODES.map(buildCuratedPresetOption);
   const themeCookieValue = options.themeCookieValue ?? null;
   const themeRef = options.themeRef ?? null;
 
   if (!themeCookieValue) {
+    const current = buildDefaultCurrentSummary();
+
     return {
       current: {
-        ...buildDefaultCurrentSummary(),
-        createHref: buildCreateHref(
-          encodePreset(DEFAULT_PRESET_CONFIG),
-          themeRef,
-        ),
+        ...current,
+        createHref: buildCreateHref(current.id, themeRef),
         themeRef,
       },
       presets,

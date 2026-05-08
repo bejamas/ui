@@ -2,7 +2,7 @@ import os from "node:os";
 import path from "node:path";
 import fs from "node:fs/promises";
 
-export const PINNED_SHADCN_VERSION = "4.1.1";
+export const PINNED_SHADCN_VERSION = "4.6.0";
 export const PINNED_SHADCN_PACKAGE = `shadcn@${PINNED_SHADCN_VERSION}`;
 export const PINNED_SHADCN_EXEC_PREFIX = path.join(
   os.tmpdir(),

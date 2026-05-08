@@ -4,17 +4,29 @@ import {
   readStaticStyleRegistryIndex,
 } from "@/utils/create-registry";
 import { STATIC_ASSET_CACHE_CONTROL } from "@/utils/http-cache";
+import {
+  LEGACY_STYLE_REGISTRY_IDS,
+  resolveStyleRegistryId,
+} from "@/utils/style-registry-aliases";
 
 export const prerender = true;
 
+const styleRouteIds = [
+  ...new Set([
+    ...STYLES.map((style) => style.id),
+    ...LEGACY_STYLE_REGISTRY_IDS,
+  ]),
+];
+
 export function getStaticPaths() {
-  return STYLES.map((style) => ({
-    params: { style: style.id },
+  return styleRouteIds.map((styleId) => ({
+    params: { style: styleId },
   }));
 }
 
 export async function GET({ params }: { params: { style: string } }) {
-  const style = STYLES.find((entry) => entry.id === params.style);
+  const styleId = resolveStyleRegistryId(params.style);
+  const style = STYLES.find((entry) => entry.id === styleId);
 
   if (!style) {
     return jsonResponse(
@@ -27,7 +39,7 @@ export async function GET({ params }: { params: { style: string } }) {
   }
 
   try {
-    return jsonResponse(await readStaticStyleRegistryIndex(style.id), {
+    return jsonResponse(await readStaticStyleRegistryIndex(styleId), {
       headers: { "Cache-Control": STATIC_ASSET_CACHE_CONTROL },
     });
   } catch {
