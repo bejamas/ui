@@ -1,11 +1,13 @@
 import {
   decodePreset,
   isPresetCode,
+  isSharedShadcnStyle,
   type DesignSystemConfig,
 } from "@bejamas/create-config/browser";
-import { setStoredPreset } from "./preset-store";
+import { getCurrentMode, setStoredPreset } from "./preset-store";
 import type { ThemeSwatches } from "./theme-cookie";
-import { buildDesignSystemThemeCss } from "./design-system-adapter";
+import { resolveDesignSystemTheme } from "./design-system-adapter";
+import { applyThemeToElement } from "./apply-theme";
 
 export interface ApplyDocsPresetOptions {
   id: string;
@@ -16,8 +18,6 @@ export interface ApplyDocsPresetOptions {
 
 const PENDING_THEME_STYLESHEET_SELECTOR =
   "link[data-pending-current-theme-stylesheet]";
-
-const INLINE_THEME_STYLE_ID = "docs-current-theme-css";
 
 let stylesheetSwapToken = 0;
 let stylesheetVersionCounter = 0;
@@ -143,13 +143,18 @@ function resolveConfigFromPresetId(id: string): DesignSystemConfig | null {
 }
 
 /**
- * Apply the theme's color/radius/font variables synchronously via an inline
- * <style>, mirroring how /create applies themes. This makes the change instant
- * and reliable instead of waiting on the async network stylesheet swap. The
- * network refresh still runs afterwards to layer in the server-only per-style
- * global CSS (shadows, borders, component styles).
+ * Apply the theme synchronously by writing its CSS variables as an inline
+ * style on <html> via applyThemeToElement — the same authoritative layer the
+ * page bootstrap and the other preset switchers write to.
+ *
+ * This is required (not just a nicety): an element's inline style outranks any
+ * <link>/<style> rule, so the runtime theme stylesheet swap alone can never win
+ * against the inline vars the bootstrap sets on load. Updating this layer is
+ * what actually changes the visible theme. The network stylesheet refresh still
+ * runs afterwards to pick up the server-only per-style global CSS (component
+ * styling that isn't expressible as plain CSS variables).
  */
-export function applyInlineThemeCss(id: string) {
+export function applyThemeToDocument(id: string) {
   if (typeof document === "undefined") {
     return;
   }
@@ -159,20 +164,17 @@ export function applyInlineThemeCss(id: string) {
     return;
   }
 
-  let style = document.getElementById(
-    INLINE_THEME_STYLE_ID,
-  ) as HTMLStyleElement | null;
+  const { styles } = resolveDesignSystemTheme(config);
 
-  if (!style) {
-    style = document.createElement("style");
-    style.id = INLINE_THEME_STYLE_ID;
-    style.setAttribute("data-docs-current-theme-inline", "");
-    // Append after the network <link> so equal-specificity color vars resolve
-    // to this (the reliable, synchronous) source.
-    document.head.appendChild(style);
-  }
-
-  style.textContent = buildDesignSystemThemeCss(config);
+  applyThemeToElement(
+    { styles, currentMode: getCurrentMode() },
+    document.documentElement,
+    {
+      // ThemeProvider owns the light/dark class; don't fight it here.
+      skipModeClass: true,
+      includeGeneratedShadows: !isSharedShadcnStyle(config.style),
+    },
+  );
 }
 
 export function applyDocsPreset(options: ApplyDocsPresetOptions) {
@@ -183,7 +185,7 @@ export function applyDocsPreset(options: ApplyDocsPresetOptions) {
     options.themeRef ?? null,
   );
 
-  applyInlineThemeCss(options.id);
+  applyThemeToDocument(options.id);
 
   return refreshCurrentThemeStylesheet();
 }
