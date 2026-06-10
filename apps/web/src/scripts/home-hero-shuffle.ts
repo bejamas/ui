@@ -78,7 +78,7 @@ class HeroShuffleControlElement extends HTMLElement {
     const presetId = encodePreset(config as Partial<PresetConfig>);
     const styles = resolveDesignSystemTheme(config).styles;
 
-    applyDocsPreset({
+    await applyDocsPreset({
       id: presetId,
       label: getPresetLabel(config),
       swatches: {

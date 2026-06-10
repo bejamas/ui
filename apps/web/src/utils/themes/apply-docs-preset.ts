@@ -1,5 +1,13 @@
-import { setStoredPreset } from "./preset-store";
+import {
+  decodePreset,
+  isPresetCode,
+  isSharedShadcnStyle,
+  type DesignSystemConfig,
+} from "@bejamas/create-config/browser";
+import { getCurrentMode, setStoredPreset } from "./preset-store";
 import type { ThemeSwatches } from "./theme-cookie";
+import { resolveDesignSystemTheme } from "./design-system-adapter";
+import { applyThemeToElement } from "./apply-theme";
 
 export interface ApplyDocsPresetOptions {
   id: string;
@@ -12,6 +20,7 @@ const PENDING_THEME_STYLESHEET_SELECTOR =
   "link[data-pending-current-theme-stylesheet]";
 
 let stylesheetSwapToken = 0;
+let stylesheetVersionCounter = 0;
 let cancelPendingThemeStylesheetSwap: (() => void) | null = null;
 
 function getAnimationFrame() {
@@ -35,7 +44,9 @@ export function refreshCurrentThemeStylesheet() {
   cancelPendingThemeStylesheetSwap?.();
 
   const url = new URL(currentStylesheet.href, window.location.origin);
-  url.searchParams.set("v", Date.now().toString());
+  // Strictly-monotonic version so two refreshes in the same millisecond can
+  // never collide on a cached response (which would swap in a stale theme).
+  url.searchParams.set("v", `${Date.now()}-${++stylesheetVersionCounter}`);
   const nextStylesheet = currentStylesheet.cloneNode(true) as HTMLLinkElement;
   const nextHref = `${url.pathname}${url.search}`;
   const swapToken = ++stylesheetSwapToken;
@@ -113,6 +124,59 @@ export function refreshCurrentThemeStylesheet() {
   });
 }
 
+function resolveConfigFromPresetId(id: string): DesignSystemConfig | null {
+  if (!isPresetCode(id)) {
+    return null;
+  }
+
+  const decoded = decodePreset(id);
+  if (!decoded) {
+    return null;
+  }
+
+  return {
+    ...decoded,
+    template: "astro",
+    rtl: false,
+    rtlLanguage: "ar",
+  } as DesignSystemConfig;
+}
+
+/**
+ * Apply the theme synchronously by writing its CSS variables as an inline
+ * style on <html> via applyThemeToElement — the same authoritative layer the
+ * page bootstrap and the other preset switchers write to.
+ *
+ * This is required (not just a nicety): an element's inline style outranks any
+ * <link>/<style> rule, so the runtime theme stylesheet swap alone can never win
+ * against the inline vars the bootstrap sets on load. Updating this layer is
+ * what actually changes the visible theme. The network stylesheet refresh still
+ * runs afterwards to pick up the server-only per-style global CSS (component
+ * styling that isn't expressible as plain CSS variables).
+ */
+export function applyThemeToDocument(id: string) {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const config = resolveConfigFromPresetId(id);
+  if (!config) {
+    return;
+  }
+
+  const { styles } = resolveDesignSystemTheme(config);
+
+  applyThemeToElement(
+    { styles, currentMode: getCurrentMode() },
+    document.documentElement,
+    {
+      // ThemeProvider owns the light/dark class; don't fight it here.
+      skipModeClass: true,
+      includeGeneratedShadows: !isSharedShadcnStyle(config.style),
+    },
+  );
+}
+
 export function applyDocsPreset(options: ApplyDocsPresetOptions) {
   setStoredPreset(
     options.id,
@@ -120,6 +184,8 @@ export function applyDocsPreset(options: ApplyDocsPresetOptions) {
     options.label,
     options.themeRef ?? null,
   );
+
+  applyThemeToDocument(options.id);
 
   return refreshCurrentThemeStylesheet();
 }
