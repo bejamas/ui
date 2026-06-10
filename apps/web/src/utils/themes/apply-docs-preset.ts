@@ -1,5 +1,11 @@
+import {
+  decodePreset,
+  isPresetCode,
+  type DesignSystemConfig,
+} from "@bejamas/create-config/browser";
 import { setStoredPreset } from "./preset-store";
 import type { ThemeSwatches } from "./theme-cookie";
+import { buildDesignSystemThemeCss } from "./design-system-adapter";
 
 export interface ApplyDocsPresetOptions {
   id: string;
@@ -11,7 +17,10 @@ export interface ApplyDocsPresetOptions {
 const PENDING_THEME_STYLESHEET_SELECTOR =
   "link[data-pending-current-theme-stylesheet]";
 
+const INLINE_THEME_STYLE_ID = "docs-current-theme-css";
+
 let stylesheetSwapToken = 0;
+let stylesheetVersionCounter = 0;
 let cancelPendingThemeStylesheetSwap: (() => void) | null = null;
 
 function getAnimationFrame() {
@@ -35,7 +44,9 @@ export function refreshCurrentThemeStylesheet() {
   cancelPendingThemeStylesheetSwap?.();
 
   const url = new URL(currentStylesheet.href, window.location.origin);
-  url.searchParams.set("v", Date.now().toString());
+  // Strictly-monotonic version so two refreshes in the same millisecond can
+  // never collide on a cached response (which would swap in a stale theme).
+  url.searchParams.set("v", `${Date.now()}-${++stylesheetVersionCounter}`);
   const nextStylesheet = currentStylesheet.cloneNode(true) as HTMLLinkElement;
   const nextHref = `${url.pathname}${url.search}`;
   const swapToken = ++stylesheetSwapToken;
@@ -113,6 +124,57 @@ export function refreshCurrentThemeStylesheet() {
   });
 }
 
+function resolveConfigFromPresetId(id: string): DesignSystemConfig | null {
+  if (!isPresetCode(id)) {
+    return null;
+  }
+
+  const decoded = decodePreset(id);
+  if (!decoded) {
+    return null;
+  }
+
+  return {
+    ...decoded,
+    template: "astro",
+    rtl: false,
+    rtlLanguage: "ar",
+  } as DesignSystemConfig;
+}
+
+/**
+ * Apply the theme's color/radius/font variables synchronously via an inline
+ * <style>, mirroring how /create applies themes. This makes the change instant
+ * and reliable instead of waiting on the async network stylesheet swap. The
+ * network refresh still runs afterwards to layer in the server-only per-style
+ * global CSS (shadows, borders, component styles).
+ */
+export function applyInlineThemeCss(id: string) {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const config = resolveConfigFromPresetId(id);
+  if (!config) {
+    return;
+  }
+
+  let style = document.getElementById(
+    INLINE_THEME_STYLE_ID,
+  ) as HTMLStyleElement | null;
+
+  if (!style) {
+    style = document.createElement("style");
+    style.id = INLINE_THEME_STYLE_ID;
+    style.setAttribute("data-docs-current-theme-inline", "");
+    // Append after the network <link> so equal-specificity color vars resolve
+    // to this (the reliable, synchronous) source.
+    document.head.appendChild(style);
+  }
+
+  style.textContent = buildDesignSystemThemeCss(config);
+}
+
 export function applyDocsPreset(options: ApplyDocsPresetOptions) {
   setStoredPreset(
     options.id,
@@ -120,6 +182,8 @@ export function applyDocsPreset(options: ApplyDocsPresetOptions) {
     options.label,
     options.themeRef ?? null,
   );
+
+  applyInlineThemeCss(options.id);
 
   return refreshCurrentThemeStylesheet();
 }

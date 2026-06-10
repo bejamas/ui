@@ -198,6 +198,27 @@ describe("refreshCurrentThemeStylesheet", () => {
     expect(document.querySelector(PENDING_SELECTOR)).toBeNull();
   });
 
+  test("uses a unique cache-busting version for each refresh", async () => {
+    const document = globalThis.document as unknown as FakeDocument;
+    appendActiveStylesheet(document);
+
+    const firstRefresh = refreshCurrentThemeStylesheet();
+    const firstHref =
+      document.querySelector<FakeLinkElement>(PENDING_SELECTOR)?.href;
+
+    // A second refresh in the same tick (same Date.now()) must still produce a
+    // distinct URL, otherwise the browser can reuse a stale cached response.
+    const secondRefresh = refreshCurrentThemeStylesheet();
+    const secondPending =
+      document.querySelector<FakeLinkElement>(PENDING_SELECTOR);
+
+    expect(secondPending?.href).toContain("/r/themes/current-theme.css?v=");
+    expect(secondPending?.href).not.toBe(firstHref);
+
+    secondPending?.dispatchEvent(new Event("load"));
+    await Promise.all([firstRefresh, secondRefresh]);
+  });
+
   test("cancels an older pending swap when a newer one starts", async () => {
     const document = globalThis.document as unknown as FakeDocument;
     appendActiveStylesheet(document);
