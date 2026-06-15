@@ -14,7 +14,10 @@ import {
 } from "@/utils/shuffles";
 import { applyDocsPreset } from "@/utils/themes/apply-docs-preset";
 import { getStoredPreset } from "@/utils/themes/preset-store";
-import { resolveDesignSystemTheme } from "@/utils/themes/design-system-adapter";
+import {
+  buildDesignSystemThemeCss,
+  resolveDesignSystemTheme,
+} from "@/utils/themes/design-system-adapter";
 
 function getPresetLabel(preset: { style: string; font: string }) {
   const styleLabel =
@@ -88,6 +91,7 @@ class HeroShuffleControlElement extends HTMLElement {
         accentDark: styles.dark.accent ?? "oklch(0.8 0 0)",
       },
       themeRef: null,
+      optimisticThemeCss: buildDesignSystemThemeCss(config),
     });
 
     this.renderCount(this.getCount() + 1);

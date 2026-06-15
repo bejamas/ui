@@ -40,7 +40,9 @@ describe("homepage hero shuffle", () => {
     expect(source).toContain(
       "createRandomDesignSystemConfig(getCurrentConfig())",
     );
+    expect(source).toContain("buildDesignSystemThemeCss");
     expect(source).toContain("applyDocsPreset({");
+    expect(source).toContain("optimisticThemeCss: buildDesignSystemThemeCss(config)");
     expect(source).toContain("getShuffleCountRequest()");
     expect(source).toContain("this.renderCount(this.getCount() + 1)");
     expect(source).toContain("incrementShuffleCountRequest()");
