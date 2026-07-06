@@ -14,15 +14,29 @@ interface FileEntry {
 
 const { href } = Astro.props as { href: string };
 
-function sanitizeCode(source: string): string {
+function sanitizeCode(source: unknown): string {
   // Keep all imports and code intact for the preview.
-  return source;
+  if (typeof source === "string") {
+    return source;
+  }
+
+  if (
+    source &&
+    typeof source === "object" &&
+    "default" in source &&
+    typeof source.default === "string"
+  ) {
+    return source.default;
+  }
+
+  return String(source ?? "");
 }
 
 // Gather all candidate files at build time (works in prod) and filter at runtime
 const allRaw = import.meta.glob("../pages/blocks/**/*.{astro,ts,tsx,css}", {
-  as: "raw",
   eager: true,
+  import: "default",
+  query: "?raw",
 }) as Record<string, string>;
 
 function selectFilesForHref(blockHref: string): FileEntry[] {

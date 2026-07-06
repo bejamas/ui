@@ -46,11 +46,6 @@ const staticFirstRoutes = {
 export default defineConfig({
   trailingSlash: "never",
   output: "server",
-  experimental: {
-    queuedRendering: {
-      enabled: true,
-    },
-  },
   site: "https://ui.bejamas.com",
   redirects: {
     "/docs": "/docs/introduction",
@@ -129,7 +124,7 @@ export default defineConfig({
         },
         {
           label: "Components",
-          autogenerate: { directory: "components" },
+          items: [{ autogenerate: { directory: "components" } }],
         },
         {
           label: "Concepts",

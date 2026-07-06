@@ -2,7 +2,11 @@
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import { KITCHEN_SINK_PAGES as pages } from "@/utils/kitchen-sink";
 
-const rawFiles = import.meta.glob('./*.astro', { as: 'raw', eager: true }) as Record<string, string>;
+const rawFiles = import.meta.glob("./*.astro", {
+  eager: true,
+  import: "default",
+  query: "?raw",
+}) as Record<string, string>;
 const pageFiles = Object.entries(rawFiles).filter(([path]) => !path.endsWith('index.astro'));
 
 const sectionCounts = new Map(

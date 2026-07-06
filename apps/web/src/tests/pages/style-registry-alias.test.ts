@@ -17,6 +17,13 @@ const styleItemRouteUrl = new URL(
   import.meta.url,
 ).href;
 
+type StyleRegistryPath = {
+  params: {
+    name?: string;
+    style: string;
+  };
+};
+
 describe("style registry aliases", () => {
   test("rewrites legacy style registry JSON URLs to bejamas-juno", () => {
     const rewrittenUrl = rewriteLegacyStyleRegistryUrl(
@@ -65,8 +72,8 @@ describe("style registry aliases", () => {
       const { getStaticPaths: getStyleItemPaths } = await import(
         `${styleItemRouteUrl}?style-registry-alias-item`
       );
-      const indexPaths = getStyleIndexPaths();
-      const itemPaths = await getStyleItemPaths();
+      const indexPaths = getStyleIndexPaths() as StyleRegistryPath[];
+      const itemPaths = (await getStyleItemPaths()) as StyleRegistryPath[];
 
       expect(
         indexPaths.some((path) => path.params.style === "new-york-v4"),

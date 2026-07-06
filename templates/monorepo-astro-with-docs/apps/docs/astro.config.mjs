@@ -58,7 +58,7 @@ export default defineConfig({
         },
         {
           label: "Components",
-          autogenerate: { directory: "components" },
+          items: [{ autogenerate: { directory: "components" } }],
         },
       ],
       customCss: ["./src/styles/globals.css", "@repo/ui/globals.css"],
