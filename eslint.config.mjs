@@ -14,5 +14,5 @@ export default [
     rules: { "turbo/no-undeclared-env-vars": "warn" },
   },
   { plugins: { onlyWarn } },
-  { ignores: ["dist/**"] },
+  { ignores: ["**/.astro/**", "dist/**"] },
 ];
