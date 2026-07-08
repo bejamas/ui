@@ -17,6 +17,10 @@ const watcherScriptFile = path.resolve(
   import.meta.dir,
   "../../scripts/watch-style-artifacts.ts",
 );
+const styleCssCompilerFile = path.resolve(
+  import.meta.dir,
+  "../../../../packages/create-config/src/style-css-compiler.ts",
+);
 
 describe("dev style watch workflow", () => {
   test("routes the app dev script through the orchestrator", () => {
@@ -105,5 +109,21 @@ describe("dev style watch workflow", () => {
     expect(source).toContain("REGISTRY_UI_DIRECTORY");
     expect(source).toContain("REGISTRY_LIB_DIRECTORY");
     expect(source).toContain("isRegistrySourcePath(filePath)");
+  });
+
+  test("keeps style compiler package imports resolvable from the app dev cwd", () => {
+    const packageJson = JSON.parse(
+      fs.readFileSync(packageJsonFile, "utf8"),
+    ) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    const source = fs.readFileSync(styleCssCompilerFile, "utf8");
+
+    expect(source).toContain('@import "tw-animate-css";');
+    expect({
+      ...packageJson.dependencies,
+      ...packageJson.devDependencies,
+    }).toHaveProperty("tw-animate-css");
   });
 });
