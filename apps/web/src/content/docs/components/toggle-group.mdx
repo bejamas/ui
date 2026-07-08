@@ -1,0 +1,277 @@
+---
+title: "Toggle Group"
+description: "A set of two-state buttons that can be toggled on or off. Supports single or multiple selection."
+---
+
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon, AlignVerticalJustifyCenterIcon, AlignVerticalJustifyEndIcon, AlignVerticalJustifyStartIcon, BoldIcon, ItalicIcon, UnderlineIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<ToggleGroup defaultValue="center" variant="outline"> <ToggleGroupItem value="left" aria-label="Align left"> <AlignLeftIcon /> </ToggleGroupItem> <ToggleGroupItem value="center" aria-label="Align center"> <AlignCenterIcon /> </ToggleGroupItem> <ToggleGroupItem value="right" aria-label="Align right"> <AlignRightIcon /> </ToggleGroupItem> </ToggleGroup>
+</div>
+
+```astro
+---
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon } from '@lucide/astro';
+
+import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group';
+---
+
+<ToggleGroup defaultValue="center" variant="outline">
+  <ToggleGroupItem value="left" aria-label="Align left">
+    <AlignLeftIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="center" aria-label="Align center">
+    <AlignCenterIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="right" aria-label="Align right">
+    <AlignRightIcon />
+  </ToggleGroupItem>
+</ToggleGroup>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add toggle-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add toggle-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add toggle-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add toggle-group
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { ToggleGroup, ToggleGroupItem } from '@bejamas/ui/components/toggle-group';
+import { BoldIcon, ItalicIcon, UnderlineIcon } from '@lucide/astro';
+---
+
+<ToggleGroup defaultValue="bold" variant="outline">
+  <ToggleGroupItem value="bold" aria-label="Toggle bold">
+    <BoldIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="italic" aria-label="Toggle italic">
+    <ItalicIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="underline" aria-label="Toggle underline">
+    <UnderlineIcon />
+  </ToggleGroupItem>
+</ToggleGroup>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>variant</code> | `"default" \| "outline"` | `"default"` |
+| <code>size</code> | `"default" \| "sm" \| "lg"` | `"default"` |
+| <code>spacing</code> | `number` | `0` |
+| <code>defaultValue</code> | `string \| string[]` |  |
+| <code>multiple</code> | `boolean` | `false` |
+| <code>orientation</code> | `"horizontal" \| "vertical"` | `"horizontal"` |
+| <code>disabled</code> | `boolean` | `false` |
+| <code>class</code> | `string` | `""` |
+| <code>style</code> | `string` | `""` |
+
+## Examples
+
+### Multiple Selection
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<ToggleGroup multiple defaultValue={["bold", "italic"]} variant="outline"> <ToggleGroupItem value="bold" aria-label="Toggle bold"> <BoldIcon /> </ToggleGroupItem> <ToggleGroupItem value="italic" aria-label="Toggle italic"> <ItalicIcon /> </ToggleGroupItem> <ToggleGroupItem value="underline" aria-label="Toggle underline"> <UnderlineIcon /> </ToggleGroupItem> </ToggleGroup>
+</div>
+
+```astro
+---
+import { BoldIcon, ItalicIcon, UnderlineIcon } from '@lucide/astro';
+
+import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group';
+---
+
+<ToggleGroup multiple defaultValue={["bold", "italic"]} variant="outline">
+  <ToggleGroupItem value="bold" aria-label="Toggle bold">
+    <BoldIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="italic" aria-label="Toggle italic">
+    <ItalicIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="underline" aria-label="Toggle underline">
+    <UnderlineIcon />
+  </ToggleGroupItem>
+</ToggleGroup>
+```
+
+### Outline Variant
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<ToggleGroup variant="outline" defaultValue="center"> <ToggleGroupItem value="left" aria-label="Align left"> <AlignLeftIcon /> </ToggleGroupItem> <ToggleGroupItem value="center" aria-label="Align center"> <AlignCenterIcon /> </ToggleGroupItem> <ToggleGroupItem value="right" aria-label="Align right"> <AlignRightIcon /> </ToggleGroupItem> </ToggleGroup>
+</div>
+
+```astro
+---
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon } from '@lucide/astro';
+
+import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group';
+---
+
+<ToggleGroup variant="outline" defaultValue="center">
+  <ToggleGroupItem value="left" aria-label="Align left">
+    <AlignLeftIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="center" aria-label="Align center">
+    <AlignCenterIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="right" aria-label="Align right">
+    <AlignRightIcon />
+  </ToggleGroupItem>
+</ToggleGroup>
+```
+
+### Sizes
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-col gap-4"> <ToggleGroup size="sm" variant="outline" defaultValue="center"> <ToggleGroupItem value="left" aria-label="Align left"> <AlignLeftIcon /> </ToggleGroupItem> <ToggleGroupItem value="center" aria-label="Align center"> <AlignCenterIcon /> </ToggleGroupItem> <ToggleGroupItem value="right" aria-label="Align right"> <AlignRightIcon /> </ToggleGroupItem> </ToggleGroup> <ToggleGroup size="default" variant="outline" defaultValue="center"> <ToggleGroupItem value="left" aria-label="Align left"> <AlignLeftIcon /> </ToggleGroupItem> <ToggleGroupItem value="center" aria-label="Align center"> <AlignCenterIcon /> </ToggleGroupItem> <ToggleGroupItem value="right" aria-label="Align right"> <AlignRightIcon /> </ToggleGroupItem> </ToggleGroup> <ToggleGroup size="lg" variant="outline" defaultValue="center"> <ToggleGroupItem value="left" aria-label="Align left"> <AlignLeftIcon /> </ToggleGroupItem> <ToggleGroupItem value="center" aria-label="Align center"> <AlignCenterIcon /> </ToggleGroupItem> <ToggleGroupItem value="right" aria-label="Align right"> <AlignRightIcon /> </ToggleGroupItem> </ToggleGroup> </div>
+</div>
+
+```astro
+---
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon } from '@lucide/astro';
+
+import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group';
+---
+
+<div class="flex flex-col gap-4">
+  <ToggleGroup size="sm" variant="outline" defaultValue="center">
+    <ToggleGroupItem value="left" aria-label="Align left">
+      <AlignLeftIcon />
+    </ToggleGroupItem>
+    <ToggleGroupItem value="center" aria-label="Align center">
+      <AlignCenterIcon />
+    </ToggleGroupItem>
+    <ToggleGroupItem value="right" aria-label="Align right">
+      <AlignRightIcon />
+    </ToggleGroupItem>
+  </ToggleGroup>
+  <ToggleGroup size="default" variant="outline" defaultValue="center">
+    <ToggleGroupItem value="left" aria-label="Align left">
+      <AlignLeftIcon />
+    </ToggleGroupItem>
+    <ToggleGroupItem value="center" aria-label="Align center">
+      <AlignCenterIcon />
+    </ToggleGroupItem>
+    <ToggleGroupItem value="right" aria-label="Align right">
+      <AlignRightIcon />
+    </ToggleGroupItem>
+  </ToggleGroup>
+  <ToggleGroup size="lg" variant="outline" defaultValue="center">
+    <ToggleGroupItem value="left" aria-label="Align left">
+      <AlignLeftIcon />
+    </ToggleGroupItem>
+    <ToggleGroupItem value="center" aria-label="Align center">
+      <AlignCenterIcon />
+    </ToggleGroupItem>
+    <ToggleGroupItem value="right" aria-label="Align right">
+      <AlignRightIcon />
+    </ToggleGroupItem>
+  </ToggleGroup>
+</div>
+```
+
+### Vertical Orientation
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<ToggleGroup orientation="vertical" variant="outline" defaultValue="middle"> <ToggleGroupItem value="top" aria-label="Align top"> <AlignVerticalJustifyStartIcon /> </ToggleGroupItem> <ToggleGroupItem value="middle" aria-label="Align middle"> <AlignVerticalJustifyCenterIcon /> </ToggleGroupItem> <ToggleGroupItem value="bottom" aria-label="Align bottom"> <AlignVerticalJustifyEndIcon /> </ToggleGroupItem> </ToggleGroup>
+</div>
+
+```astro
+---
+import { AlignVerticalJustifyCenterIcon, AlignVerticalJustifyEndIcon, AlignVerticalJustifyStartIcon } from '@lucide/astro';
+
+import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group';
+---
+
+<ToggleGroup orientation="vertical" variant="outline" defaultValue="middle">
+  <ToggleGroupItem value="top" aria-label="Align top">
+    <AlignVerticalJustifyStartIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="middle" aria-label="Align middle">
+    <AlignVerticalJustifyCenterIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="bottom" aria-label="Align bottom">
+    <AlignVerticalJustifyEndIcon />
+  </ToggleGroupItem>
+</ToggleGroup>
+```
+
+### Disabled
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<ToggleGroup disabled variant="outline" defaultValue="center"> <ToggleGroupItem value="left" aria-label="Align left"> <AlignLeftIcon /> </ToggleGroupItem> <ToggleGroupItem value="center" aria-label="Align center"> <AlignCenterIcon /> </ToggleGroupItem> <ToggleGroupItem value="right" aria-label="Align right"> <AlignRightIcon /> </ToggleGroupItem> </ToggleGroup>
+</div>
+
+```astro
+---
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon } from '@lucide/astro';
+
+import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group';
+---
+
+<ToggleGroup disabled variant="outline" defaultValue="center">
+  <ToggleGroupItem value="left" aria-label="Align left">
+    <AlignLeftIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="center" aria-label="Align center">
+    <AlignCenterIcon />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="right" aria-label="Align right">
+    <AlignRightIcon />
+  </ToggleGroupItem>
+</ToggleGroup>
+```
+
+## API Reference
+
+### Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `toggle-group:change` | `{ value: string[] }` | Fired when the selection changes |
+
+### Programmatic Control
+
+```js nocollapse
+// Set selected values programmatically
+element.dispatchEvent(new CustomEvent('toggle-group:set', {
+  detail: { value: ['bold', 'italic'] }
+}));
+```
+
+### Data Attributes
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-state` | toggle-group-item | Current state: `on` or `off` |
+| `data-disabled` | toggle-group | Present when group is disabled |
+| `data-orientation` | toggle-group | Orientation: `horizontal` or `vertical` |
+| `data-spacing` | toggle-group | Gap value used by style packs |
+| `data-variant` | toggle-group | Visual variant: `default` or `outline` |
+| `data-size` | toggle-group | Size: `sm`, `default`, or `lg` |

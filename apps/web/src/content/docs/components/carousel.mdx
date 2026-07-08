@@ -1,0 +1,74 @@
+---
+title: "Carousel"
+description: "A CSS scroll-snap carousel using only Tailwind classes (no JS)."
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+{/* Horizontal images with center snapping */} <Carousel class="gap-4 p-2" align="center"> <CarouselSlide><img src="https://images.unsplash.com/photo-1759332978018-a6efdacf4d11?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1290" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide> <CarouselSlide><img src="https://plus.unsplash.com/premium_photo-1760541740387-e0af5182d805?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1335" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide> <CarouselSlide><img src="https://images.unsplash.com/photo-1760659391924-86d657118008?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2340" alt="Example" class="w-120 h-96 object-cover rounded-lg" /></CarouselSlide> </Carousel>
+</div>
+
+```astro
+---
+import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
+---
+
+<!-- Horizontal images with center snapping -->
+<Carousel class="gap-4 p-2" align="center">
+  <CarouselSlide><img src="https://images.unsplash.com/photo-1759332978018-a6efdacf4d11?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1290" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide>
+  <CarouselSlide><img src="https://plus.unsplash.com/premium_photo-1760541740387-e0af5182d805?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1335" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide>
+  <CarouselSlide><img src="https://images.unsplash.com/photo-1760659391924-86d657118008?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2340" alt="Example" class="w-120 h-96 object-cover rounded-lg" /></CarouselSlide>
+</Carousel>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add carousel
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add carousel
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add carousel
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add carousel
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Carousel, CarouselSlide } from '@bejamas/ui/components/carousel';
+---
+
+<Carousel>
+  <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 1</div></CarouselSlide>
+  <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 2</div></CarouselSlide>
+  <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 3</div></CarouselSlide>
+</Carousel>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>axis</code> | `Axis` | `"x"` |
+| <code>snapType</code> | `SnapType` | `"mandatory"` |
+| <code>align</code> | `Align` | `"start"` |
+| <code>fade</code> | `boolean` | `false` |
+| <code>class</code> | `string` | `""` |

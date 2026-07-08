@@ -1,0 +1,82 @@
+---
+title: "Item"
+description: "A versatile component for displaying any content, combining elements like title, description, media, and actions."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2525-7378&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Button } from '@bejamas/registry/ui/button';
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '@bejamas/registry/ui/item';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex w-full max-w-md flex-col gap-6"> <Item variant="outline"> <ItemContent> <ItemTitle>{"Basic Item"}</ItemTitle> <ItemDescription>{"A simple item with title and description."}</ItemDescription> </ItemContent> <ItemActions><Button variant="outline" size="sm">{"Action"}</Button></ItemActions> </Item> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '@bejamas/registry/ui/item';
+---
+
+<div class="flex w-full max-w-md flex-col gap-6">
+  <Item variant="outline">
+    <ItemContent>
+      <ItemTitle>Basic Item</ItemTitle>
+      <ItemDescription>A simple item with title and description.</ItemDescription>
+    </ItemContent>
+    <ItemActions><Button variant="outline" size="sm">Action</Button></ItemActions>
+  </Item>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add item
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add item
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add item
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add item
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Item, ItemContent, ItemTitle, ItemDescription, ItemActions, ItemMedia } from '@bejamas/ui/components/item';
+---
+
+<Item variant="outline">
+  <ItemContent>
+    <ItemTitle>Basic Item</ItemTitle>
+    <ItemDescription>A simple item.</ItemDescription>
+  </ItemContent>
+  <ItemActions>
+    <Button variant="outline" size="sm">Action</Button>
+  </ItemActions>
+</Item>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>variant</code> | `ItemRootVariant` | `"default"` |
+| <code>size</code> | `ItemRootSize` | `"default"` |
+| <code>class</code> | `string` | `""` |

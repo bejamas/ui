@@ -1,0 +1,56 @@
+---
+title: "Textarea"
+description: "A multi-line input field for longer user content."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2508-2555&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Textarea } from '@bejamas/registry/ui/textarea';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Textarea placeholder="Type your message here..." />
+</div>
+
+```astro
+---
+import { Textarea } from '@bejamas/registry/ui/textarea';
+---
+
+<Textarea placeholder="Type your message here..." />
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add textarea
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add textarea
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add textarea
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add textarea
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Textarea } from '@bejamas/ui/components/textarea';
+---
+
+<Textarea placeholder="Type your message here..." />
+```

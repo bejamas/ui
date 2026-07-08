@@ -1,0 +1,285 @@
+---
+title: "Popover"
+description: "A floating panel that appears on trigger click, useful for displaying rich content like forms or additional information."
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Input } from '@bejamas/registry/ui/input';
+import { Label } from '@bejamas/registry/ui/label';
+import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from '@bejamas/registry/ui/popover';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Popover> <PopoverTrigger variant="outline">{"Open popover"}</PopoverTrigger> <PopoverContent> <PopoverHeader> <PopoverTitle>{"Dimensions"}</PopoverTitle> <PopoverDescription>{"Set the dimensions for the layer."}</PopoverDescription> </PopoverHeader> <div class="grid gap-2"> <div class="grid grid-cols-3 items-center gap-4"> <Label>{"Width"}</Label> <Input class="col-span-2 h-8" value="100%" /> </div> <div class="grid grid-cols-3 items-center gap-4"> <Label>{"Height"}</Label> <Input class="col-span-2 h-8" value="25px" /> </div> </div> </PopoverContent> </Popover>
+</div>
+
+```astro
+---
+import { Input } from '@bejamas/registry/ui/input';
+import { Label } from '@bejamas/registry/ui/label';
+import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from '@bejamas/registry/ui/popover';
+---
+
+<Popover>
+  <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+  <PopoverContent>
+    <PopoverHeader>
+      <PopoverTitle>Dimensions</PopoverTitle>
+      <PopoverDescription>Set the dimensions for the layer.</PopoverDescription>
+    </PopoverHeader>
+    <div class="grid gap-2">
+      <div class="grid grid-cols-3 items-center gap-4">
+        <Label>Width</Label>
+        <Input class="col-span-2 h-8" value="100%" />
+      </div>
+      <div class="grid grid-cols-3 items-center gap-4">
+        <Label>Height</Label>
+        <Input class="col-span-2 h-8" value="25px" />
+      </div>
+    </div>
+  </PopoverContent>
+</Popover>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add popover
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add popover
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add popover
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add popover
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverTitle, PopoverDescription } from '@bejamas/ui/components/popover';
+---
+
+<Popover>
+  <PopoverTrigger variant="outline">Open</PopoverTrigger>
+  <PopoverContent>
+    <PopoverHeader>
+      <PopoverTitle>Title</PopoverTitle>
+      <PopoverDescription>Description text.</PopoverDescription>
+    </PopoverHeader>
+    <p>Popover body content.</p>
+  </PopoverContent>
+</Popover>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+
+## Examples
+
+### Basic
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Popover> <PopoverTrigger variant="outline">{"Open popover"}</PopoverTrigger> <PopoverContent> <PopoverHeader> <PopoverTitle>{"Popover Title"}</PopoverTitle> <PopoverDescription>{"This is a simple popover."}</PopoverDescription> </PopoverHeader> </PopoverContent> </Popover>
+</div>
+
+```astro
+---
+import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from '@bejamas/registry/ui/popover';
+---
+
+<Popover>
+  <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+  <PopoverContent>
+    <PopoverHeader>
+      <PopoverTitle>Popover Title</PopoverTitle>
+      <PopoverDescription>This is a simple popover.</PopoverDescription>
+    </PopoverHeader>
+  </PopoverContent>
+</Popover>
+```
+
+### Side Variants
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex gap-4 items-center justify-center py-8"> <Popover> <PopoverTrigger variant="outline">Left</PopoverTrigger> <PopoverContent side="left"> <p>Popover on the left</p> </PopoverContent> </Popover> <Popover> <PopoverTrigger variant="outline">Top</PopoverTrigger> <PopoverContent side="top"> <p>Popover on top</p> </PopoverContent> </Popover> <Popover> <PopoverTrigger variant="outline">Bottom</PopoverTrigger> <PopoverContent side="bottom"> <p>Popover on bottom</p> </PopoverContent> </Popover> <Popover> <PopoverTrigger variant="outline">Right</PopoverTrigger> <PopoverContent side="right"> <p>Popover on the right</p> </PopoverContent> </Popover> </div>
+</div>
+
+```astro
+---
+import { Popover, PopoverContent, PopoverTrigger } from '@bejamas/registry/ui/popover';
+---
+
+<div class="flex gap-4 items-center justify-center py-8">
+  <Popover>
+    <PopoverTrigger variant="outline">Left</PopoverTrigger>
+    <PopoverContent side="left">
+      <p>Popover on the left</p>
+    </PopoverContent>
+  </Popover>
+  <Popover>
+    <PopoverTrigger variant="outline">Top</PopoverTrigger>
+    <PopoverContent side="top">
+      <p>Popover on top</p>
+    </PopoverContent>
+  </Popover>
+  <Popover>
+    <PopoverTrigger variant="outline">Bottom</PopoverTrigger>
+    <PopoverContent side="bottom">
+      <p>Popover on bottom</p>
+    </PopoverContent>
+  </Popover>
+  <Popover>
+    <PopoverTrigger variant="outline">Right</PopoverTrigger>
+    <PopoverContent side="right">
+      <p>Popover on the right</p>
+    </PopoverContent>
+  </Popover>
+</div>
+```
+
+### Alignment Variants
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex gap-8"> <Popover> <PopoverTrigger variant="outline">Start</PopoverTrigger> <PopoverContent side="bottom" align="start"> <p>Start-aligned content</p> </PopoverContent> </Popover> <Popover> <PopoverTrigger variant="outline">Center</PopoverTrigger> <PopoverContent side="bottom" align="center"> <p>Center-aligned content</p> </PopoverContent> </Popover> <Popover> <PopoverTrigger variant="outline">End</PopoverTrigger> <PopoverContent side="bottom" align="end"> <p>End-aligned content</p> </PopoverContent> </Popover> </div>
+</div>
+
+```astro
+---
+import { Popover, PopoverContent, PopoverTrigger } from '@bejamas/registry/ui/popover';
+---
+
+<div class="flex gap-8">
+  <Popover>
+    <PopoverTrigger variant="outline">Start</PopoverTrigger>
+    <PopoverContent side="bottom" align="start">
+      <p>Start-aligned content</p>
+    </PopoverContent>
+  </Popover>
+  <Popover>
+    <PopoverTrigger variant="outline">Center</PopoverTrigger>
+    <PopoverContent side="bottom" align="center">
+      <p>Center-aligned content</p>
+    </PopoverContent>
+  </Popover>
+  <Popover>
+    <PopoverTrigger variant="outline">End</PopoverTrigger>
+    <PopoverContent side="bottom" align="end">
+      <p>End-aligned content</p>
+    </PopoverContent>
+  </Popover>
+</div>
+```
+
+### With Form
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Popover> <PopoverTrigger variant="outline">{"Open form"}</PopoverTrigger> <PopoverContent> <PopoverHeader> <PopoverTitle>{"Dimensions"}</PopoverTitle> <PopoverDescription>{"Set the dimensions for the layer."}</PopoverDescription> </PopoverHeader> <div class="grid gap-2"> <div class="grid grid-cols-3 items-center gap-4"> <Label>{"Width"}</Label> <Input class="col-span-2 h-8" value="100%" /> </div> <div class="grid grid-cols-3 items-center gap-4"> <Label>{"Height"}</Label> <Input class="col-span-2 h-8" value="25px" /> </div> </div> </PopoverContent> </Popover>
+</div>
+
+```astro
+---
+import { Input } from '@bejamas/registry/ui/input';
+import { Label } from '@bejamas/registry/ui/label';
+import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from '@bejamas/registry/ui/popover';
+---
+
+<Popover>
+  <PopoverTrigger variant="outline">Open form</PopoverTrigger>
+  <PopoverContent>
+    <PopoverHeader>
+      <PopoverTitle>Dimensions</PopoverTitle>
+      <PopoverDescription>Set the dimensions for the layer.</PopoverDescription>
+    </PopoverHeader>
+    <div class="grid gap-2">
+      <div class="grid grid-cols-3 items-center gap-4">
+        <Label>Width</Label>
+        <Input class="col-span-2 h-8" value="100%" />
+      </div>
+      <div class="grid grid-cols-3 items-center gap-4">
+        <Label>Height</Label>
+        <Input class="col-span-2 h-8" value="25px" />
+      </div>
+    </div>
+  </PopoverContent>
+</Popover>
+```
+
+## API Reference
+
+### Events
+
+The popover emits custom events that you can listen to:
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `popover:change` | `{ open: boolean }` | Fired when the popover opens or closes |
+
+<div id="sl-bejamas-console-preview-1" class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Popover id="my-popover"> <PopoverTrigger variant="outline">Open</PopoverTrigger> <PopoverContent> <p>Content</p> </PopoverContent> </Popover>
+</div>
+<div class="not-content sl-bejamas-console-log-shell px-4 md:px-10 py-4 border border-border border-t-0">
+<pre id="sl-bejamas-console-preview-1-output" data-slot="event-log" class="sl-bejamas-console-log w-full p-3 rounded-md bg-muted text-xs font-mono text-muted-foreground min-h-[80px] max-h-[200px] overflow-y-auto">Waiting for logs...</pre>
+<script type="module" src="data:text/javascript;charset=utf-8,(function%20()%20%7B%0A%20%20var%20root%20%3D%20document.getElementById(%22sl-bejamas-console-preview-1%22)%3B%0A%20%20var%20panel%20%3D%20document.getElementById(%22sl-bejamas-console-preview-1-output%22)%3B%0A%20%20if%20(!root%20%7C%7C%20!panel)%20return%3B%0A%0A%20%20var%20placeholder%20%3D%20panel.textContent%20%7C%7C%20%22Waiting%20for%20logs...%22%3B%0A%20%20var%20hasLogs%20%3D%20false%3B%0A%0A%20%20var%20toText%20%3D%20function%20(value)%20%7B%0A%20%20%20%20if%20(typeof%20value%20%3D%3D%3D%20%22string%22)%20return%20value%3B%0A%20%20%20%20if%20(value%20%3D%3D%3D%20undefined)%20return%20%22undefined%22%3B%0A%20%20%20%20if%20(value%20%3D%3D%3D%20null)%20return%20%22null%22%3B%0A%20%20%20%20try%20%7B%0A%20%20%20%20%20%20return%20JSON.stringify(value)%3B%0A%20%20%20%20%7D%20catch%20(_error)%20%7B%0A%20%20%20%20%20%20return%20String(value)%3B%0A%20%20%20%20%7D%0A%20%20%7D%3B%0A%0A%20%20var%20append%20%3D%20function%20(level%2C%20args)%20%7B%0A%20%20%20%20var%20stamp%20%3D%20new%20Date().toLocaleTimeString()%3B%0A%20%20%20%20var%20body%20%3D%20Array.prototype.map.call(args%2C%20toText).join(%22%20%22)%3B%0A%20%20%20%20var%20line%20%3D%20%22%5B%22%20%2B%20stamp%20%2B%20%22%5D%20%22%20%2B%20String(level).toUpperCase()%20%2B%20%22%3A%20%22%20%2B%20body%3B%0A%20%20%20%20var%20current%20%3D%20panel.textContent%20%7C%7C%20%22%22%3B%0A%20%20%20%20if%20(!hasLogs%20%26%26%20current.trim()%20%3D%3D%3D%20placeholder.trim())%20%7B%0A%20%20%20%20%20%20panel.textContent%20%3D%20line%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20panel.textContent%20%3D%20current%20%3F%20current%20%2B%20%22%5Cn%22%20%2B%20line%20%3A%20line%3B%0A%20%20%20%20%7D%0A%20%20%20%20hasLogs%20%3D%20true%3B%0A%20%20%20%20panel.scrollTop%20%3D%20panel.scrollHeight%3B%0A%20%20%7D%3B%0A%0A%20%20var%20methods%20%3D%20%5B%22log%22%2C%20%22info%22%2C%20%22warn%22%2C%20%22error%22%5D%3B%0A%20%20var%20proxyConsole%20%3D%20Object.create(console)%3B%0A%20%20for%20(var%20i%20%3D%200%3B%20i%20%3C%20methods.length%3B%20i%20%2B%3D%201)%20%7B%0A%20%20%20%20(function%20(methodName)%20%7B%0A%20%20%20%20%20%20var%20fallback%20%3D%20typeof%20console.log%20%3D%3D%3D%20%22function%22%20%3F%20console.log.bind(console)%20%3A%20function%20()%20%7B%7D%3B%0A%20%20%20%20%20%20var%20original%20%3D%0A%20%20%20%20%20%20%20%20typeof%20console%5BmethodName%5D%20%3D%3D%3D%20%22function%22%0A%20%20%20%20%20%20%20%20%20%20%3F%20console%5BmethodName%5D.bind(console)%0A%20%20%20%20%20%20%20%20%20%20%3A%20fallback%3B%0A%20%20%20%20%20%20proxyConsole%5BmethodName%5D%20%3D%20function%20()%20%7B%0A%20%20%20%20%20%20%20%20var%20args%20%3D%20Array.prototype.slice.call(arguments)%3B%0A%20%20%20%20%20%20%20%20original.apply(console%2C%20args)%3B%0A%20%20%20%20%20%20%20%20append(methodName%2C%20args)%3B%0A%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%7D)(methods%5Bi%5D)%3B%0A%20%20%7D%0A%0A%20%20try%20%7B%0A%20%20%20%20var%20run%20%3D%20new%20Function(%22console%22%2C%20%22root%22%2C%20%22panel%22%2C%20%22const%20popover%20%3D%20document.getElementById('my-popover')%3B%5Cn%5Cn%20%20popover.addEventListener('popover%3Achange'%2C%20(e)%20%3D%3E%20%7B%5Cn%20%20%20%20console.log('Is%20open%3A'%2C%20e.detail.open)%3B%5Cn%20%20%7D)%3B%22)%3B%0A%20%20%20%20run(proxyConsole%2C%20root%2C%20panel)%3B%0A%20%20%7D%20catch%20(error)%20%7B%0A%20%20%20%20var%20fallbackError%20%3D%20typeof%20console.error%20%3D%3D%3D%20%22function%22%20%3F%20console.error.bind(console)%20%3A%20function%20()%20%7B%7D%3B%0A%20%20%20%20fallbackError(error)%3B%0A%20%20%20%20append(%22error%22%2C%20%5Berror%5D)%3B%0A%20%20%7D%0A%7D)()%3B"></script>
+</div>
+
+```astro nocollapse console
+<Popover id="my-popover">
+  <PopoverTrigger variant="outline">Open</PopoverTrigger>
+  <PopoverContent>
+    <p>Content</p>
+  </PopoverContent>
+</Popover>
+
+<script>
+  const popover = document.getElementById('my-popover');
+
+  popover.addEventListener('popover:change', (e) => {
+    console.log('Is open:', e.detail.open);
+  });
+</script>
+```
+
+### Programmatic Control
+
+You can control the popover programmatically by dispatching a `popover:set` event:
+
+```js nocollapse
+const popover = document.getElementById('my-popover');
+
+// Open the popover
+popover.dispatchEvent(new CustomEvent('popover:set', {
+  detail: { open: true }
+}));
+
+// Close the popover
+popover.dispatchEvent(new CustomEvent('popover:set', {
+  detail: { open: false }
+}));
+```
+
+### Data Attributes
+
+The popover sets these data attributes that you can use for styling or querying state:
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-state` | popover, popover-content | Current state (`open` or `closed`) |
+| `data-side` | popover, popover-content | Position relative to trigger (`top`, `bottom`, `left`, `right`) |
+| `data-align` | popover, popover-content | Alignment (`start`, `center`, or `end`) |

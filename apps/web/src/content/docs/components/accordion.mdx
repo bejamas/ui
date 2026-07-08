@@ -1,0 +1,189 @@
+---
+title: "Accordion"
+description: "Vertically stacked collapsible sections that let users show and hide content panels."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/BejamasUI---Design-System?node-id=2589-14086&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@bejamas/registry/ui/accordion';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Accordion class="w-full max-w-[420px] self-start mt-10" defaultValue="accordion-item-1"> <AccordionItem value="accordion-item-1"> <AccordionTrigger>{" Is it accessible? "}</AccordionTrigger> <AccordionContent>{" Yes. It adheres to WAI-ARIA design patterns. "}</AccordionContent> </AccordionItem> <AccordionItem value="accordion-item-2"> <AccordionTrigger>{" Can I customize the icon? "}</AccordionTrigger> <AccordionContent>{" Yes you can. "}</AccordionContent> </AccordionItem> </Accordion>
+</div>
+
+```astro
+---
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@bejamas/registry/ui/accordion';
+---
+
+<Accordion class="w-full max-w-[420px] self-start mt-10" defaultValue="accordion-item-1">
+  <AccordionItem value="accordion-item-1">
+    <AccordionTrigger>
+      Is it accessible?
+    </AccordionTrigger>
+    <AccordionContent>
+      Yes. It adheres to WAI-ARIA design patterns.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="accordion-item-2">
+    <AccordionTrigger>
+      Can I customize the icon?
+    </AccordionTrigger>
+    <AccordionContent>
+      Yes you can.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add accordion
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add accordion
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add accordion
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add accordion
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@bejamas/ui/components/accordion';
+---
+
+<Accordion class="w-full max-w-[420px] self-start" defaultValue="accordion-item-1">
+  <AccordionItem value="accordion-item-1">
+    <AccordionTrigger>
+      Is it accessible?
+    </AccordionTrigger>
+    <AccordionContent>
+      Yes. It adheres to WAI-ARIA design patterns.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+| <code>multiple</code> | `boolean` | `false` |
+| <code>defaultValue</code> | `string \| string[]` |  |
+| <code>collapsible</code> | `boolean` | `true` |
+
+## Examples
+
+### Multiple choice accordion
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Accordion class="w-full max-w-[420px] self-start" multiple defaultValue={["accordion-item-1"]}> <AccordionItem value="accordion-item-1"> <AccordionTrigger>{" Is it accessible? "}</AccordionTrigger> <AccordionContent>{" Yes. It adheres to WAI-ARIA design patterns. "}</AccordionContent> </AccordionItem> <AccordionItem value="accordion-item-2"> <AccordionTrigger>{" Can I customize the icon? "}</AccordionTrigger> <AccordionContent>{" Yes you can. "}</AccordionContent> </AccordionItem> <AccordionItem value="accordion-item-3"> <AccordionTrigger>{" Can I customize the icon? "}</AccordionTrigger> <AccordionContent>{" Yes you can. "}</AccordionContent> </AccordionItem> </Accordion>
+</div>
+
+```astro
+---
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@bejamas/registry/ui/accordion';
+---
+
+<Accordion class="w-full max-w-[420px] self-start" multiple defaultValue={["accordion-item-1"]}>
+  <AccordionItem value="accordion-item-1">
+    <AccordionTrigger>
+      Is it accessible?
+    </AccordionTrigger>
+    <AccordionContent>
+      Yes. It adheres to WAI-ARIA design patterns.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="accordion-item-2">
+    <AccordionTrigger>
+      Can I customize the icon?
+    </AccordionTrigger>
+    <AccordionContent>
+      Yes you can.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="accordion-item-3">
+    <AccordionTrigger>
+      Can I customize the icon?
+    </AccordionTrigger>
+    <AccordionContent>
+      Yes you can.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+## API Reference
+
+### Events
+
+The accordion emits custom events that you can listen to:
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `accordion:change` | `{ value: string[] }` | Fired when expanded items change |
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Accordion id="my-accordion"> <AccordionItem value="item-1"> <AccordionTrigger>{"Item 1"}</AccordionTrigger> <AccordionContent>{"Content 1"}</AccordionContent> </AccordionItem> </Accordion>
+</div>
+
+```astro nocollapse
+<Accordion id="my-accordion">
+  <AccordionItem value="item-1">
+    <AccordionTrigger>Item 1</AccordionTrigger>
+    <AccordionContent>Content 1</AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+```js nocollapse
+  const accordion = document.getElementById('my-accordion');
+
+  accordion.addEventListener('accordion:change', (e) => {
+    console.log('Expanded items:', e.detail.value);
+  });
+```
+
+### Programmatic Control
+
+You can control the accordion programmatically by dispatching an `accordion:set` event:
+
+```js nocollapse
+const accordion = document.getElementById('my-accordion');
+
+// Expand a single item
+accordion.dispatchEvent(new CustomEvent('accordion:set', {
+  detail: { value: 'item-1' }
+}));
+
+// Expand multiple items (when multiple prop is true)
+accordion.dispatchEvent(new CustomEvent('accordion:set', {
+  detail: { value: ['item-1', 'item-2'] }
+}));
+```
+
+### Data Attributes
+
+The accordion sets these data attributes that you can use for styling or querying state:
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-state` | accordion-item | Current state (`open` or `closed`) |

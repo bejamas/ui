@@ -1,0 +1,107 @@
+---
+title: "Badge"
+description: "A small label for status, categories, or counts."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2537-3522&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { BadgeCheckIcon, XIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Badge } from '@bejamas/registry/ui/badge';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-col items-center gap-3"> <div class="flex w-full flex-wrap gap-3"> <Badge>{"Badge"}</Badge> <Badge variant="secondary">{"Secondary"}</Badge> <Badge variant="destructive">{"Destructive"}</Badge> <Badge variant="outline">{"Outline"}</Badge> </div> <div class="flex w-full flex-wrap gap-3"> <Badge shape="pill">{"Pill"}</Badge> <Badge shape="pill" variant="secondary">{"Secondary"}</Badge> <Badge shape="pill" variant="destructive">{"Destructive"}</Badge> <Badge shape="pill" variant="outline">{"Outline "}<XIcon class="size-6" /></Badge> </div> <div class="flex w-full flex-wrap gap-3"> <Badge variant="secondary" class="bg-blue-500 text-white dark:bg-blue-600 border-blue-600" > <BadgeCheckIcon class="size-3" />{" Verified "}</Badge> <Badge class="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">{" 8 "}</Badge> <Badge class="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums" variant="destructive" >{" 99 "}</Badge> <Badge class="h-5 min-w-5 rounded-full px-1.5 text-xs font-mono tabular-nums" variant="outline" >{" 20000+ "}</Badge> </div> </div>
+</div>
+
+```astro
+---
+import { BadgeCheckIcon, XIcon } from '@lucide/astro';
+
+import { Badge } from '@bejamas/registry/ui/badge';
+---
+
+<div class="flex flex-col items-center gap-3">
+  <div class="flex w-full flex-wrap gap-3">
+    <Badge>Badge</Badge>
+    <Badge variant="secondary">Secondary</Badge>
+    <Badge variant="destructive">Destructive</Badge>
+    <Badge variant="outline">Outline</Badge>
+  </div>
+ <div class="flex w-full flex-wrap gap-3">
+    <Badge shape="pill">Pill</Badge>
+    <Badge shape="pill" variant="secondary">Secondary</Badge>
+    <Badge shape="pill" variant="destructive">Destructive</Badge>
+    <Badge shape="pill" variant="outline">Outline <XIcon class="size-6" /></Badge>
+  </div>
+  <div class="flex w-full flex-wrap gap-3">
+    <Badge
+      variant="secondary"
+      class="bg-blue-500 text-white dark:bg-blue-600 border-blue-600"
+    >
+      <BadgeCheckIcon class="size-3" />
+      Verified
+    </Badge>
+    <Badge class="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">
+        8
+    </Badge>
+    <Badge
+      class="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
+      variant="destructive"
+    >
+      99
+    </Badge>
+    <Badge
+      class="h-5 min-w-5 rounded-full px-1.5 text-xs font-mono tabular-nums"
+      variant="outline"
+    >
+      20000+
+    </Badge>
+  </div>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add badge
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add badge
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add badge
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add badge
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Badge } from '@bejamas/ui/components/badge';
+---
+
+<Badge>Badge</Badge>
+<Badge variant="secondary">Secondary</Badge>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>as</code> | `HTMLTag` | `"span"` |
+| <code>variant</code> | `"default" \| "secondary" \| "destructive" \| "outline"` | `"default"` |
+| <code>class</code> | `string` | `""` |
+| <code>shape</code> | `"default" \| "pill"` | `"default"` |
+| <code>size</code> | `"default" \| "sm"` | `"default"` |

@@ -1,0 +1,185 @@
+---
+title: "Toggle"
+description: "A two-state button that can be either on or off."
+---
+
+import { BoldIcon, BookmarkIcon, ItalicIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Toggle } from '@bejamas/registry/ui/toggle';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Toggle aria-label="Toggle bookmark" variant="outline"> <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />{" Bookmark "}</Toggle>
+</div>
+
+```astro
+---
+import { BookmarkIcon } from '@lucide/astro';
+
+import { Toggle } from '@bejamas/registry/ui/toggle';
+---
+
+<Toggle aria-label="Toggle bookmark" variant="outline">
+  <BookmarkIcon class="group-aria-pressed/toggle:fill-foreground" />
+  Bookmark
+</Toggle>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add toggle
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add toggle
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add toggle
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add toggle
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Toggle } from '@bejamas/ui/components/toggle';
+import { BoldIcon } from '@lucide/astro';
+---
+
+<Toggle aria-label="Toggle bold">
+  <BoldIcon />
+</Toggle>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>defaultPressed</code> | `boolean` |  |
+| <code>disabled</code> | `boolean` |  |
+| <code>class</code> | `string` | `""` |
+
+## Examples
+
+### Outline
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex items-center gap-2"> <Toggle variant="outline" aria-label="Toggle bold"> <BoldIcon />{" Bold "}</Toggle> <Toggle variant="outline" aria-label="Toggle italic"> <ItalicIcon />{" Italic "}</Toggle> </div>
+</div>
+
+```astro
+---
+import { BoldIcon, ItalicIcon } from '@lucide/astro';
+
+import { Toggle } from '@bejamas/registry/ui/toggle';
+---
+
+<div class="flex items-center gap-2">
+  <Toggle variant="outline" aria-label="Toggle bold">
+    <BoldIcon />
+    Bold
+  </Toggle>
+  <Toggle variant="outline" aria-label="Toggle italic">
+    <ItalicIcon />
+    Italic
+  </Toggle>
+</div>
+```
+
+### With Text
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Toggle variant="outline" aria-label="Toggle italic"> <ItalicIcon />{" Italic "}</Toggle>
+</div>
+
+```astro
+---
+import { ItalicIcon } from '@lucide/astro';
+
+import { Toggle } from '@bejamas/registry/ui/toggle';
+---
+
+<Toggle variant="outline" aria-label="Toggle italic">
+  <ItalicIcon />
+  Italic
+</Toggle>
+```
+
+### Sizes
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex items-center gap-2"> <Toggle size="sm" variant="outline" aria-label="Toggle small">{" Small "}</Toggle> <Toggle size="default" variant="outline" aria-label="Toggle default">{" Default "}</Toggle> <Toggle size="lg" variant="outline" aria-label="Toggle large">{" Large "}</Toggle> </div>
+</div>
+
+```astro
+---
+import { Toggle } from '@bejamas/registry/ui/toggle';
+---
+
+<div class="flex items-center gap-2">
+  <Toggle size="sm" variant="outline" aria-label="Toggle small">
+    Small
+  </Toggle>
+  <Toggle size="default" variant="outline" aria-label="Toggle default">
+    Default
+  </Toggle>
+  <Toggle size="lg" variant="outline" aria-label="Toggle large">
+    Large
+  </Toggle>
+</div>
+```
+
+### Disabled
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex items-center gap-2"> <Toggle disabled aria-label="Toggle bold">{" Disabled "}</Toggle> <Toggle disabled variant="outline" aria-label="Toggle italic">{" Disabled "}</Toggle> </div>
+</div>
+
+```astro
+---
+import { Toggle } from '@bejamas/registry/ui/toggle';
+---
+
+<div class="flex items-center gap-2">
+  <Toggle disabled aria-label="Toggle bold">
+    Disabled
+  </Toggle>
+  <Toggle disabled variant="outline" aria-label="Toggle italic">
+    Disabled
+  </Toggle>
+</div>
+```
+
+## API Reference
+
+### Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `toggle:change` | `{ pressed: boolean }` | Fired when the toggle state changes |
+
+### Programmatic Control
+
+```js nocollapse
+// Set toggle state programmatically
+element.dispatchEvent(new CustomEvent('toggle:set', { detail: { value: true } }));
+```
+
+### Data Attributes
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-state` | toggle | Current state: `on` or `off` |
+| `data-disabled` | toggle | Present when toggle is disabled |

@@ -1,0 +1,153 @@
+---
+title: "Button Group"
+description: "A set of related buttons grouped together, with support for horizontal or vertical layouts."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2621-2972&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { MinusIcon, PlusIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Button } from '@bejamas/registry/ui/button';
+import { ButtonGroup } from '@bejamas/registry/ui/button-group';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<ButtonGroup> <Button variant="outline">{"Left"}</Button> <Button variant="outline">{"Middle"}</Button> <Button variant="outline">{"Right"}</Button> </ButtonGroup>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { ButtonGroup } from '@bejamas/registry/ui/button-group';
+---
+
+<ButtonGroup>
+  <Button variant="outline">Left</Button>
+  <Button variant="outline">Middle</Button>
+  <Button variant="outline">Right</Button>
+</ButtonGroup>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add button-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add button-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add button-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add button-group
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { ButtonGroup } from '@bejamas/ui/components/button-group';
+import { Button } from '@bejamas/ui/components/button';
+---
+<ButtonGroup>
+  <Button>One</Button>
+  <Button>Two</Button>
+  <Button>Three</Button>
+</ButtonGroup>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+
+## Examples
+
+### Orientation
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<ButtonGroup orientation="vertical" aria-label="Media controls" class="h-fit"> <Button variant="outline" size="icon"> <PlusIcon /> </Button> <Button variant="outline" size="icon"> <MinusIcon /> </Button> </ButtonGroup>
+</div>
+
+```astro
+---
+import { MinusIcon, PlusIcon } from '@lucide/astro';
+
+import { Button } from '@bejamas/registry/ui/button';
+import { ButtonGroup } from '@bejamas/registry/ui/button-group';
+---
+
+<ButtonGroup orientation="vertical" aria-label="Media controls" class="h-fit">
+  <Button variant="outline" size="icon">
+    <PlusIcon />
+  </Button>
+  <Button variant="outline" size="icon">
+    <MinusIcon />
+  </Button>
+</ButtonGroup>
+```
+
+### Size
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-col items-start gap-8"> <ButtonGroup> <Button variant="outline" size="sm">{" Small "}</Button> <Button variant="outline" size="sm">{" Button "}</Button> <Button variant="outline" size="sm">{" Group "}</Button> <Button variant="outline" size="icon-sm"> <PlusIcon /> </Button> </ButtonGroup> <ButtonGroup> <Button variant="outline">{"Default"}</Button> <Button variant="outline">{"Button"}</Button> <Button variant="outline">{"Group"}</Button> <Button variant="outline" size="icon"> <PlusIcon /> </Button> </ButtonGroup> <ButtonGroup> <Button variant="outline" size="lg">{" Large "}</Button> <Button variant="outline" size="lg">{" Button "}</Button> <Button variant="outline" size="lg">{" Group "}</Button> <Button variant="outline" size="icon-lg"> <PlusIcon /> </Button> </ButtonGroup> </div>
+</div>
+
+```astro
+---
+import { PlusIcon } from '@lucide/astro';
+
+import { Button } from '@bejamas/registry/ui/button';
+import { ButtonGroup } from '@bejamas/registry/ui/button-group';
+---
+
+<div class="flex flex-col items-start gap-8">
+  <ButtonGroup>
+    <Button variant="outline" size="sm">
+      Small
+    </Button>
+    <Button variant="outline" size="sm">
+      Button
+    </Button>
+    <Button variant="outline" size="sm">
+      Group
+    </Button>
+    <Button variant="outline" size="icon-sm">
+      <PlusIcon />
+     </Button>
+  </ButtonGroup>
+  <ButtonGroup>
+    <Button variant="outline">Default</Button>
+    <Button variant="outline">Button</Button>
+    <Button variant="outline">Group</Button>
+    <Button variant="outline" size="icon">
+      <PlusIcon />
+    </Button>
+  </ButtonGroup>
+  <ButtonGroup>
+    <Button variant="outline" size="lg">
+      Large
+    </Button>
+    <Button variant="outline" size="lg">
+      Button
+    </Button>
+    <Button variant="outline" size="lg">
+      Group
+    </Button>
+    <Button variant="outline" size="icon-lg">
+      <PlusIcon />
+    </Button>
+  </ButtonGroup>
+</div>
+```

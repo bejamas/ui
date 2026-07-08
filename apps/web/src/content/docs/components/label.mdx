@@ -1,0 +1,61 @@
+---
+title: "Label"
+description: "A text label for form controls."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2523-1293&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Checkbox } from '@bejamas/registry/ui/checkbox';
+import { Label } from '@bejamas/registry/ui/label';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex items-center space-x-2"> <Checkbox id="terms" /> <Label for="terms">{"Accept terms and conditions"}</Label> </div>
+</div>
+
+```astro
+---
+import { Checkbox } from '@bejamas/registry/ui/checkbox';
+import { Label } from '@bejamas/registry/ui/label';
+---
+
+<div class="flex items-center space-x-2">
+  <Checkbox id="terms" />
+  <Label for="terms">Accept terms and conditions</Label>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add label
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add label
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add label
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add label
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Label } from '@bejamas/ui/components/label';
+---
+
+<Label for="terms">Accept terms and conditions</Label>
+```

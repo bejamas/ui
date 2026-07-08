@@ -1,0 +1,379 @@
+---
+title: "Tabs"
+description: "Organize content into tabbed panels, rendering one panel at a time."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2523-6067&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@bejamas/registry/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bejamas/registry/ui/tabs';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Tabs defaultValue="overview" class="w-full max-w-[400px]"> <TabsList> <TabsTrigger value="overview">{"Overview"}</TabsTrigger> <TabsTrigger value="analytics">{"Analytics"}</TabsTrigger> <TabsTrigger value="reports">{"Reports"}</TabsTrigger> <TabsTrigger value="settings">{"Settings"}</TabsTrigger> </TabsList> <TabsContent value="overview"> <Card> <CardHeader> <CardTitle>{"Overview"}</CardTitle> <CardDescription>{" View key metrics and recent activity across active projects. "}</CardDescription> </CardHeader> <CardContent class="text-sm text-muted-foreground">{" You have 12 active projects and 3 pending tasks. "}</CardContent> </Card> </TabsContent> <TabsContent value="analytics"> <Card> <CardHeader> <CardTitle>{"Analytics"}</CardTitle> <CardDescription>{" Track engagement trends and performance over time. "}</CardDescription> </CardHeader> <CardContent class="text-sm text-muted-foreground">{" Page views are up 25% compared to last month. "}</CardContent> </Card> </TabsContent> <TabsContent value="reports"> <Card> <CardHeader> <CardTitle>{"Reports"}</CardTitle> <CardDescription>{" Generate detailed exports for sharing and analysis. "}</CardDescription> </CardHeader> <CardContent class="text-sm text-muted-foreground">{" You have 5 reports ready to export. "}</CardContent> </Card> </TabsContent> <TabsContent value="settings"> <Card> <CardHeader> <CardTitle>{"Settings"}</CardTitle> <CardDescription>{" Manage account preferences and personalization options. "}</CardDescription> </CardHeader> <CardContent class="text-sm text-muted-foreground">{" Configure notifications, security, and themes. "}</CardContent> </Card> </TabsContent> </Tabs>
+</div>
+
+```astro
+---
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@bejamas/registry/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bejamas/registry/ui/tabs';
+---
+
+<Tabs defaultValue="overview" class="w-full max-w-[400px]">
+  <TabsList>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="analytics">Analytics</TabsTrigger>
+    <TabsTrigger value="reports">Reports</TabsTrigger>
+    <TabsTrigger value="settings">Settings</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview">
+    <Card>
+      <CardHeader>
+        <CardTitle>Overview</CardTitle>
+        <CardDescription>
+          View key metrics and recent activity across active projects.
+        </CardDescription>
+      </CardHeader>
+      <CardContent class="text-sm text-muted-foreground">
+        You have 12 active projects and 3 pending tasks.
+      </CardContent>
+    </Card>
+  </TabsContent>
+  <TabsContent value="analytics">
+    <Card>
+      <CardHeader>
+        <CardTitle>Analytics</CardTitle>
+        <CardDescription>
+          Track engagement trends and performance over time.
+        </CardDescription>
+      </CardHeader>
+      <CardContent class="text-sm text-muted-foreground">
+        Page views are up 25% compared to last month.
+      </CardContent>
+    </Card>
+  </TabsContent>
+  <TabsContent value="reports">
+    <Card>
+      <CardHeader>
+        <CardTitle>Reports</CardTitle>
+        <CardDescription>
+          Generate detailed exports for sharing and analysis.
+        </CardDescription>
+      </CardHeader>
+      <CardContent class="text-sm text-muted-foreground">
+        You have 5 reports ready to export.
+      </CardContent>
+    </Card>
+  </TabsContent>
+  <TabsContent value="settings">
+    <Card>
+      <CardHeader>
+        <CardTitle>Settings</CardTitle>
+        <CardDescription>
+          Manage account preferences and personalization options.
+        </CardDescription>
+      </CardHeader>
+      <CardContent class="text-sm text-muted-foreground">
+        Configure notifications, security, and themes.
+      </CardContent>
+    </Card>
+  </TabsContent>
+</Tabs>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add tabs
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add tabs
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add tabs
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add tabs
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@bejamas/ui/components/tabs';
+---
+
+<Tabs defaultValue="overview">
+  <TabsList>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="analytics">Analytics</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview">Overview content...</TabsContent>
+  <TabsContent value="analytics">Analytics content...</TabsContent>
+</Tabs>
+
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+| <code>orientation</code> | `"horizontal" \| "vertical"` | `"horizontal"` |
+| <code>defaultValue</code> | `string` |  |
+
+## Examples
+
+### Line Animated
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Tabs defaultValue="overview"> <TabsList variant="line-animated" class="mb-4"> <TabsTrigger value="overview">{"Overview"}</TabsTrigger> <TabsTrigger value="analytics">{"Analytics"}</TabsTrigger> <TabsTrigger value="reports">{"Reports"}</TabsTrigger> </TabsList> <TabsContent value="overview">{"Line variant content."}</TabsContent> <TabsContent value="analytics">{"Analytics content."}</TabsContent> <TabsContent value="reports">{"Reports content."}</TabsContent> </Tabs>
+</div>
+
+```astro
+---
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bejamas/registry/ui/tabs';
+---
+
+<Tabs defaultValue="overview">
+  <TabsList variant="line-animated" class="mb-4">
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="analytics">Analytics</TabsTrigger>
+    <TabsTrigger value="reports">Reports</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview">Line variant content.</TabsContent>
+  <TabsContent value="analytics">Analytics content.</TabsContent>
+  <TabsContent value="reports">Reports content.</TabsContent>
+</Tabs>
+```
+
+### Vertical
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Tabs defaultValue="profile" orientation="vertical" class="w-full max-w-xl"> <TabsList class="min-w-40"> <TabsTrigger value="profile" class="justify-start px-3">{"Profile"}</TabsTrigger> <TabsTrigger value="billing" class="justify-start px-3">{"Billing"}</TabsTrigger> <TabsTrigger value="notifications" class="justify-start px-3">{"Notifications"}</TabsTrigger> </TabsList> <TabsContent value="profile" class="rounded-lg border p-4">{" Profile settings content. "}</TabsContent> <TabsContent value="billing" class="rounded-lg border p-4">{" Billing settings content. "}</TabsContent> <TabsContent value="notifications" class="rounded-lg border p-4">{" Notifications settings content. "}</TabsContent> </Tabs>
+</div>
+
+```astro
+---
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bejamas/registry/ui/tabs';
+---
+
+<Tabs defaultValue="profile" orientation="vertical" class="w-full max-w-xl">
+  <TabsList class="min-w-40">
+    <TabsTrigger value="profile" class="justify-start px-3">Profile</TabsTrigger>
+    <TabsTrigger value="billing" class="justify-start px-3">Billing</TabsTrigger>
+    <TabsTrigger value="notifications" class="justify-start px-3">Notifications</TabsTrigger>
+  </TabsList>
+  <TabsContent value="profile" class="rounded-lg border p-4">
+    Profile settings content.
+  </TabsContent>
+  <TabsContent value="billing" class="rounded-lg border p-4">
+    Billing settings content.
+  </TabsContent>
+  <TabsContent value="notifications" class="rounded-lg border p-4">
+    Notifications settings content.
+  </TabsContent>
+</Tabs>
+```
+
+### Disabled
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Tabs defaultValue="active"> <TabsList> <TabsTrigger value="active">{"Active"}</TabsTrigger> <TabsTrigger value="disabled" disabled>{"Disabled"}</TabsTrigger> <TabsTrigger value="secondary">{"Secondary"}</TabsTrigger> </TabsList> <TabsContent value="active">{"Active tab content."}</TabsContent> <TabsContent value="disabled">{"Disabled tab content."}</TabsContent> <TabsContent value="secondary">{"Secondary tab content."}</TabsContent> </Tabs>
+</div>
+
+```astro
+---
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bejamas/registry/ui/tabs';
+---
+
+<Tabs defaultValue="active">
+  <TabsList>
+    <TabsTrigger value="active">Active</TabsTrigger>
+    <TabsTrigger value="disabled" disabled>Disabled</TabsTrigger>
+    <TabsTrigger value="secondary">Secondary</TabsTrigger>
+  </TabsList>
+  <TabsContent value="active">Active tab content.</TabsContent>
+  <TabsContent value="disabled">Disabled tab content.</TabsContent>
+  <TabsContent value="secondary">Secondary tab content.</TabsContent>
+</Tabs>
+```
+
+### Overflow
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Tabs defaultValue="monday"> <TabsList class="w-full max-w-[20rem] justify-start overflow-x-auto whitespace-nowrap"> <TabsTrigger value="monday" class="shrink-0">{"Monday"}</TabsTrigger> <TabsTrigger value="tuesday" class="shrink-0">{"Tuesday"}</TabsTrigger> <TabsTrigger value="wednesday" class="shrink-0">{"Wednesday"}</TabsTrigger> <TabsTrigger value="thursday" class="shrink-0">{"Thursday"}</TabsTrigger> <TabsTrigger value="friday" class="shrink-0">{"Friday"}</TabsTrigger> <TabsTrigger value="saturday" class="shrink-0">{"Saturday"}</TabsTrigger> <TabsTrigger value="sunday" class="shrink-0">{"Sunday"}</TabsTrigger> </TabsList> <TabsContent value="monday">{"Monday content."}</TabsContent> <TabsContent value="tuesday">{"Tuesday content."}</TabsContent> <TabsContent value="wednesday">{"Wednesday content."}</TabsContent> <TabsContent value="thursday">{"Thursday content."}</TabsContent> <TabsContent value="friday">{"Friday content."}</TabsContent> <TabsContent value="saturday">{"Saturday content."}</TabsContent> <TabsContent value="sunday">{"Sunday content."}</TabsContent> </Tabs>
+</div>
+
+```astro
+---
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bejamas/registry/ui/tabs';
+---
+
+<Tabs defaultValue="monday">
+  <TabsList class="w-full max-w-[20rem] justify-start overflow-x-auto whitespace-nowrap">
+    <TabsTrigger value="monday" class="shrink-0">Monday</TabsTrigger>
+    <TabsTrigger value="tuesday" class="shrink-0">Tuesday</TabsTrigger>
+    <TabsTrigger value="wednesday" class="shrink-0">Wednesday</TabsTrigger>
+    <TabsTrigger value="thursday" class="shrink-0">Thursday</TabsTrigger>
+    <TabsTrigger value="friday" class="shrink-0">Friday</TabsTrigger>
+    <TabsTrigger value="saturday" class="shrink-0">Saturday</TabsTrigger>
+    <TabsTrigger value="sunday" class="shrink-0">Sunday</TabsTrigger>
+  </TabsList>
+  <TabsContent value="monday">Monday content.</TabsContent>
+  <TabsContent value="tuesday">Tuesday content.</TabsContent>
+  <TabsContent value="wednesday">Wednesday content.</TabsContent>
+  <TabsContent value="thursday">Thursday content.</TabsContent>
+  <TabsContent value="friday">Friday content.</TabsContent>
+  <TabsContent value="saturday">Saturday content.</TabsContent>
+  <TabsContent value="sunday">Sunday content.</TabsContent>
+</Tabs>
+```
+
+### Direction Animation
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Tabs defaultValue="overview"> <TabsList> <TabsTrigger value="overview">{"Overview"}</TabsTrigger> <TabsTrigger value="analytics">{"Analytics"}</TabsTrigger> <TabsTrigger value="reports">{"Reports"}</TabsTrigger> </TabsList> <TabsContent value="overview" animation="direction">{"Direction-aware overview."}</TabsContent> <TabsContent value="analytics" animation="direction">{"Direction-aware analytics."}</TabsContent> <TabsContent value="reports" animation="direction">{"Direction-aware reports."}</TabsContent> </Tabs>
+</div>
+
+```astro
+---
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bejamas/registry/ui/tabs';
+---
+
+<Tabs defaultValue="overview">
+  <TabsList>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="analytics">Analytics</TabsTrigger>
+    <TabsTrigger value="reports">Reports</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview" animation="direction">Direction-aware overview.</TabsContent>
+  <TabsContent value="analytics" animation="direction">Direction-aware analytics.</TabsContent>
+  <TabsContent value="reports" animation="direction">Direction-aware reports.</TabsContent>
+</Tabs>
+```
+
+### Sizes
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="space-y-4"> <Tabs defaultValue="sm-account"> <TabsList size="sm"> <TabsTrigger value="sm-account" class="text-xs px-2">{"Account"}</TabsTrigger> <TabsTrigger value="sm-password" class="text-xs px-2">{"Password"}</TabsTrigger> </TabsList> </Tabs> <Tabs defaultValue="md-account"> <TabsList size="default"> <TabsTrigger value="md-account">{"Account"}</TabsTrigger> <TabsTrigger value="md-password">{"Password"}</TabsTrigger> </TabsList> </Tabs> <Tabs defaultValue="lg-account"> <TabsList size="lg"> <TabsTrigger value="lg-account" class="text-base px-4">{"Account"}</TabsTrigger> <TabsTrigger value="lg-password" class="text-base px-4">{"Password"}</TabsTrigger> </TabsList> </Tabs> </div>
+</div>
+
+```astro
+---
+import { Tabs, TabsList, TabsTrigger } from '@bejamas/registry/ui/tabs';
+---
+
+<div class="space-y-4">
+  <Tabs defaultValue="sm-account">
+    <TabsList size="sm">
+      <TabsTrigger value="sm-account" class="text-xs px-2">Account</TabsTrigger>
+      <TabsTrigger value="sm-password" class="text-xs px-2">Password</TabsTrigger>
+    </TabsList>
+  </Tabs>
+
+  <Tabs defaultValue="md-account">
+    <TabsList size="default">
+      <TabsTrigger value="md-account">Account</TabsTrigger>
+      <TabsTrigger value="md-password">Password</TabsTrigger>
+    </TabsList>
+  </Tabs>
+
+  <Tabs defaultValue="lg-account">
+    <TabsList size="lg">
+      <TabsTrigger value="lg-account" class="text-base px-4">Account</TabsTrigger>
+      <TabsTrigger value="lg-password" class="text-base px-4">Password</TabsTrigger>
+    </TabsList>
+  </Tabs>
+</div>
+```
+
+## API Reference
+
+### Events
+
+The tabs component emits custom events that you can listen to:
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `tabs:change` | `{ value: string }` | Fired when the selected tab changes |
+
+<div id="sl-bejamas-console-preview-1" class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Tabs id="my-tabs" defaultValue="tab1"> <TabsList> <TabsTrigger value="tab1">{"Tab 1"}</TabsTrigger> <TabsTrigger value="tab2">{"Tab 2"}</TabsTrigger> </TabsList> <TabsContent value="tab1">{"Content 1"}</TabsContent> <TabsContent value="tab2">{"Content 2"}</TabsContent> </Tabs>
+</div>
+<div class="not-content sl-bejamas-console-log-shell px-4 md:px-10 py-4 border border-border border-t-0">
+<pre id="sl-bejamas-console-preview-1-output" data-slot="event-log" class="sl-bejamas-console-log w-full p-3 rounded-md bg-muted text-xs font-mono text-muted-foreground min-h-[80px] max-h-[200px] overflow-y-auto">Waiting for logs...</pre>
+<script type="module" src="data:text/javascript;charset=utf-8,(function%20()%20%7B%0A%20%20var%20root%20%3D%20document.getElementById(%22sl-bejamas-console-preview-1%22)%3B%0A%20%20var%20panel%20%3D%20document.getElementById(%22sl-bejamas-console-preview-1-output%22)%3B%0A%20%20if%20(!root%20%7C%7C%20!panel)%20return%3B%0A%0A%20%20var%20placeholder%20%3D%20panel.textContent%20%7C%7C%20%22Waiting%20for%20logs...%22%3B%0A%20%20var%20hasLogs%20%3D%20false%3B%0A%0A%20%20var%20toText%20%3D%20function%20(value)%20%7B%0A%20%20%20%20if%20(typeof%20value%20%3D%3D%3D%20%22string%22)%20return%20value%3B%0A%20%20%20%20if%20(value%20%3D%3D%3D%20undefined)%20return%20%22undefined%22%3B%0A%20%20%20%20if%20(value%20%3D%3D%3D%20null)%20return%20%22null%22%3B%0A%20%20%20%20try%20%7B%0A%20%20%20%20%20%20return%20JSON.stringify(value)%3B%0A%20%20%20%20%7D%20catch%20(_error)%20%7B%0A%20%20%20%20%20%20return%20String(value)%3B%0A%20%20%20%20%7D%0A%20%20%7D%3B%0A%0A%20%20var%20append%20%3D%20function%20(level%2C%20args)%20%7B%0A%20%20%20%20var%20stamp%20%3D%20new%20Date().toLocaleTimeString()%3B%0A%20%20%20%20var%20body%20%3D%20Array.prototype.map.call(args%2C%20toText).join(%22%20%22)%3B%0A%20%20%20%20var%20line%20%3D%20%22%5B%22%20%2B%20stamp%20%2B%20%22%5D%20%22%20%2B%20String(level).toUpperCase()%20%2B%20%22%3A%20%22%20%2B%20body%3B%0A%20%20%20%20var%20current%20%3D%20panel.textContent%20%7C%7C%20%22%22%3B%0A%20%20%20%20if%20(!hasLogs%20%26%26%20current.trim()%20%3D%3D%3D%20placeholder.trim())%20%7B%0A%20%20%20%20%20%20panel.textContent%20%3D%20line%3B%0A%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20panel.textContent%20%3D%20current%20%3F%20current%20%2B%20%22%5Cn%22%20%2B%20line%20%3A%20line%3B%0A%20%20%20%20%7D%0A%20%20%20%20hasLogs%20%3D%20true%3B%0A%20%20%20%20panel.scrollTop%20%3D%20panel.scrollHeight%3B%0A%20%20%7D%3B%0A%0A%20%20var%20methods%20%3D%20%5B%22log%22%2C%20%22info%22%2C%20%22warn%22%2C%20%22error%22%5D%3B%0A%20%20var%20proxyConsole%20%3D%20Object.create(console)%3B%0A%20%20for%20(var%20i%20%3D%200%3B%20i%20%3C%20methods.length%3B%20i%20%2B%3D%201)%20%7B%0A%20%20%20%20(function%20(methodName)%20%7B%0A%20%20%20%20%20%20var%20fallback%20%3D%20typeof%20console.log%20%3D%3D%3D%20%22function%22%20%3F%20console.log.bind(console)%20%3A%20function%20()%20%7B%7D%3B%0A%20%20%20%20%20%20var%20original%20%3D%0A%20%20%20%20%20%20%20%20typeof%20console%5BmethodName%5D%20%3D%3D%3D%20%22function%22%0A%20%20%20%20%20%20%20%20%20%20%3F%20console%5BmethodName%5D.bind(console)%0A%20%20%20%20%20%20%20%20%20%20%3A%20fallback%3B%0A%20%20%20%20%20%20proxyConsole%5BmethodName%5D%20%3D%20function%20()%20%7B%0A%20%20%20%20%20%20%20%20var%20args%20%3D%20Array.prototype.slice.call(arguments)%3B%0A%20%20%20%20%20%20%20%20original.apply(console%2C%20args)%3B%0A%20%20%20%20%20%20%20%20append(methodName%2C%20args)%3B%0A%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%7D)(methods%5Bi%5D)%3B%0A%20%20%7D%0A%0A%20%20try%20%7B%0A%20%20%20%20var%20run%20%3D%20new%20Function(%22console%22%2C%20%22root%22%2C%20%22panel%22%2C%20%22const%20tabs%20%3D%20document.getElementById('my-tabs')%3B%5Cn%5Cn%20%20tabs.addEventListener('tabs%3Achange'%2C%20(e)%20%3D%3E%20%7B%5Cn%20%20%20%20console.log('Selected%20tab%3A'%2C%20e.detail.value)%3B%5Cn%20%20%7D)%3B%22)%3B%0A%20%20%20%20run(proxyConsole%2C%20root%2C%20panel)%3B%0A%20%20%7D%20catch%20(error)%20%7B%0A%20%20%20%20var%20fallbackError%20%3D%20typeof%20console.error%20%3D%3D%3D%20%22function%22%20%3F%20console.error.bind(console)%20%3A%20function%20()%20%7B%7D%3B%0A%20%20%20%20fallbackError(error)%3B%0A%20%20%20%20append(%22error%22%2C%20%5Berror%5D)%3B%0A%20%20%7D%0A%7D)()%3B"></script>
+</div>
+
+```astro nocollapse console
+<Tabs id="my-tabs" defaultValue="tab1">
+  <TabsList>
+    <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+    <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+  </TabsList>
+  <TabsContent value="tab1">Content 1</TabsContent>
+  <TabsContent value="tab2">Content 2</TabsContent>
+</Tabs>
+
+<script>
+  const tabs = document.getElementById('my-tabs');
+
+  tabs.addEventListener('tabs:change', (e) => {
+    console.log('Selected tab:', e.detail.value);
+  });
+</script>
+```
+
+### Programmatic Control
+
+You can control the tabs programmatically by dispatching a `tabs:set` event:
+
+```js nocollapse
+const tabs = document.getElementById('my-tabs');
+
+// Select a tab
+tabs.dispatchEvent(new CustomEvent('tabs:set', {
+  detail: { value: 'tab2' }
+}));
+```
+
+### Variants
+
+| Prop | Element | Values | Default |
+|------|---------|--------|---------|
+| `variant` | tabs-list | `indicator`, `default`, `line`, `line-animated` | `indicator` |
+| `size` | tabs-list | `sm`, `default`, `lg` | `default` |
+| `animation` | tabs-content | `none`, `fade`, `slide`, `direction` | `none` |
+
+### Data Attributes
+
+The tabs component sets these data attributes that you can use for styling or querying state:
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-orientation` | tabs | Current orientation (`horizontal` or `vertical`) |
+| `data-variant` | tabs-list | Current list variant (`indicator`, `default`, `line`, or `line-animated`) |
+| `data-activation-direction` | tabs-content | Last activation direction after tab change (`left`, `right`, `up`, or `down`, not set on initial mount) |
+| `data-state` | tabs-trigger | Current state (`active` or `inactive`) |
+
+### CSS Variables
+
+The tabs indicator exposes CSS variables for animation:
+
+| Variable | Element | Description |
+|----------|---------|-------------|
+| `--active-tab-left` | tabs-indicator | Left position of active tab |
+| `--active-tab-width` | tabs-indicator | Width of active tab |
+| `--active-tab-top` | tabs-indicator | Top position of active tab |
+| `--active-tab-height` | tabs-indicator | Height of active tab |

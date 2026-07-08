@@ -1,0 +1,73 @@
+---
+title: "Link Group"
+description: "A group of related links with optional title for navigation or footer sections."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2166-6001&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { LinkGroup, LinkGroupItem, LinkGroupList, LinkGroupTitle } from '@bejamas/registry/ui/link-group';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<LinkGroup> <LinkGroupTitle>{"Company"}</LinkGroupTitle> <LinkGroupList> <LinkGroupItem><a href="/">{"Home"}</a></LinkGroupItem> <LinkGroupItem><a href="#">{"About"}</a></LinkGroupItem> </LinkGroupList> </LinkGroup>
+</div>
+
+```astro
+---
+import { LinkGroup, LinkGroupItem, LinkGroupList, LinkGroupTitle } from '@bejamas/registry/ui/link-group';
+---
+
+<LinkGroup>
+  <LinkGroupTitle>Company</LinkGroupTitle>
+  <LinkGroupList>
+    <LinkGroupItem><a href="/">Home</a></LinkGroupItem>
+    <LinkGroupItem><a href="#">About</a></LinkGroupItem>
+  </LinkGroupList>
+</LinkGroup>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add link-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add link-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add link-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add link-group
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { LinkGroup, LinkGroupTitle, LinkGroupList, LinkGroupItem } from '@bejamas/ui/components/link-group';
+---
+
+<LinkGroup>
+  <LinkGroupTitle>Company</LinkGroupTitle>
+  <LinkGroupList>
+    <LinkGroupItem><a href="/">Home</a></LinkGroupItem>
+  </LinkGroupList>
+</LinkGroup>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |

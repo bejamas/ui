@@ -3,9 +3,12 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "npm run build:docs && astro dev",
-    "start": "npm run build:docs && astro dev",
-    "build": "npm run build:docs && astro build",
+    "dev": "astro dev",
+    "dev:docs": "npm run build:docs && astro dev",
+    "start": "astro dev",
+    "build": "npm run build:full",
+    "build:fast": "astro build",
+    "build:full": "npm run build:docs && astro build",
     "build:docs": "npx bejamas@canary docs:build",
     "preview": "astro preview",
     "astro": "astro"
