@@ -1,4 +1,4 @@
-import { watch } from "node:fs";
+import { existsSync, watch } from "node:fs";
 import path from "node:path";
 
 export const APP_ROOT = path.resolve(import.meta.dir, "..");
@@ -19,6 +19,12 @@ export const STYLE_PIPELINE_FILE_RELATIVE_PATHS = [
 export const STYLE_IGNORED_OUTPUT_RELATIVE_PATHS = [
   "packages/create-config/src/generated",
   "apps/web/public/r/styles",
+] as const;
+export const STYLE_ARTIFACT_RELATIVE_PATHS = [
+  "packages/create-config/src/generated/compiled-style-css.js",
+  "apps/web/public/r/styles/index.json",
+  "apps/web/public/r/registry.json",
+  "packages/ui/src/components/button/Button.astro",
 ] as const;
 export const STYLE_BUILD_SCRIPTS = [
   "build:compiled-styles",
@@ -139,6 +145,12 @@ export async function runStyleArtifactBuild(
     logger.info(`[style-watch] running ${scriptName}`);
     await runScript(scriptName, cwd);
   }
+}
+
+export function getMissingStyleArtifactRelativePaths() {
+  return STYLE_ARTIFACT_RELATIVE_PATHS.filter(
+    (relativePath) => !existsSync(resolveWorkspacePath(relativePath)),
+  );
 }
 
 export function startStyleArtifactWatcher(

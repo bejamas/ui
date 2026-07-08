@@ -2,10 +2,12 @@ import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import {
   APP_ROOT,
+  getMissingStyleArtifactRelativePaths,
   runStyleArtifactBuild,
   startStyleArtifactWatcher,
 } from "./watch-style-artifacts";
 
+const BUILD_STYLE_ARTIFACTS_ON_DEV_ENV = "BEJAMAS_DEV_BUILD_ARTIFACTS";
 const BUILD_DOCS_ON_DEV_ENV = "BEJAMAS_DEV_BUILD_DOCS";
 const GENERATED_DOCS_DIR = path.join(APP_ROOT, "src/content/docs/components");
 
@@ -29,6 +31,11 @@ function shouldBuildDocsOnDev() {
   return value === "1" || value === "true" || value === "yes";
 }
 
+function shouldBuildStyleArtifactsOnDev() {
+  const value = Bun.env[BUILD_STYLE_ARTIFACTS_ON_DEV_ENV]?.toLowerCase();
+  return value === "1" || value === "true" || value === "yes";
+}
+
 function hasGeneratedComponentDocs() {
   if (!existsSync(GENERATED_DOCS_DIR)) {
     return false;
@@ -39,8 +46,29 @@ function hasGeneratedComponentDocs() {
   );
 }
 
+async function ensureStyleArtifacts() {
+  if (shouldBuildStyleArtifactsOnDev()) {
+    console.info("[dev] refreshing generated style artifacts before startup");
+    await runStyleArtifactBuild();
+    return;
+  }
+
+  const missingArtifacts = getMissingStyleArtifactRelativePaths();
+  if (missingArtifacts.length > 0) {
+    console.info(
+      `[dev] generated style artifacts missing (${missingArtifacts.join(", ")}); running style build`,
+    );
+    await runStyleArtifactBuild();
+    return;
+  }
+
+  console.info(
+    "[dev] generated style artifacts exist; run `bun run dev:artifacts` to refresh them before startup",
+  );
+}
+
 async function main() {
-  await runStyleArtifactBuild();
+  await ensureStyleArtifacts();
 
   if (shouldBuildDocsOnDev()) {
     console.info("[dev] refreshing generated docs before startup");
@@ -55,8 +83,9 @@ async function main() {
   }
 
   const styleWatcher = startStyleArtifactWatcher();
+  const devServerArgs = Bun.argv.slice(2);
   const astroProcess = Bun.spawn({
-    cmd: ["bun", "run", "start"],
+    cmd: ["bun", "run", "start", ...devServerArgs],
     cwd: APP_ROOT,
     stdin: "inherit",
     stdout: "inherit",

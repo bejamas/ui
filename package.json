@@ -6,6 +6,7 @@
     "build:fast": "turbo run build:fast",
     "build:packages": "turbo run build --filter='./packages/*'",
     "dev": "turbo run dev",
+    "dev:artifacts": "turbo run dev:artifacts",
     "dev:docs": "turbo run dev:docs",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
