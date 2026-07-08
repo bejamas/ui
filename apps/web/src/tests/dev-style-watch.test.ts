@@ -23,6 +23,10 @@ const styleCssCompilerFile = path.resolve(
   import.meta.dir,
   "../../../../packages/create-config/src/style-css-compiler.ts",
 );
+const starlightThemeFile = path.resolve(
+  import.meta.dir,
+  "../../../../packages/starlight-theme-bejamas/src/index.ts",
+);
 
 describe("dev style watch workflow", () => {
   test("routes the app dev script through the orchestrator", () => {
@@ -152,5 +156,21 @@ describe("dev style watch workflow", () => {
       ...packageJson.dependencies,
       ...packageJson.devDependencies,
     }).toHaveProperty("tw-animate-css");
+  });
+
+  test("keeps theme font css imports resolvable from the app dev cwd", () => {
+    const packageJson = JSON.parse(
+      fs.readFileSync(packageJsonFile, "utf8"),
+    ) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    const source = fs.readFileSync(starlightThemeFile, "utf8");
+
+    expect(source).toContain("@fontsource/inter/400.css");
+    expect({
+      ...packageJson.dependencies,
+      ...packageJson.devDependencies,
+    }).toHaveProperty("@fontsource/inter");
   });
 });
