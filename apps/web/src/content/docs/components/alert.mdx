@@ -1,0 +1,91 @@
+---
+title: "Alert"
+description: "A prominent message that draws user attention to important information."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/BejamasUI---Design-System?node-id=2536-3189&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { CircleCheckIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Alert, AlertDescription, AlertTitle } from '@bejamas/registry/ui/alert';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="grid w-full max-w-xl items-start gap-4"> <Alert> <CircleCheckIcon size={32} /> <AlertTitle>Success! Your changes have been saved</AlertTitle> <AlertDescription>This is an alert with title and description.</AlertDescription> </Alert> <Alert> <AlertTitle>This Alert has a title and an icon. No description.</AlertTitle> </Alert> <Alert variant="destructive"> <AlertTitle>Unable to process your payment.</AlertTitle> <AlertDescription> <p>Please verify your billing information and try again.</p> <ul class="list-inside list-disc text-sm"> <li>Check your card details</li> <li>Ensure sufficient funds</li> <li>Verify billing address</li> </ul> </AlertDescription> </Alert> </div>
+</div>
+
+```astro
+---
+import { CircleCheckIcon } from '@lucide/astro';
+
+import { Alert, AlertDescription, AlertTitle } from '@bejamas/registry/ui/alert';
+---
+
+<div class="grid w-full max-w-xl items-start gap-4">
+  <Alert>
+    <CircleCheckIcon size={32} />
+    <AlertTitle>Success! Your changes have been saved</AlertTitle>
+    <AlertDescription>This is an alert with title and description.</AlertDescription>
+  </Alert>
+
+  <Alert>
+    <AlertTitle>This Alert has a title and an icon. No description.</AlertTitle>
+  </Alert>
+
+  <Alert variant="destructive">
+    <AlertTitle>Unable to process your payment.</AlertTitle>
+    <AlertDescription>
+      <p>Please verify your billing information and try again.</p>
+      <ul class="list-inside list-disc text-sm">
+        <li>Check your card details</li>
+        <li>Ensure sufficient funds</li>
+        <li>Verify billing address</li>
+      </ul>
+    </AlertDescription>
+  </Alert>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add alert
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add alert
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add alert
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add alert
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Alert, AlertTitle, AlertDescription } from '@bejamas/ui/components/alert';
+---
+<Alert variant="default">
+  <CircleCheckIcon size={32} />
+  <AlertTitle>Heads up!</AlertTitle>
+  <AlertDescription>Something happened successfully.</AlertDescription>
+</Alert>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>variant</code> | `AlertVariant` | `"default"` |
+| <code>class</code> | `string` | `""` |

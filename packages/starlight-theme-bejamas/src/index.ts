@@ -11,7 +11,6 @@ import {
   type StarlightThemeBejamasUserConfig,
 } from "./config";
 import { vitePluginStarlightThemeBejamas } from "./lib/vite";
-// import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 
 export default function starlightThemeBejamas(
   userConfig: StarlightThemeBejamasUserConfig,
@@ -47,12 +46,6 @@ export default function starlightThemeBejamas(
           starlightConfig.expressiveCode === true
             ? {}
             : starlightConfig.expressiveCode;
-
-        // starlightConfig.plugins?.push(
-        //   pluginLineNumbers({
-        //     showLineNumbers: true,
-        //   }),
-        // );
 
         const componentOverrides: typeof config.components = {};
 

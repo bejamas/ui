@@ -3,8 +3,10 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:fast": "turbo run build:fast",
     "build:packages": "turbo run build --filter='./packages/*'",
     "dev": "turbo run dev",
+    "dev:docs": "turbo run dev:docs",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
@@ -33,9 +35,5 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "dependencies": {
-    "@astrojs/compiler": "^4.0.0",
-    "ts-morph": "^26.0.0"
-  }
+  ]
 }

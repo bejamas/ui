@@ -1,0 +1,169 @@
+---
+title: "Native Select"
+description: "A styled native HTML select element with consistent design system integration."
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from '@bejamas/registry/ui/native-select';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<NativeSelect class="w-[200px]"> <NativeSelectOption value="">{"Select a fruit"}</NativeSelectOption> <NativeSelectOption value="apple">{"Apple"}</NativeSelectOption> <NativeSelectOption value="banana">{"Banana"}</NativeSelectOption> <NativeSelectOption value="cherry">{"Cherry"}</NativeSelectOption> </NativeSelect>
+</div>
+
+```astro
+---
+import { NativeSelect, NativeSelectOption } from '@bejamas/registry/ui/native-select';
+---
+
+<NativeSelect class="w-[200px]">
+  <NativeSelectOption value="">Select a fruit</NativeSelectOption>
+  <NativeSelectOption value="apple">Apple</NativeSelectOption>
+  <NativeSelectOption value="banana">Banana</NativeSelectOption>
+  <NativeSelectOption value="cherry">Cherry</NativeSelectOption>
+</NativeSelect>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add native-select
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add native-select
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add native-select
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add native-select
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import {
+  NativeSelect,
+  NativeSelectOption,
+  NativeSelectOptGroup,
+} from '@bejamas/ui/components/native-select';
+---
+
+<NativeSelect>
+  <NativeSelectOption value="">Select a fruit</NativeSelectOption>
+  <NativeSelectOption value="apple">Apple</NativeSelectOption>
+  <NativeSelectOption value="banana">Banana</NativeSelectOption>
+</NativeSelect>
+```
+
+### Native Select vs Select
+
+Use **NativeSelect** when you need standard browser form behavior — native validation, mobile-optimized pickers, and zero JavaScript. Use **Select** when you need a custom-styled dropdown with keyboard navigation, grouped items, and rich content.
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+| <code>size</code> | `"sm" \| "default" \| "lg"` | `"default"` |
+
+## Examples
+
+### With Groups
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<NativeSelect class="w-[200px]"> <NativeSelectOptGroup label="Fruits"> <NativeSelectOption value="apple">{"Apple"}</NativeSelectOption> <NativeSelectOption value="banana">{"Banana"}</NativeSelectOption> </NativeSelectOptGroup> <NativeSelectOptGroup label="Vegetables"> <NativeSelectOption value="carrot">{"Carrot"}</NativeSelectOption> <NativeSelectOption value="broccoli">{"Broccoli"}</NativeSelectOption> </NativeSelectOptGroup> </NativeSelect>
+</div>
+
+```astro
+---
+import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from '@bejamas/registry/ui/native-select';
+---
+
+<NativeSelect class="w-[200px]">
+  <NativeSelectOptGroup label="Fruits">
+    <NativeSelectOption value="apple">Apple</NativeSelectOption>
+    <NativeSelectOption value="banana">Banana</NativeSelectOption>
+  </NativeSelectOptGroup>
+  <NativeSelectOptGroup label="Vegetables">
+    <NativeSelectOption value="carrot">Carrot</NativeSelectOption>
+    <NativeSelectOption value="broccoli">Broccoli</NativeSelectOption>
+  </NativeSelectOptGroup>
+</NativeSelect>
+```
+
+### Sizes
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-col items-start gap-4 sm:flex-row"> <NativeSelect class="w-[180px]" size="sm"> <NativeSelectOption value="">{"Small (h-8)"}</NativeSelectOption> <NativeSelectOption value="apple">{"Apple"}</NativeSelectOption> <NativeSelectOption value="banana">{"Banana"}</NativeSelectOption> </NativeSelect> <NativeSelect class="w-[180px]" size="default"> <NativeSelectOption value="">{"Default (h-9)"}</NativeSelectOption> <NativeSelectOption value="apple">{"Apple"}</NativeSelectOption> <NativeSelectOption value="banana">{"Banana"}</NativeSelectOption> </NativeSelect> <NativeSelect class="w-[180px]" size="lg"> <NativeSelectOption value="">{"Large (h-10)"}</NativeSelectOption> <NativeSelectOption value="apple">{"Apple"}</NativeSelectOption> <NativeSelectOption value="banana">{"Banana"}</NativeSelectOption> </NativeSelect> </div>
+</div>
+
+```astro
+---
+import { NativeSelect, NativeSelectOption } from '@bejamas/registry/ui/native-select';
+---
+
+<div class="flex flex-col items-start gap-4 sm:flex-row">
+  <NativeSelect class="w-[180px]" size="sm">
+    <NativeSelectOption value="">Small (h-8)</NativeSelectOption>
+    <NativeSelectOption value="apple">Apple</NativeSelectOption>
+    <NativeSelectOption value="banana">Banana</NativeSelectOption>
+  </NativeSelect>
+  <NativeSelect class="w-[180px]" size="default">
+    <NativeSelectOption value="">Default (h-9)</NativeSelectOption>
+    <NativeSelectOption value="apple">Apple</NativeSelectOption>
+    <NativeSelectOption value="banana">Banana</NativeSelectOption>
+  </NativeSelect>
+  <NativeSelect class="w-[180px]" size="lg">
+    <NativeSelectOption value="">Large (h-10)</NativeSelectOption>
+    <NativeSelectOption value="apple">Apple</NativeSelectOption>
+    <NativeSelectOption value="banana">Banana</NativeSelectOption>
+  </NativeSelect>
+</div>
+```
+
+### Disabled
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<NativeSelect disabled class="w-[200px]"> <NativeSelectOption value="apple">{"Apple"}</NativeSelectOption> <NativeSelectOption value="banana">{"Banana"}</NativeSelectOption> </NativeSelect>
+</div>
+
+```astro
+---
+import { NativeSelect, NativeSelectOption } from '@bejamas/registry/ui/native-select';
+---
+
+<NativeSelect disabled class="w-[200px]">
+  <NativeSelectOption value="apple">Apple</NativeSelectOption>
+  <NativeSelectOption value="banana">Banana</NativeSelectOption>
+</NativeSelect>
+```
+
+### Invalid
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<NativeSelect aria-invalid="true" class="w-[200px]"> <NativeSelectOption value="">{"Select a fruit"}</NativeSelectOption> <NativeSelectOption value="apple">{"Apple"}</NativeSelectOption> <NativeSelectOption value="banana">{"Banana"}</NativeSelectOption> </NativeSelect>
+</div>
+
+```astro
+---
+import { NativeSelect, NativeSelectOption } from '@bejamas/registry/ui/native-select';
+---
+
+<NativeSelect aria-invalid="true" class="w-[200px]">
+  <NativeSelectOption value="">Select a fruit</NativeSelectOption>
+  <NativeSelectOption value="apple">Apple</NativeSelectOption>
+  <NativeSelectOption value="banana">Banana</NativeSelectOption>
+</NativeSelect>
+```

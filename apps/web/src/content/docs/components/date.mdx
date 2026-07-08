@@ -1,0 +1,91 @@
+---
+title: "Date"
+description: "Formats and displays dates and times in human-readable styles."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2527-2986&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Date } from '@bejamas/registry/ui/date';
+import { Separator } from '@bejamas/registry/ui/separator';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="grid grid-cols-2 gap-4"> <div>{"Default:"}</div> <Date date="2025-06-13T12:00:00Z" /> <Separator class="col-span-2" /> <div>{"Short:"}</div> <Date date="2025-06-13T12:00:00Z" format="short" /> <Separator class="col-span-2" /> <div>{"Time:"}</div> <Date date="2025-06-13T12:00:00Z" format="time" /> <Separator class="col-span-2" /> <div>{"Full:"}</div> <Date date="2025-06-13T12:00:00Z" format="full" /> <Separator class="col-span-2" /> <div>{"Long:"}</div> <Date date="2025-06-13T12:00:00Z" format="long" /> <Separator class="col-span-2" /> <div>{"Long with time:"}</div> <Date date="2025-06-13T12:00:00Z" format="long" includeTime /> </div>
+</div>
+
+```astro
+---
+import { Date } from '@bejamas/registry/ui/date';
+import { Separator } from '@bejamas/registry/ui/separator';
+---
+
+<div class="grid grid-cols-2 gap-4">
+  <div>Default:</div> <Date date="2025-06-13T12:00:00Z" />
+  <Separator class="col-span-2" />
+  <div>Short:</div> <Date date="2025-06-13T12:00:00Z" format="short" />
+  <Separator class="col-span-2" />
+  <div>Time:</div> <Date date="2025-06-13T12:00:00Z" format="time" />
+  <Separator class="col-span-2" />
+  <div>Full:</div> <Date date="2025-06-13T12:00:00Z" format="full" />
+  <Separator class="col-span-2" />
+  <div>Long:</div> <Date date="2025-06-13T12:00:00Z" format="long" />
+  <Separator class="col-span-2" />
+  <div>Long with time:</div> <Date date="2025-06-13T12:00:00Z" format="long" includeTime />
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add date
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add date
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add date
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add date
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Date } from '@bejamas/ui/components/date';
+---
+
+<Date date="2025-06-24T12:00:00Z" />
+```
+
+## Examples
+
+### Custom locale
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex gap-2 flex-col"> <Date date="2025-06-24T12:00:00Z" locale="fr-FR" /> <Date date="2025-06-24T12:00:00Z" locale="de-DE" /> <Date date="2025-06-24T12:00:00Z" locale="es-ES" /> <Date date="2025-06-24T12:00:00Z" locale="pl-PL" /> </div>
+</div>
+
+```astro
+---
+import { Date } from '@bejamas/registry/ui/date';
+---
+
+<div class="flex gap-2 flex-col">
+  <Date date="2025-06-24T12:00:00Z" locale="fr-FR" />
+  <Date date="2025-06-24T12:00:00Z" locale="de-DE" />
+  <Date date="2025-06-24T12:00:00Z" locale="es-ES" />
+  <Date date="2025-06-24T12:00:00Z" locale="pl-PL" />
+</div>
+```

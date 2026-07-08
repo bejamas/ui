@@ -4,7 +4,7 @@
   "exclude": ["dist", "node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "types": ["bun-types"],
+    "types": ["bun"],
     "paths": {
       "@/*": ["./src/*"],
       "@bejamas/registry/*": ["../../packages/registry/src/*"],

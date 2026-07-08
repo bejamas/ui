@@ -1,0 +1,420 @@
+---
+title: "Combobox"
+description: "A searchable dropdown (autocomplete) that lets users filter and select from a list of options with full keyboard navigation and accessibility support."
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxLabel, ComboboxList, ComboboxSeparator, ComboboxTrigger, ComboboxValue } from '@bejamas/registry/ui/combobox';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Combobox class="w-[200px]"> <ComboboxInput placeholder="Select framework..." showClear /> <ComboboxContent> <ComboboxList> <ComboboxEmpty>{"No results found."}</ComboboxEmpty> <ComboboxItem value="astro">{"Astro"}</ComboboxItem> <ComboboxItem value="next">{"Next.js"}</ComboboxItem> <ComboboxItem value="nuxt">{"Nuxt"}</ComboboxItem> <ComboboxItem value="remix">{"Remix"}</ComboboxItem> <ComboboxItem value="svelte">{"SvelteKit"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox>
+</div>
+
+```astro
+---
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@bejamas/registry/ui/combobox';
+---
+
+<Combobox class="w-[200px]">
+  <ComboboxInput placeholder="Select framework..." showClear />
+  <ComboboxContent>
+    <ComboboxList>
+      <ComboboxEmpty>No results found.</ComboboxEmpty>
+      <ComboboxItem value="astro">Astro</ComboboxItem>
+      <ComboboxItem value="next">Next.js</ComboboxItem>
+      <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+      <ComboboxItem value="remix">Remix</ComboboxItem>
+      <ComboboxItem value="svelte">SvelteKit</ComboboxItem>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add combobox
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add combobox
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add combobox
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add combobox
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxLabel,
+  ComboboxSeparator,
+} from '@bejamas/ui/components/combobox';
+---
+
+<Combobox name="framework">
+  <ComboboxInput placeholder="Select framework..." />
+  <ComboboxContent>
+    <ComboboxList>
+      <ComboboxEmpty>No results found.</ComboboxEmpty>
+      <ComboboxItem value="astro">Astro</ComboboxItem>
+      <ComboboxItem value="next">Next.js</ComboboxItem>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+| <code>name</code> | `string` |  |
+| <code>defaultValue</code> | `string` |  |
+| <code>placeholder</code> | `string` |  |
+| <code>disabled</code> | `boolean` | `false` |
+| <code>required</code> | `boolean` | `false` |
+| <code>openOnFocus</code> | `boolean` |  |
+| <code>autoHighlight</code> | `boolean` |  |
+
+## Examples
+
+### Clear Button
+
+Use the `showClear` prop to show a clear button in the input.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Combobox class="w-[200px]"> <ComboboxInput placeholder="Select framework..." showClear /> <ComboboxContent> <ComboboxList> <ComboboxEmpty>{"No results found."}</ComboboxEmpty> <ComboboxItem value="astro">{"Astro"}</ComboboxItem> <ComboboxItem value="next">{"Next.js"}</ComboboxItem> <ComboboxItem value="nuxt">{"Nuxt"}</ComboboxItem> <ComboboxItem value="remix">{"Remix"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox>
+</div>
+
+```astro
+---
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@bejamas/registry/ui/combobox';
+---
+
+<Combobox class="w-[200px]">
+  <ComboboxInput placeholder="Select framework..." showClear />
+  <ComboboxContent>
+    <ComboboxList>
+      <ComboboxEmpty>No results found.</ComboboxEmpty>
+      <ComboboxItem value="astro">Astro</ComboboxItem>
+      <ComboboxItem value="next">Next.js</ComboboxItem>
+      <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+      <ComboboxItem value="remix">Remix</ComboboxItem>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+### Sizing
+
+Use the `size` prop on `ComboboxInput` to match button/input sizing.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="grid w-full max-w-sm gap-3"> <Combobox> <ComboboxInput size="sm" placeholder="Small (h-8)" /> <ComboboxContent> <ComboboxList> <ComboboxItem value="astro-sm">{"Astro"}</ComboboxItem> <ComboboxItem value="next-sm">{"Next.js"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox> <Combobox> <ComboboxInput placeholder="Default (h-9)" /> <ComboboxContent> <ComboboxList> <ComboboxItem value="astro-default">{"Astro"}</ComboboxItem> <ComboboxItem value="next-default">{"Next.js"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox> <Combobox> <ComboboxInput size="lg" placeholder="Large (h-10)" /> <ComboboxContent> <ComboboxList> <ComboboxItem value="astro-lg">{"Astro"}</ComboboxItem> <ComboboxItem value="next-lg">{"Next.js"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox> </div>
+</div>
+
+```astro
+---
+import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from '@bejamas/registry/ui/combobox';
+---
+
+<div class="grid w-full max-w-sm gap-3">
+  <Combobox>
+    <ComboboxInput size="sm" placeholder="Small (h-8)" />
+    <ComboboxContent>
+      <ComboboxList>
+        <ComboboxItem value="astro-sm">Astro</ComboboxItem>
+        <ComboboxItem value="next-sm">Next.js</ComboboxItem>
+      </ComboboxList>
+    </ComboboxContent>
+  </Combobox>
+  <Combobox>
+    <ComboboxInput placeholder="Default (h-9)" />
+    <ComboboxContent>
+      <ComboboxList>
+        <ComboboxItem value="astro-default">Astro</ComboboxItem>
+        <ComboboxItem value="next-default">Next.js</ComboboxItem>
+      </ComboboxList>
+    </ComboboxContent>
+  </Combobox>
+  <Combobox>
+    <ComboboxInput size="lg" placeholder="Large (h-10)" />
+    <ComboboxContent>
+      <ComboboxList>
+        <ComboboxItem value="astro-lg">Astro</ComboboxItem>
+        <ComboboxItem value="next-lg">Next.js</ComboboxItem>
+      </ComboboxList>
+    </ComboboxContent>
+  </Combobox>
+</div>
+```
+
+### Groups
+
+Use the `ComboboxGroup` and `ComboboxLabel` to group items and add a label to the group.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Combobox class="w-[200px]"> <ComboboxInput placeholder="Select framework..." /> <ComboboxContent> <ComboboxList> <ComboboxEmpty>{"No results found."}</ComboboxEmpty> <ComboboxGroup> <ComboboxLabel>{"Frontend"}</ComboboxLabel> <ComboboxItem value="astro">{"Astro"}</ComboboxItem> <ComboboxItem value="next">{"Next.js"}</ComboboxItem> <ComboboxItem value="nuxt">{"Nuxt"}</ComboboxItem> </ComboboxGroup> <ComboboxSeparator /> <ComboboxGroup> <ComboboxLabel>{"Backend"}</ComboboxLabel> <ComboboxItem value="express">{"Express"}</ComboboxItem> <ComboboxItem value="hono">{"Hono"}</ComboboxItem> </ComboboxGroup> </ComboboxList> </ComboboxContent> </Combobox>
+</div>
+
+```astro
+---
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxLabel, ComboboxList, ComboboxSeparator } from '@bejamas/registry/ui/combobox';
+---
+
+<Combobox class="w-[200px]">
+  <ComboboxInput placeholder="Select framework..." />
+  <ComboboxContent>
+    <ComboboxList>
+      <ComboboxEmpty>No results found.</ComboboxEmpty>
+      <ComboboxGroup>
+        <ComboboxLabel>Frontend</ComboboxLabel>
+        <ComboboxItem value="astro">Astro</ComboboxItem>
+        <ComboboxItem value="next">Next.js</ComboboxItem>
+        <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+      </ComboboxGroup>
+      <ComboboxSeparator />
+      <ComboboxGroup>
+        <ComboboxLabel>Backend</ComboboxLabel>
+        <ComboboxItem value="express">Express</ComboboxItem>
+        <ComboboxItem value="hono">Hono</ComboboxItem>
+      </ComboboxGroup>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+### Invalid
+
+Use the `aria-invalid="true"` attribute on the `ComboboxInput` to mark the combobox as invalid.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Combobox class="w-[200px]"> <ComboboxInput placeholder="Select framework..." aria-invalid="true" /> <ComboboxContent> <ComboboxList> <ComboboxItem value="astro">{"Astro"}</ComboboxItem> <ComboboxItem value="next">{"Next.js"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox>
+</div>
+
+```astro
+---
+import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from '@bejamas/registry/ui/combobox';
+---
+
+<Combobox class="w-[200px]">
+  <ComboboxInput placeholder="Select framework..." aria-invalid="true" />
+  <ComboboxContent>
+    <ComboboxList>
+      <ComboboxItem value="astro">Astro</ComboboxItem>
+      <ComboboxItem value="next">Next.js</ComboboxItem>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+### Disabled
+
+Use the `disabled` prop to disable the combobox.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Combobox disabled class="w-[200px]"> <ComboboxInput placeholder="Select framework..." disabled /> <ComboboxContent> <ComboboxList> <ComboboxItem value="astro">{"Astro"}</ComboboxItem> <ComboboxItem value="next">{"Next.js"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox>
+</div>
+
+```astro
+---
+import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from '@bejamas/registry/ui/combobox';
+---
+
+<Combobox disabled class="w-[200px]">
+  <ComboboxInput placeholder="Select framework..." disabled />
+  <ComboboxContent>
+    <ComboboxList>
+      <ComboboxItem value="astro">Astro</ComboboxItem>
+      <ComboboxItem value="next">Next.js</ComboboxItem>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+### Auto Highlight
+
+Use the `autoHighlight` prop to automatically highlight the first item on filter.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Combobox autoHighlight class="w-[200px]"> <ComboboxInput placeholder="Start typing..." /> <ComboboxContent> <ComboboxList> <ComboboxEmpty>{"No results found."}</ComboboxEmpty> <ComboboxItem value="astro">{"Astro"}</ComboboxItem> <ComboboxItem value="next">{"Next.js"}</ComboboxItem> <ComboboxItem value="nuxt">{"Nuxt"}</ComboboxItem> <ComboboxItem value="remix">{"Remix"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox>
+</div>
+
+```astro
+---
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@bejamas/registry/ui/combobox';
+---
+
+<Combobox autoHighlight class="w-[200px]">
+  <ComboboxInput placeholder="Start typing..." />
+  <ComboboxContent>
+    <ComboboxList>
+      <ComboboxEmpty>No results found.</ComboboxEmpty>
+      <ComboboxItem value="astro">Astro</ComboboxItem>
+      <ComboboxItem value="next">Next.js</ComboboxItem>
+      <ComboboxItem value="nuxt">Nuxt</ComboboxItem>
+      <ComboboxItem value="remix">Remix</ComboboxItem>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+### Search in Popup
+
+You can trigger the combobox from a button or any other component by using the render prop. Move the `ComboboxInput` inside the `ComboboxContent`.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Combobox class="w-[200px]"> <ComboboxTrigger> <ComboboxValue placeholder="Select country..." /> </ComboboxTrigger> <ComboboxContent> <ComboboxInput showTrigger={false} placeholder="Search countries..." /> <ComboboxList> <ComboboxEmpty>{"No countries found."}</ComboboxEmpty> <ComboboxItem value="brazil" label="Brazil">{"Brazil"}</ComboboxItem> <ComboboxItem value="canada" label="Canada">{"Canada"}</ComboboxItem> <ComboboxItem value="france" label="France">{"France"}</ComboboxItem> <ComboboxItem value="germany" label="Germany">{"Germany"}</ComboboxItem> <ComboboxItem value="japan" label="Japan">{"Japan"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox>
+</div>
+
+```astro
+---
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger, ComboboxValue } from '@bejamas/registry/ui/combobox';
+---
+
+<Combobox class="w-[200px]">
+  <ComboboxTrigger>
+    <ComboboxValue placeholder="Select country..." />
+  </ComboboxTrigger>
+  <ComboboxContent>
+    <ComboboxInput showTrigger={false} placeholder="Search countries..." />
+    <ComboboxList>
+      <ComboboxEmpty>No countries found.</ComboboxEmpty>
+      <ComboboxItem value="brazil" label="Brazil">Brazil</ComboboxItem>
+      <ComboboxItem value="canada" label="Canada">Canada</ComboboxItem>
+      <ComboboxItem value="france" label="France">France</ComboboxItem>
+      <ComboboxItem value="germany" label="Germany">Germany</ComboboxItem>
+      <ComboboxItem value="japan" label="Japan">Japan</ComboboxItem>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+## API Reference
+
+### Events
+
+The combobox emits custom events that you can listen to:
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `combobox:change` | `{ value: string \| null }` | Fired when a new value is selected |
+| `combobox:open-change` | `{ open: boolean }` | Fired when the dropdown opens or closes |
+| `combobox:input-change` | `{ inputValue: string }` | Fired when the user types in the input |
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Combobox id="my-combobox"> <ComboboxInput placeholder="Search..." /> <ComboboxContent> <ComboboxList> <ComboboxItem value="option1">{"Option 1"}</ComboboxItem> <ComboboxItem value="option2">{"Option 2"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox>
+</div>
+
+```astro nocollapse
+<Combobox id="my-combobox">
+  <ComboboxInput placeholder="Search..." />
+  <ComboboxContent>
+    <ComboboxList>
+      <ComboboxItem value="option1">Option 1</ComboboxItem>
+      <ComboboxItem value="option2">Option 2</ComboboxItem>
+    </ComboboxList>
+  </ComboboxContent>
+</Combobox>
+```
+
+```js nocollapse
+  const combobox = document.getElementById('my-combobox');
+
+  combobox.addEventListener('combobox:change', (e) => {
+    console.log('Selected value:', e.detail.value);
+  });
+
+  combobox.addEventListener('combobox:input-change', (e) => {
+    console.log('Input text:', e.detail.inputValue);
+  });
+```
+
+### Programmatic Control
+
+You can control the combobox programmatically by dispatching a `combobox:set` event:
+
+```js nocollapse
+const combobox = document.getElementById('my-combobox');
+
+// Set a specific value
+combobox.dispatchEvent(new CustomEvent('combobox:set', {
+  detail: { value: 'option2' }
+}));
+
+// Clear the value
+combobox.dispatchEvent(new CustomEvent('combobox:set', {
+  detail: { value: null }
+}));
+
+// Open the dropdown
+combobox.dispatchEvent(new CustomEvent('combobox:set', {
+  detail: { open: true }
+}));
+
+// Set the input text
+combobox.dispatchEvent(new CustomEvent('combobox:set', {
+  detail: { inputValue: 'search term' }
+}));
+
+// Custom display text for selected value
+// itemToStringValue — (item: HTMLElement | null, value: string | null) => string
+// Controls what text appears in the input after selection.
+// Useful when items contain rich content (icons, descriptions).
+combobox.dispatchEvent(new CustomEvent('combobox:set', {
+  detail: {
+    itemToStringValue: (item, value) => value ? `TZ: ${value}` : ''
+  }
+}));
+```
+
+### Data Attributes
+
+The combobox sets these data attributes that you can use for styling or querying state:
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-open` | combobox, combobox-content | Present when the popup is open |
+| `data-closed` | combobox, combobox-content | Present when the popup is closed |
+| `data-side` | combobox-content | Resolved popup side |
+| `data-align` | combobox-content | Resolved popup alignment |
+| `data-value` | combobox | Currently selected value |
+| `data-selected` | combobox-item | Present when item is selected |
+| `data-highlighted` | combobox-item | Present when item is focused/highlighted |
+| `data-disabled` | combobox, combobox-item | Present when disabled |
+| `data-empty` | combobox-content | Present when no items match the filter |
+
+### Positioning
+
+Placement options are configured on `ComboboxContent`:
+
+```astro nocollapse nopreview
+<Combobox>
+  <ComboboxInput />
+  <ComboboxContent side="top" align="start" sideOffset={8}>
+    ...
+  </ComboboxContent>
+</Combobox>
+```

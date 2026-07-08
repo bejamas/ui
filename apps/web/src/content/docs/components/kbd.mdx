@@ -1,0 +1,204 @@
+---
+title: "Kbd"
+description: "A visual indicator for keyboard keys and shortcuts, styled to match system keyboard key appearance."
+---
+
+import { SearchIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Button } from '@bejamas/registry/ui/button';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@bejamas/registry/ui/input-group';
+import { Kbd, KbdGroup } from '@bejamas/registry/ui/kbd';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@bejamas/registry/ui/tooltip';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-col items-center gap-4"> <KbdGroup> <Kbd>{"⌘"}</Kbd> <Kbd>{"⇧"}</Kbd> <Kbd>{"⌥"}</Kbd> <Kbd>{"⌃"}</Kbd> </KbdGroup> <KbdGroup> <Kbd>{"Ctrl"}</Kbd> <span>{"+"}</span> <Kbd>{"B"}</Kbd> </KbdGroup> <KbdGroup> <Kbd>{"⌘"}</Kbd> <Kbd>{"K"}</Kbd> </KbdGroup> </div>
+</div>
+
+```astro
+---
+import { Kbd, KbdGroup } from '@bejamas/registry/ui/kbd';
+---
+
+<div class="flex flex-col items-center gap-4">
+  <KbdGroup>
+    <Kbd>⌘</Kbd>
+    <Kbd>⇧</Kbd>
+    <Kbd>⌥</Kbd>
+    <Kbd>⌃</Kbd>
+  </KbdGroup>
+  <KbdGroup>
+    <Kbd>Ctrl</Kbd>
+    <span>+</span>
+    <Kbd>B</Kbd>
+  </KbdGroup>
+  <KbdGroup>
+    <Kbd>⌘</Kbd>
+    <Kbd>K</Kbd>
+  </KbdGroup>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add kbd
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add kbd
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add kbd
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add kbd
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Kbd, KbdGroup } from '@bejamas/ui/components/kbd';
+---
+
+<KbdGroup>
+  <Kbd>⌘</Kbd>
+  <Kbd>K</Kbd>
+</KbdGroup>
+
+<KbdGroup>
+  <Kbd>Ctrl</Kbd>
+  <span>+</span>
+  <Kbd>B</Kbd>
+</KbdGroup>
+```
+
+## Examples
+
+### Group
+
+Use the `KbdGroup` component to group keyboard keys together.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-col items-center gap-4"> <span class="text-muted-foreground text-sm" style="display:block"> Use{" "} <KbdGroup> <Kbd>{"Ctrl + B"}</Kbd> <Kbd>{"Ctrl + K"}</Kbd> </KbdGroup>{" "} to open the command palette </span> </div>
+</div>
+
+```astro
+---
+import { Kbd, KbdGroup } from '@bejamas/registry/ui/kbd';
+---
+
+<div class="flex flex-col items-center gap-4">
+  <p class="text-muted-foreground text-sm">
+   Use{" "}
+    <KbdGroup>
+      <Kbd>Ctrl + B</Kbd>
+      <Kbd>Ctrl + K</Kbd>
+    </KbdGroup>{" "}
+    to open the command palette
+  </p>
+</div>
+```
+
+### Button
+
+Use the `Kbd` component inside a `Button` component to display a keyboard key inside a button.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Button variant="outline">{" Accept "}<Kbd class="translate-x-0.5">{" ⏎ "}</Kbd> </Button>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Kbd } from '@bejamas/registry/ui/kbd';
+---
+
+<Button variant="outline">
+  Accept <Kbd class="translate-x-0.5">
+    ⏎
+  </Kbd>
+</Button>
+```
+
+### Tooltip
+
+You can use the `Kbd` component inside a `Tooltip` component to display a tooltip with a keyboard key.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-wrap gap-4"> <Tooltip> <TooltipTrigger asChild> <Button variant="outline">{"Save"}</Button> </TooltipTrigger> <TooltipContent class="pr-1.5"> <div class="flex items-center gap-2">{" Save Changes "}<Kbd>{"S"}</Kbd> </div> </TooltipContent> </Tooltip> <Tooltip> <TooltipTrigger asChild> <Button variant="outline">{"Print"}</Button> </TooltipTrigger> <TooltipContent class="pr-1.5"> <div class="flex items-center gap-2">{" Print Document "}<KbdGroup> <Kbd>{"Ctrl"}</Kbd> <Kbd>{"P"}</Kbd> </KbdGroup> </div> </TooltipContent> </Tooltip> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Kbd, KbdGroup } from '@bejamas/registry/ui/kbd';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@bejamas/registry/ui/tooltip';
+---
+
+<div class="flex flex-wrap gap-4">
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant="outline">Save</Button>
+    </TooltipTrigger>
+    <TooltipContent class="pr-1.5">
+      <div class="flex items-center gap-2">
+        Save Changes <Kbd>S</Kbd>
+      </div>
+    </TooltipContent>
+  </Tooltip>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant="outline">Print</Button>
+    </TooltipTrigger>
+    <TooltipContent class="pr-1.5">
+      <div class="flex items-center gap-2">
+        Print Document <KbdGroup>
+          <Kbd>Ctrl</Kbd>
+          <Kbd>P</Kbd>
+        </KbdGroup>
+      </div>
+    </TooltipContent>
+  </Tooltip>
+</div>
+```
+
+### Input Group
+
+You can use the `Kbd` component inside a `InputGroupAddon` component to display a keyboard key inside an input group.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex w-full max-w-xs flex-col gap-6"> <InputGroup> <InputGroupInput placeholder="Search..." /> <InputGroupAddon> <SearchIcon /> </InputGroupAddon> <InputGroupAddon align="inline-end"> <Kbd>{"⌘"}</Kbd> <Kbd>{"K"}</Kbd> </InputGroupAddon> </InputGroup> </div>
+</div>
+
+```astro
+---
+import { SearchIcon } from '@lucide/astro';
+
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@bejamas/registry/ui/input-group';
+import { Kbd } from '@bejamas/registry/ui/kbd';
+---
+
+<div class="flex w-full max-w-xs flex-col gap-6">
+  <InputGroup>
+    <InputGroupInput placeholder="Search..." />
+    <InputGroupAddon>
+      <SearchIcon />
+    </InputGroupAddon>
+    <InputGroupAddon align="inline-end">
+      <Kbd>⌘</Kbd>
+      <Kbd>K</Kbd>
+    </InputGroupAddon>
+  </InputGroup>
+</div>
+```

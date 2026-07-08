@@ -1,0 +1,83 @@
+---
+title: "Sticky Surface"
+description: "A sticky surface component with scroll-based effects (border, shadow, surface swap, shrink, glass)."
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Button } from '@bejamas/registry/ui/button';
+import { StickySurface } from '@bejamas/registry/ui/sticky-surface';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="overflow-y-auto max-h-[320px] w-full bg-border px-8 border-border"> <div class="h-[1000px] bg-muted"> <StickySurface effects={["line", "elevate"]} threshold="1rem" observeStuck class="bg-background p-4 flex justify-between items-center"> <p>Scroll inside!</p> <div class="flex items-center gap-2"> <Button size="sm" variant="outline" class="group-[.is-stuck]/surface:opacity-0 will-change-transform group-[.is-stuck]/surface:blur-sm transition-all duration-300 ease-out">Log in</Button> <Button size="sm" class="w-24 group-[.is-stuck]/surface:w-28 duration-500 ease-out"> <span class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out">Contact</span> <span class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 opacity-0 transition-all blur-sm duration-500 ease-out">Get a demo</span> </Button> </div> </StickySurface> </div> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { StickySurface } from '@bejamas/registry/ui/sticky-surface';
+---
+
+<div class="overflow-y-auto max-h-[320px] w-full bg-border px-8 border-border">
+  <div class="h-[1000px] bg-muted">
+    <StickySurface effects={["line", "elevate"]} threshold="1rem" observeStuck class="bg-background p-4 flex justify-between items-center">
+      <p>Scroll inside!</p>
+      <div class="flex items-center gap-2">
+        <Button size="sm" variant="outline" class="group-[.is-stuck]/surface:opacity-0 will-change-transform group-[.is-stuck]/surface:blur-sm transition-all duration-300 ease-out">Log in</Button>
+        <Button size="sm" class="w-24 group-[.is-stuck]/surface:w-28 duration-500 ease-out">
+          <span class="group-[.is-stuck]/surface:blur-sm group-[.is-stuck]/surface:opacity-0 absolute group-[.is-stuck]/surface:hidden transition-discrete duration-500 ease-out">Contact</span>
+          <span class="group-[.is-stuck]/surface:blur-none group-[.is-stuck]/surface:opacity-100 group-[.is-stuck]/surface:delay-150 opacity-0 transition-all blur-sm duration-500 ease-out">Get a demo</span>
+        </Button>
+      </div>
+    </StickySurface>
+  </div>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add sticky-surface
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add sticky-surface
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add sticky-surface
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add sticky-surface
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { StickySurface } from '@bejamas/ui/components/sticky-surface';
+---
+
+<StickySurface effects={["line", "elevate"]} threshold="1rem">
+  <!-- Your content here -->
+</StickySurface>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>as</code> | `HTMLTag` | `"div"` |
+| <code>threshold</code> | `string \| number` | `"16px"` |
+| <code>effects</code> | `Array<"line" \| "elevate" \| "backdrop">` | `[]` |
+| <code>class</code> | `string` | `""` |
+| <code>style</code> | `string` | `""` |
+| <code>observeStuck</code> | `boolean` |  |

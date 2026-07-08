@@ -1,0 +1,199 @@
+---
+title: "Command"
+description: "A searchable command palette with grouped items, keyboard navigation, and optional dialog composition."
+---
+
+import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from '@bejamas/registry/ui/command';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Command class="max-w-sm rounded-lg border"> <CommandInput placeholder="Type a command or search..." /> <CommandList> <CommandEmpty>{"No results found."}</CommandEmpty> <CommandGroup heading="Suggestions"> <CommandItem> <CalendarIcon /> <span>{"Calendar"}</span> </CommandItem> <CommandItem> <SmileIcon /> <span>{"Search Emoji"}</span> </CommandItem> <CommandItem disabled> <CalculatorIcon /> <span>{"Calculator"}</span> </CommandItem> </CommandGroup> <CommandSeparator /> <CommandGroup heading="Settings"> <CommandItem> <UserIcon /> <span>{"Profile"}</span> <CommandShortcut>{"⌘P"}</CommandShortcut> </CommandItem> <CommandItem> <CreditCardIcon /> <span>{"Billing"}</span> <CommandShortcut>{"⌘B"}</CommandShortcut> </CommandItem> <CommandItem> <SettingsIcon /> <span>{"Settings"}</span> <CommandShortcut>{"⌘S"}</CommandShortcut> </CommandItem> </CommandGroup> </CommandList> </Command>
+</div>
+
+```astro
+---
+import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from '@lucide/astro';
+
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from '@bejamas/registry/ui/command';
+---
+
+<Command class="max-w-sm rounded-lg border">
+  <CommandInput placeholder="Type a command or search..." />
+  <CommandList>
+    <CommandEmpty>No results found.</CommandEmpty>
+    <CommandGroup heading="Suggestions">
+      <CommandItem>
+        <CalendarIcon />
+        <span>Calendar</span>
+      </CommandItem>
+      <CommandItem>
+        <SmileIcon />
+        <span>Search Emoji</span>
+      </CommandItem>
+      <CommandItem disabled>
+        <CalculatorIcon />
+        <span>Calculator</span>
+      </CommandItem>
+    </CommandGroup>
+    <CommandSeparator />
+    <CommandGroup heading="Settings">
+      <CommandItem>
+        <UserIcon />
+        <span>Profile</span>
+        <CommandShortcut>⌘P</CommandShortcut>
+      </CommandItem>
+      <CommandItem>
+        <CreditCardIcon />
+        <span>Billing</span>
+        <CommandShortcut>⌘B</CommandShortcut>
+      </CommandItem>
+      <CommandItem>
+        <SettingsIcon />
+        <span>Settings</span>
+        <CommandShortcut>⌘S</CommandShortcut>
+      </CommandItem>
+    </CommandGroup>
+  </CommandList>
+</Command>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add command
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add command
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add command
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add command
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse nopreview
+---
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from '@bejamas/ui/components/command';
+import {
+  Calculator,
+  Calendar,
+  CreditCard,
+  Settings,
+  Smile,
+  User,
+} from '@lucide/astro';
+---
+
+<Command class="max-w-sm rounded-lg border">
+  <CommandInput placeholder="Type a command or search..." />
+  <CommandList>
+    <CommandEmpty>No results found.</CommandEmpty>
+    <CommandGroup heading="Suggestions">
+      <CommandItem>
+        <CalendarIcon />
+        <span>Calendar</span>
+      </CommandItem>
+      <CommandItem>
+        <SmileIcon />
+        <span>Search Emoji</span>
+      </CommandItem>
+      <CommandItem disabled>
+        <Calculator />
+        <span>Calculator</span>
+      </CommandItem>
+    </CommandGroup>
+    <CommandSeparator />
+    <CommandGroup heading="Settings">
+      <CommandItem>
+        <User />
+        <span>Profile</span>
+        <CommandShortcut>⌘P</CommandShortcut>
+      </CommandItem>
+      <CommandItem>
+        <CreditCard />
+        <span>Billing</span>
+        <CommandShortcut>⌘B</CommandShortcut>
+      </CommandItem>
+      <CommandItem>
+        <Settings />
+        <span>Settings</span>
+        <CommandShortcut>⌘S</CommandShortcut>
+      </CommandItem>
+    </CommandGroup>
+  </CommandList>
+</Command>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>label</code> | `string` |  |
+| <code>defaultValue</code> | `string` |  |
+| <code>defaultSearch</code> | `string` |  |
+| <code>shouldFilter</code> | `boolean` |  |
+| <code>loop</code> | `boolean` |  |
+| <code>disablePointerSelection</code> | `boolean` |  |
+| <code>vimBindings</code> | `boolean` |  |
+| <code>class</code> | `string` | `""` |
+
+## API Reference
+
+### Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `command:change` | `{ value: string \| null }` | Fired when the active item changes |
+| `command:search-change` | `{ search: string }` | Fired when the search query changes |
+| `command:select` | `{ value: string }` | Fired when an item is selected |
+
+### Programmatic Control
+
+```js nocollapse
+const command = document.getElementById('my-command');
+
+command.dispatchEvent(new CustomEvent('command:set', {
+  detail: {
+    search: 'settings',
+    value: 'settings'
+  }
+}));
+```
+
+### Dialog Composition
+
+```astro nocollapse nopreview
+<CommandDialog defaultOpen>
+  <Command>
+    <CommandInput placeholder="Search..." />
+    <CommandList>
+      <CommandEmpty>No results found.</CommandEmpty>
+      <CommandItem>Open settings</CommandItem>
+    </CommandList>
+  </Command>
+</CommandDialog>
+```

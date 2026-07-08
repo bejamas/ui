@@ -1,0 +1,86 @@
+---
+title: "Radio Group"
+description: "A group of options where users can select exactly one choice."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2549-18817&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Label } from '@bejamas/registry/ui/label';
+import { RadioGroup, RadioGroupItem } from '@bejamas/registry/ui/radio-group';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<RadioGroup name="plan" defaultValue="free"> <div class="flex items-center gap-2"> <RadioGroupItem value="free" id="free" /> <Label for="free">{"Free"}</Label> </div> <div class="flex items-center gap-2"> <RadioGroupItem value="pro" id="pro" /> <Label for="pro">{"Pro"}</Label> </div> </RadioGroup>
+</div>
+
+```astro
+---
+import { Label } from '@bejamas/registry/ui/label';
+import { RadioGroup, RadioGroupItem } from '@bejamas/registry/ui/radio-group';
+---
+
+<RadioGroup name="plan" defaultValue="free">
+  <div class="flex items-center gap-2">
+    <RadioGroupItem value="free" id="free" />
+    <Label for="free">Free</Label>
+  </div>
+  <div class="flex items-center gap-2">
+    <RadioGroupItem value="pro" id="pro" />
+    <Label for="pro">Pro</Label>
+  </div>
+</RadioGroup>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add radio-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add radio-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add radio-group
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add radio-group
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { RadioGroup, RadioGroupItem } from '@bejamas/ui/components/radio-group';
+import { Label } from '@bejamas/ui/components/label';
+---
+
+<RadioGroup name="plan" defaultValue="free">
+  <div class="flex items-center gap-2">
+    <RadioGroupItem value="free" id="free" />
+    <Label for="free">Free</Label>
+  </div>
+</RadioGroup>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+| <code>defaultValue</code> | `string` |  |
+| <code>name</code> | `string` |  |
+| <code>disabled</code> | `boolean` | `false` |
+| <code>readOnly</code> | `boolean` | `false` |
+| <code>required</code> | `boolean` | `false` |
+| <code>"aria-label"</code> | `string` |  |
+| <code>"aria-labelledby"</code> | `string` |  |

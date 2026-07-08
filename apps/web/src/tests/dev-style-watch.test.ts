@@ -27,6 +27,9 @@ describe("dev style watch workflow", () => {
     };
 
     expect(packageJson.scripts?.dev).toBe("bun run scripts/dev.ts");
+    expect(packageJson.scripts?.["dev:docs"]).toBe(
+      "BEJAMAS_DEV_BUILD_DOCS=1 bun run scripts/dev.ts",
+    );
     expect(packageJson.scripts?.start).toBe("astro dev");
   });
 
@@ -73,11 +76,22 @@ describe("dev style watch workflow", () => {
     expect(source).toContain("await runStyleArtifactBuild({ cwd, logger });");
   });
 
-  test("runs initial setup, starts the watcher, then launches astro dev", () => {
+  test("runs fast initial setup, starts the watcher, then launches astro dev", () => {
     const source = fs.readFileSync(devScriptFile, "utf8");
 
     expect(source).toContain("await runStyleArtifactBuild();");
+    expect(source).toContain(
+      'const BUILD_DOCS_ON_DEV_ENV = "BEJAMAS_DEV_BUILD_DOCS";',
+    );
+    expect(source).toContain(
+      'const GENERATED_DOCS_DIR = path.join(APP_ROOT, "src/content/docs/components");',
+    );
+    expect(source).toContain("function hasGeneratedComponentDocs()");
+    expect(source).toContain("if (shouldBuildDocsOnDev()) {");
+    expect(source).toContain("} else if (!hasGeneratedComponentDocs()) {");
+    expect(source).toContain("[dev] generated component docs missing");
     expect(source).toContain('await runCommand("build:docs");');
+    expect(source).toContain("[dev] generated component docs exist");
     expect(source).toContain(
       "const styleWatcher = startStyleArtifactWatcher();",
     );

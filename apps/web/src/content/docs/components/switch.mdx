@@ -1,0 +1,82 @@
+---
+title: "Switch"
+description: "A toggle control for switching between checked and unchecked states."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2509-4236&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Label } from '@bejamas/registry/ui/label';
+import { Switch } from '@bejamas/registry/ui/switch';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex items-center gap-3"> <Switch id="notifications" /> <Label for="notifications">{"Enable notifications"}</Label> </div>
+</div>
+
+```astro
+---
+import { Label } from '@bejamas/registry/ui/label';
+import { Switch } from '@bejamas/registry/ui/switch';
+---
+
+<div class="flex items-center gap-3">
+  <Switch id="notifications" />
+  <Label for="notifications">Enable notifications</Label>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add switch
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add switch
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add switch
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add switch
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Switch } from '@bejamas/ui/components/switch';
+import { Label } from '@bejamas/ui/components/label';
+---
+
+<div class="flex items-center gap-3">
+  <Switch id="notifications" />
+  <Label for="notifications">Enable notifications</Label>
+</div>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+| <code>id</code> | `string` | `""` |
+| <code>size</code> | `"sm" \| "default"` | `"default"` |
+| <code>checked</code> | `boolean` |  |
+| <code>defaultChecked</code> | `boolean` |  |
+| <code>name</code> | `string` |  |
+| <code>value</code> | `string` |  |
+| <code>uncheckedValue</code> | `string` |  |
+| <code>disabled</code> | `boolean` | `false` |
+| <code>readOnly</code> | `boolean` | `false` |
+| <code>required</code> | `boolean` | `false` |
+| <code>"aria-invalid"</code> | `boolean \| "true" \| "false"` |  |

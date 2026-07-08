@@ -1,0 +1,182 @@
+---
+title: "Avatar"
+description: "An image representing a user or entity, with fallback support when unavailable."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/BejamasUI---Design-System?node-id=2531-2620&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from '@bejamas/registry/ui/avatar';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-wrap items-center gap-4"> <Avatar> <AvatarImage src="https://github.com/thomkrupa.png" alt="@thomkrupa" /> <AvatarFallback>{"TK"}</AvatarFallback> <AvatarBadge /> </Avatar> <AvatarGroup> <Avatar> <AvatarImage src="https://github.com/withastro.png" alt="@withastro" /> <AvatarFallback>{"WA"}</AvatarFallback> </Avatar> <Avatar> <AvatarImage src="https://github.com/bejamas.png" alt="@bejamas" /> <AvatarFallback>{"BJ"}</AvatarFallback> </Avatar> <AvatarGroupCount>{"+2"}</AvatarGroupCount> </AvatarGroup> </div>
+</div>
+
+```astro
+---
+import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from '@bejamas/registry/ui/avatar';
+---
+
+<div class="flex flex-wrap items-center gap-4">
+  <Avatar>
+    <AvatarImage src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+    <AvatarFallback>TK</AvatarFallback>
+    <AvatarBadge />
+  </Avatar>
+  <AvatarGroup>
+    <Avatar>
+      <AvatarImage src="https://github.com/withastro.png" alt="@withastro" />
+      <AvatarFallback>WA</AvatarFallback>
+    </Avatar>
+    <Avatar>
+      <AvatarImage src="https://github.com/bejamas.png" alt="@bejamas" />
+      <AvatarFallback>BJ</AvatarFallback>
+    </Avatar>
+    <AvatarGroupCount>+2</AvatarGroupCount>
+  </AvatarGroup>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add avatar
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add avatar
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add avatar
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add avatar
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  AvatarBadge,
+  AvatarGroup,
+  AvatarGroupCount,
+} from '@bejamas/ui/components/avatar';
+---
+
+<Avatar size="lg">
+  <AvatarImage src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+  <AvatarFallback>TK</AvatarFallback>
+  <AvatarBadge />
+</Avatar>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+| <code>size</code> | `"default" \| "sm" \| "lg"` | `"default"` |
+
+## Examples
+
+### Sizes
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex items-center gap-4"> <Avatar size="sm"> <AvatarImage src="https://github.com/bejamas.png" alt="small" /> <AvatarFallback>{"SM"}</AvatarFallback> </Avatar> <Avatar> <AvatarImage src="https://github.com/bejamas.png" alt="default" /> <AvatarFallback>{"MD"}</AvatarFallback> </Avatar> <Avatar size="lg"> <AvatarImage src="https://github.com/bejamas.png" alt="large" /> <AvatarFallback>{"LG"}</AvatarFallback> </Avatar> </div>
+</div>
+
+```astro
+---
+import { Avatar, AvatarFallback, AvatarImage } from '@bejamas/registry/ui/avatar';
+---
+
+<div class="flex items-center gap-4">
+  <Avatar size="sm">
+    <AvatarImage src="https://github.com/bejamas.png" alt="small" />
+    <AvatarFallback>SM</AvatarFallback>
+  </Avatar>
+  <Avatar>
+    <AvatarImage src="https://github.com/bejamas.png" alt="default" />
+    <AvatarFallback>MD</AvatarFallback>
+  </Avatar>
+  <Avatar size="lg">
+    <AvatarImage src="https://github.com/bejamas.png" alt="large" />
+    <AvatarFallback>LG</AvatarFallback>
+  </Avatar>
+</div>
+```
+
+### Badge
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Avatar> <AvatarImage src="https://github.com/thomkrupa.png" alt="@thomkrupa" /> <AvatarFallback>{"TK"}</AvatarFallback> <AvatarBadge /> </Avatar>
+</div>
+
+```astro
+---
+import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from '@bejamas/registry/ui/avatar';
+---
+
+<Avatar>
+  <AvatarImage src="https://github.com/thomkrupa.png" alt="@thomkrupa" />
+  <AvatarFallback>TK</AvatarFallback>
+  <AvatarBadge />
+</Avatar>
+```
+
+### Group
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<AvatarGroup> <Avatar> <AvatarImage src="https://github.com/withastro.png" alt="@withastro" /> <AvatarFallback>{"WA"}</AvatarFallback> </Avatar> <Avatar> <AvatarImage src="https://github.com/bejamas.png" alt="@bejamas" /> <AvatarFallback>{"BJ"}</AvatarFallback> </Avatar> <Avatar> <AvatarFallback>{"FS"}</AvatarFallback> </Avatar> <AvatarGroupCount>{"+3"}</AvatarGroupCount> </AvatarGroup>
+</div>
+
+```astro
+---
+import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from '@bejamas/registry/ui/avatar';
+---
+
+<AvatarGroup>
+  <Avatar>
+    <AvatarImage src="https://github.com/withastro.png" alt="@withastro" />
+    <AvatarFallback>WA</AvatarFallback>
+  </Avatar>
+  <Avatar>
+    <AvatarImage src="https://github.com/bejamas.png" alt="@bejamas" />
+    <AvatarFallback>BJ</AvatarFallback>
+  </Avatar>
+  <Avatar>
+    <AvatarFallback>FS</AvatarFallback>
+  </Avatar>
+  <AvatarGroupCount>+3</AvatarGroupCount>
+</AvatarGroup>
+```
+
+### With `astro:assets` Image
+
+```astro
+---
+import { Image } from "astro:assets";
+import profile from "@/assets/profile.jpg";
+import { Avatar, AvatarImage, AvatarFallback } from "@bejamas/ui/components/avatar";
+---
+
+<Avatar>
+  <AvatarImage>
+    <Image src={profile} alt="Profile photo" />
+  </AvatarImage>
+  <AvatarFallback>PR</AvatarFallback>
+</Avatar>
+```

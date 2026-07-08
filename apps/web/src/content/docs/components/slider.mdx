@@ -1,0 +1,195 @@
+---
+title: "Slider"
+description: "An input component that allows users to select a value from a range by dragging a thumb along a track."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2523-6067&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Slider } from '@bejamas/registry/ui/slider';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Slider class="w-full max-w-sm" defaultValue={50} max={100} />
+</div>
+
+```astro
+---
+import { Slider } from '@bejamas/registry/ui/slider';
+---
+
+<Slider class="w-full max-w-sm" defaultValue={50} max={100} />
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add slider
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add slider
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add slider
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add slider
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Slider } from '@bejamas/ui/components/slider';
+---
+
+<Slider defaultValue={50} max={100} />
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+| <code>value</code> | `SliderValue` |  |
+| <code>defaultValue</code> | `SliderValue` |  |
+| <code>min</code> | `number` | `0` |
+| <code>max</code> | `number` | `100` |
+| <code>step</code> | `number` | `1` |
+| <code>orientation</code> | `"horizontal" \| "vertical"` | `"horizontal"` |
+| <code>disabled</code> | `boolean` | `false` |
+
+## Examples
+
+### Range
+
+Use two thumbs to create a range slider for selecting a min and max value.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Slider class="w-full max-w-sm" defaultValue={[25, 75]} max={100} />
+</div>
+
+```astro
+---
+import { Slider } from '@bejamas/registry/ui/slider';
+---
+
+<Slider class="w-full max-w-sm" defaultValue={[25, 75]} max={100} />
+```
+
+### Vertical
+
+Set orientation to vertical for a vertical slider.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="h-48"> <Slider class="h-full" orientation="vertical" defaultValue={50} max={100} /> </div>
+</div>
+
+```astro
+---
+import { Slider } from '@bejamas/registry/ui/slider';
+---
+
+<div class="h-48">
+  <Slider class="h-full" orientation="vertical" defaultValue={50} max={100} />
+</div>
+```
+
+### Disabled
+
+Disable the slider to prevent interaction.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Slider class="w-full max-w-sm" defaultValue={50} max={100} disabled />
+</div>
+
+```astro
+---
+import { Slider } from '@bejamas/registry/ui/slider';
+---
+
+<Slider class="w-full max-w-sm" defaultValue={50} max={100} disabled />
+```
+
+### Step
+
+Set a custom step increment.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Slider class="w-full max-w-sm" defaultValue={50} max={100} step={10} />
+</div>
+
+```astro
+---
+import { Slider } from '@bejamas/registry/ui/slider';
+---
+
+<Slider class="w-full max-w-sm" defaultValue={50} max={100} step={10} />
+```
+
+## API Reference
+
+### Events
+
+The slider emits custom events that you can listen to:
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `slider:change` | `{ value: number \| [number, number] }` | Fired on every value change (during drag) |
+| `slider:commit` | `{ value: number \| [number, number] }` | Fired when value is committed (pointer up or keyboard blur) |
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Slider id="my-slider" defaultValue={50} max={100} />
+</div>
+
+```astro nocollapse
+<Slider id="my-slider" defaultValue={50} max={100} />
+```
+
+```js nocollapse
+  const slider = document.getElementById('my-slider');
+
+  slider.addEventListener('slider:change', (e) => {
+    console.log('Value changing:', e.detail.value);
+  });
+
+  slider.addEventListener('slider:commit', (e) => {
+    console.log('Value committed:', e.detail.value);
+  });
+```
+
+### Programmatic Control
+
+You can set the slider value programmatically by dispatching a `slider:set` event:
+
+```js nocollapse
+// Set single value
+slider.dispatchEvent(new CustomEvent('slider:set', {
+  detail: { value: 75 }
+}));
+
+// Set range values
+slider.dispatchEvent(new CustomEvent('slider:set', {
+  detail: { value: [25, 75] }
+}));
+```
+
+### Data Attributes
+
+The slider sets these data attributes that you can use for styling or querying state:
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-orientation` | slider | Current orientation (`horizontal` or `vertical`) |
+| `data-disabled` | slider | Present when slider is disabled |
+| `data-dragging` | slider, thumb | Present during drag interaction |
+| `data-value` | slider | Current value(s) as string (e.g., `"50"` or `"25,75"`) |

@@ -1,0 +1,72 @@
+---
+title: "Separator"
+description: "Visual separator for grouping content, supporting horizontal and vertical orientation."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2511-5829&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Separator } from '@bejamas/registry/ui/separator';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div> <div class="space-y-1"> <h4 class="text-sm leading-none font-medium">bejamas/ui</h4> <p class="text-muted-foreground text-sm"> An open-source UI component library. </p> </div> <Separator class="my-4" /> <div class="flex h-5 items-center space-x-4 text-sm"> <div>Blog</div> <Separator orientation="vertical" /> <div>Docs</div> <Separator orientation="vertical" /> <div>Source</div> </div> </div>
+</div>
+
+```astro
+---
+import { Separator } from '@bejamas/registry/ui/separator';
+---
+
+<div>
+  <div class="space-y-1">
+    <h4 class="text-sm leading-none font-medium">bejamas/ui</h4>
+    <p class="text-muted-foreground text-sm">
+      An open-source UI component library.
+    </p>
+  </div>
+  <Separator class="my-4" />
+  <div class="flex h-5 items-center space-x-4 text-sm">
+    <div>Blog</div>
+    <Separator orientation="vertical" />
+    <div>Docs</div>
+    <Separator orientation="vertical" />
+    <div>Source</div>
+  </div>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add separator
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add separator
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add separator
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add separator
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Separator } from '@bejamas/ui/components/separator';
+---
+
+<Separator />
+<Separator orientation="vertical" />
+```

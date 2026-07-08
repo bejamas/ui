@@ -1,0 +1,296 @@
+---
+title: "Table"
+description: "A responsive table component with compound parts for header, body, footer, and caption."
+---
+
+import { EllipsisIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@bejamas/registry/ui/dropdown-menu';
+import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@bejamas/registry/ui/table';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Table> <TableCaption>{"A list of your recent invoices."}</TableCaption> <TableHeader> <TableRow> <TableHead class="w-[100px]">{"Invoice"}</TableHead> <TableHead>{"Status"}</TableHead> <TableHead>{"Method"}</TableHead> <TableHead class="text-right">{"Amount"}</TableHead> </TableRow> </TableHeader> <TableBody> <TableRow> <TableCell class="font-medium">{"INV001"}</TableCell> <TableCell>{"Paid"}</TableCell> <TableCell>{"Credit Card"}</TableCell> <TableCell class="text-right">{"$250.00"}</TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"INV002"}</TableCell> <TableCell>{"Pending"}</TableCell> <TableCell>{"PayPal"}</TableCell> <TableCell class="text-right">{"$150.00"}</TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"INV003"}</TableCell> <TableCell>{"Unpaid"}</TableCell> <TableCell>{"Bank Transfer"}</TableCell> <TableCell class="text-right">{"$350.00"}</TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"INV004"}</TableCell> <TableCell>{"Paid"}</TableCell> <TableCell>{"Credit Card"}</TableCell> <TableCell class="text-right">{"$450.00"}</TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"INV005"}</TableCell> <TableCell>{"Paid"}</TableCell> <TableCell>{"PayPal"}</TableCell> <TableCell class="text-right">{"$550.00"}</TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"INV006"}</TableCell> <TableCell>{"Pending"}</TableCell> <TableCell>{"Bank Transfer"}</TableCell> <TableCell class="text-right">{"$200.00"}</TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"INV007"}</TableCell> <TableCell>{"Unpaid"}</TableCell> <TableCell>{"Credit Card"}</TableCell> <TableCell class="text-right">{"$300.00"}</TableCell> </TableRow> </TableBody> <TableFooter> <TableRow> <TableCell colspan={3}>{"Total"}</TableCell> <TableCell class="text-right">{"$2,500.00"}</TableCell> </TableRow> </TableFooter> </Table>
+</div>
+
+```astro
+---
+import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@bejamas/registry/ui/table';
+---
+
+<Table>
+  <TableCaption>A list of your recent invoices.</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead class="w-[100px]">Invoice</TableHead>
+      <TableHead>Status</TableHead>
+      <TableHead>Method</TableHead>
+      <TableHead class="text-right">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell class="font-medium">INV001</TableCell>
+      <TableCell>Paid</TableCell>
+      <TableCell>Credit Card</TableCell>
+      <TableCell class="text-right">$250.00</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">INV002</TableCell>
+      <TableCell>Pending</TableCell>
+      <TableCell>PayPal</TableCell>
+      <TableCell class="text-right">$150.00</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">INV003</TableCell>
+      <TableCell>Unpaid</TableCell>
+      <TableCell>Bank Transfer</TableCell>
+      <TableCell class="text-right">$350.00</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">INV004</TableCell>
+      <TableCell>Paid</TableCell>
+      <TableCell>Credit Card</TableCell>
+      <TableCell class="text-right">$450.00</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">INV005</TableCell>
+      <TableCell>Paid</TableCell>
+      <TableCell>PayPal</TableCell>
+      <TableCell class="text-right">$550.00</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">INV006</TableCell>
+      <TableCell>Pending</TableCell>
+      <TableCell>Bank Transfer</TableCell>
+      <TableCell class="text-right">$200.00</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">INV007</TableCell>
+      <TableCell>Unpaid</TableCell>
+      <TableCell>Credit Card</TableCell>
+      <TableCell class="text-right">$300.00</TableCell>
+    </TableRow>
+  </TableBody>
+  <TableFooter>
+    <TableRow>
+      <TableCell colspan={3}>Total</TableCell>
+      <TableCell class="text-right">$2,500.00</TableCell>
+    </TableRow>
+  </TableFooter>
+</Table>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add table
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add table
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add table
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add table
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@bejamas/ui/components/table';
+
+const invoices = [
+  { invoice: "INV001", paymentStatus: "Paid", totalAmount: "$250.00", paymentMethod: "Credit Card" },
+  { invoice: "INV002", paymentStatus: "Pending", totalAmount: "$150.00", paymentMethod: "PayPal" },
+  { invoice: "INV003", paymentStatus: "Unpaid", totalAmount: "$350.00", paymentMethod: "Bank Transfer" },
+  { invoice: "INV004", paymentStatus: "Paid", totalAmount: "$450.00", paymentMethod: "Credit Card" },
+  { invoice: "INV005", paymentStatus: "Paid", totalAmount: "$550.00", paymentMethod: "PayPal" },
+  { invoice: "INV006", paymentStatus: "Pending", totalAmount: "$200.00", paymentMethod: "Bank Transfer" },
+  { invoice: "INV007", paymentStatus: "Unpaid", totalAmount: "$300.00", paymentMethod: "Credit Card" },
+];
+---
+
+<Table>
+  <TableCaption>A list of your recent invoices.</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead class="w-[100px]">Invoice</TableHead>
+      <TableHead>Status</TableHead>
+      <TableHead>Method</TableHead>
+      <TableHead class="text-right">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    {invoices.map((invoice) => (
+      <TableRow>
+        <TableCell class="font-medium">{invoice.invoice}</TableCell>
+        <TableCell>{invoice.paymentStatus}</TableCell>
+        <TableCell>{invoice.paymentMethod}</TableCell>
+        <TableCell class="text-right">{invoice.totalAmount}</TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+  <TableFooter>
+    <TableRow>
+      <TableCell colspan={3}>Total</TableCell>
+      <TableCell class="text-right">$2,500.00</TableCell>
+    </TableRow>
+  </TableFooter>
+</Table>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+
+## Examples
+
+### Footer
+
+Use the `<TableFooter />` component to add a footer to the table.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Table> <TableCaption>{"A list of your recent invoices."}</TableCaption> <TableHeader> <TableRow> <TableHead class="w-[100px]">{"Invoice"}</TableHead> <TableHead>{"Status"}</TableHead> <TableHead>{"Method"}</TableHead> <TableHead class="text-right">{"Amount"}</TableHead> </TableRow> </TableHeader> <TableBody> <TableRow> <TableCell class="font-medium">{"INV001"}</TableCell> <TableCell>{"Paid"}</TableCell> <TableCell>{"Credit Card"}</TableCell> <TableCell class="text-right">{"$250.00"}</TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"INV002"}</TableCell> <TableCell>{"Pending"}</TableCell> <TableCell>{"PayPal"}</TableCell> <TableCell class="text-right">{"$150.00"}</TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"INV003"}</TableCell> <TableCell>{"Unpaid"}</TableCell> <TableCell>{"Bank Transfer"}</TableCell> <TableCell class="text-right">{"$350.00"}</TableCell> </TableRow> </TableBody> <TableFooter> <TableRow> <TableCell colspan={3}>{"Total"}</TableCell> <TableCell class="text-right">{"$2,500.00"}</TableCell> </TableRow> </TableFooter> </Table>
+</div>
+
+```astro
+---
+import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@bejamas/registry/ui/table';
+---
+
+<Table>
+  <TableCaption>A list of your recent invoices.</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead class="w-[100px]">Invoice</TableHead>
+      <TableHead>Status</TableHead>
+      <TableHead>Method</TableHead>
+      <TableHead class="text-right">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell class="font-medium">INV001</TableCell>
+      <TableCell>Paid</TableCell>
+      <TableCell>Credit Card</TableCell>
+      <TableCell class="text-right">$250.00</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">INV002</TableCell>
+      <TableCell>Pending</TableCell>
+      <TableCell>PayPal</TableCell>
+      <TableCell class="text-right">$150.00</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">INV003</TableCell>
+      <TableCell>Unpaid</TableCell>
+      <TableCell>Bank Transfer</TableCell>
+      <TableCell class="text-right">$350.00</TableCell>
+    </TableRow>
+  </TableBody>
+  <TableFooter>
+    <TableRow>
+      <TableCell colspan={3}>Total</TableCell>
+      <TableCell class="text-right">$2,500.00</TableCell>
+    </TableRow>
+  </TableFooter>
+</Table>
+```
+
+### Actions
+
+A table showing actions for each row using a `<DropdownMenu />` component.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Table> <TableHeader> <TableRow> <TableHead>{"Product"}</TableHead> <TableHead>{"Price"}</TableHead> <TableHead class="text-right">{"Actions"}</TableHead> </TableRow> </TableHeader> <TableBody> <TableRow> <TableCell class="font-medium">{"Wireless Mouse"}</TableCell> <TableCell>{"$29.99"}</TableCell> <TableCell class="text-right"> <DropdownMenu> <DropdownMenuTrigger variant="ghost" size="icon" class="size-8"><EllipsisIcon /><span class="sr-only">{"Open menu"}</span></DropdownMenuTrigger> <DropdownMenuContent align="end"> <DropdownMenuItem>{"Edit"}</DropdownMenuItem> <DropdownMenuItem>{"Duplicate"}</DropdownMenuItem> <DropdownMenuSeparator /> <DropdownMenuItem class="text-destructive">{"Delete"}</DropdownMenuItem> </DropdownMenuContent> </DropdownMenu> </TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"Mechanical Keyboard"}</TableCell> <TableCell>{"$129.99"}</TableCell> <TableCell class="text-right"> <DropdownMenu> <DropdownMenuTrigger variant="ghost" size="icon" class="size-8"><EllipsisIcon /><span class="sr-only">{"Open menu"}</span></DropdownMenuTrigger> <DropdownMenuContent align="end"> <DropdownMenuItem>{"Edit"}</DropdownMenuItem> <DropdownMenuItem>{"Duplicate"}</DropdownMenuItem> <DropdownMenuSeparator /> <DropdownMenuItem class="text-destructive">{"Delete"}</DropdownMenuItem> </DropdownMenuContent> </DropdownMenu> </TableCell> </TableRow> <TableRow> <TableCell class="font-medium">{"USB-C Hub"}</TableCell> <TableCell>{"$49.99"}</TableCell> <TableCell class="text-right"> <DropdownMenu> <DropdownMenuTrigger variant="ghost" size="icon" class="size-8"><EllipsisIcon /><span class="sr-only">{"Open menu"}</span></DropdownMenuTrigger> <DropdownMenuContent align="end"> <DropdownMenuItem>{"Edit"}</DropdownMenuItem> <DropdownMenuItem>{"Duplicate"}</DropdownMenuItem> <DropdownMenuSeparator /> <DropdownMenuItem class="text-destructive">{"Delete"}</DropdownMenuItem> </DropdownMenuContent> </DropdownMenu> </TableCell> </TableRow> </TableBody> </Table>
+</div>
+
+```astro
+---
+import { EllipsisIcon } from '@lucide/astro';
+
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@bejamas/registry/ui/dropdown-menu';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@bejamas/registry/ui/table';
+---
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Product</TableHead>
+      <TableHead>Price</TableHead>
+      <TableHead class="text-right">Actions</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell class="font-medium">Wireless Mouse</TableCell>
+      <TableCell>$29.99</TableCell>
+      <TableCell class="text-right">
+        <DropdownMenu>
+          <DropdownMenuTrigger variant="ghost" size="icon" class="size-8"><EllipsisIcon /><span class="sr-only">Open menu</span></DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>Duplicate</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem class="text-destructive">Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">Mechanical Keyboard</TableCell>
+      <TableCell>$129.99</TableCell>
+      <TableCell class="text-right">
+        <DropdownMenu>
+          <DropdownMenuTrigger variant="ghost" size="icon" class="size-8"><EllipsisIcon /><span class="sr-only">Open menu</span></DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>Duplicate</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem class="text-destructive">Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell class="font-medium">USB-C Hub</TableCell>
+      <TableCell>$49.99</TableCell>
+      <TableCell class="text-right">
+        <DropdownMenu>
+          <DropdownMenuTrigger variant="ghost" size="icon" class="size-8"><EllipsisIcon /><span class="sr-only">Open menu</span></DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>Duplicate</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem class="text-destructive">Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+```

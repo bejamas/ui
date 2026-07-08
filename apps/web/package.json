@@ -5,8 +5,12 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "bun run scripts/dev.ts",
+    "dev:docs": "BEJAMAS_DEV_BUILD_DOCS=1 bun run scripts/dev.ts",
     "start": "astro dev",
-    "build": "bun run build:compiled-styles && bun run build:style-registry && bun run build:registry && bun run normalize-component-paths-in-registry && bun run build:docs && astro build",
+    "build": "bun run build:full",
+    "build:fast": "bun run build:artifacts && astro build",
+    "build:full": "bun run build:artifacts && bun run build:docs && astro build",
+    "build:artifacts": "bun run build:compiled-styles && bun run build:style-registry && bun run build:registry && bun run normalize-component-paths-in-registry",
     "preview": "astro preview",
     "astro": "astro",
     "watch:style-artifacts": "bun run scripts/watch-style-artifacts.ts",
@@ -23,7 +27,6 @@
     "@astrojs/alpinejs": "1.0.0",
     "@astrojs/check": "0.9.9",
     "@astrojs/mdx": "7.0.2",
-    "@astrojs/netlify": "8.1.1",
     "@astrojs/sitemap": "3.7.3",
     "@astrojs/starlight": "^0.41.3",
     "@astrojs/starlight-tailwind": "5.0.0",
@@ -57,7 +60,6 @@
     "@fontsource-variable/roboto-slab": "^5.2.8",
     "@fontsource-variable/source-sans-3": "^5.2.9",
     "@fontsource-variable/space-grotesk": "^5.2.10",
-    "@fontsource/inter": "^5.2.8",
     "@hotwired/stimulus": "^3.2.2",
     "@lucide/astro": "^1.23.0",
     "@pagefind/default-ui": "^1.4.0",
@@ -75,7 +77,6 @@
     "prismjs": "^1.30.0",
     "shadcn": "4.6.0",
     "sharp": "^0.34.5",
-    "starlight-cooler-credit": "^0.4.1",
     "starlight-theme-bejamas": "workspace:*",
     "tailwindcss": "^4.3.2",
     "typescript": "^5.9.3",
@@ -84,7 +85,6 @@
   "devDependencies": {
     "@types/bun": "^1.3.14",
     "@types/culori": "^4.0.1",
-    "@types/prismjs": "^1.26.6",
-    "tw-animate-css": "^1.4.0"
+    "@types/prismjs": "^1.26.6"
   }
 }

@@ -1,0 +1,182 @@
+---
+title: "Input"
+description: "A field for collecting user input."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2589-23428&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Button } from '@bejamas/registry/ui/button';
+import { Input } from '@bejamas/registry/ui/input';
+import { Label } from '@bejamas/registry/ui/label';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Input type="text" placeholder="Enter your name" />
+</div>
+
+```astro
+---
+import { Input } from '@bejamas/registry/ui/input';
+---
+
+<Input type="text" placeholder="Enter your name" />
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add input
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add input
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add input
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add input
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Input } from '@bejamas/ui/components/input';
+---
+<Input type="email" placeholder="Enter your email" />
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>size</code> | `InputUiSize \| NativeInputSize` |  |
+| <code>nativeSize</code> | `NativeInputSize` |  |
+
+## Examples
+
+### Default
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Input type="email" placeholder="Enter your email" />
+</div>
+
+```astro
+---
+import { Input } from '@bejamas/registry/ui/input';
+---
+
+<Input type="email" placeholder="Enter your email" />
+```
+
+### Disabled
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Input type="email" placeholder="Enter your email" disabled />
+</div>
+
+```astro
+---
+import { Input } from '@bejamas/registry/ui/input';
+---
+
+<Input type="email" placeholder="Enter your email" disabled />
+```
+
+### Sizes
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="grid w-full max-w-sm gap-3"> <div class="flex items-center gap-2"> <Input size="sm" placeholder="Small input (h-8)" /> <Button size="sm" variant="outline">{" Small "}</Button> </div> <div class="flex items-center gap-2"> <Input placeholder="Default input (h-9)" /> <Button variant="outline">{"Default"}</Button> </div> <div class="flex items-center gap-2"> <Input size="lg" placeholder="Large input (h-10)" /> <Button size="lg" variant="outline">{" Large "}</Button> </div> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Input } from '@bejamas/registry/ui/input';
+---
+
+<div class="grid w-full max-w-sm gap-3">
+  <div class="flex items-center gap-2">
+    <Input size="sm" placeholder="Small input (h-8)" />
+    <Button size="sm" variant="outline">
+      Small
+    </Button>
+  </div>
+  <div class="flex items-center gap-2">
+    <Input placeholder="Default input (h-9)" />
+    <Button variant="outline">Default</Button>
+  </div>
+  <div class="flex items-center gap-2">
+    <Input size="lg" placeholder="Large input (h-10)" />
+    <Button size="lg" variant="outline">
+      Large
+    </Button>
+  </div>
+</div>
+```
+
+### File
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="grid w-full max-w-sm items-center gap-3"> <Label htmlFor="picture">{"Picture"}</Label> <Input id="picture" type="file" /> </div>
+</div>
+
+```astro
+---
+import { Input } from '@bejamas/registry/ui/input';
+import { Label } from '@bejamas/registry/ui/label';
+---
+
+<div class="grid w-full max-w-sm items-center gap-3">
+  <Label htmlFor="picture">Picture</Label>
+  <Input id="picture" type="file" />
+</div>
+```
+
+### With Label
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="grid w-full max-w-sm items-center gap-3"> <Label htmlFor="email">{"Email"}</Label> <Input id="email" type="email" placeholder="Enter your email" /> </div>
+</div>
+
+```astro
+---
+import { Input } from '@bejamas/registry/ui/input';
+import { Label } from '@bejamas/registry/ui/label';
+---
+
+<div class="grid w-full max-w-sm items-center gap-3">
+  <Label htmlFor="email">Email</Label>
+  <Input id="email" type="email" placeholder="Enter your email" />
+</div>
+```
+
+### With Button
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex w-full max-w-sm items-center gap-2"> <Input type="email" placeholder="Email" /> <Button type="submit" variant="outline">{" Subscribe "}</Button> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Input } from '@bejamas/registry/ui/input';
+---
+
+<div class="flex w-full max-w-sm items-center gap-2">
+   <Input type="email" placeholder="Email" />
+   <Button type="submit" variant="outline">
+     Subscribe
+   </Button>
+ </div>
+```

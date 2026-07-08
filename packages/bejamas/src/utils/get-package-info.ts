@@ -1,6 +1,11 @@
 import path from "path";
 import fs from "fs-extra";
-import { type PackageJson } from "type-fest";
+
+type PackageJson = {
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  [key: string]: unknown;
+};
 
 export function getPackageInfo(
   cwd: string = "",

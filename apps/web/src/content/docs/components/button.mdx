@@ -1,0 +1,240 @@
+---
+title: "Button"
+description: "A clickable element for triggering actions or submitting forms."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2609-10438&t=YFStJ3V8fXEO8QD8-4"
+---
+
+import { ArrowUpIcon, ArrowUpRightIcon } from '@lucide/astro';
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Badge } from '@bejamas/registry/ui/badge';
+import { Button } from '@bejamas/registry/ui/button';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-wrap items-center gap-2 md:flex-row"> <Button>{"Button"}</Button> <Button variant="outline" size="icon" aria-label="Submit"> <ArrowUpIcon /> </Button> </div>
+</div>
+
+```astro
+---
+import { ArrowUpIcon } from '@lucide/astro';
+
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<div class="flex flex-wrap items-center gap-2 md:flex-row">
+  <Button>Button</Button>
+  <Button variant="outline" size="icon" aria-label="Submit">
+    <ArrowUpIcon />
+  </Button>
+</div>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add button
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add button
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add button
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add button
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Button } from '@bejamas/ui/components/button';
+---
+
+<Button>Click me</Button>
+```
+
+## Link
+
+You can use the `as` prop to render the component as an anchor.
+
+```astro nocollapse
+---
+import { Button } from '@bejamas/ui/components/button';
+---
+
+<Button as="a" href="https://bejamas.com">Click me</Button>
+```
+
+## Examples
+
+### Variants
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-col items-start gap-8 sm:flex-row"> <Button variant="default">{"Default"}</Button> <Button variant="secondary">{"Secondary"}</Button> <Button variant="outline">{"Outline"}</Button> <Button variant="ghost">{"Ghost"}</Button> <Button variant="destructive">{"Destructive"}</Button> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<div class="flex flex-col items-start gap-8 sm:flex-row">
+  <Button variant="default">Default</Button>
+  <Button variant="secondary">Secondary</Button>
+  <Button variant="outline">Outline</Button>
+  <Button variant="ghost">Ghost</Button>
+  <Button variant="destructive">Destructive</Button>
+</div>
+```
+
+### Sizes
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-col items-start gap-8 sm:flex-row"> <div class="flex items-start gap-2"> <Button size="sm" variant="outline">{" Small "}</Button> <Button size="icon-sm" aria-label="Submit" variant="outline"> <ArrowUpRightIcon /> </Button> </div> <div class="flex items-start gap-2"> <Button variant="outline">{"Default"}</Button> <Button size="icon" aria-label="Submit" variant="outline"> <ArrowUpRightIcon /> </Button> </div> <div class="flex items-start gap-2"> <Button variant="outline" size="lg">{" Large "}</Button> <Button size="icon-lg" aria-label="Submit" variant="outline"> <ArrowUpRightIcon /> </Button> </div> </div>
+</div>
+
+```astro
+---
+import { ArrowUpRightIcon } from '@lucide/astro';
+
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<div class="flex flex-col items-start gap-8 sm:flex-row">
+  <div class="flex items-start gap-2">
+    <Button size="sm" variant="outline">
+      Small
+    </Button>
+    <Button size="icon-sm" aria-label="Submit" variant="outline">
+      <ArrowUpRightIcon />
+    </Button>
+  </div>
+  <div class="flex items-start gap-2">
+    <Button variant="outline">Default</Button>
+    <Button size="icon" aria-label="Submit" variant="outline">
+      <ArrowUpRightIcon />
+    </Button>
+  </div>
+  <div class="flex items-start gap-2">
+    <Button variant="outline" size="lg">
+      Large
+    </Button>
+    <Button size="icon-lg" aria-label="Submit" variant="outline">
+      <ArrowUpRightIcon />
+    </Button>
+  </div>
+</div>
+```
+
+### With badge
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Button variant="default">{" Click me "}<Badge variant="secondary">{"Value"}</Badge> </Button>
+</div>
+
+```astro
+---
+import { Badge } from '@bejamas/registry/ui/badge';
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<Button variant="default">
+  Click me
+  <Badge variant="secondary">Value</Badge>
+</Button>
+```
+
+### Destructive
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Button variant="destructive">{"Click me"}</Button>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<Button variant="destructive">Click me</Button>
+```
+
+### Outline
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Button variant="outline">{"Click me"}</Button>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<Button variant="outline">Click me</Button>
+```
+
+### Secondary
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Button variant="secondary">{"Click me"}</Button>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<Button variant="secondary">Click me</Button>
+```
+
+### Ghost
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Button variant="ghost">{"Click me"}</Button>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<Button variant="ghost">Click me</Button>
+```
+
+### Link
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Button variant="link">{"Click me"}</Button>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<Button variant="link">Click me</Button>
+```
+
+### Default
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Button>{"Click me"}</Button>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<Button>Click me</Button>
+```
