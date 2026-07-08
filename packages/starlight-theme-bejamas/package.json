@@ -38,14 +38,14 @@
   },
   "bugs": "https://github.com/bejamas/ui/issues",
   "peerDependencies": {
-    "@astrojs/starlight": ">=0.33.0",
-    "astro": ">=5.5.0"
+    "@astrojs/starlight": "^0.41.3",
+    "astro": "^7.0.6"
   },
   "dependencies": {
     "@bejamas/semantic-icons": "workspace:*",
-    "@expressive-code/plugin-line-numbers": "^0.41.3",
+    "@expressive-code/plugin-line-numbers": "^0.41.7",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
-    "@lucide/astro": "^1.14.0"
+    "@lucide/astro": "^1.23.0"
   }
 }
