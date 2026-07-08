@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "bun run scripts/dev.ts",
+    "dev:artifacts": "BEJAMAS_DEV_BUILD_ARTIFACTS=1 bun run scripts/dev.ts",
     "dev:docs": "BEJAMAS_DEV_BUILD_DOCS=1 bun run scripts/dev.ts",
     "start": "astro dev",
     "build": "bun run build:full",

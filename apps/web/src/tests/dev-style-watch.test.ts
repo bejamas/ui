@@ -2,8 +2,10 @@ import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import path from "node:path";
 import {
+  getMissingStyleArtifactRelativePaths,
   REGISTRY_LIB_DIRECTORY_RELATIVE_PATH,
   REGISTRY_UI_DIRECTORY_RELATIVE_PATH,
+  STYLE_ARTIFACT_RELATIVE_PATHS,
   STYLE_BUILD_SCRIPTS,
   STYLE_IGNORED_OUTPUT_RELATIVE_PATHS,
   STYLE_PIPELINE_FILE_RELATIVE_PATHS,
@@ -31,6 +33,9 @@ describe("dev style watch workflow", () => {
     };
 
     expect(packageJson.scripts?.dev).toBe("bun run scripts/dev.ts");
+    expect(packageJson.scripts?.["dev:artifacts"]).toBe(
+      "BEJAMAS_DEV_BUILD_ARTIFACTS=1 bun run scripts/dev.ts",
+    );
     expect(packageJson.scripts?.["dev:docs"]).toBe(
       "BEJAMAS_DEV_BUILD_DOCS=1 bun run scripts/dev.ts",
     );
@@ -65,6 +70,13 @@ describe("dev style watch workflow", () => {
       "packages/create-config/src/generated",
       "apps/web/public/r/styles",
     ]);
+    expect(STYLE_ARTIFACT_RELATIVE_PATHS).toEqual([
+      "packages/create-config/src/generated/compiled-style-css.js",
+      "apps/web/public/r/styles/index.json",
+      "apps/web/public/r/registry.json",
+      "packages/ui/src/components/button/Button.astro",
+    ]);
+    expect(getMissingStyleArtifactRelativePaths()).toEqual([]);
     expect(STYLE_REBUILD_DEBOUNCE_MS).toBeGreaterThan(0);
   });
 
@@ -80,10 +92,24 @@ describe("dev style watch workflow", () => {
     expect(source).toContain("await runStyleArtifactBuild({ cwd, logger });");
   });
 
+  test("skips committed style artifacts during initial setup unless forced", () => {
+    const source = fs.readFileSync(devScriptFile, "utf8");
+
+    expect(source).toContain(
+      'const BUILD_STYLE_ARTIFACTS_ON_DEV_ENV = "BEJAMAS_DEV_BUILD_ARTIFACTS";',
+    );
+    expect(source).toContain("function shouldBuildStyleArtifactsOnDev()");
+    expect(source).toContain("async function ensureStyleArtifacts()");
+    expect(source).toContain("if (shouldBuildStyleArtifactsOnDev()) {");
+    expect(source).toContain("getMissingStyleArtifactRelativePaths()");
+    expect(source).toContain("missingArtifacts.length > 0");
+    expect(source).toContain("generated style artifacts exist");
+    expect(source).toContain("await ensureStyleArtifacts();");
+  });
+
   test("runs fast initial setup, starts the watcher, then launches astro dev", () => {
     const source = fs.readFileSync(devScriptFile, "utf8");
 
-    expect(source).toContain("await runStyleArtifactBuild();");
     expect(source).toContain(
       'const BUILD_DOCS_ON_DEV_ENV = "BEJAMAS_DEV_BUILD_DOCS";',
     );
@@ -99,7 +125,8 @@ describe("dev style watch workflow", () => {
     expect(source).toContain(
       "const styleWatcher = startStyleArtifactWatcher();",
     );
-    expect(source).toContain('cmd: ["bun", "run", "start"]');
+    expect(source).toContain("const devServerArgs = Bun.argv.slice(2);");
+    expect(source).toContain('cmd: ["bun", "run", "start", ...devServerArgs]');
   });
 
   test("routes registry component and lib edits through the same rebuild path", () => {
