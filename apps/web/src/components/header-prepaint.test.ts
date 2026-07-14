@@ -20,7 +20,9 @@ describe("header prepaint bootstrap", () => {
     expect(source).toContain('const root = script?.previousElementSibling;');
     expect(source).toContain('const themeCookie = readCookie("theme");');
     expect(source).toContain('const presetId = localStorage.getItem("theme-preset");');
-    expect(source).toContain('const themeRef = readCookie("theme-ref");');
+    expect(source).toContain(
+      'const themeRef = readCookie("theme-ref") || null;',
+    );
     expect(source).toContain('const customPresets = getCustomPresets();');
     expect(source).toContain('const stored = localStorage.getItem("bejamas-custom-presets");');
     expect(source).toContain("const buildCreateHref = (presetId, currentThemeRef) => {");

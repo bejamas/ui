@@ -6,6 +6,7 @@ import {
 } from "@bejamas/create-config/browser";
 import { getCurrentMode, setStoredPreset } from "./preset-store";
 import type { ThemeSwatches } from "./theme-cookie";
+import type { ThemeStyles } from "../types/theme";
 import { resolveDesignSystemTheme } from "./design-system-adapter";
 import { applyThemeToElement } from "./apply-theme";
 
@@ -14,6 +15,7 @@ export interface ApplyDocsPresetOptions {
   label: string;
   swatches: ThemeSwatches;
   themeRef?: string | null;
+  styles?: ThemeStyles;
 }
 
 const PENDING_THEME_STYLESHEET_SELECTOR =
@@ -154,25 +156,27 @@ function resolveConfigFromPresetId(id: string): DesignSystemConfig | null {
  * runs afterwards to pick up the server-only per-style global CSS (component
  * styling that isn't expressible as plain CSS variables).
  */
-export function applyThemeToDocument(id: string) {
+export function applyThemeToDocument(id: string, styles?: ThemeStyles) {
   if (typeof document === "undefined") {
     return;
   }
 
   const config = resolveConfigFromPresetId(id);
-  if (!config) {
+  if (!config && !styles) {
     return;
   }
 
-  const { styles } = resolveDesignSystemTheme(config);
+  const resolvedStyles = styles ?? resolveDesignSystemTheme(config!).styles;
 
   applyThemeToElement(
-    { styles, currentMode: getCurrentMode() },
+    { styles: resolvedStyles, currentMode: getCurrentMode() },
     document.documentElement,
     {
       // ThemeProvider owns the light/dark class; don't fight it here.
       skipModeClass: true,
-      includeGeneratedShadows: !isSharedShadcnStyle(config.style),
+      includeGeneratedShadows: config
+        ? !isSharedShadcnStyle(config.style)
+        : true,
     },
   );
 }
@@ -183,9 +187,10 @@ export function applyDocsPreset(options: ApplyDocsPresetOptions) {
     options.swatches,
     options.label,
     options.themeRef ?? null,
+    options.styles,
   );
 
-  applyThemeToDocument(options.id);
+  applyThemeToDocument(options.id, options.styles);
 
   return refreshCurrentThemeStylesheet();
 }
