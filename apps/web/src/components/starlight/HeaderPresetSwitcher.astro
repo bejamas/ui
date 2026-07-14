@@ -11,6 +11,10 @@ import {
 import { Button } from "@bejamas/registry/ui/button";
 import { ChevronDownIcon } from "@lucide/astro";
 import { buildHeaderPresetSwitcherState } from "@/utils/themes/header-preset-switcher";
+import {
+  HEADER_CUSTOM_PRESET_LABEL,
+  HEADER_CUSTOM_PRESET_VALUE,
+} from "@/utils/themes/header-custom-preset";
 
 const state = buildHeaderPresetSwitcherState({});
 ---
@@ -86,6 +90,28 @@ const state = buildHeaderPresetSwitcherState({});
             </DropdownMenuRadioItem>
           ))
         }
+        <DropdownMenuRadioItem
+          class="cursor-pointer gap-3 rounded-md px-3 py-2"
+          value={HEADER_CUSTOM_PRESET_VALUE}
+          data-header-custom-preset
+          hidden
+        >
+          <span class="flex shrink-0 -space-x-1 items-center">
+            <span
+              class="size-3 rounded-full border border-background/80 dark:hidden"
+              data-header-custom-swatch="light-primary"></span>
+            <span
+              class="size-3 rounded-full border border-background/80 dark:hidden"
+              data-header-custom-swatch="light-accent"></span>
+            <span
+              class="hidden size-3 rounded-full border border-border dark:block"
+              data-header-custom-swatch="dark-primary"></span>
+            <span
+              class="hidden size-3 rounded-full border border-border dark:block"
+              data-header-custom-swatch="dark-accent"></span>
+          </span>
+          <span class="truncate">{HEADER_CUSTOM_PRESET_LABEL}</span>
+        </DropdownMenuRadioItem>
       </DropdownMenuGroup>
 
       <DropdownMenuSeparator />
@@ -231,7 +257,7 @@ const state = buildHeaderPresetSwitcherState({});
       ]),
     );
     const stored = readStoredPreset();
-    const themeRef = readCookie("theme-ref");
+    const themeRef = readCookie("theme-ref") || null;
     const customPresets = getCustomPresets();
 
     let summary = current;

@@ -35,7 +35,9 @@ describe("create preset store sync", () => {
       "const presetSelection = this.resolvePresetStoreSelection(event.detail);",
     );
     expect(controllerSource).toContain("this.paletteSnapshot = null;");
-    expect(controllerSource).toContain("clearCustomTheme: true");
+    expect(controllerSource).toContain(
+      "clearCustomTheme: !presetSelection.styles",
+    );
     expect(controllerSource).toContain('history: "push"');
     expect(controllerSource).toContain(
       "this.shouldIgnorePresetStoreSelection(presetSelection)",
@@ -44,7 +46,7 @@ describe("create preset store sync", () => {
     expect(controllerSource).toContain("designSystemConfigSchema.safeParse");
   });
 
-  test("stores rich preset metadata so non-curated presets can prepaint correctly in the header", () => {
+  test("stores rich preset metadata and the restorable custom preset for the header", () => {
     const controllerSource = fs.readFileSync(createEditorControllerFile, "utf8");
 
     expect(controllerSource).toContain("getThemeSwatchesFromStyles");
@@ -52,6 +54,12 @@ describe("create preset store sync", () => {
     expect(controllerSource).toContain("setStoredPreset(");
     expect(controllerSource).toContain("getThemeSwatchesFromStyles(presetStyles)");
     expect(controllerSource).toContain("getHeaderPresetLabel(config)");
+    expect(controllerSource).toContain("setHeaderCustomPreset({");
+    expect(controllerSource).toContain("HEADER_CUSTOM_PRESET_LABEL");
+    expect(controllerSource).toContain("styles: presetStyles");
+    expect(controllerSource).toContain("styles?: ThemeStyles");
+    expect(controllerSource).toContain("resolveThemeOverridesFromStyles(");
+    expect(controllerSource).toContain("clearCustomTheme: !presetSelection.styles");
   });
 
   test("stores serializable history state so popstate can restore create config, theme state, and preview target", () => {

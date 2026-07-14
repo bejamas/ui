@@ -9,6 +9,7 @@ import {
   type ParsedThemeCookie,
   type ThemeSwatches,
 } from "./theme-cookie";
+import type { ThemeStyles } from "../types/theme";
 
 export const PRESET_STORAGE_KEY = "theme-preset";
 export const PRESET_CHANGE_EVENT = "bejamas:preset-change";
@@ -73,6 +74,7 @@ export function setStoredPreset(
   swatches?: ThemeSwatches,
   name?: string,
   themeRef?: string | null,
+  styles?: ThemeStyles,
 ): void {
   if (typeof document === "undefined") return;
 
@@ -92,6 +94,7 @@ export function setStoredPreset(
         preset: designSystemPreset ?? undefined,
         iconLibrary: designSystemPreset?.iconLibrary,
         themeRef: themeRef ?? null,
+        styles,
       },
     })
   );

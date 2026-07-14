@@ -1,6 +1,7 @@
 import { applyDocsPreset } from "@/utils/themes/apply-docs-preset";
 import {
   PRESET_CHANGE_EVENT,
+  PRESET_STORAGE_KEY,
   getStoredPresetWithSwatches,
 } from "@/utils/themes/preset-store";
 import { getCustomPresets } from "@/utils/themes/custom-presets-store";
@@ -15,6 +16,13 @@ import {
   resolveHeaderPresetSelection,
   getThemeSwatchesFromStyles,
 } from "@/utils/themes/header-preset-summary";
+import {
+  HEADER_CUSTOM_PRESET_STORAGE_KEY,
+  HEADER_CUSTOM_PRESET_VALUE,
+  getHeaderCustomPreset,
+  getHeaderCustomPresetSummary,
+  isHeaderCustomPresetActive,
+} from "@/utils/themes/header-custom-preset";
 
 function readCookie(name: string) {
   const match = document.cookie.match(
@@ -29,13 +37,18 @@ function readCookie(name: string) {
 class HeaderPresetSwitcherElement extends HTMLElement {
   current: CurrentSummary | null = null;
   presets = new Map<string, PresetOption>();
+  customPreset: PresetOption | null = null;
 
   onPresetChange = () => {
     this.syncFromStoredState();
   };
 
   onStorage = (event: StorageEvent) => {
-    if (event.key && event.key !== "theme-preset") {
+    if (
+      event.key &&
+      event.key !== PRESET_STORAGE_KEY &&
+      event.key !== HEADER_CUSTOM_PRESET_STORAGE_KEY
+    ) {
       return;
     }
 
@@ -59,7 +72,10 @@ class HeaderPresetSwitcherElement extends HTMLElement {
       return;
     }
 
-    const preset = this.presets.get(presetId);
+    const preset =
+      presetId === HEADER_CUSTOM_PRESET_VALUE
+        ? this.customPreset
+        : this.presets.get(presetId);
     if (!preset) {
       return;
     }
@@ -68,7 +84,9 @@ class HeaderPresetSwitcherElement extends HTMLElement {
       id: preset.id,
       label: preset.label,
       swatches: getThemeSwatchesFromStyles(preset.styles),
-      themeRef: null,
+      themeRef: preset.themeRef,
+      styles:
+        presetId === HEADER_CUSTOM_PRESET_VALUE ? preset.styles : undefined,
     });
 
     this.renderCurrent({
@@ -76,9 +94,9 @@ class HeaderPresetSwitcherElement extends HTMLElement {
       label: preset.label,
       swatches: preset.swatches,
       createHref: preset.createHref,
-      themeRef: null,
+      themeRef: preset.themeRef,
     });
-    this.syncSelectedPreset(preset.id);
+    this.syncSelectedPreset(presetId);
   };
 
   connectedCallback() {
@@ -114,8 +132,26 @@ class HeaderPresetSwitcherElement extends HTMLElement {
 
   syncFromStoredState() {
     const stored = getStoredPresetWithSwatches();
-    const themeRef = readCookie(THEME_REF_COOKIE_NAME);
+    const themeRef = readCookie(THEME_REF_COOKIE_NAME) || null;
     const customPresets = getCustomPresets();
+    this.customPreset = getHeaderCustomPreset();
+    this.renderCustomPreset(this.customPreset);
+
+    const activeCustomPreset =
+      isHeaderCustomPresetActive({
+        preset: this.customPreset,
+        stored,
+        themeRef,
+      }) && this.customPreset;
+
+    if (activeCustomPreset) {
+      this.renderCurrent(getHeaderCustomPresetSummary(activeCustomPreset));
+      this.syncSelectedPreset(HEADER_CUSTOM_PRESET_VALUE);
+      syncGradientImages({
+        theme: resolveGradientThemeFromPresetId(activeCustomPreset.id),
+      });
+      return;
+    }
 
     const next = resolveHeaderPresetSelection({
       current: this.current,
@@ -158,6 +194,23 @@ class HeaderPresetSwitcherElement extends HTMLElement {
     this.updateSwatch("dark-accent", summary.swatches.dark.accent);
   }
 
+  renderCustomPreset(preset: PresetOption | null) {
+    const item = this.querySelector<HTMLElement>("[data-header-custom-preset]");
+    if (!item) {
+      return;
+    }
+
+    item.hidden = !preset;
+    if (!preset) {
+      return;
+    }
+
+    this.updateCustomSwatch("light-primary", preset.swatches.light.primary);
+    this.updateCustomSwatch("light-accent", preset.swatches.light.accent);
+    this.updateCustomSwatch("dark-primary", preset.swatches.dark.primary);
+    this.updateCustomSwatch("dark-accent", preset.swatches.dark.accent);
+  }
+
   syncSelectedPreset(selectedPresetId: string | null) {
     this.dataset.selectedPresetId = selectedPresetId ?? "";
     this.querySelector<HTMLElement>('[data-slot="dropdown-menu"]')?.dispatchEvent(
@@ -173,6 +226,15 @@ class HeaderPresetSwitcherElement extends HTMLElement {
   updateSwatch(name: string, color: string) {
     const swatch = this.querySelector<HTMLElement>(
       `[data-current-swatch="${name}"]`,
+    );
+    if (swatch) {
+      swatch.style.background = color;
+    }
+  }
+
+  updateCustomSwatch(name: string, color: string) {
+    const swatch = this.querySelector<HTMLElement>(
+      `[data-header-custom-swatch="${name}"]`,
     );
     if (swatch) {
       swatch.style.background = color;

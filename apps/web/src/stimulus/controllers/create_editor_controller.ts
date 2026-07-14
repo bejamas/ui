@@ -30,6 +30,10 @@ import {
   getThemeSwatchesFromStyles,
 } from "@/utils/themes/header-preset-summary";
 import {
+  HEADER_CUSTOM_PRESET_LABEL,
+  setHeaderCustomPreset,
+} from "@/utils/themes/header-custom-preset";
+import {
   getThemeChoiceFromRoot,
   getThemeModeFromRoot,
   resolveThemeMode as resolveGlobalThemeMode,
@@ -65,6 +69,7 @@ import {
 import type CreateSidebarController from "@/stimulus/controllers/create_sidebar_controller";
 import type CreateProjectDialogController from "@/stimulus/controllers/create_project_dialog_controller";
 import type CreateNavigateController from "@/stimulus/controllers/create_navigate_controller";
+import type { ThemeStyles } from "@/utils/types/theme";
 import type {
   CreateConfig,
   CreateHistoryState,
@@ -79,6 +84,12 @@ type PresetStoreChangeDetail = {
   key?: string;
   preset?: Partial<CreatePresetConfig> | null;
   themeRef?: string | null;
+  styles?: ThemeStyles;
+};
+type PresetStoreSelection = {
+  code: string;
+  config: CreateConfig;
+  styles?: ThemeStyles;
 };
 
 const PICKER_NAMES = [
@@ -277,13 +288,22 @@ export default class extends Controller<HTMLElement> {
     }
 
     window.clearTimeout(this.themeSyncTimer);
+    if (presetSelection.styles) {
+      this.themeRef = event.detail.themeRef ?? null;
+      this.themeOverrides = this.resolveThemeOverridesFromStyles(
+        presetSelection.config,
+        presetSelection.styles,
+      );
+      this.setThemeRefValue(this.themeRef);
+      this.syncThemeStatus();
+    }
     this.preservedPreset = {
       code: presetSelection.code,
       config: this.toPresetConfig(presetSelection.config),
     };
     this.paletteSnapshot = null;
     this.applyConfig(presetSelection.config, {
-      clearCustomTheme: true,
+      clearCustomTheme: !presetSelection.styles,
       history: "push",
     });
   }
@@ -916,7 +936,7 @@ export default class extends Controller<HTMLElement> {
 
   private resolvePresetStoreSelection(
     detail: PresetStoreChangeDetail | null | undefined,
-  ): { code: string; config: CreateConfig } | null {
+  ): PresetStoreSelection | null {
     if (!detail) {
       return null;
     }
@@ -938,6 +958,7 @@ export default class extends Controller<HTMLElement> {
                   this.toPresetConfig(config) as Parameters<typeof encodePreset>[0],
                 ),
           config,
+          styles: detail.styles,
         };
       }
     }
@@ -963,13 +984,15 @@ export default class extends Controller<HTMLElement> {
     return {
       code: detail.key,
       config: normalizeDesignSystemConfig(presetResult.data),
+      styles: detail.styles,
     };
   }
 
-  private shouldIgnorePresetStoreSelection(selection: {
-    code: string;
-    config: CreateConfig;
-  }) {
+  private shouldIgnorePresetStoreSelection(selection: PresetStoreSelection) {
+    if (selection.styles) {
+      return false;
+    }
+
     const currentConfig = this.collectConfig();
     const currentPreset = this.getCurrentPreset(currentConfig);
 
@@ -984,6 +1007,28 @@ export default class extends Controller<HTMLElement> {
       !hasThemeOverrides(this.themeOverrides) &&
       this.paletteSnapshot === null
     );
+  }
+
+  private resolveThemeOverridesFromStyles(
+    config: CreateConfig,
+    styles: ThemeStyles,
+  ) {
+    const baseline = resolveDesignSystemTheme(config).styles;
+    const overrides = emptyThemeOverrides();
+
+    (["light", "dark"] as const).forEach((mode) => {
+      const modeOverrides = overrides[mode] as Record<string, string>;
+      Object.entries(styles[mode]).forEach(([token, value]) => {
+        if (
+          typeof value === "string" &&
+          value !== baseline[mode][token as keyof typeof baseline.light]
+        ) {
+          modeOverrides[token] = value;
+        }
+      });
+    });
+
+    return normalizeThemeOverrides(overrides);
   }
 
   private buildHistoryState(
@@ -1264,10 +1309,20 @@ export default class extends Controller<HTMLElement> {
         config,
         this.themeOverrides,
       ).styles;
+      const hasCustomTheme = hasThemeOverrides(this.themeOverrides);
+      if (hasCustomTheme) {
+        setHeaderCustomPreset({
+          id: preset,
+          styles: presetStyles,
+          themeRef: this.themeRef,
+        });
+      }
       setStoredPreset(
         preset,
         getThemeSwatchesFromStyles(presetStyles),
-        getHeaderPresetLabel(config),
+        hasCustomTheme
+          ? HEADER_CUSTOM_PRESET_LABEL
+          : getHeaderPresetLabel(config),
         this.themeRef,
       );
     } finally {

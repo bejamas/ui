@@ -47,6 +47,9 @@ describe("header preset switcher", () => {
     expect(source).toContain("<DropdownMenuLabel>Presets</DropdownMenuLabel>");
     expect(source).toContain("value={preset.id}");
     expect(source).toContain("data-header-preset-id={preset.id}");
+    expect(source).toContain("data-header-custom-preset");
+    expect(source).toContain("HEADER_CUSTOM_PRESET_VALUE");
+    expect(source).toContain("HEADER_CUSTOM_PRESET_LABEL");
     expect(source).toContain("<DropdownMenuRadioItem");
     expect(source).toContain("Create your own");
     expect(scriptSource).toContain(
@@ -69,6 +72,10 @@ describe("header preset switcher", () => {
     expect(scriptSource).toContain(
       'import { getCustomPresets } from "@/utils/themes/custom-presets-store";',
     );
+    expect(scriptSource).toContain("getHeaderCustomPreset");
+    expect(scriptSource).toContain("isHeaderCustomPresetActive");
+    expect(scriptSource).toContain("renderCustomPreset");
+    expect(scriptSource).toContain("styles:");
     expect(scriptSource).toContain(
       'import {\n  resolveGradientThemeFromPresetId,\n  syncGradientImages,\n} from "@/utils/themes/gradient-image-runtime";',
     );
