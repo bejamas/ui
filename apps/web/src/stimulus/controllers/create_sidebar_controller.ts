@@ -92,11 +92,12 @@ export default class extends Controller<HTMLElement> {
   private activePanel: CreateSidebarPanel = "main";
   private transitionToken = 0;
   private lastRenderState: CreateSidebarRenderState | null = null;
+  private boundImportConfirmButton: HTMLButtonElement | null = null;
   private readonly boundImportConfirm = (event: Event) =>
     this.confirmThemeImport(event);
 
   connect() {
-    this.importConfirmButton?.addEventListener("click", this.boundImportConfirm);
+    this.bindThemeImportControls();
     this.activePanel = this.panelValue || "main";
     this.isReady = true;
     this.applyPanelStateImmediately(this.currentPanel);
@@ -104,10 +105,7 @@ export default class extends Controller<HTMLElement> {
   }
 
   disconnect() {
-    this.importConfirmButton?.removeEventListener(
-      "click",
-      this.boundImportConfirm,
-    );
+    this.unbindThemeImportControls();
   }
 
   colorInputTargetConnected(target: ColorInputElement) {
@@ -293,7 +291,19 @@ export default class extends Controller<HTMLElement> {
   }
 
   openThemeImportDialog() {
-    this.importDialogTrigger?.click();
+    this.themeImportDialog?.dispatchEvent(
+      new CustomEvent("dialog:set", {
+        detail: {
+          open: true,
+        },
+      }),
+    );
+  }
+
+  themeImportDialogChanged(event: CustomEvent<{ open: boolean }>) {
+    if (event.detail.open) {
+      this.bindThemeImportControls();
+    }
   }
 
   confirmThemeImport(event?: Event) {
@@ -315,26 +325,51 @@ export default class extends Controller<HTMLElement> {
     this.panelValue = "theme-list";
   }
 
-  private get importDialogTrigger() {
-    return this.element.querySelector<HTMLButtonElement>("#import-dialog-trigger");
+  private bindThemeImportControls() {
+    const confirmButton = this.importConfirmButton;
+    if (!confirmButton || confirmButton === this.boundImportConfirmButton) {
+      return;
+    }
+
+    this.unbindThemeImportControls();
+    confirmButton.addEventListener("click", this.boundImportConfirm);
+    this.boundImportConfirmButton = confirmButton;
+  }
+
+  private unbindThemeImportControls() {
+    this.boundImportConfirmButton?.removeEventListener(
+      "click",
+      this.boundImportConfirm,
+    );
+    this.boundImportConfirmButton = null;
+  }
+
+  private get themeImportDialog() {
+    return this.element.querySelector<HTMLElement>(
+      "[data-create-theme-import-dialog]",
+    );
   }
 
   private get importConfirmButton() {
-    return this.element.querySelector<HTMLButtonElement>("#import-confirm-btn");
+    return document.querySelector<HTMLButtonElement>(
+      "[data-create-theme-import-confirm]",
+    );
   }
 
   private get importTextarea() {
-    return this.element.querySelector<HTMLTextAreaElement>("#import-css-textarea");
-  }
-
-  private get importDialogCloseButton() {
-    return this.element.querySelector<HTMLElement>(
-      "#import-dialog [data-slot='dialog-close']",
+    return document.querySelector<HTMLTextAreaElement>(
+      "[data-create-theme-import-textarea]",
     );
   }
 
   closeThemeImportDialog() {
-    this.importDialogCloseButton?.click();
+    this.themeImportDialog?.dispatchEvent(
+      new CustomEvent("dialog:set", {
+        detail: {
+          open: false,
+        },
+      }),
+    );
   }
 
   private get currentPanel(): CreateSidebarPanel {
