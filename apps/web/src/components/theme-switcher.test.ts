@@ -28,6 +28,10 @@ describe("theme switcher", () => {
     expect(source).toContain('tabsRoot.dataset.themeChoiceIndex = themeChoiceIndex;');
     expect(source).toContain("syncThemeChoiceControls(");
     expect(source).toContain("setThemeChoice(nextTheme);");
+    expect(source).toContain(
+      "const mountLegacyThemeEditor = !/^\\/create(?:\\/|$)/.test(Astro.url.pathname);",
+    );
+    expect(source).toContain("mountLegacyThemeEditor && (");
     expect(preloadIndex).toBeGreaterThan(-1);
     expect(hiddenThemeEditorIndex).toBeGreaterThan(-1);
     expect(preloadIndex).toBeLessThan(hiddenThemeEditorIndex);

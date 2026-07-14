@@ -9,26 +9,50 @@ import {
   DialogTitle,
 } from "@bejamas/ui/components/dialog";
 import { Textarea } from "@bejamas/ui/components/textarea";
+
+interface Props {
+  scope?: "legacy" | "create";
+}
+
+const { scope = "legacy" } = Astro.props as Props;
+const isCreateScope = scope === "create";
+const dialogId = isCreateScope ? "create-theme-import-dialog" : "import-dialog";
+const triggerId = isCreateScope
+  ? "create-theme-import-dialog-trigger"
+  : "import-dialog-trigger";
+const textareaId = isCreateScope
+  ? "create-theme-import-css-textarea"
+  : "import-css-textarea";
+const confirmButtonId = isCreateScope
+  ? "create-theme-import-confirm-btn"
+  : "import-confirm-btn";
 ---
 
-<Dialog id="import-dialog">
+<Dialog
+  id={dialogId}
+  data-create-theme-import-dialog={isCreateScope ? "" : undefined}
+  data-action={isCreateScope
+    ? "dialog:change->create-sidebar#themeImportDialogChanged"
+    : undefined}
+>
   <button
     type="button"
     data-slot="dialog-trigger"
-    id="import-dialog-trigger"
+    id={triggerId}
+    data-create-theme-import-trigger={isCreateScope ? "" : undefined}
     class="hidden"></button>
   <DialogContent class="sm:max-w-lg z-10001">
     <DialogHeader>
       <DialogTitle>Import Custom CSS</DialogTitle>
       <DialogDescription>
-        Paste your CSS file below to customize the theme colors. You can import
-        themes from tweakcn.com or include variables like --primary,
-        --background, etc.
+        Paste CSS variables below to customize theme colors, radius, fonts, and
+        other supported tokens. You can also import themes from tweakcn.com.
       </DialogDescription>
     </DialogHeader>
     <div class="mt-4">
       <Textarea
-        id="import-css-textarea"
+        id={textareaId}
+        data-create-theme-import-textarea={isCreateScope ? "" : undefined}
         class="min-h-[200px] font-mono text-xs max-h-80"
         placeholder={`:root {\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.2 0.044 250);\n  --primary: oklch(0.6 0.2 280);\n  /* And more */\n}\n\n.dark {\n  --background: oklch(0.2 0.02 250);\n  --foreground: oklch(0.97 0.02 250);\n  /* And more */\n}`}
       />
@@ -37,7 +61,13 @@ import { Textarea } from "@bejamas/ui/components/textarea";
       <Button type="button" variant="outline" data-slot="dialog-close">
         Cancel
       </Button>
-      <Button type="button" id="import-confirm-btn">Import</Button>
+      <Button
+        type="button"
+        id={confirmButtonId}
+        data-create-theme-import-confirm={isCreateScope ? "" : undefined}
+      >
+        Import
+      </Button>
     </DialogFooter>
   </DialogContent>
 </Dialog>

@@ -1,8 +1,12 @@
 import type { ThemeStyles } from "../../../utils/types/theme";
 import { colorFormatter } from "../../../utils/themes/color-converter";
-import { normalizeThemeTokenValue } from "../../../utils/themes/theme-tokens";
+import {
+  COMMON_NON_COLOR_KEYS,
+  normalizeThemeTokenValue,
+  SHADOW_INPUT_KEYS,
+} from "../../../utils/themes/theme-tokens";
 
-const validTokens = new Set([
+const validTokens = new Set<string>([
   "background",
   "foreground",
   "card",
@@ -40,6 +44,15 @@ const validTokens = new Set([
   "footer-primary",
   "footer-primary-foreground",
   "footer-border",
+  ...COMMON_NON_COLOR_KEYS,
+  ...SHADOW_INPUT_KEYS,
+]);
+
+const fontTokens = new Set<string>([
+  "font-sans",
+  "font-heading",
+  "font-serif",
+  "font-mono",
 ]);
 
 export type ThemeStyleValues = {
@@ -128,6 +141,10 @@ export const extractVariables = (
     let value = match[2].trim();
 
     if (!validTokens.has(name)) continue;
+
+    if (fontTokens.has(name)) {
+      value = value.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+    }
 
     const hslSpacePattern =
       /^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)%\s+(\d+(?:\.\d+)?)%$/;

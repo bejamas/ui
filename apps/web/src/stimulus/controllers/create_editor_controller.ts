@@ -477,6 +477,13 @@ export default class extends Controller<HTMLElement> {
     }
 
     const parsed = parseCssVariables(css);
+    const importedTokenCount =
+      Object.keys(parsed.light).length + Object.keys(parsed.dark).length;
+    if (importedTokenCount === 0) {
+      this.setThemeStatus("No supported CSS variables found.");
+      return;
+    }
+
     const baseline = this.getBaselineThemeStyles(config);
     const overrides = normalizeThemeOverrides(this.themeOverrides);
 
