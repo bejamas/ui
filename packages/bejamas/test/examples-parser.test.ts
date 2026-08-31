@@ -226,6 +226,18 @@ import { SearchIcon } from '@lucide/astro';
     expect(tags).not.toContain("InputGroup");
   });
 
+  test("skips forced preview tags when previews are disabled for a section", () => {
+    const markdown = `\`\`\`astro preview
+<Button />
+\`\`\``;
+    const tags = extractComponentTagsFromPreviewMarkdown(markdown, {
+      defaultPreview: false,
+      allowForcedPreview: false,
+    });
+
+    expect(tags).toEqual([]);
+  });
+
   test("ignores nopreview astro fences when extracting preview component tags", () => {
     const markdown = `\`\`\`astro nopreview
 <Field>
@@ -686,7 +698,7 @@ const { class: className = "", ...props } = Astro.props;
     expect(mdx).not.toContain("data-slot=\"event-log\"");
   });
 
-  test("strips script tags from injected previews but keeps source fence unchanged", () => {
+  test("does not render previews for astro fences in API Reference", () => {
     const mdx = buildMdx({
       importName: "Popover",
       importPath: "@bejamas/ui/components/popover",
@@ -709,7 +721,7 @@ const { class: className = "", ...props } = Astro.props;
       commandName: "popover",
       componentsAlias: "@bejamas/ui/components",
       namedExports: ["PopoverContent", "PopoverTrigger"],
-      apiMDX: `\`\`\`astro
+      apiMDX: `\`\`\`astro preview
 <Popover id="my-popover">
   <PopoverTrigger variant="outline">Open</PopoverTrigger>
   <PopoverContent>
@@ -725,14 +737,13 @@ const { class: className = "", ...props } = Astro.props;
 \`\`\``,
     });
 
-    expect(mdx).toContain("sl-bejamas-component-preview");
+    expect(mdx).toContain("## API Reference");
+    expect(mdx).not.toContain("sl-bejamas-component-preview");
     expect(mdx).toContain("<Popover id=\"my-popover\">");
-    expect(mdx).not.toContain(
-      "<script> const popover = document.getElementById('my-popover');",
-    );
 
-    const sourceMatch = mdx.match(/```astro\n([\s\S]*?)\n```/);
+    const sourceMatch = mdx.match(/```astro preview\n([\s\S]*?)\n```/);
     expect(sourceMatch).toBeTruthy();
+    expect(sourceMatch![1]).toContain("<script>");
     expect(sourceMatch![1]).toContain("popover.addEventListener");
     expect(sourceMatch![1]).toContain("console.log('Is open:', e.detail.open);");
   });

@@ -377,6 +377,7 @@ export function buildMdx(params: {
 
   type MarkdownPreviewConfig = {
     defaultPreview?: boolean;
+    allowForcedPreview?: boolean;
   };
 
   const extractInlineScripts = (snippet: string): {
@@ -619,7 +620,7 @@ ${preparedPreview.markup}
     config: MarkdownPreviewConfig = {},
   ): string => {
     if (!block || !block.length) return block;
-    const { defaultPreview = true } = config;
+    const { defaultPreview = true, allowForcedPreview = true } = config;
 
     const lines = block.split("\n");
     const out: string[] = [];
@@ -689,7 +690,8 @@ ${preparedPreview.markup}
           const hasForcedPreviewFlag =
             currentFenceFlags.has("preview") || currentFenceFlags.has("console");
           const shouldPreview =
-            !prepared.skipPreview && (defaultPreview || hasForcedPreviewFlag);
+            !prepared.skipPreview &&
+            (defaultPreview || (allowForcedPreview && hasForcedPreviewFlag));
           if (
             prepared.snippet &&
             prepared.snippet.length &&
@@ -808,7 +810,10 @@ ${preparedPreview.markup}
   const renderedUsageMDX = renderAstroPreviewsInMarkdown(usageMDX || "", {
     defaultPreview: false,
   });
-  const renderedApiMDX = renderAstroPreviewsInMarkdown(apiMDX || "");
+  const renderedApiMDX = renderAstroPreviewsInMarkdown(apiMDX || "", {
+    defaultPreview: false,
+    allowForcedPreview: false,
+  });
 
   const primaryExampleSection =
     primaryExampleMDX && primaryExampleMDX.length

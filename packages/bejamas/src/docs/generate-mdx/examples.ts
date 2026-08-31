@@ -67,6 +67,7 @@ export interface FenceInfo {
 
 interface PreviewRenderConfig {
   defaultPreview?: boolean;
+  allowForcedPreview?: boolean;
 }
 
 type MutableSection = {
@@ -486,7 +487,7 @@ export function extractComponentTagsFromPreviewMarkdown(
   config: PreviewRenderConfig = {},
 ): string[] {
   if (!block || !block.length) return [];
-  const { defaultPreview = true } = config;
+  const { defaultPreview = true, allowForcedPreview = true } = config;
   const found = new Set<string>();
   const lines = block.split("\n");
   let inFence = false;
@@ -516,7 +517,8 @@ export function extractComponentTagsFromPreviewMarkdown(
         const hasForcedPreviewFlag =
           currentFenceFlags.has("preview") || currentFenceFlags.has("console");
         const shouldPreview =
-          !prepared.skipPreview && (defaultPreview || hasForcedPreviewFlag);
+          !prepared.skipPreview &&
+          (defaultPreview || (allowForcedPreview && hasForcedPreviewFlag));
         if (shouldPreview) {
           for (const tag of extractTags(prepared.snippet)) found.add(tag);
         }
