@@ -94,7 +94,7 @@ describe("domain bridge", () => {
     const response = await handleRequest(
       new Request("https://og.ui.bejamas.com/api/og/text?title=Hello"),
       {
-        UPSTREAM_ORIGIN: "https://bejamas-ui-og.bejamas-oss.workers.dev",
+        UPSTREAM_ORIGIN: "https://bejamas-ui-og.bejamas.workers.dev",
       },
     );
 
