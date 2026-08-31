@@ -18,14 +18,16 @@ coverage
 # Turbo
 .turbo
 
-# Vercel
+# Deployment tooling
 .vercel
+.wrangler
 
 # Build Outputs
 .next/
 out/
 build
 dist
+dist-*
 
 
 # Debug

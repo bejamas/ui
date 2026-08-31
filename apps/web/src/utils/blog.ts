@@ -17,15 +17,21 @@ export function getBlogHref(slug: string) {
   return `/blog/${slug}`;
 }
 
-export function isVercelPreviewEnvironment(env: BlogEnvironment = process.env) {
-  return env.VERCEL_ENV === "preview" || env.VERCEL_TARGET_ENV === "preview";
+export function isCloudflarePreviewEnvironment(
+  env: BlogEnvironment = process.env,
+) {
+  return (
+    env.WORKERS_CI === "1" &&
+    typeof env.WORKERS_CI_BRANCH === "string" &&
+    env.WORKERS_CI_BRANCH !== "main"
+  );
 }
 
 export function shouldIncludeDraftBlogEntries(
   options: DraftEnvironmentOptions = {},
 ) {
   const { isDev = false, env = process.env } = options;
-  return isDev || isVercelPreviewEnvironment(env);
+  return isDev || isCloudflarePreviewEnvironment(env);
 }
 
 export function isBlogPathname(pathname: string) {
@@ -41,13 +47,12 @@ export function shouldNoindexBlogPage(
   pathname: string,
   env: BlogEnvironment = process.env,
 ) {
-  return isVercelPreviewEnvironment(env) && isBlogPathname(pathname);
+  return isCloudflarePreviewEnvironment(env) && isBlogPathname(pathname);
 }
 
-export function filterVisibleBlogEntries<T extends { data: { draft?: boolean } }>(
-  entries: readonly T[],
-  options: BlogVisibilityOptions = {},
-) {
+export function filterVisibleBlogEntries<
+  T extends { data: { draft?: boolean } },
+>(entries: readonly T[], options: BlogVisibilityOptions = {}) {
   if (options.includeDrafts) {
     return [...entries];
   }
@@ -73,10 +78,7 @@ export function getAuthorInitials(name: string) {
     .join("");
 }
 
-export function hasDistinctUpdatedDate(
-  publishDate: Date,
-  updatedDate?: Date,
-) {
+export function hasDistinctUpdatedDate(publishDate: Date, updatedDate?: Date) {
   return Boolean(
     updatedDate && updatedDate.getTime() !== publishDate.getTime(),
   );

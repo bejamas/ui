@@ -1,38 +1,37 @@
-type BoundingBox = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-
-type Clip = BoundingBox;
+import type {
+  BoundingBox,
+  ElementHandle,
+  Page,
+  ScreenshotClip,
+  Viewport,
+} from "@cloudflare/puppeteer";
 
 export async function capturePreviewScreenshot(
-  page: any,
-  previewHandle: any,
-): Promise<Buffer> {
+  page: Page,
+  previewHandle: ElementHandle,
+): Promise<Uint8Array> {
   const childHandles = await previewHandle.$$(":scope > *");
 
   if (childHandles.length === 0) {
-    return (await previewHandle.screenshot({ type: "png" })) as Buffer;
+    return previewHandle.screenshot({ type: "png" });
   }
 
   try {
     const boxes = (
-      await Promise.all(childHandles.map((child: any) => child.boundingBox()))
+      await Promise.all(childHandles.map((child) => child.boundingBox()))
     ).filter(isUsableBoundingBox);
 
     if (boxes.length === 0) {
-      return (await previewHandle.screenshot({ type: "png" })) as Buffer;
+      return previewHandle.screenshot({ type: "png" });
     }
 
     const viewport =
       typeof page.viewport === "function" ? page.viewport() : null;
     const clip = computeClipFromBoxes(boxes, viewport);
 
-    return (await page.screenshot({ type: "png", clip })) as Buffer;
+    return page.screenshot({ type: "png", clip });
   } finally {
-    await Promise.all(childHandles.map((child: any) => child.dispose()));
+    await Promise.all(childHandles.map((child) => child.dispose()));
   }
 }
 
@@ -50,9 +49,9 @@ function isUsableBoundingBox(box: BoundingBox | null): box is BoundingBox {
 
 function computeClipFromBoxes(
   boxes: BoundingBox[],
-  viewport: { width: number; height: number } | null,
+  viewport: Viewport | null,
   padding = 8,
-): Clip {
+): ScreenshotClip {
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
@@ -94,4 +93,3 @@ function computeClipFromBoxes(
 
   return { x, y, width, height };
 }
-

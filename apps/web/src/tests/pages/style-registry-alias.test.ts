@@ -43,7 +43,9 @@ describe("style registry aliases", () => {
     const source = fs.readFileSync(middlewareFile, "utf8");
 
     expect(source).toContain("rewriteLegacyStyleRegistryUrl(context.url)");
-    expect(source).toContain("return next(rewrittenUrl);");
+    expect(source).toContain(
+      "rewrittenUrl ? await next(rewrittenUrl) : await next()",
+    );
   });
 
   test("resolves the source registry root when prerender code runs from built output", () => {

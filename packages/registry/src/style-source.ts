@@ -10,12 +10,14 @@ type CachedCss = {
   value: string;
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const styleCssCache = new Map<StyleName, CachedCss>();
 
 export function getStyleFilepath(style: StyleName) {
-  return path.resolve(__dirname, "styles", `style-${style}.css`);
+  // Resolve the filesystem path only for the Node-based build tools that read
+  // source CSS. The package is also imported by the Cloudflare runtime, where
+  // compiled CSS is embedded and `import.meta.url` has no filesystem pathname.
+  const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
+  return path.resolve(moduleDirectory, "styles", `style-${style}.css`);
 }
 
 function unwrapScopedCss(cssText: string, style: StyleName) {

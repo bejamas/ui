@@ -1,0 +1,26 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "bejamas-ui-og",
+  "account_id": "705e6a1ce1620c4ac2ce279a064dec41",
+  "main": "./src/index.ts",
+  "compatibility_date": "2026-08-31",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "browser": {
+    "binding": "BROWSER",
+  },
+  "vars": {
+    "DOCS_BASE_URL": "https://ui.bejamas.com",
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.1,
+    },
+  },
+}

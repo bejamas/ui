@@ -27,12 +27,13 @@
     "prettier-plugin-astro": "^0.14.1",
     "turbo": "^2.10.4",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.63.0"
+    "typescript-eslint": "^8.63.0",
+    "wrangler": "4.127.1"
   },
   "engines": {
     "node": ">=22.12.0"
   },
-  "packageManager": "bun@1.2.6",
+  "packageManager": "bun@1.3.14",
   "workspaces": [
     "apps/*",
     "packages/*"

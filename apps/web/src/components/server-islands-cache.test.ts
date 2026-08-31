@@ -24,16 +24,20 @@ describe("server island cache headers", () => {
       "utf8",
     );
 
-    expect(gitHubLinkSource).toContain('NO_STORE_CACHE_CONTROL');
-    expect(gitHubLinkSource).toContain('SHARED_DYNAMIC_CACHE_CONTROL');
+    expect(gitHubLinkSource).toContain("NO_STORE_CACHE_CONTROL");
+    expect(gitHubLinkSource).toContain("SHARED_DYNAMIC_CACHE_CONTROL");
     expect(gitHubLinkSource).toContain(
       'Astro.response.headers.set("Cache-Control", NO_STORE_CACHE_CONTROL);',
     );
+    expect(gitHubLinkSource).toContain("Astro.response.headers.set(");
     expect(gitHubLinkSource).toContain(
-      'Astro.response.headers.set(',
+      'Astro.response.headers.set("Cache-Control", SHARED_DYNAMIC_CACHE_CONTROL);',
     );
-    expect(gitHubLinkSource).toContain(
-      '"Cache-Control",\n      SHARED_DYNAMIC_CACHE_CONTROL,',
+    expect(gitHubLinkSource).toContain('Accept: "application/vnd.github+json"');
+    expect(gitHubLinkSource).toContain('"User-Agent": "bejamas-ui"');
+    expect(gitHubLinkSource).toContain('"X-GitHub-Api-Version": "2022-11-28"');
+    expect(gitHubLinkSource).not.toContain(
+      '? starCount.toLocaleString() : "69"',
     );
 
     for (const source of [
@@ -44,7 +48,9 @@ describe("server island cache headers", () => {
       expect(source).toContain(
         'Astro.response.headers.set("Cache-Control", PRIVATE_NO_STORE_CACHE_CONTROL);',
       );
-      expect(source).toContain('Astro.response.headers.append("Vary", "Cookie");');
+      expect(source).toContain(
+        'Astro.response.headers.append("Vary", "Cookie");',
+      );
     }
   });
 });

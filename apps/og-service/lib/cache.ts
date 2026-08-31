@@ -20,18 +20,3 @@ export function buildCacheHeaders(
 
   return headers;
 }
-
-type HeaderWritable = {
-  setHeader(name: string, value: string): void;
-};
-
-export function applyCacheHeaders(
-  res: HeaderWritable,
-  buildTime: string | null,
-  isFresh: boolean,
-): void {
-  const headers = buildCacheHeaders(buildTime, isFresh);
-  Object.entries(headers).forEach(([key, value]) => {
-    res.setHeader(key, value);
-  });
-}

@@ -1,0 +1,57 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "bejamas-ui-domain-bridge",
+  "account_id": "36d8e296b038103d8425f88ada127880",
+  "main": "./src/index.ts",
+  "compatibility_date": "2026-08-31",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "ui.bejamas.com",
+      "custom_domain": true,
+    },
+  ],
+  "vars": {
+    "UPSTREAM_ORIGIN": "https://bejamas-ui.bejamas-oss.workers.dev",
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.1,
+    },
+  },
+  "env": {
+    "og": {
+      "name": "bejamas-ui-og-domain-bridge",
+      "workers_dev": true,
+      "preview_urls": false,
+      "routes": [
+        {
+          "pattern": "og.ui.bejamas.com",
+          "custom_domain": true,
+        },
+      ],
+      "vars": {
+        "UPSTREAM_ORIGIN": "https://bejamas-ui-og.bejamas-oss.workers.dev",
+      },
+      "observability": {
+        "enabled": true,
+        "logs": {
+          "enabled": true,
+          "head_sampling_rate": 1,
+        },
+        "traces": {
+          "enabled": true,
+          "head_sampling_rate": 0.1,
+        },
+      },
+    },
+  },
+}

@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ImageResponse } from "@vercel/og";
+import { cache, ImageResponse } from "@cf-wasm/og/workerd";
 import { buildCacheHeaders } from "../../lib/cache";
 import { loadGoogleFont } from "../../lib/fonts";
 import { decodeQueryValue } from "../../lib/query";
@@ -38,163 +37,165 @@ const BejamasUiBgSvg = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export default {
-  async fetch(req: Request) {
-    const { searchParams } = new URL(req.url);
-    const title = decodeQueryValue(searchParams.get("title")) ?? DEFAULT_TITLE;
-    const description =
-      decodeQueryValue(searchParams.get("description")) ?? DEFAULT_DESCRIPTION;
-    const siteTitle =
-      decodeQueryValue(searchParams.get("siteTitle")) ?? DEFAULT_SITE_TITLE;
-    const isFreshRequest = searchParams.has("fresh");
-    const showTwitterFooter = searchParams.get("x") === "1";
-    const hideDescription = searchParams.get("hideDescription") === "1";
-    const layout = resolveTextOgLayout({
-      title,
-      description,
-      showTwitterFooter,
-      hideDescription,
-    });
+export async function handleTextOg(
+  req: Request,
+  ctx: ExecutionContext,
+): Promise<Response> {
+  const { searchParams } = new URL(req.url);
+  const title = decodeQueryValue(searchParams.get("title")) ?? DEFAULT_TITLE;
+  const description =
+    decodeQueryValue(searchParams.get("description")) ?? DEFAULT_DESCRIPTION;
+  const siteTitle =
+    decodeQueryValue(searchParams.get("siteTitle")) ?? DEFAULT_SITE_TITLE;
+  const isFreshRequest = searchParams.has("fresh");
+  const showTwitterFooter = searchParams.get("x") === "1";
+  const hideDescription = searchParams.get("hideDescription") === "1";
+  const layout = resolveTextOgLayout({
+    title,
+    description,
+    showTwitterFooter,
+    hideDescription,
+  });
 
-    const fontText = layout.renderDescription
-      ? `${title} ${description} ${siteTitle}`
-      : `${title} ${siteTitle}`;
-    const [interRegular, interMedium] = await Promise.all([
-      loadGoogleFont("Inter", fontText, 400),
-      loadGoogleFont("Inter", fontText, 600),
-    ]);
+  const fontText = layout.renderDescription
+    ? `${title} ${description} ${siteTitle}`
+    : `${title} ${siteTitle}`;
+  const [interRegular, interMedium] = await Promise.all([
+    loadGoogleFont("Inter", fontText, 400),
+    loadGoogleFont("Inter", fontText, 600),
+  ]);
 
-    const response = new ImageResponse(
+  cache.setExecutionContext(ctx);
+  const response = await ImageResponse.async(
+    <div
+      style={{
+        width: OG_WIDTH,
+        height: OG_HEIGHT,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        background: "#F3F5F8",
+        color: "#051729",
+        padding: showTwitterFooter ? "48px 128px 116px 128px" : "96px 128px",
+        boxSizing: "border-box",
+        fontFamily: "Inter",
+        // position: "relative",
+        overflow: "hidden",
+        gap: layout.gap,
+        textWrap: "balance",
+      }}
+    >
+      {/* Background shapes */}
+      <BejamasUiBgSvg
+        style={{
+          opacity: 0.04,
+          position: "absolute",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          inset: 0,
+          overflow: "hidden",
+          zIndex: 0,
+          objectFit: "cover",
+        }}
+      />
+
       <div
         style={{
-          width: OG_WIDTH,
-          height: OG_HEIGHT,
+          position: "relative",
+          zIndex: 1,
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
-          background: "#F3F5F8",
-          color: "#051729",
-          padding: showTwitterFooter ? "48px 128px 116px 128px" : "96px 128px",
-          boxSizing: "border-box",
-          fontFamily: "Inter",
-          // position: "relative",
-          overflow: "hidden",
           gap: layout.gap,
-          textWrap: "balance",
+          maxWidth: layout.maxWidth,
         }}
       >
-        {/* Background shapes */}
-        <BejamasUiBgSvg
-          style={{
-            opacity: 0.04,
-            position: "absolute",
-            left: 0,
-            top: 0,
-            bottom: 0,
-            inset: 0,
-            overflow: "hidden",
-            zIndex: 0,
-            objectFit: "cover",
-          }}
-        />
-
         <div
           style={{
-            position: "relative",
-            zIndex: 1,
-            display: "flex",
-            flexDirection: "column",
-            gap: layout.gap,
-            maxWidth: layout.maxWidth,
+            fontSize: layout.titleFontSize,
+            fontWeight: 500,
+            letterSpacing: "-0.03em",
+            lineHeight: 1.05,
+            ...(typeof layout.titleLineClamp === "number"
+              ? { lineClamp: layout.titleLineClamp }
+              : {}),
+            textWrap: "balance",
+            wordBreak: "break-word",
           }}
         >
+          {title}
+        </div>
+
+        {layout.renderDescription ? (
           <div
             style={{
-              fontSize: layout.titleFontSize,
-              fontWeight: 500,
-              letterSpacing: "-0.03em",
-              lineHeight: 1.05,
-              ...(typeof layout.titleLineClamp === "number"
-                ? { lineClamp: layout.titleLineClamp }
-                : {}),
+              fontSize: layout.descriptionFontSize,
+              fontWeight: 400,
+              color: "#69737d",
+              lineHeight: 1.6,
+              lineClamp: layout.descriptionLineClamp,
               textWrap: "balance",
               wordBreak: "break-word",
             }}
           >
-            {title}
+            {description}
           </div>
-
-          {layout.renderDescription ? (
-            <div
-              style={{
-                fontSize: layout.descriptionFontSize,
-                fontWeight: 400,
-                color: "#69737d",
-                lineHeight: 1.6,
-                lineClamp: layout.descriptionLineClamp,
-                textWrap: "balance",
-                wordBreak: "break-word",
-              }}
-            >
-              {description}
-            </div>
-          ) : null}
-        </div>
-        {showTwitterFooter ? (
-          <div
-            style={{
-              width: "100%",
-              height: 100,
-              background:
-                "linear-gradient(to top, #f4f5f8, rgba(255, 255, 255, 0))",
-              position: "absolute",
-              bottom: showTwitterFooter ? TWITTER_FOOTER_HEIGHT : 0,
-              left: 0,
-              right: 0,
-              zIndex: 1000,
-            }}
-          />
         ) : null}
-        {showTwitterFooter ? (
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: TWITTER_FOOTER_HEIGHT,
-              borderTop: "2px solid rgba(15, 23, 42, 0.08)",
-              background: "#f4f5f8",
-              zIndex: 1,
-            }}
-          />
-        ) : null}
-      </div>,
-      {
-        width: OG_WIDTH,
-        height: OG_HEIGHT,
-        fonts: [
-          {
-            name: "Inter",
-            data: interRegular,
-            style: "normal",
-            weight: 400,
-          },
-          {
-            name: "Inter",
-            data: interMedium,
-            style: "normal",
-            weight: 500,
-          },
-        ],
-      },
-    );
+      </div>
+      {showTwitterFooter ? (
+        <div
+          style={{
+            width: "100%",
+            height: 100,
+            background:
+              "linear-gradient(to top, #f4f5f8, rgba(255, 255, 255, 0))",
+            position: "absolute",
+            bottom: showTwitterFooter ? TWITTER_FOOTER_HEIGHT : 0,
+            left: 0,
+            right: 0,
+            zIndex: 1000,
+          }}
+        />
+      ) : null}
+      {showTwitterFooter ? (
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: TWITTER_FOOTER_HEIGHT,
+            borderTop: "2px solid rgba(15, 23, 42, 0.08)",
+            background: "#f4f5f8",
+            zIndex: 1,
+          }}
+        />
+      ) : null}
+    </div>,
+    {
+      width: OG_WIDTH,
+      height: OG_HEIGHT,
+      fonts: [
+        {
+          name: "Inter",
+          data: interRegular,
+          style: "normal",
+          weight: 400,
+        },
+        {
+          name: "Inter",
+          data: interMedium,
+          style: "normal",
+          weight: 500,
+        },
+      ],
+    },
+  );
 
-    const cacheHeaders = buildCacheHeaders(null, isFreshRequest);
-    Object.entries(cacheHeaders).forEach(([key, value]) => {
-      response.headers.set(key, value);
-    });
+  const cacheHeaders = buildCacheHeaders(null, isFreshRequest);
+  Object.entries(cacheHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
 
-    return response;
-  },
-};
+  return response;
+}
