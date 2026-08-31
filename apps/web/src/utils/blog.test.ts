@@ -36,9 +36,9 @@ describe("blog utils", () => {
       data: { publishDate: new Date("2026-03-30T09:00:00Z"), draft: true },
     };
 
-    expect(filterVisibleBlogEntries([published, draft]).map((entry) => entry.id)).toEqual([
-      "published",
-    ]);
+    expect(
+      filterVisibleBlogEntries([published, draft]).map((entry) => entry.id),
+    ).toEqual(["published"]);
     expect(
       filterVisibleBlogEntries([published, draft], { includeDrafts: true }).map(
         (entry) => entry.id,
@@ -50,28 +50,34 @@ describe("blog utils", () => {
     expect(shouldIncludeDraftBlogEntries()).toBe(false);
     expect(shouldIncludeDraftBlogEntries({ isDev: true })).toBe(true);
     expect(
-      shouldIncludeDraftBlogEntries({ env: { VERCEL_ENV: "preview" } }),
-    ).toBe(true);
-    expect(
-      shouldIncludeDraftBlogEntries({ env: { VERCEL_TARGET_ENV: "preview" } }),
-    ).toBe(true);
-  });
-
-  test("marks preview blog pages as noindex", () => {
-    expect(shouldNoindexBlogPage("/blog", { VERCEL_ENV: "preview" })).toBe(
-      true,
-    );
-    expect(
-      shouldNoindexBlogPage("/blog/introducing-data-slot", {
-        VERCEL_ENV: "preview",
+      shouldIncludeDraftBlogEntries({
+        env: { WORKERS_CI: "1", WORKERS_CI_BRANCH: "feature/cloudflare" },
       }),
     ).toBe(true);
     expect(
-      shouldNoindexBlogPage("/docs/introduction", { VERCEL_ENV: "preview" }),
+      shouldIncludeDraftBlogEntries({
+        env: { WORKERS_CI: "1", WORKERS_CI_BRANCH: "main" },
+      }),
     ).toBe(false);
-    expect(shouldNoindexBlogPage("/blog", { VERCEL_ENV: "production" })).toBe(
-      false,
-    );
+  });
+
+  test("marks preview blog pages as noindex", () => {
+    const previewEnv = {
+      WORKERS_CI: "1",
+      WORKERS_CI_BRANCH: "feature/cloudflare",
+    };
+
+    expect(shouldNoindexBlogPage("/blog", previewEnv)).toBe(true);
+    expect(
+      shouldNoindexBlogPage("/blog/introducing-data-slot", previewEnv),
+    ).toBe(true);
+    expect(shouldNoindexBlogPage("/docs/introduction", previewEnv)).toBe(false);
+    expect(
+      shouldNoindexBlogPage("/blog", {
+        WORKERS_CI: "1",
+        WORKERS_CI_BRANCH: "main",
+      }),
+    ).toBe(false);
   });
 
   test("builds initials from the first two name parts", () => {

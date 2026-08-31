@@ -17,18 +17,26 @@ describe("header prepaint bootstrap", () => {
     const source = fs.readFileSync(switcherFile, "utf8");
 
     expect(source).toContain("<script is:inline>");
-    expect(source).toContain('const root = script?.previousElementSibling;');
+    expect(source).toContain("const root = script?.previousElementSibling;");
     expect(source).toContain('const themeCookie = readCookie("theme");');
-    expect(source).toContain('const presetId = localStorage.getItem("theme-preset");');
+    expect(source).toContain(
+      'const presetId = localStorage.getItem("theme-preset");',
+    );
     expect(source).toContain(
       'const themeRef = readCookie("theme-ref") || null;',
     );
-    expect(source).toContain('const customPresets = getCustomPresets();');
-    expect(source).toContain('const stored = localStorage.getItem("bejamas-custom-presets");');
-    expect(source).toContain("const buildCreateHref = (presetId, currentThemeRef) => {");
+    expect(source).toContain("const customPresets = getCustomPresets();");
+    expect(source).toContain(
+      'const stored = localStorage.getItem("bejamas-custom-presets");',
+    );
+    expect(source).toContain(
+      "const buildCreateHref = (presetId, currentThemeRef) => {",
+    );
     expect(source).toContain("root.dataset.current = JSON.stringify(summary);");
-    expect(source).toContain("root.dataset.selectedPresetId = selectedPresetId;");
-    expect(source).toContain('createLink.href = summary.createHref;');
+    expect(source).toContain(
+      "root.dataset.selectedPresetId = selectedPresetId;",
+    );
+    expect(source).toContain("createLink.href = summary.createHref;");
   });
 
   test("reuses a cached GitHub count until the server island response arrives", () => {
@@ -36,15 +44,20 @@ describe("header prepaint bootstrap", () => {
     const linkSource = fs.readFileSync(gitHubLinkFile, "utf8");
 
     expect(buttonSource).toContain("data-github-stars-button");
-    expect(buttonSource).toContain('const STORAGE_KEY = "bejamas:github-stars";');
-    expect(buttonSource).toContain("const observer = new MutationObserver(() => {");
+    expect(buttonSource).toContain(
+      'const STORAGE_KEY = "bejamas:github-stars";',
+    );
+    expect(buttonSource).toContain(
+      "const observer = new MutationObserver(() => {",
+    );
     expect(buttonSource).toContain(
       'button\n        .querySelector("[data-github-stars-value]")',
     );
-    expect(buttonSource).toContain('display.textContent = cachedValue;');
+    expect(buttonSource).toContain("display.textContent = cachedValue;");
+    expect(buttonSource).toContain("applyCachedValue();\n    });");
     expect(linkSource).toContain("data-github-stars-display");
     expect(linkSource).toContain(
-      'data-github-stars-value={starCount !== null ? String(starCount) : undefined}',
+      "data-github-stars-value={starCount !== null ? String(starCount) : undefined}",
     );
   });
 });

@@ -5,7 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
 import starlightThemeBejamas from "starlight-theme-bejamas";
 
-import vercel from "@astrojs/vercel";
+import cloudflare from "@astrojs/cloudflare";
 import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
 
@@ -46,13 +46,18 @@ const staticFirstRoutes = {
 export default defineConfig({
   trailingSlash: "never",
   output: "server",
+  session: false,
   site: "https://ui.bejamas.com",
   redirects: {
     "/docs": "/docs/introduction",
   },
   image: {
     // Allow remote image optimization from a single domain
-    domains: ["gradient.bejamas.com", "github.com"],
+    domains: [
+      "gradient.bejamas.com",
+      "github.com",
+      "avatars.githubusercontent.com",
+    ],
   },
   env: {
     schema: {
@@ -282,8 +287,10 @@ export default defineConfig({
       noExternal: ["zod", "nanoid"],
     },
   },
-  adapter: vercel({
-    skewProtection: true,
-    imageService: true,
+  adapter: cloudflare({
+    imageService: "cloudflare-binding",
+    // The site prerenders through filesystem-heavy registry tooling. Keep that
+    // build step in Node while the deployed application still runs in workerd.
+    prerenderEnvironment: "node",
   }),
 });

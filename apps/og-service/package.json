@@ -3,24 +3,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "vercel:dev": "vercel dev",
-    "vercel:version": "vercel --version",
-    "build": "node scripts/postinstall.mjs",
-    "postinstall": "node scripts/postinstall.mjs"
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "check-types": "wrangler types && tsc --noEmit",
+    "deploy:cloudflare": "wrangler deploy",
+    "dev": "wrangler dev",
+    "test": "bun test"
   },
   "dependencies": {
-    "@sparticuz/chromium-min": "^141.0.0",
-    "@vercel/og": "^0.8.6",
-    "puppeteer-core": "^24.43.1",
+    "@cf-wasm/og": "0.5.0",
     "react": "^19.2.7"
   },
   "devDependencies": {
-    "@sparticuz/chromium": "^141.0.0",
+    "@cloudflare/puppeteer": "1.4.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
-    "@vercel/node": "^3.2.29",
-    "puppeteer": "^24.43.1",
-    "typescript": "^5.9.3",
-    "vercel": "^48.12.1"
+    "typescript": "^5.9.3"
   }
 }
