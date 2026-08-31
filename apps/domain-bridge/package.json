@@ -3,10 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "wrangler deploy --env=\"\" --dry-run --outdir dist && wrangler deploy --env og --dry-run --outdir dist-og",
+    "build": "wrangler deploy --env=\"\" --dry-run --outdir dist",
     "check-types": "wrangler types && tsc --noEmit",
     "deploy:web": "wrangler deploy --env=\"\"",
-    "deploy:og": "wrangler deploy --env og",
     "test": "bun test"
   },
   "devDependencies": {

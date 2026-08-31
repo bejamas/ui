@@ -27,31 +27,4 @@
       "head_sampling_rate": 0.1,
     },
   },
-  "env": {
-    "og": {
-      "name": "bejamas-ui-og-domain-bridge",
-      "workers_dev": true,
-      "preview_urls": false,
-      "routes": [
-        {
-          "pattern": "og.ui.bejamas.com",
-          "custom_domain": true,
-        },
-      ],
-      "vars": {
-        "UPSTREAM_ORIGIN": "https://bejamas-ui-og.bejamas.workers.dev",
-      },
-      "observability": {
-        "enabled": true,
-        "logs": {
-          "enabled": true,
-          "head_sampling_rate": 1,
-        },
-        "traces": {
-          "enabled": true,
-          "head_sampling_rate": 0.1,
-        },
-      },
-    },
-  },
 }
