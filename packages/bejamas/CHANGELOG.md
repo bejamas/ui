@@ -1,5 +1,11 @@
 # bejamas
 
+## 0.4.1
+
+### Patch Changes
+
+- [#134](https://github.com/bejamas/ui/pull/134) [`88be93b`](https://github.com/bejamas/ui/commit/88be93bb892962989da93ab21905293a2b4429bd) Thanks [@thomkrupa](https://github.com/thomkrupa)! - Disable component previews in generated API Reference sections.
+
 ## 0.4.0
 
 ### Minor Changes
