@@ -306,9 +306,10 @@ async function main() {
     const usedInPrimary = extractComponentTagsFromMDX(primaryExampleMDX).filter(
       (n) => n !== pascal,
     );
-    const usedInApi = extractComponentTagsFromPreviewMarkdown(apiMDX).filter(
-      (n) => n !== pascal,
-    );
+    const usedInApi = extractComponentTagsFromPreviewMarkdown(apiMDX, {
+      defaultPreview: false,
+      allowForcedPreview: false,
+    }).filter((n) => n !== pascal);
     const autoSet = new Set<string>([
       ...usedInUsage,
       ...usedInDescription,
