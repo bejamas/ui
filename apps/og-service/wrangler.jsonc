@@ -6,6 +6,12 @@
   "compatibility_date": "2026-08-31",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "og.ui.bejamas.com",
+      "custom_domain": true,
+    },
+  ],
   "browser": {
     "binding": "BROWSER",
   },

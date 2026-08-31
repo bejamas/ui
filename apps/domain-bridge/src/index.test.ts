@@ -92,9 +92,9 @@ describe("domain bridge", () => {
     }) as unknown as typeof fetch;
 
     const response = await handleRequest(
-      new Request("https://og.ui.bejamas.com/api/og/text?title=Hello"),
+      new Request("https://ui.bejamas.com/api/shuffles"),
       {
-        UPSTREAM_ORIGIN: "https://bejamas-ui-og.bejamas.workers.dev",
+        UPSTREAM_ORIGIN: "https://bejamas-ui.bejamas-oss.workers.dev",
       },
     );
 
