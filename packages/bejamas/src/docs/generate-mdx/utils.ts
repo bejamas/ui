@@ -435,7 +435,7 @@ export async function discoverExamples(
       }
     } catch {}
   }
-  return found;
+  return [...new Set(found)].sort();
 }
 
 export function createSourceFileFromFrontmatter(

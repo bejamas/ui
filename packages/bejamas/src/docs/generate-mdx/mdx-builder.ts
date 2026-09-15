@@ -1,9 +1,12 @@
 import {
   decodeEscapedScriptTags,
+  extractComponentTagsFromPreviewMarkdown,
   parseFenceInfo,
   prepareExampleContent,
   type ParsedExampleSection,
 } from "./examples";
+
+import { RESERVED_COMPONENTS } from "./utils";
 
 /**
  * Check if an import path uses the new barrel export pattern (no .astro extension)
@@ -32,6 +35,11 @@ function componentToFolder(name: string): string {
     "RadioGroup",
     "ButtonGroup",
     "StickySurface",
+    "DropdownMenu",
+    "NavigationMenu",
+    "ContextMenu",
+    "HoverCard",
+    "ToggleGroup",
   ];
 
   // Check for multi-word families first (order matters - longer matches first)
@@ -57,12 +65,6 @@ function resolveComponentFolder(
   if (!componentFolderMap) return componentToFolder(name);
   const direct = componentFolderMap[name];
   if (direct && direct.length) return direct;
-
-  // Fallback: try the longest mapped prefix (e.g. InputGroup* -> input-group)
-  const prefixMatch = Object.keys(componentFolderMap)
-    .filter((key) => name.startsWith(key))
-    .sort((a, b) => b.length - a.length)[0];
-  if (prefixMatch) return componentFolderMap[prefixMatch];
 
   return componentToFolder(name);
 }
@@ -101,6 +103,11 @@ function generateBarrelImports(
 
   for (const folder of sortedFolders) {
     const names = groups.get(folder)!.sort();
+    if (folder.endsWith(".astro")) {
+      for (const name of names)
+        lines.push(`import ${name} from '${componentsAlias}/${folder}';`);
+      continue;
+    }
     lines.push(
       `import { ${names.join(", ")} } from '${componentsAlias}/${folder}';`,
     );
@@ -147,6 +154,7 @@ export function buildMdx(params: {
   }>;
   examplesSections: ParsedExampleSection[];
   componentFolderMap?: Record<string, string>;
+  availableComponents?: string[];
   autoImports: string[];
   lucideIcons: string[];
   primaryExampleMDX: string;
@@ -188,6 +196,34 @@ export function buildMdx(params: {
     apiMDX,
   } = params;
 
+  const available = params.availableComponents
+    ? new Set(params.availableComponents)
+    : null;
+  const missingFromNames = (names: string[]) =>
+    names.filter(
+      (name) =>
+        available &&
+        !available.has(name) &&
+        !RESERVED_COMPONENTS.has(name) &&
+        !/Icon$/.test(name),
+    );
+  const missingFromSnippet = (snippet: string) =>
+    missingFromNames([
+      ...new Set(
+        [...snippet.matchAll(/<([A-Z][A-Za-z0-9_]*)\b/g)].map(
+          (match) => match[1],
+        ),
+      ),
+    ]);
+  const missingNotice = (names: string[]) => {
+    const components = [
+      ...new Set(
+        names.map((name) => resolveComponentFolder(name, componentFolderMap)),
+      ),
+    ].sort();
+    return `> Preview unavailable. Run \`bejamas add ${components.join(" ")}\` to install the required components, then regenerate the docs.`;
+  };
+
   // Detect if we should use the new barrel import pattern
   const useBarrelPattern = isBarrelImport(importPath);
 
@@ -203,14 +239,19 @@ export function buildMdx(params: {
     .slice()
     .sort((a, b) => String(a).localeCompare(String(b)));
 
-  const sortedUiAuto = (autoImports ?? []).slice().sort();
+  const sortedUiAuto = (autoImports ?? [])
+    .filter((name) => !available || available.has(name))
+    .slice()
+    .sort();
 
   // Generate UI component imports based on pattern
-  const uiAutoLines = useBarrelPattern
-    ? generateBarrelImports(sortedUiAuto, componentsAlias, componentFolderMap)
-    : generateDefaultImports(sortedUiAuto, componentsAlias);
+  const uiAutoLines =
+    useBarrelPattern || componentFolderMap
+      ? generateBarrelImports(sortedUiAuto, componentsAlias, componentFolderMap)
+      : generateDefaultImports(sortedUiAuto, componentsAlias);
 
   const exampleLines = (examples ?? [])
+    .filter((ex) => !missingFromSnippet(ex.source).length)
     .map((ex) => `import ${ex.importName} from '${ex.importPath}';`)
     .sort((a, b) => a.localeCompare(b));
 
@@ -299,12 +340,9 @@ export function buildMdx(params: {
         internal.push(`import ${importName} from '${importPath}';`);
       }
       internal.push(
-        ...usedUi
-          .slice()
-          .sort()
-          .map(
-            (name) => `import ${name} from '${componentsAlias}/${name}.astro';`,
-          ),
+        ...(componentFolderMap
+          ? generateBarrelImports(usedUi, componentsAlias, componentFolderMap)
+          : generateDefaultImports(usedUi, componentsAlias)),
       );
     }
 
@@ -380,7 +418,9 @@ export function buildMdx(params: {
     allowForcedPreview?: boolean;
   };
 
-  const extractInlineScripts = (snippet: string): {
+  const extractInlineScripts = (
+    snippet: string,
+  ): {
     markup: string;
     scripts: string[];
   } => {
@@ -526,7 +566,9 @@ export function buildMdx(params: {
   const renderCompanionSourceMD = (sourceMD: string): string => {
     if (!sourceMD || !sourceMD.trim().length) return "";
     const normalizedSourceMD = sourceMD.trim();
-    const match = normalizedSourceMD.match(/^```(\S*)([^\n]*)\n([\s\S]*?)\n```$/);
+    const match = normalizedSourceMD.match(
+      /^```(\S*)([^\n]*)\n([\s\S]*?)\n```$/,
+    );
     if (!match) return sourceMD;
 
     const [, langRaw = "", flagsRaw = "", body = ""] = match;
@@ -549,7 +591,9 @@ export function buildMdx(params: {
   const extractCompanionScriptBody = (sourceMD: string): string => {
     if (!sourceMD || !sourceMD.trim().length) return "";
     const normalizedSourceMD = sourceMD.trim();
-    const match = normalizedSourceMD.match(/^```(\S*)([^\n]*)\n([\s\S]*?)\n```$/);
+    const match = normalizedSourceMD.match(
+      /^```(\S*)([^\n]*)\n([\s\S]*?)\n```$/,
+    );
     if (!match) return "";
 
     const [, langRaw = "", , body = ""] = match;
@@ -584,6 +628,8 @@ export function buildMdx(params: {
     snippet: string,
     options: PreviewRenderOptions = {},
   ): string => {
+    const missing = missingFromSnippet(snippet);
+    if (missing.length) return missingNotice(missing);
     const { enableConsolePanel = false } = options;
     const preparedPreview = toMdxPreview(snippet, options);
     if (!preparedPreview.markup || !preparedPreview.markup.length) return "";
@@ -620,6 +666,14 @@ ${preparedPreview.markup}
     config: MarkdownPreviewConfig = {},
   ): string => {
     if (!block || !block.length) return block;
+    const missingRaw = missingFromNames(
+      extractComponentTagsFromPreviewMarkdown(block, {
+        defaultPreview: false,
+        allowForcedPreview: false,
+      }),
+    );
+    if (missingRaw.length)
+      return `${missingNotice(missingRaw)}\n\n\`\`\`\`mdx\n${block}\n\`\`\`\``;
     const { defaultPreview = true, allowForcedPreview = true } = config;
 
     const lines = block.split("\n");
@@ -675,12 +729,16 @@ ${preparedPreview.markup}
         }
 
         if (currentFenceLang === "astro") {
-          const sourceCode = decodeEscapedScriptTags(fenceBody.join("\n").trim());
+          const sourceCode = decodeEscapedScriptTags(
+            fenceBody.join("\n").trim(),
+          );
           const companionConsoleFence = currentFenceFlags.has("console")
             ? findCompanionConsoleFence(lineIndex + 1)
             : null;
           const companionMarkdown = companionConsoleFence
-            ? lines.slice(lineIndex + 1, companionConsoleFence.end + 1).join("\n")
+            ? lines
+                .slice(lineIndex + 1, companionConsoleFence.end + 1)
+                .join("\n")
             : "";
           const prepared = prepareExampleContent(
             companionMarkdown.length
@@ -688,15 +746,12 @@ ${preparedPreview.markup}
               : `${fenceOpen}\n${sourceCode}\n${line}`,
           );
           const hasForcedPreviewFlag =
-            currentFenceFlags.has("preview") || currentFenceFlags.has("console");
+            currentFenceFlags.has("preview") ||
+            currentFenceFlags.has("console");
           const shouldPreview =
             !prepared.skipPreview &&
             (defaultPreview || (allowForcedPreview && hasForcedPreviewFlag));
-          if (
-            prepared.snippet &&
-            prepared.snippet.length &&
-            shouldPreview
-          ) {
+          if (prepared.snippet && prepared.snippet.length && shouldPreview) {
             const previewBlock = renderPreviewBlock(prepared.snippet, {
               enableConsolePanel: prepared.enableConsolePanel,
               consoleScripts: prepared.consoleScripts,
@@ -836,7 +891,7 @@ ${(() => {
     const titleLine = `${headingLevel} ${headingTitle}`;
     const blocks: string[] = [titleLine];
     if (prepared.descriptionMD && prepared.descriptionMD.length) {
-      blocks.push(prepared.descriptionMD);
+      blocks.push(renderAstroPreviewsInMarkdown(prepared.descriptionMD));
     }
 
     if (
@@ -867,7 +922,11 @@ ${(() => {
         prepared.mergeCompanionWithSource
       ) {
         blocks.push(
-          renderMergedAstroSourceMD("```astro", sourceBlock, prepared.companionSourceMD),
+          renderMergedAstroSourceMD(
+            "```astro",
+            sourceBlock,
+            prepared.companionSourceMD,
+          ),
         );
       } else {
         blocks.push(`\`\`\`astro
@@ -888,8 +947,13 @@ ${sourceBlock}
       ) {
         blocks.push(renderCompanionSourceMD(prepared.companionSourceMD));
       }
-      if (prepared.trailingDescriptionMD && prepared.trailingDescriptionMD.length) {
-        blocks.push(prepared.trailingDescriptionMD);
+      if (
+        prepared.trailingDescriptionMD &&
+        prepared.trailingDescriptionMD.length
+      ) {
+        blocks.push(
+          renderAstroPreviewsInMarkdown(prepared.trailingDescriptionMD),
+        );
       }
     }
 
@@ -908,7 +972,7 @@ ${sourceBlock}
       }
 
       if (section.introMD && section.introMD.length) {
-        sectionParts.push(section.introMD);
+        sectionParts.push(renderAstroPreviewsInMarkdown(section.introMD));
       }
 
       if (section.items && section.items.length) {
@@ -920,7 +984,11 @@ ${sourceBlock}
             renderExampleItem(itemHeadingLevel, item.title, item.body),
           );
         }
-      } else if (!hasSectionTitle && section.introMD && section.introMD.length) {
+      } else if (
+        !hasSectionTitle &&
+        section.introMD &&
+        section.introMD.length
+      ) {
         const prepared = prepareExampleContent(section.introMD);
         if (prepared.snippet && prepared.snippet.length) {
           sectionParts.length = 0;
@@ -945,9 +1013,13 @@ ${sourceBlock}
       renderedExampleSections.push(
         `### ${ex.title}
 
-<div class="not-content">
+${
+  missingFromSnippet(ex.source).length
+    ? missingNotice(missingFromSnippet(ex.source))
+    : `<div class="not-content">
   <${ex.importName} />
-</div>
+</div>`
+}
 
 \`\`\`astro
 ${ex.source}
