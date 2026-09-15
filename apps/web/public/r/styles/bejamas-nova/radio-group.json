@@ -19,7 +19,9 @@
       "content": "export { default as RadioGroup } from \"./RadioGroup.astro\";\nexport { default as RadioGroupItem } from \"./RadioGroupItem.astro\";\n\n"
     }
   ],
-  "dependencies": [],
+  "dependencies": [
+    "@data-slot/radio-group"
+  ],
   "registryDependencies": [
     "index",
     "utils"

@@ -20,14 +20,17 @@ import { highlighter } from "@/src/utils/highlighter";
 import { logger } from "@/src/utils/logger";
 import {
   fetchRegistryItem,
+  fetchRegistryTree,
   getSubfolderFromPaths,
   reorganizeComponents,
+  repairUiPackageExports,
   shouldReorganizeRegistryUiFiles,
 } from "@/src/utils/reorganize-components";
 import {
   buildPinnedShadcnInvocation,
   ensurePinnedShadcnExecPrefix,
 } from "@/src/utils/shadcn-cli";
+import { ensureRegistryDependencies } from "@/src/utils/registry-dependencies";
 import { spinner } from "@/src/utils/spinner";
 import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
 
@@ -188,26 +191,26 @@ async function buildSubfolderMap(
   let requiresReorganization = false;
 
   for (const componentName of components) {
-    const registryItem = await fetchRegistryItem(
-      componentName,
+    const registryItems = await fetchRegistryTree(
+      [componentName],
       registryUrl,
       style,
     );
-    if (!registryItem) continue;
+    for (const registryItem of registryItems) {
+      if (shouldReorganizeRegistryUiFiles(registryItem.files, uiDir)) {
+        requiresReorganization = true;
+      }
 
-    if (shouldReorganizeRegistryUiFiles(registryItem.files, uiDir)) {
-      requiresReorganization = true;
-    }
+      const subfolder = getSubfolderFromPaths(registryItem.files);
+      if (!subfolder) continue;
 
-    const subfolder = getSubfolderFromPaths(registryItem.files);
-    if (!subfolder) continue;
-
-    for (const file of registryItem.files) {
-      if (file.type === "registry:ui") {
-        const filename = path.basename(file.path);
-        const subfolders = filenameToSubfolders.get(filename) || [];
-        subfolders.push(subfolder);
-        filenameToSubfolders.set(filename, subfolders);
+      for (const file of registryItem.files) {
+        if (file.type === "registry:ui") {
+          const filename = path.basename(file.path);
+          const subfolders = filenameToSubfolders.get(filename) || [];
+          subfolders.push(subfolder);
+          filenameToSubfolders.set(filename, subfolders);
+        }
       }
     }
   }
@@ -619,6 +622,7 @@ export const add = new Command()
           registryUrl,
           verbose,
           activeStyle,
+          overwriteUsed,
         );
         skippedCount = reorgResult.skippedFiles.length;
       }
@@ -681,6 +685,15 @@ export const add = new Command()
     }
 
     if (!inspectionMode) {
-      await fixAstroImports(cwd, verbose);
+      await fixAstroImports(cwd, verbose, uiConfig);
+      if (uiConfig) {
+        await repairUiPackageExports(uiDir, uiConfig.resolvedPaths.cwd);
+        const items = await fetchRegistryTree(
+          componentsToAdd,
+          registryUrl,
+          activeStyle,
+        );
+        await ensureRegistryDependencies(uiConfig.resolvedPaths.cwd, items);
+      }
     }
   });

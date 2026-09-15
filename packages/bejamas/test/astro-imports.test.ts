@@ -235,3 +235,30 @@ test("rewrites menu placeholders for inverted translucent menu output", () => {
   expect(result).not.toContain("cn-menu-target");
   expect(result).not.toContain("cn-menu-translucent");
 });
+
+test("repairs shortened lib aliases in frontmatter, client scripts and helper exports", () => {
+  const config = makeConfig({
+    aliases: {
+      components: "@repo/ui/components",
+      ui: "@repo/ui/components",
+      lib: "@repo/ui/lib",
+      utils: "@repo/ui/lib/utils",
+      hooks: "@repo/ui/hooks",
+    },
+  });
+  const source = `---
+import { cn } from "@repo/lib/utils";
+import { toggle } from "@/lib/toggle-shared";
+---
+<script>import { controller } from "@repo/lib/toggle-group-controller";</script>
+export { toggle } from "@repo/lib/toggle-shared";
+const lazy = import("@repo/lib/toggle-shared");
+import { other } from "@repo/other/lib/helper";`;
+  const output = rewriteAstroImports(source, config);
+  expect(output).not.toContain('"@repo/lib/');
+  expect(output).not.toContain('"@/lib/');
+  expect(output).toContain('"@repo/ui/lib/utils"');
+  expect(output).toContain('"@repo/ui/lib/toggle-shared"');
+  expect(output).toContain('"@repo/ui/lib/toggle-group-controller"');
+  expect(output).toContain('"@repo/other/lib/helper"');
+});

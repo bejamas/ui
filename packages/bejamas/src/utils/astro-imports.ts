@@ -11,6 +11,23 @@ export function updateImportAliases(
   config: Config,
   isRemote: boolean = false,
 ) {
+  // Upstream shadcn can shorten a scoped workspace alias to @repo/lib.
+  const scope = config.aliases.components.split("/")[0];
+  for (const [segment, alias] of [
+    ["lib/utils", config.aliases.utils],
+    ["lib", config.aliases.lib],
+    ["hooks", config.aliases.hooks],
+  ] as const) {
+    if (!alias) continue;
+    for (const prefix of [`@/${segment}`, `${scope}/${segment}`]) {
+      if (
+        moduleSpecifier === prefix ||
+        moduleSpecifier.startsWith(`${prefix}/`)
+      ) {
+        return alias + moduleSpecifier.slice(prefix.length);
+      }
+    }
+  }
   // Not a local import.
   if (!moduleSpecifier.startsWith("@/") && !isRemote) {
     return moduleSpecifier;
@@ -97,6 +114,12 @@ export function rewriteAstroImports(content: string, config: Config) {
     },
   );
 
+  updated = updated.replace(
+    /(?:export\s+(?:type\s+)?(?:\{[^}]*\}|\*)\s+from\s*|import\s*\(\s*)["']([^"']+)["']/g,
+    (full, specifier) =>
+      full.replace(specifier, updateImportAliases(specifier, config)),
+  );
+
   // Handle bare imports, e.g. `import "path"`
   updated = updated.replace(/import\s+["']([^"']+)["']/g, (full, specifier) => {
     const next = updateImportAliases(specifier, config, false);
@@ -109,18 +132,24 @@ export function rewriteAstroImports(content: string, config: Config) {
   return rewriteAstroIcons(updated, config.iconLibrary);
 }
 
-export async function fixAstroImports(cwd: string, isVerbose: boolean) {
-  const config = await getConfig(cwd);
+export async function fixAstroImports(
+  cwd: string,
+  isVerbose: boolean,
+  targetConfig?: Config | null,
+) {
+  const config = targetConfig ?? (await getConfig(cwd));
   if (!config) return;
 
   const searchRoots = new Set<string>([
     config.resolvedPaths.components,
     config.resolvedPaths.ui,
+    config.resolvedPaths.lib,
+    config.resolvedPaths.hooks,
   ]);
 
   for (const root of Array.from(searchRoots)) {
     if (!root) continue;
-    const astroFiles = await fg("**/*.astro", {
+    const astroFiles = await fg("**/*.{astro,ts,js}", {
       cwd: root,
       absolute: true,
       dot: false,
