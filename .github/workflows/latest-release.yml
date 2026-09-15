@@ -34,7 +34,7 @@ jobs:
         id: cs
         uses: changesets/action@v1
         with:
-          publish: npx changeset publish
+          publish: bun .github/scripts/prepare-release.ts && npx changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
