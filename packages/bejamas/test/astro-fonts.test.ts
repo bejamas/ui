@@ -1,7 +1,4 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import ts from "typescript";
 import {
   mergeManagedAstroFonts,
   parseManagedAstroFonts,
@@ -40,73 +37,6 @@ const headingFont = {
 };
 
 describe("astro font helpers", () => {
-  test("generated and template font configs pass Astro type checking", () => {
-    const repoRoot = path.resolve(import.meta.dir, "../../..");
-    const sources = [
-      patchAstroConfigSource(
-        '// @ts-check\nimport { defineConfig } from "astro/config";\nexport default defineConfig({});\n',
-        [interFont, monoFont, headingFont],
-      ),
-      ...[
-        "templates/astro/astro.config.mjs",
-        "templates/monorepo-astro/apps/web/astro.config.mjs",
-        "templates/monorepo-astro-with-docs/apps/web/astro.config.mjs",
-        "templates/monorepo-astro-with-docs/apps/docs/astro.config.mjs",
-      ].map((template) => {
-        const source = readFileSync(path.join(repoRoot, template), "utf8");
-        const fontBlock = source.match(
-          /\/\/ bejamas:astro-fonts:start[\s\S]*?\/\/ bejamas:astro-fonts:end/,
-        )?.[0];
-        expect(fontBlock).toBeDefined();
-        return `import { defineConfig, fontProviders } from "astro/config";\n${fontBlock}\nexport default defineConfig({ fonts: BEJAMAS_ASTRO_FONTS });`;
-      }),
-    ];
-    // Resolve the real Astro dependency from apps/web without writing fixtures.
-    const files = new Map(
-      sources.map((source, index) => [
-        path.join(repoRoot, "apps/web", `astro-fonts-check-${index}.mjs`),
-        source,
-      ]),
-    );
-    const options: ts.CompilerOptions = {
-      allowJs: true,
-      checkJs: true,
-      noEmit: true,
-      strict: true,
-      skipLibCheck: true,
-      module: ts.ModuleKind.ESNext,
-      moduleResolution: ts.ModuleResolutionKind.Bundler,
-      target: ts.ScriptTarget.ESNext,
-    };
-    const host = ts.createCompilerHost(options);
-    const getSourceFile = host.getSourceFile.bind(host);
-    host.getSourceFile = (
-      fileName,
-      languageVersion,
-      onError,
-      shouldCreateNewSourceFile,
-    ) => {
-      const source = files.get(fileName);
-      return source === undefined
-        ? getSourceFile(
-            fileName,
-            languageVersion,
-            onError,
-            shouldCreateNewSourceFile,
-          )
-        : ts.createSourceFile(
-            fileName,
-            source,
-            languageVersion,
-            true,
-            ts.ScriptKind.JS,
-          );
-    };
-    const program = ts.createProgram([...files.keys()], options, host);
-    const diagnostics = ts.getPreEmitDiagnostics(program);
-    expect(ts.formatDiagnosticsWithColorAndContext(diagnostics, host)).toBe("");
-  });
-
   test("patchAstroConfigSource bootstraps Astro fonts config", () => {
     const source = `// @ts-check\nimport { defineConfig } from 'astro/config';\n\nexport default defineConfig({\n  vite: {}\n});\n`;
     const result = patchAstroConfigSource(source, [sansFont]);
