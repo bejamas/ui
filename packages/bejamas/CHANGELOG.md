@@ -1,5 +1,15 @@
 # bejamas
 
+## 0.4.2
+
+### Patch Changes
+
+- [#148](https://github.com/bejamas/ui/pull/148) [`c8ea8f1`](https://github.com/bejamas/ui/commit/c8ea8f1ef277c91ba3cd954fb75d4673b593b919) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Fix the Astro font configuration type import in generated projects and templates so TypeScript resolves `AstroUserConfig` from `astro`.
+
+- [#145](https://github.com/bejamas/ui/pull/145) [`03f1428`](https://github.com/bejamas/ui/commit/03f142855c51c77cf9b06d8b87ebc32d433e1f6b) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Preserve nested component layouts during add, rebuild valid local barrel exports, repair workspace aliases, and install omitted headless runtime dependencies in the UI workspace.
+
+- [#146](https://github.com/bejamas/ui/pull/146) [`05ac0ca`](https://github.com/bejamas/ui/commit/05ac0caec1977abb8b5a334b4186a2af3c06fd1c) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Generate docs from installed component exports, keep unavailable demos as source with installation guidance, and use consumer aliases with deterministic import groupings.
+
 ## 0.4.1
 
 ### Patch Changes
