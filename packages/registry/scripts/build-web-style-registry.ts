@@ -1,3 +1,4 @@
+import { getHeadlessDependencies } from "../src/lib/headless-dependencies";
 import fs from "node:fs/promises";
 import path from "node:path";
 import postcss, { type AtRule, type Declaration, type Rule } from "postcss";
@@ -612,7 +613,7 @@ async function buildRegistryItem(name: string, style: Style, tokenMap: TokenMap)
     ...template,
     $schema: schemaUrl,
     files,
-    dependencies: normalizeDependenciesForInstall(template.dependencies),
+    dependencies: normalizeDependenciesForInstall([...(template.dependencies ?? []), ...getHeadlessDependencies(files)]),
     registryDependencies: normalizeRegistryDependenciesForInstall(
       name,
       template.registryDependencies,

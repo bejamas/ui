@@ -74,7 +74,7 @@ describe("reorganize-components", () => {
         ],
         "/repo/packages/ui/src/components",
       ),
-    ).toBe(false);
+    ).toBe(true);
     expect(
       shouldReorganizeRegistryUiFiles(
         undefined,
@@ -93,11 +93,10 @@ describe("reorganize-components", () => {
 
     const result = await reorganizeRegistryUiFiles(files, uiDir, false);
 
-    expect(result.totalMoved).toBe(3);
+    expect(result.totalMoved).toBe(2);
     expect(result.movedFiles).toEqual([
       "tabs/Tabs.astro",
       "tabs/TabsList.astro",
-      "tabs/index.ts",
     ]);
     expect(await Bun.file(path.join(uiDir, "Tabs.astro")).exists()).toBe(false);
     expect(

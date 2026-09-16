@@ -47,7 +47,7 @@ export function getSubfolderFromPaths(files?: RegistryFile[]): string | null {
   }
 
   const uiFiles = files.filter((file) => file.type === "registry:ui");
-  if (uiFiles.length < 2) {
+  if (uiFiles.length === 0) {
     return null;
   }
 
@@ -123,7 +123,7 @@ export function shouldReorganizeRegistryUiFiles(
     return false;
   }
 
-  const uiFiles = files.filter((file) => file.type === "registry:ui");
+  const uiFiles = (files ?? []).filter((file) => file.type === "registry:ui");
 
   return uiFiles.some((file) => {
     const relativePath = resolveShadcnUiRelativePath(file.path, uiDir);
@@ -167,6 +167,9 @@ export async function reorganizeRegistryUiFiles(
 
   for (const file of uiFiles) {
     const filename = path.basename(file.path);
+    // Dependencies share the flattened index.ts path, so its contents cannot
+    // identify the owning component. Rebuild each barrel from its own files.
+    if (filename === "index.ts") continue;
     const flatPath = path.join(uiDir, filename);
     const targetPath = path.join(targetDir, filename);
 
@@ -214,7 +217,73 @@ export async function reorganizeRegistryUiFiles(
     }
   }
 
+  if (await pathExists(targetDir)) {
+    await repairComponentBarrel(targetDir, files, overwriteExisting);
+  }
   return result;
+}
+
+export async function repairComponentBarrel(
+  targetDir: string,
+  files: RegistryFile[],
+  overwriteExisting = false,
+) {
+  const localFiles = (await fs.readdir(targetDir))
+    .filter((name) => name.endsWith(".astro"))
+    .sort();
+  if (!localFiles.length) return;
+  const indexPath = path.join(targetDir, "index.ts");
+  const existing = await fs.readFile(indexPath, "utf8").catch(() => "");
+  const registryBarrel =
+    files.find((file) => path.basename(file.path) === "index.ts")?.content ??
+    "";
+  const source = overwriteExisting || !existing ? registryBarrel : existing;
+  // Preserve valid additional exports (such as buttonVariants), but discard
+  // re-exports of files that belong to another component's flattened barrel.
+  const cleaned = source
+    .replace(
+      /export\s*\{[^}]*\}\s*from\s*["'](\.\/[^"']+\.astro)["'];?/g,
+      (statement, specifier) =>
+        localFiles.includes(specifier.slice(2)) ? statement : "",
+    )
+    .trim();
+  const additions = localFiles
+    .filter((file) => {
+      const name = path.basename(file, ".astro");
+      return !new RegExp(`default\\s+as\\s+${name}\\b`).test(cleaned);
+    })
+    .map(
+      (file) =>
+        `export { default as ${path.basename(file, ".astro")} } from "./${file}";`,
+    );
+  const next = [cleaned, ...additions].filter(Boolean).join("\n") + "\n";
+  if (next !== existing) await fs.writeFile(indexPath, next);
+}
+
+/** Resolve dependencies as well as the requested item before repairing output. */
+export async function fetchRegistryTree(
+  components: string[],
+  registryUrl: string,
+  style = "bejamas-juno",
+): Promise<RegistryItem[]> {
+  const seen = new Set<string>();
+  const items: RegistryItem[] = [];
+  async function visit(name: string) {
+    if (seen.has(name)) return;
+    seen.add(name);
+    // Custom external registries are managed by shadcn, not this compatibility shim.
+    if (!/^[a-z0-9-]+$/.test(name)) return;
+    const item = await fetchRegistryItem(name, registryUrl, style);
+    if (!item)
+      throw new Error(
+        `Unable to load registry item ${name} for installation validation.`,
+      );
+    for (const dependency of item.registryDependencies ?? [])
+      await visit(dependency);
+    items.push(item);
+  }
+  for (const name of components) await visit(name);
+  return items;
 }
 
 export async function reorganizeComponents(
@@ -235,51 +304,66 @@ export async function reorganizeComponents(
     return result;
   }
 
-  for (const componentName of components) {
-    try {
-      const registryItem = await fetchRegistryItem(
-        componentName,
-        registryUrl,
-        style,
-      );
-      if (!registryItem) {
-        if (verbose) {
-          logger.info(
-            `[bejamas-ui] Could not fetch registry for ${componentName}, skipping reorganization`,
-          );
-        }
-        continue;
-      }
+  const items = await fetchRegistryTree(components, registryUrl, style);
+  for (const item of items) {
+    if (!shouldReorganizeRegistryUiFiles(item.files, uiDir)) continue;
+    const componentResult = await reorganizeRegistryUiFiles(
+      item.files,
+      uiDir,
+      verbose,
+      overwriteExisting,
+    );
+    result.totalMoved += componentResult.totalMoved;
+    result.movedFiles.push(...componentResult.movedFiles);
+    result.skippedFiles.push(...componentResult.skippedFiles);
+  }
+  // Remove only a known generated flat barrel; preserve user-authored root exports.
+  const flatIndex = path.join(uiDir, "index.ts");
+  const flatContent = await fs.readFile(flatIndex, "utf8").catch(() => null);
+  if (
+    flatContent &&
+    items.some((item) =>
+      item.files?.some(
+        (file) =>
+          file.type === "registry:ui" &&
+          path.basename(file.path) === "index.ts" &&
+          file.content.trim() === flatContent.trim(),
+      ),
+    )
+  )
+    await fs.unlink(flatIndex);
+  return result;
+}
 
-      if (!shouldReorganizeRegistryUiFiles(registryItem.files, uiDir)) {
-        continue;
-      }
-
-      const componentResult = await reorganizeRegistryUiFiles(
-        registryItem.files,
-        uiDir,
-        verbose,
-        overwriteExisting,
-      );
-
-      result.totalMoved += componentResult.totalMoved;
-      result.movedFiles.push(...componentResult.movedFiles);
-      result.skippedFiles.push(...componentResult.skippedFiles);
-
-      if (componentResult.totalMoved > 0 && verbose) {
-        const subfolder = getSubfolderFromPaths(registryItem.files);
-        logger.info(
-          `[bejamas-ui] Reorganized ${componentName} into ${subfolder}/`,
-        );
-      }
-    } catch (err) {
-      if (verbose) {
-        logger.warn(
-          `[bejamas-ui] Failed to reorganize ${componentName}: ${err}`,
-        );
-      }
+/** Update legacy template exports once the installed UI uses nested barrels. */
+export async function repairUiPackageExports(
+  uiDir: string,
+  packageRoot: string,
+) {
+  const entries = await fs
+    .readdir(uiDir, { withFileTypes: true })
+    .catch(() => []);
+  if (
+    !entries.some((entry) => entry.isDirectory()) ||
+    entries.some((entry) => entry.name.endsWith(".astro"))
+  )
+    return;
+  const packagePath = path.join(packageRoot, "package.json");
+  const manifest = JSON.parse(await fs.readFile(packagePath, "utf8"));
+  if (!manifest.exports || typeof manifest.exports !== "object") return;
+  const relativeUi = path
+    .relative(packageRoot, uiDir)
+    .split(path.sep)
+    .join("/");
+  if (relativeUi.startsWith("../")) return;
+  const prefix = `./${relativeUi}`;
+  let changed = false;
+  for (const [specifier, target] of Object.entries(manifest.exports)) {
+    if (target === `${prefix}/*.astro` || target === `${prefix}/*.ts`) {
+      manifest.exports[specifier] = `${prefix}/*/index.ts`;
+      changed = true;
     }
   }
-
-  return result;
+  if (changed)
+    await fs.writeFile(packagePath, JSON.stringify(manifest, null, 2) + "\n");
 }

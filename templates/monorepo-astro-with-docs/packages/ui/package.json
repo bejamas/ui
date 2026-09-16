@@ -6,7 +6,7 @@
     "./globals.css": "./src/styles/globals.css",
     "./styles/globals.css": "./src/styles/globals.css",
     "./lib/*": "./src/lib/*.ts",
-    "./components/*": "./src/components/*.astro"
+    "./components/*": "./src/components/*/index.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0"
