@@ -38,28 +38,11 @@ jobs:
 
       - name: Publish canary packages
         run: |
-          # Get changed files in this commit
-          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
-
-          cd packages
-          for package in */; do
-            if [ -f "${package}package.json" ]; then
-              PACKAGE_NAME=$(cat "${package}package.json" | grep '"name"' | head -1 | cut -d'"' -f4)
-              IS_PRIVATE=$(cat "${package}package.json" | grep -o '"private"[[:space:]]*:[[:space:]]*true' || echo "")
-              
-              if [ -z "$IS_PRIVATE" ]; then
-                # Check if this package has changes
-                PACKAGE_CHANGED=$(echo "$CHANGED_FILES" | grep "^packages/${package%/}/" || echo "")
-                
-                if [ -n "$PACKAGE_CHANGED" ]; then
-                  cd "$package"
-                  echo "📦 Publishing $PACKAGE_NAME (has changes)..."
-                  bun publish --tag canary --access public 2>&1 || echo "⚠️  Failed to publish $PACKAGE_NAME"
-                  cd ..
-                else
-                  echo "⏭️  Skipping $PACKAGE_NAME (no changes)"
-                fi
-              fi
+          # Publish the complete versioned set so canary workspace dependencies exist.
+          bun .github/scripts/prepare-release.ts
+          for package in packages/*/; do
+            if [ -f "${package}package.json" ] && [ "$(jq -r '.private // false' "${package}package.json")" != "true" ]; then
+              (cd "$package" && bun publish --tag canary --access public)
             fi
           done
         env:

@@ -3,6 +3,7 @@ set -euo pipefail
 
 bun install
 bun run build:packages
+bun .github/scripts/prepare-release.ts
 
 cd packages
 shopt -s nullglob
