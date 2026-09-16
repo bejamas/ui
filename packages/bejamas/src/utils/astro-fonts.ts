@@ -107,7 +107,7 @@ function buildAstroConfigFontBlock(fontsToSerialize: ManagedAstroFont[]) {
           )
           .join("\n")}\n`;
 
-  return `${ASTRO_CONFIG_BLOCK_START}\n/** @type {NonNullable<import("astro/config").AstroUserConfig["fonts"]>} */\nconst ${ASTRO_FONT_CONSTANT} = [${body}];\n${ASTRO_CONFIG_BLOCK_END}`;
+  return `${ASTRO_CONFIG_BLOCK_START}\n/** @type {NonNullable<import("astro").AstroUserConfig["fonts"]>} */\nconst ${ASTRO_FONT_CONSTANT} = [${body}];\n${ASTRO_CONFIG_BLOCK_END}`;
 }
 
 function buildAstroLayoutFontBlock(fontsToSerialize: ManagedAstroFont[]) {

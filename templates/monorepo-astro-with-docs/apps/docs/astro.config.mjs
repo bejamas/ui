@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 import starlightThemeBejamas from "starlight-theme-bejamas";
 
 // bejamas:astro-fonts:start
-/** @type {NonNullable<import("astro/config").AstroUserConfig["fonts"]>} */
+/** @type {NonNullable<import("astro").AstroUserConfig["fonts"]>} */
 const BEJAMAS_ASTRO_FONTS = [
   {
     provider: fontProviders.fontsource(),

@@ -50,7 +50,7 @@ describe("astro font helpers", () => {
     expect(result).toContain('cssVariable: "--font-sans"');
     expect(result).toContain("fonts: BEJAMAS_ASTRO_FONTS");
     expect(result).toContain(
-      '/** @type {NonNullable<import("astro/config").AstroUserConfig["fonts"]>} */',
+      '/** @type {NonNullable<import("astro").AstroUserConfig["fonts"]>} */',
     );
     expect(result).not.toContain("experimental: { fonts: BEJAMAS_ASTRO_FONTS }");
   });
