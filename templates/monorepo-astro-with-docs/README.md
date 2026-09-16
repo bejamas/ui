@@ -10,6 +10,13 @@ Run the following command:
 bunx bejamas@latest init
 ```
 
+## Using pnpm
+
+The template defaults to Bun and also includes `pnpm-workspace.yaml`. To switch,
+set the root `packageManager` field to `pnpm@<your-installed-version>`, remove
+`bun.lock` or `bun.lockb` if present, then run `pnpm install` from the workspace root.
+Keep internal package dependencies as `workspace:*` so pnpm links the local packages.
+
 ## What's inside?
 
 This Turborepo includes the following packages/apps:
