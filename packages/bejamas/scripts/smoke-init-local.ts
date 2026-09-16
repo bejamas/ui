@@ -299,7 +299,7 @@ async function assertProjectState(
   );
   assert(
     astroConfigSource.includes(
-      '@type {NonNullable<import("astro/config").AstroUserConfig["fonts"]>}',
+      '@type {NonNullable<import("astro").AstroUserConfig["fonts"]>}',
     ),
     `Expected ${astroConfigPath} to type the managed Astro fonts block`,
   );
