@@ -51,7 +51,9 @@ async function discoverComponents(
   componentsDir: string,
 ): Promise<ComponentEntry[]> {
   const entries: ComponentEntry[] = [];
-  const dirEntries = await readdir(componentsDir, { withFileTypes: true });
+  const dirEntries = (
+    await readdir(componentsDir, { withFileTypes: true })
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
   for (const entry of dirEntries) {
     if (entry.isDirectory()) {
@@ -62,13 +64,21 @@ async function discoverComponents(
       if (existsSync(indexPath)) {
         // Parse the barrel file to find exports
         const indexContent = await readFile(indexPath, "utf-8");
-        const namedExports = parseBarrelExports(indexContent);
+        const localExports = parseBarrelExports(indexContent).filter(
+          ({ file }) =>
+            dirname(join(folderPath, file)) === folderPath &&
+            existsSync(join(folderPath, file)),
+        );
+        const namedExports = localExports.map(({ name }) => name);
 
         // Find the main component (first export or the one matching folder name)
         const mainComponentName = findMainComponent(namedExports, entry.name);
 
         if (mainComponentName) {
-          const mainFilePath = join(folderPath, `${mainComponentName}.astro`);
+          const mainFilePath = join(
+            folderPath,
+            localExports.find(({ name }) => name === mainComponentName)!.file,
+          );
 
           if (existsSync(mainFilePath)) {
             // Filter out the main component from namedExports (it will be imported separately)
@@ -86,7 +96,10 @@ async function discoverComponents(
           }
         }
       }
-    } else if (entry.isFile() && extname(entry.name).toLowerCase() === ".astro") {
+    } else if (
+      entry.isFile() &&
+      extname(entry.name).toLowerCase() === ".astro"
+    ) {
       // Old pattern: flat .astro file
       const componentName = entry.name.replace(/\.astro$/i, "");
       entries.push({
@@ -99,7 +112,13 @@ async function discoverComponents(
     }
   }
 
-  return entries;
+  // Prefer the nested component if an older installer left a flat duplicate.
+  const nestedNames = new Set(
+    entries.filter((entry) => entry.isFolder).map((entry) => entry.name),
+  );
+  return entries.filter(
+    (entry) => entry.isFolder || !nestedNames.has(entry.name),
+  );
 }
 
 function buildComponentFolderMap(
@@ -107,7 +126,11 @@ function buildComponentFolderMap(
 ): Record<string, string> {
   const map: Record<string, string> = {};
   for (const component of components) {
-    if (!component.isFolder || !component.folderName) continue;
+    if (!component.isFolder) {
+      map[component.name] = `${component.name}.astro`;
+      continue;
+    }
+    if (!component.folderName) continue;
     map[component.name] = component.folderName;
     for (const sub of component.namedExports) {
       map[sub] = component.folderName;
@@ -122,15 +145,16 @@ function buildComponentFolderMap(
  * - export { default as Card } from "./Card.astro";
  * - export { default as CardHeader } from "./CardHeader.astro";
  */
-function parseBarrelExports(content: string): string[] {
-  const exports: string[] = [];
+function parseBarrelExports(content: string): { name: string; file: string }[] {
+  const exports: { name: string; file: string }[] = [];
 
   // Match: export { default as ComponentName } from "..."
-  const exportRegex = /export\s*\{\s*default\s+as\s+(\w+)\s*\}/g;
+  const exportRegex =
+    /export\s*\{\s*default\s+as\s+(\w+)\s*\}\s*from\s*["'](\.\/[^"']+\.astro)["']/g;
   let match: RegExpExecArray | null;
 
   while ((match = exportRegex.exec(content)) !== null) {
-    exports.push(match[1]);
+    exports.push({ name: match[1], file: match[2] });
   }
 
   return exports;
@@ -176,7 +200,9 @@ async function main() {
   ).replace(/\/$/, "");
   const componentsDirFromConfig =
     config?.resolvedPaths?.ui || config?.resolvedPaths?.components;
-  let uiRoot = resolveUiRoot(cwd);
+  let uiRoot = componentsDirFromConfig
+    ? dirname(dirname(componentsDirFromConfig))
+    : resolveUiRoot(cwd);
   let componentsDir = join(uiRoot, "src", "components");
   if (componentsDirFromConfig) {
     componentsDir = componentsDirFromConfig;
@@ -199,6 +225,18 @@ async function main() {
   // Discover all components (both flat files and folders)
   const components = await discoverComponents(componentsDir);
   const componentFolderMap = buildComponentFolderMap(components);
+  const availableComponents = Object.keys(componentFolderMap);
+  const rewriteAliases = (source: string) =>
+    source
+      .replace(/@bejamas\/ui\/components(?=[/"'])/g, componentsAlias)
+      .replace(
+        /@bejamas\/(?:ui|registry)\/lib\/utils(?=["'])/g,
+        config?.aliases?.utils ?? "@/lib/utils",
+      )
+      .replace(
+        /@bejamas\/(?:ui|registry)\/lib(?=[/"'])/g,
+        config?.aliases?.lib ?? "@/lib",
+      );
 
   if (DEBUG) {
     logger.info(`[docs-generator] components found: ${components.length}`);
@@ -217,12 +255,18 @@ async function main() {
   const spin = spinner(`Generating docs (0/${total})`).start();
 
   for (const component of components) {
-    const { name: pascal, filePath, folderName, isFolder, namedExports } = component;
+    const {
+      name: pascal,
+      filePath,
+      folderName,
+      isFolder,
+      namedExports,
+    } = component;
 
     const astroFile = await readFile(filePath, "utf-8");
     const frontmatterCode = extractFrontmatter(astroFile);
     const sourceFile = createSourceFileFromFrontmatter(frontmatterCode);
-    const meta = parseJsDocMetadata(frontmatterCode);
+    const meta = parseJsDocMetadata(rewriteAliases(frontmatterCode));
     const declaredProps = extractPropsFromDeclaredProps(sourceFile);
     const destructuredProps = extractPropsFromAstroProps(sourceFile);
 
@@ -284,13 +328,18 @@ async function main() {
           .join(require("path").posix.sep);
         const importPathEx = `${componentsAlias}/${posixRel}`;
         const abs = join(componentsDir, rel);
-        const source = require("fs").readFileSync(abs, "utf-8");
+        const source = rewriteAliases(require("fs").readFileSync(abs, "utf-8"));
         const base = toIdentifier(
           require("path").basename(rel, require("path").extname(rel)),
         );
         const importNameEx = `${pascal}${base}`;
         const titleEx = base;
-        return { importName: importNameEx, importPath: importPathEx, title: titleEx, source };
+        return {
+          importName: importNameEx,
+          importPath: importPathEx,
+          title: titleEx,
+          source,
+        };
       });
     }
 
@@ -330,12 +379,21 @@ async function main() {
       }
     }
 
-    const autoImports = Array.from(autoSet)
-      .filter((name) => !RESERVED_COMPONENTS.has(name))
-      .filter((name) => true);
+    const autoImports = Array.from(autoSet).filter(
+      (name) => !RESERVED_COMPONENTS.has(name),
+    );
 
     const lucideIcons = autoImports.filter((n) => /Icon$/.test(n));
     const uiAutoImports = autoImports.filter((n) => !/Icon$/.test(n));
+
+    const missingComponents = uiAutoImports.filter(
+      (name) => !availableComponents.includes(name),
+    );
+    if (missingComponents.length) {
+      logger.warn(
+        `${slug}.mdx: previews require ${missingComponents.sort().join(", ")}; keeping their source examples without executing them.`,
+      );
+    }
 
     const mdx = buildMdx({
       importName,
@@ -349,6 +407,7 @@ async function main() {
       examples,
       examplesSections: parsedExamplesSections,
       componentFolderMap,
+      availableComponents,
       autoImports: uiAutoImports,
       lucideIcons,
       primaryExampleMDX,
