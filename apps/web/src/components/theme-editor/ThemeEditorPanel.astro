@@ -962,8 +962,6 @@ const sectionTitles = [
               this.updateRadiusSelect();
               this._isLoadingPreset = false;
 
-              this.applyLivePreview();
-
               const swatches = {
                 primaryLight: preset.styles.light?.primary || "#000",
                 accentLight: preset.styles.light?.accent || "#666",
@@ -971,6 +969,7 @@ const sectionTitles = [
                 accentDark: preset.styles.dark?.accent || "#888",
               };
               setStoredPreset(id, swatches, preset.name || id);
+              this.applyLivePreview();
             },
 
             buildPresetDropdownItem(id: string, label: string, preset: any) {
@@ -1112,6 +1111,9 @@ const sectionTitles = [
             },
 
             applyLivePreview() {
+              // A generated preset can replace this legacy editor's selection.
+              // Only the editor for the active preset may write inline tokens.
+              if (this.currentPresetId !== getStoredPreset()) return;
               applyThemeToElement(
                 { styles: this.workingStyles, currentMode: this.currentMode },
                 document.documentElement,

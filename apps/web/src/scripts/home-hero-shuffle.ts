@@ -45,7 +45,6 @@ function getCurrentConfig() {
 class HeroShuffleControlElement extends HTMLElement {
   private button: HTMLButtonElement | null = null;
   private countLabel: HTMLElement | null = null;
-  private busy = false;
 
   private syncCount = async () => {
     const nextCount = await getShuffleCountRequest();
@@ -66,19 +65,12 @@ class HeroShuffleControlElement extends HTMLElement {
     }
   }
 
-  private onClick = async () => {
-    if (this.busy) {
-      return;
-    }
-
-    this.busy = true;
-    this.button?.setAttribute("disabled", "");
-
+  private onClick = () => {
     const config = createRandomDesignSystemConfig(getCurrentConfig());
     const presetId = encodePreset(config as Partial<PresetConfig>);
     const styles = resolveDesignSystemTheme(config).styles;
 
-    await applyDocsPreset({
+    applyDocsPreset({
       id: presetId,
       label: getPresetLabel(config),
       swatches: {
@@ -92,13 +84,12 @@ class HeroShuffleControlElement extends HTMLElement {
 
     this.renderCount(this.getCount() + 1);
 
-    const nextCount = await incrementShuffleCountRequest();
-    if (typeof nextCount === "number") {
-      this.renderCount(nextCount);
-    }
-
-    this.busy = false;
-    this.button?.removeAttribute("disabled");
+    // The counter must not block the next local theme change.
+    void incrementShuffleCountRequest().then((nextCount) => {
+      if (typeof nextCount === "number" && nextCount >= this.getCount()) {
+        this.renderCount(nextCount);
+      }
+    });
   };
 
   connectedCallback() {

@@ -128,15 +128,11 @@ const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 
 <script>
   import { syncSemanticIconsInRoot } from "@bejamas/semantic-icons/browser";
-  import {
-    buildCurrentThemeStylesheetHref,
-    CURRENT_THEME_STYLESHEET_SELECTOR,
-  } from "../lib/theme-stylesheet";
+  import { refreshCurrentThemeStylesheet } from "../lib/theme-stylesheet";
 
   const PRESET_CHANGE_EVENT = "bejamas:preset-change";
   const SETUP_KEY = "__bejamasCurrentThemeStylesheetSync";
   let reloadFrame = 0;
-  let reloadVersion = 0;
   let pendingIconLibrary = null;
 
   function syncDocumentIconLibrary() {
@@ -152,60 +148,6 @@ const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
     }
   }
 
-  function refreshCurrentThemeStylesheet() {
-    const links = Array.from(
-      document.head.querySelectorAll(CURRENT_THEME_STYLESHEET_SELECTOR),
-    ).filter(
-      (link): link is HTMLLinkElement => link instanceof HTMLLinkElement,
-    );
-    const currentLink = links.at(-1);
-
-    if (!currentLink) {
-      window.StarlightThemeProvider?.refreshThemeColors?.();
-      return;
-    }
-
-    reloadVersion += 1;
-
-    const replacement = currentLink.cloneNode(false) as HTMLLinkElement;
-    const sourceHref = currentLink.getAttribute("href") ?? currentLink.href;
-    replacement.href = buildCurrentThemeStylesheetHref(sourceHref, `${Date.now()}-${reloadVersion}`);
-
-    replacement.addEventListener(
-      "load",
-      () => {
-        links.forEach((link) => {
-          if (link !== replacement) {
-            link.remove();
-          }
-        });
-        if (pendingIconLibrary) {
-          document.documentElement.dataset.iconLibrary = pendingIconLibrary;
-          syncSemanticIconsInRoot(document, pendingIconLibrary);
-          pendingIconLibrary = null;
-        }
-        window.StarlightThemeProvider?.refreshThemeColors?.();
-      },
-      { once: true },
-    );
-
-    replacement.addEventListener(
-      "error",
-      () => {
-        replacement.remove();
-        if (pendingIconLibrary) {
-          document.documentElement.dataset.iconLibrary = pendingIconLibrary;
-          syncSemanticIconsInRoot(document, pendingIconLibrary);
-          pendingIconLibrary = null;
-        }
-        window.StarlightThemeProvider?.refreshThemeColors?.();
-      },
-      { once: true },
-    );
-
-    currentLink.after(replacement);
-  }
-
   const scheduleCurrentThemeStylesheetRefresh = () => {
     if (reloadFrame) {
       return;
@@ -213,7 +155,14 @@ const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 
     reloadFrame = requestAnimationFrame(() => {
       reloadFrame = 0;
-      refreshCurrentThemeStylesheet();
+      void refreshCurrentThemeStylesheet().then(() => {
+        if (pendingIconLibrary) {
+          document.documentElement.dataset.iconLibrary = pendingIconLibrary;
+          syncSemanticIconsInRoot(document, pendingIconLibrary);
+          pendingIconLibrary = null;
+        }
+        window.StarlightThemeProvider?.refreshThemeColors?.();
+      });
     });
   };
 
