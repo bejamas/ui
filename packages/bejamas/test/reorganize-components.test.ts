@@ -1,16 +1,23 @@
-import { afterEach, describe, expect, it } from "bun:test";
+import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import {
+  fetchRegistryItem,
+  fetchRegistryTree,
+  isRegistryItemUrl,
   reorganizeRegistryUiFiles,
+  resolveBejamasRegistryItemName,
   shouldReorganizeRegistryUiFiles,
   type RegistryFile,
 } from "../src/utils/reorganize-components";
 
 const createdDirs: string[] = [];
+let fetchMock: ReturnType<typeof spyOn> | undefined;
 
 afterEach(async () => {
+  fetchMock?.mockRestore();
+  fetchMock = undefined;
   await Promise.all(
     createdDirs
       .splice(0)
@@ -43,6 +50,109 @@ function createTabsFiles(): RegistryFile[] {
     },
   ];
 }
+
+describe("registry item resolution", () => {
+  it("recognizes Bejamas item names, the @bejamas namespace, and URLs", () => {
+    expect(resolveBejamasRegistryItemName("features-01")).toBe("features-01");
+    expect(resolveBejamasRegistryItemName("@bejamas/features-01")).toBe(
+      "features-01",
+    );
+    expect(resolveBejamasRegistryItemName("@acme/hero")).toBeNull();
+    expect(resolveBejamasRegistryItemName("Features01")).toBeNull();
+    expect(
+      isRegistryItemUrl("https://ui.example.test/r/features-01.json"),
+    ).toBe(true);
+    expect(isRegistryItemUrl("features-01")).toBe(false);
+  });
+
+  it("fetches direct item URLs without mapping them onto the Bejamas registry", async () => {
+    fetchMock = spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ name: "remote", type: "registry:block" })),
+    );
+
+    expect(
+      await fetchRegistryItem(
+        "https://registry.example.test/remote.json",
+        "https://ui.example.test/r",
+      ),
+    ).toMatchObject({ name: "remote", type: "registry:block" });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://registry.example.test/remote.json",
+    );
+  });
+
+  it("leaves third-party namespaces to shadcn", async () => {
+    fetchMock = spyOn(globalThis, "fetch");
+
+    expect(
+      await fetchRegistryItem("@acme/remote", "https://ui.example.test/r"),
+    ).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("resolves the built-in namespace against the styled registry first", async () => {
+    fetchMock = spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response(null, { status: 404 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({ name: "features-01", type: "registry:block" }),
+        ),
+      );
+
+    expect(
+      await fetchRegistryItem(
+        "@bejamas/features-01",
+        "https://ui.example.test/r",
+        "bejamas-vega",
+      ),
+    ).toMatchObject({ name: "features-01", type: "registry:block" });
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      "https://ui.example.test/r/styles/bejamas-vega/features-01.json",
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      "https://ui.example.test/r/features-01.json",
+    );
+  });
+
+  it("follows a block's UI dependencies when validating the install tree", async () => {
+    fetchMock = spyOn(globalThis, "fetch").mockImplementation(
+      async (input: string | URL | Request) => {
+        const url = String(input);
+        if (url.endsWith("/styles/bejamas-juno/features-01.json")) {
+          return new Response(
+            JSON.stringify({
+              name: "features-01",
+              type: "registry:block",
+              registryDependencies: ["button", "@acme/remote"],
+            }),
+          );
+        }
+        if (url.endsWith("/styles/bejamas-juno/button.json")) {
+          return new Response(
+            JSON.stringify({ name: "button", type: "registry:ui" }),
+          );
+        }
+        return new Response(null, { status: 404 });
+      },
+    );
+
+    expect(
+      await fetchRegistryTree(
+        ["@bejamas/features-01"],
+        "https://ui.example.test/r",
+      ),
+    ).toEqual([
+      { name: "button", type: "registry:ui" },
+      {
+        name: "features-01",
+        type: "registry:block",
+        registryDependencies: ["button", "@acme/remote"],
+      },
+    ]);
+  });
+});
 
 describe("reorganize-components", () => {
   it("only requires reorganization for workspace ui targets that would flatten paths", () => {

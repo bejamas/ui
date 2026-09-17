@@ -1,10 +1,20 @@
 ---
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@bejamas/ui/components/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@bejamas/ui/components/tabs";
 import { Button } from "@bejamas/ui/components/button";
 import { Laptop, Tablet, Smartphone, Terminal, Check } from "@lucide/astro";
 import Source from "@/components/Source.astro";
+import {
+  getBlockInstallCommand,
+  type BlockGalleryItem,
+} from "@/lib/block-gallery";
 
-const item = Astro.props.item;
+const { item } = Astro.props as { item: BlockGalleryItem };
+const installCommand = getBlockInstallCommand(item.id);
 ---
 
 <div x-data="{ size: 'desktop' }">
@@ -51,14 +61,14 @@ const item = Astro.props.item;
           <Smartphone class="size-4" />
         </Button>
         <button
-          x-data="{ copied: false }"
-          @click="navigator.clipboard.writeText('bunx bejamas@latest add {item.id}'); copied = true; setTimeout(() => copied = false, 2000)"
+          x-data={`{ copied: false, command: ${JSON.stringify(installCommand)} }`}
+          @click="navigator.clipboard.writeText(command); copied = true; setTimeout(() => copied = false, 2000)"
           class="bg-muted/50 ml-2 border flex items-center rounded-md text-xs px-2 py-2 cursor-pointer select-none hover:bg-muted/80 h-8 transition-colors duration-200 ease-out"
           title="Copy install command"
         >
           <span x-show="!copied"><Terminal class="size-4 mr-2" /></span>
           <span x-show="copied"><Check class="size-4 mr-2" /></span>
-          <code>bunx bejamas@latest add {item.id}</code>
+          <code>{installCommand}</code>
         </button>
       </div>
     </div>
@@ -69,7 +79,7 @@ const item = Astro.props.item;
         :data-size="size"></iframe>
     </TabsContent>
     <TabsContent value="source">
-      <Source href={item.href} />
+      <Source blockId={item.id} />
     </TabsContent>
   </Tabs>
 </div>

@@ -1,0 +1,28 @@
+{
+  "name": "navigation-headers-02",
+  "type": "registry:block",
+  "title": "Navigation Header 02",
+  "description": "A responsive announcement bar and sticky navigation header.",
+  "registryDependencies": [
+    "index",
+    "button",
+    "dropdown-menu",
+    "sticky-surface"
+  ],
+  "files": [
+    {
+      "path": "blocks/navigation-headers-02/NavigationHeaders02.astro",
+      "type": "registry:component",
+      "target": "src/components/blocks/navigation-headers-02/NavigationHeaders02.astro",
+      "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  DropdownMenu,\n  DropdownMenuContent,\n  DropdownMenuTrigger,\n} from \"@/registry/bejamas/ui/dropdown-menu\";\nimport { StickySurface } from \"@/registry/bejamas/ui/sticky-surface\";\n\ninterface NavLink {\n  label: string;\n  href: string;\n}\n\ninterface Props {\n  brand?: string;\n  announcement?: string;\n  announcementHref?: string;\n  announcementLinkLabel?: string;\n  homeHref?: string;\n  links?: NavLink[];\n  class?: string;\n}\n\nconst defaultLinks: NavLink[] = [\n  { label: \"Home\", href: \"/\" },\n  { label: \"Company\", href: \"#company\" },\n  { label: \"Contact\", href: \"#contact\" },\n];\n\nconst {\n  brand = \"Acme\",\n  announcement = \"New release available!\",\n  announcementHref = \"#changelog\",\n  announcementLinkLabel = \"See the changelog\",\n  homeHref = \"/\",\n  links = defaultLinks,\n  class: className = \"\",\n} = Astro.props as Props;\n\nconst menuLinkClass =\n  \"flex w-full rounded-lg px-3 py-2 text-sm hover:bg-accent focus-visible:bg-accent focus-visible:outline-none\";\n---\n\n<div class:list={[\"w-full\", className]}>\n  <div class=\"bg-muted px-4 py-3 text-center text-sm text-muted-foreground\">\n    {announcement}\n    <a\n      href={announcementHref}\n      class=\"font-medium text-foreground underline underline-offset-4\"\n      >{announcementLinkLabel}</a\n    >\n  </div>\n  <StickySurface\n    as=\"header\"\n    effects={[\"line\"]}\n    threshold=\"1rem\"\n    observeStuck\n    class=\"bg-background/95 backdrop-blur\"\n  >\n    <nav\n      aria-label=\"Primary\"\n      class=\"mx-auto flex h-16 max-w-6xl items-center gap-6 px-6\"\n    >\n      <a href={homeHref} class=\"mr-auto text-lg font-semibold tracking-tight\"\n        >{brand}</a\n      >\n      <ul class=\"hidden items-center gap-1 md:flex\">\n        {\n          links.map((link) => (\n            <li>\n              <Button as=\"a\" href={link.href} variant=\"ghost\">\n                {link.label}\n              </Button>\n            </li>\n          ))\n        }\n      </ul>\n      <div class=\"flex items-center gap-2\">\n        <DropdownMenu>\n          <DropdownMenuTrigger\n            variant=\"outline\"\n            class=\"md:hidden\"\n            aria-label=\"Open navigation menu\">Menu</DropdownMenuTrigger\n          >\n          <DropdownMenuContent align=\"end\" class=\"w-48 p-2\">\n            <ul class=\"grid gap-1\">\n              {\n                links.map((link) => (\n                  <li>\n                    <a href={link.href} class={menuLinkClass}>\n                      {link.label}\n                    </a>\n                  </li>\n                ))\n              }\n              <li><a href=\"#login\" class={menuLinkClass}>Log in</a></li>\n            </ul>\n          </DropdownMenuContent>\n        </DropdownMenu>\n        <Button\n          as=\"a\"\n          href=\"#login\"\n          variant=\"outline\"\n          class=\"hidden transition-all duration-300 ease-out sm:inline-flex group-[.is-stuck]/surface:opacity-0 group-[.is-stuck]/surface:blur-sm\"\n          >Log in</Button\n        >\n        <Button as=\"a\" href=\"#contact\">Get a demo</Button>\n      </div>\n    </nav>\n  </StickySurface>\n</div>\n"
+    },
+    {
+      "path": "blocks/navigation-headers-02/index.ts",
+      "type": "registry:component",
+      "target": "src/components/blocks/navigation-headers-02/index.ts",
+      "content": "export { default as NavigationHeaders02 } from \"./NavigationHeaders02.astro\";\n"
+    }
+  ],
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": []
+}

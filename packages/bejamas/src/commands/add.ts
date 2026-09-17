@@ -1,4 +1,6 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
+import { stripVTControlCharacters } from "node:util";
 import { Command } from "commander";
 import { execa } from "execa";
 import prompts from "prompts";
@@ -7,7 +9,11 @@ import {
   syncAstroManagedFontCss,
   syncManagedTailwindCss,
 } from "@/src/utils/apply-design-system";
-import { fixAstroImports } from "@/src/utils/astro-imports";
+import {
+  fixAstroImports,
+  getConfiguredSourceRoots,
+  isPathWithin,
+} from "@/src/utils/astro-imports";
 import {
   cleanupAstroFontPackages,
   mergeManagedAstroFonts,
@@ -15,15 +21,22 @@ import {
   syncAstroFontsInProject,
   toManagedAstroFont,
 } from "@/src/utils/astro-fonts";
-import { getConfig, getWorkspaceConfig } from "@/src/utils/get-config";
+import {
+  Config,
+  findCommonRoot,
+  getConfig,
+  getWorkspaceConfig,
+} from "@/src/utils/get-config";
 import { highlighter } from "@/src/utils/highlighter";
 import { logger } from "@/src/utils/logger";
 import {
+  BEJAMAS_REGISTRY_NAMESPACE,
   fetchRegistryItem,
   fetchRegistryTree,
   getSubfolderFromPaths,
   reorganizeComponents,
   repairUiPackageExports,
+  resolveBejamasRegistryItemName,
   shouldReorganizeRegistryUiFiles,
 } from "@/src/utils/reorganize-components";
 import {
@@ -38,6 +51,109 @@ interface ParsedOutput {
   created: string[];
   updated: string[];
   skipped: string[];
+}
+
+interface RegistryIndexEntry {
+  name: string;
+  type?: string;
+}
+
+export function isUiRegistryItem(item: { type?: string }) {
+  return !item.type || item.type === "registry:ui";
+}
+
+export function isBlockRegistryItem(
+  item: { type?: string } | null | undefined,
+) {
+  return item?.type === "registry:block";
+}
+
+/** Items a user can pick by name: UI components and blocks. */
+export function isAddableRegistryItem(item: { type?: string }) {
+  return isUiRegistryItem(item) || isBlockRegistryItem(item);
+}
+
+/** `--all` is expanded locally, so shadcn must not expand it a second time. */
+export function withoutExpandedAllOption(forwardedOptions: string[]) {
+  return forwardedOptions.filter(
+    (option) => option !== "--all" && option !== "-a",
+  );
+}
+
+/**
+ * shadcn output is captured and re-reported by this command, and silent mode
+ * would hide the file list needed for post-install repair.
+ */
+export function withoutShadcnSilentOption(forwardedOptions: string[]) {
+  return forwardedOptions.filter(
+    (option) => option !== "--silent" && option !== "-s",
+  );
+}
+
+/**
+ * shadcn only knows the registries declared in components.json. The built-in
+ * `@bejamas/<item>` namespace is the default registry (REGISTRY_URL), so it is
+ * passed to shadcn as the bare item name, which resolves to the styled payload.
+ * Bare names, URLs, and third-party namespaces are passed through unchanged.
+ */
+export function toShadcnAddArgument(item: string) {
+  if (!item.startsWith(BEJAMAS_REGISTRY_NAMESPACE)) return item;
+  return resolveBejamasRegistryItemName(item) ?? item;
+}
+
+/**
+ * shadcn confirms every existing file whose content differs, even with --yes.
+ * Detect those questions so each one can be declined as it appears: a canned
+ * stdin buffer only answers the first question, after which shadcn hits EOF
+ * and stops mid-install without reporting the files it already wrote.
+ */
+export function isOverwritePrompt(chunk: string | Uint8Array) {
+  return /\(y\/N\)/i.test(stripVTControlCharacters(String(chunk)));
+}
+
+/**
+ * The file summary marks the end of shadcn's interactive phase. Closing stdin
+ * there lets the process exit: after answering prompts, shadcn keeps reading
+ * an open stdin pipe and never terminates on its own.
+ */
+export function isFilePhaseSummary(chunk: string | Uint8Array) {
+  return /(?:Created|Updated|Skipped)\s+\d+\s+file|No files updated/i.test(
+    stripVTControlCharacters(String(chunk)),
+  );
+}
+
+/**
+ * shadcn reports written files relative to the directory it ran in, except in
+ * a workspace where paths are relative to the monorepo root. Resolve each
+ * reported path against the candidate bases and keep the ones that exist.
+ */
+export function resolveReportedFiles(
+  files: Iterable<string>,
+  bases: readonly string[],
+  exists: (filePath: string) => boolean = existsSync,
+) {
+  const resolved = new Set<string>();
+  for (const file of files) {
+    const candidates = path.isAbsolute(file)
+      ? [file]
+      : bases.map((base) => path.resolve(base, file));
+    const match = candidates.find((candidate) => exists(candidate));
+    if (match) resolved.add(match);
+  }
+  return Array.from(resolved);
+}
+
+/** Installed files (relative to cwd or absolute) not covered by config aliases. */
+export function filesOutsideConfigRoots(
+  cwd: string,
+  files: readonly string[],
+  config: Config,
+) {
+  const roots = getConfiguredSourceRoots(config);
+  return files.filter(
+    (file) =>
+      !roots.some((root) => isPathWithin(path.resolve(cwd, file), root)),
+  );
 }
 
 // Derive only the user-provided flags for shadcn to avoid losing options.
@@ -204,7 +320,7 @@ async function buildSubfolderMap(
       const subfolder = getSubfolderFromPaths(registryItem.files);
       if (!subfolder) continue;
 
-      for (const file of registryItem.files) {
+      for (const file of registryItem.files ?? []) {
         if (file.type === "registry:ui") {
           const filename = path.basename(file.path);
           const subfolders = filenameToSubfolders.get(filename) || [];
@@ -266,7 +382,7 @@ function rewritePaths(
 
 async function fetchAvailableComponents(
   registryUrl: string,
-): Promise<{ name: string; type?: string }[]> {
+): Promise<RegistryIndexEntry[]> {
   const indexUrl = `${registryUrl}/index.json`;
   const response = await fetch(indexUrl);
   if (!response.ok) {
@@ -282,7 +398,7 @@ async function promptForComponents(
 ): Promise<string[] | null> {
   const checkingSpinner = spinner("Checking registry.").start();
 
-  let components: { name: string; type?: string }[];
+  let components: RegistryIndexEntry[];
   try {
     components = await fetchAvailableComponents(registryUrl);
     checkingSpinner.succeed();
@@ -297,19 +413,16 @@ async function promptForComponents(
     return null;
   }
 
-  const uiComponents = components.filter(
-    (component) => !component.type || component.type === "registry:ui",
-  );
-
-  const choices = uiComponents.map((component) => ({
+  const choices = components.filter(isAddableRegistryItem).map((component) => ({
     title: component.name,
     value: component.name,
+    description: isBlockRegistryItem(component) ? "block" : undefined,
   }));
 
   const { selected } = await prompts({
     type: "autocompleteMultiselect",
     name: "selected",
-    message: "Which components would you like to add?",
+    message: "Which components or blocks would you like to add?",
     choices,
     hint: "- Space to select. Return to submit.",
     instructions: false,
@@ -322,14 +435,20 @@ async function promptForComponents(
   return selected;
 }
 
-function parseShadcnOutput(stdout: string, stderr: string): ParsedOutput {
+export function parseShadcnOutput(
+  stdout: string,
+  stderr: string,
+): ParsedOutput {
   const result: ParsedOutput = { created: [], updated: [], skipped: [] };
-  const cleanStderr = stderr.replace(/\x1b\[[0-9;]*m/g, "");
-  const cleanStdout = stdout.replace(/\x1b\[[0-9;]*m/g, "");
+  const cleanStderr = stripVTControlCharacters(stderr);
+  const cleanStdout = stripVTControlCharacters(stdout);
+  // shadcn writes spinner summaries to stderr and file lists to stdout, but the
+  // split has moved between releases, so look for the counts in both.
+  const cleanOutput = `${cleanStdout}\n${cleanStderr}`;
 
-  const createdMatch = cleanStderr.match(/Created\s+(\d+)\s+file/i);
-  const updatedMatch = cleanStderr.match(/Updated\s+(\d+)\s+file/i);
-  const skippedMatch = cleanStderr.match(/Skipped\s+(\d+)\s+file/i);
+  const createdMatch = cleanOutput.match(/Created\s+(\d+)\s+file/i);
+  const updatedMatch = cleanOutput.match(/Updated\s+(\d+)\s+file/i);
+  const skippedMatch = cleanOutput.match(/Skipped\s+(\d+)\s+file/i);
 
   const createdCount = createdMatch ? parseInt(createdMatch[1], 10) : 0;
   const updatedCount = updatedMatch ? parseInt(updatedMatch[1], 10) : 0;
@@ -406,14 +525,23 @@ async function addComponents(
   registrySpinner.start();
 
   try {
-    const result = await execa(invocation.cmd, invocation.args, {
+    const subprocess = execa(invocation.cmd, invocation.args, {
       cwd,
       env,
-      input: "n\nn\nn\nn\nn\nn\nn\nn\nn\nn\n",
+      stdin: "pipe",
       stdout: "pipe",
       stderr: "pipe",
       reject: false,
     });
+    const answerShadcn = (chunk: string | Uint8Array) => {
+      const stdin = subprocess.stdin;
+      if (!stdin || stdin.writableEnded) return;
+      if (isOverwritePrompt(chunk)) stdin.write("n\n");
+      if (isFilePhaseSummary(chunk)) stdin.end();
+    };
+    subprocess.stdout?.on("data", answerShadcn);
+    subprocess.stderr?.on("data", answerShadcn);
+    const result = await subprocess;
 
     registrySpinner.succeed();
 
@@ -508,18 +636,18 @@ export const add = new Command()
 
     let componentsToAdd = packages || [];
     const wantsAll = Boolean(opts.all);
+    const expandsAll = wantsAll && componentsToAdd.length === 0;
     const isSilent = opts.silent || false;
     const registryUrl = resolveRegistryUrl();
 
-    if (wantsAll && componentsToAdd.length === 0) {
+    if (expandsAll) {
       const fetchingSpinner = spinner("Fetching available components.", {
         silent: isSilent,
       }).start();
       try {
+        // Like shadcn, `--all` installs every UI component; blocks are opt-in.
         const allComponents = await fetchAvailableComponents(registryUrl);
-        const uiComponents = allComponents.filter(
-          (component) => !component.type || component.type === "registry:ui",
-        );
+        const uiComponents = allComponents.filter(isUiRegistryItem);
         componentsToAdd = uiComponents.map((component) => component.name);
         fetchingSpinner.succeed();
       } catch {
@@ -559,6 +687,11 @@ export const add = new Command()
 
     const activeStyle = uiConfig?.style || config?.style || "bejamas-juno";
     const totalComponents = componentsToAdd.length;
+    const installedFiles = new Set<string>();
+    const outputBearingOptions = withoutShadcnSilentOption(forwardedOptions);
+    const addOptions = expandsAll
+      ? withoutExpandedAllOption(outputBearingOptions)
+      : outputBearingOptions;
 
     for (let index = 0; index < componentsToAdd.length; index += 1) {
       const component = componentsToAdd[index];
@@ -581,12 +714,19 @@ export const add = new Command()
 
       const parsed = await addComponents(
         cwd,
-        [component],
-        forwardedOptions,
+        [toShadcnAddArgument(component)],
+        addOptions,
         verbose,
         isSilent,
         inspectionMode,
       );
+      for (const file of [
+        ...parsed.created,
+        ...parsed.updated,
+        ...parsed.skipped,
+      ]) {
+        installedFiles.add(file);
+      }
 
       if (!inspectionMode) {
         await syncManagedTailwindCss(cwd);
@@ -625,6 +765,16 @@ export const add = new Command()
           overwriteUsed,
         );
         skippedCount = reorgResult.skippedFiles.length;
+        for (const file of [
+          ...reorgResult.movedFiles,
+          ...reorgResult.skippedFiles,
+        ]) {
+          const reorganizedFile = path.resolve(uiDir, file);
+          installedFiles.add(reorganizedFile);
+          installedFiles.add(
+            path.join(path.dirname(reorganizedFile), "index.ts"),
+          );
+        }
       }
 
       if (!isSilent && !inspectionMode) {
@@ -686,6 +836,34 @@ export const add = new Command()
 
     if (!inspectionMode) {
       await fixAstroImports(cwd, verbose, uiConfig);
+
+      // Blocks are written to the app (for example src/components/blocks) and
+      // may sit outside the UI aliases, in particular in a monorepo where the
+      // UI config points at packages/ui. Repair those files with the app config
+      // so registry imports resolve to the app's own `aliases.ui`.
+      if (config) {
+        const workspaceRoot =
+          uiConfig && uiConfig.resolvedPaths.cwd !== config.resolvedPaths.cwd
+            ? findCommonRoot(
+                config.resolvedPaths.cwd,
+                uiConfig.resolvedPaths.cwd,
+              )
+            : null;
+        const reportedFiles = resolveReportedFiles(
+          installedFiles,
+          workspaceRoot ? [cwd, workspaceRoot] : [cwd],
+        );
+        const appFiles = uiConfig
+          ? filesOutsideConfigRoots(cwd, reportedFiles, uiConfig)
+          : reportedFiles;
+        if (appFiles.length > 0) {
+          await fixAstroImports(cwd, verbose, config, {
+            kind: "files",
+            paths: appFiles,
+          });
+        }
+      }
+
       if (uiConfig) {
         await repairUiPackageExports(uiDir, uiConfig.resolvedPaths.cwd);
         const items = await fetchRegistryTree(
@@ -693,7 +871,15 @@ export const add = new Command()
           registryUrl,
           activeStyle,
         );
-        await ensureRegistryDependencies(uiConfig.resolvedPaths.cwd, items);
+        const blockItems = items.filter(isBlockRegistryItem);
+        const uiItems = items.filter((item) => !isBlockRegistryItem(item));
+        await ensureRegistryDependencies(uiConfig.resolvedPaths.cwd, uiItems);
+        if (config && blockItems.length > 0) {
+          await ensureRegistryDependencies(
+            config.resolvedPaths.cwd,
+            blockItems,
+          );
+        }
       }
     }
   });

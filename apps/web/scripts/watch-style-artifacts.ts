@@ -7,7 +7,10 @@ export const STYLE_SOURCE_DIRECTORY_RELATIVE_PATH =
   "packages/registry/src/styles";
 export const REGISTRY_UI_DIRECTORY_RELATIVE_PATH = "packages/registry/src/ui";
 export const REGISTRY_LIB_DIRECTORY_RELATIVE_PATH = "packages/registry/src/lib";
+export const REGISTRY_BLOCKS_DIRECTORY_RELATIVE_PATH =
+  "packages/registry/src/blocks";
 export const STYLE_PIPELINE_FILE_RELATIVE_PATHS = [
+  "apps/web/registry.json",
   "packages/registry/src/style-source.ts",
   "packages/create-config/src/style-css-source.ts",
   "packages/create-config/src/style-css.ts",
@@ -15,10 +18,11 @@ export const STYLE_PIPELINE_FILE_RELATIVE_PATHS = [
   "packages/create-config/scripts/generate-compiled-style-css.ts",
   "packages/registry/scripts/build-web-style-registry.ts",
   "packages/ui/scripts/generate-from-style-registry.ts",
+  "apps/web/scripts/normalize-paths.ts",
 ] as const;
 export const STYLE_IGNORED_OUTPUT_RELATIVE_PATHS = [
   "packages/create-config/src/generated",
-  "apps/web/public/r/styles",
+  "apps/web/public/r",
 ] as const;
 export const STYLE_ARTIFACT_RELATIVE_PATHS = [
   "packages/create-config/src/generated/compiled-style-css.js",
@@ -30,6 +34,8 @@ export const STYLE_BUILD_SCRIPTS = [
   "build:compiled-styles",
   "build:style-registry",
   "generate:ui-package",
+  "build:registry",
+  "normalize-component-paths-in-registry",
 ] as const;
 export const STYLE_REBUILD_DEBOUNCE_MS = 150;
 
@@ -48,12 +54,11 @@ type StyleArtifactWatcher = {
 const STYLE_SOURCE_DIRECTORY = resolveWorkspacePath(
   STYLE_SOURCE_DIRECTORY_RELATIVE_PATH,
 );
-const REGISTRY_UI_DIRECTORY = resolveWorkspacePath(
+const REGISTRY_SOURCE_DIRECTORIES = [
   REGISTRY_UI_DIRECTORY_RELATIVE_PATH,
-);
-const REGISTRY_LIB_DIRECTORY = resolveWorkspacePath(
   REGISTRY_LIB_DIRECTORY_RELATIVE_PATH,
-);
+  REGISTRY_BLOCKS_DIRECTORY_RELATIVE_PATH,
+].map(resolveWorkspacePath);
 const STYLE_PIPELINE_FILE_PATHS = new Set(
   STYLE_PIPELINE_FILE_RELATIVE_PATHS.map(resolveWorkspacePath),
 );
@@ -61,8 +66,7 @@ const STYLE_IGNORED_OUTPUT_PATHS =
   STYLE_IGNORED_OUTPUT_RELATIVE_PATHS.map(resolveWorkspacePath);
 const STYLE_WATCH_DIRECTORIES = [
   STYLE_SOURCE_DIRECTORY,
-  REGISTRY_UI_DIRECTORY,
-  REGISTRY_LIB_DIRECTORY,
+  ...REGISTRY_SOURCE_DIRECTORIES,
   ...new Set(
     STYLE_PIPELINE_FILE_RELATIVE_PATHS.map((filePath) =>
       path.dirname(resolveWorkspacePath(filePath)),
@@ -97,15 +101,12 @@ function isRegistrySourcePath(filePath: string) {
     return false;
   }
 
-  return (
-    directory.startsWith(`${REGISTRY_UI_DIRECTORY}${path.sep}`) ||
-    directory === REGISTRY_UI_DIRECTORY ||
-    directory.startsWith(`${REGISTRY_LIB_DIRECTORY}${path.sep}`) ||
-    directory === REGISTRY_LIB_DIRECTORY
+  return REGISTRY_SOURCE_DIRECTORIES.some(
+    (root) => directory === root || directory.startsWith(`${root}${path.sep}`),
   );
 }
 
-function shouldRebuildFromFile(filePath: string) {
+export function shouldRebuildFromFile(filePath: string) {
   if (isIgnoredPath(filePath)) {
     return false;
   }
@@ -160,23 +161,28 @@ export function startStyleArtifactWatcher(
   const debounceMs = options.debounceMs ?? STYLE_REBUILD_DEBOUNCE_MS;
   const logger = options.logger ?? console;
   const watchers = STYLE_WATCH_DIRECTORIES.map((directoryPath) =>
-    watch(directoryPath, (eventType, filename) => {
-      if (closed) {
-        return;
-      }
+    watch(
+      directoryPath,
+      // Registry sources nest one folder per component or block.
+      { recursive: REGISTRY_SOURCE_DIRECTORIES.includes(directoryPath) },
+      (eventType, filename) => {
+        if (closed) {
+          return;
+        }
 
-      if (filename == null) {
-        scheduleBuild(`${eventType}:${path.basename(directoryPath)}`);
-        return;
-      }
+        if (filename == null) {
+          scheduleBuild(`${eventType}:${path.basename(directoryPath)}`);
+          return;
+        }
 
-      const nextPath = path.resolve(directoryPath, filename.toString());
-      if (!shouldRebuildFromFile(nextPath)) {
-        return;
-      }
+        const nextPath = path.resolve(directoryPath, filename.toString());
+        if (!shouldRebuildFromFile(nextPath)) {
+          return;
+        }
 
-      scheduleBuild(path.relative(WORKSPACE_ROOT, nextPath));
-    }),
+        scheduleBuild(path.relative(WORKSPACE_ROOT, nextPath));
+      },
+    ),
   );
 
   let closed = false;

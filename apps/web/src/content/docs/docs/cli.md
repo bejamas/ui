@@ -71,19 +71,27 @@ Full apply updates the design system and re-installs detected UI components. Par
 
 ### add <name>
 
-Install a component/block from configured registries (see components.json → registries). Writes files under your aliases.
+Install a component or block from configured registries (see `components.json` → `registries`). Components are written under your aliases. Blocks keep a portable folder per block under `src/components/blocks/<id>` (or `components/blocks/<id>` in projects without `src`), and any UI components they depend on are installed alongside.
 
 #### Usage
 
 ```bash
 npx bejamas add <name>
-npx bejamas add @bejamas/pricing-table
+npx bejamas add button
+npx bejamas add navigation-headers-01
+npx bejamas add @bejamas/features-01
 npx bejamas add @shadcn/button
 ```
 
+Run `add` without arguments to pick components and blocks interactively. `--all` installs every UI component; blocks stay opt-in.
+
 **Notes**
 
-Namespaced form `@namespace/name` targets a specific registry.
+Namespaced form `@namespace/name` targets a specific registry. `@bejamas/<name>` always resolves to the Bejamas registry for your configured style.
+
+Available blocks: `navigation-headers-01`, `navigation-headers-02`, `features-01`, and `footer-01`. Browse them at [/blocks](/blocks).
+
+In a monorepo, run `add` from the app (for example `apps/web`). Blocks land in the app while their UI dependencies are installed in the shared UI package, and block imports are rewritten to the app's `aliases.ui`.
 
 --dry-run shows what would be written.
 
