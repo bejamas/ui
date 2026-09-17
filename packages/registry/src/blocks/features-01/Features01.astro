@@ -1,0 +1,121 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardMedia,
+  CardOverlay,
+  CardTitle,
+} from "@bejamas/registry/ui/card";
+
+interface Feature {
+  title: string;
+  description: string;
+  image: string;
+  overlay?: boolean;
+}
+
+interface Props {
+  title?: string;
+  features?: Feature[];
+  ctaLabel?: string;
+  ctaHref?: string;
+  class?: string;
+}
+
+const defaultFeatures: Feature[] = [
+  {
+    title: "Healthy breakfast",
+    description: "Eggs are a great source of protein.",
+    image:
+      "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    title: "Healthy lunch",
+    description: "A simple meal that keeps you going.",
+    image:
+      "https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=900&q=80",
+    overlay: true,
+  },
+  {
+    title: "Healthy dinner",
+    description: "Good ingredients need little fuss.",
+    image:
+      "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    title: "Healthy snack",
+    description: "A dependable base for a quick snack.",
+    image:
+      "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=900&q=80",
+  },
+];
+
+const {
+  title = "You can just eat eggs",
+  features = defaultFeatures,
+  ctaLabel = "View recipes",
+  ctaHref = "#recipes",
+  class: className = "",
+} = Astro.props as Props;
+---
+
+<section
+  class:list={[
+    "mx-auto max-w-6xl px-6 py-20 text-foreground [container-type:inline-size]",
+    className,
+  ]}
+>
+  <h2
+    class="mb-8 text-[clamp(2.5rem,11cqw,6rem)] font-medium leading-none tracking-tight"
+  >
+    {title}
+  </h2>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {
+      features.map((feature, index) => (
+        <Card variant="ghost">
+          <CardMedia class="relative aspect-[4/5]">
+            <img
+              src={feature.image}
+              alt=""
+              loading="lazy"
+              class="size-full rounded-xl object-cover"
+            />
+            <span class="absolute left-4 top-4 rounded-md bg-primary px-2 py-1 font-mono text-sm text-primary-foreground">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+          </CardMedia>
+          <CardHeader>
+            <CardTitle>{feature.title}</CardTitle>
+            <CardDescription>{feature.description}</CardDescription>
+          </CardHeader>
+          {feature.overlay && (
+            <CardOverlay variant="glass">
+              <p>{feature.description}</p>
+            </CardOverlay>
+          )}
+        </Card>
+      ))
+    }
+  </div>
+  <div
+    class="mt-4 flex items-center justify-between gap-4 border-t border-border pt-4"
+  >
+    <p class="text-sm text-muted-foreground">Four ideas for any time of day.</p>
+    <Button as="a" href={ctaHref} variant="secondary">
+      {ctaLabel}
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="size-4"
+        aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg
+      >
+    </Button>
+  </div>
+</section>

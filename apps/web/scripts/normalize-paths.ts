@@ -8,7 +8,13 @@ type RegistryFile = {
 };
 
 type RegistryItem = {
+  name?: string;
+  type?: string;
   files?: RegistryFile[];
+};
+
+type RegistryManifest = {
+  items?: RegistryItem[];
 };
 
 /**
@@ -30,6 +36,7 @@ function getAllJsonFiles(dir: string): string[] {
 
 const baseDir = join(__dirname, "../public/r/");
 const registrySourceRoot = resolve(__dirname, "../../../packages/registry/src");
+const sourceRegistryPath = join(__dirname, "../registry.json");
 const files = getAllJsonFiles(baseDir);
 
 function normalizeRegistrySource(content: string) {
@@ -45,6 +52,17 @@ function normalizeRegistrySource(content: string) {
 
   if (next.includes("@bejamas/registry/lib/utils")) {
     next = next.replace(/@bejamas\/registry\/lib\/utils/g, "@/lib/utils");
+  }
+
+  if (next.includes("@bejamas/registry/ui/")) {
+    next = next.replace(/@bejamas\/registry\/ui\//g, "@/registry/bejamas/ui/");
+  }
+
+  if (next.includes("../../packages/registry/src/blocks/")) {
+    next = next.replace(
+      /\.\.\/\.\.\/packages\/registry\/src\/blocks\//g,
+      "blocks/",
+    );
   }
 
   return next;
@@ -63,6 +81,10 @@ function normalizeRegistryPath(filePath: string) {
 
   if (next.startsWith("../../packages/registry/src/lib/")) {
     next = next.replace("../../packages/registry/src/lib/", "lib/");
+  }
+
+  if (next.startsWith("../../packages/registry/src/blocks/")) {
+    next = next.replace("../../packages/registry/src/blocks/", "blocks/");
   }
 
   return next;
@@ -90,6 +112,10 @@ function inferRegistryFileType(filePath: string) {
 
   if (filePath.startsWith("lib/")) {
     return "registry:lib";
+  }
+
+  if (filePath.startsWith("blocks/")) {
+    return "registry:component";
   }
 
   return null;
@@ -213,4 +239,37 @@ for (const file of files) {
     writeFileSync(file, newContent, "utf8");
     console.log(`Updated: ${file}`);
   }
+}
+
+// The discovery index mirrors registry.json (components and blocks) without
+// file contents, so the CLI can list what is installable from one request.
+function buildDiscoveryIndex(manifest: RegistryManifest) {
+  return (manifest.items ?? []).map((item) => ({
+    ...item,
+    files: item.files?.map(({ content: _content, ...file }) => ({
+      ...file,
+      path: normalizeRegistryPath(file.path),
+    })),
+  }));
+}
+
+function formatIndexJson(items: RegistryItem[]) {
+  return `${JSON.stringify(items, null, 2).replace(
+    /\[(?:\n\s+"(?:[^"\\]|\\.)*",?)+\n\s*\]/g,
+    (array) =>
+      `[${(JSON.parse(array) as string[])
+        .map((value) => JSON.stringify(value))
+        .join(", ")}]`,
+  )}\n`;
+}
+
+const sourceRegistry = JSON.parse(
+  readFileSync(sourceRegistryPath, "utf8"),
+) as RegistryManifest;
+const indexPath = join(baseDir, "index.json");
+const nextIndex = formatIndexJson(buildDiscoveryIndex(sourceRegistry));
+
+if (!existsSync(indexPath) || readFileSync(indexPath, "utf8") !== nextIndex) {
+  writeFileSync(indexPath, nextIndex, "utf8");
+  console.log(`Updated: ${indexPath}`);
 }

@@ -18,17 +18,48 @@ export interface RegistryItem {
   registryDependencies?: string[];
 }
 
+export const BEJAMAS_REGISTRY_NAMESPACE = "@bejamas/";
+
+/**
+ * Resolve the Bejamas item name behind a user-provided specifier. Returns null
+ * for URLs and third-party namespaces, which shadcn resolves on its own.
+ */
+export function resolveBejamasRegistryItemName(specifier: string) {
+  const name = specifier.startsWith(BEJAMAS_REGISTRY_NAMESPACE)
+    ? specifier.slice(BEJAMAS_REGISTRY_NAMESPACE.length)
+    : specifier;
+  return /^[a-z0-9][a-z0-9-]*$/.test(name) ? name : null;
+}
+
+export function isRegistryItemUrl(specifier: string) {
+  return /^https?:\/\//.test(specifier);
+}
+
 export async function fetchRegistryItem(
   componentName: string,
   registryUrl: string,
   style = "bejamas-juno",
 ): Promise<RegistryItem | null> {
-  const url = `${registryUrl}/styles/${style}/${componentName}.json`;
+  if (isRegistryItemUrl(componentName)) {
+    try {
+      const response = await fetch(componentName);
+      return response.ok ? ((await response.json()) as RegistryItem) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  const itemName = resolveBejamasRegistryItemName(componentName);
+  if (!itemName) {
+    return null;
+  }
+
+  const url = `${registryUrl}/styles/${style}/${itemName}.json`;
 
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      const fallbackUrl = `${registryUrl}/${componentName}.json`;
+      const fallbackUrl = `${registryUrl}/${itemName}.json`;
       const fallbackResponse = await fetch(fallbackUrl);
       if (!fallbackResponse.ok) {
         return null;
@@ -272,7 +303,8 @@ export async function fetchRegistryTree(
     if (seen.has(name)) return;
     seen.add(name);
     // Custom external registries are managed by shadcn, not this compatibility shim.
-    if (!/^[a-z0-9-]+$/.test(name)) return;
+    if (!isRegistryItemUrl(name) && !resolveBejamasRegistryItemName(name))
+      return;
     const item = await fetchRegistryItem(name, registryUrl, style);
     if (!item)
       throw new Error(

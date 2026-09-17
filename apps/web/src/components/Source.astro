@@ -1,77 +1,29 @@
 ---
-// import { readFileSync, existsSync } from "node:fs";
-// import { fileURLToPath } from "node:url";
-// import { Code } from "astro:components";
 import { Code } from "@astrojs/starlight/components";
 import SourceTree from "@/components/SourceTree.astro";
-//
+import {
+  selectPublishedBlockSourceFiles,
+  type BlockSourceFile,
+} from "@/lib/block-gallery";
 
-interface FileEntry {
-  path: string;
-  displayName: string;
-  code: string;
-}
+const { blockId } = Astro.props as { blockId: string };
 
-const { href } = Astro.props as { href: string };
-
-function sanitizeCode(source: unknown): string {
-  // Keep all imports and code intact for the preview.
-  if (typeof source === "string") {
-    return source;
-  }
-
-  if (
-    source &&
-    typeof source === "object" &&
-    "default" in source &&
-    typeof source.default === "string"
-  ) {
-    return source.default;
-  }
-
-  return String(source ?? "");
-}
-
-// Gather all candidate files at build time (works in prod) and filter at runtime
-const allRaw = import.meta.glob("../pages/blocks/**/*.{astro,ts,tsx,css}", {
+// Read the published registry payloads so the copyable code matches what the
+// CLI installs. Block artifacts are named `<category>-<number>.json`.
+const registryItems = import.meta.glob("../../public/r/*-[0-9][0-9].json", {
   eager: true,
   import: "default",
-  query: "?raw",
-}) as Record<string, string>;
+}) as Record<string, unknown>;
 
-function selectFilesForHref(blockHref: string): FileEntry[] {
-  const keys = Object.keys(allRaw);
-  const folderPrefix = `../pages${blockHref}/`;
-  const filePath = `../pages${blockHref}.astro`;
-  const indexPath = `${folderPrefix}index.astro`;
-
-  const hasIndex = keys.includes(indexPath);
-  const hasFile = keys.includes(filePath);
-
-  const matchedKeys = hasIndex
-    ? keys.filter((k) => k.startsWith(folderPrefix))
-    : hasFile
-      ? [filePath]
-      : [];
-
-  return matchedKeys.map((k) => {
-    const code = sanitizeCode(allRaw[k]);
-    // Normalize to a display path relative to src/
-    const displayName = k.replace(/^\.\.\//, "src/").replace(/^\.\//, "src/");
-    return { path: k, displayName, code } as FileEntry;
-  });
-}
-
-const files: FileEntry[] = selectFilesForHref(href);
+const files: BlockSourceFile[] = selectPublishedBlockSourceFiles(
+  registryItems,
+  blockId,
+);
 
 // Build labeled files relative to the root folder of the entry file
-type LabeledFile = FileEntry & { label: string };
+type LabeledFile = BlockSourceFile & { label: string };
 const entryFile =
-  files.find(
-    (f) =>
-      f.displayName.endsWith("/index.astro") ||
-      f.displayName.endsWith("index.astro"),
-  ) ?? files[0];
+  files.find((f) => /(^|\/)index\.(ts|astro)$/.test(f.displayName)) ?? files[0];
 const rootDir = entryFile
   ? entryFile.displayName.slice(0, entryFile.displayName.lastIndexOf("/"))
   : "";
@@ -86,10 +38,10 @@ let labeledFiles: LabeledFile[] = files.map((f) => {
   return { ...f, label };
 });
 
-// Sort with index.astro first, then alphabetically
+// Sort with the barrel first, then alphabetically
 labeledFiles = labeledFiles.sort((a, b) => {
-  const aIsIndex = a.label === "index.astro";
-  const bIsIndex = b.label === "index.astro";
+  const aIsIndex = /^index\.(ts|astro)$/.test(a.label);
+  const bIsIndex = /^index\.(ts|astro)$/.test(b.label);
   if (aIsIndex && !bIsIndex) return -1;
   if (!aIsIndex && bIsIndex) return 1;
   return a.label.localeCompare(b.label);
@@ -147,7 +99,7 @@ function buildTree(filesIn: LabeledFile[]): TreeNode[] {
 
 const tree = buildTree(labeledFiles);
 const defaultActiveLabel =
-  (labeledFiles.find((f) => f.label === "index.astro") ?? labeledFiles[0])
+  (labeledFiles.find((f) => f.label.endsWith(".astro")) ?? labeledFiles[0])
     ?.label ?? "";
 const openInitObj: Record<string, boolean> = {};
 // Open all folders by default
