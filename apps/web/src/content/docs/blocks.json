@@ -1,7 +1,20 @@
 {
   "navigation-headers": {
     "label": "Navigation Header",
-    "items": []
+    "items": [
+      {
+        "label": "Navigation Header 01",
+        "id": "navigation-headers-01",
+        "description": "A floating, responsive header with a company menu and scroll elevation.",
+        "href": "/blocks/navigation-headers/navbar-1"
+      },
+      {
+        "label": "Navigation Header 02",
+        "id": "navigation-headers-02",
+        "description": "A responsive announcement bar and sticky navigation header.",
+        "href": "/blocks/navigation-headers/navbar-2"
+      }
+    ]
   },
   "hero": {
     "label": "Hero",
@@ -13,7 +26,14 @@
   },
   "features": {
     "label": "Features",
-    "items": []
+    "items": [
+      {
+        "label": "Features 01",
+        "id": "features-01",
+        "description": "A four-card feature grid with imagery, supporting copy, and a call to action.",
+        "href": "/blocks/features/01"
+      }
+    ]
   },
   "testimonials": {
     "label": "Testimonials",
@@ -25,6 +45,13 @@
   },
   "footers": {
     "label": "Footer",
-    "items": []
+    "items": [
+      {
+        "label": "Footer 01",
+        "id": "footer-01",
+        "description": "A footer with a call to action, link columns, and legal links.",
+        "href": "/blocks/footers/footer-1"
+      }
+    ]
   }
 }

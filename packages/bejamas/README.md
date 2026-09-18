@@ -28,11 +28,9 @@ npx bejamas add [component]
 
 ```bash
 npx bejamas add button
-npx bejamas add @bejamas/button
+npx bejamas add navigation-headers-01
+npx bejamas add @bejamas/features-01
 ```
-
-The CLI supports registry blocks, but no first-party blocks are published yet.
-Crafted blocks will be added in a future release.
 
 Blocks are installed under `src/components/blocks/<block-id>` together with
 their required UI components. In a monorepo, run the command from the app so
