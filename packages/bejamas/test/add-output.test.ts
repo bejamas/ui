@@ -4,20 +4,20 @@ import { Command } from "commander";
 import {
   ensureTrailingNewline,
   extractOptionsForShadcn,
-  filesOutsideConfigRoots,
   formatSkippedFilesHeading,
   hasInspectionFlags,
   isAddableRegistryItem,
   isBlockRegistryItem,
-  isFilePhaseSummary,
-  isOverwritePrompt,
   isUiRegistryItem,
   parseShadcnOutput,
-  resolveReportedFiles,
   toShadcnAddArgument,
   withoutExpandedAllOption,
   withoutShadcnSilentOption,
 } from "../src/commands/add";
+import {
+  filesOutsideConfigRoots,
+  resolveReportedFiles,
+} from "../src/utils/registry-install";
 import type { Config } from "../src/utils/get-config";
 
 function createAddLikeCommand() {
@@ -82,27 +82,6 @@ describe("block-aware add helpers", () => {
     expect(toShadcnAddArgument("@bejamas/Not Valid")).toBe(
       "@bejamas/Not Valid",
     );
-  });
-
-  test("recognizes shadcn overwrite questions and the end of its file phase", () => {
-    expect(
-      isOverwritePrompt(
-        "\u001b[36m?\u001b[39m \u001b[1mThe file Button.astro already exists. Would you like to overwrite?\u001b[22m \u001b[90m›\u001b[39m \u001b[90m(y/N)\u001b[39m",
-      ),
-    ).toBe(true);
-    expect(isOverwritePrompt("  - src/ui/button/Button.astro")).toBe(false);
-
-    expect(
-      isFilePhaseSummary(
-        Buffer.from("\u001b[32m✔\u001b[39m Created 2 files:\n"),
-      ),
-    ).toBe(true);
-    expect(
-      isFilePhaseSummary("ℹ Skipped 18 files: (files might be identical)"),
-    ).toBe(true);
-    expect(isFilePhaseSummary("ℹ No files updated.")).toBe(true);
-    expect(isFilePhaseSummary("- Updating files.")).toBe(false);
-    expect(isFilePhaseSummary("- Checking registry.")).toBe(false);
   });
 
   test("does not re-forward --all after expanding the registry index", () => {

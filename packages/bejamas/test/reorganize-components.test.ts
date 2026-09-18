@@ -6,6 +6,7 @@ import {
   fetchRegistryItem,
   fetchRegistryTree,
   isRegistryItemUrl,
+  reorganizeRegistryItems,
   reorganizeRegistryUiFiles,
   resolveBejamasRegistryItemName,
   shouldReorganizeRegistryUiFiles,
@@ -155,6 +156,25 @@ describe("registry item resolution", () => {
 });
 
 describe("reorganize-components", () => {
+  it("preserves root files when the installer already keeps nested UI paths", async () => {
+    const root = await createTempUiDir();
+    const uiDir = path.join(root, "ui");
+    const files = createTabsFiles();
+    await fs.mkdir(uiDir);
+    await fs.writeFile(path.join(uiDir, "index.ts"), files[2].content);
+
+    const result = await reorganizeRegistryItems(
+      [{ name: "tabs", type: "registry:ui", files }],
+      uiDir,
+      false,
+    );
+
+    expect(result.movedFiles).toEqual([]);
+    expect(await fs.readFile(path.join(uiDir, "index.ts"), "utf8")).toBe(
+      files[2].content,
+    );
+  });
+
   it("only requires reorganization for workspace ui targets that would flatten paths", () => {
     const files = createTabsFiles();
 
