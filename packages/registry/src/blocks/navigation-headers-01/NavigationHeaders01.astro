@@ -1,0 +1,136 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@bejamas/registry/ui/dropdown-menu";
+import { StickySurface } from "@bejamas/registry/ui/sticky-surface";
+
+interface MenuLink {
+  label: string;
+  description?: string;
+  href: string;
+}
+
+interface Props {
+  brand?: string;
+  homeHref?: string;
+  companyLinks?: MenuLink[];
+  class?: string;
+}
+
+const defaultCompanyLinks: MenuLink[] = [
+  {
+    label: "About",
+    description: "Read more about our company",
+    href: "#about",
+  },
+  { label: "Team", description: "Meet our heroes", href: "#team" },
+  { label: "Blog", description: "Read our latest news", href: "#blog" },
+  { label: "Careers", description: "Join our team", href: "#careers" },
+];
+
+const {
+  brand = "Acme",
+  homeHref = "/",
+  companyLinks = defaultCompanyLinks,
+  class: className = "",
+} = Astro.props as Props;
+
+const menuLinkClass =
+  "flex w-full flex-col rounded-lg px-3 py-2 text-left hover:bg-accent focus-visible:bg-accent focus-visible:outline-none";
+
+const surfaceClass = [
+  "top-5 mx-auto h-16 max-w-5xl rounded-2xl px-5 group-[.is-stuck]/surface:max-w-2xl",
+  "bg-background/80 backdrop-blur-md transition-[max-width,box-shadow] duration-300 ease-out",
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<StickySurface
+  as="header"
+  threshold="1rem"
+  observeStuck
+  effects={["elevate"]}
+  class={surfaceClass}
+  style="--stuck-shadow: var(--shadow-sm)"
+>
+  <nav
+    aria-label="Primary"
+    class="grid h-full grid-cols-[1fr_auto_1fr] items-center gap-4"
+  >
+    <a href={homeHref} class="text-lg font-semibold tracking-tight">{brand}</a>
+
+    <ul class="hidden items-center gap-1 md:flex">
+      <li><Button as="a" href={homeHref} variant="ghost">Home</Button></li>
+      <li>
+        <DropdownMenu>
+          <DropdownMenuTrigger variant="ghost">Company</DropdownMenuTrigger>
+          <DropdownMenuContent align="center" class="w-[30rem] p-2">
+            <div class="grid grid-cols-12 gap-2">
+              <ul class="col-span-5 grid content-start gap-1">
+                {
+                  companyLinks.map((link) => (
+                    <li>
+                      <a href={link.href} class={menuLinkClass}>
+                        <span class="text-sm font-medium">{link.label}</span>
+                        {link.description && (
+                          <span class="text-xs text-muted-foreground">
+                            {link.description}
+                          </span>
+                        )}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+              <a
+                href="#company"
+                class="col-span-7 flex min-h-40 items-end rounded-lg bg-primary p-4 font-medium text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                Our company
+              </a>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </li>
+      <li><Button as="a" href="#contact" variant="ghost">Contact</Button></li>
+    </ul>
+
+    <div class="ml-auto flex items-center gap-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          variant="outline"
+          class="md:hidden"
+          aria-label="Open navigation menu">Menu</DropdownMenuTrigger
+        >
+        <DropdownMenuContent align="end" class="w-56 p-2">
+          <ul class="grid gap-1">
+            <li><a href={homeHref} class={menuLinkClass}>Home</a></li>
+            {
+              companyLinks.map((link) => (
+                <li>
+                  <a href={link.href} class={menuLinkClass}>
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+            <li><a href="#contact" class={menuLinkClass}>Contact</a></li>
+          </ul>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Button
+        as="a"
+        href="#login"
+        variant="outline"
+        class="hidden transition-all duration-300 ease-out sm:inline-flex group-[.is-stuck]/surface:opacity-0 group-[.is-stuck]/surface:blur-sm"
+        >Log in</Button
+      >
+      <Button as="a" href="#contact">Get a demo</Button>
+    </div>
+  </nav>
+</StickySurface>

@@ -96,7 +96,7 @@ cd apps/web
 The CLI automatically detects whether a component is a primitive or a block and installs it in the correct location:
 
 - **Primitives** (e.g. button, card, input) — installed in `packages/ui` and automatically update import paths in `apps/web`
-- **Registry blocks** (when available) — installed in `apps/web/src/components/blocks/<id>` with their portable folder structure. Any primitives the block depends on are installed automatically in `packages/ui`, and the block's imports are rewritten to the app's `aliases.ui`
+- **Blocks** (e.g. navigation-headers-01, features-01, footer-01) — installed in `apps/web/src/components/blocks/<id>` with their portable folder structure. Any primitives the block depends on are installed automatically in `packages/ui`, and the block's imports are rewritten to the app's `aliases.ui`
 
 
 ## File Structure

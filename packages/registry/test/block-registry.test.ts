@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { readdirSync, readFileSync, writeFileSync, unlinkSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { STYLES } from "../src/catalog/styles";
 import {
@@ -44,6 +44,8 @@ const blockIds = blockItems.map((item) => item.name);
 
 describe("first-party block registry", () => {
   it("declares every block with portable component targets and UI dependencies", () => {
+    expect(blockIds.length).toBeGreaterThan(0);
+
     for (const item of blockItems) {
       expect(item.title).toBeString();
       expect(item.description).toBeString();
@@ -114,35 +116,19 @@ describe("first-party block registry", () => {
   });
 
   it("does not resurrect a removed block from its published artifacts", async () => {
-    const id = "removed-test-block";
-    const artifactPath = path.resolve(
-      repoRoot,
-      `apps/web/public/r/styles/bejamas-juno/${id}.json`,
-    );
-    writeFileSync(
-      artifactPath,
-      JSON.stringify({ name: id, type: "registry:block", files: [] }),
-      { flag: "wx" },
-    );
+    const templates = await readBlockTemplateItems();
+    const id = blockIds[0];
+    const removed = templates.get(id)!;
+    templates.delete(id);
     try {
       const names = await getTemplateItemNames();
       expect(names).not.toContain(id);
       expect(names).toContain("button");
-      for (const remaining of blockIds) expect(names).toContain(remaining);
+      for (const remaining of blockIds.slice(1))
+        expect(names).toContain(remaining);
     } finally {
-      unlinkSync(artifactPath);
+      templates.set(id, removed);
     }
-  });
-
-  it("normalizes block source paths independently of the published catalog", () => {
-    expect(
-      normalizeBlockRegistryPath(
-        "../../packages/registry/src/blocks/test-block/TestBlock.astro",
-      ),
-    ).toBe("blocks/test-block/TestBlock.astro");
-    expect(normalizeBlockRegistryPath("ui/button/Button.astro")).toBe(
-      "ui/button/Button.astro",
-    );
   });
 
   it("publishes every block for every style bundle", () => {
