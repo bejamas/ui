@@ -32,11 +32,21 @@ export async function getStaticPaths() {
   <BlocksNav />
 
   {
-    <section class="text-left not-content space-y-20">
-      {blockItems.map((item) => (
-        <BlockPreview item={item} />
-      ))}
-    </section>
+    !blockItems.length && (
+      <p class="text-left text-muted-foreground">
+        Crafted blocks are coming soon.
+      </p>
+    )
+  }
+
+  {
+    (
+      <section class="text-left not-content space-y-20">
+        {blockItems.map((item) => (
+          <BlockPreview item={item} />
+        ))}
+      </section>
+    )
   }
 </StarlightPage>
 

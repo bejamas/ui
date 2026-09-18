@@ -24,9 +24,7 @@ describe("block gallery catalog", () => {
     expect(blockGalleryItems.map((item) => item.id).sort()).toEqual(
       publishedBlockIds,
     );
-    expect(getBlockGalleryItem("footer-01")?.href).toBe(
-      "/blocks/footers/footer-1",
-    );
+    expect(getBlockGalleryItem("unknown-block")).toBeUndefined();
 
     for (const item of blockGalleryItems) {
       const routeBase = path.join(webRoot, `src/pages${item.href}`);

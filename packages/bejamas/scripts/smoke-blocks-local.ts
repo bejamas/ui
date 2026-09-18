@@ -5,18 +5,40 @@ import path from "node:path";
 // Local end-to-end check for block installation. Run after building the CLI
 // (`bun run build`) and the web registry (`bun run --cwd ../../apps/web
 // build:artifacts`). It uses the real pinned shadcn installer and package
-// manager against a fixture served from apps/web/public/r; fixtures and logs
-// stay under tmp/ for troubleshooting.
+// manager against private synthetic blocks and UI dependencies served from
+// apps/web/public/r; fixtures and logs stay under tmp/ for troubleshooting.
 const repoRoot = path.resolve(import.meta.dir, "../../..");
 const smokeRoot = path.join(repoRoot, "tmp", `blocks-smoke-${Date.now()}`);
 const cli = path.join(repoRoot, "packages/bejamas/dist/index.js");
 const registryRoot = path.join(repoRoot, "apps/web/public/r");
 const blocks = [
-  ["navigation-headers-01", "NavigationHeaders01"],
-  ["navigation-headers-02", "NavigationHeaders02"],
-  ["features-01", "Features01"],
-  ["footer-01", "Footer01"],
+  ["smoke-panel-01", "SmokePanel01"],
+  ["smoke-panel-02", "SmokePanel02"],
 ] as const;
+
+// These blocks exist only in the local smoke server, never in the public catalog.
+function smokeBlock(id: string, component: string) {
+  return {
+    $schema: "https://ui.shadcn.com/schema/registry-item.json",
+    name: id,
+    type: "registry:block",
+    registryDependencies: ["index", "button", "card"],
+    files: [
+      {
+        path: `blocks/${id}/${component}.astro`,
+        target: `src/components/blocks/${id}/${component}.astro`,
+        type: "registry:component",
+        content: `---\nimport { Button } from "@/registry/bejamas/ui/button";\nimport { Card, CardContent } from "@/registry/bejamas/ui/card";\n---\n<section data-smoke-block="${id}"><Card><CardContent><Button>Smoke fixture</Button></CardContent></Card></section>\n`,
+      },
+      {
+        path: `blocks/${id}/index.ts`,
+        target: `src/components/blocks/${id}/index.ts`,
+        type: "registry:component",
+        content: `export { default as ${component} } from "./${component}.astro";\n`,
+      },
+    ],
+  };
+}
 
 async function write(relativePath: string, value: string | object) {
   const target = path.join(smokeRoot, relativePath);
@@ -206,6 +228,13 @@ const server = Bun.serve({
     const pathname = new URL(request.url).pathname;
     if (!pathname.startsWith("/r/"))
       return new Response("Not found", { status: 404 });
+    const block = blocks.find(
+      ([id]) =>
+        pathname === `/r/${id}.json` ||
+        (/^\/r\/styles\/bejamas-[a-z]+\//.test(pathname) &&
+          pathname.endsWith(`/${id}.json`)),
+    );
+    if (block) return Response.json(smokeBlock(...block));
     const filePath = path.resolve(registryRoot, pathname.slice(3));
     if (!filePath.startsWith(`${registryRoot}/`))
       return new Response("Not found", { status: 404 });
@@ -236,7 +265,7 @@ try {
       ["bun", cli, "add", blocks[0][0], "--dry-run"],
       env,
     );
-    assert.match(dryRun, /NavigationHeaders01\.astro/);
+    assert.match(dryRun, /SmokePanel01\.astro/);
     assert.deepEqual(
       await snapshot(fixture.root),
       before,
@@ -280,14 +309,14 @@ try {
     const uiComponents = await fs.readdir(
       path.join(fixture.ui, "src", monorepo ? "components" : "ui"),
     );
-    for (const dependency of ["button", "card", "dropdown-menu", "link-group"])
+    for (const dependency of ["button", "card"])
       assert(
         uiComponents.includes(dependency),
         `${dependency} was not installed as a block dependency`,
       );
     const first = path.join(
       fixture.app,
-      "src/components/blocks/navigation-headers-01/NavigationHeaders01.astro",
+      "src/components/blocks/smoke-panel-01/SmokePanel01.astro",
     );
     const installed = await fs.readFile(first, "utf8");
     await fs.writeFile(first, `${installed}\n<!-- user customization -->\n`);
@@ -318,8 +347,8 @@ try {
       path.join(fixture.app, "dist/index.html"),
       "utf8",
     );
-    assert.match(html, /<nav[\s>]/);
-    assert.match(html, /<footer[\s>]/);
+    for (const [id] of blocks)
+      assert(html.includes(`data-smoke-block="${id}"`), `${id} did not render`);
   }
   console.log(
     "[blocks smoke] PASS: standalone + monorepo install, bare and namespaced inputs, dry-run, overwrite, and Astro builds.",
