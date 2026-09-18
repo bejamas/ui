@@ -115,6 +115,22 @@ describe("first-party block registry", () => {
     }
   });
 
+  it("does not resurrect a removed block from its published artifacts", async () => {
+    const templates = await readBlockTemplateItems();
+    const id = blockIds[0];
+    const removed = templates.get(id)!;
+    templates.delete(id);
+    try {
+      const names = await getTemplateItemNames();
+      expect(names).not.toContain(id);
+      expect(names).toContain("button");
+      for (const remaining of blockIds.slice(1))
+        expect(names).toContain(remaining);
+    } finally {
+      templates.set(id, removed);
+    }
+  });
+
   it("publishes every block for every style bundle", () => {
     for (const style of STYLES) {
       const styledBlockNames = readdirSync(

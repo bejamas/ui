@@ -326,17 +326,30 @@ export async function reorganizeComponents(
   style = "bejamas-juno",
   overwriteExisting = false,
 ): Promise<ReorganizeResult> {
+  const items =
+    uiDir && components.length
+      ? await fetchRegistryTree(components, registryUrl, style)
+      : [];
+  return reorganizeRegistryItems(items, uiDir, verbose, overwriteExisting);
+}
+
+/** Reuse the registry tree already resolved for this installation. */
+export async function reorganizeRegistryItems(
+  items: RegistryItem[],
+  uiDir: string,
+  verbose: boolean,
+  overwriteExisting = false,
+): Promise<ReorganizeResult> {
   const result: ReorganizeResult = {
     totalMoved: 0,
     movedFiles: [],
     skippedFiles: [],
   };
 
-  if (!uiDir || components.length === 0) {
+  if (!items.some((item) => shouldReorganizeRegistryUiFiles(item.files, uiDir))) {
     return result;
   }
 
-  const items = await fetchRegistryTree(components, registryUrl, style);
   for (const item of items) {
     if (!shouldReorganizeRegistryUiFiles(item.files, uiDir)) continue;
     const componentResult = await reorganizeRegistryUiFiles(

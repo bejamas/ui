@@ -723,9 +723,18 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
 
 export async function getTemplateItemNames() {
   const blockNames = Array.from((await readBlockTemplateItems()).keys());
-  const templateNames = (await listJsonFiles(templateStyleDir))
-    .filter((filename) => filename !== "index.json")
-    .map((filename) => filename.replace(/\.json$/, ""))
+  const legacyTemplates = await Promise.all(
+    (await listJsonFiles(templateStyleDir))
+      .filter((filename) => filename !== "index.json")
+      .map((filename) =>
+        readJson<RegistryItem>(path.resolve(templateStyleDir, filename)),
+      ),
+  );
+  // UI templates still live in the Juno registry. Published blocks are outputs
+  // only: keeping them here resurrects deleted or renamed manifest entries.
+  const templateNames = legacyTemplates
+    .filter((item) => item.type !== "registry:block")
+    .map((item) => item.name)
     .filter((name) => !internalIconRegistryItems.has(name));
 
   return Array.from(new Set([...templateNames, ...blockNames])).sort();
