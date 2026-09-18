@@ -6,6 +6,7 @@ import BlockPreview from "@/components/BlockPreview.astro";
 import BlocksNav from "@/components/BlocksNav.astro";
 
 const blocks = await getCollection("blocks");
+const hasBlocks = blocks.some((block) => block.data.items?.length);
 ---
 
 <script is:inline src="//unpkg.com/alpinejs" defer></script>
@@ -18,7 +19,14 @@ const blocks = await getCollection("blocks");
   }}
 >
   <div data-page-scope="blocks-index" hidden></div>
-  <BlocksNav />
+  {hasBlocks && <BlocksNav />}
+  {
+    !hasBlocks && (
+      <p class="text-left text-muted-foreground">
+        Crafted blocks are coming soon.
+      </p>
+    )
+  }
 
   {
     blocks.map((block) => (
@@ -37,7 +45,9 @@ const blocks = await getCollection("blocks");
       @apply text-center border-0 pt-30 pb-0 first:pt-10;
     }
 
-    :root:has([data-page-scope="blocks-index"]) .content-panel + .content-panel {
+    :root:has([data-page-scope="blocks-index"])
+      .content-panel
+      + .content-panel {
       @apply pt-10;
     }
 

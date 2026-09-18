@@ -78,8 +78,7 @@ Install a component or block from configured registries (see `components.json` â
 ```bash
 npx bejamas add <name>
 npx bejamas add button
-npx bejamas add navigation-headers-01
-npx bejamas add @bejamas/features-01
+npx bejamas add @bejamas/button
 npx bejamas add @shadcn/button
 ```
 
@@ -89,7 +88,7 @@ Run `add` without arguments to pick components and blocks interactively. `--all`
 
 Namespaced form `@namespace/name` targets a specific registry. `@bejamas/<name>` always resolves to the Bejamas registry for your configured style.
 
-Available blocks: `navigation-headers-01`, `navigation-headers-02`, `features-01`, and `footer-01`. Browse them at [/blocks](/blocks).
+The CLI supports registry blocks, but no first-party blocks are published yet. Crafted blocks will be added in a future release.
 
 In a monorepo, run `add` from the app (for example `apps/web`). Blocks land in the app while their UI dependencies are installed in the shared UI package, and block imports are rewritten to the app's `aliases.ui`.
 
