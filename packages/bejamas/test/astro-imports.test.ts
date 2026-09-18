@@ -1,6 +1,14 @@
 // @ts-nocheck
-import { expect, test } from "bun:test";
-import { rewriteAstroImports } from "../src/utils/astro-imports";
+import { afterEach, expect, test } from "bun:test";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import {
+  fixAstroImports,
+  getConfiguredSourceRoots,
+  isPathWithin,
+  rewriteAstroImports,
+} from "../src/utils/astro-imports";
 import type { Config } from "../src/utils/get-config";
 
 function makeConfig(partial: Partial<Config>): Config {
@@ -38,6 +46,123 @@ function makeConfig(partial: Partial<Config>): Config {
     ...partial,
   } as Config;
 }
+
+const tempDirs: string[] = [];
+afterEach(async () => {
+  await Promise.all(
+    tempDirs
+      .splice(0)
+      .map((dir) => fs.rm(dir, { recursive: true, force: true })),
+  );
+});
+
+test("rewrites Bejamas block imports to the project's UI alias", () => {
+  const source = `---\nimport { Button } from "@/registry/bejamas/ui/button";\nimport { Card } from "@/registry/bejamas/ui/card";\n---\n`;
+
+  const standalone = rewriteAstroImports(
+    source,
+    makeConfig({
+      aliases: { components: "@/components", utils: "@/lib/utils", ui: "@/ui" },
+    }),
+  );
+  expect(standalone).toContain(`from "@/ui/button"`);
+  expect(standalone).toContain(`from "@/ui/card"`);
+
+  const monorepoApp = rewriteAstroImports(
+    source,
+    makeConfig({
+      aliases: {
+        components: "@/components",
+        utils: "@repo/ui/lib/utils",
+        ui: "@repo/ui/components",
+      },
+    }),
+  );
+  expect(monorepoApp).toContain(`from "@repo/ui/components/button"`);
+  expect(monorepoApp).not.toContain("@/registry/");
+});
+
+test("repairs only the listed files when scoped to installed block files", async () => {
+  const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "bejamas-imports-"));
+  tempDirs.push(cwd);
+  const blockFile = path.join(
+    cwd,
+    "src/components/blocks/features-01/Features01.astro",
+  );
+  const barrelFile = path.join(
+    cwd,
+    "src/components/blocks/features-01/index.ts",
+  );
+  const untouchedFile = path.join(cwd, "src/components/Untouched.astro");
+  const registryImport = `---\nimport { Button } from "@/registry/bejamas/ui/button";\n---\n`;
+  await fs.mkdir(path.dirname(blockFile), { recursive: true });
+  await fs.writeFile(blockFile, registryImport);
+  await fs.writeFile(
+    barrelFile,
+    `export { default as Features01 } from "./Features01.astro";\n`,
+  );
+  await fs.writeFile(untouchedFile, registryImport);
+
+  const config = makeConfig({
+    aliases: { components: "@/widgets", utils: "@/lib/utils", ui: "@/ui" },
+    resolvedPaths: {
+      cwd,
+      components: path.join(cwd, "src/widgets"),
+      ui: path.join(cwd, "src/ui"),
+      lib: path.join(cwd, "src/lib"),
+    },
+  });
+
+  await fixAstroImports(cwd, false, config, {
+    kind: "files",
+    paths: [
+      path.relative(cwd, blockFile),
+      barrelFile,
+      "src/components/blocks/missing.astro",
+      "src/styles/blocks.css",
+    ],
+  });
+
+  expect(await fs.readFile(blockFile, "utf8")).toContain(`from "@/ui/button"`);
+  expect(await fs.readFile(barrelFile, "utf8")).toContain(
+    `from "./Features01.astro"`,
+  );
+  expect(await fs.readFile(untouchedFile, "utf8")).toContain(
+    `from "@/registry/bejamas/ui/button"`,
+  );
+});
+
+test("exposes configured source roots and path containment checks", () => {
+  const config = makeConfig({
+    resolvedPaths: {
+      cwd: "/repo",
+      components: "/repo/src/components",
+      ui: "/repo/src/components",
+      lib: "/repo/src/lib",
+      hooks: "",
+    },
+  });
+
+  expect(getConfiguredSourceRoots(config)).toEqual([
+    "/repo/src/components",
+    "/repo/src/lib",
+  ]);
+  expect(
+    isPathWithin(
+      "/repo/src/components/ui/Button.astro",
+      "/repo/src/components",
+    ),
+  ).toBe(true);
+  expect(isPathWithin("/repo/src/components", "/repo/src/components")).toBe(
+    true,
+  );
+  expect(
+    isPathWithin("/repo/src/componentsx/A.astro", "/repo/src/components"),
+  ).toBe(false);
+  expect(
+    isPathWithin("/repo/src/pages/index.astro", "/repo/src/components"),
+  ).toBe(false);
+});
 
 test("rewrites registry imports inside astro files using workspace aliases", () => {
   const config = makeConfig({

@@ -263,6 +263,7 @@
     "name": "combobox",
     "type": "registry:ui",
     "dependencies": ["@data-slot/combobox"],
+    "registryDependencies": ["input-group"],
     "files": [
       {
         "path": "ui/combobox/Combobox.astro",
@@ -281,10 +282,6 @@
         "type": "registry:ui"
       },
       {
-        "path": "ui/combobox/ComboboxEmpty.astro",
-        "type": "registry:ui"
-      },
-      {
         "path": "ui/combobox/ComboboxItem.astro",
         "type": "registry:ui"
       },
@@ -298,6 +295,10 @@
       },
       {
         "path": "ui/combobox/ComboboxSeparator.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/combobox/ComboboxEmpty.astro",
         "type": "registry:ui"
       },
       {
@@ -664,28 +665,6 @@
     ]
   },
   {
-    "name": "native-select",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/native-select/NativeSelect.astro",
-        "type": "registry:ui"
-      },
-      {
-        "path": "ui/native-select/NativeSelectOption.astro",
-        "type": "registry:ui"
-      },
-      {
-        "path": "ui/native-select/NativeSelectOptGroup.astro",
-        "type": "registry:ui"
-      },
-      {
-        "path": "ui/native-select/index.ts",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
     "name": "navigation-menu",
     "type": "registry:ui",
     "dependencies": ["@data-slot/navigation-menu"],
@@ -715,11 +694,11 @@
         "type": "registry:ui"
       },
       {
-        "path": "ui/navigation-menu/NavigationMenuIndicator.astro",
+        "path": "ui/navigation-menu/NavigationMenuLink.astro",
         "type": "registry:ui"
       },
       {
-        "path": "ui/navigation-menu/NavigationMenuLink.astro",
+        "path": "ui/navigation-menu/NavigationMenuIndicator.astro",
         "type": "registry:ui"
       },
       {
@@ -729,9 +708,32 @@
     ]
   },
   {
+    "name": "native-select",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/native-select/NativeSelect.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/native-select/NativeSelectOption.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/native-select/NativeSelectOptGroup.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/native-select/index.ts",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
     "name": "popover",
     "type": "registry:ui",
     "dependencies": ["@data-slot/popover"],
+    "registryDependencies": ["button"],
     "files": [
       {
         "path": "ui/popover/Popover.astro",
@@ -746,6 +748,10 @@
         "type": "registry:ui"
       },
       {
+        "path": "ui/popover/PopoverClose.astro",
+        "type": "registry:ui"
+      },
+      {
         "path": "ui/popover/PopoverHeader.astro",
         "type": "registry:ui"
       },
@@ -755,10 +761,6 @@
       },
       {
         "path": "ui/popover/PopoverDescription.astro",
-        "type": "registry:ui"
-      },
-      {
-        "path": "ui/popover/PopoverClose.astro",
         "type": "registry:ui"
       },
       {
@@ -788,13 +790,26 @@
   {
     "name": "select",
     "type": "registry:ui",
+    "dependencies": ["@data-slot/select"],
     "files": [
       {
         "path": "ui/select/Select.astro",
         "type": "registry:ui"
       },
       {
-        "path": "ui/select/SelectControl.astro",
+        "path": "ui/select/SelectTrigger.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/select/SelectValue.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/select/SelectContent.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/select/SelectItem.astro",
         "type": "registry:ui"
       },
       {
@@ -802,15 +817,11 @@
         "type": "registry:ui"
       },
       {
-        "path": "ui/select/SelectIndicator.astro",
+        "path": "ui/select/SelectLabel.astro",
         "type": "registry:ui"
       },
       {
-        "path": "ui/select/SelectOption.astro",
-        "type": "registry:ui"
-      },
-      {
-        "path": "ui/select/SelectPlaceholder.astro",
+        "path": "ui/select/SelectSeparator.astro",
         "type": "registry:ui"
       },
       {
@@ -1041,6 +1052,82 @@
       {
         "path": "ui/tooltip/index.ts",
         "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "navigation-headers-01",
+    "type": "registry:block",
+    "title": "Navigation Header 01",
+    "description": "A floating, responsive header with a company menu and scroll elevation.",
+    "registryDependencies": ["button", "dropdown-menu", "sticky-surface"],
+    "files": [
+      {
+        "path": "blocks/navigation-headers-01/NavigationHeaders01.astro",
+        "type": "registry:component",
+        "target": "src/components/blocks/navigation-headers-01/NavigationHeaders01.astro"
+      },
+      {
+        "path": "blocks/navigation-headers-01/index.ts",
+        "type": "registry:component",
+        "target": "src/components/blocks/navigation-headers-01/index.ts"
+      }
+    ]
+  },
+  {
+    "name": "navigation-headers-02",
+    "type": "registry:block",
+    "title": "Navigation Header 02",
+    "description": "A responsive announcement bar and sticky navigation header.",
+    "registryDependencies": ["button", "dropdown-menu", "sticky-surface"],
+    "files": [
+      {
+        "path": "blocks/navigation-headers-02/NavigationHeaders02.astro",
+        "type": "registry:component",
+        "target": "src/components/blocks/navigation-headers-02/NavigationHeaders02.astro"
+      },
+      {
+        "path": "blocks/navigation-headers-02/index.ts",
+        "type": "registry:component",
+        "target": "src/components/blocks/navigation-headers-02/index.ts"
+      }
+    ]
+  },
+  {
+    "name": "features-01",
+    "type": "registry:block",
+    "title": "Features 01",
+    "description": "A four-card feature grid with imagery, supporting copy, and a call to action.",
+    "registryDependencies": ["button", "card"],
+    "files": [
+      {
+        "path": "blocks/features-01/Features01.astro",
+        "type": "registry:component",
+        "target": "src/components/blocks/features-01/Features01.astro"
+      },
+      {
+        "path": "blocks/features-01/index.ts",
+        "type": "registry:component",
+        "target": "src/components/blocks/features-01/index.ts"
+      }
+    ]
+  },
+  {
+    "name": "footer-01",
+    "type": "registry:block",
+    "title": "Footer 01",
+    "description": "A footer with a call to action, link columns, and legal links.",
+    "registryDependencies": ["button", "link-group"],
+    "files": [
+      {
+        "path": "blocks/footer-01/Footer01.astro",
+        "type": "registry:component",
+        "target": "src/components/blocks/footer-01/Footer01.astro"
+      },
+      {
+        "path": "blocks/footer-01/index.ts",
+        "type": "registry:component",
+        "target": "src/components/blocks/footer-01/index.ts"
       }
     ]
   }

@@ -1,0 +1,27 @@
+{
+  "name": "features-01",
+  "type": "registry:block",
+  "title": "Features 01",
+  "description": "A four-card feature grid with imagery, supporting copy, and a call to action.",
+  "registryDependencies": [
+    "index",
+    "button",
+    "card"
+  ],
+  "files": [
+    {
+      "path": "blocks/features-01/Features01.astro",
+      "type": "registry:component",
+      "target": "src/components/blocks/features-01/Features01.astro",
+      "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  Card,\n  CardDescription,\n  CardHeader,\n  CardMedia,\n  CardOverlay,\n  CardTitle,\n} from \"@/registry/bejamas/ui/card\";\n\ninterface Feature {\n  title: string;\n  description: string;\n  image: string;\n  overlay?: boolean;\n}\n\ninterface Props {\n  title?: string;\n  features?: Feature[];\n  ctaLabel?: string;\n  ctaHref?: string;\n  class?: string;\n}\n\nconst defaultFeatures: Feature[] = [\n  {\n    title: \"Healthy breakfast\",\n    description: \"Eggs are a great source of protein.\",\n    image:\n      \"https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=80\",\n  },\n  {\n    title: \"Healthy lunch\",\n    description: \"A simple meal that keeps you going.\",\n    image:\n      \"https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=900&q=80\",\n    overlay: true,\n  },\n  {\n    title: \"Healthy dinner\",\n    description: \"Good ingredients need little fuss.\",\n    image:\n      \"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80\",\n  },\n  {\n    title: \"Healthy snack\",\n    description: \"A dependable base for a quick snack.\",\n    image:\n      \"https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=900&q=80\",\n  },\n];\n\nconst {\n  title = \"You can just eat eggs\",\n  features = defaultFeatures,\n  ctaLabel = \"View recipes\",\n  ctaHref = \"#recipes\",\n  class: className = \"\",\n} = Astro.props as Props;\n---\n\n<section\n  class:list={[\n    \"mx-auto max-w-6xl px-6 py-20 text-foreground [container-type:inline-size]\",\n    className,\n  ]}\n>\n  <h2\n    class=\"mb-8 text-[clamp(2.5rem,11cqw,6rem)] font-medium leading-none tracking-tight\"\n  >\n    {title}\n  </h2>\n  <div class=\"grid gap-4 sm:grid-cols-2 lg:grid-cols-4\">\n    {\n      features.map((feature, index) => (\n        <Card variant=\"ghost\">\n          <CardMedia class=\"relative aspect-[4/5]\">\n            <img\n              src={feature.image}\n              alt=\"\"\n              loading=\"lazy\"\n              class=\"size-full rounded-xl object-cover\"\n            />\n            <span class=\"absolute left-4 top-4 rounded-md bg-primary px-2 py-1 font-mono text-sm text-primary-foreground\">\n              {String(index + 1).padStart(2, \"0\")}\n            </span>\n          </CardMedia>\n          <CardHeader>\n            <CardTitle>{feature.title}</CardTitle>\n            <CardDescription>{feature.description}</CardDescription>\n          </CardHeader>\n          {feature.overlay && (\n            <CardOverlay variant=\"glass\">\n              <p>{feature.description}</p>\n            </CardOverlay>\n          )}\n        </Card>\n      ))\n    }\n  </div>\n  <div\n    class=\"mt-4 flex items-center justify-between gap-4 border-t border-border pt-4\"\n  >\n    <p class=\"text-sm text-muted-foreground\">Four ideas for any time of day.</p>\n    <Button as=\"a\" href={ctaHref} variant=\"secondary\">\n      {ctaLabel}\n      <svg\n        viewBox=\"0 0 24 24\"\n        fill=\"none\"\n        stroke=\"currentColor\"\n        stroke-width=\"2\"\n        stroke-linecap=\"round\"\n        stroke-linejoin=\"round\"\n        class=\"size-4\"\n        aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"></path></svg\n      >\n    </Button>\n  </div>\n</section>\n"
+    },
+    {
+      "path": "blocks/features-01/index.ts",
+      "type": "registry:component",
+      "target": "src/components/blocks/features-01/index.ts",
+      "content": "export { default as Features01 } from \"./Features01.astro\";\n"
+    }
+  ],
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": []
+}

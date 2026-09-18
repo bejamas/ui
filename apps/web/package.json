@@ -11,7 +11,7 @@
     "build": "bun run build:full",
     "build:fast": "bun run build:artifacts && astro build",
     "build:full": "bun run build:artifacts && bun run build:docs && astro build",
-    "build:artifacts": "bun run build:compiled-styles && bun run build:style-registry && bun run build:registry && bun run normalize-component-paths-in-registry",
+    "build:artifacts": "bun run build:compiled-styles && bun run build:style-registry && bun run generate:ui-package && bun run build:registry && bun run normalize-component-paths-in-registry",
     "preview": "astro preview",
     "astro": "astro",
     "watch:style-artifacts": "bun run scripts/watch-style-artifacts.ts",

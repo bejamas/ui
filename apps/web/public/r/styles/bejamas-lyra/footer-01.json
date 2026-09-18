@@ -1,0 +1,27 @@
+{
+  "name": "footer-01",
+  "type": "registry:block",
+  "title": "Footer 01",
+  "description": "A footer with a call to action, link columns, and legal links.",
+  "registryDependencies": [
+    "index",
+    "button",
+    "link-group"
+  ],
+  "files": [
+    {
+      "path": "blocks/footer-01/Footer01.astro",
+      "type": "registry:component",
+      "target": "src/components/blocks/footer-01/Footer01.astro",
+      "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  LinkGroup,\n  LinkGroupItem,\n  LinkGroupList,\n  LinkGroupTitle,\n} from \"@/registry/bejamas/ui/link-group\";\n\ninterface FooterLink {\n  label: string;\n  href: string;\n}\n\ninterface FooterColumn {\n  title: string;\n  links: FooterLink[];\n}\n\ninterface Props {\n  brand?: string;\n  tagline?: string;\n  ctaTitle?: string;\n  ctaLabel?: string;\n  ctaHref?: string;\n  columns?: FooterColumn[];\n  year?: number;\n  class?: string;\n}\n\nconst defaultColumns: FooterColumn[] = [\n  {\n    title: \"Resources\",\n    links: [\n      { label: \"Blog\", href: \"#blog\" },\n      { label: \"Documentation\", href: \"#docs\" },\n      { label: \"Support\", href: \"#support\" },\n    ],\n  },\n  {\n    title: \"Company\",\n    links: [\n      { label: \"About\", href: \"#about\" },\n      { label: \"Careers\", href: \"#careers\" },\n      { label: \"Contact\", href: \"#contact\" },\n    ],\n  },\n  {\n    title: \"Legal\",\n    links: [\n      { label: \"Privacy\", href: \"#privacy\" },\n      { label: \"Terms\", href: \"#terms\" },\n    ],\n  },\n];\n\nconst {\n  brand = \"Acme\",\n  tagline = \"Thoughtful tools for teams that care about the details.\",\n  ctaTitle = \"Ready to build something clear and useful?\",\n  ctaLabel = \"Get started\",\n  ctaHref = \"#get-started\",\n  columns = defaultColumns,\n  year = new Date().getFullYear(),\n  class: className = \"\",\n} = Astro.props as Props;\n---\n\n<footer class:list={[\"w-full border-t bg-muted/30 text-foreground\", className]}>\n  <div class=\"mx-auto max-w-6xl px-6\">\n    <div class=\"flex flex-col items-center gap-5 border-b py-16 text-center\">\n      <p\n        class=\"text-sm font-medium uppercase tracking-widest text-muted-foreground\"\n      >\n        Start today\n      </p>\n      <h2 class=\"max-w-2xl text-4xl font-medium tracking-tight sm:text-5xl\">\n        {ctaTitle}\n      </h2>\n      <Button as=\"a\" href={ctaHref} size=\"lg\">{ctaLabel}</Button>\n    </div>\n\n    <div class=\"grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4\">\n      <div>\n        <a href=\"/\" class=\"text-xl font-semibold tracking-tight\">{brand}</a>\n        <p class=\"mt-3 max-w-xs text-sm text-muted-foreground\">{tagline}</p>\n      </div>\n      {\n        columns.map((column) => (\n          <LinkGroup>\n            <LinkGroupTitle>{column.title}</LinkGroupTitle>\n            <LinkGroupList>\n              {column.links.map((link) => (\n                <LinkGroupItem>\n                  <a href={link.href}>{link.label}</a>\n                </LinkGroupItem>\n              ))}\n            </LinkGroupList>\n          </LinkGroup>\n        ))\n      }\n    </div>\n\n    <div\n      class=\"flex flex-col gap-3 border-t py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between\"\n    >\n      <span>© {year} {brand}. All rights reserved.</span>\n      <nav aria-label=\"Legal\" class=\"flex gap-5\">\n        <a href=\"#privacy\" class=\"hover:text-foreground\">Privacy</a>\n        <a href=\"#terms\" class=\"hover:text-foreground\">Terms</a>\n      </nav>\n    </div>\n    <div\n      aria-hidden=\"true\"\n      class=\"overflow-hidden pb-4 text-center text-[clamp(5rem,20vw,14rem)] font-bold leading-[0.8] tracking-tighter text-foreground/10\"\n    >\n      {brand}\n    </div>\n  </div>\n</footer>\n"
+    },
+    {
+      "path": "blocks/footer-01/index.ts",
+      "type": "registry:component",
+      "target": "src/components/blocks/footer-01/index.ts",
+      "content": "export { default as Footer01 } from \"./Footer01.astro\";\n"
+    }
+  ],
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": []
+}
