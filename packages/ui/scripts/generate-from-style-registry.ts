@@ -282,15 +282,12 @@ export async function checkUiPackageSync(
   for (const [filePath, expectedContent] of generated.files) {
     actualFiles.delete(filePath);
 
-    let actualContent = "";
     try {
-      actualContent = await fs.readFile(filePath, "utf8");
+      const actualContent = await fs.readFile(filePath, "utf8");
+      if (actualContent !== expectedContent) {
+        staleFiles.push(path.relative(generated.outputRoot, filePath));
+      }
     } catch {
-      staleFiles.push(path.relative(generated.outputRoot, filePath));
-      continue;
-    }
-
-    if (actualContent !== expectedContent) {
       staleFiles.push(path.relative(generated.outputRoot, filePath));
     }
   }
