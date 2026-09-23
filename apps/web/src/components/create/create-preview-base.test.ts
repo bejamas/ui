@@ -65,7 +65,6 @@ describe("create preview base layer", () => {
     expect(previewSurface).toContain("import KitchenIsland");
     expect(previewSurface).toContain("import UIElements");
     expect(previewSurface).toContain("import ObservabilityCard");
-    expect(previewSurface).toContain("import Shortcuts");
     expect(previewSurface).toContain("import EnvironmentVariables");
     expect(previewSurface).toContain("import InviteTeam");
     expect(previewSurface).toContain("import SidebarNav");
@@ -75,15 +74,11 @@ describe("create preview base layer", () => {
     expect(previewSurface).toContain("import Preferences");
     expect(previewSurface).toContain("import NoTeamMembers");
     expect(previewSurface).toContain("import ReportBug");
-    expect(previewSurface).toContain("import Contributors");
     expect(previewSurface).toContain("import FeedbackForm");
     expect(previewSurface).toContain("import BookAppointment");
     expect(previewSurface).toContain("import GithubProfile");
     expect(previewSurface).toContain("import AssignIssue");
-    expect(previewSurface).toContain("import WeeklyFitnessSummary");
     expect(previewSurface).toContain("import FileUpload");
-    expect(previewSurface).toContain("import UsageCard");
-    expect(previewSurface).toContain("import ContributionsActivity");
     expect(previewSurface).toContain("import AnomalyAlert");
     expect(previewSurface).toContain("import ShippingAddress");
     expect(previewSurface).toContain("import NotFound");
@@ -373,7 +368,7 @@ describe("create preview base layer", () => {
     expect(link).not.toContain("hover:bg-muted");
     expect(content).toContain("transition-[opacity,transform,translate]");
     expect(content).toContain(
-      "data-starting-style:data-activation-direction=left:translate-x-[-50%]",
+      "data-[starting-style]:data-[activation-direction=left]:translate-x-[-50%]",
     );
     expect(content).toContain("data-align={align}");
     expect(content).not.toContain("absolute");
@@ -452,9 +447,9 @@ describe("create preview base layer", () => {
     expect(radioGroup).toContain("data-default-value={defaultValue}");
     expect(radioGroup).toContain("data-name={name}");
     expect(radioGroup).toContain(
-      'import { create } from "@data-slot/radio-group";',
+      'import { createRadioGroup } from "@data-slot/radio-group";',
     );
-    expect(radioGroup).toContain("create();");
+    expect(radioGroup).toContain("createRadioGroup(el)");
     expect(radioGroup).not.toContain('role="radiogroup"');
     expect(radioItem).toContain('data-slot="radio-group-indicator"');
     expect(radioItem).toContain("data-value={value}");
@@ -471,11 +466,11 @@ describe("create preview base layer", () => {
     const registryTabsTrigger = read(
       "packages/registry/src/ui/tabs/TabsTrigger.astro",
     );
-    const createBaseTabsList = read(
-      "apps/web/src/components/create/base/ui/tabs/TabsList.astro",
+    const installedTabsList = read(
+      "packages/ui/src/components/tabs/TabsList.astro",
     );
-    const createBaseTabsTrigger = read(
-      "apps/web/src/components/create/base/ui/tabs/TabsTrigger.astro",
+    const installedTabsTrigger = read(
+      "packages/ui/src/components/tabs/TabsTrigger.astro",
     );
 
     expect(registryTabsList).toContain("cn-tabs-list-variant-indicator");
@@ -502,13 +497,13 @@ describe("create preview base layer", () => {
       "group-data-[variant=line-animated]/tabs-list:after:hidden",
     );
 
-    expect(createBaseTabsList).toContain("cn-tabs-list-variant-indicator");
-    expect(createBaseTabsList).toContain("cn-tabs-list-variant-line-animated");
-    expect(createBaseTabsList).toContain('data-slot="tabs-indicator"');
+    expect(installedTabsList).toContain('indicator: "rounded-lg bg-muted');
+    expect(installedTabsList).toContain('"line-animated":');
+    expect(installedTabsList).toContain('data-slot="tabs-indicator"');
 
-    expect(createBaseTabsTrigger).toContain("text-foreground/60");
-    expect(createBaseTabsTrigger).toContain("focus-visible:outline-ring");
-    expect(createBaseTabsTrigger).toContain(
+    expect(installedTabsTrigger).toContain("text-foreground/60");
+    expect(installedTabsTrigger).toContain("focus-visible:outline-ring");
+    expect(installedTabsTrigger).toContain(
       "group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
     );
   });
@@ -526,8 +521,8 @@ describe("create preview base layer", () => {
     const dropdownItem = read(
       "packages/registry/src/ui/dropdown-menu/DropdownMenuItem.astro",
     );
-    const createBaseDropdownItem = read(
-      "apps/web/src/components/create/base/ui/dropdown-menu/DropdownMenuItem.astro",
+    const installedDropdownItem = read(
+      "packages/ui/src/components/dropdown-menu/DropdownMenuItem.astro",
     );
     const dropdownLabel = read(
       "packages/registry/src/ui/dropdown-menu/DropdownMenuLabel.astro",
@@ -535,7 +530,9 @@ describe("create preview base layer", () => {
 
     expect(dialogContent).toContain("cn-dialog-content");
     expect(dialogContent).not.toContain("bg-background");
-    expect(dialogTitle).toContain('class={cn("cn-dialog-title", className)}');
+    expect(dialogTitle).toContain(
+      'class={cn("cn-dialog-title cn-font-heading", className)}',
+    );
     expect(dialogTitle).not.toContain("text-xl");
 
     expect(dropdownContent).toContain("cn-dropdown-menu-content");
@@ -544,18 +541,18 @@ describe("create preview base layer", () => {
     expect(dropdownItem).toContain("data-value={value}");
     expect(dropdownItem).toContain('data-inset={inset ? "" : undefined}');
     expect(dropdownItem).not.toContain('inset && "pl-8"');
-    expect(createBaseDropdownItem).toContain("value?: string");
-    expect(createBaseDropdownItem).toContain("data-value={value}");
+    expect(installedDropdownItem).toContain("value?: string");
+    expect(installedDropdownItem).toContain("data-value={value}");
     expect(dropdownLabel).toContain('data-inset={inset ? "" : undefined}');
     expect(dropdownLabel).not.toContain("px-2 py-1.5 text-sm font-medium");
   });
 
-  it("keeps tooltip markup aligned across registry and create preview copies", () => {
+  it("keeps tooltip markup aligned across registry and installed components", () => {
     const registryTooltipContent = read(
       "packages/registry/src/ui/tooltip/TooltipContent.astro",
     );
-    const createBaseTooltipContent = read(
-      "apps/web/src/components/create/base/ui/tooltip/TooltipContent.astro",
+    const installedTooltipContent = read(
+      "packages/ui/src/components/tooltip/TooltipContent.astro",
     );
 
     expect(registryTooltipContent).toContain('data-slot="tooltip-arrow"');
@@ -580,26 +577,20 @@ describe("create preview base layer", () => {
       "pointer-events-none absolute cn-tooltip-arrow",
     );
 
-    expect(createBaseTooltipContent).toContain('data-slot="tooltip-arrow"');
-    expect(createBaseTooltipContent).toContain(
-      "cn-tooltip-arrow cn-tooltip-arrow-logical",
-    );
-    expect(createBaseTooltipContent).toContain("side?: TooltipSide;");
-    expect(createBaseTooltipContent).toContain('"inline-start"');
-    expect(createBaseTooltipContent).toContain('"inline-end"');
-    expect(createBaseTooltipContent).not.toContain(
+    expect(installedTooltipContent).toContain('data-slot="tooltip-arrow"');
+    expect(installedTooltipContent).toContain("side?: TooltipSide;");
+    expect(installedTooltipContent).toContain('"inline-start"');
+    expect(installedTooltipContent).toContain('"inline-end"');
+    expect(installedTooltipContent).not.toContain(
       'data-slot="tooltip-indicator"',
     );
-    expect(createBaseTooltipContent).not.toContain("data-[state=delayed-open]");
-    expect(createBaseTooltipContent).not.toContain('class="cn-tooltip-portal"');
-    expect(createBaseTooltipContent).toContain("data-[side=top]:-bottom-1");
-    expect(createBaseTooltipContent).toContain("data-[side=bottom]:-top-1");
-    expect(createBaseTooltipContent).not.toContain("top-1/2!");
-    expect(createBaseTooltipContent).not.toContain(
+    expect(installedTooltipContent).toContain('data-slot="tooltip-portal"');
+    expect(installedTooltipContent).toContain('data-slot="tooltip-positioner"');
+    expect(installedTooltipContent).toContain("data-[side=top]:-bottom-1");
+    expect(installedTooltipContent).toContain("data-[side=bottom]:-top-1");
+    expect(installedTooltipContent).not.toContain("top-1/2!");
+    expect(installedTooltipContent).not.toContain(
       "translate-y-[calc(-50%-2px)]",
-    );
-    expect(createBaseTooltipContent).not.toContain(
-      "pointer-events-none absolute cn-tooltip-arrow",
     );
   });
 

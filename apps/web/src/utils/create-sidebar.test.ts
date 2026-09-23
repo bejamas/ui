@@ -171,7 +171,9 @@ describe("create sidebar helpers", () => {
       (option) => groupOrder[option.group as keyof typeof groupOrder],
     );
 
-    expect(orderedGroups).toEqual([...orderedGroups].sort((left, right) => left - right));
+    expect(orderedGroups).toEqual(
+      [...orderedGroups].sort((left, right) => left - right),
+    );
   });
 
   it("pins a same-as-body option at the top of the heading font picker", () => {
@@ -251,7 +253,7 @@ describe("create sidebar helpers", () => {
     expect(isCreatePickerDisabled("font", { style: "lyra" })).toBe(false);
   });
 
-  it("exposes all four menu color options", () => {
+  it("exposes menu color and appearance options", () => {
     const options = getCreatePickerOptions({
       baseColor: "neutral",
       style: "juno",
@@ -260,8 +262,8 @@ describe("create sidebar helpers", () => {
     expect(options.menuColor.map((option) => option.value)).toEqual([
       "default",
       "inverted",
-      "default-translucent",
-      "inverted-translucent",
+      "solid",
+      "translucent",
     ]);
   });
 
@@ -333,21 +335,24 @@ describe("create sidebar helpers", () => {
 
   it("normalizes Lyra shuffle results to radius none", () => {
     const config = withMockedRandom(0.99, () =>
-      createRandomDesignSystemConfig({
-        style: "lyra",
-        baseColor: "neutral",
-        theme: "neutral",
-        iconLibrary: "lucide",
-        font: "inter",
-        radius: "large",
-        menuColor: "default",
-        menuAccent: "subtle",
-        template: "astro",
-        rtl: false,
-        rtlLanguage: "ar",
-      }, {
-        locked: ["style"],
-      }),
+      createRandomDesignSystemConfig(
+        {
+          style: "lyra",
+          baseColor: "neutral",
+          theme: "neutral",
+          iconLibrary: "lucide",
+          font: "inter",
+          radius: "large",
+          menuColor: "default",
+          menuAccent: "subtle",
+          template: "astro",
+          rtl: false,
+          rtlLanguage: "ar",
+        },
+        {
+          locked: ["style"],
+        },
+      ),
     );
 
     expect(config.style).toBe("lyra");

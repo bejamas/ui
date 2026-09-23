@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import type { AstroCookies } from "astro";
 import { encodePreset } from "@bejamas/create-config/server";
 import { GET } from "../../../../pages/r/themes/current-theme.css";
+import { SHORT_SHARED_CACHE_CONTROL } from "../../../../utils/http-cache";
 
 describe("current-theme.css", () => {
   test("falls back to the default legacy preset without a cookie", async () => {
@@ -15,7 +16,7 @@ describe("current-theme.css", () => {
     const css = await response.text();
 
     expect(response.headers.get("Cache-Control")).toBe(
-      "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
+      SHORT_SHARED_CACHE_CONTROL,
     );
     expect(response.headers.get("Vary")).toBe("Cookie");
     expect(css).toContain("--font-sans: Inter");
@@ -80,7 +81,9 @@ describe("current-theme.css", () => {
     const css = await response.text();
 
     expect(css).toContain("--font-sans: 'Inter Variable', sans-serif;");
-    expect(css).toContain("--font-heading: 'Playfair Display Variable', serif;");
+    expect(css).toContain(
+      "--font-heading: 'Playfair Display Variable', serif;",
+    );
   });
 
   test("decodes upstream-compatible a-codes from create preset cookies", async () => {

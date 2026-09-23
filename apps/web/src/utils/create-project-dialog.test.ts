@@ -53,16 +53,16 @@ describe("create project dialog helpers", () => {
     );
 
     expect(commands.pnpm).toBe(
-      "pnpm dlx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42",
+      "pnpm dlx bejamas@latest init --template astro-monorepo --preset abc123 --theme-ref theme-42",
     );
     expect(commands.npm).toBe(
-      "npx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42",
+      "npx bejamas@latest init --template astro-monorepo --preset abc123 --theme-ref theme-42",
     );
     expect(commands.yarn).toBe(
-      "yarn dlx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42",
+      "yarn dlx bejamas@latest init --template astro-monorepo --preset abc123 --theme-ref theme-42",
     );
     expect(commands.bun).toBe(
-      "bunx bejamas init --template astro-monorepo --preset abc123 --theme-ref theme-42",
+      "bunx bejamas@latest init --template astro-monorepo --preset abc123 --theme-ref theme-42",
     );
   });
 
@@ -74,6 +74,8 @@ describe("create project dialog helpers", () => {
       themeRef: null,
     });
 
-    expect(command).toBe("bunx bejamas init --template astro --preset abc123");
+    expect(command).toBe(
+      "bunx bejamas@latest init --template astro --preset abc123",
+    );
   });
 });

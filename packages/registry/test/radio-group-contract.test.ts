@@ -12,7 +12,10 @@ const radioGroupItemFile = path.resolve(
   packageRoot,
   "src/ui/radio-group/RadioGroupItem.astro",
 );
-const registryFile = path.resolve(repoRoot, "apps/web/public/r/radio-group.json");
+const registryFile = path.resolve(
+  repoRoot,
+  "apps/web/public/r/radio-group.json",
+);
 const styleRegistryFile = path.resolve(
   repoRoot,
   "apps/web/public/r/styles/bejamas-juno/radio-group.json",
@@ -43,20 +46,30 @@ describe("radio-group compatibility contract", () => {
     expect(rootSource).toContain("defaultValue?: string");
     expect(rootSource).toContain("name?: string");
     expect(rootSource).toContain("readOnly?: boolean");
-    expect(rootSource).toContain('data-default-value={defaultValue}');
-    expect(rootSource).toContain('data-name={name}');
-    expect(rootSource).toContain('data-disabled={disabled ? "true" : undefined}');
+    expect(rootSource).toContain("data-default-value={defaultValue}");
+    expect(rootSource).toContain("data-name={name}");
+    expect(rootSource).toContain(
+      'data-disabled={disabled ? "true" : undefined}',
+    );
     expect(rootSource).toContain(
       'data-read-only={readOnly ? "true" : undefined}',
     );
-    expect(rootSource).toContain('data-required={required ? "true" : undefined}');
-    expect(rootSource).toContain('import { create } from "@data-slot/radio-group";');
-    expect(rootSource).toContain("create();");
+    expect(rootSource).toContain(
+      'data-required={required ? "true" : undefined}',
+    );
+    expect(rootSource).toContain(
+      'import { createRadioGroup } from "@data-slot/radio-group";',
+    );
+    expect(rootSource).toContain("createRadioGroup(el)");
     expect(rootSource).not.toContain('role="radiogroup"');
 
-    expect(itemSource).toContain('interface Props extends HTMLAttributes<"span">');
-    expect(itemSource).toContain('data-value={value}');
-    expect(itemSource).toContain('data-disabled={disabled ? "true" : undefined}');
+    expect(itemSource).toContain(
+      'interface Props extends HTMLAttributes<"span">',
+    );
+    expect(itemSource).toContain("data-value={value}");
+    expect(itemSource).toContain(
+      'data-disabled={disabled ? "true" : undefined}',
+    );
     expect(itemSource).toContain('data-slot="radio-group-indicator"');
     expect(itemSource).toContain("cn-radio-group-indicator-icon");
     expect(itemSource).not.toContain("name?: string");
@@ -84,17 +97,19 @@ describe("radio-group compatibility contract", () => {
       "ui/radio-group/RadioGroupItem.astro",
     );
 
-    expect(registryRoot).toContain('data-default-value={defaultValue}');
-    expect(registryRoot).toContain('data-name={name}');
-    expect(registryRoot).toContain('import { create } from "@data-slot/radio-group";');
+    expect(registryRoot).toContain("data-default-value={defaultValue}");
+    expect(registryRoot).toContain("data-name={name}");
+    expect(registryRoot).toContain(
+      'import { createRadioGroup } from "@data-slot/radio-group";',
+    );
     expect(registryRoot).not.toContain('role="radiogroup"');
 
-    expect(registryItem).toContain('data-value={value}');
+    expect(registryItem).toContain("data-value={value}");
     expect(registryItem).not.toContain('type="radio"');
     expect(registryItem).not.toContain("window.__bejamasRadioGroupSync");
 
     expect(styleRoot).toContain('class={cn("grid gap-3", className)}');
-    expect(styleItem).toContain('data-value={value}');
+    expect(styleItem).toContain("data-value={value}");
     expect(styleItem).toContain("data-disabled:cursor-not-allowed");
     expect(styleItem).not.toContain("peer-focus-visible");
     expect(styleItem).not.toContain('type="radio"');
