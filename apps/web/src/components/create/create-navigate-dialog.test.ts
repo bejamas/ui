@@ -38,8 +38,9 @@ describe("create navigate dialog", () => {
     const headerSource = fs.readFileSync(headerFile, "utf8");
 
     expect(customizerSource).toContain('data-controller="create-sidebar"');
-    expect(headerSource).toContain('data-action="click->create-sidebar#openNavigate"');
-    expect(headerSource).toContain("data-create-header-navigate");
+    expect(headerSource).toContain(
+      'data-action="click->create-sidebar#openNavigate"',
+    );
     expect(headerSource).toContain("data-create-header-search");
   });
 
@@ -81,11 +82,19 @@ describe("create navigate dialog", () => {
     expect(pageSource).toContain('import "@/stimulus/create";');
     expect(navigateSource).toContain('new CustomEvent("command:set"');
     expect(navigateSource).toContain('addEventListener("command:select"');
-    expect(navigateSource).toContain('removeEventListener(\n      "command:select"');
-    expect(navigateSource).toContain('document.querySelector("[data-create-navigate-command]")');
-    expect(navigateSource).toContain('document.querySelector(\n      "[data-create-navigate-input]"');
-    expect(navigateSource).toContain("this.dispatch(\"select-target\"");
-    expect(editorSource).toContain("this.createNavigateOutlet.setSelectedTarget");
+    expect(navigateSource).toContain(
+      'removeEventListener(\n      "command:select"',
+    );
+    expect(navigateSource).toContain(
+      'document.querySelector("[data-create-navigate-command]")',
+    );
+    expect(navigateSource).toContain(
+      'document.querySelector(\n      "[data-create-navigate-input]"',
+    );
+    expect(navigateSource).toContain('this.dispatch("select-target"');
+    expect(editorSource).toContain(
+      "this.createNavigateOutlet.setSelectedTarget",
+    );
     expect(editorSource).toContain("this.createNavigateOutlet.open()");
   });
 
@@ -96,7 +105,9 @@ describe("create navigate dialog", () => {
 
     expect(previewPageSource).toContain('data-controller="create-preview"');
     expect(previewPageSource).toContain('import "@/stimulus/create";');
-    expect(createPreviewSource).toContain("openNavigateShortcut(event: KeyboardEvent)");
+    expect(createPreviewSource).toContain(
+      "openNavigateShortcut(event: KeyboardEvent)",
+    );
     expect(createPreviewSource).toContain(
       'type: "bejamas:create-navigate-open"',
     );

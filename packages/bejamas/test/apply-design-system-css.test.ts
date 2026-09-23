@@ -163,7 +163,7 @@ describe("transformDesignSystemCss", () => {
       monorepoUiPackageJson,
       docsMonorepoUiPackageJson,
     ]) {
-      expect(packageJson).toContain('"bejamas": "^0.3.0"');
+      expect(packageJson).toContain('"bejamas": "^0.4.1"');
     }
   });
 

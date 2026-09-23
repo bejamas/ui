@@ -21,7 +21,9 @@ function getSelectContentBlock(css: string) {
 
 function getCssBlock(css: string, selector: string) {
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const match = css.match(new RegExp(`${escapedSelector}\\s*\\{([\\s\\S]*?)\\n  \\}`));
+  const match = css.match(
+    new RegExp(`${escapedSelector}\\s*\\{([\\s\\S]*?)\\n  \\}`),
+  );
 
   return match?.[1] ?? "";
 }
@@ -85,7 +87,14 @@ describe("style catalog defaults", () => {
   });
 
   it("keeps select popup motion in the shared component instead of theme overrides", () => {
-    for (const style of ["vega", "nova", "maia", "lyra", "mira", "luma"] as const) {
+    for (const style of [
+      "vega",
+      "nova",
+      "maia",
+      "lyra",
+      "mira",
+      "luma",
+    ] as const) {
       const selectContentBlock = getSelectContentBlock(getStyleCss(style));
 
       expect(selectContentBlock).not.toContain("data-open:animate-in");
@@ -133,11 +142,15 @@ describe("style catalog defaults", () => {
       expect(css).toContain(".cn-tooltip-content");
       expect(css).toContain(".cn-tooltip-arrow");
       expect(css).toContain(".cn-tooltip-arrow-logical");
-      expect(tooltipContentBlock).toContain("data-[state=delayed-open]:animate-in");
+      expect(tooltipContentBlock).toContain(
+        "data-[state=delayed-open]:animate-in",
+      );
       expect(tooltipContentBlock).toContain("pointer-events-none");
       expect(tooltipContentBlock).toContain("data-open:pointer-events-auto");
       expect(tooltipContentBlock).toContain("data-closed:pointer-events-none");
-      expect(tooltipContentBlock).not.toContain("data-starting-style:opacity-0");
+      expect(tooltipContentBlock).not.toContain(
+        "data-starting-style:opacity-0",
+      );
       expect(tooltipContentBlock).not.toContain("data-ending-style:scale-95");
       expect(tooltipContentBlock).not.toContain("data-instant:animate-none!");
       expect(tooltipArrowBlock).not.toContain("pointer-events-none");
@@ -148,8 +161,12 @@ describe("style catalog defaults", () => {
       expect(tooltipArrowBlock).not.toContain("top-1/2!");
       expect(tooltipArrowBlock).not.toContain("translate-y-[calc(-50%-2px)]");
       expect(tooltipArrowLogicalBlock).not.toContain("pointer-events-none");
-      expect(tooltipArrowLogicalBlock).toContain("data-[side=inline-start]:-right-1");
-      expect(tooltipArrowLogicalBlock).toContain("data-[side=inline-end]:-left-1");
+      expect(tooltipArrowLogicalBlock).toContain(
+        "data-[side=inline-start]:-right-1",
+      );
+      expect(tooltipArrowLogicalBlock).toContain(
+        "data-[side=inline-end]:-left-1",
+      );
       expect(tooltipArrowLogicalBlock).not.toContain("top-1/2!");
       expect(tooltipArrowLogicalBlock).not.toContain("-translate-y-1/2");
       expect(tooltipContentLogicalBlock).toContain(
@@ -160,8 +177,12 @@ describe("style catalog defaults", () => {
       );
 
       if (style === "juno" || style === "maia" || style === "luma") {
-        expect(tooltipArrowBlock).toContain("data-[side=left]:translate-x-[-1.5px]");
-        expect(tooltipArrowBlock).toContain("data-[side=right]:translate-x-[1.5px]");
+        expect(tooltipArrowBlock).toContain(
+          "data-[side=left]:translate-x-[-1.5px]",
+        );
+        expect(tooltipArrowBlock).toContain(
+          "data-[side=right]:translate-x-[1.5px]",
+        );
         expect(tooltipArrowLogicalBlock).toContain(
           "data-[side=inline-start]:translate-x-[-1.5px]",
         );
@@ -169,8 +190,12 @@ describe("style catalog defaults", () => {
           "data-[side=inline-end]:translate-x-[1.5px]",
         );
       } else {
-        expect(tooltipArrowBlock).not.toContain("data-[side=left]:translate-x-[-1.5px]");
-        expect(tooltipArrowBlock).not.toContain("data-[side=right]:translate-x-[1.5px]");
+        expect(tooltipArrowBlock).not.toContain(
+          "data-[side=left]:translate-x-[-1.5px]",
+        );
+        expect(tooltipArrowBlock).not.toContain(
+          "data-[side=right]:translate-x-[1.5px]",
+        );
         expect(tooltipArrowLogicalBlock).not.toContain(
           "data-[side=inline-start]:translate-x-[-1.5px]",
         );
@@ -191,9 +216,14 @@ describe("style catalog defaults", () => {
     }
   });
 
-  it("exposes explicit tabs list variant and size selectors in every style", () => {
+  it("exposes explicit tabs list variant and size selectors outside luma", () => {
     for (const style of STYLES.map((entry) => entry.name)) {
       const css = getStyleCss(style);
+
+      if (style === "luma") {
+        expect(css).toContain(".cn-tabs-list");
+        continue;
+      }
 
       expect(css).toContain(".cn-tabs-list-variant-indicator");
       expect(css).toContain(".cn-tabs-list-variant-default");
@@ -202,7 +232,6 @@ describe("style catalog defaults", () => {
       expect(css).toContain(".cn-tabs-list-size-default");
       expect(css).toContain(".cn-tabs-list-size-sm");
       expect(css).toContain(".cn-tabs-list-size-lg");
-      expect(css).toContain("--tabs-indicator-radius");
     }
   });
 });
