@@ -71,6 +71,7 @@ import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
 | <code>orientation</code> | `"horizontal" \| "vertical"` | `axis === "y" ? "vertical" : "horizontal"` |
 | <code>variant</code> | `"single" \| "multiple"` | `"single"` |
 | <code>defaultIndex</code> | `number` | `0` |
+| <code>"data-loop"</code> | `boolean \| string` | `loop` |
 | <code>loop</code> | `boolean` | `false` |
 | <code>drag</code> | `boolean` | `true` |
 | <code>controls</code> | `boolean` | `true` |
@@ -180,6 +181,26 @@ import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
 </Carousel>
 ```
 
+### Looping
+
+Set `data-loop="true"` to wrap button, keyboard, and programmatic navigation from the last slide to the first and back. Looping defaults to `false`. An explicit `data-loop` value takes precedence over the `loop` prop.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Carousel aria-label="Looping cards" data-loop="true" class="mx-auto max-w-86.5"> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"1"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"2"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"3"}</div></CarouselSlide> </Carousel>
+</div>
+
+```astro
+---
+import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
+---
+
+<Carousel aria-label="Looping cards" data-loop="true" class="mx-auto max-w-86.5">
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">1</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">2</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">3</div></CarouselSlide>
+</Carousel>
+```
+
 ### Navigation and accessibility
 
 Use the previous and next buttons, drag with a mouse, or swipe with touch. Focus the slide viewport to use Left/Right (horizontal), Up/Down (vertical), Home, or End. Data-slot manages slide semantics, inactive content, disabled controls, and reduced-motion scrolling. Give each carousel an accessible name with `aria-label` or `aria-labelledby`.
@@ -249,6 +270,7 @@ The carousel exposes these attributes for styling and state queries:
 |-----------|---------|-------------|
 | `data-orientation` | carousel | Current orientation (`horizontal` or `vertical`) |
 | `data-variant` | carousel | Layout variant (`single` or `multiple`) |
+| `data-loop` | carousel | Set to `"true"` to wrap navigation at either end; defaults to `"false"` |
 | `data-index` | carousel | Zero-based index of the active slide |
 | `data-dragging` | carousel | Present during an active drag gesture |
 | `data-state` | carousel-item | Current slide state (`active` or `inactive`) |
