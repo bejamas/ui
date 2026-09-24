@@ -96,6 +96,13 @@ export const KITCHEN_SINK_PAGES: KitchenSinkPage[] = [
     js: true,
   },
   {
+    id: "drawer",
+    href: "/kitchen-sink/drawer",
+    label: "Drawer",
+    description: "Left, right, and bottom panels, swipe and keyboard dismissal",
+    js: true,
+  },
+  {
     id: "dropdown-menu",
     href: "/kitchen-sink/dropdown-menu",
     label: "Dropdown Menu",

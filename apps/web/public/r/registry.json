@@ -380,6 +380,53 @@
       ]
     },
     {
+      "name": "drawer",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/drawer"],
+      "files": [
+        {
+          "path": "ui/drawer/Drawer.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/drawer/DrawerTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/drawer/DrawerContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/drawer/DrawerClose.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/drawer/DrawerHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/drawer/DrawerTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/drawer/DrawerDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/drawer/DrawerBody.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/drawer/DrawerFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/drawer/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "dropdown-menu",
       "type": "registry:ui",
       "dependencies": ["@data-slot/dropdown-menu"],

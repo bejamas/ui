@@ -1,0 +1,18 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/drawer/DrawerHeader.astro directly.
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="drawer-header"
+  class={cn("flex shrink-0 flex-col gap-2", className)}
+>
+  <slot />
+</div>

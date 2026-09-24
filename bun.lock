@@ -1,6 +1,5 @@
 {
   "lockfileVersion": 1,
-  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "bejamas-ui",
@@ -169,6 +168,7 @@
         "@data-slot/combobox": "^1.0.0",
         "@data-slot/command": "^1.0.0",
         "@data-slot/dialog": "^1.0.0",
+        "@data-slot/drawer": "^1.0.0",
         "@data-slot/dropdown-menu": "^1.0.0",
         "@data-slot/hover-card": "^1.0.0",
         "@data-slot/navigation-menu": "^1.0.0",
@@ -221,6 +221,7 @@
         "@data-slot/combobox": "^1.0.0",
         "@data-slot/command": "^1.0.0",
         "@data-slot/dialog": "^1.0.0",
+        "@data-slot/drawer": "^1.0.0",
         "@data-slot/dropdown-menu": "^1.0.0",
         "@data-slot/hover-card": "^1.0.0",
         "@data-slot/navigation-menu": "^1.0.0",
@@ -479,6 +480,8 @@
     "@data-slot/core": ["@data-slot/core@1.0.0", "", {}, "sha512-UlmlJtCpq4k0qoxAMUEPQ5cgwqmFBToV7z3M4NJ/JQNBqMbaVeY/3gz1UYW17YE/E6kmFkRXtRPtM+HUby+pkw=="],
 
     "@data-slot/dialog": ["@data-slot/dialog@1.0.0", "", { "dependencies": { "@data-slot/core": "1.0.0" } }, "sha512-pT/00DgNHih061xUC6bnWa8M8LYAowtND6DwBbNrq5/PsWh3VDbpUpqlE5uAMV1FnTTgJ2VRwPaUVG+NudubfA=="],
+
+    "@data-slot/drawer": ["@data-slot/drawer@1.0.0", "", { "dependencies": { "@data-slot/core": "1.0.0" } }, "sha512-ZnUFqDoPb2jUDC1ADLidl5aqKLuSIROkBZVG8/kDsFXTKyEz2Lo1RAP73jOKQ2gs93QK9jTvCAAVfA53xSAvWA=="],
 
     "@data-slot/dropdown-menu": ["@data-slot/dropdown-menu@1.0.0", "", { "dependencies": { "@data-slot/core": "1.0.0" } }, "sha512-a89y7yZP5+yg3jFJR8eVklOt99Qck1ZkjxAn0yXFcUzxM5DbcRiX3DwjHK09ymW0xssqnsEeUnWs+3DVe4Zn8Q=="],
 

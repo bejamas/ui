@@ -380,6 +380,53 @@
       ]
     },
     {
+      "name": "drawer",
+      "type": "registry:ui",
+      "dependencies": ["@data-slot/drawer"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/drawer/Drawer.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/drawer/DrawerTrigger.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/drawer/DrawerContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/drawer/DrawerClose.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/drawer/DrawerHeader.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/drawer/DrawerTitle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/drawer/DrawerDescription.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/drawer/DrawerBody.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/drawer/DrawerFooter.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/drawer/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "dropdown-menu",
       "type": "registry:ui",
       "dependencies": ["@data-slot/dropdown-menu"],

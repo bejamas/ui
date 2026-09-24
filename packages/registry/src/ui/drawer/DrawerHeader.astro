@@ -1,0 +1,17 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="drawer-header"
+  class={cn("flex shrink-0 flex-col gap-2", className)}
+>
+  <slot />
+</div>

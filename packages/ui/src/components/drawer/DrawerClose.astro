@@ -1,0 +1,23 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/drawer/DrawerClose.astro directly.
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"button"> {
+  class?: string;
+}
+const {
+  class: className = "",
+  type = "button",
+  ...rest
+} = Astro.props as Props;
+---
+
+<button
+  {...rest}
+  type={type}
+  data-slot="drawer-close"
+  class={cn("", className)}
+>
+  <slot />
+</button>

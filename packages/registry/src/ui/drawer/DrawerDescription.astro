@@ -1,0 +1,17 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"p"> {
+  class?: string;
+}
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<p
+  {...rest}
+  data-slot="drawer-description"
+  class={cn("text-xs leading-4 font-medium text-muted-foreground", className)}
+>
+  <slot />
+</p>

@@ -1,0 +1,165 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div data-slot="drawer-portal">
+  <div
+    data-slot="drawer-backdrop"
+    class="fixed inset-0 z-50 bg-foreground/20"
+    hidden
+  ></div>
+  <div
+    data-slot="drawer-viewport"
+    class="fixed inset-0 z-50 pointer-events-none"
+    hidden
+  >
+    <div
+      {...rest}
+      data-slot="drawer-popup"
+      class={cn(
+        "pointer-events-auto flex flex-col gap-4 overflow-hidden border border-border bg-background p-4 text-foreground shadow-lg outline-none",
+        className,
+      )}
+      hidden
+    >
+      <div
+        data-slot="drawer-handle"
+        class="mx-auto h-1.5 w-[100px] shrink-0 rounded-full bg-muted"
+        aria-hidden="true"
+      ></div>
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  [data-slot="drawer-backdrop"] {
+    transition: opacity 250ms ease;
+  }
+
+  [data-slot="drawer-backdrop"][data-starting-style],
+  [data-slot="drawer-backdrop"][data-ending-style] {
+    opacity: 0;
+  }
+
+  [data-slot="drawer-backdrop"][data-nonmodal] {
+    pointer-events: none;
+    background: transparent;
+  }
+
+  [data-slot="drawer-body"] {
+    scrollbar-color: var(--border) transparent;
+    scrollbar-width: thin;
+  }
+
+  [data-slot="drawer-popup"] {
+    position: fixed;
+    z-index: 51;
+    transition: transform 250ms ease;
+    max-width: 100vw;
+    max-height: 100dvh;
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="right"] {
+    inset-block: 0;
+    right: 0;
+    width: 300px;
+    border-radius: var(--radius-2xl, 16px) 0 0 var(--radius-2xl, 16px);
+    transform: translateX(
+      calc(
+        var(--drawer-snap-point-offset, 0px) +
+          var(--drawer-swipe-movement-x, 0px)
+      )
+    );
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="left"] {
+    inset-block: 0;
+    left: 0;
+    width: 300px;
+    border-radius: 0 var(--radius-2xl, 16px) var(--radius-2xl, 16px) 0;
+    transform: translateX(
+      calc(
+        var(--drawer-snap-point-offset, 0px) +
+          var(--drawer-swipe-movement-x, 0px)
+      )
+    );
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="down"] {
+    inset-inline: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: 80dvh;
+    padding-top: 8px;
+    border-radius: var(--radius-2xl, 16px) var(--radius-2xl, 16px) 0 0;
+    transform: translateY(
+      calc(
+        var(--drawer-snap-point-offset, 0px) +
+          var(--drawer-swipe-movement-y, 0px)
+      )
+    );
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="right"][data-starting-style],
+  [data-slot="drawer-popup"][data-swipe-direction="right"][data-ending-style] {
+    transform: translateX(100%);
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="left"][data-starting-style],
+  [data-slot="drawer-popup"][data-swipe-direction="left"][data-ending-style] {
+    transform: translateX(-100%);
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="down"][data-starting-style],
+  [data-slot="drawer-popup"][data-swipe-direction="down"][data-ending-style] {
+    transform: translateY(100%);
+  }
+
+  [data-slot="drawer-popup"][data-swiping] {
+    transition: none;
+  }
+
+  [data-slot="drawer-handle"] {
+    display: none;
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="down"]
+    > [data-slot="drawer-handle"] {
+    display: block;
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="down"]
+    > [data-slot="drawer-header"] {
+    align-self: center;
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="down"]
+    > [data-slot="drawer-body"] {
+    flex: 0 1 auto;
+    width: 100%;
+  }
+
+  [data-slot="drawer-popup"][data-swipe-direction="down"]
+    > [data-slot="drawer-footer"] {
+    align-self: center;
+    max-width: 600px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="drawer-popup"],
+    [data-slot="drawer-backdrop"] {
+      transition-duration: 0ms;
+    }
+  }
+</style>
