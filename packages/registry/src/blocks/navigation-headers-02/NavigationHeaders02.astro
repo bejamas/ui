@@ -1,0 +1,112 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@bejamas/registry/ui/dropdown-menu";
+import { StickySurface } from "@bejamas/registry/ui/sticky-surface";
+
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  brand?: string;
+  announcement?: string;
+  announcementHref?: string;
+  announcementLinkLabel?: string;
+  homeHref?: string;
+  links?: NavLink[];
+  class?: string;
+}
+
+const defaultLinks: NavLink[] = [
+  { label: "Home", href: "/" },
+  { label: "Company", href: "#company" },
+  { label: "Contact", href: "#contact" },
+];
+
+const {
+  brand = "Acme",
+  announcement = "New release available!",
+  announcementHref = "#changelog",
+  announcementLinkLabel = "See the changelog",
+  homeHref = "/",
+  links = defaultLinks,
+  class: className = "",
+} = Astro.props as Props;
+
+const menuLinkClass =
+  "flex w-full rounded-lg px-3 py-2 text-sm hover:bg-accent focus-visible:bg-accent focus-visible:outline-none";
+---
+
+<div class:list={["w-full", className]}>
+  <div class="bg-muted px-4 py-3 text-center text-sm text-muted-foreground">
+    {announcement}
+    <a
+      href={announcementHref}
+      class="font-medium text-foreground underline underline-offset-4"
+      >{announcementLinkLabel}</a
+    >
+  </div>
+  <StickySurface
+    as="header"
+    effects={["line"]}
+    threshold="1rem"
+    observeStuck
+    class="bg-background/95 backdrop-blur"
+  >
+    <nav
+      aria-label="Primary"
+      class="mx-auto flex h-16 max-w-6xl items-center gap-6 px-6"
+    >
+      <a href={homeHref} class="mr-auto text-lg font-semibold tracking-tight"
+        >{brand}</a
+      >
+      <ul class="hidden items-center gap-1 md:flex">
+        {
+          links.map((link) => (
+            <li>
+              <Button as="a" href={link.href} variant="ghost">
+                {link.label}
+              </Button>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="flex items-center gap-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            variant="outline"
+            class="md:hidden"
+            aria-label="Open navigation menu">Menu</DropdownMenuTrigger
+          >
+          <DropdownMenuContent align="end" class="w-48 p-2">
+            <ul class="grid gap-1">
+              {
+                links.map((link) => (
+                  <li>
+                    <a href={link.href} class={menuLinkClass}>
+                      {link.label}
+                    </a>
+                  </li>
+                ))
+              }
+              <li><a href="#login" class={menuLinkClass}>Log in</a></li>
+            </ul>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Button
+          as="a"
+          href="#login"
+          variant="outline"
+          class="hidden transition-all duration-300 ease-out sm:inline-flex group-[.is-stuck]/surface:opacity-0 group-[.is-stuck]/surface:blur-sm"
+          >Log in</Button
+        >
+        <Button as="a" href="#contact">Get a demo</Button>
+      </div>
+    </nav>
+  </StickySurface>
+</div>

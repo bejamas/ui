@@ -36,6 +36,8 @@ const webRoot = path.resolve(repoRoot, "apps/web");
 const stylesRoot = path.resolve(webRoot, "public/r/styles");
 const templateStyleDir = path.resolve(stylesRoot, STYLES[0].id);
 const registrySourceRoot = path.resolve(__dirname, "..", "src");
+const sourceRegistryPath = path.resolve(webRoot, "registry.json");
+const blockSourcePathPrefix = "../../packages/registry/src/blocks/";
 const schemaUrl = "https://ui.shadcn.com/schema/registry-item.json";
 const preservedTokens = new Set([
   "cn-font-heading",
@@ -48,6 +50,7 @@ const installerRewrittenIconDependencies = new Set([
   "@lucide/astro",
 ]);
 const templateCache = new Map<string, RegistryItem>();
+let blockTemplateCache: Map<string, RegistryItem> | undefined;
 const fileContentCache = new Map<string, string>();
 
 function splitSelectors(selector: string) {
@@ -345,10 +348,11 @@ function expandCnTokens(value: string, tokenMap: TokenMap) {
 }
 
 export function transformRegistrySource(content: string, tokenMap: TokenMap) {
-  const normalizedImports = content.replace(
-    /@bejamas\/registry\/lib\//g,
-    "@/lib/",
-  );
+  // Blocks import shared UI through the registry alias that both shadcn and the
+  // Bejamas installer rewrite to the project's configured `aliases.ui`.
+  const normalizedImports = content
+    .replace(/@bejamas\/registry\/lib\//g, "@/lib/")
+    .replace(/@bejamas\/registry\/ui\//g, "@/registry/bejamas/ui/");
 
   return normalizedImports.replace(
     /(["'`])((?:\\.|(?!\1)[\s\S])*?)\1/g,
@@ -430,13 +434,53 @@ async function listJsonFiles(filepath: string) {
     .map((entry) => entry.name);
 }
 
+export function normalizeBlockRegistryPath(filePath: string) {
+  return filePath.startsWith(blockSourcePathPrefix)
+    ? filePath.replace(blockSourcePathPrefix, "blocks/")
+    : filePath;
+}
+
+/**
+ * Blocks are authored once in `apps/web/registry.json` (the shadcn build input)
+ * and reused as templates for every style bundle, so their metadata never
+ * drifts between the default and styled registries.
+ */
+export async function readBlockTemplateItems() {
+  if (blockTemplateCache) {
+    return blockTemplateCache;
+  }
+
+  const sourceRegistry = await readJson<{ items?: RegistryItem[] }>(
+    sourceRegistryPath,
+  );
+  blockTemplateCache = new Map(
+    (sourceRegistry.items ?? [])
+      .filter((item) => item.type === "registry:block")
+      .map((item) => [
+        item.name,
+        {
+          ...item,
+          files: item.files?.map((file) => ({
+            ...file,
+            path: normalizeBlockRegistryPath(file.path),
+          })),
+        },
+      ]),
+  );
+
+  return blockTemplateCache;
+}
+
 async function readTemplateItem(name: string) {
   const cached = templateCache.get(name);
   if (cached) {
     return cached;
   }
 
-  const item = await readJson<RegistryItem>(path.resolve(templateStyleDir, `${name}.json`));
+  const blockTemplate = (await readBlockTemplateItems()).get(name);
+  const item =
+    blockTemplate ??
+    (await readJson<RegistryItem>(path.resolve(templateStyleDir, `${name}.json`)));
   templateCache.set(name, item);
   return item;
 }
@@ -471,6 +515,10 @@ function inferRegistryFileType(filePath: string) {
     return "registry:lib";
   }
 
+  if (filePath.startsWith("blocks/")) {
+    return "registry:component";
+  }
+
   throw new Error(`Unsupported registry file type for ${filePath}`);
 }
 
@@ -500,6 +548,10 @@ function resolveSourceFile(templatePath: string) {
 
   if (templatePath.startsWith("lib/")) {
     return path.resolve(registrySourceRoot, templatePath.replace(/^lib\//, "lib/"));
+  }
+
+  if (templatePath.startsWith("blocks/")) {
+    return path.resolve(registrySourceRoot, templatePath);
   }
 
   throw new Error(`Unsupported registry source path: ${templatePath}`);
@@ -670,11 +722,22 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
 }
 
 export async function getTemplateItemNames() {
-  return (await listJsonFiles(templateStyleDir))
-    .filter((filename) => filename !== "index.json")
-    .map((filename) => filename.replace(/\.json$/, ""))
-    .filter((name) => !internalIconRegistryItems.has(name))
-    .sort();
+  const blockNames = Array.from((await readBlockTemplateItems()).keys());
+  const legacyTemplates = await Promise.all(
+    (await listJsonFiles(templateStyleDir))
+      .filter((filename) => filename !== "index.json")
+      .map((filename) =>
+        readJson<RegistryItem>(path.resolve(templateStyleDir, filename)),
+      ),
+  );
+  // UI templates still live in the Juno registry. Published blocks are outputs
+  // only: keeping them here resurrects deleted or renamed manifest entries.
+  const templateNames = legacyTemplates
+    .filter((item) => item.type !== "registry:block")
+    .map((item) => item.name)
+    .filter((name) => !internalIconRegistryItems.has(name));
+
+  return Array.from(new Set([...templateNames, ...blockNames])).sort();
 }
 
 async function buildStylesIndex() {
