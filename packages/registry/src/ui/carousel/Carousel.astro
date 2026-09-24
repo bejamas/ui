@@ -28,22 +28,6 @@
  * </Carousel>
  * ```
  *
- * @props
- * - orientation?: "horizontal" | "vertical" — Direction of navigation. Default: "horizontal".
- * - variant?: "single" | "multiple" — One card or two cards per page. Default: "single".
- * - defaultIndex?: number — Initial page index (zero-based). Default: 0.
- * - loop?: boolean — Wrap navigation at the first and last pages. Default: false.
- * - drag?: boolean — Enable mouse and touch dragging. Default: true.
- * - controls?: boolean — Show previous and next buttons. Default: true.
- * - showCounter?: boolean — Show the current page counter. Defaults to true for horizontal single carousels.
- * - counterLabel?: string — Counter prefix. Defaults to "Card" for single and "Page" for multiple.
- * - previousLabel?: string — Accessible previous button label. Default: "Previous slide".
- * - nextLabel?: string — Accessible next button label. Default: "Next slide".
- * - contentClass?: string — Classes for the scroll viewport, including vertical height.
- * - axis?: "x" | "y" — Legacy orientation alias. Explicit orientation takes precedence.
- * - snapType?: "mandatory" | "proximity" — Native snap behavior. Default: "mandatory".
- * - fade?: boolean — Fade the viewport edges. Default: false.
- *
  * @examples
  *
  * ### Horizontal single
@@ -112,9 +96,66 @@
  *
  * Use `class` for the carousel's outer width and `contentClass` for the viewport. Vertical carousels need an explicit viewport height. Slides fill the viewport; keep card dimensions inside the slide. The former `axis="y"` spelling remains an alias for `orientation="vertical"`. Scroll spacing and height classes previously placed on the root should move to `contentClass`. The old `align` prop is replaced by full-page start snapping so buttons, gestures, and keyboard navigation share the same positions.
  *
- * ## Events
+ * @api
  *
- * Listen for `carousel:change` on the root to read `event.detail.index`. Dispatch `new CustomEvent("carousel:set", { detail: { index: 2 } })` on the root to select a page, or use `{ action: "next" }` / `{ action: "prev" }` to navigate.
+ * ### Events
+ *
+ * The carousel emits custom events on its root element:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `carousel:change` | `{ index: number }` | Fired when the active slide changes. The index is zero-based. |
+ *
+ * ```astro nocollapse
+ * <Carousel id="my-carousel" aria-label="Featured cards" class="max-w-sm">
+ *   <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 1</div></CarouselSlide>
+ *   <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 2</div></CarouselSlide>
+ *   <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 3</div></CarouselSlide>
+ * </Carousel>
+ * ```
+ *
+ * ```js nocollapse
+ * const carousel = document.getElementById('my-carousel');
+ *
+ * carousel.addEventListener('carousel:change', (event) => {
+ *   console.log('Active slide:', event.detail.index);
+ * });
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * Dispatch `carousel:set` on the root to select a slide or navigate:
+ *
+ * ```js nocollapse
+ * const carousel = document.getElementById('my-carousel');
+ *
+ * // Select the third slide (zero-based index).
+ * carousel.dispatchEvent(new CustomEvent('carousel:set', {
+ *   detail: { index: 2 }
+ * }));
+ *
+ * // Move to the next slide.
+ * carousel.dispatchEvent(new CustomEvent('carousel:set', {
+ *   detail: { action: 'next' }
+ * }));
+ *
+ * // Move to the previous slide.
+ * carousel.dispatchEvent(new CustomEvent('carousel:set', {
+ *   detail: { action: 'prev' }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The carousel exposes these attributes for styling and state queries:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-orientation` | carousel | Current orientation (`horizontal` or `vertical`) |
+ * | `data-variant` | carousel | Layout variant (`single` or `multiple`) |
+ * | `data-index` | carousel | Zero-based index of the active slide |
+ * | `data-dragging` | carousel | Present during an active drag gesture |
+ * | `data-state` | carousel-item | Current slide state (`active` or `inactive`) |
  */
 import type { HTMLAttributes } from "astro/types";
 import { cn } from "@bejamas/registry/lib/utils";

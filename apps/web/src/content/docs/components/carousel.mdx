@@ -192,6 +192,63 @@ Each `CarouselSlide` is one full viewport page and can contain any number of ele
 
 Use `class` for the carousel's outer width and `contentClass` for the viewport. Vertical carousels need an explicit viewport height. Slides fill the viewport; keep card dimensions inside the slide. The former `axis="y"` spelling remains an alias for `orientation="vertical"`. Scroll spacing and height classes previously placed on the root should move to `contentClass`. The old `align` prop is replaced by full-page start snapping so buttons, gestures, and keyboard navigation share the same positions.
 
+## API Reference
+
 ### Events
 
-Listen for `carousel:change` on the root to read `event.detail.index`. Dispatch `new CustomEvent("carousel:set", { detail: { index: 2 } })` on the root to select a page, or use `{ action: "next" }` / `{ action: "prev" }` to navigate.
+The carousel emits custom events on its root element:
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `carousel:change` | `{ index: number }` | Fired when the active slide changes. The index is zero-based. |
+
+```astro nocollapse
+<Carousel id="my-carousel" aria-label="Featured cards" class="max-w-sm">
+  <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 1</div></CarouselSlide>
+  <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 2</div></CarouselSlide>
+  <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 3</div></CarouselSlide>
+</Carousel>
+```
+
+```js nocollapse
+const carousel = document.getElementById('my-carousel');
+
+carousel.addEventListener('carousel:change', (event) => {
+  console.log('Active slide:', event.detail.index);
+});
+```
+
+### Programmatic Control
+
+Dispatch `carousel:set` on the root to select a slide or navigate:
+
+```js nocollapse
+const carousel = document.getElementById('my-carousel');
+
+// Select the third slide (zero-based index).
+carousel.dispatchEvent(new CustomEvent('carousel:set', {
+  detail: { index: 2 }
+}));
+
+// Move to the next slide.
+carousel.dispatchEvent(new CustomEvent('carousel:set', {
+  detail: { action: 'next' }
+}));
+
+// Move to the previous slide.
+carousel.dispatchEvent(new CustomEvent('carousel:set', {
+  detail: { action: 'prev' }
+}));
+```
+
+### Data Attributes
+
+The carousel exposes these attributes for styling and state queries:
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-orientation` | carousel | Current orientation (`horizontal` or `vertical`) |
+| `data-variant` | carousel | Layout variant (`single` or `multiple`) |
+| `data-index` | carousel | Zero-based index of the active slide |
+| `data-dragging` | carousel | Present during an active drag gesture |
+| `data-state` | carousel-item | Current slide state (`active` or `inactive`) |
