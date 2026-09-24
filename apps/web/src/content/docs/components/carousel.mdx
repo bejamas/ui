@@ -1,6 +1,6 @@
 ---
 title: "Carousel"
-description: "A CSS scroll-snap carousel using only Tailwind classes (no JS)."
+description: "An accessible, draggable carousel powered by data-slot, with horizontal and vertical layouts."
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -8,7 +8,7 @@ import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/com
 import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
 
 <div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-{/* Horizontal images with center snapping */} <Carousel class="gap-4 p-2" align="center"> <CarouselSlide><img src="https://images.unsplash.com/photo-1759332978018-a6efdacf4d11?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1290" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide> <CarouselSlide><img src="https://plus.unsplash.com/premium_photo-1760541740387-e0af5182d805?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1335" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide> <CarouselSlide><img src="https://images.unsplash.com/photo-1760659391924-86d657118008?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2340" alt="Example" class="w-120 h-96 object-cover rounded-lg" /></CarouselSlide> </Carousel>
+<Carousel aria-label="Horizontal single cards" class="mx-auto max-w-86.5"> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"1"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"2"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"3"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"4"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"5"}</div></CarouselSlide> </Carousel>
 </div>
 
 ```astro
@@ -16,11 +16,12 @@ import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
 import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
 ---
 
-<!-- Horizontal images with center snapping -->
-<Carousel class="gap-4 p-2" align="center">
-  <CarouselSlide><img src="https://images.unsplash.com/photo-1759332978018-a6efdacf4d11?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1290" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide>
-  <CarouselSlide><img src="https://plus.unsplash.com/premium_photo-1760541740387-e0af5182d805?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1335" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide>
-  <CarouselSlide><img src="https://images.unsplash.com/photo-1760659391924-86d657118008?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2340" alt="Example" class="w-120 h-96 object-cover rounded-lg" /></CarouselSlide>
+<Carousel aria-label="Horizontal single cards" class="mx-auto max-w-86.5">
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">1</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">2</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">3</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">4</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">5</div></CarouselSlide>
 </Carousel>
 ```
 
@@ -53,13 +54,13 @@ import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
 
 ```astro nocollapse
 ---
-import { Carousel, CarouselSlide } from '@bejamas/ui/components/carousel';
+import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
 ---
 
-<Carousel>
-  <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 1</div></CarouselSlide>
-  <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 2</div></CarouselSlide>
-  <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 3</div></CarouselSlide>
+<Carousel aria-label="Featured cards" class="max-w-sm">
+  <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 1</div></CarouselSlide>
+  <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 2</div></CarouselSlide>
+  <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 3</div></CarouselSlide>
 </Carousel>
 ```
 
@@ -67,8 +68,196 @@ import { Carousel, CarouselSlide } from '@bejamas/ui/components/carousel';
 
 | Prop | Type | Default |
 |---|---|---|
-| <code>axis</code> | `Axis` | `"x"` |
-| <code>snapType</code> | `SnapType` | `"mandatory"` |
-| <code>align</code> | `Align` | `"start"` |
+| <code>orientation</code> | `"horizontal" \| "vertical"` | `axis === "y" ? "vertical" : "horizontal"` |
+| <code>variant</code> | `"single" \| "multiple"` | `"single"` |
+| <code>defaultIndex</code> | `number` | `0` |
+| <code>"data-loop"</code> | `boolean \| string` | `false` |
+| <code>drag</code> | `boolean` | `true` |
+| <code>controls</code> | `boolean` | `true` |
+| <code>showCounter</code> | `boolean` | `orientation === "horizontal" && variant === "single"` |
+| <code>counterLabel</code> | `string` | `variant === "multiple" ? "Page" : "Card"` |
+| <code>previousLabel</code> | `string` | `"Previous slide"` |
+| <code>nextLabel</code> | `string` | `"Next slide"` |
+| <code>contentClass</code> | `string` |  |
+| <code>axis</code> | `"x" \| "y"` | `"x"` |
+| <code>snapType</code> | `"mandatory" \| "proximity"` | `"mandatory"` |
 | <code>fade</code> | `boolean` | `false` |
-| <code>class</code> | `string` | `""` |
+| <code>class</code> | `string` |  |
+
+## Examples
+
+### Horizontal single
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Carousel aria-label="Horizontal single cards" class="mx-auto max-w-86.5"> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"1"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"2"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"3"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"4"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"5"}</div></CarouselSlide> </Carousel>
+</div>
+
+```astro
+---
+import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
+---
+
+<Carousel aria-label="Horizontal single cards" class="mx-auto max-w-86.5">
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">1</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">2</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">3</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">4</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">5</div></CarouselSlide>
+</Carousel>
+```
+
+### Horizontal multiple
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Carousel aria-label="Horizontal multiple cards" variant="multiple" class="mx-auto max-w-108"> <CarouselSlide> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"1"}</div> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"2"}</div> </CarouselSlide> <CarouselSlide> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"3"}</div> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"4"}</div> </CarouselSlide> <CarouselSlide> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"5"}</div> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"6"}</div> </CarouselSlide> </Carousel>
+</div>
+
+```astro
+---
+import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
+---
+
+<Carousel aria-label="Horizontal multiple cards" variant="multiple" class="mx-auto max-w-108">
+  <CarouselSlide>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">1</div>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">2</div>
+  </CarouselSlide>
+  <CarouselSlide>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">3</div>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">4</div>
+  </CarouselSlide>
+  <CarouselSlide>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">5</div>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">6</div>
+  </CarouselSlide>
+</Carousel>
+```
+
+### Vertical single
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Carousel aria-label="Vertical single cards" orientation="vertical" class="mx-auto max-w-75" contentClass="h-50"> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">{"1"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">{"2"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">{"3"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">{"4"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">{"5"}</div></CarouselSlide> </Carousel>
+</div>
+
+```astro
+---
+import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
+---
+
+<Carousel aria-label="Vertical single cards" orientation="vertical" class="mx-auto max-w-75" contentClass="h-50">
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">1</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">2</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">3</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">4</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">5</div></CarouselSlide>
+</Carousel>
+```
+
+### Vertical multiple
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Carousel aria-label="Vertical multiple cards" orientation="vertical" variant="multiple" class="mx-auto max-w-75" contentClass="h-79"> <CarouselSlide> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">{"1"}</div> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">{"2"}</div> </CarouselSlide> <CarouselSlide> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">{"3"}</div> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">{"4"}</div> </CarouselSlide> <CarouselSlide> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">{"5"}</div> <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">{"6"}</div> </CarouselSlide> </Carousel>
+</div>
+
+```astro
+---
+import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
+---
+
+<Carousel aria-label="Vertical multiple cards" orientation="vertical" variant="multiple" class="mx-auto max-w-75" contentClass="h-79">
+  <CarouselSlide>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">1</div>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">2</div>
+  </CarouselSlide>
+  <CarouselSlide>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">3</div>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">4</div>
+  </CarouselSlide>
+  <CarouselSlide>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">5</div>
+    <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">6</div>
+  </CarouselSlide>
+</Carousel>
+```
+
+### Looping
+
+Set `data-loop="true"` to wrap button, keyboard, and programmatic navigation from the last slide to the first and back. Looping defaults to `false`.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Carousel aria-label="Looping cards" data-loop="true" class="mx-auto max-w-86.5"> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"1"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"2"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"3"}</div></CarouselSlide> </Carousel>
+</div>
+
+```astro
+---
+import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
+---
+
+<Carousel aria-label="Looping cards" data-loop="true" class="mx-auto max-w-86.5">
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">1</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">2</div></CarouselSlide>
+  <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">3</div></CarouselSlide>
+</Carousel>
+```
+
+## API Reference
+
+### Events
+
+The carousel emits custom events on its root element:
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `carousel:change` | `{ index: number }` | Fired when the active slide changes. The index is zero-based. |
+
+```astro nocollapse
+<Carousel id="my-carousel" aria-label="Featured cards" class="max-w-sm">
+  <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 1</div></CarouselSlide>
+  <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 2</div></CarouselSlide>
+  <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 3</div></CarouselSlide>
+</Carousel>
+```
+
+```js nocollapse
+const carousel = document.getElementById('my-carousel');
+
+carousel.addEventListener('carousel:change', (event) => {
+  console.log('Active slide:', event.detail.index);
+});
+```
+
+### Programmatic Control
+
+Dispatch `carousel:set` on the root to select a slide or navigate:
+
+```js nocollapse
+const carousel = document.getElementById('my-carousel');
+
+// Select the third slide (zero-based index).
+carousel.dispatchEvent(new CustomEvent('carousel:set', {
+  detail: { index: 2 }
+}));
+
+// Move to the next slide.
+carousel.dispatchEvent(new CustomEvent('carousel:set', {
+  detail: { action: 'next' }
+}));
+
+// Move to the previous slide.
+carousel.dispatchEvent(new CustomEvent('carousel:set', {
+  detail: { action: 'prev' }
+}));
+```
+
+### Data Attributes
+
+The carousel exposes these attributes for styling and state queries:
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-orientation` | carousel | Current orientation (`horizontal` or `vertical`) |
+| `data-variant` | carousel | Layout variant (`single` or `multiple`) |
+| `data-loop` | carousel | Set to `"true"` to wrap navigation at either end; defaults to `"false"` |
+| `data-index` | carousel | Zero-based index of the active slide |
+| `data-dragging` | carousel | Present during an active drag gesture |
+| `data-state` | carousel-item | Current slide state (`active` or `inactive`) |
