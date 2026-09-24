@@ -210,6 +210,8 @@
     {
       "name": "carousel",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/carousel"],
+      "registryDependencies": ["button"],
       "files": [
         {
           "path": "../../packages/ui/src/components/carousel/Carousel.astro",

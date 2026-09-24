@@ -60,7 +60,8 @@ export const KITCHEN_SINK_PAGES: KitchenSinkPage[] = [
     id: "carousel",
     href: "/kitchen-sink/carousel",
     label: "Carousel",
-    description: "Basic, vertical, snap proximity, center aligned, fade, multiple items",
+    description: "Horizontal and vertical, single and multiple cards, drag, keyboard navigation, looping",
+    js: true,
   },
   {
     id: "checkbox",

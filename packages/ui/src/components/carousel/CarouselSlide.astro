@@ -7,17 +7,17 @@ interface Props extends HTMLAttributes<"div"> {
   class?: string;
 }
 
-const {
-  class: className = "",
-  ...rest
-} = Astro.props as Props;
+const { class: className, ...rest } = Astro.props;
 ---
 
 <div
   {...rest}
-  data-slot="carousel-slide"
-  class={cn("", "shrink-0", className)}
+  data-slot="carousel-item"
+  class={cn(
+    "min-h-0 min-w-0 basis-full shrink-0 snap-start",
+    "group-data-[variant=multiple]/carousel:grid group-data-[variant=multiple]/carousel:gap-4 group-data-[orientation=horizontal]/carousel:grid-cols-2 group-data-[orientation=vertical]/carousel:grid-rows-2",
+    className,
+  )}
 >
   <slot />
 </div>
-

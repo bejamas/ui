@@ -3,15 +3,16 @@
 /**
  * @component Carousel
  * @title Carousel
- * @description A CSS scroll-snap carousel using only Tailwind classes (no JS).
+ * @description An accessible, draggable carousel powered by data-slot, with horizontal and vertical layouts.
  *
  * @preview
  *
- * <!-- Horizontal images with center snapping -->
- * <Carousel class="gap-4 p-2" align="center">
- *   <CarouselSlide><img src="https://images.unsplash.com/photo-1759332978018-a6efdacf4d11?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1290" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide>
- *   <CarouselSlide><img src="https://plus.unsplash.com/premium_photo-1760541740387-e0af5182d805?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1335" alt="Example" class="w-64 h-96 object-cover rounded-lg" /></CarouselSlide>
- *   <CarouselSlide><img src="https://images.unsplash.com/photo-1760659391924-86d657118008?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2340" alt="Example" class="w-120 h-96 object-cover rounded-lg" /></CarouselSlide>
+ * <Carousel aria-label="Horizontal single cards" class="mx-auto max-w-86.5">
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">1</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">2</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">3</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">4</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">5</div></CarouselSlide>
  * </Carousel>
  *
  * @usage
@@ -21,87 +22,262 @@
  * import { Carousel, CarouselSlide } from '@bejamas/ui/components/carousel';
  * ---
  *
- * <Carousel>
- *   <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 1</div></CarouselSlide>
- *   <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 2</div></CarouselSlide>
- *   <CarouselSlide><div class="w-72 bg-muted rounded-xl p-6">Item 3</div></CarouselSlide>
+ * <Carousel aria-label="Featured cards" class="max-w-sm">
+ *   <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 1</div></CarouselSlide>
+ *   <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 2</div></CarouselSlide>
+ *   <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 3</div></CarouselSlide>
  * </Carousel>
  * ```
  *
  * @props
- * - axis?: "x" | "y" — Scroll direction. Default: "x".
- * - snapType?: "mandatory" | "proximity" — Scroll-snap behavior. Default: "mandatory".
- * - align?: "start" | "center" | "end" — Child snap alignment. Default: "start".
- * - fade?: boolean — Add edge fade via CSS mask on the scroll axis. Default: false.
+ * - orientation?: "horizontal" | "vertical" — Direction of navigation. Default: "horizontal".
+ * - variant?: "single" | "multiple" — One card or two cards per page. Default: "single".
+ * - defaultIndex?: number — Initial page index (zero-based). Default: 0.
+ * - loop?: boolean — Wrap navigation at the first and last pages. Default: false.
+ * - drag?: boolean — Enable mouse and touch dragging. Default: true.
+ * - controls?: boolean — Show previous and next buttons. Default: true.
+ * - showCounter?: boolean — Show the current page counter. Defaults to true for horizontal single carousels.
+ * - counterLabel?: string — Counter prefix. Defaults to "Card" for single and "Page" for multiple.
+ * - previousLabel?: string — Accessible previous button label. Default: "Previous slide".
+ * - nextLabel?: string — Accessible next button label. Default: "Next slide".
+ * - contentClass?: string — Classes for the scroll viewport, including vertical height.
+ * - axis?: "x" | "y" — Legacy orientation alias. Explicit orientation takes precedence.
+ * - snapType?: "mandatory" | "proximity" — Native snap behavior. Default: "mandatory".
+ * - fade?: boolean — Fade the viewport edges. Default: false.
+ *
+ * @examples
+ *
+ * ### Horizontal single
+ *
+ * <Carousel aria-label="Horizontal single cards" class="mx-auto max-w-86.5">
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">1</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">2</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">3</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">4</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">5</div></CarouselSlide>
+ * </Carousel>
+ *
+ * ### Horizontal multiple
+ *
+ * <Carousel aria-label="Horizontal multiple cards" variant="multiple" class="mx-auto max-w-108">
+ *   <CarouselSlide>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">1</div>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">2</div>
+ *   </CarouselSlide>
+ *   <CarouselSlide>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">3</div>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">4</div>
+ *   </CarouselSlide>
+ *   <CarouselSlide>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">5</div>
+ *   </CarouselSlide>
+ * </Carousel>
+ *
+ * ### Vertical single
+ *
+ * <Carousel aria-label="Vertical single cards" orientation="vertical" class="mx-auto max-w-75" contentClass="h-50">
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">1</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">2</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">3</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">4</div></CarouselSlide>
+ *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold h-full">5</div></CarouselSlide>
+ * </Carousel>
+ *
+ * ### Vertical multiple
+ *
+ * <Carousel aria-label="Vertical multiple cards" orientation="vertical" variant="multiple" class="mx-auto max-w-75" contentClass="h-79">
+ *   <CarouselSlide>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">1</div>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">2</div>
+ *   </CarouselSlide>
+ *   <CarouselSlide>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">3</div>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">4</div>
+ *   </CarouselSlide>
+ *   <CarouselSlide>
+ *     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">5</div>
+ *   </CarouselSlide>
+ * </Carousel>
+ *
+ * ## Navigation and accessibility
+ *
+ * Use the previous and next buttons, drag with a mouse, or swipe with touch. Focus the slide viewport to use Left/Right (horizontal), Up/Down (vertical), Home, or End. Data-slot manages slide semantics, inactive content, disabled controls, and reduced-motion scrolling. Give each carousel an accessible name with `aria-label` or `aria-labelledby`.
+ *
+ * ## Multiple cards
+ *
+ * Each `CarouselSlide` is one full viewport page. With `variant="multiple"`, put up to two cards inside each slide: they form columns horizontally and rows vertically. Navigation advances one page at a time, keeping both visible cards accessible. The last page may contain a single card. A counter on this variant counts pages.
+ *
+ * ## Sizing and migration
+ *
+ * Use `class` for the carousel's outer width and `contentClass` for the viewport. Vertical carousels need an explicit viewport height. Slides fill the viewport; keep card dimensions inside the slide. The former `axis="y"` spelling remains an alias for `orientation="vertical"`. Scroll spacing and height classes previously placed on the root should move to `contentClass`. The old `align` prop is replaced by full-page start snapping so buttons, gestures, and keyboard navigation share the same positions.
+ *
+ * ## Events
+ *
+ * Listen for `carousel:change` on the root to read `event.detail.index`. Dispatch `new CustomEvent("carousel:set", { detail: { index: 2 } })` on the root to select a page, or use `{ action: "next" }` / `{ action: "prev" }` to navigate.
  */
-
 import type { HTMLAttributes } from "astro/types";
-import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
-
-type Axis = "x" | "y";
-type SnapType = "mandatory" | "proximity";
-type Align = "start" | "center" | "end";
+import Button from "../button/Button.astro";
+import SemanticIcon from "../icon/SemanticIcon.astro";
 
 interface Props extends HTMLAttributes<"div"> {
-  axis?: Axis;
-  snapType?: SnapType;
-  align?: Align;
+  orientation?: "horizontal" | "vertical";
+  variant?: "single" | "multiple";
+  defaultIndex?: number;
+  loop?: boolean;
+  drag?: boolean;
+  controls?: boolean;
+  showCounter?: boolean;
+  counterLabel?: string;
+  previousLabel?: string;
+  nextLabel?: string;
+  contentClass?: string;
+  axis?: "x" | "y";
+  snapType?: "mandatory" | "proximity";
   fade?: boolean;
   class?: string;
 }
 
 const {
   axis = "x",
+  orientation = axis === "y" ? "vertical" : "horizontal",
+  variant = "single",
+  defaultIndex = 0,
+  loop = false,
+  drag = true,
+  controls = true,
+  showCounter = orientation === "horizontal" && variant === "single",
+  counterLabel = variant === "multiple" ? "Page" : "Card",
+  previousLabel = "Previous slide",
+  nextLabel = "Next slide",
+  contentClass,
   snapType = "mandatory",
-  align = "start",
   fade = false,
-  class: className = "",
+  class: className,
+  "aria-label": ariaLabel = "Carousel",
   ...rest
-} = Astro.props as Props;
-
-const carouselVariants = cva(
-  "relative w-full overflow-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
-  {
-    variants: {
-      axis: {
-        x: "flex flex-row snap-x",
-        y: "flex flex-col snap-y",
-      },
-      snapType: {
-        mandatory: "snap-mandatory",
-        proximity: "snap-proximity",
-      },
-      align: {
-        start:
-          "[&>[data-slot=carousel-slide]]:snap-start [&>[data-slot=carousel-slide]]:shrink-0",
-        center:
-          "[&>[data-slot=carousel-slide]]:snap-center [&>[data-slot=carousel-slide]]:shrink-0",
-        end: "[&>[data-slot=carousel-slide]]:snap-end [&>[data-slot=carousel-slide]]:shrink-0",
-      },
-    },
-    defaultVariants: {
-      axis: "x",
-      snapType: "mandatory",
-      align: "start",
-    },
-  },
-);
-
-const defaultFadeX = "mask-x-from-80% mask-x-to-95%";
-const defaultFadeY = "mask-y-from-80% mask-y-to-95%";
+} = Astro.props;
+const vertical = orientation === "vertical";
 ---
 
 <div
   {...rest}
+  role="region"
+  aria-roledescription="carousel"
+  aria-label={ariaLabel}
   data-slot="carousel"
-  class={cn("", 
-    carouselVariants({ axis, snapType, align }),
-    fade && axis === "x" && defaultFadeX,
-    fade && axis === "y" && defaultFadeY,
+  data-orientation={orientation}
+  data-variant={variant}
+  data-default-index={defaultIndex}
+  data-loop={String(loop)}
+  data-drag={String(drag)}
+  data-counter-label={counterLabel}
+  class={cn(
+    "group/carousel relative grid w-full min-w-0 items-center gap-x-4 gap-y-2",
+    vertical
+      ? "grid-cols-1 justify-items-center gap-y-4"
+      : "grid-cols-[auto_minmax(0,1fr)_auto]",
+    !controls && "grid-cols-1",
     className,
   )}
 >
-  <slot />
+  {controls && (
+    <Button
+      type="button"
+      variant="outline"
+      size="icon-sm"
+      data-slot="carousel-previous"
+      aria-label={previousLabel}
+      class="cn-carousel-previous"
+    >
+      <SemanticIcon
+        name="chevron-right"
+        class={cn("size-4", vertical ? "-rotate-90" : "rotate-180")}
+      />
+    </Button>
+  )}
+  <div
+    data-slot="carousel-content"
+    tabindex="0"
+    role="group"
+    aria-label="Slides"
+    class={cn(
+      "flex min-h-0 min-w-0 w-full gap-4 overflow-auto overscroll-contain rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      vertical ? "flex-col snap-y" : "snap-x",
+      snapType === "mandatory" ? "snap-mandatory" : "snap-proximity",
+      drag && "cursor-grab group-data-[dragging=true]/carousel:cursor-grabbing",
+      fade &&
+        (vertical
+          ? "mask-y-from-80% mask-y-to-95%"
+          : "mask-x-from-80% mask-x-to-95%"),
+      contentClass,
+    )}
+  >
+    <slot />
+  </div>
+  {controls && (
+    <Button
+      type="button"
+      variant="outline"
+      size="icon-sm"
+      data-slot="carousel-next"
+      aria-label={nextLabel}
+      class="cn-carousel-next"
+    >
+      <SemanticIcon
+        name="chevron-right"
+        class={cn("size-4", vertical && "rotate-90")}
+      />
+    </Button>
+  )}
+  {showCounter && (
+    <p
+      data-slot="carousel-counter"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      class={cn(
+        "text-center text-xs font-medium text-muted-foreground",
+        !vertical && controls && "col-span-3",
+      )}
+    />
+  )}
 </div>
 
+<script>
+  import { createCarousel, type CarouselController } from "@data-slot/carousel";
+
+  const carousels = new Map<HTMLElement, CarouselController>();
+
+  function initializeCarousels() {
+    document
+      .querySelectorAll<HTMLElement>('[data-slot="carousel"]')
+      .forEach((root) => {
+        if (carousels.has(root)) return;
+        const content = root.querySelector('[data-slot="carousel-content"]');
+        if (!content?.querySelector(':scope > [data-slot="carousel-item"]'))
+          return;
+        const counter = root.querySelector<HTMLElement>(
+          ':scope > [data-slot="carousel-counter"]',
+        );
+        const updateCounter = () => {
+          const carousel = carousels.get(root);
+          if (counter && carousel) {
+            counter.textContent = carousel.count
+              ? `${root.dataset.counterLabel} ${carousel.index + 1} of ${carousel.count}`
+              : "";
+          }
+        };
+        const carousel = createCarousel(root, { onIndexChange: updateCounter });
+        carousels.set(root, carousel);
+        updateCounter();
+      });
+  }
+
+  initializeCarousels();
+  document.addEventListener("astro:page-load", initializeCarousels);
+  document.addEventListener("astro:before-swap", () => {
+    carousels.forEach((carousel) => carousel.destroy());
+    carousels.clear();
+  });
+</script>
