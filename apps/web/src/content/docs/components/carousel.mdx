@@ -71,8 +71,7 @@ import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
 | <code>orientation</code> | `"horizontal" \| "vertical"` | `axis === "y" ? "vertical" : "horizontal"` |
 | <code>variant</code> | `"single" \| "multiple"` | `"single"` |
 | <code>defaultIndex</code> | `number` | `0` |
-| <code>"data-loop"</code> | `boolean \| string` | `loop` |
-| <code>loop</code> | `boolean` | `false` |
+| <code>"data-loop"</code> | `boolean \| string` | `false` |
 | <code>drag</code> | `boolean` | `true` |
 | <code>controls</code> | `boolean` | `true` |
 | <code>showCounter</code> | `boolean` | `orientation === "horizontal" && variant === "single"` |
@@ -183,7 +182,7 @@ import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
 
 ### Looping
 
-Set `data-loop="true"` to wrap button, keyboard, and programmatic navigation from the last slide to the first and back. Looping defaults to `false`. An explicit `data-loop` value takes precedence over the `loop` prop.
+Set `data-loop="true"` to wrap button, keyboard, and programmatic navigation from the last slide to the first and back. Looping defaults to `false`.
 
 <div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
 <Carousel aria-label="Looping cards" data-loop="true" class="mx-auto max-w-86.5"> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"1"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"2"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"3"}</div></CarouselSlide> </Carousel>

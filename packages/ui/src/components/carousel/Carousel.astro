@@ -87,7 +87,7 @@
  *
  * ### Looping
  *
- * Set `data-loop="true"` to wrap button, keyboard, and programmatic navigation from the last slide to the first and back. Looping defaults to `false`. An explicit `data-loop` value takes precedence over the `loop` prop.
+ * Set `data-loop="true"` to wrap button, keyboard, and programmatic navigation from the last slide to the first and back. Looping defaults to `false`.
  *
  * <Carousel aria-label="Looping cards" data-loop="true" class="mx-auto max-w-86.5">
  *   <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">1</div></CarouselSlide>
@@ -179,7 +179,6 @@ interface Props extends HTMLAttributes<"div"> {
   variant?: "single" | "multiple";
   defaultIndex?: number;
   "data-loop"?: boolean | string;
-  loop?: boolean;
   drag?: boolean;
   controls?: boolean;
   showCounter?: boolean;
@@ -198,8 +197,7 @@ const {
   orientation = axis === "y" ? "vertical" : "horizontal",
   variant = "single",
   defaultIndex = 0,
-  loop = false,
-  "data-loop": dataLoop = loop,
+  "data-loop": dataLoop = false,
   drag = true,
   controls = true,
   showCounter = orientation === "horizontal" && variant === "single",
