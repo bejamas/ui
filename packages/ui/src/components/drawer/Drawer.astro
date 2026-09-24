@@ -1,0 +1,195 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/drawer/Drawer.astro directly.
+/**
+ * @component Drawer
+ * @title Drawer
+ * @description A modal panel that slides in from the left, right, or bottom, with swipe dismissal and accessible focus management.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=5929-4173
+ *
+ * @preview
+ * <Drawer side="right">
+ *   <Button data-slot="drawer-trigger">Open drawer</Button>
+ *   <DrawerContent>
+ *     <DrawerHeader><DrawerTitle>Delete workspace?</DrawerTitle><DrawerDescription>12 projects and 3,400 files will be permanently removed. This can't be undone.</DrawerDescription></DrawerHeader>
+ *     <DrawerBody class="space-y-2">
+ *       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+ *       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+ *     </DrawerBody>
+ *     <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
+ *   </DrawerContent>
+ * </Drawer>
+ *
+ * @usage
+ * ```astro nocollapse
+ * ---
+ * import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerBody, DrawerFooter } from '@bejamas/ui/components/drawer';
+ * import { Button } from '@bejamas/ui/components/button';
+ * ---
+ * <Drawer side="right">
+ *   <Button data-slot="drawer-trigger">Open drawer</Button>
+ *   <DrawerContent>
+ *     <DrawerHeader><DrawerTitle>Drawer title</DrawerTitle><DrawerDescription>Drawer description.</DrawerDescription></DrawerHeader>
+ *     <DrawerBody>Drawer content</DrawerBody>
+ *     <DrawerFooter><Button data-slot="drawer-close" variant="secondary">Close</Button></DrawerFooter>
+ *   </DrawerContent>
+ * </Drawer>
+ * ```
+ *
+ * @api
+ *
+ * ### Events
+ *
+ * The drawer emits custom events on its root element:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `drawer:beforechange` | `{ open, reason, trigger, payload, originalEvent? }` | Fired before the open state changes; cancel with `event.preventDefault()` or `event.detail.cancel()` |
+ * | `drawer:change` | `{ open, reason, trigger, payload, originalEvent? }` | Fired after the open state changes |
+ * | `drawer:change-complete` | `{ open: boolean }` | Fired after the opening or closing transition finishes |
+ *
+ * ```astro nocollapse
+ * <Drawer id="my-drawer">
+ *   <Button data-slot="drawer-trigger">Open drawer</Button>
+ *   <DrawerContent>
+ *     <DrawerHeader><DrawerTitle>Drawer title</DrawerTitle></DrawerHeader>
+ *     <DrawerBody>Drawer content</DrawerBody>
+ *     <DrawerFooter><Button data-slot="drawer-close">Close</Button></DrawerFooter>
+ *   </DrawerContent>
+ * </Drawer>
+ * ```
+ *
+ * ```js nocollapse
+ * const drawer = document.getElementById('my-drawer');
+ *
+ * drawer.addEventListener('drawer:change', (event) => {
+ *   console.log('Is open:', event.detail.open);
+ * });
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * Dispatch `drawer:set` on the root to change its open state:
+ *
+ * ```js nocollapse
+ * const drawer = document.getElementById('my-drawer');
+ *
+ * drawer.dispatchEvent(new CustomEvent('drawer:set', {
+ *   detail: { open: true }
+ * }));
+ *
+ * drawer.dispatchEvent(new CustomEvent('drawer:set', {
+ *   detail: { open: false }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * The drawer exposes these attributes for styling and state queries:
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-state` | drawer, portal, backdrop, viewport, popup | Current state (`open` or `closed`) |
+ * | `data-swipe-direction` | drawer, portal, backdrop, viewport, popup | Dismissal direction (`left`, `right`, or `down`) |
+ * | `data-popup-open` | active trigger | Present while its drawer is open |
+ * | `data-swiping` | backdrop, viewport, popup | Present during a swipe gesture |
+ * | `data-starting-style`, `data-ending-style` | backdrop, popup | Present during entry or exit transitions |
+ *
+ * @examples
+ * ### Right drawer
+ *
+ * <Drawer side="right">
+ *   <Button data-slot="drawer-trigger">Open right drawer</Button>
+ *   <DrawerContent>
+ *     <DrawerHeader><DrawerTitle>Delete workspace?</DrawerTitle><DrawerDescription>12 projects and 3,400 files will be permanently removed. This can't be undone.</DrawerDescription></DrawerHeader>
+ *     <DrawerBody class="space-y-2">
+ *       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+ *       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+ *     </DrawerBody>
+ *     <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
+ *   </DrawerContent>
+ * </Drawer>
+ *
+ * ### Left drawer
+ *
+ * <Drawer side="left">
+ *   <Button data-slot="drawer-trigger">Open left drawer</Button>
+ *   <DrawerContent>
+ *     <DrawerHeader><DrawerTitle>Delete workspace?</DrawerTitle><DrawerDescription>12 projects and 3,400 files will be permanently removed. This can't be undone.</DrawerDescription></DrawerHeader>
+ *     <DrawerBody class="space-y-2">
+ *       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+ *       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+ *     </DrawerBody>
+ *     <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
+ *   </DrawerContent>
+ * </Drawer>
+ *
+ * ### Bottom drawer
+ *
+ * <Drawer side="bottom">
+ *   <Button data-slot="drawer-trigger">Open bottom drawer</Button>
+ *   <DrawerContent>
+ *     <DrawerHeader><DrawerTitle>Delete workspace?</DrawerTitle><DrawerDescription>12 projects and 3,400 files will be permanently removed. This can't be undone.</DrawerDescription></DrawerHeader>
+ *     <DrawerBody class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</DrawerBody>
+ *     <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
+ *   </DrawerContent>
+ * </Drawer>
+ */
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  side?: "left" | "right" | "bottom";
+  defaultOpen?: boolean;
+  modal?: boolean;
+  disablePointerDismissal?: boolean;
+  closeOnEscape?: boolean;
+  class?: string;
+}
+
+const {
+  side = "right",
+  defaultOpen = false,
+  modal = true,
+  disablePointerDismissal = false,
+  closeOnEscape = true,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="drawer"
+  data-swipe-direction={side === "bottom" ? "down" : side}
+  data-default-open={defaultOpen}
+  data-modal={modal}
+  data-disable-pointer-dismissal={disablePointerDismissal}
+  data-close-on-escape={closeOnEscape}
+  class={cn("", className)}
+>
+  <slot />
+</div>
+
+<script>
+  import { createDrawer } from "@data-slot/drawer";
+
+  document
+    .querySelectorAll<HTMLElement>('[data-slot="drawer"]')
+    .forEach((root) => {
+      if (!root.hasAttribute("data-drawer-initialized")) {
+        root.setAttribute("data-drawer-initialized", "");
+        const backdrop = root.querySelector<HTMLElement>(
+          '[data-slot="drawer-backdrop"]',
+        );
+        if (root.dataset.modal === "false") {
+          backdrop?.setAttribute("data-nonmodal", "");
+        }
+        // A backdrop press should not move focus to the page after the
+        // primitive restores focus to the trigger.
+        backdrop?.addEventListener("pointerdown", (event) => {
+          if (event.pointerType !== "touch") event.preventDefault();
+        });
+        createDrawer(root);
+      }
+    });
+</script>

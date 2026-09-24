@@ -1,0 +1,219 @@
+---
+title: "Drawer"
+description: "A modal panel that slides in from the left, right, or bottom, with swipe dismissal and accessible focus management."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=5929-4173"
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Button } from '@bejamas/registry/ui/button';
+import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@bejamas/registry/ui/drawer';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Drawer side="right"> <Button data-slot="drawer-trigger">{"Open drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="space-y-2"> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> </DrawerBody> <DrawerFooter><Button data-slot="drawer-close" size="sm">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary" size="sm">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@bejamas/registry/ui/drawer';
+---
+
+<Drawer side="right">
+  <Button data-slot="drawer-trigger">Open drawer</Button>
+  <DrawerContent>
+    <DrawerHeader><DrawerTitle>Delete workspace?</DrawerTitle><DrawerDescription>12 projects and 3,400 files will be permanently removed. This can't be undone.</DrawerDescription></DrawerHeader>
+    <DrawerBody class="space-y-2">
+      <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+      <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+    </DrawerBody>
+    <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add drawer
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add drawer
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add drawer
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add drawer
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerBody, DrawerFooter } from '@bejamas/registry/ui/drawer';
+import { Button } from '@bejamas/registry/ui/button';
+---
+<Drawer side="right">
+  <Button data-slot="drawer-trigger">Open drawer</Button>
+  <DrawerContent>
+    <DrawerHeader><DrawerTitle>Drawer title</DrawerTitle><DrawerDescription>Drawer description.</DrawerDescription></DrawerHeader>
+    <DrawerBody>Drawer content</DrawerBody>
+    <DrawerFooter><Button data-slot="drawer-close" variant="secondary">Close</Button></DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>side</code> | `"left" \| "right" \| "bottom"` | `"right"` |
+| <code>defaultOpen</code> | `boolean` | `false` |
+| <code>modal</code> | `boolean` | `true` |
+| <code>disablePointerDismissal</code> | `boolean` | `false` |
+| <code>closeOnEscape</code> | `boolean` | `true` |
+| <code>class</code> | `string` | `""` |
+
+## Examples
+
+### Right drawer
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Drawer side="right"> <Button data-slot="drawer-trigger">{"Open right drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="space-y-2"> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> </DrawerBody> <DrawerFooter><Button data-slot="drawer-close" size="sm">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary" size="sm">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@bejamas/registry/ui/drawer';
+---
+
+<Drawer side="right">
+  <Button data-slot="drawer-trigger">Open right drawer</Button>
+  <DrawerContent>
+    <DrawerHeader><DrawerTitle>Delete workspace?</DrawerTitle><DrawerDescription>12 projects and 3,400 files will be permanently removed. This can't be undone.</DrawerDescription></DrawerHeader>
+    <DrawerBody class="space-y-2">
+      <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+      <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+    </DrawerBody>
+    <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+### Left drawer
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Drawer side="left"> <Button data-slot="drawer-trigger">{"Open left drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="space-y-2"> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> </DrawerBody> <DrawerFooter><Button data-slot="drawer-close" size="sm">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary" size="sm">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@bejamas/registry/ui/drawer';
+---
+
+<Drawer side="left">
+  <Button data-slot="drawer-trigger">Open left drawer</Button>
+  <DrawerContent>
+    <DrawerHeader><DrawerTitle>Delete workspace?</DrawerTitle><DrawerDescription>12 projects and 3,400 files will be permanently removed. This can't be undone.</DrawerDescription></DrawerHeader>
+    <DrawerBody class="space-y-2">
+      <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+      <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
+    </DrawerBody>
+    <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+### Bottom drawer
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Drawer side="bottom"> <Button data-slot="drawer-trigger">{"Open bottom drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</DrawerBody> <DrawerFooter><Button data-slot="drawer-close" size="sm">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary" size="sm">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@bejamas/registry/ui/drawer';
+---
+
+<Drawer side="bottom">
+  <Button data-slot="drawer-trigger">Open bottom drawer</Button>
+  <DrawerContent>
+    <DrawerHeader><DrawerTitle>Delete workspace?</DrawerTitle><DrawerDescription>12 projects and 3,400 files will be permanently removed. This can't be undone.</DrawerDescription></DrawerHeader>
+    <DrawerBody class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</DrawerBody>
+    <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+## API Reference
+
+### Events
+
+The drawer emits custom events on its root element:
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `drawer:beforechange` | `{ open, reason, trigger, payload, originalEvent? }` | Fired before the open state changes; cancel with `event.preventDefault()` or `event.detail.cancel()` |
+| `drawer:change` | `{ open, reason, trigger, payload, originalEvent? }` | Fired after the open state changes |
+| `drawer:change-complete` | `{ open: boolean }` | Fired after the opening or closing transition finishes |
+
+```astro nocollapse
+<Drawer id="my-drawer">
+  <Button data-slot="drawer-trigger">Open drawer</Button>
+  <DrawerContent>
+    <DrawerHeader><DrawerTitle>Drawer title</DrawerTitle></DrawerHeader>
+    <DrawerBody>Drawer content</DrawerBody>
+    <DrawerFooter><Button data-slot="drawer-close">Close</Button></DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+```js nocollapse
+const drawer = document.getElementById('my-drawer');
+
+drawer.addEventListener('drawer:change', (event) => {
+  console.log('Is open:', event.detail.open);
+});
+```
+
+### Programmatic Control
+
+Dispatch `drawer:set` on the root to change its open state:
+
+```js nocollapse
+const drawer = document.getElementById('my-drawer');
+
+drawer.dispatchEvent(new CustomEvent('drawer:set', {
+  detail: { open: true }
+}));
+
+drawer.dispatchEvent(new CustomEvent('drawer:set', {
+  detail: { open: false }
+}));
+```
+
+### Data Attributes
+
+The drawer exposes these attributes for styling and state queries:
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-state` | drawer, portal, backdrop, viewport, popup | Current state (`open` or `closed`) |
+| `data-swipe-direction` | drawer, portal, backdrop, viewport, popup | Dismissal direction (`left`, `right`, or `down`) |
+| `data-popup-open` | active trigger | Present while its drawer is open |
+| `data-swiping` | backdrop, viewport, popup | Present during a swipe gesture |
+| `data-starting-style`, `data-ending-style` | backdrop, popup | Present during entry or exit transitions |

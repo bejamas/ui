@@ -1,0 +1,114 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@bejamas/registry/ui/drawer";
+---
+
+<KitchenSinkLayout>
+  <section class="mx-auto max-w-5xl space-y-12 px-5 py-20">
+    <h1 class="mb-10 text-3xl font-bold">Drawer</h1>
+    <p class="text-muted-foreground">
+      Open a panel, then use Escape, the backdrop, a close button, or a swipe
+      toward its edge to dismiss it.
+    </p>
+
+    <div class="grid gap-8 md:grid-cols-2">
+      <KitchenSinkSection title="Right">
+        <Drawer side="right">
+          <Button data-slot="drawer-trigger">Open right drawer</Button>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Delete workspace?</DrawerTitle>
+              <DrawerDescription>
+                12 projects and 3,400 files will be permanently removed. This
+                can't be undone.
+              </DrawerDescription>
+            </DrawerHeader>
+            <DrawerBody class="space-y-2">
+              <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                Slot area
+              </div>
+              <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                Slot area
+              </div>
+            </DrawerBody>
+            <DrawerFooter>
+              <Button data-slot="drawer-close" size="sm">Delete workspace</Button>
+              <Button data-slot="drawer-close" variant="secondary" size="sm">
+                Cancel
+              </Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Left">
+        <Drawer side="left">
+          <Button data-slot="drawer-trigger" variant="outline">
+            Open left drawer
+          </Button>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Delete workspace?</DrawerTitle>
+              <DrawerDescription>
+                12 projects and 3,400 files will be permanently removed. This
+                can't be undone.
+              </DrawerDescription>
+            </DrawerHeader>
+            <DrawerBody class="space-y-2">
+              <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                Slot area
+              </div>
+              <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                Slot area
+              </div>
+            </DrawerBody>
+            <DrawerFooter>
+              <Button data-slot="drawer-close" size="sm">Delete workspace</Button>
+              <Button data-slot="drawer-close" variant="secondary" size="sm">
+                Cancel
+              </Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Bottom">
+        <Drawer side="bottom">
+          <Button data-slot="drawer-trigger" variant="outline">
+            Open bottom drawer
+          </Button>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Delete workspace?</DrawerTitle>
+              <DrawerDescription>
+                12 projects and 3,400 files will be permanently removed. This
+                can't be undone.
+              </DrawerDescription>
+            </DrawerHeader>
+            <DrawerBody>
+              <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                Slot area
+              </div>
+            </DrawerBody>
+            <DrawerFooter>
+              <Button data-slot="drawer-close" size="sm">Delete workspace</Button>
+              <Button data-slot="drawer-close" variant="secondary" size="sm">
+                Cancel
+              </Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>

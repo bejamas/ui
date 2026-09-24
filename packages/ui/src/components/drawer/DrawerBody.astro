@@ -1,0 +1,21 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/drawer/DrawerBody.astro directly.
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="drawer-body"
+  class={cn(
+    "min-h-0 flex-1 overflow-y-auto overscroll-contain",
+    className,
+  )}
+>
+  <slot />
+</div>
