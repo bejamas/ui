@@ -10,7 +10,7 @@ import { Button } from '@bejamas/registry/ui/button';
 import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@bejamas/registry/ui/drawer';
 
 <div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Drawer side="right"> <Button data-slot="drawer-trigger">{"Open drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="space-y-2"> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> </DrawerBody> <DrawerFooter><Button data-slot="drawer-close">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
+<Drawer side="right"> <Button data-slot="drawer-trigger">{"Open drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="space-y-2"> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> </DrawerBody> <DrawerFooter><Button data-slot="drawer-close" size="sm">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary" size="sm">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
 </div>
 
 ```astro
@@ -27,7 +27,7 @@ import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, Dra
       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
     </DrawerBody>
-    <DrawerFooter><Button data-slot="drawer-close">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary">Cancel</Button></DrawerFooter>
+    <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
   </DrawerContent>
 </Drawer>
 ```
@@ -90,7 +90,7 @@ import { Button } from '@bejamas/registry/ui/button';
 ### Right drawer
 
 <div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Drawer side="right"> <Button data-slot="drawer-trigger">{"Open right drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="space-y-2"> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> </DrawerBody> <DrawerFooter><Button data-slot="drawer-close">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
+<Drawer side="right"> <Button data-slot="drawer-trigger">{"Open right drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="space-y-2"> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> </DrawerBody> <DrawerFooter><Button data-slot="drawer-close" size="sm">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary" size="sm">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
 </div>
 
 ```astro
@@ -107,7 +107,7 @@ import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, Dra
       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
     </DrawerBody>
-    <DrawerFooter><Button data-slot="drawer-close">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary">Cancel</Button></DrawerFooter>
+    <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
   </DrawerContent>
 </Drawer>
 ```
@@ -115,7 +115,7 @@ import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, Dra
 ### Left drawer
 
 <div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Drawer side="left"> <Button data-slot="drawer-trigger">{"Open left drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="space-y-2"> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> </DrawerBody> <DrawerFooter><Button data-slot="drawer-close">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
+<Drawer side="left"> <Button data-slot="drawer-trigger">{"Open left drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="space-y-2"> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</div> </DrawerBody> <DrawerFooter><Button data-slot="drawer-close" size="sm">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary" size="sm">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
 </div>
 
 ```astro
@@ -132,7 +132,7 @@ import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, Dra
       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
       <div class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</div>
     </DrawerBody>
-    <DrawerFooter><Button data-slot="drawer-close">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary">Cancel</Button></DrawerFooter>
+    <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
   </DrawerContent>
 </Drawer>
 ```
@@ -140,7 +140,7 @@ import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, Dra
 ### Bottom drawer
 
 <div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Drawer side="bottom"> <Button data-slot="drawer-trigger">{"Open bottom drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</DrawerBody> <DrawerFooter><Button data-slot="drawer-close">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
+<Drawer side="bottom"> <Button data-slot="drawer-trigger">{"Open bottom drawer"}</Button> <DrawerContent> <DrawerHeader><DrawerTitle>{"Delete workspace?"}</DrawerTitle><DrawerDescription>{"12 projects and 3,400 files will be permanently removed. This can't be undone."}</DrawerDescription></DrawerHeader> <DrawerBody class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</DrawerBody> <DrawerFooter><Button data-slot="drawer-close" size="sm">{"Delete workspace"}</Button><Button data-slot="drawer-close" variant="secondary" size="sm">{"Cancel"}</Button></DrawerFooter> </DrawerContent> </Drawer>
 </div>
 
 ```astro
@@ -154,7 +154,7 @@ import { Drawer, DrawerBody, DrawerContent, DrawerDescription, DrawerFooter, Dra
   <DrawerContent>
     <DrawerHeader><DrawerTitle>Delete workspace?</DrawerTitle><DrawerDescription>12 projects and 3,400 files will be permanently removed. This can't be undone.</DrawerDescription></DrawerHeader>
     <DrawerBody class="flex h-[300px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</DrawerBody>
-    <DrawerFooter><Button data-slot="drawer-close">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary">Cancel</Button></DrawerFooter>
+    <DrawerFooter><Button data-slot="drawer-close" size="sm">Delete workspace</Button><Button data-slot="drawer-close" variant="secondary" size="sm">Cancel</Button></DrawerFooter>
   </DrawerContent>
 </Drawer>
 ```
