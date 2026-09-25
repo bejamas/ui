@@ -704,7 +704,7 @@
     max-width: calc(var(--spacing) * 150);
   }
 
-  starlight-menu-button button {
+  .sl-menu-button {
     box-shadow: none;
     padding: 0;
     width: calc(var(--spacing) * 6);
@@ -712,18 +712,18 @@
     color: var(--foreground);
   }
 
-  starlight-menu-button button svg {
+  .sl-menu-button svg {
     width: calc(var(--spacing) * 8);
     height: calc(var(--spacing) * 8);
     font-size: calc(var(--spacing) * 8);
   }
 
   @media (min-width: 50rem) and (max-width: calc(64rem - 0.01rem)) {
-    starlight-menu-button button {
+    .sl-menu-button {
       display: flex;
     }
 
-    [data-mobile-menu-expanded] {
+    body:has(#starlight__sidebar:popover-open) {
       overflow: hidden;
     }
   }
