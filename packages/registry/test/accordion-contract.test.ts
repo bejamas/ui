@@ -98,7 +98,7 @@ describe("accordion compatibility contract", () => {
     const itemSource = fs.readFileSync(uiAccordionItemFile, "utf8");
     const triggerSource = fs.readFileSync(uiAccordionTriggerFile, "utf8");
 
-    expect(itemSource).toContain('class={cn("not-last:border-b", className)}');
+    expect(itemSource).toContain('class={cn("border-b", className)}');
 
     expect(triggerSource).toContain("rounded-md py-4 text-left text-sm font-medium hover:underline");
     expect(triggerSource).toContain("**:data-[slot=accordion-trigger-icon]:ml-auto");
@@ -110,6 +110,49 @@ describe("accordion compatibility contract", () => {
     expect(contentSource).toContain("h-(--accordion-panel-height)");
     expect(contentSource).toContain("pt-0 pb-4");
     expect(contentSource).not.toContain("--radix-accordion-content-height");
+  });
+
+  test("unframed accordions keep a bottom border on the final item", () => {
+    const compiledCss = fs.readFileSync(
+      path.resolve(
+        repoRoot,
+        "packages/create-config/src/generated/compiled-style-css.js",
+      ),
+      "utf8",
+    );
+
+    for (const style of ["juno", "lyra", "nova", "vega"]) {
+      const source = getRegistryContent(
+        path.resolve(
+          repoRoot,
+          `apps/web/public/r/styles/bejamas-${style}/accordion.json`,
+        ),
+        "ui/accordion/AccordionItem.astro",
+      );
+
+      expect(source).toContain('class={cn("border-b", className)}');
+      expect(source).not.toContain("not-last:border-b");
+      expect(compiledCss).toContain(`.style-${style} .cn-accordion-item {`);
+      expect(compiledCss).not.toContain(
+        `.style-${style} .cn-accordion-item:not(:last-child)`,
+      );
+    }
+
+    for (const style of ["luma", "maia", "mira"]) {
+      const source = getRegistryContent(
+        path.resolve(
+          repoRoot,
+          `apps/web/public/r/styles/bejamas-${style}/accordion.json`,
+        ),
+        "ui/accordion/AccordionItem.astro",
+      );
+
+      expect(source).toContain("not-last:border-b");
+    }
+
+    expect(
+      getRegistryContent(registryFile, "ui/accordion/AccordionItem.astro"),
+    ).toContain('class={cn("border-b", className)}');
   });
 
   test("published registry payloads stay aligned with the accordion contract", () => {

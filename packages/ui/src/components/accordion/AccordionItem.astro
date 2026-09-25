@@ -15,7 +15,7 @@ const { value, class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   data-value={value}
   data-slot="accordion-item"
-  class={cn("not-last:border-b", className)}
+  class={cn("border-b", className)}
 >
   <slot />
 </div>
