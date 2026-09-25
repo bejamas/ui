@@ -1,0 +1,149 @@
+---
+/**
+ * @component HamburgerMenu
+ * @title Hamburger Menu
+ * @description A compact mobile navigation bar with simple links or expandable groups.
+ * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=5940-5284
+ *
+ * @preview
+ * <HamburgerMenu>
+ *   <span slot="brand">Bejamas UI</span>
+ *   <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
+ *   <HamburgerMenuLink href="#components">Components</HamburgerMenuLink>
+ * </HamburgerMenu>
+ *
+ * @usage
+ * ```astro nocollapse
+ * ---
+ * import { HamburgerMenu, HamburgerMenuLink, HamburgerMenuGroup } from '@bejamas/ui/components/hamburger-menu';
+ * ---
+ * <HamburgerMenu variant="advanced">
+ *   <a slot="brand" href="/">Bejamas UI</a>
+ *   <HamburgerMenuGroup label="Getting started" defaultOpen>
+ *     <HamburgerMenuLink href="/introduction">Introduction</HamburgerMenuLink>
+ *     <HamburgerMenuLink href="/installation">Installation</HamburgerMenuLink>
+ *   </HamburgerMenuGroup>
+ * </HamburgerMenu>
+ * ```
+ */
+import { cn } from "@bejamas/registry/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+  variant?: "simple" | "advanced";
+  defaultOpen?: boolean;
+  /** Accessible name of the navigation region. */
+  label?: string;
+}
+
+const {
+  class: className = "",
+  variant = "simple",
+  defaultOpen = false,
+  label = "Mobile navigation",
+  id = `hamburger-menu-${crypto.randomUUID()}`,
+  ...rest
+} = Astro.props as Props;
+const panelId = `${id}-panel`;
+---
+
+<div
+  {...rest}
+  id={id}
+  data-slot="hamburger-menu"
+  data-variant={variant}
+  data-state={defaultOpen ? "open" : "closed"}
+  class={cn("cn-hamburger-menu group/hamburger-menu relative w-full bg-background text-foreground", className)}
+>
+  <div data-slot="hamburger-menu-bar" class="flex h-12 items-center justify-between gap-3 border-b border-border px-3 py-2">
+    <div data-slot="hamburger-menu-brand" class="min-w-0 shrink-0">
+      <slot name="brand" />
+    </div>
+    <div class="flex min-w-0 items-center gap-3">
+      <div data-slot="hamburger-menu-actions" class="flex items-center gap-3">
+        <slot name="actions" />
+      </div>
+      <button
+        type="button"
+        data-slot="hamburger-menu-trigger"
+        class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-foreground outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        aria-label={defaultOpen ? "Close menu" : "Open menu"}
+        aria-controls={panelId}
+        aria-expanded={defaultOpen ? "true" : "false"}
+      >
+        <SemanticIcon name="menu" class={cn("size-4", defaultOpen && "hidden")} data-slot="hamburger-menu-icon-open" />
+        <SemanticIcon name="x" class={cn("size-4", !defaultOpen && "hidden")} data-slot="hamburger-menu-icon-close" />
+      </button>
+    </div>
+  </div>
+  <nav
+    id={panelId}
+    data-slot="hamburger-menu-panel"
+    aria-label={label}
+    hidden={!defaultOpen}
+    class={cn(
+      "absolute inset-x-0 top-full z-50 flex min-h-[calc(100dvh-3rem)] flex-col justify-between overflow-y-auto bg-background px-3 pb-6 shadow-sm",
+      variant === "simple" ? "pt-6" : "pt-3",
+    )}
+  >
+    <div data-slot="hamburger-menu-items" class={cn("flex flex-col", variant === "simple" ? "gap-3" : "gap-2")}>
+      <slot />
+    </div>
+    {
+      Astro.slots.has("footer") && (
+        <div data-slot="hamburger-menu-footer" class="mt-8 flex items-center gap-1.5">
+          <slot name="footer" />
+        </div>
+      )
+    }
+  </nav>
+</div>
+
+<script>
+  function initializeHamburgerMenu(root: HTMLElement) {
+    if (root.dataset.initialized === "true") return;
+    root.dataset.initialized = "true";
+    const trigger = root.querySelector<HTMLButtonElement>('[data-slot="hamburger-menu-trigger"]');
+    const panel = root.querySelector<HTMLElement>('[data-slot="hamburger-menu-panel"]');
+    const openIcon = root.querySelector<HTMLElement>('[data-slot="hamburger-menu-icon-open"]');
+    const closeIcon = root.querySelector<HTMLElement>('[data-slot="hamburger-menu-icon-close"]');
+    if (!trigger || !panel) return;
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    const setOpen = (open: boolean, restoreFocus = false) => {
+      root.dataset.state = open ? "open" : "closed";
+      panel.hidden = !open;
+      trigger.setAttribute("aria-expanded", String(open));
+      trigger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      openIcon?.classList.toggle("hidden", open);
+      closeIcon?.classList.toggle("hidden", !open);
+      if (restoreFocus) trigger.focus();
+    };
+
+    trigger.addEventListener("click", () => setOpen(panel.hidden === true), { signal });
+    root.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !panel.hidden) {
+        event.preventDefault();
+        setOpen(false, true);
+      }
+    }, { signal });
+    document.addEventListener("pointerdown", (event) => {
+      if (!panel.hidden && event.target instanceof Node && !root.contains(event.target)) {
+        setOpen(false);
+      }
+    }, { signal });
+    panel.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest('a[href]')) setOpen(false);
+    }, { signal });
+    document.addEventListener("astro:before-swap", () => controller.abort(), { once: true, signal });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-slot="hamburger-menu"]').forEach(initializeHamburgerMenu);
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>('[data-slot="hamburger-menu"]').forEach(initializeHamburgerMenu);
+  });
+</script>

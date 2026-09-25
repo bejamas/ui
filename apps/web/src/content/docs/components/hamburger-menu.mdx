@@ -1,0 +1,82 @@
+---
+title: "Hamburger Menu"
+description: "Mobile navigation with simple links or expandable groups."
+figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=5940-5284"
+---
+
+import { HamburgerMenu, HamburgerMenuGroup, HamburgerMenuLink } from '@bejamas/registry/ui/hamburger-menu';
+
+The menu has a 48px header and an overlay panel that fills the remaining viewport height. Use the `brand`, `actions`, and `footer` slots for your site's existing controls.
+
+## Simple menu
+
+<div class="not-content sl-bejamas-component-preview relative h-[470px] overflow-hidden rounded-lg border border-border bg-muted/40">
+  <HamburgerMenu defaultOpen>
+    <a slot="brand" href="/" class="font-semibold">Bejamas UI</a>
+    <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
+    <HamburgerMenuLink href="#installation">Installation</HamburgerMenuLink>
+    <HamburgerMenuLink href="#components">Components</HamburgerMenuLink>
+    <HamburgerMenuLink href="#concepts">Concepts</HamburgerMenuLink>
+    <HamburgerMenuLink href="#blog">Blog</HamburgerMenuLink>
+    <HamburgerMenuLink href="#about">About us</HamburgerMenuLink>
+    <HamburgerMenuLink href="#contact">Contact us</HamburgerMenuLink>
+    <HamburgerMenuLink href="#faq">FAQ</HamburgerMenuLink>
+  </HamburgerMenu>
+</div>
+
+```astro
+---
+import { HamburgerMenu, HamburgerMenuLink } from '@bejamas/ui/components/hamburger-menu';
+---
+
+<HamburgerMenu>
+  <a slot="brand" href="/">Bejamas UI</a>
+  <HamburgerMenuLink href="/getting-started">Getting started</HamburgerMenuLink>
+  <HamburgerMenuLink href="/components">Components</HamburgerMenuLink>
+</HamburgerMenu>
+```
+
+## Advanced menu
+
+<div class="not-content sl-bejamas-component-preview relative h-[470px] overflow-hidden rounded-lg border border-border bg-muted/40">
+  <HamburgerMenu variant="advanced" defaultOpen>
+    <a slot="brand" href="/" class="font-semibold">Bejamas UI</a>
+    <HamburgerMenuGroup label="Getting started" defaultOpen>
+      <HamburgerMenuLink href="#introduction">Introduction</HamburgerMenuLink>
+      <HamburgerMenuLink href="#installation-advanced">Installation</HamburgerMenuLink>
+      <HamburgerMenuLink href="#cli">CLI</HamburgerMenuLink>
+      <HamburgerMenuLink href="#forms">Forms with Astro Actions</HamburgerMenuLink>
+    </HamburgerMenuGroup>
+    <HamburgerMenuGroup label="Components">
+      <HamburgerMenuLink href="#buttons">Buttons</HamburgerMenuLink>
+    </HamburgerMenuGroup>
+    <HamburgerMenuGroup label="Concepts">
+      <HamburgerMenuLink href="#theming">Theming</HamburgerMenuLink>
+    </HamburgerMenuGroup>
+    <HamburgerMenuGroup label="About us">
+      <HamburgerMenuLink href="#team">Team</HamburgerMenuLink>
+    </HamburgerMenuGroup>
+  </HamburgerMenu>
+</div>
+
+```astro
+---
+import { HamburgerMenu, HamburgerMenuGroup, HamburgerMenuLink } from '@bejamas/ui/components/hamburger-menu';
+---
+
+<HamburgerMenu variant="advanced">
+  <a slot="brand" href="/">Bejamas UI</a>
+  <HamburgerMenuGroup label="Getting started" defaultOpen>
+    <HamburgerMenuLink href="/introduction">Introduction</HamburgerMenuLink>
+    <HamburgerMenuLink href="/installation">Installation</HamburgerMenuLink>
+  </HamburgerMenuGroup>
+</HamburgerMenu>
+```
+
+The trigger is a native button with `aria-expanded` and `aria-controls`. It opens with mouse, touch, Enter, or Space. Escape closes the panel and returns focus to the trigger. Links close the panel when selected. Groups use native disclosure elements, so they also work with the keyboard.
+
+| Prop | Type | Default |
+|---|---|---|
+| `variant` | `"simple" \| "advanced"` | `"simple"` |
+| `defaultOpen` | `boolean` | `false` |
+| `label` | `string` | `"Mobile navigation"` |

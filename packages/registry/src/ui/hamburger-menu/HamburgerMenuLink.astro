@@ -1,0 +1,20 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"a"> {
+  href: string;
+  class?: string;
+}
+
+const { href, class: className = "", ...rest } = Astro.props as Props;
+---
+
+<a
+  {...rest}
+  href={href}
+  data-slot="hamburger-menu-link"
+  class={cn("block rounded-md py-1 text-base font-medium leading-6 text-foreground outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-ring group-data-[variant=advanced]/hamburger-menu:py-0", className)}
+>
+  <slot />
+</a>
