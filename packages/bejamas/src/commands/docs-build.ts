@@ -22,6 +22,14 @@ async function generateDocs({
   try {
     const shellCwd = process.cwd();
 
+    // Explicit CLI options take precedence over configuration and interactive defaults.
+    if (cwd && cwd.length) {
+      process.env.BEJAMAS_UI_ROOT = resolve(shellCwd, cwd);
+    }
+    if (outDir && outDir.length) {
+      process.env.BEJAMAS_DOCS_OUT_DIR = outDir;
+    }
+
     // Probe for components.json up the directory tree starting from shell CWD
     let projectRoot = shellCwd;
     let probe: string | null = shellCwd;
@@ -142,13 +150,6 @@ async function generateDocs({
         process.exit(1);
       }
       process.env.BEJAMAS_UI_ROOT = resolve(shellCwd, uiRoot);
-    }
-
-    if (cwd && cwd.length) {
-      process.env.BEJAMAS_UI_ROOT = resolve(cwd);
-    }
-    if (outDir && outDir.length) {
-      process.env.BEJAMAS_DOCS_OUT_DIR = outDir;
     }
 
     if (!process.env.BEJAMAS_DOCS_OUT_DIR) {
