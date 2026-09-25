@@ -196,6 +196,14 @@
     font-size: 1rem;
   }
 
+  .sidebar-content details > summary .caret {
+    transform: rotate(90deg);
+  }
+
+  .sidebar-content details[open] > summary .caret {
+    transform: rotate(-90deg);
+  }
+
   .sidebar-content a > span {
     color: var(--foreground);
     padding-inline: 0.5rem;
