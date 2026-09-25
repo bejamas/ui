@@ -1,69 +1,64 @@
 ---
 title: "Hamburger Menu"
-description: "Mobile navigation with simple links or expandable groups."
+description: "A compact mobile navigation bar with simple links or expandable groups."
 figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=5940-5284"
 ---
 
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Button } from '@bejamas/registry/ui/button';
 import { HamburgerMenu, HamburgerMenuGroup, HamburgerMenuLink } from '@bejamas/registry/ui/hamburger-menu';
 
-The menu has a 48px header and an overlay panel that fills the remaining viewport height. Use the `brand`, `actions`, and `footer` slots for your site's existing controls.
-
-## Simple menu
-
-<div class="not-content sl-bejamas-component-preview relative h-[470px] overflow-hidden rounded-lg border border-border bg-muted/40">
-  <HamburgerMenu defaultOpen>
-    <a slot="brand" href="/" class="font-semibold">Bejamas UI</a>
-    <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
-    <HamburgerMenuLink href="#installation">Installation</HamburgerMenuLink>
-    <HamburgerMenuLink href="#components">Components</HamburgerMenuLink>
-    <HamburgerMenuLink href="#concepts">Concepts</HamburgerMenuLink>
-    <HamburgerMenuLink href="#blog">Blog</HamburgerMenuLink>
-    <HamburgerMenuLink href="#about">About us</HamburgerMenuLink>
-    <HamburgerMenuLink href="#contact">Contact us</HamburgerMenuLink>
-    <HamburgerMenuLink href="#faq">FAQ</HamburgerMenuLink>
-  </HamburgerMenu>
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<HamburgerMenu> <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</span> <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span> <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />{"220"}</Button> <HamburgerMenuLink href="#getting-started">{"Getting started"}</HamburgerMenuLink> <HamburgerMenuLink href="#components">{"Components"}</HamburgerMenuLink> </HamburgerMenu>
 </div>
 
 ```astro
 ---
-import { HamburgerMenu, HamburgerMenuLink } from '@bejamas/ui/components/hamburger-menu';
+import { Button } from '@bejamas/registry/ui/button';
+import { HamburgerMenu, HamburgerMenuLink } from '@bejamas/registry/ui/hamburger-menu';
 ---
 
 <HamburgerMenu>
-  <a slot="brand" href="/">Bejamas UI</a>
-  <HamburgerMenuLink href="/getting-started">Getting started</HamburgerMenuLink>
-  <HamburgerMenuLink href="/components">Components</HamburgerMenuLink>
+  <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
+  <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
+  <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
+  <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
+  <HamburgerMenuLink href="#components">Components</HamburgerMenuLink>
 </HamburgerMenu>
 ```
 
-## Advanced menu
+## Installation
 
-<div class="not-content sl-bejamas-component-preview relative h-[470px] overflow-hidden rounded-lg border border-border bg-muted/40">
-  <HamburgerMenu variant="advanced" defaultOpen>
-    <a slot="brand" href="/" class="font-semibold">Bejamas UI</a>
-    <HamburgerMenuGroup label="Getting started" defaultOpen>
-      <HamburgerMenuLink href="#introduction">Introduction</HamburgerMenuLink>
-      <HamburgerMenuLink href="#installation-advanced">Installation</HamburgerMenuLink>
-      <HamburgerMenuLink href="#cli">CLI</HamburgerMenuLink>
-      <HamburgerMenuLink href="#forms">Forms with Astro Actions</HamburgerMenuLink>
-    </HamburgerMenuGroup>
-    <HamburgerMenuGroup label="Components">
-      <HamburgerMenuLink href="#buttons">Buttons</HamburgerMenuLink>
-    </HamburgerMenuGroup>
-    <HamburgerMenuGroup label="Concepts">
-      <HamburgerMenuLink href="#theming">Theming</HamburgerMenuLink>
-    </HamburgerMenuGroup>
-    <HamburgerMenuGroup label="About us">
-      <HamburgerMenuLink href="#team">Team</HamburgerMenuLink>
-    </HamburgerMenuGroup>
-  </HamburgerMenu>
-</div>
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add hamburger-menu
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add hamburger-menu
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add hamburger-menu
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add hamburger-menu
+  ```
+  </DocsTabItem>
+</DocsTabs>
 
-```astro
+## Usage
+
+```astro nocollapse
 ---
-import { HamburgerMenu, HamburgerMenuGroup, HamburgerMenuLink } from '@bejamas/ui/components/hamburger-menu';
+import { HamburgerMenu, HamburgerMenuLink, HamburgerMenuGroup } from '@bejamas/registry/ui/hamburger-menu';
 ---
-
 <HamburgerMenu variant="advanced">
   <a slot="brand" href="/">Bejamas UI</a>
   <HamburgerMenuGroup label="Getting started" defaultOpen>
@@ -73,10 +68,105 @@ import { HamburgerMenu, HamburgerMenuGroup, HamburgerMenuLink } from '@bejamas/u
 </HamburgerMenu>
 ```
 
-The trigger is a native button with `aria-expanded` and `aria-controls`. It opens with mouse, touch, Enter, or Space. Escape closes the panel and returns focus to the trigger. Links close the panel when selected. Groups use native disclosure elements, so they also work with the keyboard.
+## Props
 
 | Prop | Type | Default |
 |---|---|---|
-| `variant` | `"simple" \| "advanced"` | `"simple"` |
-| `defaultOpen` | `boolean` | `false` |
-| `label` | `string` | `"Mobile navigation"` |
+| <code>class</code> | `string` | `""` |
+| <code>variant</code> | `"simple" \| "advanced"` | `"simple"` |
+| <code>defaultOpen</code> | `boolean` | `false` |
+| <code>label</code> | `string` | `"Mobile navigation"` |
+
+## Examples
+
+### Closed
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="relative w-full max-w-[375px] border border-border"> <HamburgerMenu> <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</span> <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span> <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />{"220"}</Button> <HamburgerMenuLink href="#getting-started">{"Getting started"}</HamburgerMenuLink> </HamburgerMenu> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { HamburgerMenu, HamburgerMenuLink } from '@bejamas/registry/ui/hamburger-menu';
+---
+
+<div class="relative w-full max-w-[375px] border border-border">
+  <HamburgerMenu>
+    <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
+    <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
+    <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
+    <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
+  </HamburgerMenu>
+</div>
+```
+
+### Opened Simple
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="relative h-[736px] w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px]"> <HamburgerMenu defaultOpen> <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</span> <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span> <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />{"220"}</Button> <HamburgerMenuLink href="#getting-started">{"Getting started"}</HamburgerMenuLink> <HamburgerMenuLink href="#installation">{"Installation"}</HamburgerMenuLink> <HamburgerMenuLink href="#components">{"Components"}</HamburgerMenuLink> <HamburgerMenuLink href="#concepts">{"Concepts"}</HamburgerMenuLink> <HamburgerMenuLink href="#blog">{"Blog"}</HamburgerMenuLink> <HamburgerMenuLink href="#about">{"About us"}</HamburgerMenuLink> <HamburgerMenuLink href="#contact">{"Contact us"}</HamburgerMenuLink> <HamburgerMenuLink href="#faq">{"FAQ"}</HamburgerMenuLink> <Button slot="footer" as="a" href="https://x.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on X"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/social-x.svg" width="16" height="16" alt="" /></Button> <Button slot="footer" as="a" href="https://github.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on GitHub"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-footer.svg" width="16" height="16" alt="" /></Button> </HamburgerMenu> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { HamburgerMenu, HamburgerMenuLink } from '@bejamas/registry/ui/hamburger-menu';
+---
+
+<div class="relative h-[736px] w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px]">
+  <HamburgerMenu defaultOpen>
+    <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
+    <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
+    <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
+    <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
+    <HamburgerMenuLink href="#installation">Installation</HamburgerMenuLink>
+    <HamburgerMenuLink href="#components">Components</HamburgerMenuLink>
+    <HamburgerMenuLink href="#concepts">Concepts</HamburgerMenuLink>
+    <HamburgerMenuLink href="#blog">Blog</HamburgerMenuLink>
+    <HamburgerMenuLink href="#about">About us</HamburgerMenuLink>
+    <HamburgerMenuLink href="#contact">Contact us</HamburgerMenuLink>
+    <HamburgerMenuLink href="#faq">FAQ</HamburgerMenuLink>
+    <Button slot="footer" as="a" href="https://x.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on X"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/social-x.svg" width="16" height="16" alt="" /></Button>
+    <Button slot="footer" as="a" href="https://github.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on GitHub"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-footer.svg" width="16" height="16" alt="" /></Button>
+  </HamburgerMenu>
+</div>
+```
+
+### Opened Advanced
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="relative h-[736px] w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px]"> <HamburgerMenu variant="advanced" defaultOpen> <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">{"Slot area"}</span> <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span> <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />{"220"}</Button> <HamburgerMenuGroup label="Getting started" defaultOpen> <HamburgerMenuLink href="#introduction">{"Introduction"}</HamburgerMenuLink> <HamburgerMenuLink href="#installation-advanced">{"Installation"}</HamburgerMenuLink> <HamburgerMenuLink href="#cli">{"CLI"}</HamburgerMenuLink> <HamburgerMenuLink href="#forms">{"Forms with Astro Actions"}</HamburgerMenuLink> </HamburgerMenuGroup> <HamburgerMenuGroup label="Components"><HamburgerMenuLink href="#buttons">{"Buttons"}</HamburgerMenuLink></HamburgerMenuGroup> <HamburgerMenuGroup label="Concepts"><HamburgerMenuLink href="#theming">{"Theming"}</HamburgerMenuLink></HamburgerMenuGroup> <HamburgerMenuGroup label="About us"><HamburgerMenuLink href="#team">{"Team"}</HamburgerMenuLink></HamburgerMenuGroup> <HamburgerMenuGroup label="Contact us"><HamburgerMenuLink href="#contact-details">{"Contact details"}</HamburgerMenuLink></HamburgerMenuGroup> <Button slot="footer" as="a" href="https://x.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on X"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/social-x.svg" width="16" height="16" alt="" /></Button> <Button slot="footer" as="a" href="https://github.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on GitHub"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-footer.svg" width="16" height="16" alt="" /></Button> </HamburgerMenu> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { HamburgerMenu, HamburgerMenuGroup, HamburgerMenuLink } from '@bejamas/registry/ui/hamburger-menu';
+---
+
+<div class="relative h-[736px] w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px]">
+  <HamburgerMenu variant="advanced" defaultOpen>
+    <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
+    <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
+    <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
+    <HamburgerMenuGroup label="Getting started" defaultOpen>
+      <HamburgerMenuLink href="#introduction">Introduction</HamburgerMenuLink>
+      <HamburgerMenuLink href="#installation-advanced">Installation</HamburgerMenuLink>
+      <HamburgerMenuLink href="#cli">CLI</HamburgerMenuLink>
+      <HamburgerMenuLink href="#forms">Forms with Astro Actions</HamburgerMenuLink>
+    </HamburgerMenuGroup>
+    <HamburgerMenuGroup label="Components"><HamburgerMenuLink href="#buttons">Buttons</HamburgerMenuLink></HamburgerMenuGroup>
+    <HamburgerMenuGroup label="Concepts"><HamburgerMenuLink href="#theming">Theming</HamburgerMenuLink></HamburgerMenuGroup>
+    <HamburgerMenuGroup label="About us"><HamburgerMenuLink href="#team">Team</HamburgerMenuLink></HamburgerMenuGroup>
+    <HamburgerMenuGroup label="Contact us"><HamburgerMenuLink href="#contact-details">Contact details</HamburgerMenuLink></HamburgerMenuGroup>
+    <Button slot="footer" as="a" href="https://x.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on X"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/social-x.svg" width="16" height="16" alt="" /></Button>
+    <Button slot="footer" as="a" href="https://github.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on GitHub"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-footer.svg" width="16" height="16" alt="" /></Button>
+  </HamburgerMenu>
+</div>
+```
+
+## API Reference
+
+The 48px header remains visible while the panel fills the rest of the viewport. Add your own controls with the `brand`, `actions`, and `footer` slots. For a fixed-height preview, set `--hamburger-menu-panel-height` on a parent element.
+
+The trigger supports mouse, touch, Enter, and Space. Escape closes the panel and restores focus to the trigger. Selecting a link closes the panel. Advanced groups use native disclosure elements and support keyboard interaction.

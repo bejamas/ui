@@ -1,39 +1,34 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
-import { HamburgerMenu, HamburgerMenuGroup, HamburgerMenuLink } from "@bejamas/registry/ui/hamburger-menu";
+import HamburgerMenuExample from "@/components/HamburgerMenuExample.astro";
 ---
 
 <KitchenSinkLayout>
   <section class="mx-auto max-w-5xl space-y-8 px-5 py-20">
     <h1 class="text-3xl font-bold">Hamburger Menu</h1>
-    <p class="text-muted-foreground">Open the menus with mouse, touch, or keyboard. Press Escape to close one.</p>
-    <div class="grid gap-8 md:grid-cols-2">
-      <div class="relative h-[600px] overflow-hidden rounded-lg border border-border bg-muted/40">
-        <HamburgerMenu>
-          <a slot="brand" href="/" class="font-semibold">Bejamas UI</a>
-          <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
-          <HamburgerMenuLink href="#installation">Installation</HamburgerMenuLink>
-          <HamburgerMenuLink href="#components">Components</HamburgerMenuLink>
-          <HamburgerMenuLink href="#concepts">Concepts</HamburgerMenuLink>
-          <HamburgerMenuLink href="#blog">Blog</HamburgerMenuLink>
-          <HamburgerMenuLink href="#about">About us</HamburgerMenuLink>
-          <HamburgerMenuLink href="#contact">Contact us</HamburgerMenuLink>
-          <HamburgerMenuLink href="#faq">FAQ</HamburgerMenuLink>
-        </HamburgerMenu>
+    <p class="text-muted-foreground">
+      Open the menus with mouse, touch, or keyboard. Press Escape to close one.
+    </p>
+
+    <div class="space-y-3">
+      <h2 class="text-lg font-semibold">Closed</h2>
+      <div class="relative w-full max-w-[375px] rounded-lg border border-border">
+        <HamburgerMenuExample />
       </div>
-      <div class="relative h-[600px] overflow-hidden rounded-lg border border-border bg-muted/40">
-        <HamburgerMenu variant="advanced">
-          <a slot="brand" href="/" class="font-semibold">Bejamas UI</a>
-          <HamburgerMenuGroup label="Getting started" defaultOpen>
-            <HamburgerMenuLink href="#introduction">Introduction</HamburgerMenuLink>
-            <HamburgerMenuLink href="#install">Installation</HamburgerMenuLink>
-            <HamburgerMenuLink href="#cli">CLI</HamburgerMenuLink>
-            <HamburgerMenuLink href="#forms">Forms with Astro Actions</HamburgerMenuLink>
-          </HamburgerMenuGroup>
-          <HamburgerMenuGroup label="Components"><HamburgerMenuLink href="#buttons">Buttons</HamburgerMenuLink></HamburgerMenuGroup>
-          <HamburgerMenuGroup label="Concepts"><HamburgerMenuLink href="#theming">Theming</HamburgerMenuLink></HamburgerMenuGroup>
-          <HamburgerMenuGroup label="About us"><HamburgerMenuLink href="#team">Team</HamburgerMenuLink></HamburgerMenuGroup>
-        </HamburgerMenu>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-2">
+      <div class="space-y-3">
+        <h2 class="text-lg font-semibold">Opened Simple</h2>
+        <div class="relative h-[736px] w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px]">
+          <HamburgerMenuExample defaultOpen />
+        </div>
+      </div>
+      <div class="space-y-3">
+        <h2 class="text-lg font-semibold">Opened Advanced</h2>
+        <div class="relative h-[736px] w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px]">
+          <HamburgerMenuExample variant="advanced" defaultOpen />
+        </div>
       </div>
     </div>
   </section>
