@@ -166,6 +166,13 @@ export const KITCHEN_SINK_PAGES: KitchenSinkPage[] = [
     description: "Left, right, vertical, speed variations, solid variant",
   },
   {
+    id: "hamburger-menu",
+    href: "/kitchen-sink/hamburger-menu",
+    label: "Hamburger Menu",
+    description: "Mobile navigation with simple and expandable links",
+    js: true,
+  },
+  {
     id: "native-select",
     href: "/kitchen-sink/native-select",
     label: "Native Select",

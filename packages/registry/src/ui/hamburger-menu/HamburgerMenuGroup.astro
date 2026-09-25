@@ -1,0 +1,29 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"details"> {
+  label: string;
+  defaultOpen?: boolean;
+  class?: string;
+}
+
+const { label, defaultOpen = false, class: className = "", ...rest } = Astro.props as Props;
+---
+
+<details
+  {...rest}
+  data-slot="hamburger-menu-group"
+  open={defaultOpen}
+  class={cn("group/hamburger-menu-group", className)}
+>
+  <summary class="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-md py-2 pr-1 text-xs font-semibold leading-4 text-muted-foreground outline-none marker:hidden hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+    {label}
+    <SemanticIcon name="chevron-down" class="size-[18px] group-open/hamburger-menu-group:hidden" />
+    <SemanticIcon name="chevron-up" class="hidden size-[18px] group-open/hamburger-menu-group:block" />
+  </summary>
+  <div data-slot="hamburger-menu-group-content" class="flex flex-col gap-1.5 pb-2">
+    <slot />
+  </div>
+</details>

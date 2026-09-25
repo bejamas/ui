@@ -524,6 +524,29 @@
       ]
     },
     {
+      "name": "hamburger-menu",
+      "type": "registry:ui",
+      "registryDependencies": ["index", "utils"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/hamburger-menu/HamburgerMenu.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/hamburger-menu/HamburgerMenuGroup.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/hamburger-menu/HamburgerMenuLink.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/hamburger-menu/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "hover-card",
       "type": "registry:ui",
       "dependencies": ["@data-slot/hover-card"],
