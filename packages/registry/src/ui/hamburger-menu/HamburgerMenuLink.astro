@@ -14,7 +14,10 @@ const { href, class: className = "", ...rest } = Astro.props as Props;
   {...rest}
   href={href}
   data-slot="hamburger-menu-link"
-  class={cn("block rounded-md py-1 text-base font-medium leading-6 text-foreground outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-ring group-data-[variant=advanced]/hamburger-menu:py-0", className)}
+  class={cn(
+    "block rounded-md text-base font-medium leading-6 text-foreground outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-ring",
+    className,
+  )}
 >
   <slot />
 </a>

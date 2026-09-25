@@ -7,7 +7,9 @@
  *
  * @preview
  * <HamburgerMenu>
- *   <span slot="brand">Bejamas UI</span>
+ *   <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
+ *   <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
+ *   <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
  *   <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
  *   <HamburgerMenuLink href="#components">Components</HamburgerMenuLink>
  * </HamburgerMenu>
@@ -25,6 +27,67 @@
  *   </HamburgerMenuGroup>
  * </HamburgerMenu>
  * ```
+ *
+ * @api
+ *
+ * The 48px header remains visible while the panel fills the rest of the viewport. Add your own controls with the `brand`, `actions`, and `footer` slots. For a fixed-height preview, set `--hamburger-menu-panel-height` on a parent element.
+ *
+ * The trigger supports mouse, touch, Enter, and Space. Escape closes the panel and restores focus to the trigger. Selecting a link closes the panel. Advanced groups use native disclosure elements and support keyboard interaction.
+ *
+ * @examples
+ *
+ * ### Closed
+ *
+ * <div class="relative w-full max-w-[375px] border border-border">
+ *   <HamburgerMenu>
+ *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
+ *     <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
+ *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
+ *     <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
+ *   </HamburgerMenu>
+ * </div>
+ *
+ * ### Opened Simple
+ *
+ * <div class="relative h-[736px] w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px]">
+ *   <HamburgerMenu defaultOpen>
+ *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
+ *     <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
+ *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
+ *     <HamburgerMenuLink href="#getting-started">Getting started</HamburgerMenuLink>
+ *     <HamburgerMenuLink href="#installation">Installation</HamburgerMenuLink>
+ *     <HamburgerMenuLink href="#components">Components</HamburgerMenuLink>
+ *     <HamburgerMenuLink href="#concepts">Concepts</HamburgerMenuLink>
+ *     <HamburgerMenuLink href="#blog">Blog</HamburgerMenuLink>
+ *     <HamburgerMenuLink href="#about">About us</HamburgerMenuLink>
+ *     <HamburgerMenuLink href="#contact">Contact us</HamburgerMenuLink>
+ *     <HamburgerMenuLink href="#faq">FAQ</HamburgerMenuLink>
+ *     <Button slot="footer" as="a" href="https://x.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on X"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/social-x.svg" width="16" height="16" alt="" /></Button>
+ *     <Button slot="footer" as="a" href="https://github.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on GitHub"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-footer.svg" width="16" height="16" alt="" /></Button>
+ *   </HamburgerMenu>
+ * </div>
+ *
+ * ### Opened Advanced
+ *
+ * <div class="relative h-[736px] w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px]">
+ *   <HamburgerMenu variant="advanced" defaultOpen>
+ *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
+ *     <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
+ *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
+ *     <HamburgerMenuGroup label="Getting started" defaultOpen>
+ *       <HamburgerMenuLink href="#introduction">Introduction</HamburgerMenuLink>
+ *       <HamburgerMenuLink href="#installation-advanced">Installation</HamburgerMenuLink>
+ *       <HamburgerMenuLink href="#cli">CLI</HamburgerMenuLink>
+ *       <HamburgerMenuLink href="#forms">Forms with Astro Actions</HamburgerMenuLink>
+ *     </HamburgerMenuGroup>
+ *     <HamburgerMenuGroup label="Components"><HamburgerMenuLink href="#buttons">Buttons</HamburgerMenuLink></HamburgerMenuGroup>
+ *     <HamburgerMenuGroup label="Concepts"><HamburgerMenuLink href="#theming">Theming</HamburgerMenuLink></HamburgerMenuGroup>
+ *     <HamburgerMenuGroup label="About us"><HamburgerMenuLink href="#team">Team</HamburgerMenuLink></HamburgerMenuGroup>
+ *     <HamburgerMenuGroup label="Contact us"><HamburgerMenuLink href="#contact-details">Contact details</HamburgerMenuLink></HamburgerMenuGroup>
+ *     <Button slot="footer" as="a" href="https://x.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on X"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/social-x.svg" width="16" height="16" alt="" /></Button>
+ *     <Button slot="footer" as="a" href="https://github.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on GitHub"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-footer.svg" width="16" height="16" alt="" /></Button>
+ *   </HamburgerMenu>
+ * </div>
  */
 import { cn } from "@bejamas/registry/lib/utils";
 import SemanticIcon from "../icon/SemanticIcon.astro";
@@ -55,9 +118,15 @@ const panelId = `${id}-panel`;
   data-slot="hamburger-menu"
   data-variant={variant}
   data-state={defaultOpen ? "open" : "closed"}
-  class={cn("cn-hamburger-menu group/hamburger-menu relative w-full bg-background text-foreground", className)}
+  class={cn(
+    "cn-hamburger-menu group/hamburger-menu relative w-full bg-background text-foreground",
+    className,
+  )}
 >
-  <div data-slot="hamburger-menu-bar" class="flex h-12 items-center justify-between gap-3 border-b border-border px-3 py-2">
+  <div
+    data-slot="hamburger-menu-bar"
+    class="flex h-12 items-center justify-between gap-3 border-b border-border px-3 py-2"
+  >
     <div data-slot="hamburger-menu-brand" class="min-w-0 shrink-0">
       <slot name="brand" />
     </div>
@@ -73,8 +142,16 @@ const panelId = `${id}-panel`;
         aria-controls={panelId}
         aria-expanded={defaultOpen ? "true" : "false"}
       >
-        <SemanticIcon name="menu" class={cn("size-4", defaultOpen && "hidden")} data-slot="hamburger-menu-icon-open" />
-        <SemanticIcon name="x" class={cn("size-4", !defaultOpen && "hidden")} data-slot="hamburger-menu-icon-close" />
+        <SemanticIcon
+          name="menu"
+          class={cn("size-4", defaultOpen && "hidden")}
+          data-slot="hamburger-menu-icon-open"
+        />
+        <SemanticIcon
+          name="x"
+          class={cn("size-4", !defaultOpen && "hidden")}
+          data-slot="hamburger-menu-icon-close"
+        />
       </button>
     </div>
   </div>
@@ -84,20 +161,25 @@ const panelId = `${id}-panel`;
     aria-label={label}
     hidden={!defaultOpen}
     class={cn(
-      "absolute inset-x-0 top-full z-50 flex min-h-[calc(100dvh-3rem)] flex-col justify-between overflow-y-auto bg-background px-3 pb-6 shadow-sm",
+      "absolute inset-x-0 top-full z-50 flex h-[var(--hamburger-menu-panel-height,calc(100dvh-3rem))] flex-col justify-between overflow-y-auto overscroll-contain bg-background px-3 pb-6 shadow-sm",
       variant === "simple" ? "pt-6" : "pt-3",
+      !defaultOpen && "hidden",
     )}
   >
-    <div data-slot="hamburger-menu-items" class={cn("flex flex-col", variant === "simple" ? "gap-3" : "gap-2")}>
+    <div
+      data-slot="hamburger-menu-items"
+      class={cn("flex flex-col", variant === "simple" ? "gap-3" : "gap-2")}
+    >
       <slot />
     </div>
-    {
-      Astro.slots.has("footer") && (
-        <div data-slot="hamburger-menu-footer" class="mt-8 flex items-center gap-1.5">
-          <slot name="footer" />
-        </div>
-      )
-    }
+    {Astro.slots.has("footer") && (
+      <div
+        data-slot="hamburger-menu-footer"
+        class="mt-8 flex items-center gap-1.5"
+      >
+        <slot name="footer" />
+      </div>
+    )}
   </nav>
 </div>
 
@@ -105,10 +187,18 @@ const panelId = `${id}-panel`;
   function initializeHamburgerMenu(root: HTMLElement) {
     if (root.dataset.initialized === "true") return;
     root.dataset.initialized = "true";
-    const trigger = root.querySelector<HTMLButtonElement>('[data-slot="hamburger-menu-trigger"]');
-    const panel = root.querySelector<HTMLElement>('[data-slot="hamburger-menu-panel"]');
-    const openIcon = root.querySelector<HTMLElement>('[data-slot="hamburger-menu-icon-open"]');
-    const closeIcon = root.querySelector<HTMLElement>('[data-slot="hamburger-menu-icon-close"]');
+    const trigger = root.querySelector<HTMLButtonElement>(
+      '[data-slot="hamburger-menu-trigger"]',
+    );
+    const panel = root.querySelector<HTMLElement>(
+      '[data-slot="hamburger-menu-panel"]',
+    );
+    const openIcon = root.querySelector<HTMLElement>(
+      '[data-slot="hamburger-menu-icon-open"]',
+    );
+    const closeIcon = root.querySelector<HTMLElement>(
+      '[data-slot="hamburger-menu-icon-close"]',
+    );
     if (!trigger || !panel) return;
     const controller = new AbortController();
     const { signal } = controller;
@@ -116,6 +206,7 @@ const panelId = `${id}-panel`;
     const setOpen = (open: boolean, restoreFocus = false) => {
       root.dataset.state = open ? "open" : "closed";
       panel.hidden = !open;
+      panel.classList.toggle("hidden", !open);
       trigger.setAttribute("aria-expanded", String(open));
       trigger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
       openIcon?.classList.toggle("hidden", open);
@@ -123,27 +214,53 @@ const panelId = `${id}-panel`;
       if (restoreFocus) trigger.focus();
     };
 
-    trigger.addEventListener("click", () => setOpen(panel.hidden === true), { signal });
-    root.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !panel.hidden) {
-        event.preventDefault();
-        setOpen(false, true);
-      }
-    }, { signal });
-    document.addEventListener("pointerdown", (event) => {
-      if (!panel.hidden && event.target instanceof Node && !root.contains(event.target)) {
-        setOpen(false);
-      }
-    }, { signal });
-    panel.addEventListener("click", (event) => {
-      const target = event.target;
-      if (target instanceof Element && target.closest('a[href]')) setOpen(false);
-    }, { signal });
-    document.addEventListener("astro:before-swap", () => controller.abort(), { once: true, signal });
+    trigger.addEventListener("click", () => setOpen(panel.hidden === true), {
+      signal,
+    });
+    root.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Escape" && !panel.hidden) {
+          event.preventDefault();
+          setOpen(false, true);
+        }
+      },
+      { signal },
+    );
+    document.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (
+          !panel.hidden &&
+          event.target instanceof Node &&
+          !root.contains(event.target)
+        ) {
+          setOpen(false);
+        }
+      },
+      { signal },
+    );
+    panel.addEventListener(
+      "click",
+      (event) => {
+        const target = event.target;
+        if (target instanceof Element && target.closest("a[href]"))
+          setOpen(false);
+      },
+      { signal },
+    );
+    document.addEventListener("astro:before-swap", () => controller.abort(), {
+      once: true,
+      signal,
+    });
   }
 
-  document.querySelectorAll<HTMLElement>('[data-slot="hamburger-menu"]').forEach(initializeHamburgerMenu);
+  document
+    .querySelectorAll<HTMLElement>('[data-slot="hamburger-menu"]')
+    .forEach(initializeHamburgerMenu);
   document.addEventListener("astro:page-load", () => {
-    document.querySelectorAll<HTMLElement>('[data-slot="hamburger-menu"]').forEach(initializeHamburgerMenu);
+    document
+      .querySelectorAll<HTMLElement>('[data-slot="hamburger-menu"]')
+      .forEach(initializeHamburgerMenu);
   });
 </script>
