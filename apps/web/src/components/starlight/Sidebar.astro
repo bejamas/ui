@@ -1,0 +1,37 @@
+---
+import MobileMenuFooter from "virtual:starlight/components/MobileMenuFooter";
+import SidebarPersister from "@astrojs/starlight/components/SidebarPersister.astro";
+import SidebarSublist from "@astrojs/starlight/components/SidebarSublist.astro";
+
+const { sidebar } = Astro.locals.starlightRoute;
+---
+
+<div class="mobile-preferences-at-top">
+  <MobileMenuFooter />
+</div>
+
+<SidebarPersister>
+  <SidebarSublist sublist={sidebar} />
+</SidebarPersister>
+
+<style>
+  @layer bejamas {
+    .mobile-preferences-at-top {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--background);
+    }
+
+    .mobile-preferences-at-top :global(.mobile-preferences) {
+      border-top: 0;
+      border-bottom: 1px solid var(--sl-color-gray-6);
+    }
+
+    @media (min-width: 64rem) {
+      .mobile-preferences-at-top {
+        display: none;
+      }
+    }
+  }
+</style>

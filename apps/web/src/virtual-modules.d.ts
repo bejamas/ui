@@ -16,6 +16,11 @@ declare module "virtual:starlight/components/LanguageSelect" {
   export default LanguageSelect;
 }
 
+declare module "virtual:starlight/components/MobileMenuFooter" {
+  const MobileMenuFooter: AstroVirtualComponent;
+  export default MobileMenuFooter;
+}
+
 declare module "virtual:starlight/components/Search" {
   const Search: AstroVirtualComponent;
   export default Search;
