@@ -72,6 +72,16 @@
  *
  * @api
  *
+ * ### Overlay styling
+ *
+ * Pass `overlayClass` to `DialogContent` to style the overlay separately from the content. For example, reserve space above a mobile menu for a fixed header:
+ *
+ * ```astro nocollapse
+ * <DialogContent overlayClass="top-16">
+ *   Menu content
+ * </DialogContent>
+ * ```
+ *
  * ### Events
  *
  * The dialog emits custom events that you can listen to:
