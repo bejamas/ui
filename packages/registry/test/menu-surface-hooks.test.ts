@@ -34,7 +34,9 @@ describe("menu surface hooks", () => {
     const select = readSource("select/SelectContent.astro");
     const combobox = readSource("combobox/ComboboxContent.astro");
     const popover = readSource("popover/PopoverContent.astro");
-    const navigationMenu = readSource("navigation-menu/NavigationMenuContent.astro");
+    const navigationMenu = readSource(
+      "navigation-menu/NavigationMenuContent.astro",
+    );
     const hoverCard = readSource("hover-card/HoverCardContent.astro");
 
     expect(dropdown).toContain("cn-menu-target");
@@ -88,27 +90,27 @@ describe("menu surface hooks", () => {
   test("published registry payload preserves the upstream menu surface hook contract", () => {
     const dropdown = getRegistryContent(
       "apps/web/public/r/dropdown-menu.json",
-      "../../packages/ui/src/components/dropdown-menu/DropdownMenuContent.astro",
+      "ui/dropdown-menu/DropdownMenuContent.astro",
     );
     const select = getRegistryContent(
       "apps/web/public/r/select.json",
-      "../../packages/ui/src/components/select/SelectContent.astro",
+      "ui/select/SelectContent.astro",
     );
     const combobox = getRegistryContent(
       "apps/web/public/r/combobox.json",
-      "../../packages/ui/src/components/combobox/ComboboxContent.astro",
+      "ui/combobox/ComboboxContent.astro",
     );
     const popover = getRegistryContent(
       "apps/web/public/r/popover.json",
-      "../../packages/ui/src/components/popover/PopoverContent.astro",
+      "ui/popover/PopoverContent.astro",
     );
     const navigationMenu = getRegistryContent(
       "apps/web/public/r/navigation-menu.json",
-      "../../packages/ui/src/components/navigation-menu/NavigationMenuContent.astro",
+      "ui/navigation-menu/NavigationMenuContent.astro",
     );
     const hoverCard = getRegistryContent(
       "apps/web/public/r/hover-card.json",
-      "../../packages/ui/src/components/hover-card/HoverCardContent.astro",
+      "ui/hover-card/HoverCardContent.astro",
     );
 
     expect(dropdown).toContain("cn-menu-target");

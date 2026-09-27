@@ -23,22 +23,16 @@ describe("shuffle utilities", () => {
     expect(source).toContain("keepalive: true");
   });
 
-  test("refreshes the current-theme stylesheet when applying docs presets", () => {
+  test("updates the document theme when applying docs presets", () => {
     const source = fs.readFileSync(presetApplyFile, "utf8");
 
-    expect(source).toContain("link[data-current-theme-stylesheet]");
-    expect(source).toContain(
-      'url.searchParams.set("v", Date.now().toString())',
-    );
-    expect(source).toContain("data-pending-current-theme-stylesheet");
-    expect(source).toContain(
-      'insertAdjacentElement("afterend", nextStylesheet)',
-    );
-    expect(source).toContain('nextStylesheet.addEventListener("load", onLoad');
-    expect(source).toContain(
-      'nextStylesheet.addEventListener("error", onError',
-    );
+    expect(source).toContain("style[data-docs-preset-theme]");
+    expect(source).toContain("stylesheet.textContent = css;");
+    expect(source).toContain("document.head.appendChild(stylesheet);");
     expect(source).toContain("setStoredPreset(");
+    expect(source).toContain(
+      "applyThemeToDocument(options.id, options.styles);",
+    );
   });
 
   test("increments the Redis-backed counter through the API route", () => {
@@ -49,12 +43,10 @@ describe("shuffle utilities", () => {
     );
     expect(source).toContain("export const GET: APIRoute = async () => {");
     expect(source).toContain("const count = await getShuffleCount();");
-    expect(source).toContain(
-      '"Cache-Control": "private, max-age=60, stale-while-revalidate=300"',
-    );
+    expect(source).toContain('"Cache-Control": SHORT_SHARED_CACHE_CONTROL');
     expect(source).toContain("export const POST: APIRoute = async () => {");
     expect(source).toContain("const count = await incrementShuffleCount();");
-    expect(source).toContain('"Cache-Control": "no-store"');
+    expect(source).toContain('"Cache-Control": NO_STORE_CACHE_CONTROL');
     expect(source).toContain("JSON.stringify({ count })");
   });
 });

@@ -6,6 +6,11 @@ declare module "virtual:starlight/user-config" {
   export default config;
 }
 
+declare module "virtual:starlight/project-context" {
+  const project: { trailingSlash: "always" | "never" | "ignore" };
+  export default project;
+}
+
 declare module "virtual:starlight/components/LanguageSelect" {
   const LanguageSelect: AstroVirtualComponent;
   export default LanguageSelect;

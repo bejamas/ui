@@ -5,6 +5,7 @@
     "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
+    "types": ["bun"],
     "lib": ["ES2022"]
   },
   "include": ["src/**/*", "worker-configuration.d.ts"]

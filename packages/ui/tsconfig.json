@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "moduleResolution": "bundler",
+    "types": ["bun"],
     "paths": {
       "@/*": ["src/*"],
       "@bejamas/ui/*": ["src/*"]

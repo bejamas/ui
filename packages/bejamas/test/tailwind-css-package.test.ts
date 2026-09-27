@@ -16,7 +16,7 @@ const bejamasPackageTailwindCss = readFileSync(
   "utf8",
 );
 const shadcnTailwindCss = readFileSync(
-  path.resolve(repoRoot, "tmp/shadcn-ui/packages/shadcn/src/tailwind.css"),
+  new URL(import.meta.resolve("shadcn/tailwind.css")),
   "utf8",
 );
 

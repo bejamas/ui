@@ -28,80 +28,41 @@ const isSplashTemplate = template === "splash";
         aria-label={Astro.locals.t("sidebarNav.accessibleLabel")}
       >
         <MobileMenuToggle />
-        <div id="starlight__sidebar" class="sidebar-pane">
+        <script>
+          if (!customElements.get("sl-sidebar-pane")) {
+            class StarlightSidebarPane extends HTMLElement {
+              constructor() {
+                super();
+
+                const desktopMediaQuery = matchMedia("(min-width: 64rem)");
+                const updatePopover = () => {
+                  this.popover = desktopMediaQuery.matches ? null : "auto";
+                };
+                updatePopover();
+                desktopMediaQuery.addEventListener("change", updatePopover);
+
+                this.addEventListener("toggle", () => {
+                  const isOpen = this.matches(":popover-open");
+                  document
+                    .querySelectorAll<HTMLElement>(".main-frame, .sl-skip-link")
+                    .forEach((element) => element.toggleAttribute("inert", isOpen));
+
+                  if (isOpen && this.closest(".sidebar-splash")) {
+                    this.scrollTop = 0;
+                  }
+                });
+              }
+            }
+
+            customElements.define("sl-sidebar-pane", StarlightSidebarPane);
+          }
+        </script>
+        <sl-sidebar-pane popover="" id="starlight__sidebar" class="sidebar-pane">
           <div class="sidebar-content sl-flex">
             <slot name="sidebar" />
           </div>
-        </div>
+        </sl-sidebar-pane>
       </nav>
-    )
-  }
-
-  {
-    isSplashTemplate && (
-      <script is:inline>
-        (() => {
-          const installReset = () => {
-            const nav = document.querySelector("nav.sidebar-splash");
-            if (!(nav instanceof HTMLElement)) return () => {};
-
-            const pane = nav.querySelector("#starlight__sidebar");
-            const toggle = nav.querySelector("starlight-menu-button");
-
-            if (!(pane instanceof HTMLElement)) return () => {};
-
-            const resetToTop = () => {
-              pane.scrollTop = 0;
-            };
-
-            // Avoid opening splash menus at a persisted offset.
-            resetToTop();
-
-            if (!(toggle instanceof HTMLElement)) return () => {};
-
-            const onToggleChange = () => {
-              if (toggle.getAttribute("aria-expanded") === "true") {
-                requestAnimationFrame(resetToTop);
-              }
-            };
-
-            const onToggleClick = () => {
-              requestAnimationFrame(onToggleChange);
-            };
-
-            toggle.addEventListener("click", onToggleClick);
-
-            const observer = new MutationObserver(onToggleChange);
-            observer.observe(toggle, {
-              attributes: true,
-              attributeFilter: ["aria-expanded"],
-            });
-
-            return () => {
-              toggle.removeEventListener("click", onToggleClick);
-              observer.disconnect();
-            };
-          };
-
-          let cleanup = installReset();
-
-          const onAstroPageLoad = () => {
-            cleanup();
-            cleanup = installReset();
-          };
-
-          document.addEventListener("astro:page-load", onAstroPageLoad);
-
-          addEventListener(
-            "pagehide",
-            () => {
-              cleanup();
-              document.removeEventListener("astro:page-load", onAstroPageLoad);
-            },
-            { once: true },
-          );
-        })();
-      </script>
     )
   }
 
@@ -182,15 +143,17 @@ const isSplashTemplate = template === "splash";
     }
 
     .sidebar-pane {
-      visibility: var(--sl-sidebar-visibility, hidden);
+      border: 0;
+      margin: 0;
+      color: inherit;
+      display: none;
       position: fixed;
       z-index: var(--sl-z-index-menu);
       inset-block: var(--sl-nav-height) 0;
       inset-inline-start: 0;
       width: 100%;
       background-color: var(--background);
-      height: 100svh;
-      overflow: scroll;
+      height: calc(100svh - var(--sl-nav-height));
       overflow-y: scroll;
       overflow-x: hidden;
       scrollbar-width: none;
@@ -198,12 +161,11 @@ const isSplashTemplate = template === "splash";
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       overscroll-behavior-y: contain;
-      top: 0;
-      padding-top: calc(var(--spacing) * 18);
+      padding: 0;
     }
 
-    :global([aria-expanded="true"]) ~ .sidebar-pane {
-      --sl-sidebar-visibility: visible;
+    .sidebar-pane:popover-open {
+      display: block;
     }
 
     .sidebar-content {
@@ -221,7 +183,6 @@ const isSplashTemplate = template === "splash";
       }
 
       .sidebar-pane {
-        padding-top: 0;
         margin-top: calc(var(--spacing) * 18);
       }
     }
@@ -315,7 +276,7 @@ const isSplashTemplate = template === "splash";
         padding-inline-end: var(--sl-nav-pad-x);
       }
       .sidebar-pane {
-        --sl-sidebar-visibility: visible;
+        display: block;
         width: var(--sl-sidebar-width);
         background-color: var(--sl-color-bg-sidebar);
         border-inline-end: 1px solid var(--sl-color-hairline-shade);

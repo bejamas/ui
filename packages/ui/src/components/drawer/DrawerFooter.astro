@@ -1,0 +1,21 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/drawer/DrawerFooter.astro directly.
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  class?: string;
+}
+const { class: className = "", ...rest } = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="drawer-footer"
+  class={cn(
+    "mt-auto flex w-full shrink-0 gap-2 [&>*]:min-w-0 [&>*]:flex-1",
+    className,
+  )}
+>
+  <slot />
+</div>

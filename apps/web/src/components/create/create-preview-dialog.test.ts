@@ -2,14 +2,17 @@ import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import path from "node:path";
 
-const componentRoot = path.resolve(import.meta.dir, "./base/ui/dialog");
+const componentRoot = path.resolve(
+  import.meta.dir,
+  "../../../../../packages/ui/src/components/dialog",
+);
 
 function read(filename: string) {
   return fs.readFileSync(path.join(componentRoot, filename), "utf8");
 }
 
-describe("create preview dialog mirror", () => {
-  test("keeps the base dialog mirror aligned with the default Juno dialog contract", () => {
+describe("create preview dialog components", () => {
+  test("keeps the installed dialog components aligned with the default Juno dialog contract", () => {
     const overlay = read("DialogOverlay.astro");
     const content = read("DialogContent.astro");
     const close = read("DialogClose.astro");
@@ -26,8 +29,10 @@ describe("create preview dialog mirror", () => {
     expect(content).not.toContain("[--tw-animation-fill-mode:both]");
 
     expect(close).toContain(
-      'class={cn("cn-dialog-close inline-flex items-center gap-2", className)}',
+      'class={cn("absolute top-4 right-4 inline-flex items-center gap-2", className)}',
     );
-    expect(title).toContain('class={cn("cn-dialog-title", className)}');
+    expect(title).toContain(
+      'class={cn("leading-none font-medium cn-font-heading", className)}',
+    );
   });
 });
