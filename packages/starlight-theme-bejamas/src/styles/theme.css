@@ -89,6 +89,7 @@
     /* --sl-nav-height: auto; */
     --sl-nav-pad-y: calc(var(--spacing) * 4.5);
     --sl-content-pad-x: calc(var(--spacing) * 5);
+    --sl-docs-top-space: calc(var(--spacing) * 12);
     --sl-nav-pad-x: calc(var(--spacing) * 1 + var(--sl-content-pad-x));
     --sl-main-frame-inner-background: var(--background);
     --sl-main-frame-inner-border: var(--border);
@@ -150,7 +151,7 @@
 
   .right-sidebar-panel {
     --sl-sidebar-item-padding-inline: 1rem;
-    padding-top: calc(var(--spacing) * 14);
+    padding-top: var(--sl-docs-top-space);
   }
 
   .right-sidebar-panel a {
@@ -224,6 +225,16 @@
     margin-bottom: 1px;
   }
 
+  @media (min-width: 64rem) {
+    .sidebar-pane .sidebar-content {
+      padding-top: var(--sl-docs-top-space);
+    }
+
+    .sidebar-content::before {
+      display: none;
+    }
+  }
+
   @media (max-width: 49.99rem) {
     .sidebar-pane .sidebar-content {
       --sl-sidebar-item-padding-inline: 0.5rem;
@@ -271,7 +282,7 @@
 
   @media (min-width: 50rem) {
     .content-panel:first-child {
-      padding-top: calc(var(--spacing) * 12);
+      padding-top: var(--sl-docs-top-space);
     }
   }
 
