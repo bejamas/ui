@@ -18,44 +18,20 @@ describe("hamburger menu distribution", () => {
       );
       const menu = source.get("ui/hamburger-menu/HamburgerMenu.astro")!;
       const menuItem = source.get("ui/hamburger-menu/MenuItem.astro")!;
-      const bar = source.get("ui/hamburger-menu/HamburgerMenuBar.astro")!;
-      const panel = source.get("ui/hamburger-menu/HamburgerMenuPanel.astro")!;
       const group = source.get("ui/hamburger-menu/MenuGroup.astro")!;
-      const section = source.get("ui/hamburger-menu/MenuSection.astro")!;
       const exports = source.get("ui/hamburger-menu/index.ts")!;
 
-      expect(panel).toContain("--hamburger-menu-panel-height");
-      expect(menu).not.toContain("data-variant");
-      expect(menu).not.toContain("variant?:");
-      expect(menu).not.toContain("isLegacy");
+      expect(menu).toContain("--hamburger-menu-panel-height");
+      expect(menu).toContain('!defaultOpen && "hidden"');
       expect(menu).toContain('panel.classList.toggle("hidden", !open)');
       expect(menu).toContain(
         'trigger.setAttribute("aria-expanded", String(open))',
       );
-      expect(menu).toContain("closeOnFocusOutside?: boolean");
-      expect(menu).toContain("data-close-on-focus-outside=");
-      expect(menu).toContain('event.key !== "Escape"');
-      expect(menu).toContain("<slot />");
-      expect(bar).toContain('data-slot="hamburger-menu-bar"');
-      expect(bar).toContain('data-slot="hamburger-menu-trigger"');
-      expect(bar).toContain('aria-expanded={defaultOpen ? "true" : "false"}');
-      expect(bar).toContain('name="trigger-open"');
-      expect(bar).toContain('name="trigger-close"');
-      expect(panel).toContain('data-slot="hamburger-menu-panel"');
-      expect(panel).toContain("aria-label={label}");
-      expect(panel).toContain('name="header"');
-      expect(panel).toContain('name="footer"');
+      expect(menu).toContain('if (event.key === "Escape" && !panel.hidden)');
       expect(menuItem).not.toContain("py-1");
       expect(group).toContain('data-slot="hamburger-menu-group"');
-      expect(section).toContain("aria-labelledby={headingId}");
-      expect(exports).toContain("default as MenuItem");
-      expect(exports).toContain("default as MenuGroup");
-      expect(exports).toContain("default as MenuSection");
-      expect(exports).toContain("default as HamburgerMenuLink");
-      expect(exports).toContain("default as HamburgerMenuGroup");
-      expect(exports).toContain("default as HamburgerMenuSection");
-      expect(exports).toContain("default as HamburgerMenuBar");
-      expect(exports).toContain("default as HamburgerMenuPanel");
+      expect(exports).toContain('default as MenuItem');
+      expect(exports).toContain('default as MenuGroup');
     }
   });
 
@@ -68,21 +44,11 @@ describe("hamburger menu distribution", () => {
     );
     const example = read("apps/web/src/components/HamburgerMenuExample.astro");
 
-    for (const state of ["Closed", "Opened With Links", "Opened With Groups"]) {
+    for (const state of ["Closed", "Opened Simple", "Opened Advanced"]) {
       expect(kitchenSink).toContain(state);
       expect(docs).toContain(state);
     }
-    expect(docs).toContain("<code>closeOnFocusOutside</code>");
-    expect(docs).toContain("MenuSection");
-    expect(docs).toContain("<HamburgerMenuBar>");
-    expect(docs).toContain("<HamburgerMenuPanel>");
-    expect(docs).not.toContain('<HamburgerMenuBar slot="bar">');
-    expect(docs).not.toContain('<HamburgerMenuPanel slot="panel">');
-    expect(kitchenSink).toContain("Customized Content");
-    expect(kitchenSink).toContain("<HamburgerMenuBar");
-    expect(kitchenSink).toContain("<HamburgerMenuPanel");
-    expect(example).toContain("closeOnFocusOutside={closeOnFocusOutside}");
-    expect(example).toContain("<HamburgerMenuBar");
+    expect(example).toContain('slot="actions"');
     expect(example).toContain('slot="footer"');
     for (const asset of [
       "theme",

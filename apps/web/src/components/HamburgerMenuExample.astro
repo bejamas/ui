@@ -2,25 +2,16 @@
 import { Button } from "@bejamas/registry/ui/button";
 import {
   HamburgerMenu,
-  HamburgerMenuBar,
-  HamburgerMenuPanel,
   MenuGroup,
   MenuItem,
 } from "@bejamas/registry/ui/hamburger-menu";
 
 interface Props {
-  withGroups?: boolean;
+  variant?: "simple" | "advanced";
   defaultOpen?: boolean;
-  closeOnOutsideClick?: boolean;
-  closeOnFocusOutside?: boolean;
 }
 
-const {
-  withGroups = false,
-  defaultOpen = false,
-  closeOnOutsideClick = true,
-  closeOnFocusOutside = false,
-} = Astro.props;
+const { variant = "simple", defaultOpen = false } = Astro.props;
 
 const simpleLinks = [
   ["Getting started", "#getting-started"],
@@ -50,88 +41,86 @@ const groups = [
 ] as const;
 ---
 
-<HamburgerMenu
-  closeOnOutsideClick={closeOnOutsideClick}
-  closeOnFocusOutside={closeOnFocusOutside}
->
-  <HamburgerMenuBar defaultOpen={defaultOpen}>
-    <span class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">
-      Slot area
-    </span>
-    <span
-      class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary"
-      aria-hidden="true"
-    >
-      <img
-        class="dark:brightness-0 dark:invert"
-        src="/figma/hamburger-menu/theme.svg"
-        width="16"
-        height="16"
-        alt=""
-      />
-    </span>
-    <Button
-      as="a"
-      href="https://github.com/bejamas"
-      variant="secondary"
-      size="sm"
-      aria-label="Bejamas on GitHub, 220 stars"
-    >
-      <img
-        class="dark:brightness-0 dark:invert"
-        src="/figma/hamburger-menu/github-header.svg"
-        width="14"
-        height="14"
-        alt=""
-      />
-      220
-    </Button>
-  </HamburgerMenuBar>
+<HamburgerMenu variant={variant} defaultOpen={defaultOpen}>
+  <span
+    slot="brand"
+    class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground"
+  >
+    Slot area
+  </span>
+  <span
+    slot="actions"
+    class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary"
+    aria-hidden="true"
+  >
+    <img
+      class="dark:brightness-0 dark:invert"
+      src="/figma/hamburger-menu/theme.svg"
+      width="16"
+      height="16"
+      alt=""
+    />
+  </span>
+  <Button
+    slot="actions"
+    as="a"
+    href="https://github.com/bejamas"
+    variant="secondary"
+    size="sm"
+    aria-label="Bejamas on GitHub, 220 stars"
+  >
+    <img
+      class="dark:brightness-0 dark:invert"
+      src="/figma/hamburger-menu/github-header.svg"
+      width="14"
+      height="14"
+      alt=""
+    />
+    220
+  </Button>
 
-  <HamburgerMenuPanel>
-    {withGroups
-      ? groups.map(({ label, links }, index) => (
-          <MenuGroup label={label} defaultOpen={index === 0}>
-            {links.map(([text, href]) => (
-              <MenuItem href={href}>{text}</MenuItem>
-            ))}
-          </MenuGroup>
-        ))
-      : simpleLinks.map(([text, href]) => (
-          <MenuItem href={href}>{text}</MenuItem>
-        ))}
+  {variant === "simple"
+    ? simpleLinks.map(([text, href]) => (
+        <MenuItem href={href}>{text}</MenuItem>
+      ))
+    : groups.map(({ label, links }, index) => (
+        <MenuGroup label={label} defaultOpen={index === 0}>
+          {links.map(([text, href]) => (
+            <MenuItem href={href}>{text}</MenuItem>
+          ))}
+        </MenuGroup>
+      ))}
 
-    <Button
-      slot="footer"
-      as="a"
-      href="https://x.com/bejamas"
-      variant="secondary"
-      size="icon"
-      aria-label="Bejamas on X"
-    >
-      <img
-        class="dark:brightness-0 dark:invert"
-        src="/figma/hamburger-menu/social-x.svg"
-        width="16"
-        height="16"
-        alt=""
-      />
-    </Button>
-    <Button
-      slot="footer"
-      as="a"
-      href="https://github.com/bejamas"
-      variant="secondary"
-      size="icon"
-      aria-label="Bejamas on GitHub"
-    >
-      <img
-        class="dark:brightness-0 dark:invert"
-        src="/figma/hamburger-menu/github-footer.svg"
-        width="16"
-        height="16"
-        alt=""
-      />
-    </Button>
-  </HamburgerMenuPanel>
+  <Button
+    slot="footer"
+    as="a"
+    href="https://x.com/bejamas"
+    variant="secondary"
+    size="icon"
+    aria-label="Bejamas on X"
+  >
+    <img
+      class="dark:brightness-0 dark:invert"
+      src="/figma/hamburger-menu/social-x.svg"
+      width="16"
+      height="16"
+      alt=""
+    />
+  </Button>
+  <Button
+    slot="footer"
+    as="a"
+    href="https://github.com/bejamas"
+    variant="secondary"
+    size="icon"
+    aria-label="Bejamas on GitHub"
+  >
+    <img
+      class="dark:brightness-0 dark:invert"
+      src="/figma/hamburger-menu/github-footer.svg"
+      width="16"
+      height="16"
+      alt=""
+    />
+  </Button>
 </HamburgerMenu>
