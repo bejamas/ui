@@ -1,13 +1,6 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import HamburgerMenuExample from "@/components/HamburgerMenuExample.astro";
-import {
-  HamburgerMenu,
-  HamburgerMenuBar,
-  HamburgerMenuLink,
-  HamburgerMenuPanel,
-  HamburgerMenuSection,
-} from "@bejamas/registry/ui/hamburger-menu";
 ---
 
 <KitchenSinkLayout>
@@ -19,61 +12,23 @@ import {
 
     <div class="space-y-3">
       <h2 class="text-lg font-semibold">Closed</h2>
-      <div class="relative w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
-        <HamburgerMenuExample closeOnFocusOutside />
+      <div class="relative w-full max-w-[375px] rounded-lg border border-border">
+        <HamburgerMenuExample />
       </div>
     </div>
 
     <div class="grid gap-8 lg:grid-cols-2">
       <div class="space-y-3">
-        <h2 class="text-lg font-semibold">Opened With Links</h2>
-        <div class="relative w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
-          <HamburgerMenuExample defaultOpen closeOnOutsideClick={false} />
+        <h2 class="text-lg font-semibold">Opened Simple</h2>
+        <div class="relative h-[736px] w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px]">
+          <HamburgerMenuExample defaultOpen />
         </div>
       </div>
       <div class="space-y-3">
-        <h2 class="text-lg font-semibold">Opened With Groups</h2>
-        <div class="relative w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
-          <HamburgerMenuExample
-            withGroups
-            defaultOpen
-            closeOnOutsideClick={false}
-          />
+        <h2 class="text-lg font-semibold">Opened Advanced</h2>
+        <div class="relative h-[736px] w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px]">
+          <HamburgerMenuExample variant="advanced" defaultOpen />
         </div>
-      </div>
-    </div>
-
-    <div class="space-y-3">
-      <h2 class="text-lg font-semibold">Customized Content</h2>
-      <div class="relative w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:320px] [&:has([data-state=open])]:h-[368px]">
-        <HamburgerMenu closeOnOutsideClick={false}>
-          <HamburgerMenuBar
-            defaultOpen
-            class="px-5"
-            triggerClass="rounded-full bg-muted"
-          >
-            <a href="/" class="font-semibold">
-              Bejamas UI
-            </a>
-            <span slot="trigger-open" class="text-[10px] font-semibold">
-              Menu
-            </span>
-            <span slot="trigger-close" class="text-[10px] font-semibold">
-              Close
-            </span>
-          </HamburgerMenuBar>
-          <HamburgerMenuPanel label="Example navigation" class="px-5">
-            <p slot="header" class="mb-4 text-sm text-muted-foreground">
-              Explore the site
-            </p>
-            <HamburgerMenuSection label="Resources">
-              <HamburgerMenuLink href="/docs">Documentation</HamburgerMenuLink>
-              <HamburgerMenuLink href="/components">
-                Components
-              </HamburgerMenuLink>
-            </HamburgerMenuSection>
-          </HamburgerMenuPanel>
-        </HamburgerMenu>
       </div>
     </div>
   </section>
