@@ -526,6 +526,7 @@
     {
       "name": "hamburger-menu",
       "type": "registry:ui",
+      "dependencies": ["@data-slot/collapsible"],
       "registryDependencies": ["index", "utils"],
       "files": [
         {

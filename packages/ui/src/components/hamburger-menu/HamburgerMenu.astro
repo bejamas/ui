@@ -7,20 +7,22 @@
  * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=5940-5284
  *
  * @preview
- * <HamburgerMenu>
- *   <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
- *   <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
- *   <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
- *   <MenuItem href="#getting-started">Getting started</MenuItem>
- *   <MenuItem href="#components">Components</MenuItem>
- * </HamburgerMenu>
+ * <div class="relative w-full max-w-[375px] self-start overflow-hidden border border-border [--hamburger-menu-panel-height:272px] [&:has([data-state=open])]:h-[320px]">
+ *   <HamburgerMenu>
+ *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
+ *     <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
+ *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
+ *     <MenuItem href="#getting-started">Getting started</MenuItem>
+ *     <MenuItem href="#components">Components</MenuItem>
+ *   </HamburgerMenu>
+ * </div>
  *
  * @usage
  * ```astro nocollapse
  * ---
  * import { HamburgerMenu, MenuItem, MenuGroup } from '@bejamas/ui/components/hamburger-menu';
  * ---
- * <HamburgerMenu variant="advanced">
+ * <HamburgerMenu>
  *   <a slot="brand" href="/">Bejamas UI</a>
  *   <MenuGroup label="Getting started" defaultOpen>
  *     <MenuItem href="/introduction">Introduction</MenuItem>
@@ -33,13 +35,15 @@
  *
  * The 48px header remains visible while the panel fills the rest of the viewport. Add your own controls with the `brand`, `actions`, and `footer` slots. For a fixed-height preview, set `--hamburger-menu-panel-height` on a parent element.
  *
- * The trigger supports mouse, touch, Enter, and Space. Escape closes the panel and restores focus to the trigger. Selecting a link closes the panel. Advanced groups use native disclosure elements and support keyboard interaction.
+ * The trigger supports mouse, touch, Enter, and Space. Escape closes the panel and returns focus to the trigger when focus was inside the menu. Clicking outside the menu or selecting a link closes the panel. Set `closeOnOutsideClick={false}` to keep the panel open while interacting with the rest of the page, for example in previews. Groups use native disclosure elements and support keyboard interaction.
+ *
+ * The open state is managed by `@data-slot/collapsible`, so the root sets `data-state` (`open` or `closed`), emits `collapsible:change` with `{ open: boolean }`, and accepts `collapsible:set` with `{ open: boolean }` for programmatic control.
  *
  * @examples
  *
  * ### Closed
  *
- * <div class="relative w-full max-w-[375px] border border-border">
+ * <div class="relative w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
  *   <HamburgerMenu>
  *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
  *     <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
@@ -50,8 +54,8 @@
  *
  * ### Opened Simple
  *
- * <div class="relative h-[736px] w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px]">
- *   <HamburgerMenu defaultOpen>
+ * <div class="relative w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
+ *   <HamburgerMenu defaultOpen closeOnOutsideClick={false}>
  *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
  *     <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
  *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
@@ -70,8 +74,8 @@
  *
  * ### Opened Advanced
  *
- * <div class="relative h-[736px] w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px]">
- *   <HamburgerMenu variant="advanced" defaultOpen>
+ * <div class="relative w-full max-w-[375px] overflow-hidden border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
+ *   <HamburgerMenu defaultOpen closeOnOutsideClick={false}>
  *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
  *     <span slot="actions" class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary" aria-hidden="true"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/theme.svg" width="16" height="16" alt="" /></span>
  *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" size="sm" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
@@ -96,16 +100,17 @@ import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"div"> {
   class?: string;
-  variant?: "simple" | "advanced";
   defaultOpen?: boolean;
+  /** Close the panel on a pointer press outside the menu. */
+  closeOnOutsideClick?: boolean;
   /** Accessible name of the navigation region. */
   label?: string;
 }
 
 const {
   class: className = "",
-  variant = "simple",
   defaultOpen = false,
+  closeOnOutsideClick = true,
   label = "Mobile navigation",
   id = `hamburger-menu-${crypto.randomUUID()}`,
   ...rest
@@ -117,8 +122,9 @@ const panelId = `${id}-panel`;
   {...rest}
   id={id}
   data-slot="hamburger-menu"
-  data-variant={variant}
   data-state={defaultOpen ? "open" : "closed"}
+  data-default-open={defaultOpen ? true : undefined}
+  data-close-on-outside-click={closeOnOutsideClick ? undefined : "false"}
   class={cn(
     "group/hamburger-menu relative w-full bg-background text-foreground",
     className,
@@ -137,7 +143,7 @@ const panelId = `${id}-panel`;
       </div>
       <button
         type="button"
-        data-slot="hamburger-menu-trigger"
+        data-slot="collapsible-trigger"
         class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-foreground outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         aria-label={defaultOpen ? "Close menu" : "Open menu"}
         aria-controls={panelId}
@@ -145,31 +151,27 @@ const panelId = `${id}-panel`;
       >
         <SemanticIcon
           name="menu"
-          class={cn("size-4", defaultOpen && "hidden")}
-          data-slot="hamburger-menu-icon-open"
+          class="size-4 group-data-[state=open]/hamburger-menu:hidden"
         />
         <SemanticIcon
           name="x"
-          class={cn("size-4", !defaultOpen && "hidden")}
-          data-slot="hamburger-menu-icon-close"
+          class="hidden size-4 group-data-[state=open]/hamburger-menu:block"
         />
       </button>
     </div>
   </div>
   <nav
     id={panelId}
-    data-slot="hamburger-menu-panel"
+    data-slot="collapsible-content"
     aria-label={label}
     hidden={!defaultOpen}
     class={cn(
-      "absolute inset-x-0 top-full z-50 flex h-[var(--hamburger-menu-panel-height,calc(100dvh-3rem))] flex-col justify-between overflow-y-auto overscroll-contain bg-background px-3 pb-6 shadow-sm",
-      variant === "simple" ? "pt-6" : "pt-3",
-      !defaultOpen && "hidden",
+      "absolute inset-x-0 top-full z-50 flex h-[var(--hamburger-menu-panel-height,calc(100dvh-3rem))] flex-col justify-between overflow-y-auto overscroll-contain bg-background px-3 pt-3 pb-6 shadow-sm",
     )}
   >
     <div
       data-slot="hamburger-menu-items"
-      class={cn("flex flex-col", variant === "simple" ? "gap-3" : "gap-2")}
+      class="flex flex-col gap-2"
     >
       <slot />
     </div>
@@ -185,46 +187,45 @@ const panelId = `${id}-panel`;
 </div>
 
 <script>
+  import { createCollapsible } from "@data-slot/collapsible";
+
   function initializeHamburgerMenu(root: HTMLElement) {
     if (root.dataset.initialized === "true") return;
     root.dataset.initialized = "true";
     const trigger = root.querySelector<HTMLButtonElement>(
-      '[data-slot="hamburger-menu-trigger"]',
+      '[data-slot="collapsible-trigger"]',
     );
     const panel = root.querySelector<HTMLElement>(
-      '[data-slot="hamburger-menu-panel"]',
-    );
-    const openIcon = root.querySelector<HTMLElement>(
-      '[data-slot="hamburger-menu-icon-open"]',
-    );
-    const closeIcon = root.querySelector<HTMLElement>(
-      '[data-slot="hamburger-menu-icon-close"]',
+      '[data-slot="collapsible-content"]',
     );
     if (!trigger || !panel) return;
+    const collapsible = createCollapsible(root);
+    // Collapsible turns its content into a region labelled by the trigger;
+    // keep the panel a navigation landmark named by `label`.
+    panel.removeAttribute("role");
+    panel.removeAttribute("aria-labelledby");
     const controller = new AbortController();
     const { signal } = controller;
 
-    const setOpen = (open: boolean, restoreFocus = false) => {
-      root.dataset.state = open ? "open" : "closed";
-      panel.hidden = !open;
-      panel.classList.toggle("hidden", !open);
-      trigger.setAttribute("aria-expanded", String(open));
-      trigger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-      openIcon?.classList.toggle("hidden", open);
-      closeIcon?.classList.toggle("hidden", !open);
-      if (restoreFocus) trigger.focus();
-    };
-
-    trigger.addEventListener("click", () => setOpen(panel.hidden === true), {
-      signal,
-    });
     root.addEventListener(
+      "collapsible:change",
+      () => {
+        trigger.setAttribute(
+          "aria-label",
+          collapsible.isOpen ? "Close menu" : "Open menu",
+        );
+      },
+      { signal },
+    );
+    // Listen on the document: Safari does not focus buttons on click, so a
+    // listener on the root would miss Escape after opening with the mouse.
+    document.addEventListener(
       "keydown",
       (event) => {
-        if (event.key === "Escape" && !panel.hidden) {
-          event.preventDefault();
-          setOpen(false, true);
-        }
+        if (event.key !== "Escape" || !collapsible.isOpen) return;
+        const restoreFocus = root.contains(document.activeElement);
+        collapsible.close();
+        if (restoreFocus) trigger.focus();
       },
       { signal },
     );
@@ -232,11 +233,12 @@ const panelId = `${id}-panel`;
       "pointerdown",
       (event) => {
         if (
-          !panel.hidden &&
+          collapsible.isOpen &&
+          root.dataset.closeOnOutsideClick !== "false" &&
           event.target instanceof Node &&
           !root.contains(event.target)
         ) {
-          setOpen(false);
+          collapsible.close();
         }
       },
       { signal },
@@ -246,14 +248,18 @@ const panelId = `${id}-panel`;
       (event) => {
         const target = event.target;
         if (target instanceof Element && target.closest("a[href]"))
-          setOpen(false);
+          collapsible.close();
       },
       { signal },
     );
-    document.addEventListener("astro:before-swap", () => controller.abort(), {
-      once: true,
-      signal,
-    });
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        controller.abort();
+        collapsible.destroy();
+      },
+      { once: true, signal },
+    );
   }
 
   document
