@@ -13,7 +13,7 @@ import HamburgerMenuExample from "@/components/HamburgerMenuExample.astro";
     <div class="space-y-3">
       <h2 class="text-lg font-semibold">Closed</h2>
       <div class="relative w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
-        <HamburgerMenuExample />
+        <HamburgerMenuExample closeOnOutsideClick={false} />
       </div>
     </div>
 
