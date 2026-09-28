@@ -2,8 +2,8 @@
 import { Button } from "@bejamas/registry/ui/button";
 import {
   HamburgerMenu,
-  HamburgerMenuGroup,
-  HamburgerMenuLink,
+  MenuGroup,
+  MenuItem,
 } from "@bejamas/registry/ui/hamburger-menu";
 
 interface Props {
@@ -81,14 +81,14 @@ const groups = [
 
   {variant === "simple"
     ? simpleLinks.map(([text, href]) => (
-        <HamburgerMenuLink href={href}>{text}</HamburgerMenuLink>
+        <MenuItem href={href}>{text}</MenuItem>
       ))
     : groups.map(({ label, links }, index) => (
-        <HamburgerMenuGroup label={label} defaultOpen={index === 0}>
+        <MenuGroup label={label} defaultOpen={index === 0}>
           {links.map(([text, href]) => (
-            <HamburgerMenuLink href={href}>{text}</HamburgerMenuLink>
+            <MenuItem href={href}>{text}</MenuItem>
           ))}
-        </HamburgerMenuGroup>
+        </MenuGroup>
       ))}
 
   <Button

@@ -17,7 +17,9 @@ describe("hamburger menu distribution", () => {
         item.files.map((file) => [file.path, file.content]),
       );
       const menu = source.get("ui/hamburger-menu/HamburgerMenu.astro")!;
-      const link = source.get("ui/hamburger-menu/HamburgerMenuLink.astro")!;
+      const menuItem = source.get("ui/hamburger-menu/MenuItem.astro")!;
+      const group = source.get("ui/hamburger-menu/MenuGroup.astro")!;
+      const exports = source.get("ui/hamburger-menu/index.ts")!;
 
       expect(menu).toContain("--hamburger-menu-panel-height");
       expect(menu).toContain('!defaultOpen && "hidden"');
@@ -26,7 +28,10 @@ describe("hamburger menu distribution", () => {
         'trigger.setAttribute("aria-expanded", String(open))',
       );
       expect(menu).toContain('if (event.key === "Escape" && !panel.hidden)');
-      expect(link).not.toContain("py-1");
+      expect(menuItem).not.toContain("py-1");
+      expect(group).toContain('data-slot="hamburger-menu-group"');
+      expect(exports).toContain('default as MenuItem');
+      expect(exports).toContain('default as MenuGroup');
     }
   });
 
