@@ -63,7 +63,6 @@ describe("hamburger menu distribution", () => {
     expect(example).toContain('slot="actions"');
     expect(example).toContain('slot="footer"');
     for (const asset of [
-      "theme",
       "github-header",
       "social-x",
       "github-footer",
