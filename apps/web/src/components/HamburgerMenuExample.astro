@@ -7,11 +7,16 @@ import {
 } from "@bejamas/registry/ui/hamburger-menu";
 
 interface Props {
-  variant?: "simple" | "advanced";
+  withGroups?: boolean;
   defaultOpen?: boolean;
+  closeOnOutsideClick?: boolean;
 }
 
-const { variant = "simple", defaultOpen = false } = Astro.props;
+const {
+  withGroups = false,
+  defaultOpen = false,
+  closeOnOutsideClick = true,
+} = Astro.props;
 
 const simpleLinks = [
   ["Getting started", "#getting-started"],
@@ -41,7 +46,10 @@ const groups = [
 ] as const;
 ---
 
-<HamburgerMenu variant={variant} defaultOpen={defaultOpen}>
+<HamburgerMenu
+  defaultOpen={defaultOpen}
+  closeOnOutsideClick={closeOnOutsideClick}
+>
   <span
     slot="brand"
     class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground"
@@ -79,16 +87,16 @@ const groups = [
     220
   </Button>
 
-  {variant === "simple"
-    ? simpleLinks.map(([text, href]) => (
-        <MenuItem href={href}>{text}</MenuItem>
-      ))
-    : groups.map(({ label, links }, index) => (
+  {withGroups
+    ? groups.map(({ label, links }, index) => (
         <MenuGroup label={label} defaultOpen={index === 0}>
           {links.map(([text, href]) => (
             <MenuItem href={href}>{text}</MenuItem>
           ))}
         </MenuGroup>
+      ))
+    : simpleLinks.map(([text, href]) => (
+        <MenuItem href={href}>{text}</MenuItem>
       ))}
 
   <Button

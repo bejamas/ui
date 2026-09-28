@@ -12,7 +12,10 @@ describe("hamburger menu distribution", () => {
     for (const style of STYLES) {
       const item = JSON.parse(
         read(`apps/web/public/r/styles/${style.id}/hamburger-menu.json`),
-      ) as { files: { path: string; content: string }[] };
+      ) as {
+        dependencies?: string[];
+        files: { path: string; content: string }[];
+      };
       const source = new Map(
         item.files.map((file) => [file.path, file.content]),
       );
@@ -22,12 +25,21 @@ describe("hamburger menu distribution", () => {
       const exports = source.get("ui/hamburger-menu/index.ts")!;
 
       expect(menu).toContain("--hamburger-menu-panel-height");
-      expect(menu).toContain('!defaultOpen && "hidden"');
-      expect(menu).toContain('panel.classList.toggle("hidden", !open)');
+      expect(menu).not.toContain("data-variant");
+      expect(menu).not.toContain("variant?:");
+      expect(item.dependencies).toContain("@data-slot/collapsible");
       expect(menu).toContain(
-        'trigger.setAttribute("aria-expanded", String(open))',
+        'import { createCollapsible } from "@data-slot/collapsible"',
       );
-      expect(menu).toContain('if (event.key === "Escape" && !panel.hidden)');
+      expect(menu).toContain('data-slot="collapsible-trigger"');
+      expect(menu).toContain('data-slot="collapsible-content"');
+      expect(menu).toContain("hidden={!defaultOpen}");
+      expect(menu).toContain('panel.removeAttribute("role")');
+      expect(menu).toContain('event.key !== "Escape"');
+      expect(menu).toContain("closeOnOutsideClick?: boolean");
+      expect(menu).toContain(
+        'root.dataset.closeOnOutsideClick !== "false"',
+      );
       expect(menuItem).not.toContain("py-1");
       expect(group).toContain('data-slot="hamburger-menu-group"');
       expect(exports).toContain('default as MenuItem');
