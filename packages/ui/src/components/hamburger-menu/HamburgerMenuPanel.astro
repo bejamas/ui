@@ -1,0 +1,55 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/hamburger-menu/HamburgerMenuPanel.astro directly.
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"nav"> {
+  class?: string;
+  headerClass?: string;
+  itemsClass?: string;
+  footerClass?: string;
+  /** Accessible name of the navigation region. */
+  label?: string;
+}
+
+const {
+  class: className = "",
+  headerClass = "",
+  itemsClass = "",
+  footerClass = "",
+  label = "Mobile navigation",
+  id = `hamburger-menu-panel-${crypto.randomUUID()}`,
+  ...rest
+} = Astro.props as Props;
+---
+
+<nav
+  {...rest}
+  id={id}
+  data-slot="hamburger-menu-panel"
+  aria-label={label}
+  class={cn(
+    "absolute inset-x-0 top-full z-50 flex h-[var(--hamburger-menu-panel-height,calc(100dvh-3rem))] flex-col justify-between overflow-y-auto overscroll-contain bg-background px-3 pt-3 pb-6 shadow-sm",
+    className,
+  )}
+>
+  <div
+    data-slot="hamburger-menu-items"
+    class={cn("flex flex-col gap-2", itemsClass)}
+  >
+    {Astro.slots.has("header") && (
+      <div data-slot="hamburger-menu-panel-header" class={headerClass}>
+        <slot name="header" />
+      </div>
+    )}
+    <slot />
+  </div>
+  {Astro.slots.has("footer") && (
+    <div
+      data-slot="hamburger-menu-footer"
+      class={cn("mt-8 flex items-center gap-1.5", footerClass)}
+    >
+      <slot name="footer" />
+    </div>
+  )}
+</nav>
