@@ -1,5 +1,6 @@
 ---
 import { Button } from "@bejamas/registry/ui/button";
+import { SemanticIcon } from "@bejamas/registry/ui/icon";
 import {
   HamburgerMenu,
   MenuGroup,
@@ -56,6 +57,15 @@ const groups = [
   >
     Slot area
   </span>
+  <Button
+    slot="actions"
+    type="button"
+    variant="secondary"
+    size="icon-sm"
+    aria-label="Toggle theme"
+  >
+    <SemanticIcon name="sun" />
+  </Button>
   <Button
     slot="actions"
     as="a"
