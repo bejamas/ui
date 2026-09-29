@@ -14,7 +14,6 @@ const registryRoot = path.join(repoRoot, "apps/web/public/r");
 const blocks = [
   ["navigation-headers-01", "NavigationHeaders01"],
   ["navigation-headers-02", "NavigationHeaders02"],
-  ["features-01", "Features01"],
   ["footer-01", "Footer01"],
 ] as const;
 

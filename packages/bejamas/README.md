@@ -29,7 +29,7 @@ npx bejamas add [component]
 ```bash
 npx bejamas add button
 npx bejamas add navigation-headers-01
-npx bejamas add @bejamas/features-01
+npx bejamas add @bejamas/footer-01
 ```
 
 Blocks are installed under `src/components/blocks/<block-id>` together with

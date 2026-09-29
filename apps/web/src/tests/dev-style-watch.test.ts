@@ -154,7 +154,7 @@ describe("dev style watch workflow", () => {
     );
 
     for (const input of [
-      "packages/registry/src/blocks/features-01/Features01.astro",
+      "packages/registry/src/blocks/footer-01/Footer01.astro",
       "packages/registry/src/ui/button/Button.astro",
       "packages/registry/src/lib/utils.ts",
       "apps/web/registry.json",
@@ -163,9 +163,9 @@ describe("dev style watch workflow", () => {
     }
 
     for (const output of [
-      "apps/web/public/r/features-01.json",
+      "apps/web/public/r/footer-01.json",
       "apps/web/public/r/index.json",
-      "apps/web/public/r/styles/bejamas-juno/features-01.json",
+      "apps/web/public/r/styles/bejamas-juno/footer-01.json",
       "packages/ui/src/components/button/Button.astro",
     ]) {
       expect(shouldRebuildFromFile(path.join(workspaceRoot, output))).toBe(

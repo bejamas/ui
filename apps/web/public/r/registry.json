@@ -1146,25 +1146,6 @@
       ]
     },
     {
-      "name": "features-01",
-      "type": "registry:block",
-      "title": "Features 01",
-      "description": "A four-card feature grid with imagery, supporting copy, and a call to action.",
-      "registryDependencies": ["button", "card"],
-      "files": [
-        {
-          "path": "blocks/features-01/Features01.astro",
-          "type": "registry:component",
-          "target": "src/components/blocks/features-01/Features01.astro"
-        },
-        {
-          "path": "blocks/features-01/index.ts",
-          "type": "registry:component",
-          "target": "src/components/blocks/features-01/index.ts"
-        }
-      ]
-    },
-    {
       "name": "footer-01",
       "type": "registry:block",
       "title": "Footer 01",
