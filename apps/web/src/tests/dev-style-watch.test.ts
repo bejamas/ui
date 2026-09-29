@@ -3,8 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   getMissingStyleArtifactRelativePaths,
+  REGISTRY_BLOCKS_DIRECTORY_RELATIVE_PATH,
   REGISTRY_LIB_DIRECTORY_RELATIVE_PATH,
   REGISTRY_UI_DIRECTORY_RELATIVE_PATH,
+  shouldRebuildFromFile,
   STYLE_ARTIFACT_RELATIVE_PATHS,
   STYLE_BUILD_SCRIPTS,
   STYLE_IGNORED_OUTPUT_RELATIVE_PATHS,
@@ -56,23 +58,31 @@ describe("dev style watch workflow", () => {
     expect(REGISTRY_LIB_DIRECTORY_RELATIVE_PATH).toBe(
       "packages/registry/src/lib",
     );
+    expect(REGISTRY_BLOCKS_DIRECTORY_RELATIVE_PATH).toBe(
+      "packages/registry/src/blocks",
+    );
     expect(STYLE_PIPELINE_FILE_RELATIVE_PATHS).toEqual([
+      "apps/web/registry.json",
       "packages/registry/src/style-source.ts",
       "packages/create-config/src/style-css-source.ts",
       "packages/create-config/src/style-css.ts",
       "packages/create-config/src/style-css-compiler.ts",
       "packages/create-config/scripts/generate-compiled-style-css.ts",
       "packages/registry/scripts/build-web-style-registry.ts",
+      "packages/registry/scripts/registry-normalization.ts",
       "packages/ui/scripts/generate-from-style-registry.ts",
+      "apps/web/scripts/normalize-paths.ts",
     ]);
     expect(STYLE_BUILD_SCRIPTS).toEqual([
       "build:compiled-styles",
       "build:style-registry",
       "generate:ui-package",
+      "build:registry",
+      "normalize-component-paths-in-registry",
     ]);
     expect(STYLE_IGNORED_OUTPUT_RELATIVE_PATHS).toEqual([
       "packages/create-config/src/generated",
-      "apps/web/public/r/styles",
+      "apps/web/public/r",
     ]);
     expect(STYLE_ARTIFACT_RELATIVE_PATHS).toEqual([
       "packages/create-config/src/generated/compiled-style-css.js",
@@ -133,13 +143,35 @@ describe("dev style watch workflow", () => {
     expect(source).toContain('cmd: ["bun", "run", "start", ...devServerArgs]');
   });
 
-  test("routes registry component and lib edits through the same rebuild path", () => {
+  test("rebuilds nested registry component, lib, and block edits without watching generated output", () => {
     const source = fs.readFileSync(watcherScriptFile, "utf8");
+    const workspaceRoot = path.resolve(import.meta.dir, "../../../..");
 
     expect(source).toContain("function isRegistrySourcePath");
-    expect(source).toContain("REGISTRY_UI_DIRECTORY");
-    expect(source).toContain("REGISTRY_LIB_DIRECTORY");
     expect(source).toContain("isRegistrySourcePath(filePath)");
+    expect(source).toContain(
+      "recursive: REGISTRY_SOURCE_DIRECTORIES.includes(directoryPath)",
+    );
+
+    for (const input of [
+      "packages/registry/src/blocks/footer-01/Footer01.astro",
+      "packages/registry/src/ui/button/Button.astro",
+      "packages/registry/src/lib/utils.ts",
+      "apps/web/registry.json",
+    ]) {
+      expect(shouldRebuildFromFile(path.join(workspaceRoot, input))).toBe(true);
+    }
+
+    for (const output of [
+      "apps/web/public/r/footer-01.json",
+      "apps/web/public/r/index.json",
+      "apps/web/public/r/styles/bejamas-juno/footer-01.json",
+      "packages/ui/src/components/button/Button.astro",
+    ]) {
+      expect(shouldRebuildFromFile(path.join(workspaceRoot, output))).toBe(
+        false,
+      );
+    }
   });
 
   test("keeps style compiler package imports resolvable from the app dev cwd", () => {

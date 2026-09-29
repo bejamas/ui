@@ -42,7 +42,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./catalog/*": "./src/catalog/*.ts",
+    "./blocks/*": "./src/blocks/*/index.ts",
     "./lib/*": "./src/lib/*.ts",
+    "./registry-normalization": "./scripts/registry-normalization.ts",
     "./style-source": "./src/style-source.ts",
     "./ui/*": "./src/ui/*/index.ts"
   }

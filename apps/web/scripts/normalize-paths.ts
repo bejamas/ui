@@ -1,5 +1,11 @@
 import { existsSync, readdirSync, statSync, readFileSync, writeFileSync } from "fs";
 import { extname, join, posix, resolve } from "path";
+import {
+  inferRegistryFileType,
+  normalizeRegistryImports,
+  normalizeRegistryPath,
+  SOURCE_PATH_PREFIXES,
+} from "@bejamas/registry/registry-normalization";
 
 type RegistryFile = {
   path: string;
@@ -8,7 +14,13 @@ type RegistryFile = {
 };
 
 type RegistryItem = {
+  name?: string;
+  type?: string;
   files?: RegistryFile[];
+};
+
+type RegistryManifest = {
+  items?: RegistryItem[];
 };
 
 /**
@@ -30,41 +42,16 @@ function getAllJsonFiles(dir: string): string[] {
 
 const baseDir = join(__dirname, "../public/r/");
 const registrySourceRoot = resolve(__dirname, "../../../packages/registry/src");
+const sourceRegistryPath = join(__dirname, "../registry.json");
 const files = getAllJsonFiles(baseDir);
 
+// Runs over whole registry JSON documents too, so source paths inside file
+// entries are rewritten along with imports in file contents.
 function normalizeRegistrySource(content: string) {
-  let next = content;
-
-  if (next.includes("../../packages/ui/src/components/")) {
-    next = next.replace(/(\.\.\/\.\.\/packages\/ui\/src\/components\/)/g, "ui/");
+  let next = normalizeRegistryImports(content);
+  for (const [source, published] of SOURCE_PATH_PREFIXES) {
+    next = next.replaceAll(source, published);
   }
-
-  if (next.includes("@bejamas/ui/lib/utils")) {
-    next = next.replace(/@bejamas\/ui\/lib\/utils/g, "@/lib/utils");
-  }
-
-  if (next.includes("@bejamas/registry/lib/utils")) {
-    next = next.replace(/@bejamas\/registry\/lib\/utils/g, "@/lib/utils");
-  }
-
-  return next;
-}
-
-function normalizeRegistryPath(filePath: string) {
-  let next = filePath;
-
-  if (next.startsWith("../../packages/ui/src/components/")) {
-    next = next.replace("../../packages/ui/src/components/", "ui/");
-  }
-
-  if (next.startsWith("../../packages/registry/src/ui/")) {
-    next = next.replace("../../packages/registry/src/ui/", "ui/");
-  }
-
-  if (next.startsWith("../../packages/registry/src/lib/")) {
-    next = next.replace("../../packages/registry/src/lib/", "lib/");
-  }
-
   return next;
 }
 
@@ -81,18 +68,6 @@ function extractLocalRelativeImports(content: string) {
   }
 
   return Array.from(imports);
-}
-
-function inferRegistryFileType(filePath: string) {
-  if (filePath.startsWith("ui/")) {
-    return "registry:ui";
-  }
-
-  if (filePath.startsWith("lib/")) {
-    return "registry:lib";
-  }
-
-  return null;
 }
 
 function resolveRegistrySourceImport(filePath: string) {
@@ -213,4 +188,37 @@ for (const file of files) {
     writeFileSync(file, newContent, "utf8");
     console.log(`Updated: ${file}`);
   }
+}
+
+// The discovery index mirrors registry.json (components and blocks) without
+// file contents, so the CLI can list what is installable from one request.
+function buildDiscoveryIndex(manifest: RegistryManifest) {
+  return (manifest.items ?? []).map((item) => ({
+    ...item,
+    files: item.files?.map(({ content: _content, ...file }) => ({
+      ...file,
+      path: normalizeRegistryPath(file.path),
+    })),
+  }));
+}
+
+function formatIndexJson(items: RegistryItem[]) {
+  return `${JSON.stringify(items, null, 2).replace(
+    /\[(?:\n\s+"(?:[^"\\]|\\.)*",?)+\n\s*\]/g,
+    (array) =>
+      `[${(JSON.parse(array) as string[])
+        .map((value) => JSON.stringify(value))
+        .join(", ")}]`,
+  )}\n`;
+}
+
+const sourceRegistry = JSON.parse(
+  readFileSync(sourceRegistryPath, "utf8"),
+) as RegistryManifest;
+const indexPath = join(baseDir, "index.json");
+const nextIndex = formatIndexJson(buildDiscoveryIndex(sourceRegistry));
+
+if (!existsSync(indexPath) || readFileSync(indexPath, "utf8") !== nextIndex) {
+  writeFileSync(indexPath, nextIndex, "utf8");
+  console.log(`Updated: ${indexPath}`);
 }

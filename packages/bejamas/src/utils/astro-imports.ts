@@ -132,39 +132,81 @@ export function rewriteAstroImports(content: string, config: Config) {
   return rewriteAstroIcons(updated, config.iconLibrary);
 }
 
+export function getConfiguredSourceRoots(config: Config) {
+  return Array.from(
+    new Set(
+      [
+        config.resolvedPaths.components,
+        config.resolvedPaths.ui,
+        config.resolvedPaths.lib,
+        config.resolvedPaths.hooks,
+      ].filter((root): root is string => Boolean(root)),
+    ),
+  );
+}
+
+export function isPathWithin(filePath: string, root: string) {
+  const relative = path.relative(root, filePath);
+  // `..foo` is a child directory; only `..` itself or `../…` leaves the root.
+  return (
+    relative !== ".." &&
+    !relative.startsWith(`..${path.sep}`) &&
+    !path.isAbsolute(relative)
+  );
+}
+
+/**
+ * Which files to repair: every source file under the configured aliases, or an
+ * explicit list (for example block files written outside those roots).
+ * `exclude` protects files the user declined to overwrite.
+ */
+export type AstroImportRepairScope =
+  | { kind: "configured-roots"; exclude?: readonly string[] }
+  | { kind: "files"; paths: readonly string[] };
+
 export async function fixAstroImports(
   cwd: string,
   isVerbose: boolean,
   targetConfig?: Config | null,
+  scope: AstroImportRepairScope = { kind: "configured-roots" },
 ) {
   const config = targetConfig ?? (await getConfig(cwd));
   if (!config) return;
 
-  const searchRoots = new Set<string>([
-    config.resolvedPaths.components,
-    config.resolvedPaths.ui,
-    config.resolvedPaths.lib,
-    config.resolvedPaths.hooks,
-  ]);
+  const files = new Set<string>();
 
-  for (const root of Array.from(searchRoots)) {
-    if (!root) continue;
-    const astroFiles = await fg("**/*.{astro,ts,js}", {
-      cwd: root,
-      absolute: true,
-      dot: false,
-    });
-
-    for (const filePath of astroFiles) {
-      const original = await fs.readFile(filePath, "utf8");
-      const rewritten = rewriteAstroImports(original, config);
-      if (rewritten === original) continue;
-      await fs.writeFile(filePath, rewritten, "utf8");
-      if (isVerbose) {
-        logger.info(
-          `[bejamas-ui] fixed imports in ${path.relative(cwd, filePath)}`,
-        );
+  if (scope.kind === "files") {
+    for (const filePath of scope.paths) {
+      const absolutePath = path.resolve(cwd, filePath);
+      if (!/\.(?:astro|ts|js)$/.test(absolutePath)) continue;
+      const stats = await fs.stat(absolutePath).catch(() => null);
+      if (stats?.isFile()) files.add(absolutePath);
+    }
+  } else {
+    const excluded = new Set(
+      (scope.exclude ?? []).map((filePath) => path.resolve(cwd, filePath)),
+    );
+    for (const root of getConfiguredSourceRoots(config)) {
+      const matches = await fg("**/*.{astro,ts,js}", {
+        cwd: root,
+        absolute: true,
+        dot: false,
+      });
+      for (const filePath of matches) {
+        if (!excluded.has(path.resolve(filePath))) files.add(filePath);
       }
+    }
+  }
+
+  for (const filePath of files) {
+    const original = await fs.readFile(filePath, "utf8");
+    const rewritten = rewriteAstroImports(original, config);
+    if (rewritten === original) continue;
+    await fs.writeFile(filePath, rewritten, "utf8");
+    if (isVerbose) {
+      logger.info(
+        `[bejamas-ui] fixed imports in ${path.relative(cwd, filePath)}`,
+      );
     }
   }
 }
