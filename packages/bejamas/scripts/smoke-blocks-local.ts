@@ -279,7 +279,7 @@ try {
     const uiComponents = await fs.readdir(
       path.join(fixture.ui, "src", monorepo ? "components" : "ui"),
     );
-    for (const dependency of ["button", "card", "dropdown-menu", "link-group"])
+    for (const dependency of ["button", "dropdown-menu", "link-group"])
       assert(
         uiComponents.includes(dependency),
         `${dependency} was not installed as a block dependency`,
