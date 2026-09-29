@@ -8,17 +8,19 @@ import SemanticIcon from "../icon/SemanticIcon.astro";
 
 interface Props extends HTMLAttributes<"div"> {
   showCloseButton?: boolean;
+  overlayClass?: string;
 }
 
 const {
   showCloseButton = true,
+  overlayClass = "",
   class: className = "",
   ...rest
 } = Astro.props as Props;
 ---
 
 <div data-slot="dialog-portal" class="cn-dialog-portal z-50 isolate absolute">
-  <DialogOverlay />
+  <DialogOverlay class={overlayClass} />
   <div
     data-slot="dialog-content"
     hidden
