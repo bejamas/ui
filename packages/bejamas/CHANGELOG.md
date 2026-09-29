@@ -1,5 +1,15 @@
 # bejamas
 
+## 0.5.0
+
+### Minor Changes
+
+- [#149](https://github.com/bejamas/ui/pull/149) [`abb8307`](https://github.com/bejamas/ui/commit/abb8307b17131bd33a7da83e8f77f6993d30e633) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Add block support to `bejamas add`: install Bejamas blocks (`navigation-headers-01`, `navigation-headers-02`, `footer-01`) by name or via `@bejamas/<name>`, pick them in the interactive prompt, and have their imports rewritten to the project's UI alias in both standalone and monorepo Astro projects.
+
+### Patch Changes
+
+- [#161](https://github.com/bejamas/ui/pull/161) [`3a2038f`](https://github.com/bejamas/ui/commit/3a2038fa10930957a5ef01c8ac251cc5e8cbf8a0) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Honor `docs:build` `--cwd` and `--out` flags before prompting for the UI root or output directory.
+
 ## 0.4.2
 
 ### Patch Changes
