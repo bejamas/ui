@@ -100,6 +100,7 @@ export default defineConfig({
             select: "@bejamas/registry/ui/select",
             Head: "./src/components/starlight/Head.astro",
             Header: "./src/components/starlight/Header.astro",
+            Sidebar: "./src/components/starlight/Sidebar.astro",
             Hero: "./src/components/starlight/Hero.astro",
             Search: "./src/components/starlight/Search.astro",
             ThemeSelect: "./src/components/ThemeSwitcher.astro",
@@ -110,6 +111,7 @@ export default defineConfig({
       components: {
         Head: "./src/components/starlight/Head.astro",
         Header: "./src/components/starlight/Header.astro",
+        Sidebar: "./src/components/starlight/Sidebar.astro",
         Hero: "./src/components/starlight/Hero.astro",
         Search: "./src/components/starlight/Search.astro",
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
