@@ -16,7 +16,7 @@
     {
       "path": "ui/accordion/AccordionItem.astro",
       "type": "registry:ui",
-      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  value: string;\n  class?: string;\n}\n\nconst { value, class: className = \"\", ...rest } = Astro.props as Props;\n---\n\n<div\n  {...rest}\n  data-value={value}\n  data-slot=\"accordion-item\"\n  class={cn(\"not-last:border-b\", className)}\n>\n  <slot />\n</div>\n"
+      "content": "---\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  value: string;\n  class?: string;\n}\n\nconst { value, class: className = \"\", ...rest } = Astro.props as Props;\n---\n\n<div\n  {...rest}\n  data-value={value}\n  data-slot=\"accordion-item\"\n  class={cn(\"border-b\", className)}\n>\n  <slot />\n</div>\n"
     },
     {
       "path": "ui/accordion/AccordionTrigger.astro",
