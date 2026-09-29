@@ -1,18 +1,61 @@
 ---
-import MobileMenuFooter from "virtual:starlight/components/MobileMenuFooter";
+import LanguageSelect from "virtual:starlight/components/LanguageSelect";
+import ThemeSelect from "virtual:starlight/components/ThemeSelect";
 import SidebarPersister from "@astrojs/starlight/components/SidebarPersister.astro";
 import SidebarSublist from "@astrojs/starlight/components/SidebarSublist.astro";
 
+import HeaderPresetSwitcher from "@/components/starlight/HeaderPresetSwitcher.astro";
+
 const { sidebar } = Astro.locals.starlightRoute;
+const { template } = Astro.locals.starlightRoute.entry.data;
+const isSplashTemplate = template === "splash";
 ---
 
 <div class="mobile-preferences-at-top">
-  <MobileMenuFooter />
+  <HeaderPresetSwitcher />
+  <ThemeSelect />
+  <LanguageSelect />
 </div>
 
-<SidebarPersister>
-  <SidebarSublist sublist={sidebar} />
-</SidebarPersister>
+{
+  isSplashTemplate ? (
+    <>
+      <div class="fade" />
+      <SidebarSublist sublist={sidebar} />
+    </>
+  ) : (
+    <SidebarPersister>
+      <div class="fade" />
+      <SidebarSublist sublist={sidebar} />
+    </SidebarPersister>
+  )
+}
+
+<script>
+  // The mobile sidebar is a top-layer popover, so dropdown menus portaled to
+  // <body> render underneath it. Move an opened menu into the popover instead.
+  document.addEventListener("dropdown-menu:open-change", (event) => {
+    const { open } = (event as CustomEvent<{ open: boolean }>).detail;
+    const root = event.target;
+    if (!open || !(root instanceof HTMLElement)) return;
+
+    const popover = root.closest<HTMLElement>(
+      ".mobile-preferences-at-top",
+    )?.closest<HTMLElement>("[popover]");
+    const contentId = root
+      .querySelector('[data-slot="dropdown-menu-trigger"]')
+      ?.getAttribute("aria-controls");
+    const portal = contentId
+      ? document
+          .getElementById(contentId)
+          ?.closest('[data-slot="dropdown-menu-portal"]')
+      : null;
+
+    if (popover && portal && portal.parentElement !== popover) {
+      popover.append(portal);
+    }
+  });
+</script>
 
 <style>
   @layer bejamas {
@@ -20,17 +63,46 @@ const { sidebar } = Astro.locals.starlightRoute;
       position: sticky;
       top: 0;
       z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      padding-block: 0.5rem;
       background: var(--background);
+      border-bottom: 1px solid var(--sl-color-gray-6);
     }
 
-    .mobile-preferences-at-top :global(.mobile-preferences) {
-      border-top: 0;
-      border-bottom: 1px solid var(--sl-color-gray-6);
+    .fade {
+      display: none;
+      --blur: 4px;
+      --stop: 50%;
+      --height: 72px;
+      position: fixed;
+      pointer-events: none;
+      width: 100%;
+      height: var(--height);
+      user-select: none;
+      -webkit-user-select: none;
+      left: 0;
+      -webkit-backdrop-filter: blur(var(--blur));
+      backdrop-filter: blur(var(--blur));
+
+      background: linear-gradient(to top, transparent, var(--background));
+      mask-image: linear-gradient(
+        to bottom,
+        var(--background) var(--stop),
+        transparent
+      );
+      top: 0;
     }
 
     @media (min-width: 64rem) {
       .mobile-preferences-at-top {
         display: none;
+      }
+
+      .fade {
+        display: block;
       }
     }
   }
