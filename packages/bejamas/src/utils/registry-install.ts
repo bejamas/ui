@@ -28,7 +28,8 @@ import { ensureRegistryDependencies } from "./registry-dependencies";
 /**
  * shadcn reports written files relative to the directory it ran in, except in
  * a workspace where paths are relative to the monorepo root. Resolve each
- * reported path against the candidate bases and keep the ones that exist.
+ * reported path against the candidate bases and keep the ones that exist; the
+ * first base with a match wins, so list the one shadcn reports against first.
  */
 export function resolveReportedFiles(
   files: Iterable<string>,
@@ -44,6 +45,24 @@ export function resolveReportedFiles(
     if (match) resolved.add(match);
   }
   return Array.from(resolved);
+}
+
+/**
+ * Bases for `resolveReportedFiles`. In a workspace, shadcn reports paths
+ * relative to the monorepo root, so it comes before the app directory.
+ */
+export function getReportedFileBases(
+  cwd: string,
+  config: Config | null,
+  uiConfig: Config | null,
+) {
+  const workspaceRoot =
+    config &&
+    uiConfig &&
+    uiConfig.resolvedPaths.cwd !== config.resolvedPaths.cwd
+      ? findCommonRoot(config.resolvedPaths.cwd, uiConfig.resolvedPaths.cwd)
+      : null;
+  return workspaceRoot ? [workspaceRoot, cwd] : [cwd];
 }
 
 /** Installed files (relative to cwd or absolute) not covered by config aliases. */
@@ -119,15 +138,11 @@ export class RegistryInstallBatch {
   private readonly bases: string[];
 
   constructor(private readonly context: RegistryInstallContext) {
-    const { cwd, config, uiConfig } = context;
-    // shadcn reports paths relative to the monorepo root in a workspace.
-    const workspaceRoot =
-      config &&
-      uiConfig &&
-      uiConfig.resolvedPaths.cwd !== config.resolvedPaths.cwd
-        ? findCommonRoot(config.resolvedPaths.cwd, uiConfig.resolvedPaths.cwd)
-        : null;
-    this.bases = workspaceRoot ? [cwd, workspaceRoot] : [cwd];
+    this.bases = getReportedFileBases(
+      context.cwd,
+      context.config,
+      context.uiConfig,
+    );
   }
 
   async install({

@@ -162,6 +162,13 @@ test("exposes configured source roots and path containment checks", () => {
   expect(
     isPathWithin("/repo/src/pages/index.astro", "/repo/src/components"),
   ).toBe(false);
+  expect(
+    isPathWithin(
+      "/repo/src/components/..generated/A.astro",
+      "/repo/src/components",
+    ),
+  ).toBe(true);
+  expect(isPathWithin("/repo/src", "/repo/src/components")).toBe(false);
 });
 
 test("rewrites registry imports inside astro files using workspace aliases", () => {

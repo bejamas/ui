@@ -147,9 +147,11 @@ export function getConfiguredSourceRoots(config: Config) {
 
 export function isPathWithin(filePath: string, root: string) {
   const relative = path.relative(root, filePath);
+  // `..foo` is a child directory; only `..` itself or `../…` leaves the root.
   return (
-    relative === "" ||
-    (!relative.startsWith("..") && !path.isAbsolute(relative))
+    relative !== ".." &&
+    !relative.startsWith(`..${path.sep}`) &&
+    !path.isAbsolute(relative)
   );
 }
 

@@ -16,6 +16,7 @@ import {
 } from "../src/commands/add";
 import {
   filesOutsideConfigRoots,
+  getReportedFileBases,
   resolveReportedFiles,
 } from "../src/utils/registry-install";
 import type { Config } from "../src/utils/get-config";
@@ -142,6 +143,33 @@ describe("block-aware add helpers", () => {
       "/repo/apps/web/src/components/blocks/features-01/Features01.astro",
       "/repo/packages/ui/src/components/button/Button.astro",
     ]);
+  });
+
+  test("prefers the monorepo root for workspace reports that also exist in the app", () => {
+    const app = {
+      resolvedPaths: { cwd: "/repo/apps/web" },
+    } as unknown as Config;
+    const ui = {
+      resolvedPaths: { cwd: "/repo/packages/ui" },
+    } as unknown as Config;
+    const bases = getReportedFileBases("/repo/apps/web", app, ui);
+    expect(bases).toEqual(["/repo", "/repo/apps/web"]);
+    expect(getReportedFileBases("/repo/apps/web", app, app)).toEqual([
+      "/repo/apps/web",
+    ]);
+
+    // A vendored copy under the app must not shadow the installed file.
+    const existing = new Set([
+      "/repo/packages/ui/src/components/index.ts",
+      "/repo/apps/web/packages/ui/src/components/index.ts",
+    ]);
+    expect(
+      resolveReportedFiles(
+        ["packages/ui/src/components/index.ts"],
+        bases,
+        (filePath) => existing.has(filePath),
+      ),
+    ).toEqual(["/repo/packages/ui/src/components/index.ts"]);
   });
 
   test("finds installed files that live outside the UI config aliases", () => {
