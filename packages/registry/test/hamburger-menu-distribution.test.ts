@@ -63,7 +63,7 @@ describe("hamburger menu distribution", () => {
     expect(example).toContain('slot="actions"');
     expect(example).toContain('slot="footer"');
     for (const source of [example, docs]) {
-      expect(source).toContain('size="icon-sm"');
+      expect(source).toContain('size="icon"');
       expect(source).toContain('aria-label="Toggle theme"');
       expect(source).toContain('<SemanticIcon name="sun" />');
     }
