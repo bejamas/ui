@@ -74,6 +74,7 @@ const installCommand = getBlockInstallCommand(item.id);
     </div>
     <TabsContent value="preview">
       <iframe
+        data-block-preview
         src={item.href}
         class="w-full h-full min-h-[800px] border border-border rounded-2xl data-[size='desktop']:max-w-full data-[size='tablet']:max-w-3xl data-[size='smartphone']:max-w-sm"
         :data-size="size"></iframe>
@@ -83,3 +84,21 @@ const installCommand = getBlockInstallCommand(item.id);
     </TabsContent>
   </Tabs>
 </div>
+
+<script>
+  import { PRESET_CHANGE_EVENT } from "@/utils/themes/preset-store";
+  import { PRESET_CHANGE_MESSAGE } from "@/utils/themes/theme-stylesheet";
+
+  // Previews are separate documents; tell them the header switched presets.
+  window.addEventListener(PRESET_CHANGE_EVENT, (event) => {
+    const { detail } = event as CustomEvent<unknown>;
+    for (const frame of document.querySelectorAll<HTMLIFrameElement>(
+      "iframe[data-block-preview]",
+    )) {
+      frame.contentWindow?.postMessage(
+        { type: PRESET_CHANGE_MESSAGE, detail },
+        window.location.origin,
+      );
+    }
+  });
+</script>

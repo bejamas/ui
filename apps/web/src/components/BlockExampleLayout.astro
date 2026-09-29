@@ -2,6 +2,7 @@
 import "@/styles/blocks.css";
 import "@bejamas/ui/styles/globals.css";
 import { buildThemeChoiceBootstrapInlineScript } from "starlight-theme-bejamas/lib/theme-choice";
+import { buildThemeStylesheetInlineScript } from "@/utils/themes/theme-stylesheet";
 
 interface Props {
   theme?: string;
@@ -10,6 +11,8 @@ interface Props {
 
 const { theme = "current-theme", title } = Astro.props;
 const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
+const themeStylesheetHref = `/r/themes/${theme}.css`;
+const themeStylesheetScript = buildThemeStylesheetInlineScript(themeStylesheetHref);
 ---
 
 <html lang="en" class="bg-background">
@@ -20,7 +23,8 @@ const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
     <script is:inline set:html={themeChoiceBootstrapScript} />
   </head>
   <body class="antialiased bg-background">
-    <link rel="stylesheet" href={`/r/themes/${theme}.css`} />
+    <script is:inline set:html={themeStylesheetScript} />
+    <noscript><link rel="stylesheet" href={themeStylesheetHref} /></noscript>
 
     <slot />
 
@@ -34,6 +38,10 @@ const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
         resolveGradientThemeFromPresetId,
         syncGradientImages,
       } from "../utils/themes/gradient-image-runtime.ts";
+      import {
+        PRESET_CHANGE_MESSAGE,
+        refreshThemeStylesheet,
+      } from "../utils/themes/theme-stylesheet.ts";
 
       function syncPreviewGradientImages(themeOverride?: string | null) {
         const theme =
@@ -47,12 +55,27 @@ const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 
       syncPreviewGradientImages();
 
+      // A switch in another tab.
       window.addEventListener("storage", (event) => {
         if (event.key === PRESET_STORAGE_KEY) {
+          refreshThemeStylesheet();
           syncPreviewGradientImages(
             resolveGradientThemeFromPresetId(event.newValue),
           );
         }
+      });
+
+      // A switch on the page embedding this preview.
+      window.addEventListener("message", (event) => {
+        if (
+          event.origin !== window.location.origin ||
+          event.data?.type !== PRESET_CHANGE_MESSAGE
+        ) {
+          return;
+        }
+        window.dispatchEvent(
+          new CustomEvent(PRESET_CHANGE_EVENT, { detail: event.data.detail }),
+        );
       });
 
       window.addEventListener(PRESET_CHANGE_EVENT, (event) => {
@@ -65,10 +88,12 @@ const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
             : resolveGradientThemeFromPresetId(
                 typeof detail?.key === "string" ? detail.key : null,
               );
+        refreshThemeStylesheet();
         syncPreviewGradientImages(theme);
       });
 
       document.addEventListener("astro:after-swap", () => {
+        refreshThemeStylesheet();
         syncPreviewGradientImages();
       });
     </script>
