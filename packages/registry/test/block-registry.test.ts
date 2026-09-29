@@ -5,10 +5,10 @@ import { STYLES } from "../src/catalog/styles";
 import {
   buildStyleTokenMap,
   getTemplateItemNames,
-  normalizeBlockRegistryPath,
   readBlockTemplateItems,
   transformRegistrySource,
 } from "../scripts/build-web-style-registry";
+import { normalizeRegistryPath } from "../scripts/registry-normalization";
 
 const repoRoot = path.resolve(import.meta.dir, "..", "..", "..");
 
@@ -58,7 +58,7 @@ describe("first-party block registry", () => {
           `../../packages/registry/src/blocks/${item.name}/`,
         );
         expect(file.target).toStartWith(`src/components/blocks/${item.name}/`);
-        expect(normalizeBlockRegistryPath(file.path)).toStartWith(
+        expect(normalizeRegistryPath(file.path)).toStartWith(
           `blocks/${item.name}/`,
         );
       }

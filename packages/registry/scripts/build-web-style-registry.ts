@@ -6,6 +6,11 @@ import { fileURLToPath } from "node:url";
 import { getGlobalStyleCss } from "../src/style-source";
 import { STYLES, type Style } from "../src/catalog/styles";
 import { fonts } from "../src/catalog/fonts";
+import {
+  inferRegistryFileType as inferPublishedFileType,
+  normalizeRegistryImports,
+  normalizeRegistryPath,
+} from "./registry-normalization";
 
 type RegistryFile = {
   path: string;
@@ -37,7 +42,6 @@ const stylesRoot = path.resolve(webRoot, "public/r/styles");
 const templateStyleDir = path.resolve(stylesRoot, STYLES[0].id);
 const registrySourceRoot = path.resolve(__dirname, "..", "src");
 const sourceRegistryPath = path.resolve(webRoot, "registry.json");
-const blockSourcePathPrefix = "../../packages/registry/src/blocks/";
 const schemaUrl = "https://ui.shadcn.com/schema/registry-item.json";
 const preservedTokens = new Set([
   "cn-font-heading",
@@ -348,11 +352,7 @@ function expandCnTokens(value: string, tokenMap: TokenMap) {
 }
 
 export function transformRegistrySource(content: string, tokenMap: TokenMap) {
-  // Blocks import shared UI through the registry alias that both shadcn and the
-  // Bejamas installer rewrite to the project's configured `aliases.ui`.
-  const normalizedImports = content
-    .replace(/@bejamas\/registry\/lib\//g, "@/lib/")
-    .replace(/@bejamas\/registry\/ui\//g, "@/registry/bejamas/ui/");
+  const normalizedImports = normalizeRegistryImports(content);
 
   return normalizedImports.replace(
     /(["'`])((?:\\.|(?!\1)[\s\S])*?)\1/g,
@@ -434,12 +434,6 @@ async function listJsonFiles(filepath: string) {
     .map((entry) => entry.name);
 }
 
-export function normalizeBlockRegistryPath(filePath: string) {
-  return filePath.startsWith(blockSourcePathPrefix)
-    ? filePath.replace(blockSourcePathPrefix, "blocks/")
-    : filePath;
-}
-
 /**
  * Blocks are authored once in `apps/web/registry.json` (the shadcn build input)
  * and reused as templates for every style bundle, so their metadata never
@@ -462,7 +456,7 @@ export async function readBlockTemplateItems() {
           ...item,
           files: item.files?.map((file) => ({
             ...file,
-            path: normalizeBlockRegistryPath(file.path),
+            path: normalizeRegistryPath(file.path),
           })),
         },
       ]),
@@ -507,19 +501,11 @@ function resolveTemplateRelativePath(fromTemplatePath: string, relativeImport: s
 }
 
 function inferRegistryFileType(filePath: string) {
-  if (filePath.startsWith("ui/")) {
-    return "registry:ui";
+  const type = inferPublishedFileType(filePath);
+  if (!type) {
+    throw new Error(`Unsupported registry file type for ${filePath}`);
   }
-
-  if (filePath.startsWith("lib/")) {
-    return "registry:lib";
-  }
-
-  if (filePath.startsWith("blocks/")) {
-    return "registry:component";
-  }
-
-  throw new Error(`Unsupported registry file type for ${filePath}`);
+  return type;
 }
 
 async function resolveRegistrySourceImport(filePath: string) {

@@ -1,5 +1,11 @@
 import { existsSync, readdirSync, statSync, readFileSync, writeFileSync } from "fs";
 import { extname, join, posix, resolve } from "path";
+import {
+  inferRegistryFileType,
+  normalizeRegistryImports,
+  normalizeRegistryPath,
+  SOURCE_PATH_PREFIXES,
+} from "@bejamas/registry/registry-normalization";
 
 type RegistryFile = {
   path: string;
@@ -39,54 +45,13 @@ const registrySourceRoot = resolve(__dirname, "../../../packages/registry/src");
 const sourceRegistryPath = join(__dirname, "../registry.json");
 const files = getAllJsonFiles(baseDir);
 
+// Runs over whole registry JSON documents too, so source paths inside file
+// entries are rewritten along with imports in file contents.
 function normalizeRegistrySource(content: string) {
-  let next = content;
-
-  if (next.includes("../../packages/ui/src/components/")) {
-    next = next.replace(/(\.\.\/\.\.\/packages\/ui\/src\/components\/)/g, "ui/");
+  let next = normalizeRegistryImports(content);
+  for (const [source, published] of SOURCE_PATH_PREFIXES) {
+    next = next.replaceAll(source, published);
   }
-
-  if (next.includes("@bejamas/ui/lib/utils")) {
-    next = next.replace(/@bejamas\/ui\/lib\/utils/g, "@/lib/utils");
-  }
-
-  if (next.includes("@bejamas/registry/lib/utils")) {
-    next = next.replace(/@bejamas\/registry\/lib\/utils/g, "@/lib/utils");
-  }
-
-  if (next.includes("@bejamas/registry/ui/")) {
-    next = next.replace(/@bejamas\/registry\/ui\//g, "@/registry/bejamas/ui/");
-  }
-
-  if (next.includes("../../packages/registry/src/blocks/")) {
-    next = next.replace(
-      /\.\.\/\.\.\/packages\/registry\/src\/blocks\//g,
-      "blocks/",
-    );
-  }
-
-  return next;
-}
-
-function normalizeRegistryPath(filePath: string) {
-  let next = filePath;
-
-  if (next.startsWith("../../packages/ui/src/components/")) {
-    next = next.replace("../../packages/ui/src/components/", "ui/");
-  }
-
-  if (next.startsWith("../../packages/registry/src/ui/")) {
-    next = next.replace("../../packages/registry/src/ui/", "ui/");
-  }
-
-  if (next.startsWith("../../packages/registry/src/lib/")) {
-    next = next.replace("../../packages/registry/src/lib/", "lib/");
-  }
-
-  if (next.startsWith("../../packages/registry/src/blocks/")) {
-    next = next.replace("../../packages/registry/src/blocks/", "blocks/");
-  }
-
   return next;
 }
 
@@ -103,22 +68,6 @@ function extractLocalRelativeImports(content: string) {
   }
 
   return Array.from(imports);
-}
-
-function inferRegistryFileType(filePath: string) {
-  if (filePath.startsWith("ui/")) {
-    return "registry:ui";
-  }
-
-  if (filePath.startsWith("lib/")) {
-    return "registry:lib";
-  }
-
-  if (filePath.startsWith("blocks/")) {
-    return "registry:component";
-  }
-
-  return null;
 }
 
 function resolveRegistrySourceImport(filePath: string) {

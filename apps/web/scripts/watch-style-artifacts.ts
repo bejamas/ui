@@ -17,6 +17,7 @@ export const STYLE_PIPELINE_FILE_RELATIVE_PATHS = [
   "packages/create-config/src/style-css-compiler.ts",
   "packages/create-config/scripts/generate-compiled-style-css.ts",
   "packages/registry/scripts/build-web-style-registry.ts",
+  "packages/registry/scripts/registry-normalization.ts",
   "packages/ui/scripts/generate-from-style-registry.ts",
   "apps/web/scripts/normalize-paths.ts",
 ] as const;
