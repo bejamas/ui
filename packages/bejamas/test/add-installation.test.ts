@@ -208,7 +208,10 @@ for (const [file] of files) console.log("  - " + file);
 test("fails instead of hanging when shadcn asks a question it cannot decline", async () => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "bejamas-add-prompt-"));
   roots.push(root);
-  await fs.writeFile(path.join(root, "package.json"), JSON.stringify({ name: "app" }));
+  await fs.writeFile(
+    path.join(root, "package.json"),
+    JSON.stringify({ name: "app" }),
+  );
   await fs.mkdir(path.join(root, "bin"));
   // A select question is left open until stdin closes, like shadcn's setup flow.
   await fs.writeFile(
@@ -357,6 +360,113 @@ console.log("  - ${keptUi}");
     );
     expect(await fs.readFile(path.join(root, keptUi), "utf8")).toBe(
       registryImport,
+    );
+  } finally {
+    server.stop(true);
+  }
+});
+
+test("installs missing dependencies once for a multi-item command", async () => {
+  const root = await fs.mkdtemp(
+    path.join(os.tmpdir(), "bejamas-add-batch-deps-"),
+  );
+  roots.push(root);
+  async function write(relative: string, value: string | object) {
+    const file = path.join(root, relative);
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await fs.writeFile(
+      file,
+      typeof value === "string" ? value : JSON.stringify(value),
+    );
+  }
+  await write("package.json", { name: "app" });
+  await write("tsconfig.json", {
+    compilerOptions: { baseUrl: ".", paths: { "@/*": ["src/*"] } },
+  });
+  await write("components.json", {
+    style: "bejamas-juno",
+    iconLibrary: "lucide",
+    tailwind: {
+      css: "src/styles/globals.css",
+      baseColor: "neutral",
+      cssVariables: true,
+    },
+    aliases: {
+      components: "@/components",
+      ui: "@/ui",
+      utils: "@/lib/utils",
+      lib: "@/lib",
+      hooks: "@/hooks",
+    },
+  });
+
+  const installLog = path.join(root, "installs.log");
+  await write(
+    "bin/npm",
+    `#!/usr/bin/env bun
+import fs from "node:fs/promises";
+const args = process.argv.slice(2);
+if (args[0] === "install") {
+  await fs.appendFile(${JSON.stringify(installLog)}, args.slice(1).join(" ") + "\\n");
+  process.exit(0);
+}
+console.error("No files updated.");
+`,
+  );
+  await fs.chmod(path.join(root, "bin/npm"), 0o755);
+  const items = new Map([
+    [
+      "button",
+      {
+        name: "button",
+        type: "registry:ui",
+        dependencies: ["@data-slot/a"],
+        files: [],
+      },
+    ],
+    [
+      "card",
+      {
+        name: "card",
+        type: "registry:ui",
+        dependencies: ["@data-slot/b"],
+        files: [],
+      },
+    ],
+  ]);
+  const server = Bun.serve({
+    hostname: "127.0.0.1",
+    port: 0,
+    fetch(request) {
+      const item = items.get(
+        path.basename(new URL(request.url).pathname, ".json"),
+      );
+      return item
+        ? Response.json(item)
+        : new Response("Not found", { status: 404 });
+    },
+  });
+  try {
+    const child = Bun.spawn(
+      [process.execPath, cliEntry, "add", "button", "card", "--cwd", root],
+      {
+        env: {
+          ...process.env,
+          BEJAMAS_UI_URL: `http://127.0.0.1:${server.port}`,
+          PATH: `${path.join(root, "bin")}:${process.env.PATH}`,
+        },
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    const [stdout, stderr, code] = await Promise.all([
+      new Response(child.stdout).text(),
+      new Response(child.stderr).text(),
+      child.exited,
+    ]);
+    expect(code, stdout + stderr).toBe(0);
+    expect(await fs.readFile(installLog, "utf8")).toBe(
+      "@data-slot/a @data-slot/b\n",
     );
   } finally {
     server.stop(true);

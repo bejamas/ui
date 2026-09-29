@@ -97,100 +97,137 @@ export function buildSubfolderMap(
   return { uniqueMap, sharedFilenames };
 }
 
-/** Complete one installation before allowing the command to start another. */
-export async function completeRegistryInstall({
-  cwd,
-  config,
-  uiConfig,
-  uiDir,
-  items,
-  writtenFiles,
-  skippedFiles,
-  verbose,
-  overwrite,
-}: {
+interface RegistryInstallContext {
   cwd: string;
   config: Config | null;
   uiConfig: Config | null;
   uiDir: string;
-  items: RegistryItem[];
-  /** Files shadcn reported as created or updated. */
-  writtenFiles: string[];
-  /** Files shadcn left alone, for example because an overwrite was declined. */
-  skippedFiles: string[];
   verbose: boolean;
   overwrite: boolean;
-}) {
-  const reorganization = await reorganizeRegistryItems(
-    items,
-    uiDir,
-    verbose,
-    overwrite,
-  );
+}
 
-  // shadcn reports paths relative to the monorepo root in a workspace.
-  const workspaceRoot =
-    config &&
-    uiConfig &&
-    uiConfig.resolvedPaths.cwd !== config.resolvedPaths.cwd
-      ? findCommonRoot(config.resolvedPaths.cwd, uiConfig.resolvedPaths.cwd)
-      : null;
-  const bases = workspaceRoot ? [cwd, workspaceRoot] : [cwd];
+/**
+ * Repairs the output of several shadcn runs in one command. Work the next run
+ * depends on happens per item in `install`; project-wide passes (import scan,
+ * package exports, dependency installs) run once in `finish`, which the command
+ * also calls before exiting on a failure so completed items stay usable.
+ */
+export class RegistryInstallBatch {
+  private readonly items: RegistryItem[] = [];
+  private readonly written = new Set<string>();
+  private readonly kept = new Set<string>();
+  private readonly bases: string[];
 
-  // Never rewrite a file the user kept: neither a declined overwrite nor an
-  // existing subfolder copy that reorganization left in place.
-  const keptFiles = [
-    ...resolveReportedFiles(skippedFiles, bases),
-    ...reorganization.skippedFiles.map((file) => path.resolve(uiDir, file)),
-  ];
-  await fixAstroImports(cwd, verbose, uiConfig, {
-    kind: "configured-roots",
-    exclude: keptFiles,
-  });
-
-  // Shared UI roots use the UI config; app files (including block targets
-  // outside aliases.components) need the app's aliases instead.
-  if (config) {
-    const files = resolveReportedFiles(writtenFiles, bases);
-    const appFiles = uiConfig
-      ? filesOutsideConfigRoots(cwd, files, uiConfig)
-      : files;
-    if (appFiles.length) {
-      await fixAstroImports(cwd, verbose, config, {
-        kind: "files",
-        paths: appFiles,
-      });
-    }
+  constructor(private readonly context: RegistryInstallContext) {
+    const { cwd, config, uiConfig } = context;
+    // shadcn reports paths relative to the monorepo root in a workspace.
+    const workspaceRoot =
+      config &&
+      uiConfig &&
+      uiConfig.resolvedPaths.cwd !== config.resolvedPaths.cwd
+        ? findCommonRoot(config.resolvedPaths.cwd, uiConfig.resolvedPaths.cwd)
+        : null;
+    this.bases = workspaceRoot ? [cwd, workspaceRoot] : [cwd];
   }
 
-  if (uiConfig) {
-    await repairUiPackageExports(uiDir, uiConfig.resolvedPaths.cwd);
-    if (!config || config.resolvedPaths.cwd === uiConfig.resolvedPaths.cwd) {
-      await ensureRegistryDependencies(uiConfig.resolvedPaths.cwd, items);
-    } else {
-      await ensureRegistryDependencies(
-        uiConfig.resolvedPaths.cwd,
-        items.filter((item) => item.type !== "registry:block"),
-      );
-      const blockItems = items.filter((item) => item.type === "registry:block");
-      if (blockItems.length) {
-        await ensureRegistryDependencies(config.resolvedPaths.cwd, blockItems);
+  async install({
+    items,
+    writtenFiles,
+    skippedFiles,
+  }: {
+    items: RegistryItem[];
+    /** Files shadcn reported as created or updated. */
+    writtenFiles: string[];
+    /** Files shadcn left alone, for example because an overwrite was declined. */
+    skippedFiles: string[];
+  }) {
+    const { cwd, uiDir, verbose, overwrite } = this.context;
+    const reorganization = await reorganizeRegistryItems(
+      items,
+      uiDir,
+      verbose,
+      overwrite,
+    );
+
+    this.items.push(...items);
+    for (const file of resolveReportedFiles(writtenFiles, this.bases)) {
+      this.written.add(file);
+    }
+    // Never rewrite a file the user kept: neither a declined overwrite nor an
+    // existing subfolder copy that reorganization left in place.
+    for (const file of resolveReportedFiles(skippedFiles, this.bases)) {
+      this.kept.add(file);
+    }
+    for (const file of reorganization.skippedFiles) {
+      this.kept.add(path.resolve(uiDir, file));
+    }
+
+    await syncManagedTailwindCss(cwd);
+    // Registry trees are dependency-first, with the requested item last.
+    const requestedItem = items.at(-1);
+    if (requestedItem?.type === "registry:font") {
+      const nextFont = toManagedAstroFont(requestedItem.name);
+      if (nextFont) {
+        const currentFonts = await readManagedAstroFontsFromProject(cwd);
+        const nextFonts = mergeManagedAstroFonts(currentFonts, nextFont);
+        await syncAstroFontsInProject(cwd, nextFonts, nextFont.cssVariable);
+        await syncAstroManagedFontCss(cwd, nextFont.cssVariable);
+        await cleanupAstroFontPackages(cwd);
+      }
+    }
+    return reorganization;
+  }
+
+  async finish() {
+    if (!this.items.length) return;
+    const { cwd, config, uiConfig, uiDir, verbose } = this.context;
+    const items = this.items.splice(0);
+    const written = Array.from(this.written);
+    // A file written by any item in this command is ours to repair.
+    const kept = Array.from(this.kept).filter(
+      (file) => !this.written.has(file),
+    );
+    this.written.clear();
+    this.kept.clear();
+
+    await fixAstroImports(cwd, verbose, uiConfig, {
+      kind: "configured-roots",
+      exclude: kept,
+    });
+
+    // Shared UI roots use the UI config; app files (including block targets
+    // outside aliases.components) need the app's aliases instead.
+    if (config) {
+      const appFiles = uiConfig
+        ? filesOutsideConfigRoots(cwd, written, uiConfig)
+        : written;
+      if (appFiles.length) {
+        await fixAstroImports(cwd, verbose, config, {
+          kind: "files",
+          paths: appFiles,
+        });
+      }
+    }
+
+    if (uiConfig) {
+      await repairUiPackageExports(uiDir, uiConfig.resolvedPaths.cwd);
+      if (!config || config.resolvedPaths.cwd === uiConfig.resolvedPaths.cwd) {
+        await ensureRegistryDependencies(uiConfig.resolvedPaths.cwd, items);
+      } else {
+        await ensureRegistryDependencies(
+          uiConfig.resolvedPaths.cwd,
+          items.filter((item) => item.type !== "registry:block"),
+        );
+        const blockItems = items.filter(
+          (item) => item.type === "registry:block",
+        );
+        if (blockItems.length) {
+          await ensureRegistryDependencies(
+            config.resolvedPaths.cwd,
+            blockItems,
+          );
+        }
       }
     }
   }
-
-  await syncManagedTailwindCss(cwd);
-  // Registry trees are dependency-first, with the requested item last.
-  const requestedItem = items.at(-1);
-  if (requestedItem?.type === "registry:font") {
-    const nextFont = toManagedAstroFont(requestedItem.name);
-    if (nextFont) {
-      const currentFonts = await readManagedAstroFontsFromProject(cwd);
-      const nextFonts = mergeManagedAstroFonts(currentFonts, nextFont);
-      await syncAstroFontsInProject(cwd, nextFonts, nextFont.cssVariable);
-      await syncAstroManagedFontCss(cwd, nextFont.cssVariable);
-      await cleanupAstroFontPackages(cwd);
-    }
-  }
-  return reorganization;
 }

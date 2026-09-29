@@ -7,7 +7,7 @@ import prompts from "prompts";
 import { getConfig, getWorkspaceConfig } from "@/src/utils/get-config";
 import {
   buildSubfolderMap,
-  completeRegistryInstall,
+  RegistryInstallBatch,
   type SubfolderMapResult,
 } from "@/src/utils/registry-install";
 import { respondToShadcnPrompts } from "@/src/utils/shadcn-prompts";
@@ -29,6 +29,13 @@ interface ParsedOutput {
   created: string[];
   updated: string[];
   skipped: string[];
+}
+
+/** shadcn failed; the output has already been reported. */
+class InstallFailure extends Error {
+  constructor(readonly exitCode: number) {
+    super(`shadcn exited with code ${exitCode}`);
+  }
 }
 
 interface RegistryIndexEntry {
@@ -417,7 +424,7 @@ async function addComponents(
         `shadcn asked a question that bejamas add cannot answer: "${unsupportedPrompt}"`,
       );
       writeCapturedShadcnOutput(result.stdout || "", result.stderr || "");
-      process.exit(1);
+      throw new InstallFailure(1);
     }
 
     registrySpinner.succeed();
@@ -447,14 +454,15 @@ async function addComponents(
       if (!inspectionMode) {
         writeCapturedShadcnOutput(stdout, stderr);
       }
-      process.exit(result.exitCode);
+      throw new InstallFailure(result.exitCode ?? 1);
     }
 
     return parsed;
-  } catch {
+  } catch (error) {
+    if (error instanceof InstallFailure) throw error;
     registrySpinner.fail();
     logger.error("Failed to add components");
-    process.exit(1);
+    throw new InstallFailure(1);
   }
 }
 
@@ -569,99 +577,116 @@ export const add = new Command()
       ? withoutExpandedAllOption(outputBearingOptions)
       : outputBearingOptions;
 
-    for (let index = 0; index < componentsToAdd.length; index += 1) {
-      const component = componentsToAdd[index];
+    const batch = new RegistryInstallBatch({
+      cwd,
+      config,
+      uiConfig,
+      uiDir,
+      verbose,
+      overwrite: overwriteUsed,
+    });
 
-      if (totalComponents > 1 && !isSilent) {
-        logger.break();
-        logger.info(
-          highlighter.info(`[${index + 1}/${totalComponents}]`) +
-            ` Adding ${highlighter.success(component)}...`,
+    try {
+      for (let index = 0; index < componentsToAdd.length; index += 1) {
+        const component = componentsToAdd[index];
+
+        if (totalComponents > 1 && !isSilent) {
+          logger.break();
+          logger.info(
+            highlighter.info(`[${index + 1}/${totalComponents}]`) +
+              ` Adding ${highlighter.success(component)}...`,
+          );
+        }
+
+        const items = inspectionMode
+          ? []
+          : await fetchRegistryTree([component], registryUrl, activeStyle);
+        const subfolderMapResult = buildSubfolderMap(items);
+
+        const parsed = await addComponents(
+          cwd,
+          [toShadcnAddArgument(component)],
+          addOptions,
+          verbose,
+          isSilent,
+          inspectionMode,
         );
-      }
+        if (inspectionMode) continue;
 
-      const items = inspectionMode
-        ? []
-        : await fetchRegistryTree([component], registryUrl, activeStyle);
-      const subfolderMapResult = buildSubfolderMap(items);
+        const { skippedFiles } = await batch.install({
+          items,
+          writtenFiles: [...parsed.created, ...parsed.updated],
+          skippedFiles: parsed.skipped,
+        });
+        const skippedCount = skippedFiles.length;
 
-      const parsed = await addComponents(
-        cwd,
-        [toShadcnAddArgument(component)],
-        addOptions,
-        verbose,
-        isSilent,
-        inspectionMode,
-      );
-      if (inspectionMode) continue;
-
-      const { skippedFiles } = await completeRegistryInstall({
-        cwd,
-        config,
-        uiConfig,
-        uiDir,
-        items,
-        writtenFiles: [...parsed.created, ...parsed.updated],
-        skippedFiles: parsed.skipped,
-        verbose,
-        overwrite: overwriteUsed,
-      });
-      const skippedCount = skippedFiles.length;
-
-      if (!isSilent) {
-        const actuallyCreated = Math.max(
-          0,
-          parsed.created.length - skippedCount,
-        );
-
-        if (actuallyCreated > 0) {
-          const createdPaths = rewritePaths(
-            parsed.created.slice(0, actuallyCreated),
-            subfolderMapResult,
+        if (!isSilent) {
+          const actuallyCreated = Math.max(
+            0,
+            parsed.created.length - skippedCount,
           );
-          logger.success(
-            `Created ${createdPaths.length} file${createdPaths.length > 1 ? "s" : ""}:`,
-          );
-          for (const file of createdPaths) {
-            logger.log(`  ${highlighter.info("-")} ${file}`);
+
+          if (actuallyCreated > 0) {
+            const createdPaths = rewritePaths(
+              parsed.created.slice(0, actuallyCreated),
+              subfolderMapResult,
+            );
+            logger.success(
+              `Created ${createdPaths.length} file${createdPaths.length > 1 ? "s" : ""}:`,
+            );
+            for (const file of createdPaths) {
+              logger.log(`  ${highlighter.info("-")} ${file}`);
+            }
           }
-        }
 
-        if (parsed.updated.length > 0) {
-          const uniqueUpdated = Array.from(new Set(parsed.updated));
-          const updatedPaths = rewritePaths(uniqueUpdated, subfolderMapResult);
-          logger.info(
-            `Updated ${updatedPaths.length} file${updatedPaths.length > 1 ? "s" : ""}:`,
-          );
-          for (const file of updatedPaths) {
-            logger.log(`  ${highlighter.info("-")} ${file}`);
+          if (parsed.updated.length > 0) {
+            const uniqueUpdated = Array.from(new Set(parsed.updated));
+            const updatedPaths = rewritePaths(
+              uniqueUpdated,
+              subfolderMapResult,
+            );
+            logger.info(
+              `Updated ${updatedPaths.length} file${updatedPaths.length > 1 ? "s" : ""}:`,
+            );
+            for (const file of updatedPaths) {
+              logger.log(`  ${highlighter.info("-")} ${file}`);
+            }
           }
-        }
 
-        if (skippedCount > 0) {
-          logger.info(
-            `Skipped ${skippedCount} file${skippedCount > 1 ? "s" : ""}: (already exists)`,
-          );
-        }
-
-        if (parsed.skipped.length > 0) {
-          const skippedPaths = rewritePaths(parsed.skipped, subfolderMapResult);
-          logger.info(
-            formatSkippedFilesHeading(skippedPaths.length, overwriteUsed),
-          );
-          for (const file of skippedPaths) {
-            logger.log(`  ${highlighter.info("-")} ${file}`);
+          if (skippedCount > 0) {
+            logger.info(
+              `Skipped ${skippedCount} file${skippedCount > 1 ? "s" : ""}: (already exists)`,
+            );
           }
-        }
 
-        if (
-          actuallyCreated === 0 &&
-          parsed.updated.length === 0 &&
-          skippedCount === 0 &&
-          parsed.skipped.length === 0
-        ) {
-          logger.info("Already up to date.");
+          if (parsed.skipped.length > 0) {
+            const skippedPaths = rewritePaths(
+              parsed.skipped,
+              subfolderMapResult,
+            );
+            logger.info(
+              formatSkippedFilesHeading(skippedPaths.length, overwriteUsed),
+            );
+            for (const file of skippedPaths) {
+              logger.log(`  ${highlighter.info("-")} ${file}`);
+            }
+          }
+
+          if (
+            actuallyCreated === 0 &&
+            parsed.updated.length === 0 &&
+            skippedCount === 0 &&
+            parsed.skipped.length === 0
+          ) {
+            logger.info("Already up to date.");
+          }
         }
       }
+    } catch (error) {
+      // Leave the items installed before the failure repaired.
+      await batch.finish();
+      if (error instanceof InstallFailure) process.exit(error.exitCode);
+      throw error;
     }
+    await batch.finish();
   });
