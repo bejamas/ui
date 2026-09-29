@@ -601,11 +601,8 @@ export const add = new Command()
         uiConfig,
         uiDir,
         items,
-        reportedFiles: [
-          ...parsed.created,
-          ...parsed.updated,
-          ...parsed.skipped,
-        ],
+        writtenFiles: [...parsed.created, ...parsed.updated],
+        skippedFiles: parsed.skipped,
         verbose,
         overwrite: overwriteUsed,
       });

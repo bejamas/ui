@@ -156,9 +156,11 @@ export function isPathWithin(filePath: string, root: string) {
 /**
  * Which files to repair: every source file under the configured aliases, or an
  * explicit list (for example block files written outside those roots).
+ * `exclude` protects files the user declined to overwrite.
  */
 export type AstroImportRepairScope =
-  { kind: "configured-roots" } | { kind: "files"; paths: readonly string[] };
+  | { kind: "configured-roots"; exclude?: readonly string[] }
+  | { kind: "files"; paths: readonly string[] };
 
 export async function fixAstroImports(
   cwd: string,
@@ -179,13 +181,18 @@ export async function fixAstroImports(
       if (stats?.isFile()) files.add(absolutePath);
     }
   } else {
+    const excluded = new Set(
+      (scope.exclude ?? []).map((filePath) => path.resolve(cwd, filePath)),
+    );
     for (const root of getConfiguredSourceRoots(config)) {
       const matches = await fg("**/*.{astro,ts,js}", {
         cwd: root,
         absolute: true,
         dot: false,
       });
-      for (const filePath of matches) files.add(filePath);
+      for (const filePath of matches) {
+        if (!excluded.has(path.resolve(filePath))) files.add(filePath);
+      }
     }
   }
 

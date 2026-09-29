@@ -255,3 +255,110 @@ setInterval(() => {}, 1000);
     server.stop(true);
   }
 }, 15_000);
+
+test("leaves files shadcn skipped untouched while repairing written ones", async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "bejamas-add-skipped-"));
+  roots.push(root);
+  async function write(relative: string, value: string | object) {
+    const file = path.join(root, relative);
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await fs.writeFile(
+      file,
+      typeof value === "string" ? value : JSON.stringify(value),
+    );
+  }
+  await write("package.json", { name: "app" });
+  await write("tsconfig.json", {
+    compilerOptions: { baseUrl: ".", paths: { "@/*": ["src/*"] } },
+  });
+  await write("components.json", {
+    style: "bejamas-juno",
+    iconLibrary: "lucide",
+    tailwind: {
+      css: "src/styles/globals.css",
+      baseColor: "neutral",
+      cssVariables: true,
+    },
+    aliases: {
+      components: "@/components",
+      ui: "@/ui",
+      utils: "@/lib/utils",
+      lib: "@/lib",
+      hooks: "@/hooks",
+    },
+  });
+
+  const registryImport =
+    '---\nimport { Button } from "@/registry/bejamas/ui/button";\n---\n<Button />';
+  const written = "src/components/blocks/features-01/Features01.astro";
+  const keptBlock = "src/components/blocks/features-01/Custom.astro";
+  const keptUi = "src/ui/card/Card.astro";
+  // Files the user already has and declines to overwrite.
+  await write(keptBlock, registryImport);
+  await write(keptUi, registryImport);
+
+  await write(
+    "bin/npm",
+    `#!/usr/bin/env bun
+import fs from "node:fs/promises";
+import path from "node:path";
+const file = path.join(${JSON.stringify(root)}, ${JSON.stringify(written)});
+await fs.mkdir(path.dirname(file), { recursive: true });
+await fs.writeFile(file, ${JSON.stringify(registryImport)});
+console.error("Created 1 file:");
+console.log("  - ${written}");
+console.error("Skipped 2 files: (files might be identical, use --overwrite to overwrite)");
+console.log("  - ${keptBlock}");
+console.log("  - ${keptUi}");
+`,
+  );
+  await fs.chmod(path.join(root, "bin/npm"), 0o755);
+  const server = Bun.serve({
+    hostname: "127.0.0.1",
+    port: 0,
+    fetch: () =>
+      Response.json({
+        name: "features-01",
+        type: "registry:block",
+        files: [
+          {
+            path: "blocks/features-01/Features01.astro",
+            type: "registry:component",
+            target: written,
+            content: registryImport,
+          },
+        ],
+      }),
+  });
+  try {
+    const child = Bun.spawn(
+      [process.execPath, cliEntry, "add", "features-01", "--cwd", root],
+      {
+        env: {
+          ...process.env,
+          BEJAMAS_UI_URL: `http://127.0.0.1:${server.port}`,
+          PATH: `${path.join(root, "bin")}:${process.env.PATH}`,
+        },
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    const [stdout, stderr, code] = await Promise.all([
+      new Response(child.stdout).text(),
+      new Response(child.stderr).text(),
+      child.exited,
+    ]);
+    expect(code, stdout + stderr).toBe(0);
+    expect(await fs.readFile(path.join(root, written), "utf8")).toContain(
+      'from "@/ui/button"',
+    );
+    expect(await fs.readFile(path.join(root, keptBlock), "utf8")).toBe(
+      registryImport,
+    );
+    expect(await fs.readFile(path.join(root, keptUi), "utf8")).toBe(
+      registryImport,
+    );
+  } finally {
+    server.stop(true);
+  }
+});

@@ -104,7 +104,8 @@ export async function completeRegistryInstall({
   uiConfig,
   uiDir,
   items,
-  reportedFiles,
+  writtenFiles,
+  skippedFiles,
   verbose,
   overwrite,
 }: {
@@ -113,7 +114,10 @@ export async function completeRegistryInstall({
   uiConfig: Config | null;
   uiDir: string;
   items: RegistryItem[];
-  reportedFiles: string[];
+  /** Files shadcn reported as created or updated. */
+  writtenFiles: string[];
+  /** Files shadcn left alone, for example because an overwrite was declined. */
+  skippedFiles: string[];
   verbose: boolean;
   overwrite: boolean;
 }) {
@@ -123,19 +127,31 @@ export async function completeRegistryInstall({
     verbose,
     overwrite,
   );
-  await fixAstroImports(cwd, verbose, uiConfig);
+
+  // shadcn reports paths relative to the monorepo root in a workspace.
+  const workspaceRoot =
+    config &&
+    uiConfig &&
+    uiConfig.resolvedPaths.cwd !== config.resolvedPaths.cwd
+      ? findCommonRoot(config.resolvedPaths.cwd, uiConfig.resolvedPaths.cwd)
+      : null;
+  const bases = workspaceRoot ? [cwd, workspaceRoot] : [cwd];
+
+  // Never rewrite a file the user kept: neither a declined overwrite nor an
+  // existing subfolder copy that reorganization left in place.
+  const keptFiles = [
+    ...resolveReportedFiles(skippedFiles, bases),
+    ...reorganization.skippedFiles.map((file) => path.resolve(uiDir, file)),
+  ];
+  await fixAstroImports(cwd, verbose, uiConfig, {
+    kind: "configured-roots",
+    exclude: keptFiles,
+  });
 
   // Shared UI roots use the UI config; app files (including block targets
   // outside aliases.components) need the app's aliases instead.
   if (config) {
-    const workspaceRoot =
-      uiConfig && uiConfig.resolvedPaths.cwd !== config.resolvedPaths.cwd
-        ? findCommonRoot(config.resolvedPaths.cwd, uiConfig.resolvedPaths.cwd)
-        : null;
-    const files = resolveReportedFiles(
-      reportedFiles,
-      workspaceRoot ? [cwd, workspaceRoot] : [cwd],
-    );
+    const files = resolveReportedFiles(writtenFiles, bases);
     const appFiles = uiConfig
       ? filesOutsideConfigRoots(cwd, files, uiConfig)
       : files;
