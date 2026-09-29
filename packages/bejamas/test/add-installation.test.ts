@@ -204,3 +204,54 @@ for (const [file] of files) console.log("  - " + file);
     }
   });
 }
+
+test("fails instead of hanging when shadcn asks a question it cannot decline", async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "bejamas-add-prompt-"));
+  roots.push(root);
+  await fs.writeFile(path.join(root, "package.json"), JSON.stringify({ name: "app" }));
+  await fs.mkdir(path.join(root, "bin"));
+  // A select question is left open until stdin closes, like shadcn's setup flow.
+  await fs.writeFile(
+    path.join(root, "bin/npm"),
+    `#!/usr/bin/env bun
+process.stdout.write("? Which color would you like to use as the base color? › - Use arrow-keys. Return to submit.\\n❯   Neutral\\n    Gray");
+process.stdin.resume();
+setInterval(() => {}, 1000);
+`,
+  );
+  await fs.chmod(path.join(root, "bin/npm"), 0o755);
+  const server = Bun.serve({
+    hostname: "127.0.0.1",
+    port: 0,
+    fetch: () =>
+      Response.json({ name: "button", type: "registry:ui", files: [] }),
+  });
+  try {
+    const child = Bun.spawn(
+      [process.execPath, cliEntry, "add", "button", "--cwd", root],
+      {
+        env: {
+          ...process.env,
+          BEJAMAS_UI_URL: `http://127.0.0.1:${server.port}`,
+          PATH: `${path.join(root, "bin")}:${process.env.PATH}`,
+        },
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    const timeout = setTimeout(() => child.kill(), 10_000);
+    const [stdout, stderr, code] = await Promise.all([
+      new Response(child.stdout).text(),
+      new Response(child.stderr).text(),
+      child.exited,
+    ]);
+    clearTimeout(timeout);
+    expect(child.signalCode).toBeNull();
+    expect(code).toBe(1);
+    expect(stdout + stderr).toContain(
+      'cannot answer: "Which color would you like to use as the base color?"',
+    );
+  } finally {
+    server.stop(true);
+  }
+}, 15_000);

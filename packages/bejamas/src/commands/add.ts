@@ -402,8 +402,23 @@ async function addComponents(
       stderr: "pipe",
       reject: false,
     });
-    respondToShadcnPrompts(subprocess);
+    let unsupportedPrompt: string | undefined;
+    respondToShadcnPrompts(subprocess, {
+      onUnsupportedPrompt(message) {
+        unsupportedPrompt = message;
+        subprocess.kill();
+      },
+    });
     const result = await subprocess;
+
+    if (unsupportedPrompt) {
+      registrySpinner.fail();
+      logger.error(
+        `shadcn asked a question that bejamas add cannot answer: "${unsupportedPrompt}"`,
+      );
+      writeCapturedShadcnOutput(result.stdout || "", result.stderr || "");
+      process.exit(1);
+    }
 
     registrySpinner.succeed();
 
