@@ -1,5 +1,11 @@
 # starlight-theme-bejamas
 
+## 0.2.2
+
+### Patch Changes
+
+- [#159](https://github.com/bejamas/ui/pull/159) [`d9fb503`](https://github.com/bejamas/ui/commit/d9fb50331b2692cad08f1653611b952312e6d7fe) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Point sidebar group carets down when collapsed and up when expanded.
+
 ## 0.2.1
 
 ### Patch Changes
