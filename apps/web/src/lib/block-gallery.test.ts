@@ -6,6 +6,7 @@ import {
   blockGalleryItems,
   getBlockGalleryItem,
   getBlockInstallCommand,
+  loadPublishedBlockSourceFiles,
   selectPublishedBlockSourceFiles,
 } from "./block-gallery";
 
@@ -49,27 +50,22 @@ describe("block gallery catalog", () => {
   test("selects installable registry source with project-style import paths", () => {
     const files = selectPublishedBlockSourceFiles(
       {
-        "../../public/r/features-01.json": {
-          name: "features-01",
-          files: [
-            {
-              path: "blocks/features-01/Features01.astro",
-              target: "src/components/blocks/features-01/Features01.astro",
-              content:
-                'import { Button } from "@/registry/bejamas/ui/button";\n<section>Features</section>',
-            },
-            {
-              path: "blocks/features-01/index.ts",
-              target: "src/components/blocks/features-01/index.ts",
-              content:
-                'export { default as Features01 } from "./Features01.astro";',
-            },
-          ],
-        },
-        "../../public/r/footer-01.json": {
-          name: "footer-01",
-          files: [],
-        },
+        name: "features-01",
+        type: "registry:block",
+        files: [
+          {
+            path: "blocks/features-01/Features01.astro",
+            target: "src/components/blocks/features-01/Features01.astro",
+            content:
+              'import { Button } from "@/registry/bejamas/ui/button";\n<section>Features</section>',
+          },
+          {
+            path: "blocks/features-01/index.ts",
+            target: "src/components/blocks/features-01/index.ts",
+            content:
+              'export { default as Features01 } from "./Features01.astro";',
+          },
+        ],
       },
       "features-01",
     );
@@ -83,12 +79,76 @@ describe("block gallery catalog", () => {
   });
 
   test("returns no files for unknown or mismatched artifacts", () => {
+    const files = [{ path: "blocks/a/A.astro", content: "" }];
     expect(
       selectPublishedBlockSourceFiles(
-        { "../../public/r/features-01.json": { name: "other", files: [] } },
+        { name: "other", type: "registry:block", files },
         "features-01",
       ),
     ).toEqual([]);
-    expect(selectPublishedBlockSourceFiles({}, "features-01")).toEqual([]);
+    expect(
+      selectPublishedBlockSourceFiles(
+        { name: "button", type: "registry:ui", files },
+        "button",
+      ),
+    ).toEqual([]);
+    expect(selectPublishedBlockSourceFiles(undefined, "features-01")).toEqual(
+      [],
+    );
+  });
+
+  test("loads only the requested block, whatever its name", async () => {
+    const loaded: string[] = [];
+    const loader = (payload: unknown) => async () => {
+      loaded.push((payload as { name: string }).name);
+      return payload;
+    };
+    const hero = {
+      name: "hero",
+      type: "registry:block",
+      files: [
+        {
+          path: "blocks/hero/Hero.astro",
+          target: "src/components/blocks/hero/Hero.astro",
+          content: "<section />",
+        },
+      ],
+    };
+    const loaders = {
+      "../../public/r/button.json": loader({ name: "button" }),
+      "../../public/r/hero.json": loader(hero),
+      "../../public/r/features-01.json": loader({ name: "features-01" }),
+    };
+
+    const files = await loadPublishedBlockSourceFiles(loaders, "hero");
+    expect(files.map((file) => file.displayName)).toEqual([
+      "src/components/blocks/hero/Hero.astro",
+    ]);
+    expect(loaded).toEqual(["hero"]);
+  });
+
+  test("fails loudly when a block has no published source", async () => {
+    await expect(loadPublishedBlockSourceFiles({}, "hero")).rejects.toThrow(
+      'No published registry source for block "hero"',
+    );
+  });
+
+  test("finds published source for every catalog block", async () => {
+    const loaders = Object.fromEntries(
+      fs
+        .readdirSync(path.join(webRoot, "public/r"))
+        .filter((file) => file.endsWith(".json"))
+        .map((file) => [
+          `../../public/r/${file}`,
+          async () =>
+            JSON.parse(
+              fs.readFileSync(path.join(webRoot, "public/r", file), "utf8"),
+            ),
+        ]),
+    );
+    for (const item of blockGalleryItems) {
+      const files = await loadPublishedBlockSourceFiles(loaders, item.id);
+      expect(files.length).toBeGreaterThan(0);
+    }
   });
 });

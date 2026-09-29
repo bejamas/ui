@@ -2,21 +2,22 @@
 import { Code } from "@astrojs/starlight/components";
 import SourceTree from "@/components/SourceTree.astro";
 import {
-  selectPublishedBlockSourceFiles,
+  loadPublishedBlockSourceFiles,
   type BlockSourceFile,
+  type RegistryPayloadLoaders,
 } from "@/lib/block-gallery";
 
 const { blockId } = Astro.props as { blockId: string };
 
-// Read the published registry payloads so the copyable code matches what the
-// CLI installs. Block artifacts are named `<category>-<number>.json`.
-const registryItems = import.meta.glob("../../public/r/*-[0-9][0-9].json", {
-  eager: true,
-  import: "default",
-}) as Record<string, unknown>;
+// Read the published registry payload so the copyable code matches what the
+// CLI installs. Loaders are lazy: only this block's payload is read.
+const registryPayloads: RegistryPayloadLoaders = import.meta.glob(
+  "../../public/r/*.json",
+  { import: "default" },
+);
 
-const files: BlockSourceFile[] = selectPublishedBlockSourceFiles(
-  registryItems,
+const files: BlockSourceFile[] = await loadPublishedBlockSourceFiles(
+  registryPayloads,
   blockId,
 );
 
