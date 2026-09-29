@@ -96,6 +96,18 @@ const isSplashTemplate = template === "splash";
       top: 0;
     }
 
+    /* The theme switches to its desktop sidebar spacing at 50rem, but the
+       mobile menu stays until 64rem. Keep the small-screen spacing here. */
+    @media (min-width: 50rem) and (max-width: 63.99rem) {
+      :global(#starlight__sidebar .sidebar-content) {
+        padding-top: calc(var(--spacing) * 3);
+      }
+
+      :global(#starlight__sidebar .sidebar-content)::before {
+        display: none;
+      }
+    }
+
     @media (min-width: 64rem) {
       .mobile-preferences-at-top {
         display: none;
