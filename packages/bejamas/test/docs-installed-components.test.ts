@@ -178,3 +178,59 @@ test("docs:build handles the scaffolded subset, repeated runs and newly installe
     /import\s*\{[^}]*\bInputGroup\b[^}]*\}\s*from\s*["']@repo\/ui\/components\/input["']/,
   );
 }, 15000);
+
+test("docs:build uses explicit UI and output paths without prompting", async () => {
+  const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "bejamas-docs-flags-"));
+  tempDirs.push(cwd);
+  const uiRoot = path.join(cwd, "packages/ui");
+  const template = path.resolve(
+    import.meta.dir,
+    "../../../templates/monorepo-astro-with-docs/packages/ui",
+  );
+  await fs.mkdir(uiRoot, { recursive: true });
+  await fs.cp(path.join(template, "src"), path.join(uiRoot, "src"), {
+    recursive: true,
+  });
+  await fs.writeFile(
+    path.join(uiRoot, "package.json"),
+    '{"name":"@repo/ui","type":"module"}',
+  );
+
+  const cli = path.resolve(import.meta.dir, "../dist/index.js");
+  const child = Bun.spawn(
+    [
+      process.execPath,
+      cli,
+      "docs:build",
+      "-c",
+      "./packages/ui",
+      "-o",
+      "./apps/docs/src/content/docs/components",
+    ],
+    {
+      cwd,
+      env: {
+        ...process.env,
+        BEJAMAS_UI_ROOT: "",
+        BEJAMAS_DOCS_CWD: "",
+        BEJAMAS_DOCS_OUT_DIR: "",
+      },
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
+    },
+  );
+  const [stdout, stderr, code] = await Promise.all([
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text(),
+    child.exited,
+  ]);
+  expect(code, `${stdout}\n${stderr}`).toBe(0);
+  expect(stdout).not.toContain("Path to @bejamas/ui package root:");
+  expect(
+    await fs.readFile(
+      path.join(cwd, "apps/docs/src/content/docs/components/label.mdx"),
+      "utf8",
+    ),
+  ).toContain("Label");
+}, 15000);
