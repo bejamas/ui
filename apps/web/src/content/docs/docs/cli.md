@@ -192,3 +192,14 @@ npx bejamas docs:check [--cwd <path>] [--json]
 **Optional:**
 
 - `@examples` - Additional examples
+
+
+### Migrated Shadcnblocks blocks
+
+Blocks adapted from Shadcnblocks.com live in the built-in `@shadcnblocks` registry:
+
+```bash
+bunx bejamas@latest add @shadcnblocks/features-02
+```
+
+No registry configuration is needed. These blocks use your project's selected Bejamas style and install their shared UI dependencies from the main registry. Original Bejamas blocks continue to use bare names, such as `bunx bejamas@latest add footer-01`.

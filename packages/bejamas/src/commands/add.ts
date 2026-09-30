@@ -17,6 +17,7 @@ import {
   BEJAMAS_REGISTRY_NAMESPACE,
   fetchRegistryTree,
   resolveBejamasRegistryItemName,
+  resolveShadcnblocksItemName,
 } from "@/src/utils/reorganize-components";
 import {
   buildPinnedShadcnInvocation,
@@ -79,9 +80,13 @@ export function withoutShadcnSilentOption(forwardedOptions: string[]) {
  * shadcn only knows the registries declared in components.json. The built-in
  * `@bejamas/<item>` namespace is the default registry (REGISTRY_URL), so it is
  * passed to shadcn as the bare item name, which resolves to the styled payload.
+ * `@shadcnblocks/<item>` maps to our hosted, styled block sub-registry URL.
  * Bare names, URLs, and third-party namespaces are passed through unchanged.
  */
-export function toShadcnAddArgument(item: string) {
+export function toShadcnAddArgument(item: string, style = "bejamas-juno") {
+  const migratedName = resolveShadcnblocksItemName(item);
+  if (migratedName)
+    return `${resolveRegistryUrl()}/shadcnblocks/styles/${style}/${migratedName}.json`;
   if (!item.startsWith(BEJAMAS_REGISTRY_NAMESPACE)) return item;
   return resolveBejamasRegistryItemName(item) ?? item;
 }
@@ -276,7 +281,17 @@ async function promptForComponents(
 
   let components: RegistryIndexEntry[];
   try {
-    components = await fetchAvailableComponents(registryUrl);
+    const [main, migrated] = await Promise.all([
+      fetchAvailableComponents(registryUrl),
+      fetchAvailableComponents(`${registryUrl}/shadcnblocks`).catch(() => []),
+    ]);
+    components = [
+      ...main,
+      ...migrated.map((item) => ({
+        ...item,
+        name: `@shadcnblocks/${item.name}`,
+      })),
+    ];
     checkingSpinner.succeed();
   } catch {
     checkingSpinner.fail();
@@ -605,7 +620,7 @@ export const add = new Command()
 
         const parsed = await addComponents(
           cwd,
-          [toShadcnAddArgument(component)],
+          [toShadcnAddArgument(component, activeStyle)],
           addOptions,
           verbose,
           isSilent,

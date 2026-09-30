@@ -51,8 +51,18 @@ export function getBlockGalleryItem(id: string): BlockGalleryItem | undefined {
   return blockGalleryItems.find((item) => item.id === id);
 }
 
+export function getBlockRegistryPath(id: string): string {
+  return getBlockGalleryItem(id)?.sourceUrl?.includes("shadcnblocks.com")
+    ? `shadcnblocks/${id}`
+    : id;
+}
+
 export function getBlockInstallCommand(id: string): string {
-  return `bunx bejamas@latest add ${id}`;
+  const name = getBlockRegistryPath(id).replace(
+    "shadcnblocks/",
+    "@shadcnblocks/",
+  );
+  return `bunx bejamas@latest add ${name}`;
 }
 
 /** Lazy `import.meta.glob` loaders for the published registry payloads. */
@@ -69,13 +79,13 @@ export async function loadPublishedBlockSourceFiles(
   id: string,
 ): Promise<BlockSourceFile[]> {
   const artifactPath = Object.keys(loaders).find((path) =>
-    path.endsWith(`/public/r/${id}.json`),
+    path.endsWith(`/public/r/${getBlockRegistryPath(id)}.json`),
   );
   const item = artifactPath ? await loaders[artifactPath]() : undefined;
   const files = selectPublishedBlockSourceFiles(item, id);
   if (!files.length) {
     throw new Error(
-      `No published registry source for block "${id}" in public/r/${id}.json. Run \`bun run build:artifacts\`.`,
+      `No published registry source for block "${id}" in public/r/${getBlockRegistryPath(id)}.json. Run \`bun run build:artifacts\`.`,
     );
   }
   return files;

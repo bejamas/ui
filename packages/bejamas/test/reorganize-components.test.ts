@@ -276,3 +276,34 @@ describe("reorganize-components", () => {
     ).toBe("reinstalled");
   });
 });
+
+it("resolves namespaced blocks and their dependencies from the matching style", async () => {
+  fetchMock = spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+    const url = String(input);
+    if (
+      url ===
+      "https://ui.example.test/r/shadcnblocks/styles/bejamas-luna/features-02.json"
+    ) {
+      return new Response(
+        JSON.stringify({
+          name: "features-02",
+          type: "registry:block",
+          registryDependencies: ["button"],
+        }),
+      );
+    }
+    if (url === "https://ui.example.test/r/styles/bejamas-luna/button.json") {
+      return new Response(
+        JSON.stringify({ name: "button", type: "registry:ui" }),
+      );
+    }
+    return new Response(null, { status: 404 });
+  });
+  const items = await fetchRegistryTree(
+    ["@shadcnblocks/features-02"],
+    "https://ui.example.test/r",
+    "bejamas-luna",
+  );
+  expect(items.map((item) => item.name)).toEqual(["button", "features-02"]);
+  expect(fetchMock).toHaveBeenCalledTimes(2);
+});

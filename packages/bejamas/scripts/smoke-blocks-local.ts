@@ -15,6 +15,7 @@ const blocks = [
   ["navigation-headers-01", "NavigationHeaders01"],
   ["navigation-headers-02", "NavigationHeaders02"],
   ["footer-01", "Footer01"],
+  ["@shadcnblocks/features-02", "Features02"],
 ] as const;
 
 async function write(relativePath: string, value: string | object) {
@@ -242,9 +243,7 @@ try {
       "dry-run changed project files",
     );
     for (const [index, [id, component]] of blocks.entries()) {
-      // Exercise both accepted input forms: bare name and @bejamas namespace.
-      // Direct registry URLs are left to shadcn, which confirms overwrites
-      // per file and is not scripted here.
+      // Exercise bare names and the built-in Bejamas and shadcnblocks namespaces.
       const specifier = index === 1 ? `@bejamas/${id}` : id;
       console.log(`[blocks smoke] Adding ${specifier}`);
       const installOutput = await run(
@@ -263,7 +262,7 @@ try {
         assert.equal(installOutput.trim(), "", "silent install emitted output");
       const installedPath = path.join(
         fixture.app,
-        `src/components/blocks/${id}/${component}.astro`,
+        `src/components/blocks/${id.replace("@shadcnblocks/", "")}/${component}.astro`,
       );
       assert(
         await Bun.file(installedPath).exists(),
@@ -301,7 +300,7 @@ try {
     const imports = blocks
       .map(
         ([id, component]) =>
-          `import { ${component} } from "../components/blocks/${id}";`,
+          `import { ${component} } from "../components/blocks/${id.replace("@shadcnblocks/", "")}";`,
       )
       .join("\n");
     const cssImport = monorepo
