@@ -5,6 +5,7 @@ export interface BlockGalleryItem {
   id: string;
   description?: string;
   href: string;
+  sourceUrl?: string;
 }
 
 interface BlockGalleryCategory {
