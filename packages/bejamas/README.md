@@ -43,6 +43,20 @@ You can also run the command without any arguments to view a list of all availab
 npx bejamas add
 ```
 
+## External registries
+
+Starter templates include the upstream Shadcnblocks namespace in `components.json`:
+
+```json
+{
+  "registries": {
+    "@shadcnblocks": "https://www.shadcnblocks.com/r/{style}/{name}"
+  }
+}
+```
+
+Existing projects can merge this entry into their configuration. `@shadcnblocks/hero1` refers to the upstream React block; the migrated Astro version stays in our main registry as `hero-01` or `@bejamas/hero-01`. The upstream registry does not yet provide Bejamas UI compatible blocks or styles. See [Shadcnblocks CLI setup](https://www.shadcnblocks.com/shadcn-cli) for authentication options.
+
 ## apply
 
 Use the `apply` command to switch an existing project to a new preset.

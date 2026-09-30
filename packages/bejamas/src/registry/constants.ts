@@ -32,7 +32,6 @@ export const BASE_COLORS = [
 // Built-in registries that are always available and cannot be overridden
 export const BUILTIN_REGISTRIES: z.infer<typeof registryConfigSchema> = {
   "@bejamas": `${REGISTRY_URL}/{name}.json`,
-  "@shadcnblocks": `${REGISTRY_URL}/shadcnblocks/styles/{style}/{name}.json`,
 };
 
 export const BUILTIN_MODULES = new Set([

@@ -78,12 +78,7 @@ describe("first-party block registry", () => {
     const templates = await readBlockTemplateItems();
     const templateNames = await getTemplateItemNames();
 
-    const migrated = readJson<{ items: PublishedItem[] }>(
-      "apps/web/registry-shadcnblocks.json",
-    ).items;
-    expect(Array.from(templates.keys()).sort()).toEqual(
-      [...blockIds, ...migrated.map((item) => item.name)].sort(),
-    );
+    expect(Array.from(templates.keys()).sort()).toEqual([...blockIds].sort());
     for (const blockId of blockIds) {
       expect(templateNames).toContain(blockId);
       expect(
@@ -191,51 +186,6 @@ describe("first-party block registry", () => {
         expect(source).not.toContain("@bejamas/ui/");
         expect(source).not.toContain("@/components/");
         expect(source).not.toContain("ui-next");
-      }
-    }
-  });
-});
-
-describe("shadcnblocks sub-registry", () => {
-  const migrated = readJson<{ items: PublishedItem[] }>(
-    "apps/web/registry-shadcnblocks.json",
-  ).items;
-
-  it("publishes migrated blocks separately with shared UI dependencies", () => {
-    const index = readJson<PublishedItem[]>(
-      "apps/web/public/r/shadcnblocks/index.json",
-    );
-    expect(index.map((item) => item.name)).toEqual(
-      migrated.map((item) => item.name),
-    );
-    for (const item of migrated) {
-      expect(blockIds).not.toContain(item.name);
-      for (const prefix of [
-        "",
-        ...STYLES.map((style) => `styles/${style.id}/`),
-      ]) {
-        const artifact = readJson<PublishedItem>(
-          `apps/web/public/r/shadcnblocks/${prefix}${item.name}.json`,
-        );
-        expect(artifact.type).toBe("registry:block");
-        expect(
-          artifact.files.every((file) =>
-            file.target?.startsWith(`src/components/blocks/${item.name}/`),
-          ),
-        ).toBe(true);
-        for (const dependency of artifact.registryDependencies ?? []) {
-          expect(
-            readJson<PublishedItem>(
-              `apps/web/public/r/styles/${STYLES[0].id}/${dependency}.json`,
-            ).name,
-          ).toBe(dependency);
-        }
-      }
-      expect(() => read(`apps/web/public/r/${item.name}.json`)).toThrow();
-      for (const style of STYLES) {
-        expect(() =>
-          read(`apps/web/public/r/styles/${style.id}/${item.name}.json`),
-        ).toThrow();
       }
     }
   });

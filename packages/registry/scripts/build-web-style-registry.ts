@@ -38,7 +38,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "..", "..", "..");
 const webRoot = path.resolve(repoRoot, "apps/web");
-const shadcnblocksRoot = path.resolve(webRoot, "public/r/shadcnblocks");
 const stylesRoot = path.resolve(webRoot, "public/r/styles");
 const templateStyleDir = path.resolve(stylesRoot, STYLES[0].id);
 const registrySourceRoot = path.resolve(__dirname, "..", "src");
@@ -443,7 +442,7 @@ async function listJsonFiles(filepath: string) {
 }
 
 /**
- * Blocks are authored in `apps/web/registry.json` and `registry-shadcnblocks.json`
+ * Blocks are authored once in `apps/web/registry.json` (the shadcn build input)
  * and reused as templates for every style bundle, so their metadata never
  * drifts between the default and styled registries.
  */
@@ -455,13 +454,6 @@ export async function readBlockTemplateItems() {
   const sourceRegistry = await readJson<{ items?: RegistryItem[] }>(
     sourceRegistryPath,
   );
-  const migratedRegistry = await readJson<{ items: RegistryItem[] }>(
-    path.resolve(webRoot, "registry-shadcnblocks.json"),
-  );
-  sourceRegistry.items = [
-    ...(sourceRegistry.items ?? []),
-    ...migratedRegistry.items,
-  ];
   blockTemplateCache = new Map(
     (sourceRegistry.items ?? [])
       .filter((item) => item.type === "registry:block")
@@ -714,24 +706,9 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
   const tokenMap = buildStyleTokenMap(style.name);
   const styleDir = path.resolve(stylesRoot, style.id);
   const fontNames = fonts.map((font) => font.name);
-  const migratedNames = new Set(
-    (
-      await readJson<{ items: RegistryItem[] }>(
-        path.resolve(webRoot, "registry-shadcnblocks.json"),
-      )
-    ).items.map((item) => item.name),
-  );
-  const migratedStyleDir = path.resolve(shadcnblocksRoot, "styles", style.id);
-  await ensureDir(migratedStyleDir);
-  await removeStaleJsonFiles(
-    migratedStyleDir,
-    new Set([...migratedNames].map((name) => `${name}.json`)),
-  );
   const nextFiles = new Set<string>([
     "index.json",
-    ...itemNames
-      .filter((name) => !migratedNames.has(name))
-      .map((name) => `${name}.json`),
+    ...itemNames.map((name) => `${name}.json`),
     ...fontNames.map((name) => `${name}.json`),
   ]);
 
@@ -748,10 +725,7 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
   for (const name of itemNames) {
     const item = await buildRegistryItem(name, style, tokenMap);
     await fs.writeFile(
-      path.resolve(
-        migratedNames.has(name) ? migratedStyleDir : styleDir,
-        `${name}.json`,
-      ),
+      path.resolve(styleDir, `${name}.json`),
       `${JSON.stringify(item, null, 2)}\n`,
       "utf8",
     );

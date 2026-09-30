@@ -77,6 +77,9 @@ describe("block-aware add helpers", () => {
     expect(toShadcnAddArgument("@bejamas/button")).toBe("button");
     expect(toShadcnAddArgument("features-01")).toBe("features-01");
     expect(toShadcnAddArgument("@acme/hero")).toBe("@acme/hero");
+    expect(toShadcnAddArgument("@shadcnblocks/hero1")).toBe(
+      "@shadcnblocks/hero1",
+    );
     expect(toShadcnAddArgument("https://other.example.test/item.json")).toBe(
       "https://other.example.test/item.json",
     );
@@ -291,10 +294,4 @@ describe("add output helpers", () => {
       "Already has newline\n",
     );
   });
-});
-
-test("maps migrated blocks to hosted styled URLs without project registry configuration", () => {
-  expect(toShadcnAddArgument("@shadcnblocks/features-02", "bejamas-luna")).toBe(
-    "https://ui.bejamas.com/r/shadcnblocks/styles/bejamas-luna/features-02.json",
-  );
 });

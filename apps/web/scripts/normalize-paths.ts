@@ -4,8 +4,6 @@ import {
   statSync,
   readFileSync,
   writeFileSync,
-  mkdirSync,
-  unlinkSync,
 } from "fs";
 import { extname, join, posix, resolve } from "path";
 import {
@@ -199,10 +197,6 @@ for (const file of files) {
     }
   }
 
-  if (file.endsWith("/registry.json")) {
-    newContent = formatRegistryJson(JSON.parse(newContent));
-  }
-
   if (newContent !== content) {
     writeFileSync(file, newContent, "utf8");
     console.log(`Updated: ${file}`);
@@ -221,8 +215,8 @@ function buildDiscoveryIndex(manifest: RegistryManifest) {
   }));
 }
 
-function formatRegistryJson(value: unknown) {
-  return `${JSON.stringify(value, null, 2).replace(
+function formatIndexJson(items: RegistryItem[]) {
+  return `${JSON.stringify(items, null, 2).replace(
     /\[(?:\n\s+"(?:[^"\\]|\\.)*",?)+\n\s*\]/g,
     (array) =>
       `[${(JSON.parse(array) as string[])
@@ -234,23 +228,8 @@ function formatRegistryJson(value: unknown) {
 const sourceRegistry = JSON.parse(
   readFileSync(sourceRegistryPath, "utf8"),
 ) as RegistryManifest;
-const migratedRegistry = JSON.parse(
-  readFileSync(join(__dirname, "../registry-shadcnblocks.json"), "utf8"),
-) as RegistryManifest;
-const migratedDir = join(baseDir, "shadcnblocks");
-mkdirSync(migratedDir, { recursive: true });
-writeFileSync(
-  join(migratedDir, "index.json"),
-  formatRegistryJson(buildDiscoveryIndex(migratedRegistry)),
-  "utf8",
-);
-// Remove legacy unscoped payloads when rebuilding an existing checkout.
-for (const item of migratedRegistry.items ?? []) {
-  const legacyPath = join(baseDir, `${item.name}.json`);
-  if (existsSync(legacyPath)) unlinkSync(legacyPath);
-}
 const indexPath = join(baseDir, "index.json");
-const nextIndex = formatRegistryJson(buildDiscoveryIndex(sourceRegistry));
+const nextIndex = formatIndexJson(buildDiscoveryIndex(sourceRegistry));
 
 if (!existsSync(indexPath) || readFileSync(indexPath, "utf8") !== nextIndex) {
   writeFileSync(indexPath, nextIndex, "utf8");
