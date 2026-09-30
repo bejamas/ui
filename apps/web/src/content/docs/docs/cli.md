@@ -89,11 +89,29 @@ Run `add` without arguments to pick components and blocks interactively. `--all`
 
 Namespaced form `@namespace/name` targets a specific registry. `@bejamas/<name>` always resolves to the Bejamas registry for your configured style.
 
-Available blocks: `navigation-headers-01`, `navigation-headers-02`, and `footer-01`. Browse them at [/blocks](/blocks).
+Browse available Bejamas blocks at [/blocks](/blocks), including the Astro migrations of Shadcnblocks layouts. These remain in our main registry: `bejamas add features-02` or `bejamas add @bejamas/features-02`.
 
 In a monorepo, run `add` from the app (for example `apps/web`). Blocks land in the app while their UI dependencies are installed in the shared UI package, and block imports are rewritten to the app's `aliases.ui`.
 
 --dry-run shows what would be written.
+
+### External Shadcnblocks registry
+
+Starter templates register `@shadcnblocks` as the actual externally hosted registry. To enable it in an existing project, merge this entry into `components.json`:
+
+```json
+{
+  "registries": {
+    "@shadcnblocks": "https://www.shadcnblocks.com/r/{style}/{name}"
+  }
+}
+```
+
+The namespace is passed through to shadcn, using upstream item names such as `@shadcnblocks/hero1`. It does not point to our migrated `hero-01` block.
+
+The upstream registry currently serves React blocks and does not provide Bejamas UI/Astro compatible payloads. Registering it does not convert blocks or make Bejamas styles compatible with its `{style}` parameter. For a working Astro example of the migration, install `bejamas add hero-01` and compare its source with the [original hero1 block](https://www.shadcnblocks.com/block/hero1).
+
+For private blocks, the registry entry can be replaced with an object containing `url` and authentication `headers`. See [Shadcnblocks CLI setup](https://www.shadcnblocks.com/shadcn-cli) for API-key configuration and [shadcn namespaces](https://ui.shadcn.com/docs/registry/namespace) for the registry format.
 
 ### preset
 
@@ -192,14 +210,3 @@ npx bejamas docs:check [--cwd <path>] [--json]
 **Optional:**
 
 - `@examples` - Additional examples
-
-
-### Migrated Shadcnblocks blocks
-
-Blocks adapted from Shadcnblocks.com live in the built-in `@shadcnblocks` registry:
-
-```bash
-bunx bejamas@latest add @shadcnblocks/features-02
-```
-
-No registry configuration is needed. These blocks use your project's selected Bejamas style and install their shared UI dependencies from the main registry. Original Bejamas blocks continue to use bare names, such as `bunx bejamas@latest add footer-01`.

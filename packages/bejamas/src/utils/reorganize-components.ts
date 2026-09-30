@@ -19,13 +19,6 @@ export interface RegistryItem {
 }
 
 export const BEJAMAS_REGISTRY_NAMESPACE = "@bejamas/";
-export const SHADCNBLOCKS_REGISTRY_NAMESPACE = "@shadcnblocks/";
-
-export function resolveShadcnblocksItemName(specifier: string) {
-  if (!specifier.startsWith(SHADCNBLOCKS_REGISTRY_NAMESPACE)) return null;
-  const name = specifier.slice(SHADCNBLOCKS_REGISTRY_NAMESPACE.length);
-  return /^[a-z0-9][a-z0-9-]*$/.test(name) ? name : null;
-}
 
 /**
  * Resolve the Bejamas item name behind a user-provided specifier. Returns null
@@ -56,10 +49,7 @@ export async function fetchRegistryItem(
     }
   }
 
-  const migratedName = resolveShadcnblocksItemName(componentName);
-  const itemName =
-    migratedName ?? resolveBejamasRegistryItemName(componentName);
-  if (migratedName) registryUrl = `${registryUrl}/shadcnblocks`;
+  const itemName = resolveBejamasRegistryItemName(componentName);
   if (!itemName) {
     return null;
   }
@@ -313,11 +303,7 @@ export async function fetchRegistryTree(
     if (seen.has(name)) return;
     seen.add(name);
     // Custom external registries are managed by shadcn, not this compatibility shim.
-    if (
-      !isRegistryItemUrl(name) &&
-      !resolveBejamasRegistryItemName(name) &&
-      !resolveShadcnblocksItemName(name)
-    )
+    if (!isRegistryItemUrl(name) && !resolveBejamasRegistryItemName(name))
       return;
     const item = await fetchRegistryItem(name, registryUrl, style);
     if (!item)
@@ -360,9 +346,7 @@ export async function reorganizeRegistryItems(
     skippedFiles: [],
   };
 
-  if (
-    !items.some((item) => shouldReorganizeRegistryUiFiles(item.files, uiDir))
-  ) {
+  if (!items.some((item) => shouldReorganizeRegistryUiFiles(item.files, uiDir))) {
     return result;
   }
 

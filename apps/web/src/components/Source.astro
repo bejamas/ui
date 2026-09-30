@@ -12,7 +12,7 @@ const { blockId } = Astro.props as { blockId: string };
 // Read the published registry payload so the copyable code matches what the
 // CLI installs. Loaders are lazy: only this block's payload is read.
 const registryPayloads: RegistryPayloadLoaders = import.meta.glob(
-  ["../../public/r/*.json", "../../public/r/shadcnblocks/*.json"],
+  "../../public/r/*.json",
   { import: "default" },
 );
 
