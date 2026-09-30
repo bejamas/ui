@@ -17,7 +17,10 @@ describe("block gallery catalog", () => {
     const registry = JSON.parse(
       fs.readFileSync(path.join(webRoot, "registry.json"), "utf8"),
     ) as { items: Array<{ name: string; type: string }> };
-    const publishedBlockIds = registry.items
+    const migrated = JSON.parse(
+      fs.readFileSync(path.join(webRoot, "registry-shadcnblocks.json"), "utf8"),
+    ) as typeof registry;
+    const publishedBlockIds = [...registry.items, ...migrated.items]
       .filter((item) => item.type === "registry:block")
       .map((item) => item.name)
       .sort();
@@ -44,6 +47,12 @@ describe("block gallery catalog", () => {
   test("builds the install command shown next to each preview", () => {
     expect(getBlockInstallCommand("features-01")).toBe(
       "bunx bejamas@latest add features-01",
+    );
+  });
+
+  test("uses the migration namespace in install commands", () => {
+    expect(getBlockInstallCommand("features-02")).toBe(
+      "bunx bejamas@latest add @shadcnblocks/features-02",
     );
   });
 
@@ -136,7 +145,8 @@ describe("block gallery catalog", () => {
   test("finds published source for every catalog block", async () => {
     const loaders = Object.fromEntries(
       fs
-        .readdirSync(path.join(webRoot, "public/r"))
+        .readdirSync(path.join(webRoot, "public/r"), { recursive: true })
+        .map(String)
         .filter((file) => file.endsWith(".json"))
         .map((file) => [
           `../../public/r/${file}`,

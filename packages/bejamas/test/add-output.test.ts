@@ -292,3 +292,9 @@ describe("add output helpers", () => {
     );
   });
 });
+
+test("maps migrated blocks to hosted styled URLs without project registry configuration", () => {
+  expect(toShadcnAddArgument("@shadcnblocks/features-02", "bejamas-luna")).toBe(
+    "https://ui.bejamas.com/r/shadcnblocks/styles/bejamas-luna/features-02.json",
+  );
+});

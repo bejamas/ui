@@ -12,7 +12,7 @@ const { blockId } = Astro.props as { blockId: string };
 // Read the published registry payload so the copyable code matches what the
 // CLI installs. Loaders are lazy: only this block's payload is read.
 const registryPayloads: RegistryPayloadLoaders = import.meta.glob(
-  "../../public/r/*.json",
+  ["../../public/r/*.json", "../../public/r/shadcnblocks/*.json"],
   { import: "default" },
 );
 
@@ -125,49 +125,47 @@ function getLangFromPath(path: string): string {
 }
 ---
 
-{
-  labeledFiles.length === 0 ? (
-    <div class="text-sm text-muted-foreground">No source found.</div>
-  ) : (
-    <div
-      class="grid md:grid-cols-[220px_1fr] bg-card rounded-xl border border-border"
-      x-data={`{ active: '${defaultActiveLabel}', open: ${JSON.stringify(openInitObj)} }`}
-    >
-      <aside class="h-max">
-        <div class="px-5 py-2 bg-muted/50 border-b border-border text-sm font-medium h-12 flex items-center">
-          Files
-        </div>
-        <ul class="space-y-1 p-3">
-          <SourceTree nodes={tree} />
-        </ul>
-      </aside>
-
-      <div class="space-y-4 min-w-0">
-        {labeledFiles.map((f) => (
-          <div
-            x-show={`active === '${f.label}'`}
-            class="border-l border-border mb-0 min-w-0"
-          >
-            <div class="flex items-center justify-between px-5 py-2 bg-muted/50 border-b border-border h-12">
-              <span class="font-medium text-sm truncate">{f.displayName}</span>
-              <button
-                type="button"
-                class="text-xs px-2 py-1 rounded-md bg-secondary hover:bg-secondary/80"
-                onclick={`navigator.clipboard.writeText(${JSON.stringify(f.code)})`}
-              >
-                Copy
-              </button>
-            </div>
-            <div class="overflow-x-auto text-xs leading-relaxed min-w-0 w-full">
-              <Code
-                code={f.code}
-                lang={getLangFromPath(f.displayName)}
-                class="h-[800px] overflow-y-auto rounded-none [&_pre]:rounded-none"
-              />
-            </div>
-          </div>
-        ))}
+{labeledFiles.length === 0 ? (
+  <div class="text-sm text-muted-foreground">No source found.</div>
+) : (
+  <div
+    class="grid md:grid-cols-[220px_1fr] bg-card rounded-xl border border-border"
+    x-data={`{ active: '${defaultActiveLabel}', open: ${JSON.stringify(openInitObj)} }`}
+  >
+    <aside class="h-max">
+      <div class="px-5 py-2 bg-muted/50 border-b border-border text-sm font-medium h-12 flex items-center">
+        Files
       </div>
+      <ul class="space-y-1 p-3">
+        <SourceTree nodes={tree} />
+      </ul>
+    </aside>
+
+    <div class="space-y-4 min-w-0">
+      {labeledFiles.map((f) => (
+        <div
+          x-show={`active === '${f.label}'`}
+          class="border-l border-border mb-0 min-w-0"
+        >
+          <div class="flex items-center justify-between px-5 py-2 bg-muted/50 border-b border-border h-12">
+            <span class="font-medium text-sm truncate">{f.displayName}</span>
+            <button
+              type="button"
+              class="text-xs px-2 py-1 rounded-md bg-secondary hover:bg-secondary/80"
+              onclick={`navigator.clipboard.writeText(${JSON.stringify(f.code)})`}
+            >
+              Copy
+            </button>
+          </div>
+          <div class="overflow-x-auto text-xs leading-relaxed min-w-0 w-full">
+            <Code
+              code={f.code}
+              lang={getLangFromPath(f.displayName)}
+              class="h-[800px] overflow-y-auto rounded-none [&_pre]:rounded-none"
+            />
+          </div>
+        </div>
+      ))}
     </div>
-  )
-}
+  </div>
+)}
