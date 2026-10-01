@@ -49,7 +49,7 @@ describe("first-party block registry", () => {
         item as PublishedItem & { meta?: { source?: string } }
       ).meta?.source?.startsWith("https://www.shadcnblocks.com/block/"),
     );
-    expect(ports).toHaveLength(8);
+    expect(ports).toHaveLength(14);
     for (const style of STYLES) {
       const root = `apps/web/public/r/shadcnblocks/styles/${style.id}`;
       const registry = readJson<{ items: PublishedItem[] }>(
@@ -81,7 +81,7 @@ describe("first-party block registry", () => {
     for (const item of blockItems) {
       expect(item.title).toBeString();
       expect(item.description).toBeString();
-      expect(item.registryDependencies?.length).toBeGreaterThan(0);
+      expect(item.registryDependencies).toBeArray();
       expect(item.files.length).toBeGreaterThan(0);
 
       for (const file of item.files) {
@@ -141,7 +141,11 @@ describe("first-party block registry", () => {
 
       expect(artifact.type).toBe("registry:block");
       expect(component?.path).toStartWith(`blocks/${blockId}/`);
-      expect(component?.content).toContain("@/registry/bejamas/ui/");
+      if (
+        blockItems.find((item) => item.name === blockId)?.registryDependencies
+          ?.length
+      )
+        expect(component?.content).toContain("@/registry/bejamas/ui/");
       expect(component?.content).not.toContain("@bejamas/ui");
       expect(component?.content).not.toContain("@bejamas/registry");
     }

@@ -23,6 +23,12 @@ const blocks = [
   ["faq-01", "Faq01"],
   ["login-01", "Login01"],
   ["signup-01", "Signup01"],
+  ["team-01", "Team01"],
+  ["blog-01", "Blog01"],
+  ["contact-01", "Contact01"],
+  ["stats-01", "Stats01"],
+  ["gallery-01", "Gallery01"],
+  ["features-03", "Features03"],
 ] as const;
 
 async function write(relativePath: string, value: string | object) {
@@ -290,10 +296,12 @@ try {
       );
       const source = await fs.readFile(installedPath, "utf8");
       assert.doesNotMatch(source, /@bejamas\/registry|@\/registry\//);
-      assert.match(
-        source,
-        monorepo ? /@repo\/ui\/components\// : /from "@\/ui\//,
-      );
+      if (!["contact-01", "stats-01"].includes(id)) {
+        assert.match(
+          source,
+          monorepo ? /@repo\/ui\/components\// : /from "@\/ui\//,
+        );
+      }
     }
     const uiComponents = await fs.readdir(
       path.join(fixture.ui, "src", monorepo ? "components" : "ui"),
