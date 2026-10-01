@@ -7,34 +7,83 @@ const blocks = await getCollection("blocks");
 const currentBlock = Astro.url.pathname.split("/").pop();
 ---
 
-<div class="not-content mb-20">
-  <ul class="list-none flex gap-2 pl-0">
-    <li>
+<nav class="not-content mb-20" aria-label="Block categories">
+  <ul
+    data-blocks-nav
+    class="list-none flex gap-2 pl-0 py-1 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+  >
+    <li class="shrink-0">
       <Button
         as="a"
         href="/blocks"
         variant={currentBlock === "blocks" ? "secondary" : "ghost"}
+        aria-current={currentBlock === "blocks" ? "page" : undefined}
       >
         All blocks
       </Button>
     </li>
-    {
-      blocks.map((block) => (
-        <li>
+    {blocks.map((block) => {
+      const category = block.id.replace("blocks/", "");
+      return (
+        <li class="shrink-0">
           <Button
             as="a"
-            href={`/blocks/${block.id.replace("blocks/", "")}`}
-            variant={
-              currentBlock === block.id.replace("blocks/", "")
-                ? "secondary"
-                : "ghost"
-            }
+            href={`/blocks/${category}`}
+            variant={currentBlock === category ? "secondary" : "ghost"}
+            aria-current={currentBlock === category ? "page" : undefined}
           >
             {block.data.label}{" "}
-            <span class="text-muted-foreground">{block.data.items?.length ?? 0}</span>
+            <span class="text-muted-foreground">
+              {block.data.items?.length ?? 0}
+            </span>
           </Button>
         </li>
-      ))
-    }
+      );
+    })}
   </ul>
-</div>
+</nav>
+
+<style>
+  /* Fade an edge only while more categories are hidden beyond it. */
+  [data-blocks-nav] {
+    --fade-start: 0px;
+    --fade-end: 0px;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--fade-start),
+      black calc(100% - var(--fade-end)),
+      transparent
+    );
+  }
+  [data-blocks-nav][data-overflow-start] {
+    --fade-start: 4.5rem;
+  }
+  [data-blocks-nav][data-overflow-end] {
+    --fade-end: 4.5rem;
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>("[data-blocks-nav]")
+    .forEach((list) => {
+      // Keep the selected category visible when the list scrolls on narrow screens.
+      const active = list.querySelector<HTMLElement>('[aria-current="page"]');
+      if (active && list.scrollWidth > list.clientWidth) {
+        const offset =
+          active.getBoundingClientRect().left -
+          list.getBoundingClientRect().left;
+        list.scrollLeft += offset - (list.clientWidth - active.offsetWidth) / 2;
+      }
+
+      const updateFades = () => {
+        const max = list.scrollWidth - list.clientWidth;
+        list.toggleAttribute("data-overflow-start", list.scrollLeft > 1);
+        list.toggleAttribute("data-overflow-end", list.scrollLeft < max - 1);
+      };
+      list.addEventListener("scroll", updateFades, { passive: true });
+      new ResizeObserver(updateFades).observe(list);
+      updateFades();
+    });
+</script>
