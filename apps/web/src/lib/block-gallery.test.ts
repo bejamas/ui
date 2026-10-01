@@ -48,8 +48,10 @@ describe("block gallery catalog", () => {
     expect(getBlockInstallCommand("features-02")).toBe(
       "bunx bejamas@latest add @shadcnblocks/features-02",
     );
-    const ports = blockGalleryItems.filter((item) =>
-      item.sourceUrl?.startsWith("https://www.shadcnblocks.com/block/"),
+    const ports = blockGalleryItems.filter(
+      (item) =>
+        "sourceUrl" in item &&
+        item.sourceUrl.startsWith("https://www.shadcnblocks.com/block/"),
     );
     expect(ports).toHaveLength(14);
     for (const item of ports) {

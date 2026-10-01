@@ -1,45 +1,42 @@
 ---
-import { getCollection } from "astro:content";
 import { Button } from "@bejamas/ui/components/button";
-
-const blocks = await getCollection("blocks");
-
-const currentBlock = Astro.url.pathname.split("/").pop();
+import { shadcnblocksCategories, shadcnblocksItems } from "@/lib/block-gallery";
+const currentPath = Astro.url.pathname.replace(/\/$/, "");
 ---
 
-<nav class="not-content mb-20" aria-label="Block categories">
+<nav aria-label="Block categories" class="mb-10 border-b border-border pb-5">
   <ul
     data-blocks-nav
-    class="list-none flex gap-2 pl-0 py-1 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    class="m-0 flex list-none gap-1 px-0 py-1 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
   >
     <li class="shrink-0">
       <Button
         as="a"
         href="/blocks"
-        variant={currentBlock === "blocks" ? "secondary" : "ghost"}
-        aria-current={currentBlock === "blocks" ? "page" : undefined}
+        variant={currentPath === "/blocks" ? "secondary" : "ghost"}
+        aria-current={currentPath === "/blocks" ? "page" : undefined}
       >
-        All blocks
+        All blocks{" "}
+        <span class="text-muted-foreground">{shadcnblocksItems.length}</span>
       </Button>
     </li>
-    {blocks.map((block) => {
-      const category = block.id.replace("blocks/", "");
-      return (
-        <li class="shrink-0">
-          <Button
-            as="a"
-            href={`/blocks/${category}`}
-            variant={currentBlock === category ? "secondary" : "ghost"}
-            aria-current={currentBlock === category ? "page" : undefined}
-          >
-            {block.data.label}{" "}
-            <span class="text-muted-foreground">
-              {block.data.items?.length ?? 0}
-            </span>
-          </Button>
-        </li>
-      );
-    })}
+    {shadcnblocksCategories.map((category) => (
+      <li class="shrink-0">
+        <Button
+          as="a"
+          href={`/blocks/${category.slug}`}
+          variant={
+            currentPath === `/blocks/${category.slug}` ? "secondary" : "ghost"
+          }
+          aria-current={
+            currentPath === `/blocks/${category.slug}` ? "page" : undefined
+          }
+        >
+          {category.label}{" "}
+          <span class="text-muted-foreground">{category.items.length}</span>
+        </Button>
+      </li>
+    ))}
   </ul>
 </nav>
 

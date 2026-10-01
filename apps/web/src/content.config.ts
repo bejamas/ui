@@ -17,6 +17,8 @@ const blocks = defineCollection({
           description: z.string().optional(),
           href: z.string(),
           sourceUrl: z.url().optional(),
+          sourceCategory: z.string().optional(),
+          sourceSubcategory: z.string().optional(),
         }),
       )
       .optional(),
