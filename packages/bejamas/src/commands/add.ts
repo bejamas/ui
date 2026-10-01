@@ -24,6 +24,7 @@ import {
 } from "@/src/utils/shadcn-cli";
 import { spinner } from "@/src/utils/spinner";
 import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
+import { resolveShadcnblocksItemUrl } from "@/src/utils/shadcnblocks-registry";
 
 interface ParsedOutput {
   created: string[];
@@ -79,9 +80,16 @@ export function withoutShadcnSilentOption(forwardedOptions: string[]) {
  * shadcn only knows the registries declared in components.json. The built-in
  * `@bejamas/<item>` namespace is the default registry (REGISTRY_URL), so it is
  * passed to shadcn as the bare item name, which resolves to the styled payload.
- * Bare names, URLs, and third-party namespaces are passed through unchanged.
+ * Astro Shadcnblocks ports resolve to our dedicated styled registry URL.
+ * Bare names, URLs, and other namespaces are passed through unchanged.
  */
-export function toShadcnAddArgument(item: string) {
+export function toShadcnAddArgument(
+  item: string,
+  registryUrl = resolveRegistryUrl(),
+  style = "bejamas-juno",
+) {
+  const portUrl = resolveShadcnblocksItemUrl(item, registryUrl, style);
+  if (portUrl) return portUrl;
   if (!item.startsWith(BEJAMAS_REGISTRY_NAMESPACE)) return item;
   return resolveBejamasRegistryItemName(item) ?? item;
 }
@@ -605,7 +613,7 @@ export const add = new Command()
 
         const parsed = await addComponents(
           cwd,
-          [toShadcnAddArgument(component)],
+          [toShadcnAddArgument(component, registryUrl, activeStyle)],
           addOptions,
           verbose,
           isSilent,

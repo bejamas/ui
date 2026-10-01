@@ -46,7 +46,19 @@ describe("block gallery catalog", () => {
       "bunx bejamas@latest add features-01",
     );
     expect(getBlockInstallCommand("features-02")).toBe(
-      "bunx bejamas@latest add features-02",
+      "bunx bejamas@latest add @shadcnblocks/features-02",
+    );
+    const ports = blockGalleryItems.filter((item) =>
+      item.sourceUrl?.startsWith("https://www.shadcnblocks.com/block/"),
+    );
+    expect(ports).toHaveLength(8);
+    for (const item of ports) {
+      expect(getBlockInstallCommand(item.id)).toBe(
+        `bunx bejamas@latest add @shadcnblocks/${item.id}`,
+      );
+    }
+    expect(getBlockInstallCommand("footer-01")).toBe(
+      "bunx bejamas@latest add footer-01",
     );
   });
 

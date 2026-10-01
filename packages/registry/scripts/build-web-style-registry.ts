@@ -39,6 +39,7 @@ const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "..", "..", "..");
 const webRoot = path.resolve(repoRoot, "apps/web");
 const stylesRoot = path.resolve(webRoot, "public/r/styles");
+const shadcnblocksRoot = path.resolve(webRoot, "public/r/shadcnblocks");
 const templateStyleDir = path.resolve(stylesRoot, STYLES[0].id);
 const registrySourceRoot = path.resolve(__dirname, "..", "src");
 const sourceRegistryPath = path.resolve(webRoot, "registry.json");
@@ -703,6 +704,9 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
   const tokenMap = buildStyleTokenMap(style.name);
   const styleDir = path.resolve(stylesRoot, style.id);
   const fontNames = fonts.map((font) => font.name);
+  const portDir = path.resolve(shadcnblocksRoot, "styles", style.id);
+  const ports: RegistryItem[] = [];
+  await ensureDir(portDir);
   const nextFiles = new Set<string>([
     "index.json",
     ...itemNames.map((name) => `${name}.json`),
@@ -721,12 +725,38 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
 
   for (const name of itemNames) {
     const item = await buildRegistryItem(name, style, tokenMap);
+    if (isShadcnblocksPort(item)) {
+      ports.push(item);
+      await fs.writeFile(
+        path.resolve(portDir, `${name}.json`),
+        `${JSON.stringify(item, null, 2)}\n`,
+        "utf8",
+      );
+    }
     await fs.writeFile(
       path.resolve(styleDir, `${name}.json`),
       `${JSON.stringify(item, null, 2)}\n`,
       "utf8",
     );
   }
+
+  await removeStaleJsonFiles(
+    portDir,
+    new Set(["registry.json", ...ports.map((item) => `${item.name}.json`)]),
+  );
+  await fs.writeFile(
+    path.resolve(portDir, "registry.json"),
+    `${JSON.stringify(
+      {
+        $schema: "https://ui.shadcn.com/schema/registry.json",
+        name: "bejamas/shadcnblocks",
+        homepage: "https://ui.bejamas.com/blocks",
+        items: ports,
+      },
+      null,
+      2,
+    )}\n`,
+  );
 
   for (const font of fonts) {
     await fs.writeFile(
@@ -735,6 +765,14 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
       "utf8",
     );
   }
+}
+
+function isShadcnblocksPort(item: RegistryItem) {
+  return (
+    item.type === "registry:block" &&
+    typeof item.meta?.source === "string" &&
+    item.meta.source.startsWith("https://www.shadcnblocks.com/block/")
+  );
 }
 
 export async function getTemplateItemNames() {

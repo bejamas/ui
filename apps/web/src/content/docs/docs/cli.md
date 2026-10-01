@@ -89,29 +89,33 @@ Run `add` without arguments to pick components and blocks interactively. `--all`
 
 Namespaced form `@namespace/name` targets a specific registry. `@bejamas/<name>` always resolves to the Bejamas registry for your configured style.
 
-Browse available Bejamas blocks at [/blocks](/blocks), including the Astro migrations of Shadcnblocks layouts. These remain in our main registry: `bejamas add features-02` or `bejamas add @bejamas/features-02`.
+Browse available Bejamas blocks at [/blocks](/blocks). Install the Astro migrations of Shadcnblocks layouts with `bunx bejamas@latest add @shadcnblocks/features-02`. Bare names and `@bejamas/<name>` remain available as compatibility aliases.
 
 In a monorepo, run `add` from the app (for example `apps/web`). Blocks land in the app while their UI dependencies are installed in the shared UI package, and block imports are rewritten to the app's `aliases.ui`.
 
 --dry-run shows what would be written.
 
-### External Shadcnblocks registry
+### Shadcnblocks Astro registry
 
-Starter templates register `@shadcnblocks` as the actual externally hosted registry. To enable it in an existing project, merge this entry into `components.json`:
+`@shadcnblocks` selects Bejamas-hosted Astro ports using your project's configured style:
+
+```bash
+bunx bejamas@latest add @shadcnblocks/features-02
+```
+
+Bejamas resolves this namespace directly, even when no entry exists or an older project still points it at the upstream React registry. Use migrated block names such as `hero-01` and `features-02`; upstream names such as `hero1` and `feature13` are not provided by this registry.
+
+Starter templates include the following `components.json` mapping:
 
 ```json
 {
   "registries": {
-    "@shadcnblocks": "https://www.shadcnblocks.com/r/{style}/{name}"
+    "@shadcnblocks": "https://ui.bejamas.com/r/shadcnblocks/styles/{style}/{name}.json"
   }
 }
 ```
 
-The namespace is passed through to shadcn, using upstream item names such as `@shadcnblocks/hero1`. It does not point to our migrated `hero-01` block.
-
-The upstream registry currently serves React blocks and does not provide Bejamas UI/Astro compatible payloads. Registering it does not convert blocks or make Bejamas styles compatible with its `{style}` parameter. For a working Astro example of the migration, install `bejamas add hero-01` and compare its source with the [original hero1 block](https://www.shadcnblocks.com/block/hero1).
-
-For private blocks, the registry entry can be replaced with an object containing `url` and authentication `headers`. See [Shadcnblocks CLI setup](https://www.shadcnblocks.com/shadcn-cli) for API-key configuration and [shadcn namespaces](https://ui.shadcn.com/docs/registry/namespace) for the registry format.
+The dedicated registry contains Astro blocks, while primitive and style dependencies resolve through the main Bejamas registry. Other namespaces are passed through to shadcn using their configured mappings. To access the upstream React registry, configure it under a different namespace.
 
 ### preset
 

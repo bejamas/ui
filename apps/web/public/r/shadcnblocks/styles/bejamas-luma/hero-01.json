@@ -1,0 +1,30 @@
+{
+  "name": "hero-01",
+  "type": "registry:block",
+  "title": "Hero 01",
+  "description": "A responsive split hero with a badge, two actions, and a framed image.",
+  "registryDependencies": [
+    "index",
+    "badge",
+    "button"
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/hero1"
+  },
+  "files": [
+    {
+      "path": "blocks/hero-01/Hero01.astro",
+      "type": "registry:component",
+      "target": "src/components/blocks/hero-01/Hero01.astro",
+      "content": "---\nimport { Badge } from \"@/registry/bejamas/ui/badge\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\ninterface Props {\n  badge?: string;\n  heading?: string;\n  description?: string;\n  imageSrc?: string;\n  imageAlt?: string;\n  primaryHref?: string;\n  primaryLabel?: string;\n  secondaryHref?: string;\n  secondaryLabel?: string;\n  class?: string;\n}\nconst {\n  badge = \"Built for the web\",\n  heading = \"Build something your users will love.\",\n  description = \"Thoughtful components that help you turn your next idea into a fast, accessible website.\",\n  imageSrc = \"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80\",\n  imageAlt = \"A bright workspace with desks and plants\",\n  primaryHref = \"/docs\",\n  primaryLabel = \"Get started\",\n  secondaryHref = \"/blocks\",\n  secondaryLabel = \"Explore blocks\",\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2\">\n    <div class=\"flex flex-col items-center gap-6 text-center lg:items-start lg:text-left\">\n      <Badge variant=\"outline\">{badge}</Badge>\n      <h1 class=\"text-balance text-4xl font-semibold tracking-tight md:text-6xl\">\n        {heading}\n      </h1>\n      <p class=\"max-w-xl text-lg text-muted-foreground\">{description}</p>\n      <div class=\"flex w-full flex-col gap-3 sm:w-auto sm:flex-row\">\n        <Button as=\"a\" href={primaryHref}>\n          {primaryLabel}\n          <span aria-hidden=\"true\">→</span>\n        </Button>\n        <Button as=\"a\" href={secondaryHref} variant=\"outline\">\n          {secondaryLabel}\n        </Button>\n      </div>\n    </div>\n    <img\n      src={imageSrc}\n      alt={imageAlt}\n      width=\"1200\"\n      height=\"675\"\n      class=\"aspect-video w-full rounded-xl border object-cover object-top\"\n    />\n  </div>\n</section>\n"
+    },
+    {
+      "path": "blocks/hero-01/index.ts",
+      "type": "registry:component",
+      "target": "src/components/blocks/hero-01/index.ts",
+      "content": "export { default as Hero01 } from \"./Hero01.astro\";\n"
+    }
+  ],
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": []
+}

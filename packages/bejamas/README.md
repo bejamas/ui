@@ -43,19 +43,27 @@ You can also run the command without any arguments to view a list of all availab
 npx bejamas add
 ```
 
-## External registries
+## Shadcnblocks Astro ports
 
-Starter templates include the upstream Shadcnblocks namespace in `components.json`:
+Install the migrated Astro blocks with the project's selected Bejamas style:
+
+```bash
+bunx bejamas@latest add @shadcnblocks/features-02
+```
+
+Bejamas resolves `@shadcnblocks` to its own registry of Astro ports. This works without a registry entry, including in older projects that still map the namespace to the upstream React registry. Use migrated names such as `hero-01` and `features-02`, rather than upstream names such as `hero1` and `feature13`.
+
+Starter templates include this mapping in `components.json`:
 
 ```json
 {
   "registries": {
-    "@shadcnblocks": "https://www.shadcnblocks.com/r/{style}/{name}"
+    "@shadcnblocks": "https://ui.bejamas.com/r/shadcnblocks/styles/{style}/{name}.json"
   }
 }
 ```
 
-Existing projects can merge this entry into their configuration. `@shadcnblocks/hero1` refers to the upstream React block; the migrated Astro version stays in our main registry as `hero-01` or `@bejamas/hero-01`. The upstream registry does not yet provide Bejamas UI compatible blocks or styles. See [Shadcnblocks CLI setup](https://www.shadcnblocks.com/shadcn-cli) for authentication options.
+The dedicated registry contains the migrated blocks; their UI and style dependencies come from the main Bejamas registry. Bare names and `@bejamas/<name>` remain available as compatibility aliases. Other external namespaces follow their configured registry mappings.
 
 ## apply
 
