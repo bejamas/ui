@@ -2,4 +2,4 @@
 "bejamas": patch
 ---
 
-Keep migrated Astro blocks in the main Bejamas registry and reserve the @shadcnblocks namespace for the upstream external registry configured in components.json.
+Resolve @shadcnblocks block names to Bejamas-hosted Astro ports using the project's configured style. Publish a dedicated registry for all eight migrated blocks, update starter registry mappings and gallery commands, and retain bare names and @bejamas names as compatibility aliases. Existing upstream mappings no longer redirect these Bejamas add commands to React blocks.

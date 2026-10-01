@@ -77,9 +77,16 @@ describe("block-aware add helpers", () => {
     expect(toShadcnAddArgument("@bejamas/button")).toBe("button");
     expect(toShadcnAddArgument("features-01")).toBe("features-01");
     expect(toShadcnAddArgument("@acme/hero")).toBe("@acme/hero");
-    expect(toShadcnAddArgument("@shadcnblocks/hero1")).toBe(
-      "@shadcnblocks/hero1",
+    expect(
+      toShadcnAddArgument(
+        "@shadcnblocks/features-02",
+        "https://local.test/r",
+        "bejamas-vega",
+      ),
+    ).toBe(
+      "https://local.test/r/shadcnblocks/styles/bejamas-vega/features-02.json",
     );
+    expect(() => toShadcnAddArgument("@shadcnblocks/../button")).toThrow();
     expect(toShadcnAddArgument("https://other.example.test/item.json")).toBe(
       "https://other.example.test/item.json",
     );

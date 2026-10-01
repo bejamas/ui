@@ -1,0 +1,254 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "bejamas/shadcnblocks",
+  "homepage": "https://ui.bejamas.com/blocks",
+  "items": [
+    {
+      "name": "cta-01",
+      "type": "registry:block",
+      "title": "CTA 01",
+      "description": "An inline split call to action with two buttons and a closing divider.",
+      "registryDependencies": [
+        "index",
+        "button",
+        "separator"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/cta36"
+      },
+      "files": [
+        {
+          "path": "blocks/cta-01/Cta01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/cta-01/Cta01.astro",
+          "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport { Separator } from \"@/registry/bejamas/ui/separator\";\ninterface Props {\n  heading?: string;\n  description?: string;\n  primaryLabel?: string;\n  primaryHref?: string;\n  secondaryLabel?: string;\n  secondaryHref?: string;\n  class?: string;\n}\nconst {\n  heading = \"Ready to build your next great idea?\",\n  description = \"Start with thoughtful components and make them your own.\",\n  primaryLabel = \"Get started\",\n  primaryHref = \"/docs\",\n  secondaryLabel = \"Explore components\",\n  secondaryHref = \"/components\",\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-6xl\">\n    <div class=\"flex flex-col gap-8 pb-10 lg:flex-row lg:items-center lg:justify-between\">\n      <div class=\"max-w-2xl space-y-4\">\n        <h2 class=\"text-balance text-3xl font-semibold tracking-tight md:text-4xl\">\n          {heading}\n        </h2>\n        <p class=\"text-lg text-muted-foreground\">{description}</p>\n      </div>\n      <div class=\"flex shrink-0 flex-col gap-3 sm:flex-row\">\n        <Button as=\"a\" href={secondaryHref} variant=\"outline\">\n          {secondaryLabel}\n        </Button>\n        <Button as=\"a\" href={primaryHref}>\n          {primaryLabel}\n          <span aria-hidden=\"true\">→</span>\n        </Button>\n      </div>\n    </div>\n    <Separator />\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/cta-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/cta-01/index.ts",
+          "content": "export { default as Cta01 } from \"./Cta01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "faq-01",
+      "type": "registry:block",
+      "title": "FAQ 01",
+      "description": "A centered FAQ section with accessible collapsible answers.",
+      "registryDependencies": [
+        "index",
+        "accordion"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/faq1"
+      },
+      "files": [
+        {
+          "path": "blocks/faq-01/Faq01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/faq-01/Faq01.astro",
+          "content": "---\nimport {\n  Accordion,\n  AccordionItem,\n  AccordionTrigger,\n  AccordionContent,\n} from \"@/registry/bejamas/ui/accordion\";\ninterface Props {\n  heading?: string;\n  items?: { question: string; answer: string }[];\n  class?: string;\n}\nconst {\n  heading = \"Frequently asked questions\",\n  items = [\n    {\n      question: \"What is Bejamas UI?\",\n      answer:\n        \"A collection of accessible Astro components that you can customize and own.\",\n    },\n    {\n      question: \"Can I customize the components?\",\n      answer:\n        \"Yes. Install the source into your project and adjust the styles and content to suit your brand.\",\n    },\n    {\n      question: \"Does it work on mobile?\",\n      answer:\n        \"The components and blocks adapt to small screens and support keyboard interaction.\",\n    },\n    {\n      question: \"Can I use it for commercial projects?\",\n      answer:\n        \"Yes. Bejamas UI is open source and available for personal and commercial projects.\",\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-3xl\">\n    <h2 class=\"mb-8 text-3xl font-semibold md:text-4xl\">{heading}</h2>\n    <Accordion>\n      {items.map((item, index) => (\n        <AccordionItem value={`question-${index}`}>\n          <AccordionTrigger>{item.question}</AccordionTrigger>\n          <AccordionContent>\n            <p class=\"text-muted-foreground\">{item.answer}</p>\n          </AccordionContent>\n        </AccordionItem>\n      ))}\n    </Accordion>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/faq-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/faq-01/index.ts",
+          "content": "export { default as Faq01 } from \"./Faq01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "features-02",
+      "type": "registry:block",
+      "title": "Features 02",
+      "description": "A two-column feature card grid with labels, linked titles, and images.",
+      "registryDependencies": [
+        "index",
+        "card",
+        "badge"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/feature13"
+      },
+      "files": [
+        {
+          "path": "blocks/features-02/Features02.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-02/Features02.astro",
+          "content": "---\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardDescription,\n  CardMedia,\n} from \"@/registry/bejamas/ui/card\";\nimport { Badge } from \"@/registry/bejamas/ui/badge\";\ninterface Feature {\n  label: string;\n  title: string;\n  description: string;\n  href?: string;\n  imageSrc: string;\n  imageAlt: string;\n}\ninterface Props {\n  heading?: string;\n  description?: string;\n  features?: Feature[];\n  class?: string;\n}\nconst {\n  heading = \"Everything you need to move forward\",\n  description = \"A flexible foundation for your next website, from the first sketch to the final detail.\",\n  features = [\n    {\n      label: \"For developers\",\n      title: \"Build with confidence\",\n      description:\n        \"Accessible components and portable source give you a clear starting point. Spend your time on what makes your product special.\",\n      href: \"/docs\",\n      imageSrc:\n        \"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=80\",\n      imageAlt: \"A bright shared workspace\",\n    },\n    {\n      label: \"For teams\",\n      title: \"Make it feel like you\",\n      description:\n        \"Bring your brand into every detail with flexible themes, consistent components, and layouts that adapt to your content.\",\n      href: \"/create\",\n      imageSrc:\n        \"https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1000&q=80\",\n      imageAlt: \"A workspace with natural light and plants\",\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-6xl\">\n    <div class=\"mb-10 max-w-2xl space-y-4\">\n      <h2 class=\"text-balance text-3xl font-semibold tracking-tight md:text-4xl\">\n        {heading}\n      </h2>\n      <p class=\"text-lg text-muted-foreground\">{description}</p>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2\">\n      {features.map((feature) => (\n        <Card>\n          <CardHeader class=\"space-y-4\">\n            <Badge variant=\"secondary\" class=\"w-fit\">\n              {feature.label}\n            </Badge>\n            <CardTitle class=\"text-2xl\">\n              {feature.href ? (\n                <a\n                  href={feature.href}\n                  class=\"underline-offset-4 hover:underline\"\n                >\n                  {feature.title}\n                  <span aria-hidden=\"true\"> ↗</span>\n                </a>\n              ) : (\n                feature.title\n              )}\n            </CardTitle>\n            <CardDescription class=\"text-base\">\n              {feature.description}\n            </CardDescription>\n          </CardHeader>\n          <CardMedia class=\"mx-6 mt-auto aspect-video\">\n            <img\n              src={feature.imageSrc}\n              alt={feature.imageAlt}\n              width=\"1000\"\n              height=\"563\"\n              loading=\"lazy\"\n            />\n          </CardMedia>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/features-02/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-02/index.ts",
+          "content": "export { default as Features02 } from \"./Features02.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "hero-01",
+      "type": "registry:block",
+      "title": "Hero 01",
+      "description": "A responsive split hero with a badge, two actions, and a framed image.",
+      "registryDependencies": [
+        "index",
+        "badge",
+        "button"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/hero1"
+      },
+      "files": [
+        {
+          "path": "blocks/hero-01/Hero01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/hero-01/Hero01.astro",
+          "content": "---\nimport { Badge } from \"@/registry/bejamas/ui/badge\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\ninterface Props {\n  badge?: string;\n  heading?: string;\n  description?: string;\n  imageSrc?: string;\n  imageAlt?: string;\n  primaryHref?: string;\n  primaryLabel?: string;\n  secondaryHref?: string;\n  secondaryLabel?: string;\n  class?: string;\n}\nconst {\n  badge = \"Built for the web\",\n  heading = \"Build something your users will love.\",\n  description = \"Thoughtful components that help you turn your next idea into a fast, accessible website.\",\n  imageSrc = \"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80\",\n  imageAlt = \"A bright workspace with desks and plants\",\n  primaryHref = \"/docs\",\n  primaryLabel = \"Get started\",\n  secondaryHref = \"/blocks\",\n  secondaryLabel = \"Explore blocks\",\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2\">\n    <div class=\"flex flex-col items-center gap-6 text-center lg:items-start lg:text-left\">\n      <Badge variant=\"outline\">{badge}</Badge>\n      <h1 class=\"text-balance text-4xl font-semibold tracking-tight md:text-6xl\">\n        {heading}\n      </h1>\n      <p class=\"max-w-xl text-lg text-muted-foreground\">{description}</p>\n      <div class=\"flex w-full flex-col gap-3 sm:w-auto sm:flex-row\">\n        <Button as=\"a\" href={primaryHref}>\n          {primaryLabel}\n          <span aria-hidden=\"true\">→</span>\n        </Button>\n        <Button as=\"a\" href={secondaryHref} variant=\"outline\">\n          {secondaryLabel}\n        </Button>\n      </div>\n    </div>\n    <img\n      src={imageSrc}\n      alt={imageAlt}\n      width=\"1200\"\n      height=\"675\"\n      class=\"aspect-video w-full rounded-xl border object-cover object-top\"\n    />\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/hero-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/hero-01/index.ts",
+          "content": "export { default as Hero01 } from \"./Hero01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "login-01",
+      "type": "registry:block",
+      "title": "Login 01",
+      "description": "A centered email and password login form.",
+      "registryDependencies": [
+        "index",
+        "button",
+        "card",
+        "input",
+        "label"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/login1"
+      },
+      "files": [
+        {
+          "path": "blocks/login-01/Login01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/login-01/Login01.astro",
+          "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardContent,\n} from \"@/registry/bejamas/ui/card\";\nimport { Input } from \"@/registry/bejamas/ui/input\";\nimport { Label } from \"@/registry/bejamas/ui/label\";\ninterface Props {\n  brand?: string;\n  heading?: string;\n  action?: string;\n  alternateHref?: string;\n  class?: string;\n}\nconst {\n  brand = \"Acme\",\n  heading = \"Welcome back\",\n  action,\n  alternateHref = \"/signup\",\n  class: className = \"\",\n} = Astro.props;\nconst formId = `login-${crypto.randomUUID()}`;\n---\n\n<section\n  class:list={[\n    \"flex min-h-[700px] items-center justify-center bg-muted px-6 py-16\",\n    className,\n  ]}\n>\n  <div class=\"w-full max-w-sm space-y-6\">\n    <a href=\"/\" class=\"block text-center text-2xl font-semibold\">\n      {brand}\n    </a>\n    <Card>\n      <CardHeader>\n        <CardTitle class=\"text-center text-xl\">{heading}</CardTitle>\n      </CardHeader>\n      <CardContent>\n        <form\n          action={action}\n          method=\"post\"\n          data-auth-form\n          data-demo={action ? undefined : \"true\"}\n          class=\"space-y-4\"\n        >\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-email`}>Email</Label>\n            <Input\n              id={`${formId}-email`}\n              name=\"email\"\n              type=\"email\"\n              placeholder=\"you@example.com\"\n              autocomplete=\"email\"\n              required\n            />\n          </div>\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-password`}>Password</Label>\n            <Input\n              id={`${formId}-password`}\n              name=\"password\"\n              type=\"password\"\n              autocomplete=\"current-password\"\n              required\n            />\n          </div>\n\n          <Button type=\"submit\" class=\"w-full\">\n            Sign in\n          </Button>\n          <p\n            data-form-status\n            role=\"status\"\n            class=\"text-sm text-muted-foreground\"\n          ></p>\n        </form>\n      </CardContent>\n    </Card>\n    <p class=\"text-center text-sm text-muted-foreground\">\n      New here?{\" \"}\n      <a\n        href={alternateHref}\n        class=\"font-medium text-foreground underline underline-offset-4\"\n      >\n        Create an account\n      </a>\n    </p>\n  </div>\n</section>\n<script>\n  document\n    .querySelectorAll<HTMLFormElement>(\"[data-auth-form]\")\n    .forEach((form) => {\n      const password =\n        form.querySelector<HTMLInputElement>('[name=\"password\"]');\n      const confirm = form.querySelector<HTMLInputElement>(\n        '[name=\"confirmPassword\"]',\n      );\n      const validate = () =>\n        confirm?.setCustomValidity(\n          confirm.value !== password?.value ? \"Passwords must match.\" : \"\",\n        );\n      password?.addEventListener(\"input\", validate);\n      confirm?.addEventListener(\"input\", validate);\n      form.addEventListener(\"submit\", (event) => {\n        validate();\n        if (!form.reportValidity()) {\n          event.preventDefault();\n          return;\n        }\n        if (form.dataset.demo === \"true\") {\n          event.preventDefault();\n          const status = form.querySelector<HTMLElement>(\"[data-form-status]\");\n          if (status)\n            status.textContent =\n              \"Demo only. Connect a form action to enable authentication.\";\n        }\n      });\n    });\n</script>\n"
+        },
+        {
+          "path": "blocks/login-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/login-01/index.ts",
+          "content": "export { default as Login01 } from \"./Login01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "pricing-01",
+      "type": "registry:block",
+      "title": "Pricing 01",
+      "description": "Two pricing cards with an interactive monthly and yearly billing switch.",
+      "registryDependencies": [
+        "index",
+        "card",
+        "button",
+        "separator",
+        "switch",
+        "label"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/pricing2"
+      },
+      "files": [
+        {
+          "path": "blocks/pricing-01/Pricing01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/pricing-01/Pricing01.astro",
+          "content": "---\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardDescription,\n  CardContent,\n  CardFooter,\n} from \"@/registry/bejamas/ui/card\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport { Separator } from \"@/registry/bejamas/ui/separator\";\nimport { Switch } from \"@/registry/bejamas/ui/switch\";\nimport { Label } from \"@/registry/bejamas/ui/label\";\ninterface Plan {\n  name: string;\n  description: string;\n  monthlyPrice: number;\n  yearlyPrice: number;\n  features: string[];\n  href: string;\n  featured?: boolean;\n}\ninterface Props {\n  heading?: string;\n  description?: string;\n  plans?: Plan[];\n  class?: string;\n}\nconst {\n  heading = \"Choose your plan\",\n  description = \"Simple pricing that grows with your team.\",\n  plans = [\n    {\n      name: \"Starter\",\n      description: \"Everything you need to get going.\",\n      monthlyPrice: 19,\n      yearlyPrice: 190,\n      features: [\"One workspace\", \"Unlimited projects\", \"Email support\"],\n      href: \"/signup\",\n    },\n    {\n      name: \"Team\",\n      description: \"More room for your next big idea.\",\n      monthlyPrice: 49,\n      yearlyPrice: 490,\n      features: [\n        \"Unlimited workspaces\",\n        \"Team collaboration\",\n        \"Priority support\",\n      ],\n      href: \"/signup\",\n      featured: true,\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\nconst switchId = `billing-${crypto.randomUUID()}`;\n---\n\n<section data-pricing-block class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-4xl\">\n    <div class=\"mb-10 space-y-4 text-center\">\n      <h2 class=\"text-3xl font-semibold md:text-4xl\">{heading}</h2>\n      <p class=\"text-muted-foreground\">{description}</p>\n      <div class=\"flex items-center justify-center gap-3\">\n        <span class=\"text-sm\">Monthly</span>\n        <Switch id={switchId} aria-label=\"Yearly billing\" />\n        <Label for={switchId}>Yearly</Label>\n      </div>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2\">\n      {plans.map((plan) => (\n        <Card\n          class:list={[\n            \"shadow-none\",\n            plan.featured && \"border-2 border-solid border-primary\",\n          ]}\n        >\n          <CardHeader>\n            <CardTitle>{plan.name}</CardTitle>\n            <CardDescription>{plan.description}</CardDescription>\n          </CardHeader>\n          <CardContent class=\"space-y-6\">\n            <p aria-live=\"polite\">\n              <span\n                class=\"text-4xl font-semibold\"\n                data-price\n                data-monthly={plan.monthlyPrice}\n                data-yearly={plan.yearlyPrice}\n              >\n                ${plan.monthlyPrice}\n              </span>\n              <span class=\"text-muted-foreground\" data-cadence>\n                {\" \"}\n                / month\n              </span>\n            </p>\n            <Separator />\n            <ul class=\"space-y-3\">\n              {plan.features.map((feature) => (\n                <li class=\"flex gap-2 text-sm\">\n                  <span aria-hidden=\"true\" class=\"text-primary\">\n                    ✓\n                  </span>\n                  {feature}\n                </li>\n              ))}\n            </ul>\n          </CardContent>\n          <CardFooter class=\"mt-auto\">\n            <Button\n              as=\"a\"\n              href={plan.href}\n              variant={plan.featured ? \"default\" : \"outline\"}\n              class=\"w-full\"\n            >\n              Get started\n            </Button>\n          </CardFooter>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n<script>\n  document\n    .querySelectorAll<HTMLElement>(\"[data-pricing-block]\")\n    .forEach((block) => {\n      block.addEventListener(\"switch:change\", (event) => {\n        const yearly = (event as CustomEvent<{ checked: boolean }>).detail\n          .checked;\n        block.querySelectorAll<HTMLElement>(\"[data-price]\").forEach((price) => {\n          price.textContent = `$${yearly ? price.dataset.yearly : price.dataset.monthly}`;\n        });\n        block\n          .querySelectorAll<HTMLElement>(\"[data-cadence]\")\n          .forEach((cadence) => {\n            cadence.textContent = yearly ? \" / year\" : \" / month\";\n          });\n      });\n    });\n</script>\n"
+        },
+        {
+          "path": "blocks/pricing-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/pricing-01/index.ts",
+          "content": "export { default as Pricing01 } from \"./Pricing01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "signup-01",
+      "type": "registry:block",
+      "title": "Signup 01",
+      "description": "A centered signup form with password confirmation.",
+      "registryDependencies": [
+        "index",
+        "button",
+        "card",
+        "input",
+        "label"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/signup1"
+      },
+      "files": [
+        {
+          "path": "blocks/signup-01/Signup01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/signup-01/Signup01.astro",
+          "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardContent,\n} from \"@/registry/bejamas/ui/card\";\nimport { Input } from \"@/registry/bejamas/ui/input\";\nimport { Label } from \"@/registry/bejamas/ui/label\";\ninterface Props {\n  brand?: string;\n  heading?: string;\n  action?: string;\n  alternateHref?: string;\n  class?: string;\n}\nconst {\n  brand = \"Acme\",\n  heading = \"Create an account\",\n  action,\n  alternateHref = \"/login\",\n  class: className = \"\",\n} = Astro.props;\nconst formId = `signup-${crypto.randomUUID()}`;\n---\n\n<section\n  class:list={[\n    \"flex min-h-[700px] items-center justify-center bg-muted px-6 py-16\",\n    className,\n  ]}\n>\n  <div class=\"w-full max-w-sm space-y-6\">\n    <a href=\"/\" class=\"block text-center text-2xl font-semibold\">\n      {brand}\n    </a>\n    <Card>\n      <CardHeader>\n        <CardTitle class=\"text-center text-xl\">{heading}</CardTitle>\n      </CardHeader>\n      <CardContent>\n        <form\n          action={action}\n          method=\"post\"\n          data-auth-form\n          data-demo={action ? undefined : \"true\"}\n          class=\"space-y-4\"\n        >\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-email`}>Email</Label>\n            <Input\n              id={`${formId}-email`}\n              name=\"email\"\n              type=\"email\"\n              placeholder=\"you@example.com\"\n              autocomplete=\"email\"\n              required\n            />\n          </div>\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-password`}>Password</Label>\n            <Input\n              id={`${formId}-password`}\n              name=\"password\"\n              type=\"password\"\n              autocomplete=\"new-password\"\n              required\n              minlength=\"8\"\n            />\n          </div>\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-confirm`}>Confirm password</Label>\n            <Input\n              id={`${formId}-confirm`}\n              name=\"confirmPassword\"\n              type=\"password\"\n              autocomplete=\"new-password\"\n              required\n              minlength=\"8\"\n            />\n          </div>\n          <Button type=\"submit\" class=\"w-full\">\n            Create account\n          </Button>\n          <p\n            data-form-status\n            role=\"status\"\n            class=\"text-sm text-muted-foreground\"\n          ></p>\n        </form>\n      </CardContent>\n    </Card>\n    <p class=\"text-center text-sm text-muted-foreground\">\n      Already have an account?{\" \"}\n      <a\n        href={alternateHref}\n        class=\"font-medium text-foreground underline underline-offset-4\"\n      >\n        Sign in\n      </a>\n    </p>\n  </div>\n</section>\n<script>\n  document\n    .querySelectorAll<HTMLFormElement>(\"[data-auth-form]\")\n    .forEach((form) => {\n      const password =\n        form.querySelector<HTMLInputElement>('[name=\"password\"]');\n      const confirm = form.querySelector<HTMLInputElement>(\n        '[name=\"confirmPassword\"]',\n      );\n      const validate = () =>\n        confirm?.setCustomValidity(\n          confirm.value !== password?.value ? \"Passwords must match.\" : \"\",\n        );\n      password?.addEventListener(\"input\", validate);\n      confirm?.addEventListener(\"input\", validate);\n      form.addEventListener(\"submit\", (event) => {\n        validate();\n        if (!form.reportValidity()) {\n          event.preventDefault();\n          return;\n        }\n        if (form.dataset.demo === \"true\") {\n          event.preventDefault();\n          const status = form.querySelector<HTMLElement>(\"[data-form-status]\");\n          if (status)\n            status.textContent =\n              \"Demo only. Connect a form action to enable authentication.\";\n        }\n      });\n    });\n</script>\n"
+        },
+        {
+          "path": "blocks/signup-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/signup-01/index.ts",
+          "content": "export { default as Signup01 } from \"./Signup01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "testimonials-01",
+      "type": "registry:block",
+      "title": "Testimonials 01",
+      "description": "A responsive masonry wall of quote cards with avatars and optional source links.",
+      "registryDependencies": [
+        "index",
+        "card",
+        "avatar",
+        "button"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/testimonial9"
+      },
+      "files": [
+        {
+          "path": "blocks/testimonials-01/Testimonials01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/testimonials-01/Testimonials01.astro",
+          "content": "---\nimport { Card, CardHeader, CardContent } from \"@/registry/bejamas/ui/card\";\nimport {\n  Avatar,\n  AvatarImage,\n  AvatarFallback,\n} from \"@/registry/bejamas/ui/avatar\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\ninterface Testimonial {\n  name: string;\n  role: string;\n  quote: string;\n  avatarSrc?: string;\n  sourceHref?: string;\n}\ninterface Props {\n  heading?: string;\n  description?: string;\n  testimonials?: Testimonial[];\n  class?: string;\n}\nconst {\n  heading = \"Good work starts with good tools\",\n  description = \"A few words from the people building with us. Sample testimonials for this demo.\",\n  testimonials = [\n    {\n      name: \"Alex Morgan\",\n      role: \"Product designer\",\n      quote:\n        \"We went from an early sketch to a polished prototype in a single afternoon. The components gave us room to focus on the experience.\",\n    },\n    {\n      name: \"Sam Taylor\",\n      role: \"Frontend developer\",\n      quote:\n        \"Clear source, thoughtful defaults, and no surprises. Exactly what I want in a component library.\",\n    },\n    {\n      name: \"Jordan Lee\",\n      role: \"Founder\",\n      quote:\n        \"Our small team can move quickly without sacrificing the details. It has made a real difference to how we ship, and every page still feels like our own.\",\n    },\n    {\n      name: \"Casey Rivera\",\n      role: \"Engineering lead\",\n      quote:\n        \"The accessible foundations mean we spend less time fixing the basics and more time solving real problems for our customers.\",\n    },\n    {\n      name: \"Jamie Chen\",\n      role: \"Creative director\",\n      quote:\n        \"Easy to shape around a brand. The layouts feel consistent without looking identical.\",\n    },\n    {\n      name: \"Riley Brooks\",\n      role: \"Independent developer\",\n      quote:\n        \"A great starting point for client projects. I can adapt the source to each project and keep the final site fast and simple to maintain.\",\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\nconst initials = (name: string) =>\n  name\n    .split(/\\s+/)\n    .filter(Boolean)\n    .slice(0, 2)\n    .map((part) => part[0])\n    .join(\"\");\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-6xl\">\n    <div class=\"mx-auto mb-10 max-w-2xl space-y-4 text-center\">\n      <h2 class=\"text-balance text-3xl font-semibold tracking-tight md:text-4xl\">\n        {heading}\n      </h2>\n      <p class=\"text-lg text-muted-foreground\">{description}</p>\n    </div>\n    <div class=\"columns-1 gap-6 md:columns-2 lg:columns-3\">\n      {testimonials.map((testimonial) => (\n        <Card class=\"mb-6 break-inside-avoid\">\n          <CardHeader class=\"flex flex-row items-center gap-3\">\n            <Avatar class=\"shrink-0\">\n              {testimonial.avatarSrc && (\n                <AvatarImage\n                  src={testimonial.avatarSrc}\n                  alt=\"\"\n                  loading=\"lazy\"\n                />\n              )}\n              <AvatarFallback>{initials(testimonial.name)}</AvatarFallback>\n            </Avatar>\n            <div class=\"min-w-0 flex-1\">\n              <p class=\"font-semibold\">{testimonial.name}</p>\n              <p class=\"text-sm text-muted-foreground\">{testimonial.role}</p>\n            </div>\n            {testimonial.sourceHref && (\n              <Button\n                as=\"a\"\n                href={testimonial.sourceHref}\n                variant=\"ghost\"\n                size=\"icon\"\n                aria-label={`View testimonial from ${testimonial.name}`}\n              >\n                <span aria-hidden=\"true\">↗</span>\n              </Button>\n            )}\n          </CardHeader>\n          <CardContent>\n            <blockquote class=\"text-muted-foreground\">\n              <p>“{testimonial.quote}”</p>\n            </blockquote>\n          </CardContent>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/testimonials-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/testimonials-01/index.ts",
+          "content": "export { default as Testimonials01 } from \"./Testimonials01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    }
+  ]
+}

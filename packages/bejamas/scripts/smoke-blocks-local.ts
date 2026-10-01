@@ -15,6 +15,14 @@ const blocks = [
   ["navigation-headers-01", "NavigationHeaders01"],
   ["navigation-headers-02", "NavigationHeaders02"],
   ["footer-01", "Footer01"],
+  ["features-02", "Features02"],
+  ["pricing-01", "Pricing01"],
+  ["hero-01", "Hero01"],
+  ["cta-01", "Cta01"],
+  ["testimonials-01", "Testimonials01"],
+  ["faq-01", "Faq01"],
+  ["login-01", "Login01"],
+  ["signup-01", "Signup01"],
 ] as const;
 
 async function write(relativePath: string, value: string | object) {
@@ -142,6 +150,14 @@ async function createFixture(monorepo: boolean) {
       ...tailwind,
       css: monorepo ? "../../packages/ui/src/styles/globals.css" : tailwind.css,
     },
+    // Legacy upstream configuration must not redirect Astro port installs.
+    ...(monorepo
+      ? {
+          registries: {
+            "@shadcnblocks": "https://www.shadcnblocks.com/r/{style}/{name}",
+          },
+        }
+      : {}),
     aliases: {
       ...aliases,
       ...(monorepo
@@ -232,20 +248,23 @@ try {
     const before = await snapshot(fixture.root);
     const dryRun = await run(
       fixture.app,
-      ["bun", cli, "add", blocks[0][0], "--dry-run"],
+      ["bun", cli, "add", "@shadcnblocks/features-02", "--dry-run"],
       env,
     );
-    assert.match(dryRun, /NavigationHeaders01\.astro/);
+    assert.match(dryRun, /Features02\.astro/);
     assert.deepEqual(
       await snapshot(fixture.root),
       before,
       "dry-run changed project files",
     );
     for (const [index, [id, component]] of blocks.entries()) {
-      // Exercise both accepted input forms: bare name and @bejamas namespace.
-      // Direct registry URLs are left to shadcn, which confirms overwrites
-      // per file and is not scripted here.
-      const specifier = index === 1 ? `@bejamas/${id}` : id;
+      // Exercise bare names, @bejamas aliases, and every @shadcnblocks port.
+      const specifier =
+        index >= 3
+          ? `@shadcnblocks/${id}`
+          : index === 1
+            ? `@bejamas/${id}`
+            : id;
       console.log(`[blocks smoke] Adding ${specifier}`);
       const installOutput = await run(
         fixture.app,
@@ -286,15 +305,19 @@ try {
       );
     const first = path.join(
       fixture.app,
-      "src/components/blocks/navigation-headers-01/NavigationHeaders01.astro",
+      "src/components/blocks/features-02/Features02.astro",
     );
     const installed = await fs.readFile(first, "utf8");
     await fs.writeFile(first, `${installed}\n<!-- user customization -->\n`);
-    await run(fixture.app, ["bun", cli, "add", blocks[0][0]], env);
+    await run(
+      fixture.app,
+      ["bun", cli, "add", "@shadcnblocks/features-02"],
+      env,
+    );
     assert.match(await fs.readFile(first, "utf8"), /user customization/);
     await run(
       fixture.app,
-      ["bun", cli, "add", blocks[0][0], "--overwrite"],
+      ["bun", cli, "add", "@shadcnblocks/features-02", "--overwrite"],
       env,
     );
     assert.doesNotMatch(await fs.readFile(first, "utf8"), /user customization/);

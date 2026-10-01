@@ -52,7 +52,11 @@ export function getBlockGalleryItem(id: string): BlockGalleryItem | undefined {
 }
 
 export function getBlockInstallCommand(id: string): string {
-  return `bunx bejamas@latest add ${id}`;
+  const source = getBlockGalleryItem(id)?.sourceUrl;
+  const namespace = source?.startsWith("https://www.shadcnblocks.com/block/")
+    ? "@shadcnblocks/"
+    : "";
+  return `bunx bejamas@latest add ${namespace}${id}`;
 }
 
 /** Lazy `import.meta.glob` loaders for the published registry payloads. */
