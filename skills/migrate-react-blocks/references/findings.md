@@ -58,6 +58,7 @@ Ports that hit these use the closest primitive or a static version. Each is a ca
 
 - The live Shadcnblocks site drifts from its repository source: images, headings, copy, card composition and CTAs change. These differences are upstream revisions, not mistranslations of the source JSX. Record them separately.
 - A raw theme variable is not proof of a compiled breakpoint. The repository stylesheet declared a 1400px `2xl` container, while the live preview computes 1536px. The ports followed the observed live width and the receiving app's standard breakpoint, and recorded the difference.
+- Shadcnblocks previews can be loaded directly as their iframe URL, sized to the block viewport rather than the surrounding site. They may vertically center a section in a `min-h-svh` wrapper, so compare positions relative to the block, not the page. To switch color mode in the Bejamas docs app, set `data-theme` as well as the `.dark` class.
 - Bejamas themes and primitive styles change colors, borders, typography and controls. Treat Shadcnblocks ports as layout- and behavior-faithful, not pixel-identical.
 - The first eight Shadcnblocks ports (pricing-01, cta-01, signup-01, login-01, faq-01, hero-01, testimonials-01, features-02) predate this process. They are adaptations with changed content, widths or composition. Do not cite them as faithful migrations without reconciling them against their source.
 

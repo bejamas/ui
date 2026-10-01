@@ -13,7 +13,7 @@ Produce a usable Astro port, with explicit evidence of preserved behavior and an
 2. **Port**: translate markup, data, layout dependencies and icons.
 3. **Behavior**: map interactive state to native HTML or `@data-slot` primitives; report gaps instead of reimplementing them.
 4. **Register**: add the block, docs example and registry entry (registry ports only).
-5. **Verify**: run type, build, registry and smoke checks, then compare layout and exercise behavior in the real docs route.
+5. **Verify**: run type, registry and smoke checks, then compare layout and check wiring in the real docs route.
 6. **Record**: classify the result and record differences, repairs and unverified behavior.
 
 ## Repository contract
@@ -69,31 +69,32 @@ Keep these regardless of the option:
 
 ## Register a block in this repository
 
-Skip this section for ports into another application. Implement and verify locally by default. Regenerating public registry artifacts (`apps/web/public/r`), committing and publishing are separate steps that the user must request. For a registry block `<id>` (for example `team-01`) with component `<Name>` (for example `Team01`):
+Skip this section for ports into another application. The registry under `apps/web/public/r` is checked in: regenerate it and commit it with the block. Deploying the docs site is what publishes it. For a registry block `<id>` (for example `team-01`) with component `<Name>` (for example `Team01`):
 
 1. **Component**: `packages/registry/src/blocks/<id>/<Name>.astro`, an `index.ts` that re-exports it (`export { default as <Name> } from "./<Name>.astro";`).
 2. **Registry entry**: add a `registry:block` item to `apps/web/registry.json`. Include `title`, `description`, `registryDependencies` (the Bejamas primitives used; `[]` for static blocks), `meta.source` (the upstream block URL), and each file with `target: src/components/blocks/<id>/...`. Items whose `meta.source` starts with `https://www.shadcnblocks.com/block/` are also published in the `@shadcnblocks` sub-registry (`apps/web/public/r/shadcnblocks/`); no separate entry is needed.
 3. **Docs example**: `apps/web/src/pages/blocks/<category>/<id>.astro` renders the block inside `BlockExampleLayout` with `title` and `sourceUrl`. Add the gallery item (`label`, `id`, `description`, `href`, `sourceUrl`) to `apps/web/src/content/docs/blocks.json`.
 4. **Tests**: update the expected Shadcnblocks port counts in `packages/registry/test/block-registry.test.ts` and `apps/web/src/lib/block-gallery.test.ts`. Add `[id, Name]` to the block list in `packages/bejamas/scripts/smoke-blocks-local.ts`.
 
-## Verify the port against its source contract
+## Verify the port
 
-Run the receiving application's type check and production build using its existing scripts, then start its development or preview server. For registry blocks in this repository, also run from the repository root:
+Verify the port's markup, layout and wiring. Primitive behavior (focus, keyboard, ARIA) is `@data-slot`'s responsibility and is not re-tested here.
+
+**Checks.** In another application, run its type check and the build for the route that renders the block. In this repository, from the root:
 
 ```sh
-bun run --cwd apps/web build:style-registry
-bun run --cwd apps/web build:registry
-bun run --cwd apps/web normalize-component-paths-in-registry
+bun run --cwd apps/web build:artifacts
+bun run --cwd apps/web check-types
 bun test packages/registry/test/block-registry.test.ts apps/web/src/lib/block-gallery.test.ts
 bun run --cwd packages/bejamas build
 bun run --cwd packages/bejamas smoke:blocks:local
 ```
 
-The smoke test installs every block with the local CLI into standalone and monorepo Astro fixtures and builds both. The registry build commands rewrite `apps/web/public/r`. Do not commit those artifacts unless the user asked to publish.
+`build:artifacts` regenerates the checked-in registry under `apps/web/public/r`; commit it with the block. The smoke test installs every block with the local CLI into fresh standalone and monorepo Astro apps and builds both.
 
-Compare layout against the original. Load the upstream preview iframe URL directly at the same block viewport width as the local docs route (for example 1440px and 390px), with matching color mode. In this docs application, set `data-theme` as well as the `.dark` class. Capture screenshots, and use the browser to measure container `getBoundingClientRect()`, computed padding, content edges and document overflow. Do not infer alignment from class names or a successful build. A test harness must not supply CSS missing from the real application. Compare block-relative geometry, because the live preview may vertically center sections in a `min-h-svh` wrapper. Record live-preview revisions (copy, assets, markup, theme or breakpoints) separately from defects against the source code.
+**Layout.** Run the docs app (`bun run --cwd apps/web start`) and open `/blocks/<category>/<id>`. Compare the rendered block with the source's own rendering at a desktop and a mobile width, in the same color mode. Where edges, widths or gaps differ, measure the rendered boxes and computed styles instead of reading class names. Never add CSS to a test page that the real app lacks. Record differences caused by the source changing since you read it separately from port defects.
 
-Then inspect the rendered block and exercise its actual behaviors: initial state, keyboard activation, dismiss/focus restoration, validation, derived state, and repeated-instance isolation. Wait for dialog presence animations before asserting hidden state or restored focus. Check a narrow viewport, dark mode and reduced motion when the source supports them. Inspect overflow, accessible labels, duplicate IDs, nested interactive controls and browser errors. Do not treat a compiler transform or a source regex as runtime proof.
+**Wiring.** Check that each primitive starts up without console errors and that the block's controls drive it. Check that derived display updates, and that two instances on one page stay independent. Check for duplicate IDs, nested interactive controls, accessible names on icon-only controls, and overflow at the narrow width. A successful build or a source search is not runtime proof.
 
 ## Record the result
 
