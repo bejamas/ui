@@ -51,7 +51,7 @@ describe("block gallery catalog", () => {
     const ports = blockGalleryItems.filter((item) =>
       item.sourceUrl?.startsWith("https://www.shadcnblocks.com/block/"),
     );
-    expect(ports).toHaveLength(8);
+    expect(ports).toHaveLength(14);
     for (const item of ports) {
       expect(getBlockInstallCommand(item.id)).toBe(
         `bunx bejamas@latest add @shadcnblocks/${item.id}`,

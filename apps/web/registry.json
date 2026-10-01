@@ -1345,6 +1345,172 @@
           "target": "src/components/blocks/testimonials-01/index.ts"
         }
       ]
+    },
+    {
+      "name": "team-01",
+      "type": "registry:block",
+      "title": "Team 01",
+      "description": "A centered team introduction and responsive member avatar grid.",
+      "registryDependencies": ["avatar"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/team1"
+      },
+      "files": [
+        {
+          "path": "../../packages/registry/src/blocks/team-01/Team01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/team-01/Team01.astro"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/team-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/team-01/index.ts"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/team-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/team-01/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "name": "blog-01",
+      "type": "registry:block",
+      "title": "Blog 01",
+      "description": "A centered blog section with responsive image cards and read-more links.",
+      "registryDependencies": ["badge", "button", "card"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/blog7"
+      },
+      "files": [
+        {
+          "path": "../../packages/registry/src/blocks/blog-01/Blog01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/blog-01/Blog01.astro"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/blog-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/blog-01/index.ts"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/blog-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/blog-01/LICENSE.md"
+        }
+      ],
+      "dependencies": ["@lucide/astro"]
+    },
+    {
+      "name": "contact-01",
+      "type": "registry:block",
+      "title": "Contact 01",
+      "description": "Contact method cards for email, office, phone, and chat.",
+      "registryDependencies": [],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/contact7"
+      },
+      "files": [
+        {
+          "path": "../../packages/registry/src/blocks/contact-01/Contact01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/contact-01/Contact01.astro"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/contact-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/contact-01/index.ts"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/contact-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/contact-01/LICENSE.md"
+        }
+      ],
+      "dependencies": ["@lucide/astro"]
+    },
+    {
+      "name": "stats-01",
+      "type": "registry:block",
+      "title": "Stats 01",
+      "description": "A heading and report link above a responsive four-metric grid.",
+      "registryDependencies": [],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/stats8"
+      },
+      "files": [
+        {
+          "path": "../../packages/registry/src/blocks/stats-01/Stats01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/stats-01/Stats01.astro"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/stats-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/stats-01/index.ts"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/stats-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/stats-01/LICENSE.md"
+        }
+      ],
+      "dependencies": ["@lucide/astro"]
+    },
+    {
+      "name": "gallery-01",
+      "type": "registry:block",
+      "title": "Gallery 01",
+      "description": "A multi-card image gallery carousel with previous and next controls.",
+      "registryDependencies": ["carousel"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/gallery6"
+      },
+      "files": [
+        {
+          "path": "../../packages/registry/src/blocks/gallery-01/Gallery01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/gallery-01/Gallery01.astro"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/gallery-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/gallery-01/index.ts"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/gallery-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/gallery-01/LICENSE.md"
+        }
+      ],
+      "dependencies": ["@lucide/astro"]
+    },
+    {
+      "name": "features-03",
+      "type": "registry:block",
+      "title": "Features 03",
+      "description": "A feature accordion with a synchronized companion image panel.",
+      "registryDependencies": ["accordion"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/feature197"
+      },
+      "files": [
+        {
+          "path": "../../packages/registry/src/blocks/features-03/Features03.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-03/Features03.astro"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/features-03/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-03/index.ts"
+        },
+        {
+          "path": "../../packages/registry/src/blocks/features-03/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-03/LICENSE.md"
+        }
+      ]
     }
   ]
 }
