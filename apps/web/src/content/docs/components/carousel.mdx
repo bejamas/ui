@@ -5,7 +5,7 @@ description: "An accessible, draggable carousel powered by data-slot, with horiz
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
 
-import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
+import { Carousel, CarouselSlide, CarouselRoot, CarouselContent, CarouselPrevious, CarouselNext } from '@bejamas/registry/ui/carousel';
 
 <div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
 <Carousel aria-label="Horizontal single cards" class="mx-auto max-w-86.5"> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"1"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"2"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"3"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"4"}</div></CarouselSlide> <CarouselSlide><div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold aspect-4/5">{"5"}</div></CarouselSlide> </Carousel>
@@ -178,6 +178,50 @@ import { Carousel, CarouselSlide } from '@bejamas/registry/ui/carousel';
     <div class="flex items-center justify-center rounded-lg bg-muted text-muted-foreground font-semibold min-h-0">6</div>
   </CarouselSlide>
 </Carousel>
+```
+
+### Header controls
+
+Use `CarouselRoot` to compose your own layout. Place `CarouselPrevious` and `CarouselNext` anywhere inside the root, including a header above `CarouselContent`. The runtime keeps their disabled states in sync. Place slides directly inside `CarouselContent`.
+
+`CarouselRoot` accepts `orientation`, `axis`, `variant`, `defaultIndex`, `data-loop`, and `drag`. `CarouselContent` inherits orientation and drag from the root and accepts `snapType`, `fade`, and `class`; give vertical content a height. Controls accept button attributes, `variant`, `size`, and `class`, with an optional slot for a custom icon or text and `aria-label` for a custom accessible name. The composed root renders only its slot; the existing `Carousel` continues to provide its default controls, viewport, and counter.
+
+<div class="not-content sl-bejamas-component-preview px-4 md:px-10 py-12 border border-border rounded-t-lg">
+<CarouselRoot aria-label="Featured cards" class="mx-auto max-w-sm space-y-4">
+  <header class="flex items-center justify-between gap-4">
+    <h3 class="font-semibold">Featured cards</h3>
+    <div class="flex gap-2">
+      <CarouselPrevious />
+      <CarouselNext />
+    </div>
+  </header>
+  <CarouselContent>
+    <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 1</div></CarouselSlide>
+    <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 2</div></CarouselSlide>
+    <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 3</div></CarouselSlide>
+  </CarouselContent>
+</CarouselRoot>
+</div>
+
+```astro nocollapse
+---
+import { CarouselRoot, CarouselContent, CarouselSlide, CarouselPrevious, CarouselNext } from "@bejamas/ui/components/carousel";
+---
+
+<CarouselRoot aria-label="Featured cards" class="mx-auto max-w-sm space-y-4">
+  <header class="flex items-center justify-between gap-4">
+    <h3 class="font-semibold">Featured cards</h3>
+    <div class="flex gap-2">
+      <CarouselPrevious />
+      <CarouselNext />
+    </div>
+  </header>
+  <CarouselContent>
+    <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 1</div></CarouselSlide>
+    <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 2</div></CarouselSlide>
+    <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 3</div></CarouselSlide>
+  </CarouselContent>
+</CarouselRoot>
 ```
 
 ### Looping

@@ -1,0 +1,33 @@
+---
+import type { Props as ButtonProps } from "../button/Button.astro";
+import { cn } from "@bejamas/registry/lib/utils";
+import Button from "../button/Button.astro";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+type Props = Omit<Extract<ButtonProps, { as?: "button" }>, "as">;
+
+const {
+  variant = "outline",
+  size = "icon-sm",
+  class: className,
+  "aria-label": ariaLabel = "Next slide",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Button
+  {...rest}
+  type="button"
+  variant={variant}
+  size={size}
+  data-slot="carousel-next"
+  aria-label={ariaLabel}
+  class={cn("cn-carousel-next", className)}
+>
+  <slot>
+    <SemanticIcon
+      name="chevron-right"
+      class="size-4 group-data-[orientation=vertical]/carousel:rotate-90"
+    />
+  </slot>
+</Button>
