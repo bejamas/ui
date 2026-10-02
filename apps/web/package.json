@@ -19,7 +19,7 @@
     "build:style-registry": "bun run ../../packages/registry/scripts/build-web-style-registry.ts",
     "generate:ui-package": "bun run ../../packages/ui/scripts/generate-from-style-registry.ts",
     "build:registry": "bun x shadcn build",
-    "build:docs": "bun x bejamas@canary docs:build",
+    "build:docs": "bun run ../../packages/bejamas/src/index.ts docs:build",
     "normalize-component-paths-in-registry": "bun run scripts/normalize-paths.ts",
     "check-types": "wrangler types --include-runtime false && astro check",
     "deploy:cloudflare": "bun run build && wrangler deploy"
