@@ -1,0 +1,45 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import { Separator } from "@bejamas/registry/ui/separator";
+interface Props {
+  heading?: string;
+  description?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+  class?: string;
+}
+const {
+  heading = "Ready to build your next great idea?",
+  description = "Start with thoughtful components and make them your own.",
+  primaryLabel = "Get started",
+  primaryHref = "/docs",
+  secondaryLabel = "Explore components",
+  secondaryHref = "/components",
+  class: className = "",
+} = Astro.props;
+---
+
+<section class:list={["px-6 py-20 md:py-32", className]}>
+  <div class="mx-auto max-w-6xl">
+    <div class="flex flex-col gap-8 pb-10 lg:flex-row lg:items-center lg:justify-between">
+      <div class="max-w-2xl space-y-4">
+        <h2 class="text-balance text-3xl font-semibold tracking-tight md:text-4xl">
+          {heading}
+        </h2>
+        <p class="text-lg text-muted-foreground">{description}</p>
+      </div>
+      <div class="flex shrink-0 flex-col gap-3 sm:flex-row">
+        <Button as="a" href={secondaryHref} variant="outline">
+          {secondaryLabel}
+        </Button>
+        <Button as="a" href={primaryHref}>
+          {primaryLabel}
+          <span aria-hidden="true">→</span>
+        </Button>
+      </div>
+    </div>
+    <Separator />
+  </div>
+</section>

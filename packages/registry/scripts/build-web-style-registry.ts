@@ -39,6 +39,7 @@ const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "..", "..", "..");
 const webRoot = path.resolve(repoRoot, "apps/web");
 const stylesRoot = path.resolve(webRoot, "public/r/styles");
+const shadcnblocksRoot = path.resolve(webRoot, "public/r/shadcnblocks");
 const templateStyleDir = path.resolve(stylesRoot, STYLES[0].id);
 const registrySourceRoot = path.resolve(__dirname, "..", "src");
 const sourceRegistryPath = path.resolve(webRoot, "registry.json");
@@ -64,10 +65,10 @@ function splitSelectors(selector: string) {
   let parenDepth = 0;
 
   for (const char of selector) {
-    if (char === "[" ) bracketDepth += 1;
-    if (char === "]" ) bracketDepth = Math.max(0, bracketDepth - 1);
-    if (char === "(" ) parenDepth += 1;
-    if (char === ")" ) parenDepth = Math.max(0, parenDepth - 1);
+    if (char === "[") bracketDepth += 1;
+    if (char === "]") bracketDepth = Math.max(0, bracketDepth - 1);
+    if (char === "(") parenDepth += 1;
+    if (char === ")") parenDepth = Math.max(0, parenDepth - 1);
 
     if (char === "," && bracketDepth === 0 && parenDepth === 0) {
       if (current.trim()) {
@@ -245,7 +246,11 @@ function addUtilities(tokenMap: TokenMap, token: string, utilities: string[]) {
   tokenMap.set(token, existing);
 }
 
-function extractRuleUtilities(rule: Rule, prefixes: string[], tokenMap: TokenMap) {
+function extractRuleUtilities(
+  rule: Rule,
+  prefixes: string[],
+  tokenMap: TokenMap,
+) {
   const selectors = splitSelectors(rule.selector)
     .map(parseClassSelector)
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
@@ -474,7 +479,9 @@ async function readTemplateItem(name: string) {
   const blockTemplate = (await readBlockTemplateItems()).get(name);
   const item =
     blockTemplate ??
-    (await readJson<RegistryItem>(path.resolve(templateStyleDir, `${name}.json`)));
+    (await readJson<RegistryItem>(
+      path.resolve(templateStyleDir, `${name}.json`),
+    ));
   templateCache.set(name, item);
   return item;
 }
@@ -494,7 +501,10 @@ function extractLocalRelativeImports(content: string) {
   return Array.from(imports);
 }
 
-function resolveTemplateRelativePath(fromTemplatePath: string, relativeImport: string) {
+function resolveTemplateRelativePath(
+  fromTemplatePath: string,
+  relativeImport: string,
+) {
   return path.posix.normalize(
     path.posix.join(path.posix.dirname(fromTemplatePath), relativeImport),
   );
@@ -509,7 +519,12 @@ function inferRegistryFileType(filePath: string) {
 }
 
 async function resolveRegistrySourceImport(filePath: string) {
-  const candidates = [filePath, `${filePath}.ts`, `${filePath}.astro`, `${filePath}.js`];
+  const candidates = [
+    filePath,
+    `${filePath}.ts`,
+    `${filePath}.astro`,
+    `${filePath}.js`,
+  ];
 
   for (const candidate of candidates) {
     try {
@@ -529,11 +544,17 @@ async function resolveRegistrySourceImport(filePath: string) {
 
 function resolveSourceFile(templatePath: string) {
   if (templatePath.startsWith("ui/")) {
-    return path.resolve(registrySourceRoot, templatePath.replace(/^ui\//, "ui/"));
+    return path.resolve(
+      registrySourceRoot,
+      templatePath.replace(/^ui\//, "ui/"),
+    );
   }
 
   if (templatePath.startsWith("lib/")) {
-    return path.resolve(registrySourceRoot, templatePath.replace(/^lib\//, "lib/"));
+    return path.resolve(
+      registrySourceRoot,
+      templatePath.replace(/^lib\//, "lib/"),
+    );
   }
 
   if (templatePath.startsWith("blocks/")) {
@@ -572,7 +593,10 @@ async function collectTemplateFiles(template: RegistryItem) {
     const source = await readSourceFile(resolveSourceFile(current.path));
 
     for (const relativeImport of extractLocalRelativeImports(source)) {
-      const nextImportPath = resolveTemplateRelativePath(current.path, relativeImport);
+      const nextImportPath = resolveTemplateRelativePath(
+        current.path,
+        relativeImport,
+      );
       const resolvedImport = await resolveRegistrySourceImport(nextImportPath);
 
       if (!resolvedImport) {
@@ -631,7 +655,11 @@ export function buildFontItem(font: (typeof fonts)[number]) {
   } satisfies RegistryItem;
 }
 
-async function buildRegistryItem(name: string, style: Style, tokenMap: TokenMap) {
+async function buildRegistryItem(
+  name: string,
+  style: Style,
+  tokenMap: TokenMap,
+) {
   const template = await readTemplateItem(name);
   const templateFiles = await collectTemplateFiles(template);
 
@@ -651,7 +679,10 @@ async function buildRegistryItem(name: string, style: Style, tokenMap: TokenMap)
     ...template,
     $schema: schemaUrl,
     files,
-    dependencies: normalizeDependenciesForInstall([...(template.dependencies ?? []), ...getHeadlessDependencies(files)]),
+    dependencies: normalizeDependenciesForInstall([
+      ...(template.dependencies ?? []),
+      ...getHeadlessDependencies(files),
+    ]),
     registryDependencies: normalizeRegistryDependenciesForInstall(
       name,
       template.registryDependencies,
@@ -673,6 +704,9 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
   const tokenMap = buildStyleTokenMap(style.name);
   const styleDir = path.resolve(stylesRoot, style.id);
   const fontNames = fonts.map((font) => font.name);
+  const portDir = path.resolve(shadcnblocksRoot, "styles", style.id);
+  const ports: RegistryItem[] = [];
+  await ensureDir(portDir);
   const nextFiles = new Set<string>([
     "index.json",
     ...itemNames.map((name) => `${name}.json`),
@@ -691,12 +725,38 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
 
   for (const name of itemNames) {
     const item = await buildRegistryItem(name, style, tokenMap);
+    if (isShadcnblocksPort(item)) {
+      ports.push(item);
+      await fs.writeFile(
+        path.resolve(portDir, `${name}.json`),
+        `${JSON.stringify(item, null, 2)}\n`,
+        "utf8",
+      );
+    }
     await fs.writeFile(
       path.resolve(styleDir, `${name}.json`),
       `${JSON.stringify(item, null, 2)}\n`,
       "utf8",
     );
   }
+
+  await removeStaleJsonFiles(
+    portDir,
+    new Set(["registry.json", ...ports.map((item) => `${item.name}.json`)]),
+  );
+  await fs.writeFile(
+    path.resolve(portDir, "registry.json"),
+    `${JSON.stringify(
+      {
+        $schema: "https://ui.shadcn.com/schema/registry.json",
+        name: "bejamas/shadcnblocks",
+        homepage: "https://ui.bejamas.com/blocks",
+        items: ports,
+      },
+      null,
+      2,
+    )}\n`,
+  );
 
   for (const font of fonts) {
     await fs.writeFile(
@@ -705,6 +765,14 @@ async function writeStyleRegistry(style: Style, itemNames: string[]) {
       "utf8",
     );
   }
+}
+
+function isShadcnblocksPort(item: RegistryItem) {
+  return (
+    item.type === "registry:block" &&
+    typeof item.meta?.source === "string" &&
+    item.meta.source.startsWith("https://www.shadcnblocks.com/block/")
+  );
 }
 
 export async function getTemplateItemNames() {

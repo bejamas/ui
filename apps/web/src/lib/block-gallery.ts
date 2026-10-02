@@ -1,17 +1,7 @@
 import blockCatalogJson from "@/content/docs/blocks.json";
 
-export interface BlockGalleryItem {
-  label: string;
-  id: string;
-  description?: string;
-  href: string;
-}
-
-interface BlockGalleryCategory {
-  label: string;
-  description?: string;
-  items?: BlockGalleryItem[];
-}
+export type BlockGalleryItem =
+  (typeof blockCatalogJson)[keyof typeof blockCatalogJson]["items"][number];
 
 export interface BlockSourceFile {
   path: string;
@@ -37,21 +27,39 @@ function normalizePublishedSourceForDisplay(source: string): string {
   return source.replaceAll("@/registry/bejamas/ui/", "@/ui/");
 }
 
-export const blockCatalog = blockCatalogJson as Record<
-  string,
-  BlockGalleryCategory
->;
+export const blockCatalog = blockCatalogJson;
 
-export const blockGalleryItems = Object.values(blockCatalog).flatMap(
-  (category) => category.items ?? [],
+export const blockGalleryItems: BlockGalleryItem[] = Object.values(
+  blockCatalog,
+).flatMap((category) => category.items);
+
+// Only verified Shadcnblocks adaptations belong in this collection. Keep the
+// complete catalog for registry consumers and a future b/ui collection.
+export const shadcnblocksItems = blockGalleryItems.filter(
+  (item) => "sourceUrl" in item,
 );
+
+export type ShadcnblocksItem = (typeof shadcnblocksItems)[number];
+
+export const shadcnblocksCategories = Array.from(
+  new Set(shadcnblocksItems.map((item) => item.sourceCategory)),
+).map((label) => ({
+  label,
+  slug: label.toLowerCase(),
+  items: shadcnblocksItems.filter((item) => item.sourceCategory === label),
+}));
 
 export function getBlockGalleryItem(id: string): BlockGalleryItem | undefined {
   return blockGalleryItems.find((item) => item.id === id);
 }
 
 export function getBlockInstallCommand(id: string): string {
-  return `bunx bejamas@latest add ${id}`;
+  const item = getBlockGalleryItem(id);
+  const source = item && "sourceUrl" in item ? item.sourceUrl : undefined;
+  const namespace = source?.startsWith("https://www.shadcnblocks.com/block/")
+    ? "@shadcnblocks/"
+    : "";
+  return `bunx bejamas@latest add ${namespace}${id}`;
 }
 
 /** Lazy `import.meta.glob` loaders for the published registry payloads. */

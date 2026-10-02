@@ -1163,6 +1163,354 @@
           "target": "src/components/blocks/footer-01/index.ts"
         }
       ]
+    },
+    {
+      "name": "faq-01",
+      "type": "registry:block",
+      "title": "FAQ 01",
+      "description": "A centered FAQ section with accessible collapsible answers.",
+      "registryDependencies": ["accordion"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/faq1"
+      },
+      "files": [
+        {
+          "path": "blocks/faq-01/Faq01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/faq-01/Faq01.astro"
+        },
+        {
+          "path": "blocks/faq-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/faq-01/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "login-01",
+      "type": "registry:block",
+      "title": "Login 01",
+      "description": "A centered email and password login form.",
+      "registryDependencies": ["button", "card", "input", "label"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/login1"
+      },
+      "files": [
+        {
+          "path": "blocks/login-01/Login01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/login-01/Login01.astro"
+        },
+        {
+          "path": "blocks/login-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/login-01/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "signup-01",
+      "type": "registry:block",
+      "title": "Signup 01",
+      "description": "A centered signup form with password confirmation.",
+      "registryDependencies": ["button", "card", "input", "label"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/signup1"
+      },
+      "files": [
+        {
+          "path": "blocks/signup-01/Signup01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/signup-01/Signup01.astro"
+        },
+        {
+          "path": "blocks/signup-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/signup-01/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "hero-01",
+      "type": "registry:block",
+      "title": "Hero 01",
+      "description": "A responsive split hero with a badge, two actions, and a framed image.",
+      "registryDependencies": ["badge", "button"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/hero1"
+      },
+      "files": [
+        {
+          "path": "blocks/hero-01/Hero01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/hero-01/Hero01.astro"
+        },
+        {
+          "path": "blocks/hero-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/hero-01/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "pricing-01",
+      "type": "registry:block",
+      "title": "Pricing 01",
+      "description": "Two pricing cards with an interactive monthly and yearly billing switch.",
+      "registryDependencies": [
+        "card",
+        "button",
+        "separator",
+        "switch",
+        "label"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/pricing2"
+      },
+      "files": [
+        {
+          "path": "blocks/pricing-01/Pricing01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/pricing-01/Pricing01.astro"
+        },
+        {
+          "path": "blocks/pricing-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/pricing-01/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "cta-01",
+      "type": "registry:block",
+      "title": "CTA 01",
+      "description": "An inline split call to action with two buttons and a closing divider.",
+      "registryDependencies": ["button", "separator"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/cta36"
+      },
+      "files": [
+        {
+          "path": "blocks/cta-01/Cta01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/cta-01/Cta01.astro"
+        },
+        {
+          "path": "blocks/cta-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/cta-01/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "features-02",
+      "type": "registry:block",
+      "title": "Features 02",
+      "description": "A two-column feature card grid with labels, linked titles, and images.",
+      "registryDependencies": ["card", "badge"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/feature13"
+      },
+      "files": [
+        {
+          "path": "blocks/features-02/Features02.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-02/Features02.astro"
+        },
+        {
+          "path": "blocks/features-02/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-02/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "testimonials-01",
+      "type": "registry:block",
+      "title": "Testimonials 01",
+      "description": "A responsive masonry wall of quote cards with avatars and optional source links.",
+      "registryDependencies": ["card", "avatar", "button"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/testimonial9"
+      },
+      "files": [
+        {
+          "path": "blocks/testimonials-01/Testimonials01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/testimonials-01/Testimonials01.astro"
+        },
+        {
+          "path": "blocks/testimonials-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/testimonials-01/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "team-01",
+      "type": "registry:block",
+      "title": "Team 01",
+      "description": "A centered team introduction and responsive member avatar grid.",
+      "registryDependencies": ["avatar"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/team1"
+      },
+      "files": [
+        {
+          "path": "blocks/team-01/Team01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/team-01/Team01.astro"
+        },
+        {
+          "path": "blocks/team-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/team-01/index.ts"
+        },
+        {
+          "path": "blocks/team-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/team-01/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "name": "blog-01",
+      "type": "registry:block",
+      "title": "Blog 01",
+      "description": "A centered blog section with responsive image cards and read-more links.",
+      "registryDependencies": ["badge", "button", "card"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/blog7"
+      },
+      "files": [
+        {
+          "path": "blocks/blog-01/Blog01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/blog-01/Blog01.astro"
+        },
+        {
+          "path": "blocks/blog-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/blog-01/index.ts"
+        },
+        {
+          "path": "blocks/blog-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/blog-01/LICENSE.md"
+        }
+      ],
+      "dependencies": ["@lucide/astro"]
+    },
+    {
+      "name": "contact-01",
+      "type": "registry:block",
+      "title": "Contact 01",
+      "description": "Contact method cards for email, office, phone, and chat.",
+      "registryDependencies": [],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/contact7"
+      },
+      "files": [
+        {
+          "path": "blocks/contact-01/Contact01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/contact-01/Contact01.astro"
+        },
+        {
+          "path": "blocks/contact-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/contact-01/index.ts"
+        },
+        {
+          "path": "blocks/contact-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/contact-01/LICENSE.md"
+        }
+      ],
+      "dependencies": ["@lucide/astro"]
+    },
+    {
+      "name": "stats-01",
+      "type": "registry:block",
+      "title": "Stats 01",
+      "description": "A heading and report link above a responsive four-metric grid.",
+      "registryDependencies": [],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/stats8"
+      },
+      "files": [
+        {
+          "path": "blocks/stats-01/Stats01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/stats-01/Stats01.astro"
+        },
+        {
+          "path": "blocks/stats-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/stats-01/index.ts"
+        },
+        {
+          "path": "blocks/stats-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/stats-01/LICENSE.md"
+        }
+      ],
+      "dependencies": ["@lucide/astro"]
+    },
+    {
+      "name": "gallery-01",
+      "type": "registry:block",
+      "title": "Gallery 01",
+      "description": "A multi-card image gallery carousel with previous and next controls.",
+      "registryDependencies": ["carousel"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/gallery6"
+      },
+      "files": [
+        {
+          "path": "blocks/gallery-01/Gallery01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/gallery-01/Gallery01.astro"
+        },
+        {
+          "path": "blocks/gallery-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/gallery-01/index.ts"
+        },
+        {
+          "path": "blocks/gallery-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/gallery-01/LICENSE.md"
+        }
+      ],
+      "dependencies": ["@lucide/astro"]
+    },
+    {
+      "name": "features-03",
+      "type": "registry:block",
+      "title": "Features 03",
+      "description": "A feature accordion with a synchronized companion image panel.",
+      "registryDependencies": ["accordion"],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/feature197"
+      },
+      "files": [
+        {
+          "path": "blocks/features-03/Features03.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-03/Features03.astro"
+        },
+        {
+          "path": "blocks/features-03/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-03/index.ts"
+        },
+        {
+          "path": "blocks/features-03/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-03/LICENSE.md"
+        }
+      ]
     }
   ]
 }
