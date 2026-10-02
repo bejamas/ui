@@ -85,6 +85,27 @@
  *   </CarouselSlide>
  * </Carousel>
  *
+ * ### Header controls
+ *
+ * Use `CarouselRoot` to compose your own layout. Place `CarouselPrevious` and `CarouselNext` anywhere inside the root, including a header above `CarouselContent`. The runtime keeps their disabled states in sync. Place slides directly inside `CarouselContent`.
+ *
+ * `CarouselRoot` accepts `orientation`, `axis`, `variant`, `defaultIndex`, `data-loop`, and `drag`. `CarouselContent` inherits orientation and drag from the root and accepts `snapType`, `fade`, and `class`; give vertical content a height. Controls accept button attributes, `variant`, `size`, and `class`, with an optional slot for a custom icon or text and `aria-label` for a custom accessible name. The composed root renders only its slot; the existing `Carousel` continues to provide its default controls, viewport, and counter.
+ *
+ * <CarouselRoot aria-label="Featured cards" class="mx-auto max-w-sm space-y-4">
+ *   <header class="flex items-center justify-between gap-4">
+ *     <h3 class="font-semibold">Featured cards</h3>
+ *     <div class="flex gap-2">
+ *       <CarouselPrevious />
+ *       <CarouselNext />
+ *     </div>
+ *   </header>
+ *   <CarouselContent>
+ *     <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 1</div></CarouselSlide>
+ *     <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 2</div></CarouselSlide>
+ *     <CarouselSlide><div class="rounded-lg bg-muted p-6">Card 3</div></CarouselSlide>
+ *   </CarouselContent>
+ * </CarouselRoot>
+ *
  * ### Looping
  *
  * Set `data-loop="true"` to wrap button, keyboard, and programmatic navigation from the last slide to the first and back. Looping defaults to `false`.
@@ -287,39 +308,7 @@ const vertical = orientation === "vertical";
 </div>
 
 <script>
-  import { createCarousel, type CarouselController } from "@data-slot/carousel";
-
-  const carousels = new Map<HTMLElement, CarouselController>();
-
-  function initializeCarousels() {
-    document
-      .querySelectorAll<HTMLElement>('[data-slot="carousel"]')
-      .forEach((root) => {
-        if (carousels.has(root)) return;
-        const content = root.querySelector('[data-slot="carousel-content"]');
-        if (!content?.querySelector(':scope > [data-slot="carousel-item"]'))
-          return;
-        const counter = root.querySelector<HTMLElement>(
-          ':scope > [data-slot="carousel-counter"]',
-        );
-        const updateCounter = () => {
-          const carousel = carousels.get(root);
-          if (counter && carousel) {
-            counter.textContent = carousel.count
-              ? `${root.dataset.counterLabel} ${carousel.index + 1} of ${carousel.count}`
-              : "";
-          }
-        };
-        const carousel = createCarousel(root, { onIndexChange: updateCounter });
-        carousels.set(root, carousel);
-        updateCounter();
-      });
-  }
+  import { initializeCarousels } from "./carousel";
 
   initializeCarousels();
-  document.addEventListener("astro:page-load", initializeCarousels);
-  document.addEventListener("astro:before-swap", () => {
-    carousels.forEach((carousel) => carousel.destroy());
-    carousels.clear();
-  });
 </script>

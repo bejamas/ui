@@ -1,0 +1,48 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/registry/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  orientation?: "horizontal" | "vertical";
+  variant?: "single" | "multiple";
+  defaultIndex?: number;
+  "data-loop"?: boolean | string;
+  drag?: boolean;
+  axis?: "x" | "y";
+  class?: string;
+}
+
+const {
+  axis = "x",
+  orientation = axis === "y" ? "vertical" : "horizontal",
+  variant = "single",
+  defaultIndex = 0,
+  "data-loop": dataLoop = false,
+  drag = true,
+  class: className,
+  "aria-label": ariaLabel = "Carousel",
+  ...rest
+} = Astro.props;
+---
+
+<div
+  {...rest}
+  role="region"
+  aria-roledescription="carousel"
+  aria-label={ariaLabel}
+  data-slot="carousel"
+  data-orientation={orientation}
+  data-variant={variant}
+  data-default-index={defaultIndex}
+  data-loop={String(dataLoop)}
+  data-drag={String(drag)}
+  class={cn("group/carousel relative w-full min-w-0", className)}
+>
+  <slot />
+</div>
+
+<script>
+  import { initializeCarousels } from "./carousel";
+
+  initializeCarousels();
+</script>

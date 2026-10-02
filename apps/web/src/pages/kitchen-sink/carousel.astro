@@ -1,7 +1,14 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
-import { Carousel, CarouselSlide } from "@bejamas/registry/ui/carousel";
+import {
+  Carousel,
+  CarouselSlide,
+  CarouselRoot,
+  CarouselContent,
+  CarouselPrevious,
+  CarouselNext,
+} from "@bejamas/registry/ui/carousel";
 ---
 
 <KitchenSinkLayout>
@@ -145,6 +152,31 @@ import { Carousel, CarouselSlide } from "@bejamas/registry/ui/carousel";
         </Carousel>
       </KitchenSinkSection>
     </div>
+    <KitchenSinkSection title="Header controls">
+      <CarouselRoot
+        aria-label="Featured cards"
+        class="mx-auto max-w-sm space-y-4"
+      >
+        <header class="flex items-center justify-between gap-4">
+          <h3 class="font-semibold">Featured cards</h3>
+          <div class="flex gap-2">
+            <CarouselPrevious />
+            <CarouselNext />
+          </div>
+        </header>
+        <CarouselContent>
+          <CarouselSlide>
+            <div class="rounded-lg bg-muted p-6">Card 1</div>
+          </CarouselSlide>
+          <CarouselSlide>
+            <div class="rounded-lg bg-muted p-6">Card 2</div>
+          </CarouselSlide>
+          <CarouselSlide>
+            <div class="rounded-lg bg-muted p-6">Card 3</div>
+          </CarouselSlide>
+        </CarouselContent>
+      </CarouselRoot>
+    </KitchenSinkSection>
     <KitchenSinkSection title="Looping with an initial slide">
       <Carousel
         aria-label="Looping cards"

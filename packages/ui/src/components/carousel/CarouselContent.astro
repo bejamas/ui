@@ -1,0 +1,39 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/carousel/CarouselContent.astro directly.
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@bejamas/ui/lib/utils";
+
+interface Props extends HTMLAttributes<"div"> {
+  snapType?: "mandatory" | "proximity";
+  fade?: boolean;
+  class?: string;
+}
+
+const {
+  snapType = "mandatory",
+  fade = false,
+  class: className,
+  tabindex = 0,
+  "aria-label": ariaLabel = "Slides",
+  ...rest
+} = Astro.props;
+---
+
+<div
+  {...rest}
+  data-slot="carousel-content"
+  tabindex={tabindex}
+  role="group"
+  aria-label={ariaLabel}
+  class={cn(
+    "flex min-h-0 min-w-0 w-full gap-4 overflow-auto overscroll-contain rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+    "group-data-[orientation=horizontal]/carousel:snap-x group-data-[orientation=vertical]/carousel:flex-col group-data-[orientation=vertical]/carousel:snap-y",
+    snapType === "mandatory" ? "snap-mandatory" : "snap-proximity",
+    "group-data-[drag=true]/carousel:cursor-grab group-data-[dragging=true]/carousel:cursor-grabbing",
+    fade &&
+      "group-data-[orientation=horizontal]/carousel:mask-x-from-80% group-data-[orientation=horizontal]/carousel:mask-x-to-95% group-data-[orientation=vertical]/carousel:mask-y-from-80% group-data-[orientation=vertical]/carousel:mask-y-to-95%",
+    className,
+  )}
+>
+  <slot />
+</div>

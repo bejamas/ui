@@ -32,7 +32,10 @@ describe("carousel distribution", () => {
         item.files.map((file) => [file.path, file.content]),
       );
       const carousel = files.get("ui/carousel/Carousel.astro")!;
-      expect(carousel).toContain('from "@data-slot/carousel"');
+      expect(carousel).toContain('from "./carousel"');
+      expect(files.get("ui/carousel/carousel.ts")).toContain(
+        'from "@data-slot/carousel"',
+      );
       for (const slot of [
         "carousel",
         "carousel-content",
@@ -44,6 +47,23 @@ describe("carousel distribution", () => {
       expect(files.get("ui/carousel/CarouselSlide.astro")).toContain(
         'data-slot="carousel-item"',
       );
+      const root = files.get("ui/carousel/CarouselRoot.astro")!;
+      expect(root).toContain('data-slot="carousel"');
+      expect(root).toContain('from "./carousel"');
+      expect(root).not.toContain('data-slot="carousel-content"');
+      expect(root).not.toContain("grid-cols-");
+      const exports = files.get("ui/carousel/index.ts")!;
+      for (const [part, slot] of [
+        ["CarouselContent", "carousel-content"],
+        ["CarouselPrevious", "carousel-previous"],
+        ["CarouselNext", "carousel-next"],
+      ]) {
+        expect(exports).toContain(`default as ${part}`);
+        expect(files.get(`ui/carousel/${part}.astro`)).toContain(
+          `data-slot="${slot}"`,
+        );
+      }
+      expect(exports).toContain("default as CarouselRoot");
       // Installer output must not retain source-workspace aliases.
       for (const file of item.files) {
         const runtime = file.content.replace(/\/\*[\s\S]*?\*\//g, "");
@@ -56,6 +76,14 @@ describe("carousel distribution", () => {
         expect(installed).not.toContain("<SemanticIcon");
         expect(installed).not.toContain("SemanticIcon.astro");
         expect(installed.match(/<svg\b/g)).toHaveLength(2);
+        for (const part of ["CarouselPrevious", "CarouselNext"]) {
+          const installedPart = rewriteAstroIcons(
+            files.get(`ui/carousel/${part}.astro`)!,
+            library,
+          );
+          expect(installedPart).not.toContain("SemanticIcon");
+          expect(installedPart.match(/<svg\b/g)).toHaveLength(1);
+        }
       }
     }
   });
@@ -69,6 +97,10 @@ describe("carousel distribution", () => {
         path.resolve(repoRoot, file),
         "utf8",
       ).toLowerCase();
+      expect(content).toContain("header controls");
+      expect(content).toContain("<carouselroot");
+      expect(content).toContain("<carouselprevious");
+      expect(content).toContain("<carouselnext");
       for (const orientation of ["horizontal", "vertical"]) {
         for (const variant of ["single", "multiple"]) {
           expect(content).toContain(`${orientation} ${variant}`);
