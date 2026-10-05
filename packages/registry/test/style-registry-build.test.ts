@@ -134,6 +134,13 @@ describe("style registry build", () => {
         "@bejamas/semantic-icons",
       ]),
     ).toEqual(["@data-slot/command"]);
+    expect(
+      normalizeDependenciesForInstall([
+        "@data-slot/collapsible",
+        "@data-slot/collapsible@^1.1.1",
+        "@data-slot/collapsible",
+      ]),
+    ).toEqual(["@data-slot/collapsible@^1.1.1"]);
 
     expect(
       existsSync(

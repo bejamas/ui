@@ -1,0 +1,39 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import HamburgerMenuExample from "@/components/HamburgerMenuExample.astro";
+---
+
+<KitchenSinkLayout>
+  <section class="mx-auto max-w-5xl space-y-8 px-5 py-20">
+    <h1 class="text-3xl font-bold">Hamburger Menu</h1>
+    <p class="text-muted-foreground">
+      Open the menus with mouse, touch, or keyboard. Press Escape to close one.
+    </p>
+
+    <div class="space-y-3">
+      <h2 class="text-lg font-semibold">Closed</h2>
+      <div class="relative w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
+        <HamburgerMenuExample closeOnOutsideClick={false} />
+      </div>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-2">
+      <div class="space-y-3">
+        <h2 class="text-lg font-semibold">Opened Simple</h2>
+        <div class="relative w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
+          <HamburgerMenuExample defaultOpen closeOnOutsideClick={false} />
+        </div>
+      </div>
+      <div class="space-y-3">
+        <h2 class="text-lg font-semibold">Opened Advanced</h2>
+        <div class="relative w-full max-w-[375px] overflow-hidden rounded-lg border border-border [--hamburger-menu-panel-height:688px] [&:has([data-state=open])]:h-[736px]">
+          <HamburgerMenuExample
+            withGroups
+            defaultOpen
+            closeOnOutsideClick={false}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+</KitchenSinkLayout>

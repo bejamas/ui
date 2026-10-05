@@ -383,8 +383,11 @@ async function main() {
       (name) => !RESERVED_COMPONENTS.has(name),
     );
 
-    const lucideIcons = autoImports.filter((n) => /Icon$/.test(n));
-    const uiAutoImports = autoImports.filter((n) => !/Icon$/.test(n));
+    // Installed UI exports take precedence over the Lucide naming convention.
+    const isLucideIcon = (name: string) =>
+      /Icon$/.test(name) && !componentFolderMap[name];
+    const lucideIcons = autoImports.filter(isLucideIcon);
+    const uiAutoImports = autoImports.filter((name) => !isLucideIcon(name));
 
     const missingComponents = uiAutoImports.filter(
       (name) => !availableComponents.includes(name),

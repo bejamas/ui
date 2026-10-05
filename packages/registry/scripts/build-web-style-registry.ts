@@ -409,13 +409,16 @@ export function normalizeDependenciesForInstall(dependencies?: string[]) {
     return dependencies;
   }
 
-  return Array.from(
-    new Set(
-      dependencies.filter(
-        (dependency) => !installerRewrittenIconDependencies.has(dependency),
-      ),
-    ),
-  );
+  const byPackage = new Map<string, string>();
+  for (const dependency of dependencies) {
+    const name =
+      dependency.match(/^(@[^/]+\/[^@/]+|[^@/]+)/)?.[1] ?? dependency;
+    if (installerRewrittenIconDependencies.has(name)) continue;
+    // Keep a versioned specifier, so installers upgrade an existing package.
+    const existing = byPackage.get(name);
+    if (!existing || existing === name) byPackage.set(name, dependency);
+  }
+  return [...byPackage.values()];
 }
 
 async function readJson<T>(filepath: string) {

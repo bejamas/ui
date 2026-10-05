@@ -151,7 +151,14 @@ test("docs:build handles the scaffolded subset, repeated runs and newly installe
   expect(await fs.readFile(labelPath, "utf8")).toBe(first);
 
   const registry = path.resolve(import.meta.dir, "../../registry/src/ui");
-  for (const name of ["checkbox", "input", "input-group", "spinner"]) {
+  for (const name of [
+    "checkbox",
+    "input",
+    "input-group",
+    "spinner",
+    "icon",
+    "hamburger-menu",
+  ]) {
     await fs.cp(
       path.join(registry, name),
       path.join(cwd, "src/components", name),
@@ -177,6 +184,17 @@ test("docs:build handles the scaffolded subset, repeated runs and newly installe
   expect(executable(spinner)).not.toMatch(
     /import\s*\{[^}]*\bInputGroup\b[^}]*\}\s*from\s*["']@repo\/ui\/components\/input["']/,
   );
+  const hamburgerMenu = await fs.readFile(
+    path.join(cwd, "docs/hamburger-menu.mdx"),
+    "utf8",
+  );
+  expect(hamburgerMenu).toContain(
+    "import { SemanticIcon } from '@repo/ui/components/icon';",
+  );
+  expect(hamburgerMenu).not.toMatch(
+    /import\s*\{[^}]*\bSemanticIcon\b[^}]*\}\s*from\s*["']@lucide\/astro["']/,
+  );
+  expect(executable(hamburgerMenu)).toContain('<SemanticIcon name="sun" />');
 }, 15000);
 
 test("docs:build uses explicit UI and output paths without prompting", async () => {
