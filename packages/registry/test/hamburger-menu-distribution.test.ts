@@ -20,13 +20,10 @@ describe("hamburger menu distribution", () => {
         item.files.map((file) => [file.path, file.content]),
       );
       const menu = source.get("ui/hamburger-menu/HamburgerMenu.astro")!;
-      const menuItem = source.get("ui/hamburger-menu/MenuItem.astro")!;
-      const group = source.get("ui/hamburger-menu/MenuGroup.astro")!;
+      const menuItem = source.get("ui/hamburger-menu/HamburgerMenuItem.astro")!;
+      const group = source.get("ui/hamburger-menu/HamburgerMenuGroup.astro")!;
       const exports = source.get("ui/hamburger-menu/index.ts")!;
 
-      expect(menu).toContain("--hamburger-menu-panel-height");
-      expect(menu).not.toContain("data-variant");
-      expect(menu).not.toContain("variant?:");
       expect(item.dependencies).toContain("@data-slot/collapsible");
       expect(menu).toContain(
         'import { createCollapsible } from "@data-slot/collapsible"',
@@ -34,16 +31,16 @@ describe("hamburger menu distribution", () => {
       expect(menu).toContain('data-slot="collapsible-trigger"');
       expect(menu).toContain('data-slot="collapsible-content"');
       expect(menu).toContain("hidden={!defaultOpen}");
-      expect(menu).toContain('panel.removeAttribute("role")');
+      expect(menu).toContain("--hamburger-menu-panel-height");
       expect(menu).toContain("data-close-on-escape");
+      expect(menu).toContain("data-close-on-click-outside");
       expect(menu).toContain("closeOnOutsideClick?: boolean");
-      expect(menu).toContain(
-        "data-close-on-click-outside={closeOnOutsideClick ? true : undefined}",
-      );
-      expect(menuItem).not.toContain("py-1");
+      expect(menu).toContain("triggerLabel?: string");
+      expect(menu).toContain("<nav");
+      expect(menuItem).toContain('data-slot="hamburger-menu-link"');
       expect(group).toContain('data-slot="hamburger-menu-group"');
-      expect(exports).toContain('default as MenuItem');
-      expect(exports).toContain('default as MenuGroup');
+      expect(exports).toContain("default as HamburgerMenuItem");
+      expect(exports).toContain("default as HamburgerMenuGroup");
     }
   });
 

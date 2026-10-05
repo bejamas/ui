@@ -11,22 +11,22 @@
  *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
  *     <Button slot="actions" type="button" variant="secondary" size="icon" aria-label="Toggle theme"><SemanticIcon name="sun" /></Button>
  *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
- *     <MenuItem href="#getting-started">Getting started</MenuItem>
- *     <MenuItem href="#components">Components</MenuItem>
+ *     <HamburgerMenuItem href="#getting-started">Getting started</HamburgerMenuItem>
+ *     <HamburgerMenuItem href="#components">Components</HamburgerMenuItem>
  *   </HamburgerMenu>
  * </div>
  *
  * @usage
  * ```astro nocollapse
  * ---
- * import { HamburgerMenu, MenuItem, MenuGroup } from '@bejamas/ui/components/hamburger-menu';
+ * import { HamburgerMenu, HamburgerMenuItem, HamburgerMenuGroup } from '@bejamas/ui/components/hamburger-menu';
  * ---
  * <HamburgerMenu>
  *   <a slot="brand" href="/">Bejamas UI</a>
- *   <MenuGroup label="Getting started" defaultOpen>
- *     <MenuItem href="/introduction">Introduction</MenuItem>
- *     <MenuItem href="/installation">Installation</MenuItem>
- *   </MenuGroup>
+ *   <HamburgerMenuGroup label="Getting started" defaultOpen>
+ *     <HamburgerMenuItem href="/introduction">Introduction</HamburgerMenuItem>
+ *     <HamburgerMenuItem href="/installation">Installation</HamburgerMenuItem>
+ *   </HamburgerMenuGroup>
  * </HamburgerMenu>
  * ```
  *
@@ -34,7 +34,7 @@
  *
  * The 48px header remains visible while the panel fills the rest of the viewport. Add your own controls with the `brand`, `actions`, and `footer` slots. For a fixed-height preview, set `--hamburger-menu-panel-height` on a parent element.
  *
- * The trigger supports mouse, touch, Enter, and Space. Escape closes the panel and returns focus to the trigger when focus was inside the menu. Clicking outside the menu or selecting a link closes the panel. Popovers and menus opened from the menu close first and count as inside it. Set `closeOnOutsideClick={false}` to keep the panel open while interacting with the rest of the page, for example in previews. Groups use native disclosure elements and support keyboard interaction.
+ * The trigger is named by `triggerLabel` and reports its state with `aria-expanded`. It supports mouse, touch, Enter, and Space. Escape closes the panel and returns focus to the trigger when focus was inside the menu. Clicking outside the menu or selecting a link closes the panel. Popovers and menus opened from the menu close first and count as inside it. Set `closeOnOutsideClick={false}` to keep the panel open while interacting with the rest of the page, for example in previews. Groups use native disclosure elements and support keyboard interaction.
  *
  * The open state and dismissal are managed by `@data-slot/collapsible`, so the root sets `data-state` (`open` or `closed`), emits `collapsible:change` with `{ open: boolean }`, and accepts `collapsible:set` with `{ open: boolean }` for programmatic control.
  *
@@ -47,7 +47,7 @@
  *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
  *     <Button slot="actions" type="button" variant="secondary" size="icon" aria-label="Toggle theme"><SemanticIcon name="sun" /></Button>
  *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
- *     <MenuItem href="#getting-started">Getting started</MenuItem>
+ *     <HamburgerMenuItem href="#getting-started">Getting started</HamburgerMenuItem>
  *   </HamburgerMenu>
  * </div>
  *
@@ -58,14 +58,14 @@
  *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
  *     <Button slot="actions" type="button" variant="secondary" size="icon" aria-label="Toggle theme"><SemanticIcon name="sun" /></Button>
  *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
- *     <MenuItem href="#getting-started">Getting started</MenuItem>
- *     <MenuItem href="#installation">Installation</MenuItem>
- *     <MenuItem href="#components">Components</MenuItem>
- *     <MenuItem href="#concepts">Concepts</MenuItem>
- *     <MenuItem href="#blog">Blog</MenuItem>
- *     <MenuItem href="#about">About us</MenuItem>
- *     <MenuItem href="#contact">Contact us</MenuItem>
- *     <MenuItem href="#faq">FAQ</MenuItem>
+ *     <HamburgerMenuItem href="#getting-started">Getting started</HamburgerMenuItem>
+ *     <HamburgerMenuItem href="#installation">Installation</HamburgerMenuItem>
+ *     <HamburgerMenuItem href="#components">Components</HamburgerMenuItem>
+ *     <HamburgerMenuItem href="#concepts">Concepts</HamburgerMenuItem>
+ *     <HamburgerMenuItem href="#blog">Blog</HamburgerMenuItem>
+ *     <HamburgerMenuItem href="#about">About us</HamburgerMenuItem>
+ *     <HamburgerMenuItem href="#contact">Contact us</HamburgerMenuItem>
+ *     <HamburgerMenuItem href="#faq">FAQ</HamburgerMenuItem>
  *     <Button slot="footer" as="a" href="https://x.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on X"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/social-x.svg" width="16" height="16" alt="" /></Button>
  *     <Button slot="footer" as="a" href="https://github.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on GitHub"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-footer.svg" width="16" height="16" alt="" /></Button>
  *   </HamburgerMenu>
@@ -78,16 +78,16 @@
  *     <span slot="brand" class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground">Slot area</span>
  *     <Button slot="actions" type="button" variant="secondary" size="icon" aria-label="Toggle theme"><SemanticIcon name="sun" /></Button>
  *     <Button slot="actions" as="a" href="https://github.com/bejamas" variant="secondary" aria-label="Bejamas on GitHub, 220 stars"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-header.svg" width="14" height="14" alt="" />220</Button>
- *     <MenuGroup label="Getting started" defaultOpen>
- *       <MenuItem href="#introduction">Introduction</MenuItem>
- *       <MenuItem href="#installation-advanced">Installation</MenuItem>
- *       <MenuItem href="#cli">CLI</MenuItem>
- *       <MenuItem href="#forms">Forms with Astro Actions</MenuItem>
- *     </MenuGroup>
- *     <MenuGroup label="Components"><MenuItem href="#buttons">Buttons</MenuItem></MenuGroup>
- *     <MenuGroup label="Concepts"><MenuItem href="#theming">Theming</MenuItem></MenuGroup>
- *     <MenuGroup label="About us"><MenuItem href="#team">Team</MenuItem></MenuGroup>
- *     <MenuGroup label="Contact us"><MenuItem href="#contact-details">Contact details</MenuItem></MenuGroup>
+ *     <HamburgerMenuGroup label="Getting started" defaultOpen>
+ *       <HamburgerMenuItem href="#introduction">Introduction</HamburgerMenuItem>
+ *       <HamburgerMenuItem href="#installation-advanced">Installation</HamburgerMenuItem>
+ *       <HamburgerMenuItem href="#cli">CLI</HamburgerMenuItem>
+ *       <HamburgerMenuItem href="#forms">Forms with Astro Actions</HamburgerMenuItem>
+ *     </HamburgerMenuGroup>
+ *     <HamburgerMenuGroup label="Components"><HamburgerMenuItem href="#buttons">Buttons</HamburgerMenuItem></HamburgerMenuGroup>
+ *     <HamburgerMenuGroup label="Concepts"><HamburgerMenuItem href="#theming">Theming</HamburgerMenuItem></HamburgerMenuGroup>
+ *     <HamburgerMenuGroup label="About us"><HamburgerMenuItem href="#team">Team</HamburgerMenuItem></HamburgerMenuGroup>
+ *     <HamburgerMenuGroup label="Contact us"><HamburgerMenuItem href="#contact-details">Contact details</HamburgerMenuItem></HamburgerMenuGroup>
  *     <Button slot="footer" as="a" href="https://x.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on X"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/social-x.svg" width="16" height="16" alt="" /></Button>
  *     <Button slot="footer" as="a" href="https://github.com/bejamas" variant="secondary" size="icon" aria-label="Bejamas on GitHub"><img class="dark:brightness-0 dark:invert" src="/figma/hamburger-menu/github-footer.svg" width="16" height="16" alt="" /></Button>
  *   </HamburgerMenu>
@@ -104,6 +104,8 @@ interface Props extends HTMLAttributes<"div"> {
   closeOnOutsideClick?: boolean;
   /** Accessible name of the navigation region. */
   label?: string;
+  /** Accessible name of the menu trigger. */
+  triggerLabel?: string;
 }
 
 const {
@@ -111,6 +113,7 @@ const {
   defaultOpen = false,
   closeOnOutsideClick = true,
   label = "Mobile navigation",
+  triggerLabel = "Menu",
   id = `hamburger-menu-${crypto.randomUUID()}`,
   ...rest
 } = Astro.props as Props;
@@ -145,7 +148,7 @@ const panelId = `${id}-panel`;
         type="button"
         data-slot="collapsible-trigger"
         class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-foreground outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        aria-label={defaultOpen ? "Close menu" : "Open menu"}
+        aria-label={triggerLabel}
         aria-controls={panelId}
         aria-expanded={defaultOpen ? "true" : "false"}
       >
@@ -160,30 +163,32 @@ const panelId = `${id}-panel`;
       </button>
     </div>
   </div>
-  <nav
+  <div
     id={panelId}
     data-slot="collapsible-content"
-    aria-label={label}
     hidden={!defaultOpen}
-    class={cn(
-      "absolute inset-x-0 top-full z-50 flex h-[var(--hamburger-menu-panel-height,calc(100dvh-3rem))] flex-col justify-between overflow-y-auto overscroll-contain bg-background px-3 pt-3 pb-6 shadow-sm",
-    )}
+    class="absolute inset-x-0 top-full z-50 h-[var(--hamburger-menu-panel-height,calc(100dvh-3rem))] overflow-y-auto overscroll-contain bg-background px-3 pt-3 pb-6 shadow-sm"
   >
-    <div
-      data-slot="hamburger-menu-items"
-      class="flex flex-col gap-2"
+    <nav
+      aria-label={label}
+      class="flex min-h-full flex-col justify-between"
     >
-      <slot />
-    </div>
-    {Astro.slots.has("footer") && (
       <div
-        data-slot="hamburger-menu-footer"
-        class="mt-8 flex items-center gap-1.5"
+        data-slot="hamburger-menu-items"
+        class="flex flex-col gap-2"
       >
-        <slot name="footer" />
+        <slot />
       </div>
-    )}
-  </nav>
+      {Astro.slots.has("footer") && (
+        <div
+          data-slot="hamburger-menu-footer"
+          class="mt-8 flex items-center gap-1.5"
+        >
+          <slot name="footer" />
+        </div>
+      )}
+    </nav>
+  </div>
 </div>
 
 <script>
@@ -197,40 +202,15 @@ const panelId = `${id}-panel`;
       .forEach((root) => {
         if (menus.has(root)) return;
         const collapsible = createCollapsible(root);
-        const trigger = root.querySelector<HTMLButtonElement>(
-          '[data-slot="collapsible-trigger"]',
-        )!;
-        const panel = root.querySelector<HTMLElement>(
-          '[data-slot="collapsible-content"]',
-        )!;
-        // Collapsible turns its content into a region labelled by the trigger;
-        // keep the panel a navigation landmark named by `label`.
-        panel.removeAttribute("role");
-        panel.removeAttribute("aria-labelledby");
-        const controller = new AbortController();
-        const { signal } = controller;
-
-        root.addEventListener(
-          "collapsible:change",
-          () => {
-            trigger.setAttribute(
-              "aria-label",
-              collapsible.isOpen ? "Close menu" : "Open menu",
-            );
-          },
-          { signal },
-        );
-        panel.addEventListener(
-          "click",
-          (event) => {
-            const target = event.target;
-            if (target instanceof Element && target.closest("a[href]"))
-              collapsible.close();
-          },
-          { signal },
-        );
+        // Selecting a link navigates, so close the panel.
+        const closeOnLinkClick = (event: Event) => {
+          const target = event.target;
+          if (target instanceof Element && target.closest("a[href]"))
+            collapsible.close();
+        };
+        root.addEventListener("click", closeOnLinkClick);
         menus.set(root, () => {
-          controller.abort();
+          root.removeEventListener("click", closeOnLinkClick);
           collapsible.destroy();
         });
       });
