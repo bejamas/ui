@@ -35,10 +35,10 @@ describe("hamburger menu distribution", () => {
       expect(menu).toContain('data-slot="collapsible-content"');
       expect(menu).toContain("hidden={!defaultOpen}");
       expect(menu).toContain('panel.removeAttribute("role")');
-      expect(menu).toContain('event.key !== "Escape"');
+      expect(menu).toContain("data-close-on-escape");
       expect(menu).toContain("closeOnOutsideClick?: boolean");
       expect(menu).toContain(
-        'root.dataset.closeOnOutsideClick !== "false"',
+        "data-close-on-click-outside={closeOnOutsideClick ? true : undefined}",
       );
       expect(menuItem).not.toContain("py-1");
       expect(group).toContain('data-slot="hamburger-menu-group"');

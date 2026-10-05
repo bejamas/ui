@@ -176,6 +176,6 @@ import { HamburgerMenu, MenuGroup, MenuItem } from '@bejamas/registry/ui/hamburg
 
 The 48px header remains visible while the panel fills the rest of the viewport. Add your own controls with the `brand`, `actions`, and `footer` slots. For a fixed-height preview, set `--hamburger-menu-panel-height` on a parent element.
 
-The trigger supports mouse, touch, Enter, and Space. Escape closes the panel and returns focus to the trigger when focus was inside the menu. Clicking outside the menu or selecting a link closes the panel. Set `closeOnOutsideClick={false}` to keep the panel open while interacting with the rest of the page, for example in previews. Groups use native disclosure elements and support keyboard interaction.
+The trigger supports mouse, touch, Enter, and Space. Escape closes the panel and returns focus to the trigger when focus was inside the menu. Clicking outside the menu or selecting a link closes the panel. Popovers and menus opened from the menu close first and count as inside it. Set `closeOnOutsideClick={false}` to keep the panel open while interacting with the rest of the page, for example in previews. Groups use native disclosure elements and support keyboard interaction.
 
-The open state is managed by `@data-slot/collapsible`, so the root sets `data-state` (`open` or `closed`), emits `collapsible:change` with `{ open: boolean }`, and accepts `collapsible:set` with `{ open: boolean }` for programmatic control.
+The open state and dismissal are managed by `@data-slot/collapsible`, so the root sets `data-state` (`open` or `closed`), emits `collapsible:change` with `{ open: boolean }`, and accepts `collapsible:set` with `{ open: boolean }` for programmatic control.

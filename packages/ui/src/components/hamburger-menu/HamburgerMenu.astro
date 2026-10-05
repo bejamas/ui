@@ -35,9 +35,9 @@
  *
  * The 48px header remains visible while the panel fills the rest of the viewport. Add your own controls with the `brand`, `actions`, and `footer` slots. For a fixed-height preview, set `--hamburger-menu-panel-height` on a parent element.
  *
- * The trigger supports mouse, touch, Enter, and Space. Escape closes the panel and returns focus to the trigger when focus was inside the menu. Clicking outside the menu or selecting a link closes the panel. Set `closeOnOutsideClick={false}` to keep the panel open while interacting with the rest of the page, for example in previews. Groups use native disclosure elements and support keyboard interaction.
+ * The trigger supports mouse, touch, Enter, and Space. Escape closes the panel and returns focus to the trigger when focus was inside the menu. Clicking outside the menu or selecting a link closes the panel. Popovers and menus opened from the menu close first and count as inside it. Set `closeOnOutsideClick={false}` to keep the panel open while interacting with the rest of the page, for example in previews. Groups use native disclosure elements and support keyboard interaction.
  *
- * The open state is managed by `@data-slot/collapsible`, so the root sets `data-state` (`open` or `closed`), emits `collapsible:change` with `{ open: boolean }`, and accepts `collapsible:set` with `{ open: boolean }` for programmatic control.
+ * The open state and dismissal are managed by `@data-slot/collapsible`, so the root sets `data-state` (`open` or `closed`), emits `collapsible:change` with `{ open: boolean }`, and accepts `collapsible:set` with `{ open: boolean }` for programmatic control.
  *
  * @examples
  *
@@ -124,7 +124,8 @@ const panelId = `${id}-panel`;
   data-slot="hamburger-menu"
   data-state={defaultOpen ? "open" : "closed"}
   data-default-open={defaultOpen ? true : undefined}
-  data-close-on-outside-click={closeOnOutsideClick ? undefined : "false"}
+  data-close-on-escape
+  data-close-on-click-outside={closeOnOutsideClick ? true : undefined}
   class={cn(
     "group/hamburger-menu relative w-full bg-background text-foreground",
     className,
@@ -189,85 +190,57 @@ const panelId = `${id}-panel`;
 <script>
   import { createCollapsible } from "@data-slot/collapsible";
 
-  function initializeHamburgerMenu(root: HTMLElement) {
-    if (root.dataset.initialized === "true") return;
-    root.dataset.initialized = "true";
-    const trigger = root.querySelector<HTMLButtonElement>(
-      '[data-slot="collapsible-trigger"]',
-    );
-    const panel = root.querySelector<HTMLElement>(
-      '[data-slot="collapsible-content"]',
-    );
-    if (!trigger || !panel) return;
-    const collapsible = createCollapsible(root);
-    // Collapsible turns its content into a region labelled by the trigger;
-    // keep the panel a navigation landmark named by `label`.
-    panel.removeAttribute("role");
-    panel.removeAttribute("aria-labelledby");
-    const controller = new AbortController();
-    const { signal } = controller;
+  const menus = new Map<HTMLElement, () => void>();
 
-    root.addEventListener(
-      "collapsible:change",
-      () => {
-        trigger.setAttribute(
-          "aria-label",
-          collapsible.isOpen ? "Close menu" : "Open menu",
-        );
-      },
-      { signal },
-    );
-    // Listen on the document: Safari does not focus buttons on click, so a
-    // listener on the root would miss Escape after opening with the mouse.
-    document.addEventListener(
-      "keydown",
-      (event) => {
-        if (event.key !== "Escape" || !collapsible.isOpen) return;
-        const restoreFocus = root.contains(document.activeElement);
-        collapsible.close();
-        if (restoreFocus) trigger.focus();
-      },
-      { signal },
-    );
-    document.addEventListener(
-      "pointerdown",
-      (event) => {
-        if (
-          collapsible.isOpen &&
-          root.dataset.closeOnOutsideClick !== "false" &&
-          event.target instanceof Node &&
-          !root.contains(event.target)
-        ) {
-          collapsible.close();
-        }
-      },
-      { signal },
-    );
-    panel.addEventListener(
-      "click",
-      (event) => {
-        const target = event.target;
-        if (target instanceof Element && target.closest("a[href]"))
-          collapsible.close();
-      },
-      { signal },
-    );
-    document.addEventListener(
-      "astro:before-swap",
-      () => {
-        controller.abort();
-        collapsible.destroy();
-      },
-      { once: true, signal },
-    );
-  }
-
-  document
-    .querySelectorAll<HTMLElement>('[data-slot="hamburger-menu"]')
-    .forEach(initializeHamburgerMenu);
-  document.addEventListener("astro:page-load", () => {
+  function initializeHamburgerMenus() {
     document
       .querySelectorAll<HTMLElement>('[data-slot="hamburger-menu"]')
-      .forEach(initializeHamburgerMenu);
+      .forEach((root) => {
+        if (menus.has(root)) return;
+        const collapsible = createCollapsible(root);
+        const trigger = root.querySelector<HTMLButtonElement>(
+          '[data-slot="collapsible-trigger"]',
+        )!;
+        const panel = root.querySelector<HTMLElement>(
+          '[data-slot="collapsible-content"]',
+        )!;
+        // Collapsible turns its content into a region labelled by the trigger;
+        // keep the panel a navigation landmark named by `label`.
+        panel.removeAttribute("role");
+        panel.removeAttribute("aria-labelledby");
+        const controller = new AbortController();
+        const { signal } = controller;
+
+        root.addEventListener(
+          "collapsible:change",
+          () => {
+            trigger.setAttribute(
+              "aria-label",
+              collapsible.isOpen ? "Close menu" : "Open menu",
+            );
+          },
+          { signal },
+        );
+        panel.addEventListener(
+          "click",
+          (event) => {
+            const target = event.target;
+            if (target instanceof Element && target.closest("a[href]"))
+              collapsible.close();
+          },
+          { signal },
+        );
+        menus.set(root, () => {
+          controller.abort();
+          collapsible.destroy();
+        });
+      });
+  }
+
+  initializeHamburgerMenus();
+  document.addEventListener("astro:page-load", initializeHamburgerMenus);
+  document.addEventListener("astro:before-swap", () => {
+    menus.forEach((destroy) => destroy());
+    menus.clear();
   });
 </script>
