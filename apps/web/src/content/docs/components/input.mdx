@@ -7,6 +7,7 @@ figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-i
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
 
 import { Button } from '@bejamas/registry/ui/button';
+import { Field, FieldError, FieldLabel } from '@bejamas/registry/ui/field';
 import { Input } from '@bejamas/registry/ui/input';
 import { Label } from '@bejamas/registry/ui/label';
 
@@ -91,6 +92,33 @@ import { Input } from '@bejamas/registry/ui/input';
 ---
 
 <Input type="email" placeholder="Enter your email" disabled />
+```
+
+### Invalid
+
+Set `aria-invalid="true"` to show the error state. Wrap the input in a `Field` with a `FieldError` to describe the problem.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Field data-invalid="true" class="w-full max-w-sm"> <FieldLabel for="email-invalid">{"Email"}</FieldLabel> <Input id="email-invalid" type="email" value="hello@" aria-invalid="true" aria-describedby="email-invalid-error" /> <FieldError id="email-invalid-error">{"Enter a valid email address."}</FieldError> </Field>
+</div>
+
+```astro
+---
+import { Field, FieldError, FieldLabel } from '@bejamas/registry/ui/field';
+import { Input } from '@bejamas/registry/ui/input';
+---
+
+<Field data-invalid="true" class="w-full max-w-sm">
+  <FieldLabel for="email-invalid">Email</FieldLabel>
+  <Input
+    id="email-invalid"
+    type="email"
+    value="hello@"
+    aria-invalid="true"
+    aria-describedby="email-invalid-error"
+  />
+  <FieldError id="email-invalid-error">Enter a valid email address.</FieldError>
+</Field>
 ```
 
 ### Sizes

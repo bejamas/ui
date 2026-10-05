@@ -6,6 +6,7 @@ figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-i
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
 
+import { Field, FieldError, FieldLabel } from '@bejamas/registry/ui/field';
 import { Textarea } from '@bejamas/registry/ui/textarea';
 
 <div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
@@ -53,4 +54,32 @@ import { Textarea } from '@bejamas/ui/components/textarea';
 ---
 
 <Textarea placeholder="Type your message here..." />
+```
+
+## Examples
+
+### Invalid
+
+Set `aria-invalid="true"` to show the error state. Wrap the textarea in a `Field` with a `FieldError` to describe the problem.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Field data-invalid="true" class="w-full max-w-sm"> <FieldLabel for="message-invalid">{"Message"}</FieldLabel> <Textarea id="message-invalid" placeholder="Type your message here..." aria-invalid="true" aria-describedby="message-invalid-error" /> <FieldError id="message-invalid-error">{"Message is required."}</FieldError> </Field>
+</div>
+
+```astro
+---
+import { Field, FieldError, FieldLabel } from '@bejamas/registry/ui/field';
+import { Textarea } from '@bejamas/registry/ui/textarea';
+---
+
+<Field data-invalid="true" class="w-full max-w-sm">
+  <FieldLabel for="message-invalid">Message</FieldLabel>
+  <Textarea
+    id="message-invalid"
+    placeholder="Type your message here..."
+    aria-invalid="true"
+    aria-describedby="message-invalid-error"
+  />
+  <FieldError id="message-invalid-error">Message is required.</FieldError>
+</Field>
 ```
