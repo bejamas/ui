@@ -24,7 +24,7 @@ describe("hamburger menu distribution", () => {
       const group = source.get("ui/hamburger-menu/HamburgerMenuGroup.astro")!;
       const exports = source.get("ui/hamburger-menu/index.ts")!;
 
-      expect(item.dependencies).toContain("@data-slot/collapsible");
+      expect(item.dependencies).toEqual(["@data-slot/collapsible@^1.1.1"]);
       expect(menu).toContain(
         'import { createCollapsible } from "@data-slot/collapsible"',
       );
