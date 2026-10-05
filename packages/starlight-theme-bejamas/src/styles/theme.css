@@ -472,6 +472,19 @@
     z-index: 10;
   }
 
+  /* Draw the border on the wrapper so the collapse overlay and expanded
+     scrolling don't cover or scroll away the pre's own border. */
+  .expressive-code:has(> .ec-collapse) {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .expressive-code:has(> .ec-collapse) pre {
+    border: 0;
+    border-radius: 0;
+  }
+
   .sl-bejamas-component-preview + .expressive-code {
     margin-top: 0;
   }
