@@ -31,6 +31,22 @@
  *
  * <Input type="email" placeholder="Enter your email" disabled />
  *
+ * ### Invalid
+ *
+ * Set `aria-invalid="true"` to show the error state. Wrap the input in a `Field` with a `FieldError` to describe the problem.
+ *
+ * <Field data-invalid="true" class="w-full max-w-sm">
+ *   <FieldLabel for="email-invalid">Email</FieldLabel>
+ *   <Input
+ *     id="email-invalid"
+ *     type="email"
+ *     value="hello@"
+ *     aria-invalid="true"
+ *     aria-describedby="email-invalid-error"
+ *   />
+ *   <FieldError id="email-invalid-error">Enter a valid email address.</FieldError>
+ * </Field>
+ *
  * ### Sizes
  *
  * <div class="grid w-full max-w-sm gap-3">

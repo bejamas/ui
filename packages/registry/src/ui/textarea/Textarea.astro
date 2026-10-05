@@ -20,6 +20,23 @@
  *
  * <Textarea placeholder="Type your message here..." />
  * ```
+ *
+ * @examples
+ *
+ * ### Invalid
+ *
+ * Set `aria-invalid="true"` to show the error state. Wrap the textarea in a `Field` with a `FieldError` to describe the problem.
+ *
+ * <Field data-invalid="true" class="w-full max-w-sm">
+ *   <FieldLabel for="message-invalid">Message</FieldLabel>
+ *   <Textarea
+ *     id="message-invalid"
+ *     placeholder="Type your message here..."
+ *     aria-invalid="true"
+ *     aria-describedby="message-invalid-error"
+ *   />
+ *   <FieldError id="message-invalid-error">Message is required.</FieldError>
+ * </Field>
  */
 
 const { class: className = "", ...props } = Astro.props;
