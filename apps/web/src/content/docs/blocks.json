@@ -18,23 +18,81 @@
   },
   "hero": {
     "label": "Hero",
-    "items": []
+    "items": [
+      {
+        "label": "Hero 1",
+        "id": "hero-01",
+        "description": "A responsive split hero with a badge, two actions, and a framed image.",
+        "href": "/blocks/hero/hero-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/hero1",
+        "sourceCategory": "Hero",
+        "sourceSubcategory": "Hero Basic"
+      }
+    ]
   },
   "cta": {
     "label": "CTA",
-    "items": []
+    "items": [
+      {
+        "label": "Cta 36",
+        "id": "cta-01",
+        "description": "An inline split call to action with two buttons and a closing divider.",
+        "href": "/blocks/cta/cta-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/cta36",
+        "sourceCategory": "Cta",
+        "sourceSubcategory": "CTA Simple"
+      }
+    ]
   },
   "features": {
     "label": "Features",
-    "items": []
+    "items": [
+      {
+        "label": "Feature 13",
+        "id": "features-02",
+        "description": "A two-column feature card grid with labels, linked titles, and images.",
+        "href": "/blocks/features/features-02",
+        "sourceUrl": "https://www.shadcnblocks.com/block/feature13",
+        "sourceCategory": "Feature",
+        "sourceSubcategory": "Feature Card List"
+      },
+      {
+        "label": "Feature 197",
+        "id": "features-03",
+        "description": "A feature accordion with a synchronized companion image panel.",
+        "href": "/blocks/features/features-03",
+        "sourceUrl": "https://www.shadcnblocks.com/block/feature197",
+        "sourceCategory": "Feature"
+      }
+    ]
   },
   "testimonials": {
     "label": "Testimonials",
-    "items": []
+    "items": [
+      {
+        "label": "Testimonial 9",
+        "id": "testimonials-01",
+        "description": "A responsive masonry wall of quote cards with avatars and optional source links.",
+        "href": "/blocks/testimonials/testimonials-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/testimonial9",
+        "sourceCategory": "Testimonial",
+        "sourceSubcategory": "Testimonial Basic Grid"
+      }
+    ]
   },
   "faq": {
     "label": "FAQ",
-    "items": []
+    "items": [
+      {
+        "label": "Faq 1",
+        "id": "faq-01",
+        "description": "A centered FAQ section with accessible collapsible answers.",
+        "href": "/blocks/faq/faq-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/faq1",
+        "sourceCategory": "Faq",
+        "sourceSubcategory": "FAQ Accordion"
+      }
+    ]
   },
   "footers": {
     "label": "Footer",
@@ -44,6 +102,108 @@
         "id": "footer-01",
         "description": "A footer with a call to action, link columns, and legal links.",
         "href": "/blocks/footers/footer-1"
+      }
+    ]
+  },
+  "authentication": {
+    "label": "Authentication",
+    "items": [
+      {
+        "label": "Login 1",
+        "id": "login-01",
+        "description": "A centered email and password login form.",
+        "href": "/blocks/authentication/login-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/login1",
+        "sourceCategory": "Login",
+        "sourceSubcategory": "Login Form"
+      },
+      {
+        "label": "Signup 1",
+        "id": "signup-01",
+        "description": "A centered signup form with password confirmation.",
+        "href": "/blocks/authentication/signup-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/signup1",
+        "sourceCategory": "Signup",
+        "sourceSubcategory": "Signup Form"
+      }
+    ]
+  },
+  "pricing": {
+    "label": "Pricing",
+    "items": [
+      {
+        "label": "Pricing 2",
+        "id": "pricing-01",
+        "description": "Two pricing cards with an interactive monthly and yearly billing switch.",
+        "href": "/blocks/pricing/pricing-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/pricing2",
+        "sourceCategory": "Pricing",
+        "sourceSubcategory": "Pricing Cards (2 Plans)"
+      }
+    ]
+  },
+  "team": {
+    "label": "Team",
+    "items": [
+      {
+        "label": "Team 1",
+        "id": "team-01",
+        "description": "A centered team introduction and responsive member avatar grid.",
+        "href": "/blocks/team/team-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/team1",
+        "sourceCategory": "Team"
+      }
+    ]
+  },
+  "blog": {
+    "label": "Blog",
+    "items": [
+      {
+        "label": "Blog 7",
+        "id": "blog-01",
+        "description": "A centered blog section with responsive image cards and read-more links.",
+        "href": "/blocks/blog/blog-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/blog7",
+        "sourceCategory": "Blog"
+      }
+    ]
+  },
+  "contact": {
+    "label": "Contact",
+    "items": [
+      {
+        "label": "Contact 7",
+        "id": "contact-01",
+        "description": "Contact method cards for email, office, phone, and chat.",
+        "href": "/blocks/contact/contact-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/contact7",
+        "sourceCategory": "Contact"
+      }
+    ]
+  },
+  "stats": {
+    "label": "Stats",
+    "items": [
+      {
+        "label": "Stats 8",
+        "id": "stats-01",
+        "description": "A heading and report link above a responsive four-metric grid.",
+        "href": "/blocks/stats/stats-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/stats8",
+        "sourceCategory": "Stats"
+      }
+    ]
+  },
+  "gallery": {
+    "label": "Gallery",
+    "items": [
+      {
+        "label": "Gallery 6",
+        "id": "gallery-01",
+        "description": "A multi-card image gallery carousel with previous and next controls.",
+        "href": "/blocks/gallery/gallery-01",
+        "sourceUrl": "https://www.shadcnblocks.com/block/gallery6",
+        "sourceCategory": "Gallery"
       }
     ]
   }

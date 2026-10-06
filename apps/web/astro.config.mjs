@@ -10,6 +10,30 @@ import sitemap from "@astrojs/sitemap";
 import robotsTxt from "astro-robots-txt";
 
 import alpinejs from "@astrojs/alpinejs";
+import fs from "node:fs";
+import { PREVIEW_GATE_BRANCH } from "./src/preview-gate.ts";
+
+// Temporary preview password gate (src/preview-gate.ts): on for builds of the
+// gated branch on Workers Builds, or locally with PREVIEW_GATE=1.
+const previewGateEnabled =
+  process.env.WORKERS_CI_BRANCH === PREVIEW_GATE_BRANCH ||
+  process.env.PREVIEW_GATE === "1";
+
+/** @type {import("astro").AstroIntegration} */
+const previewGate = {
+  name: "preview-gate",
+  hooks: {
+    // Static files are served before the Worker runs; the gate needs to see
+    // every request, so only gated builds opt into run_worker_first.
+    "astro:build:done"({ dir }) {
+      if (!previewGateEnabled) return;
+      const configFile = new URL("../server/wrangler.json", dir);
+      const config = JSON.parse(fs.readFileSync(configFile, "utf8"));
+      config.assets = { ...config.assets, run_worker_first: true };
+      fs.writeFileSync(configFile, JSON.stringify(config));
+    },
+  },
+};
 
 const DYNAMIC_HTML_ROUTE_COMPONENTS = new Set([
   "src/pages/kitchen-sink/forms-actions.astro",
@@ -92,6 +116,7 @@ export default defineConfig({
           nav: [
             { label: "Docs", href: "/docs/introduction" },
             { label: "Components", href: "/components" },
+            { label: "Blocks", href: "/blocks" },
             { label: "Blog", href: "/blog" },
             { label: "Create", href: "/create" },
           ],
@@ -104,7 +129,7 @@ export default defineConfig({
             Hero: "./src/components/starlight/Hero.astro",
             Search: "./src/components/starlight/Search.astro",
             ThemeSelect: "./src/components/ThemeSwitcher.astro",
-            PageTitle: "./src/components/PageTitle.astro",
+            PageTitle: "./src/components/starlight/PageTitle.astro",
           },
         }),
       ],
@@ -115,7 +140,7 @@ export default defineConfig({
         Hero: "./src/components/starlight/Hero.astro",
         Search: "./src/components/starlight/Search.astro",
         ThemeSelect: "./src/components/ThemeSwitcher.astro",
-        PageTitle: "./src/components/PageTitle.astro",
+        PageTitle: "./src/components/starlight/PageTitle.astro",
       },
       title: "bejamas/ui",
       titleDelimiter: "-",
@@ -282,8 +307,12 @@ export default defineConfig({
     }),
     alpinejs(),
     staticFirstRoutes,
+    previewGate,
   ],
   vite: {
+    define: {
+      __PREVIEW_GATE_ENABLED__: JSON.stringify(previewGateEnabled),
+    },
     plugins: [tailwindcss()],
     ssr: {
       noExternal: ["zod", "nanoid"],

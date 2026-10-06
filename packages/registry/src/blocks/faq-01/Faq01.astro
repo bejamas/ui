@@ -1,0 +1,55 @@
+---
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@bejamas/registry/ui/accordion";
+interface Props {
+  heading?: string;
+  items?: { question: string; answer: string }[];
+  class?: string;
+}
+const {
+  heading = "Frequently asked questions",
+  items = [
+    {
+      question: "What is Bejamas UI?",
+      answer:
+        "A collection of accessible Astro components that you can customize and own.",
+    },
+    {
+      question: "Can I customize the components?",
+      answer:
+        "Yes. Install the source into your project and adjust the styles and content to suit your brand.",
+    },
+    {
+      question: "Does it work on mobile?",
+      answer:
+        "The components and blocks adapt to small screens and support keyboard interaction.",
+    },
+    {
+      question: "Can I use it for commercial projects?",
+      answer:
+        "Yes. Bejamas UI is open source and available for personal and commercial projects.",
+    },
+  ],
+  class: className = "",
+} = Astro.props;
+---
+
+<section class:list={["px-6 py-20 md:py-32", className]}>
+  <div class="mx-auto max-w-3xl">
+    <h2 class="mb-8 text-3xl font-semibold md:text-4xl">{heading}</h2>
+    <Accordion>
+      {items.map((item, index) => (
+        <AccordionItem value={`question-${index}`}>
+          <AccordionTrigger>{item.question}</AccordionTrigger>
+          <AccordionContent>
+            <p class="text-muted-foreground">{item.answer}</p>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  </div>
+</section>

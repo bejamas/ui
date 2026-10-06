@@ -1,0 +1,98 @@
+---
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardMedia,
+} from "@bejamas/registry/ui/card";
+import { Badge } from "@bejamas/registry/ui/badge";
+interface Feature {
+  label: string;
+  title: string;
+  description: string;
+  href?: string;
+  imageSrc: string;
+  imageAlt: string;
+}
+interface Props {
+  heading?: string;
+  description?: string;
+  features?: Feature[];
+  class?: string;
+}
+const {
+  heading = "Everything you need to move forward",
+  description = "A flexible foundation for your next website, from the first sketch to the final detail.",
+  features = [
+    {
+      label: "For developers",
+      title: "Build with confidence",
+      description:
+        "Accessible components and portable source give you a clear starting point. Spend your time on what makes your product special.",
+      href: "/docs",
+      imageSrc:
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=80",
+      imageAlt: "A bright shared workspace",
+    },
+    {
+      label: "For teams",
+      title: "Make it feel like you",
+      description:
+        "Bring your brand into every detail with flexible themes, consistent components, and layouts that adapt to your content.",
+      href: "/create",
+      imageSrc:
+        "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1000&q=80",
+      imageAlt: "A workspace with natural light and plants",
+    },
+  ],
+  class: className = "",
+} = Astro.props;
+---
+
+<section class:list={["px-6 py-20 md:py-32", className]}>
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-10 max-w-2xl space-y-4">
+      <h2 class="text-balance text-3xl font-semibold tracking-tight md:text-4xl">
+        {heading}
+      </h2>
+      <p class="text-lg text-muted-foreground">{description}</p>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2">
+      {features.map((feature) => (
+        <Card>
+          <CardHeader class="space-y-4">
+            <Badge variant="secondary" class="w-fit">
+              {feature.label}
+            </Badge>
+            <CardTitle class="text-2xl">
+              {feature.href ? (
+                <a
+                  href={feature.href}
+                  class="underline-offset-4 hover:underline"
+                >
+                  {feature.title}
+                  <span aria-hidden="true"> ↗</span>
+                </a>
+              ) : (
+                feature.title
+              )}
+            </CardTitle>
+            <CardDescription class="text-base">
+              {feature.description}
+            </CardDescription>
+          </CardHeader>
+          <CardMedia class="mx-6 mt-auto aspect-video">
+            <img
+              src={feature.imageSrc}
+              alt={feature.imageAlt}
+              width="1000"
+              height="563"
+              loading="lazy"
+            />
+          </CardMedia>
+        </Card>
+      ))}
+    </div>
+  </div>
+</section>

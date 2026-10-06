@@ -1,0 +1,56 @@
+---
+import ShadcnblocksLogo from "@/assets/shadcnblocks-logo.svg";
+import { ArrowUpRight } from "@lucide/astro";
+---
+
+<section class="blocks-hero not-content">
+  <h1 id="_top" class="cn-font-heading">
+    Building blocks for
+    <br />
+    your next Astro site.
+  </h1>
+  <p class="blocks-hero-description">
+    Ready-to-use sections built with Astro and b/ui. Preview, customize, and
+    copy the code into your project.
+  </p>
+  <p class="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+    This collection features free designs by
+    <a
+      href="https://www.shadcnblocks.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-1.5 font-medium text-foreground hover:underline underline-offset-4"
+    >
+      <ShadcnblocksLogo class="h-5 w-4" aria-hidden="true" />
+      Shadcnblocks
+      <ArrowUpRight class="size-3.5 text-muted-foreground" />
+    </a>
+  </p>
+</section>
+
+<style>
+  .blocks-hero {
+    padding-block: 4rem 3rem;
+  }
+  .blocks-hero h1 {
+    margin: 0;
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.045em;
+    color: var(--foreground);
+  }
+  .blocks-hero-description {
+    max-width: 35rem;
+    margin-top: 1.25rem;
+    color: var(--muted-foreground);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+  @media (max-width: 60rem) {
+    .blocks-hero {
+      padding-block: 2.5rem 2rem;
+    }
+  }
+</style>
