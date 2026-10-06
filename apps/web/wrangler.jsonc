@@ -1,6 +1,8 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "bejamas-ui",
+  // Temporary preview gate entry (src/worker.ts); revert before merging.
+  "main": "./src/worker.ts",
   "account_id": "705e6a1ce1620c4ac2ce279a064dec41",
   "compatibility_date": "2026-08-31",
   "compatibility_flags": ["nodejs_compat"],
