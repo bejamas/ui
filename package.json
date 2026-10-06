@@ -13,7 +13,7 @@
     "check-types": "turbo run check-types",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "changeset publish"
+    "release": "bun .github/scripts/prepare-release.ts && changeset publish"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.1",
