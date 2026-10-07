@@ -9,6 +9,10 @@ export default defineConfig({
   dts: false, // CLIs usually don't need types
   fixedExtension: false,
   deps: {
-    alwaysBundle: [/^@bejamas\/(?:create-config|semantic-icons|registry)(?:\/.*)?$/],
+    alwaysBundle: [
+      /^@bejamas\/(?:create-config|semantic-icons|registry)(?:\/.*)?$/,
+      // Only the version is inlined; the bench itself runs through npm exec.
+      /^@bejamas\/bench\/package\.json$/,
+    ],
   },
 });
