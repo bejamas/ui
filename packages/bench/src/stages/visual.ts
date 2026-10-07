@@ -1,5 +1,3 @@
-import { readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import type { Browser } from "playwright-core";
@@ -23,16 +21,14 @@ export async function captureVisual(
     side,
     url,
     width,
-    screenshotDir,
     timeout,
   }: {
     side: Side;
     url: string;
     width: number;
-    screenshotDir: string;
     timeout: number;
   },
-): Promise<Capture> {
+): Promise<{ capture: Capture; image: Buffer }> {
   const context = await browser.newContext({
     viewport: { width, height: VISUAL_HEIGHT },
     colorScheme: "light",
@@ -42,9 +38,7 @@ export async function captureVisual(
   try {
     const page = await context.newPage();
     await loadPage(page, url, timeout);
-    const screenshot = join(screenshotDir, `${side}-${width}.png`);
-    await page.screenshot({
-      path: screenshot,
+    const image = await page.screenshot({
       fullPage: true,
       animations: "disabled",
     });
@@ -90,7 +84,7 @@ export async function captureVisual(
         pageHeight: document.documentElement.scrollHeight,
       };
     });
-    return { side, width, screenshot, ...data };
+    return { capture: { side, width, screenshot: null, ...data }, image };
   } finally {
     await context.close();
   }
@@ -201,14 +195,16 @@ function crop(png: PNG, width: number, height: number) {
   return data;
 }
 
-/** Pixel-diff the overlapping area of two full-page screenshots. */
+/**
+ * Pixel-diff the overlapping area of two full-page screenshots. The diff image
+ * is returned undecoded so it is only encoded when it gets written.
+ */
 export function comparePixels(
-  originalPath: string,
-  portedPath: string,
-  diffPath: string,
-): PixelComparison {
-  const a = PNG.sync.read(readFileSync(originalPath));
-  const b = PNG.sync.read(readFileSync(portedPath));
+  original: Buffer,
+  ported: Buffer,
+): { comparison: PixelComparison; diff: PNG } {
+  const a = PNG.sync.read(original);
+  const b = PNG.sync.read(ported);
   const width = Math.min(a.width, b.width);
   const height = Math.min(a.height, b.height);
   const diff = new PNG({ width, height });
@@ -222,15 +218,19 @@ export function comparePixels(
       threshold: 0.1,
     },
   );
-  writeFileSync(diffPath, PNG.sync.write(diff));
   const total = width * height;
   return {
-    diff: diffPath,
-    comparedWidth: width,
-    comparedHeight: height,
-    heightDelta: b.height - a.height,
-    mismatchedPixels,
-    mismatch:
-      total === 0 ? 0 : Math.round((mismatchedPixels / total) * 100_000) / 1000,
+    comparison: {
+      diff: null,
+      comparedWidth: width,
+      comparedHeight: height,
+      heightDelta: b.height - a.height,
+      mismatchedPixels,
+      mismatch:
+        total === 0
+          ? 0
+          : Math.round((mismatchedPixels / total) * 100_000) / 1000,
+    },
+    diff,
   };
 }

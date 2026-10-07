@@ -37,7 +37,8 @@ export async function runLighthouse({
   runs: number;
   formFactor: FormFactor;
   chromePath: string;
-  reportDir: string;
+  /** Save every full Lighthouse report here, when set. */
+  reportDir?: string;
   onProgress: (message: string) => void;
 }): Promise<LighthouseResult> {
   const { default: lighthouse, desktopConfig } = await import("lighthouse");
@@ -45,7 +46,7 @@ export async function runLighthouse({
   const version: string = createRequire(import.meta.url)(
     "lighthouse/package.json",
   ).version;
-  mkdirSync(reportDir, { recursive: true });
+  if (reportDir) mkdirSync(reportDir, { recursive: true });
 
   const chrome = await launch({
     chromePath,
@@ -75,13 +76,17 @@ export async function runLighthouse({
             `Lighthouse failed for the ${side} URL: ${result.lhr.runtimeError.message}`,
           );
         }
-        const report = join(reportDir, `${side}-run-${run}.json`);
-        writeFileSync(
-          report,
-          typeof result.report === "string"
-            ? result.report
-            : JSON.stringify(result.lhr),
-        );
+        const report = reportDir
+          ? join(reportDir, `${side}-run-${run}.json`)
+          : null;
+        if (report) {
+          writeFileSync(
+            report,
+            typeof result.report === "string"
+              ? result.report
+              : JSON.stringify(result.lhr),
+          );
+        }
         const score = result.lhr.categories.performance?.score;
         const metric = (audit: string) => {
           const value = result.lhr.audits[audit]?.numericValue;

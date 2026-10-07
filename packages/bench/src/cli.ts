@@ -5,7 +5,7 @@ import kleur from "kleur";
 import pkg from "../package.json" with { type: "json" };
 import { BUDGET_HELP, parseBudgets } from "./budgets";
 import { BenchError } from "./errors";
-import { renderSummary } from "./report";
+import { renderSummary } from "./summary";
 import { runBench } from "./run";
 import { normalizeUrl } from "./targets";
 import { STAGES, type FormFactor, type StageName } from "./types";
@@ -73,8 +73,7 @@ function createProgram() {
     .argument("<ported>", "URL of the ported site, e.g. http://localhost:4321")
     .option(
       "-o, --out <dir>",
-      "directory for report.json, report.md, screenshots and Lighthouse reports",
-      "bench-report",
+      "also write report.md, report.json, screenshots and Lighthouse reports to this directory",
     )
     .option(
       "-r, --runs <count>",
@@ -132,6 +131,7 @@ ${BUDGET_HELP}
 
 Examples:
   $ bejamas-bench http://localhost:3000 http://localhost:4321
+  $ bejamas-bench http://localhost:3000 http://localhost:4321 --out bench-report
   $ bejamas-bench https://example.com https://new.example.com --fail-on "lcp>10%,js>0,pixels>1%"
   $ bejamas-bench localhost:3000 localhost:4321 --only visual,quality --widths 375,768,1440`,
     )
@@ -164,18 +164,18 @@ Examples:
         log,
       );
 
-      for (const warning of report.warnings)
-        process.stderr.write(`${kleur.yellow("warning")} ${warning}\n`);
       if (opts.json) {
+        // The summary carries warnings; JSON consumers get them on stderr.
+        for (const warning of report.warnings)
+          process.stderr.write(`${kleur.yellow("warning")} ${warning}\n`);
         process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
       } else {
-        const status = report.passed
-          ? kleur.green().bold("PASS")
-          : kleur.red().bold("FAIL");
-        process.stdout.write(`\n${status}\n\n${renderSummary(report)}\n\n`);
+        process.stdout.write(`\n${renderSummary(report)}\n`);
+      }
+      if (files) {
         const shown = relative(process.cwd(), files.markdown);
-        process.stdout.write(
-          `Full report: ${shown.startsWith("..") ? files.markdown : shown}\n`,
+        process.stderr.write(
+          `\nReport written to ${shown.startsWith("..") ? files.markdown : shown}\n`,
         );
       }
       if (!report.passed && !opts.reportOnly) process.exitCode = 1;

@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { Browser } from "playwright-core";
+import { PNG } from "pngjs";
 import pkg from "../package.json" with { type: "json" };
 import { launchBrowser, resolveChromePath } from "./browser";
 import { evaluateBudgets, parseBudgets } from "./budgets";
@@ -21,11 +21,13 @@ import type {
   Capture,
   Side,
   StageName,
+  Target,
 } from "./types";
 
 export interface RunResult {
   report: BenchReport;
-  files: { json: string; markdown: string };
+  /** Report files, when `outDir` is set. */
+  files?: { json: string; markdown: string };
 }
 
 export async function runBench(
@@ -34,14 +36,23 @@ export async function runBench(
 ): Promise<RunResult> {
   // Validate budgets before spending minutes on measurements.
   const budgets = parseBudgets(options.budgets);
-  const outDir = resolve(options.outDir);
-  mkdirSync(outDir, { recursive: true });
+  const outDir = options.outDir ? resolve(options.outDir) : undefined;
+  if (outDir) mkdirSync(outDir, { recursive: true });
 
-  log("Checking both URLs");
-  const [original, ported] = await Promise.all([
-    inspectTarget("original", options.original, options.timeout),
-    inspectTarget("ported", options.ported, options.timeout),
-  ]);
+  const chromePath = resolveChromePath(options.chromePath);
+  const browser = await launchBrowser(chromePath);
+  let targets: [Target, Target];
+  try {
+    log("Checking both URLs");
+    targets = await Promise.all([
+      inspectTarget(browser, "original", options.original, options.timeout),
+      inspectTarget(browser, "ported", options.ported, options.timeout),
+    ]);
+  } catch (error) {
+    await browser.close();
+    throw error;
+  }
+  const [original, ported] = targets;
   const urls: Record<Side, string> = {
     original: original.finalUrl,
     ported: ported.finalUrl,
@@ -56,7 +67,7 @@ export async function runBench(
       node: process.version,
       platform: process.platform,
       arch: process.arch,
-      browser: null,
+      browser: `Chrome ${browser.version()}`,
     },
     options: {
       outDir,
@@ -103,31 +114,24 @@ export async function runBench(
     }
   }
 
-  const chromePath = resolveChromePath(options.chromePath);
-  let browser: Browser | undefined;
-  if (stages.has("assets") || stages.has("quality") || stages.has("visual")) {
-    browser = await launchBrowser(chromePath);
-    report.environment.browser = `Chrome ${browser.version()}`;
-  }
-
   try {
     await stage("assets", async () => {
       log("Measuring route assets");
       report.assets = {
-        original: await measureAssets(browser!, urls.original, options.timeout),
-        ported: await measureAssets(browser!, urls.ported, options.timeout),
+        original: await measureAssets(browser, urls.original, options.timeout),
+        ported: await measureAssets(browser, urls.ported, options.timeout),
       };
     });
 
     await stage("quality", async () => {
       log("Checking text, headings, accessibility and browser errors");
       const originalQuality = await measureQuality(
-        browser!,
+        browser,
         urls.original,
         options.timeout,
       );
       const portedQuality = await measureQuality(
-        browser!,
+        browser,
         urls.ported,
         options.timeout,
       );
@@ -141,44 +145,50 @@ export async function runBench(
     });
 
     await stage("visual", async () => {
-      const screenshotDir = join(outDir, "screenshots");
-      mkdirSync(screenshotDir, { recursive: true });
+      const screenshotDir = outDir && join(outDir, "screenshots");
+      if (screenshotDir) mkdirSync(screenshotDir, { recursive: true });
       const captures: Capture[] = [];
       const widths = [];
       for (const width of options.widths) {
         log(`Capturing layout at ${width}px`);
         const [a, b] = [
-          await captureVisual(browser!, {
+          await captureVisual(browser, {
             side: "original",
             url: urls.original,
             width,
-            screenshotDir,
             timeout: options.timeout,
           }),
-          await captureVisual(browser!, {
+          await captureVisual(browser, {
             side: "ported",
             url: urls.ported,
             width,
-            screenshotDir,
             timeout: options.timeout,
           }),
         ];
-        captures.push(a, b);
+        const { comparison, diff } = comparePixels(a.image, b.image);
+        if (screenshotDir) {
+          for (const { capture, image } of [a, b]) {
+            capture.screenshot = join(
+              screenshotDir,
+              `${capture.side}-${width}.png`,
+            );
+            writeFileSync(capture.screenshot, image);
+          }
+          comparison.diff = join(screenshotDir, `diff-${width}.png`);
+          writeFileSync(comparison.diff, PNG.sync.write(diff));
+        }
+        captures.push(a.capture, b.capture);
         widths.push({
           width,
-          ...compareGeometry(a, b, options.tolerance),
-          pixels: comparePixels(
-            a.screenshot,
-            b.screenshot,
-            join(screenshotDir, `diff-${width}.png`),
-          ),
+          ...compareGeometry(a.capture, b.capture, options.tolerance),
+          pixels: comparison,
         });
       }
       report.visual = { tolerance: options.tolerance, captures, widths };
       report.checks.push(...visualChecks(report.visual));
     });
   } finally {
-    await browser?.close();
+    await browser.close();
   }
 
   // Lighthouse runs last and alone so other browser work cannot skew timings.
@@ -188,7 +198,7 @@ export async function runBench(
       runs: options.runs,
       formFactor: options.formFactor,
       chromePath,
-      reportDir: join(outDir, "lighthouse"),
+      reportDir: outDir && join(outDir, "lighthouse"),
       onProgress: log,
     });
   });
@@ -204,6 +214,7 @@ export async function runBench(
     report.checks.every((check) => check.status !== "fail") &&
     report.budgets.every((budget) => budget.status !== "fail");
 
+  if (!outDir) return { report };
   const files = {
     json: join(outDir, "report.json"),
     markdown: join(outDir, "report.md"),

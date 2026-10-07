@@ -56,7 +56,9 @@ Metrics: `score`, `fcp`, `lcp`, `tbt`, `cls`, `si`, `js`, `css`, `html`,
 
 ## Output
 
-Results are written to `bench-report/` (change it with `--out`):
+The summary is printed to the terminal: checks, budgets, Lighthouse, route
+assets, visual parity and page quality. Nothing is written to disk unless you
+pass `--out <dir>`, which adds:
 
 - `report.md`: the readable report
 - `report.json`: every measurement, including per-run Lighthouse values and per-request assets
@@ -71,7 +73,7 @@ agents.
 ## Options
 
 ```
--o, --out <dir>         output directory (default: bench-report)
+-o, --out <dir>         also write report files to this directory
 -r, --runs <count>      Lighthouse runs per URL (default: 5)
 -w, --widths <list>     viewport widths for visual parity (default: 412,1280)
 --form-factor <type>    mobile or desktop Lighthouse emulation (default: mobile)
@@ -94,7 +96,7 @@ import { runBench } from "@bejamas/bench";
 const { report } = await runBench({
   original: "http://localhost:3000",
   ported: "http://localhost:4321",
-  outDir: "bench-report",
+  outDir: "bench-report", // optional; omit to skip writing files
   runs: 5,
   widths: [412, 1280],
   formFactor: "mobile",

@@ -1,3 +1,4 @@
+import type { Browser, Response } from "playwright-core";
 import { BenchError } from "./errors";
 import type { Comparability, Side, Target } from "./types";
 
@@ -62,50 +63,72 @@ export function detectDevServer(html: string) {
   );
 }
 
+/** Bot-protection pages would be measured instead of the site. */
+const CHALLENGE_HEADERS = ["x-vercel-mitigated", "cf-mitigated"];
+
+/**
+ * Load the URL in the browser that takes the measurements. Bot protection on
+ * hosts such as Vercel and Cloudflare challenges plain HTTP clients but lets
+ * Chrome through, so a fetch-based check would reject reachable sites.
+ */
 export async function inspectTarget(
+  browser: Browser,
   side: Side,
   input: string,
   timeout: number,
 ): Promise<Target> {
   const url = normalizeUrl(input);
-  let response: Response;
+  const context = await browser.newContext({ serviceWorkers: "block" });
   try {
-    response = await fetch(url, {
-      redirect: "follow",
-      signal: AbortSignal.timeout(timeout),
-      headers: { accept: "text/html,application/xhtml+xml" },
-    });
-  } catch (error) {
-    const reason =
-      error instanceof Error
-        ? ((error.cause as Error | undefined)?.message ?? error.message)
-        : String(error);
-    throw new BenchError(
-      `Could not reach the ${side} URL ${url.href}: ${reason}`,
-    );
+    const page = await context.newPage();
+    let response: Response | null;
+    try {
+      response = await page.goto(url.href, {
+        waitUntil: "domcontentloaded",
+        timeout,
+      });
+    } catch (error) {
+      const reason = (error instanceof Error ? error.message : String(error))
+        .split("\n")[0]!
+        .replace(/^page\.goto: /, "");
+      throw new BenchError(
+        `Could not reach the ${side} URL ${url.href}: ${reason}`,
+      );
+    }
+    if (!response) {
+      throw new BenchError(`The ${side} URL ${url.href} returned no response.`);
+    }
+    const headers = response.headers();
+    if (CHALLENGE_HEADERS.some((name) => headers[name] === "challenge")) {
+      throw new BenchError(
+        `The ${side} URL ${url.href} is behind a bot challenge, which would be measured instead of the page. Allow the benchmark through or measure a local build.`,
+      );
+    }
+    if (!response.ok()) {
+      throw new BenchError(
+        `The ${side} URL ${url.href} responded with HTTP ${response.status()}.`,
+      );
+    }
+    const contentType = headers["content-type"] ?? "";
+    const html = await response.text().catch(() => "");
+    if (!/html/i.test(contentType) && !/<html[\s>]/i.test(html)) {
+      throw new BenchError(
+        `The ${side} URL ${url.href} did not return an HTML page (${contentType || "no content type"}).`,
+      );
+    }
+    const finalUrl = new URL(page.url());
+    return {
+      side,
+      input,
+      url: url.href,
+      finalUrl: finalUrl.href,
+      status: response.status(),
+      local: isLocalHost(finalUrl.hostname),
+      devServer: detectDevServer(html),
+    };
+  } finally {
+    await context.close();
   }
-  if (!response.ok) {
-    throw new BenchError(
-      `The ${side} URL ${url.href} responded with HTTP ${response.status}.`,
-    );
-  }
-  const contentType = response.headers.get("content-type") ?? "";
-  const html = await response.text();
-  if (!/html/i.test(contentType) && !/<html[\s>]/i.test(html)) {
-    throw new BenchError(
-      `The ${side} URL ${url.href} did not return an HTML page (${contentType || "no content type"}).`,
-    );
-  }
-  const finalUrl = new URL(response.url || url.href);
-  return {
-    side,
-    input,
-    url: url.href,
-    finalUrl: finalUrl.href,
-    status: response.status,
-    local: isLocalHost(finalUrl.hostname),
-    devServer: detectDevServer(html),
-  };
 }
 
 /** Whether timing results from the two targets can be compared fairly. */

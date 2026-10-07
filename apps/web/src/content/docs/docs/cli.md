@@ -217,7 +217,7 @@ Measure production builds (`astro build && astro preview`, `next build && next s
 
 #### Options
 
-- `-o, --out <dir>` - Directory for `report.md`, `report.json`, screenshots and Lighthouse reports (default: `bench-report`)
+- `-o, --out <dir>` - Also write `report.md`, `report.json`, screenshots and Lighthouse reports to this directory. Without it, the summary is only printed to the terminal.
 - `-r, --runs <count>` - Lighthouse runs per URL (default: `5`)
 - `-w, --widths <list>` - Viewport widths for visual parity (default: `412,1280`)
 - `--form-factor <type>` - Lighthouse `mobile` or `desktop` emulation
