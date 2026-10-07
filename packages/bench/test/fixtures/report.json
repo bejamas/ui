@@ -1,0 +1,287 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "@bejamas/bench",
+    "version": "0.0.0"
+  },
+  "measuredAt": "2026-10-07T00:00:00.000Z",
+  "environment": {
+    "node": "v22",
+    "platform": "darwin",
+    "arch": "arm64",
+    "browser": "Chrome 154"
+  },
+  "options": {
+    "runs": 5,
+    "widths": [412],
+    "formFactor": "mobile",
+    "stages": ["assets", "quality", "visual", "lighthouse"],
+    "tolerance": 0.5,
+    "budgets": ["js>0"],
+    "allowDev": false,
+    "timeout": 60000
+  },
+  "targets": {
+    "original": {
+      "side": "original",
+      "input": "https://original.test",
+      "url": "https://original.test/",
+      "finalUrl": "https://original.test/",
+      "status": 200,
+      "local": false,
+      "devServer": null
+    },
+    "ported": {
+      "side": "ported",
+      "input": "localhost:4321",
+      "url": "http://localhost:4321/",
+      "finalUrl": "http://localhost:4321/",
+      "status": 200,
+      "local": true,
+      "devServer": null
+    }
+  },
+  "comparability": {
+    "comparable": false,
+    "reasons": ["The ported URL is local and the original URL is remote."]
+  },
+  "warnings": ["The ported URL is local and the original URL is remote."],
+  "skipped": [],
+  "errors": [],
+  "checks": [
+    {
+      "id": "comparability",
+      "label": "Timing comparability",
+      "status": "warn",
+      "detail": "The ported URL is local and the original URL is remote."
+    },
+    {
+      "id": "text",
+      "label": "Visible text",
+      "status": "fail",
+      "detail": "Differs: 132 → 134 words. First difference: “… focus on what makes your product unique. View the code” vs “… focus on what makes your product unique. View the code View original”."
+    }
+  ],
+  "budgets": [
+    {
+      "budget": "js>0",
+      "status": "pass",
+      "detail": "js: 190.18 KiB → 0 B (−190.18 KiB)"
+    }
+  ],
+  "passed": false,
+  "assets": {
+    "original": {
+      "finalUrl": "x",
+      "viewport": {
+        "width": 412,
+        "height": 823
+      },
+      "categories": {
+        "html": {
+          "count": 1,
+          "transfer": 7000,
+          "raw": 21000,
+          "gzip": 7000,
+          "brotli": 7000
+        },
+        "css": {
+          "count": 1,
+          "transfer": 20000,
+          "raw": 60000,
+          "gzip": 20000,
+          "brotli": 20000
+        },
+        "js": {
+          "count": 17,
+          "transfer": 190000,
+          "raw": 570000,
+          "gzip": 190000,
+          "brotli": 190000
+        },
+        "fonts": {
+          "count": 1,
+          "transfer": 24000,
+          "raw": 72000,
+          "gzip": null,
+          "brotli": null
+        },
+        "images": {
+          "count": 0,
+          "transfer": 0,
+          "raw": 0,
+          "gzip": null,
+          "brotli": null
+        },
+        "other": {
+          "count": 0,
+          "transfer": 0,
+          "raw": 0,
+          "gzip": null,
+          "brotli": null
+        }
+      },
+      "coreGzip": 241000,
+      "requests": 3,
+      "transfer": 241000,
+      "entries": []
+    },
+    "ported": {
+      "finalUrl": "x",
+      "viewport": {
+        "width": 412,
+        "height": 823
+      },
+      "categories": {
+        "html": {
+          "count": 1,
+          "transfer": 7000,
+          "raw": 21000,
+          "gzip": 7000,
+          "brotli": 7000
+        },
+        "css": {
+          "count": 1,
+          "transfer": 20000,
+          "raw": 60000,
+          "gzip": 20000,
+          "brotli": 20000
+        },
+        "js": {
+          "count": 0,
+          "transfer": 0,
+          "raw": 0,
+          "gzip": 0,
+          "brotli": 0
+        },
+        "fonts": {
+          "count": 1,
+          "transfer": 24000,
+          "raw": 72000,
+          "gzip": null,
+          "brotli": null
+        },
+        "images": {
+          "count": 0,
+          "transfer": 0,
+          "raw": 0,
+          "gzip": null,
+          "brotli": null
+        },
+        "other": {
+          "count": 0,
+          "transfer": 0,
+          "raw": 0,
+          "gzip": null,
+          "brotli": null
+        }
+      },
+      "coreGzip": 51000,
+      "requests": 3,
+      "transfer": 51000,
+      "entries": []
+    }
+  },
+  "lighthouse": {
+    "formFactor": "mobile",
+    "version": "13.5.0",
+    "runs": 5,
+    "order": "alternating",
+    "original": {
+      "runs": [],
+      "median": {
+        "score": 99,
+        "fcp": 1100,
+        "lcp": 1870,
+        "tbt": 0,
+        "cls": 0,
+        "si": 1100
+      }
+    },
+    "ported": {
+      "runs": [],
+      "median": {
+        "score": 99,
+        "fcp": 1100,
+        "lcp": 1200,
+        "tbt": 0,
+        "cls": 0,
+        "si": 1100
+      }
+    }
+  },
+  "visual": {
+    "tolerance": 0.5,
+    "captures": [],
+    "widths": [
+      {
+        "width": 412,
+        "originalElements": 5,
+        "portedElements": 3,
+        "matchedElements": 3,
+        "differences": [
+          {
+            "slot": "button",
+            "text": "Get started",
+            "original": [100, 40],
+            "ported": [104, 40]
+          }
+        ],
+        "unmatchedOriginal": {
+          "badge": 2
+        },
+        "unmatchedPorted": {},
+        "landmarkDifferences": [],
+        "pixels": {
+          "diff": null,
+          "comparedWidth": 412,
+          "comparedHeight": 2000,
+          "heightDelta": 0,
+          "mismatchedPixels": 5000,
+          "mismatch": 0.607
+        }
+      }
+    ]
+  },
+  "quality": {
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "original": {
+      "finalUrl": "x",
+      "title": "t",
+      "description": null,
+      "lang": "en",
+      "text": "",
+      "textHash": "",
+      "headings": [],
+      "domElements": 277,
+      "domBytes": 27700,
+      "nestedInteractiveControls": 0,
+      "violations": [],
+      "errors": [],
+      "failedRequests": []
+    },
+    "ported": {
+      "finalUrl": "x",
+      "title": "t",
+      "description": null,
+      "lang": "en",
+      "text": "",
+      "textHash": "",
+      "headings": [],
+      "domElements": 180,
+      "domBytes": 18000,
+      "nestedInteractiveControls": 0,
+      "violations": [],
+      "errors": [],
+      "failedRequests": []
+    },
+    "text": {
+      "identical": true,
+      "originalWords": 0,
+      "portedWords": 0
+    }
+  }
+}

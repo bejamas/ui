@@ -15,6 +15,7 @@ The `bejamas` CLI is a thin Astro-first wrapper over shadcn. Use it for:
 - **`docs`**: fetch docs, examples, and API links for components.
 - **`docs:build`**: generate MDX docs from `.astro` comments.
 - **`docs:check`**: validate documentation completeness for components.
+- **`bench`**: compare an original site with its ported version.
 
 For advanced registry browsing, use the **shadcn** CLI (`view`, `search`, `list`, `build`).
 
@@ -192,3 +193,42 @@ npx bejamas docs:check [--cwd <path>] [--json]
 **Optional:**
 
 - `@examples` - Additional examples
+
+### bench
+
+Compare an original site with its ported version. Runs [`@bejamas/bench`](https://www.npmjs.com/package/@bejamas/bench) on demand, so Lighthouse and Playwright are only downloaded when you use it. Requires Google Chrome.
+
+It reports:
+
+- **Lighthouse**: median score, FCP, LCP, TBT, CLS and Speed Index over alternating runs.
+- **Route assets**: JavaScript, CSS, HTML and fonts loaded by a cold page view, with deterministic gzip estimates.
+- **Page quality**: visible text, title and description, heading outline, axe-core violations, browser errors and nested controls.
+- **Visual parity**: `data-slot` component sizes, page regions and screenshot pixel differences at each width.
+
+#### Usage
+
+```bash
+npx bejamas bench --original http://localhost:3000 --ported http://localhost:4321
+npx bejamas bench --original https://example.com --ported https://new.example.com --fail-on "lcp>10%,js>0,pixels>1%"
+npx bejamas bench --original localhost:3000 --ported localhost:4321 --only visual,quality --widths 375,768,1440
+```
+
+`bejamas bench <original> <ported>` also works, but prints which URL it read as which. Prefer the named flags so the URLs can't be swapped by mistake.
+
+Measure production builds (`astro build && astro preview`, `next build && next start`). Assets and Lighthouse are skipped when a dev server is detected. Lighthouse timings are flagged as not comparable when one URL is local and the other is remote.
+
+#### Options
+
+- `--original <url>` - URL of the original site
+- `--ported <url>` - URL of the ported site
+- `-o, --out <dir>` - Also write `report.md`, `report.json`, screenshots and Lighthouse reports to this directory. Without it, the summary is only printed to the terminal.
+- `-r, --runs <count>` - Lighthouse runs per URL (default: `5`)
+- `-w, --widths <list>` - Viewport widths for visual parity (default: `412,1280`)
+- `--form-factor <type>` - Lighthouse `mobile` or `desktop` emulation
+- `--only <stages>`, `--skip <stages>` - Choose from `assets`, `quality`, `visual` and `lighthouse`
+- `--tolerance <px>` - Allowed size difference for matched components (default: `0.5`)
+- `--fail-on <budgets>` - Fail when the port exceeds budgets such as `lcp>10%`, `js>0`, `total>20kb`, `score<-5` or `pixels>1%`
+- `--report-only` - Exit with 0 even when checks or budgets fail
+- `--json` - Print the JSON report to stdout
+
+The command exits with `0` when every check and budget passes, `1` when any fails, and `2` when the run cannot complete.
