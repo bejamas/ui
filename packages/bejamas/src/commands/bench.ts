@@ -11,7 +11,7 @@ export const bench = new Command()
   .description(
     "compare an original site with its ported version (runs @bejamas/bench)",
   )
-  .usage("<original> <ported> [options]")
+  .usage("--original <url> --ported <url> [options]")
   .argument("[args...]", "run `bejamas bench --help` for all options")
   // Options, including --help, belong to @bejamas/bench.
   .helpOption(false)

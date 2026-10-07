@@ -5,10 +5,14 @@ migrations, such as a React + shadcn/ui site ported to Astro + b/ui, but it
 works with any two URLs.
 
 ```bash
-npx @bejamas/bench http://localhost:3000 http://localhost:4321
+npx @bejamas/bench --original http://localhost:3000 --ported http://localhost:4321
 # or through the Bejamas CLI
-npx bejamas bench http://localhost:3000 http://localhost:4321
+npx bejamas bench --original http://localhost:3000 --ported http://localhost:4321
 ```
+
+The URLs can also be passed positionally (`<original> <ported>`), but swapping
+them silently inverts every comparison, so the named flags are preferred and the
+positional form prints which URL it read as which.
 
 Requires Node.js 22.19+ and Google Chrome. Set `CHROME_PATH` or pass
 `--chrome-path` if Chrome is installed in a nonstandard location.
@@ -73,6 +77,8 @@ agents.
 ## Options
 
 ```
+--original <url>        URL of the original site
+--ported <url>          URL of the ported site
 -o, --out <dir>         also write report files to this directory
 -r, --runs <count>      Lighthouse runs per URL (default: 5)
 -w, --widths <list>     viewport widths for visual parity (default: 412,1280)

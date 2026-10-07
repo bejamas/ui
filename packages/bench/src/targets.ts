@@ -151,3 +151,39 @@ export function assessComparability(
   }
   return { comparable: reasons.length === 0, reasons };
 }
+
+/**
+ * Resolve which URL is which. Named flags are preferred because positional
+ * URLs are easy to swap, which silently inverts every comparison.
+ */
+export function resolveTargetUrls(
+  flags: { original?: string; ported?: string },
+  positional: readonly string[],
+): { original: string; ported: string; warning?: string } {
+  const named = flags.original !== undefined || flags.ported !== undefined;
+  if (named && positional.length > 0) {
+    throw new BenchError(
+      `Pass the URLs either as --original and --ported or positionally, not both (got ${positional.join(" ")}).`,
+    );
+  }
+  if (named) {
+    const missing = (["original", "ported"] as const).filter(
+      (key) => flags[key] === undefined,
+    );
+    if (missing.length > 0) {
+      throw new BenchError(
+        `Missing ${missing.map((key) => `--${key} <url>`).join(" and ")}.`,
+      );
+    }
+    return { original: flags.original!, ported: flags.ported! };
+  }
+  if (positional.length !== 2) {
+    throw new BenchError("Pass both URLs: --original <url> --ported <url>.");
+  }
+  const [original, ported] = positional as [string, string];
+  return {
+    original,
+    ported,
+    warning: `Reading ${original} as the original and ${ported} as the port. Use --original and --ported to avoid swapping them.`,
+  };
+}
