@@ -14,7 +14,14 @@ describe("bench command", () => {
 
   test("runs bejamas-bench through an isolated npm exec", () => {
     expect(
-      buildPinnedBenchInvocation(["a.test", "b.test", "--runs", "3"]),
+      buildPinnedBenchInvocation([
+        "--original",
+        "a.test",
+        "--ported",
+        "b.test",
+        "--runs",
+        "3",
+      ]),
     ).toEqual({
       cmd: process.platform === "win32" ? "npm.cmd" : "npm",
       args: [
@@ -25,7 +32,9 @@ describe("bench command", () => {
         `--package=@bejamas/bench@${benchPackage.version}`,
         "--",
         "bejamas-bench",
+        "--original",
         "a.test",
+        "--ported",
         "b.test",
         "--runs",
         "3",
@@ -37,14 +46,18 @@ describe("bench command", () => {
     expect(
       extractBenchArgs([
         "bench",
+        "--original",
         "localhost:3000",
+        "--ported",
         "localhost:4321",
         "--help",
         "--fail-on",
         "lcp>10%",
       ]),
     ).toEqual([
+      "--original",
       "localhost:3000",
+      "--ported",
       "localhost:4321",
       "--help",
       "--fail-on",

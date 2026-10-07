@@ -194,7 +194,7 @@ npx bejamas docs:check [--cwd <path>] [--json]
 
 - `@examples` - Additional examples
 
-### bench <original> <ported>
+### bench
 
 Compare an original site with its ported version. Runs [`@bejamas/bench`](https://www.npmjs.com/package/@bejamas/bench) on demand, so Lighthouse and Playwright are only downloaded when you use it. Requires Google Chrome.
 
@@ -208,15 +208,19 @@ It reports:
 #### Usage
 
 ```bash
-npx bejamas bench http://localhost:3000 http://localhost:4321
-npx bejamas bench https://example.com https://new.example.com --fail-on "lcp>10%,js>0,pixels>1%"
-npx bejamas bench localhost:3000 localhost:4321 --only visual,quality --widths 375,768,1440
+npx bejamas bench --original http://localhost:3000 --ported http://localhost:4321
+npx bejamas bench --original https://example.com --ported https://new.example.com --fail-on "lcp>10%,js>0,pixels>1%"
+npx bejamas bench --original localhost:3000 --ported localhost:4321 --only visual,quality --widths 375,768,1440
 ```
+
+`bejamas bench <original> <ported>` also works, but prints which URL it read as which. Prefer the named flags so the URLs can't be swapped by mistake.
 
 Measure production builds (`astro build && astro preview`, `next build && next start`). Assets and Lighthouse are skipped when a dev server is detected. Lighthouse timings are flagged as not comparable when one URL is local and the other is remote.
 
 #### Options
 
+- `--original <url>` - URL of the original site
+- `--ported <url>` - URL of the ported site
 - `-o, --out <dir>` - Also write `report.md`, `report.json`, screenshots and Lighthouse reports to this directory. Without it, the summary is only printed to the terminal.
 - `-r, --runs <count>` - Lighthouse runs per URL (default: `5`)
 - `-w, --widths <list>` - Viewport widths for visual parity (default: `412,1280`)

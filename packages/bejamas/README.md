@@ -67,7 +67,7 @@ npx bejamas preset resolve
 Use the `bench` command to compare an original site with its ported version: Lighthouse, route assets, accessibility, text and visual parity. It runs [`@bejamas/bench`](https://www.npmjs.com/package/@bejamas/bench) on demand and requires Google Chrome.
 
 ```bash
-npx bejamas bench http://localhost:3000 http://localhost:4321
+npx bejamas bench --original http://localhost:3000 --ported http://localhost:4321
 npx bejamas bench --help
 ```
 

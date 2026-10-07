@@ -7,7 +7,7 @@ import { BUDGET_HELP, parseBudgets } from "./budgets";
 import { BenchError } from "./errors";
 import { renderSummary } from "./summary";
 import { runBench } from "./run";
-import { normalizeUrl } from "./targets";
+import { normalizeUrl, resolveTargetUrls } from "./targets";
 import { STAGES, type FormFactor, type StageName } from "./types";
 
 function positiveInteger(value: string) {
@@ -66,11 +66,19 @@ function createProgram() {
       "Compare an original site with its ported version: Lighthouse, route assets, accessibility, text and visual parity.",
     )
     .version(pkg.version, "-v, --version", "output the version number")
-    .argument(
-      "<original>",
-      "URL of the original site, e.g. http://localhost:3000",
+    .usage("--original <url> --ported <url> [options]")
+    .option(
+      "--original <url>",
+      "URL of the original site, e.g. https://example.com",
     )
-    .argument("<ported>", "URL of the ported site, e.g. http://localhost:4321")
+    .option(
+      "--ported <url>",
+      "URL of the ported site, e.g. http://localhost:4321",
+    )
+    .argument(
+      "[urls...]",
+      "positional <original> <ported>; prefer the named flags so the URLs cannot be swapped",
+    )
     .option(
       "-o, --out <dir>",
       "also write report.md, report.json, screenshots and Lighthouse reports to this directory",
@@ -130,13 +138,16 @@ Exit codes: 0 when all checks and budgets pass, 1 when any fail, 2 when the run 
 ${BUDGET_HELP}
 
 Examples:
-  $ bejamas-bench http://localhost:3000 http://localhost:4321
-  $ bejamas-bench http://localhost:3000 http://localhost:4321 --out bench-report
-  $ bejamas-bench https://example.com https://new.example.com --fail-on "lcp>10%,js>0,pixels>1%"
-  $ bejamas-bench localhost:3000 localhost:4321 --only visual,quality --widths 375,768,1440`,
+  $ bejamas-bench --original http://localhost:3000 --ported http://localhost:4321
+  $ bejamas-bench --original http://localhost:3000 --ported http://localhost:4321 --out bench-report
+  $ bejamas-bench --original https://example.com --ported https://new.example.com --fail-on "lcp>10%,js>0,pixels>1%"
+  $ bejamas-bench --original localhost:3000 --ported localhost:4321 --only visual,quality --widths 375,768,1440`,
     )
-    .action(async (original: string, ported: string, opts) => {
+    .action(async (positional: string[], opts) => {
+      const { original, ported, warning } = resolveTargetUrls(opts, positional);
       for (const url of [original, ported]) normalizeUrl(url);
+      if (warning)
+        process.stderr.write(`${kleur.yellow("warning")} ${warning}\n`);
       parseBudgets(opts.failOn);
       const skip = new Set<StageName>(opts.skip ?? []);
       const stages = (

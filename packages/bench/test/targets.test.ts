@@ -4,6 +4,7 @@ import {
   detectDevServer,
   isLocalHost,
   normalizeUrl,
+  resolveTargetUrls,
 } from "../src/targets";
 import type { Target } from "../src/types";
 
@@ -107,5 +108,40 @@ describe("assessComparability", () => {
     expect(result.reasons).toHaveLength(2);
     expect(result.reasons[0]).toContain("original URL is remote");
     expect(result.reasons[1]).toContain("development server (Astro)");
+  });
+});
+
+describe("resolveTargetUrls", () => {
+  test("uses the named flags without a warning", () => {
+    expect(
+      resolveTargetUrls({ original: "a.test", ported: "b.test" }, []),
+    ).toEqual({
+      original: "a.test",
+      ported: "b.test",
+    });
+  });
+
+  test("accepts two positional URLs with a warning naming each side", () => {
+    const result = resolveTargetUrls({}, ["a.test", "b.test"]);
+    expect(result).toMatchObject({ original: "a.test", ported: "b.test" });
+    expect(result.warning).toBe(
+      "Reading a.test as the original and b.test as the port. Use --original and --ported to avoid swapping them.",
+    );
+  });
+
+  test("rejects mixed, partial and miscounted input", () => {
+    expect(() =>
+      resolveTargetUrls({ original: "a.test", ported: "b.test" }, ["c.test"]),
+    ).toThrow("not both (got c.test)");
+    expect(() => resolveTargetUrls({ original: "a.test" }, [])).toThrow(
+      "Missing --ported <url>.",
+    );
+    expect(() => resolveTargetUrls({ ported: "b.test" }, [])).toThrow(
+      "Missing --original <url>.",
+    );
+    expect(() => resolveTargetUrls({}, [])).toThrow("Pass both URLs");
+    expect(() => resolveTargetUrls({}, ["a.test", "b.test", "c.test"])).toThrow(
+      "Pass both URLs",
+    );
   });
 });

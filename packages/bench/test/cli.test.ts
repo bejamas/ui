@@ -35,7 +35,7 @@ describe("usage", () => {
     const result = await run(["--help"]);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain(
-      "Usage: bejamas-bench [options] <original> <ported>",
+      "Usage: bejamas-bench --original <url> --ported <url> [options]",
     );
     expect(result.stdout).toContain("pixels>1%");
   });
@@ -80,7 +80,9 @@ describe.skipIf(!chrome)("end to end", () => {
     const original = start({});
     const ported = start({ wrapSections: true });
     const result = await run([
+      "--original",
       original,
+      "--ported",
       ported,
       "--out",
       out,
@@ -94,6 +96,8 @@ describe.skipIf(!chrome)("end to end", () => {
     const report: BenchReport = JSON.parse(
       readFileSync(join(out, "report.json"), "utf8"),
     );
+    expect(result.stderr).not.toContain("warning");
+    expect(report.targets.original.url).toBe(original);
     expect(report.errors).toEqual([]);
     expect(report.checks.filter((check) => check.status === "fail")).toEqual(
       [],
@@ -127,6 +131,10 @@ describe.skipIf(!chrome)("end to end", () => {
       cwd,
     );
     const report: BenchReport = JSON.parse(result.stdout);
+    // Positional URLs still work, but say which is which.
+    expect(result.stderr).toContain(
+      `Reading ${original} as the original and ${ported} as the port.`,
+    );
     const status = Object.fromEntries(
       report.checks.map((check) => [check.id, check.status]),
     );
