@@ -1,6 +1,3 @@
-import { mkdtempSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { describe, expect, test } from "bun:test";
 import { PNG } from "pngjs";
 import { qualityChecks, visualChecks } from "../src/checks";
@@ -174,7 +171,6 @@ describe("compareGeometry", () => {
 
 describe("comparePixels", () => {
   function png(
-    path: string,
     width: number,
     height: number,
     paint: (x: number, y: number) => number,
@@ -187,26 +183,23 @@ describe("comparePixels", () => {
         image.data[offset + 3] = 255;
       }
     }
-    writeFileSync(path, PNG.sync.write(image));
+    return PNG.sync.write(image);
   }
 
   test("compares the overlapping area and reports the height change", () => {
-    const dir = mkdtempSync(join(tmpdir(), "bench-pixels-"));
-    png(join(dir, "a.png"), 10, 10, () => 255);
-    png(join(dir, "b.png"), 10, 12, (x, y) => (x < 5 && y < 2 ? 0 : 255));
-    const result = comparePixels(
-      join(dir, "a.png"),
-      join(dir, "b.png"),
-      join(dir, "diff.png"),
+    const { comparison, diff } = comparePixels(
+      png(10, 10, () => 255),
+      png(10, 12, (x, y) => (x < 5 && y < 2 ? 0 : 255)),
     );
-    expect(result).toEqual({
-      diff: join(dir, "diff.png"),
+    expect(comparison).toEqual({
+      diff: null,
       comparedWidth: 10,
       comparedHeight: 10,
       heightDelta: 2,
       mismatchedPixels: 10,
       mismatch: 10,
     });
+    expect([diff.width, diff.height]).toEqual([10, 10]);
   });
 });
 

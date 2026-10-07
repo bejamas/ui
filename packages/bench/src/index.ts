@@ -1,5 +1,6 @@
 export { runBench, type RunResult } from "./run";
-export { renderMarkdown, renderSummary } from "./report";
+export { renderMarkdown } from "./report";
+export { renderSummary } from "./summary";
 export {
   parseBudgets,
   evaluateBudgets,

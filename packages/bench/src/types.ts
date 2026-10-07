@@ -14,7 +14,8 @@ export type FormFactor = "mobile" | "desktop";
 export interface BenchOptions {
   original: string;
   ported: string;
-  outDir: string;
+  /** Write report files here. Nothing is written when omitted. */
+  outDir?: string;
   runs: number;
   widths: number[];
   formFactor: FormFactor;
@@ -155,7 +156,8 @@ export interface Landmark extends Box {
 export interface Capture {
   side: Side;
   width: number;
-  screenshot: string;
+  /** Screenshot file, when report files are written. */
+  screenshot: string | null;
   pageHeight: number;
   elements: SlotElement[];
   landmarks: Landmark[];
@@ -186,7 +188,8 @@ export interface GeometryComparison {
 }
 
 export interface PixelComparison {
-  diff: string;
+  /** Diff image file, when report files are written. */
+  diff: string | null;
   comparedWidth: number;
   comparedHeight: number;
   heightDelta: number;
@@ -220,7 +223,8 @@ export type LighthouseValues = Record<LighthouseMetric, number | null>;
 
 export interface LighthouseRun extends LighthouseValues {
   run: number;
-  report: string;
+  /** Full Lighthouse report file, when report files are written. */
+  report: string | null;
 }
 
 export interface LighthouseResult {

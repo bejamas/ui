@@ -9,9 +9,10 @@ import { serve } from "./fixtures/page";
 
 const cli = resolve(import.meta.dir, "../dist/cli.js");
 
-async function run(args: string[]) {
+async function run(args: string[], cwd?: string) {
   // Node, not Bun, is the runtime the published bin targets.
   const proc = Bun.spawn(["node", cli, ...args], {
+    cwd,
     stdout: "pipe",
     stderr: "pipe",
   });
@@ -114,24 +115,17 @@ describe.skipIf(!chrome)("end to end", () => {
   }, 120_000);
 
   test("fails a port with layout, text and accessibility regressions", async () => {
-    const out = mkdtempSync(join(tmpdir(), "bench-e2e-"));
+    const cwd = mkdtempSync(join(tmpdir(), "bench-e2e-"));
     const original = start({});
     const ported = start({
       buttonPadding: 24,
       missingAlt: true,
       extraText: " Now with more.",
     });
-    const result = await run([
-      original,
-      ported,
-      "--out",
-      out,
-      "--skip",
-      "lighthouse",
-      "--widths",
-      "412",
-      "--json",
-    ]);
+    const result = await run(
+      [original, ported, "--skip", "lighthouse", "--widths", "412", "--json"],
+      cwd,
+    );
     const report: BenchReport = JSON.parse(result.stdout);
     const status = Object.fromEntries(
       report.checks.map((check) => [check.id, check.status]),
@@ -148,15 +142,15 @@ describe.skipIf(!chrome)("end to end", () => {
     });
     expect(report.lighthouse).toBeUndefined();
 
-    const reportOnly = await run([
-      original,
-      ported,
-      "--out",
-      out,
-      "--only",
-      "quality",
-      "--report-only",
-    ]);
+    const reportOnly = await run(
+      [original, ported, "--only", "quality", "--report-only"],
+      cwd,
+    );
     expect(reportOnly.exitCode).toBe(0);
+    expect(reportOnly.stdout).toContain("FAIL");
+    expect(reportOnly.stdout).toContain("Visible text");
+    expect(reportOnly.stdout).toContain("Page quality");
+    // Report files are opt-in.
+    expect(readdirSync(cwd)).toEqual([]);
   }, 120_000);
 });

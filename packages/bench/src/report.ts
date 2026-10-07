@@ -37,6 +37,33 @@ export function table(
   return [line(cells[0]!), divider, ...cells.slice(1).map(line)].join("\n");
 }
 
+/** A table row plus whether the ported value is better (-1) or worse (1). */
+export interface ComparisonRow {
+  cells: string[];
+  trend: -1 | 0 | 1;
+}
+
+export const COMPARISON_HEADINGS = ["Original", "Ported", "Change"];
+
+function comparisonRow(
+  label: string,
+  original: number | null,
+  ported: number | null,
+  format: (value: number) => string,
+  higherIsBetter = false,
+): ComparisonRow {
+  const delta = original === null || ported === null ? 0 : ported - original;
+  return {
+    cells: [
+      label,
+      original === null ? "–" : format(original),
+      ported === null ? "–" : format(ported),
+      formatDelta(original, ported, format),
+    ],
+    trend: delta === 0 ? 0 : delta > 0 !== higherIsBetter ? 1 : -1,
+  };
+}
+
 const LIGHTHOUSE_ROWS: [LighthouseMetric, string, (value: number) => string][] =
   [
     ["score", "Performance score", (value) => String(round(value, 0))],
@@ -47,21 +74,16 @@ const LIGHTHOUSE_ROWS: [LighthouseMetric, string, (value: number) => string][] =
     ["si", "Speed Index", formatMs],
   ];
 
-function lighthouseTable(report: BenchReport) {
+export function lighthouseRows(report: BenchReport): ComparisonRow[] {
   const lighthouse = report.lighthouse!;
-  return table(
-    ["Metric", "Original", "Ported", "Change"],
-    LIGHTHOUSE_ROWS.map(([metric, label, format]) => {
-      const original = lighthouse.original.median[metric];
-      const ported = lighthouse.ported.median[metric];
-      return [
-        label,
-        original === null ? "–" : format(original),
-        ported === null ? "–" : format(ported),
-        formatDelta(original, ported, format),
-      ];
-    }),
-    ["l", "r", "r", "r"],
+  return LIGHTHOUSE_ROWS.map(([metric, label, format]) =>
+    comparisonRow(
+      label,
+      lighthouse.original.median[metric],
+      lighthouse.ported.median[metric],
+      format,
+      metric === "score",
+    ),
   );
 }
 
@@ -74,32 +96,88 @@ const ASSET_ROWS: [AssetCategory, string][] = [
   ["other", "Other"],
 ];
 
-function assetsTable(report: BenchReport) {
+export function assetRows(report: BenchReport): ComparisonRow[] {
   const { original, ported } = report.assets!;
   const value = (side: typeof original, category: AssetCategory) =>
     side.categories[category].gzip ?? side.categories[category].transfer;
-  const row = (
-    label: string,
-    a: number,
-    b: number,
-    format: (value: number) => string = formatBytes,
-  ) => [label, format(a), format(b), formatDelta(a, b, format)];
-  return table(
-    ["Asset", "Original", "Ported", "Change"],
-    [
-      ...ASSET_ROWS.map(([category, label]) =>
-        row(
-          `${label}, ${original.categories[category].count} → ${ported.categories[category].count} files`,
-          value(original, category),
-          value(ported, category),
-        ),
+  return [
+    ...ASSET_ROWS.map(([category, label]) =>
+      comparisonRow(
+        `${label}, ${original.categories[category].count} → ${ported.categories[category].count} files`,
+        value(original, category),
+        value(ported, category),
+        formatBytes,
       ),
-      row("HTML + CSS + JS + fonts", original.coreGzip, ported.coreGzip),
-      row("All requests (transferred)", original.transfer, ported.transfer),
-      row("Requests", original.requests, ported.requests, String),
+    ),
+    comparisonRow(
+      "HTML + CSS + JS + fonts",
+      original.coreGzip,
+      ported.coreGzip,
+      formatBytes,
+    ),
+    comparisonRow(
+      "All requests (transferred)",
+      original.transfer,
+      ported.transfer,
+      formatBytes,
+    ),
+    comparisonRow("Requests", original.requests, ported.requests, String),
+  ];
+}
+
+export const VISUAL_HEADINGS = [
+  "Width",
+  "Matched components",
+  "Component diffs",
+  "Region diffs",
+  "Pixels differing",
+  "Height change",
+];
+
+export function visualRows(report: BenchReport) {
+  return report.visual!.widths.map((result) => [
+    `${result.width}px`,
+    `${result.matchedElements} of ${result.originalElements}`,
+    String(result.differences.length),
+    String(result.landmarkDifferences.length),
+    `${result.pixels.mismatch}%`,
+    `${result.pixels.heightDelta > 0 ? "+" : ""}${result.pixels.heightDelta}px`,
+  ]);
+}
+
+export function qualityRows(report: BenchReport) {
+  const { original, ported } = report.quality!;
+  return [
+    ["DOM elements", String(original.domElements), String(ported.domElements)],
+    [
+      "Serialized DOM",
+      formatBytes(original.domBytes),
+      formatBytes(ported.domBytes),
     ],
-    ["l", "r", "r", "r"],
-  );
+    [
+      "axe-core violations",
+      String(original.violations.length),
+      String(ported.violations.length),
+    ],
+    [
+      "Browser errors",
+      String(original.errors.length),
+      String(ported.errors.length),
+    ],
+    [
+      "Failed requests",
+      String(original.failedRequests.length),
+      String(ported.failedRequests.length),
+    ],
+  ];
+}
+
+/** Slots that only one side has, most frequent first. */
+export function unmatchedSlots(counts: Record<string, number>) {
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([slot, count]) => `${slot} (${count})`)
+    .join(", ");
 }
 
 function checksTable(report: BenchReport) {
@@ -114,7 +192,10 @@ function checksTable(report: BenchReport) {
 }
 
 export function renderMarkdown(report: BenchReport, outDir: string) {
-  const path = (file: string) => relative(outDir, file).split("\\").join("/");
+  const link = (label: string, file: string | null) =>
+    file
+      ? `[${label}](${relative(outDir, file).split("\\").join("/")})`
+      : label;
   const lines: string[] = [];
   // Blank lines keep headings, paragraphs and tables separate blocks.
   const push = (...values: string[]) =>
@@ -171,7 +252,11 @@ export function renderMarkdown(report: BenchReport, outDir: string) {
     push(
       `## Lighthouse ${lighthouse.formFactor}`,
       `Median of ${lighthouse.runs} Lighthouse ${lighthouse.version} runs per URL with simulated throttling, run in ${lighthouse.order} order. These are lab results, not field data.${report.comparability.comparable ? "" : " **Timings are not comparable:** " + report.comparability.reasons.join(" ")}`,
-      lighthouseTable(report),
+      table(
+        ["Metric", ...COMPARISON_HEADINGS],
+        lighthouseRows(report).map((row) => row.cells),
+        ["l", "r", "r", "r"],
+      ),
     );
   }
 
@@ -180,7 +265,11 @@ export function renderMarkdown(report: BenchReport, outDir: string) {
     push(
       "## Route assets",
       `Responses of a cold load at ${viewport.width}×${viewport.height}, until the network is idle. HTML, CSS and JavaScript are recompressed with gzip level 9 so servers with different compression compare equally; other assets use their transferred size.`,
-      assetsTable(report),
+      table(
+        ["Asset", ...COMPARISON_HEADINGS],
+        assetRows(report).map((row) => row.cells),
+        ["l", "r", "r", "r"],
+      ),
     );
   }
 
@@ -189,25 +278,14 @@ export function renderMarkdown(report: BenchReport, outDir: string) {
     push(
       "## Visual parity",
       `Visible \`data-slot\` components are matched by slot name, text and order, and their sizes compared within ${visual.tolerance}px. Top-level header, main, section and footer regions are compared by position and size. Screenshot pixels are compared over the area both pages cover.`,
-      table(
-        [
-          "Width",
-          "Matched components",
-          "Component diffs",
-          "Region diffs",
-          "Pixels differing",
-          "Height change",
-        ],
-        visual.widths.map((result) => [
-          `${result.width}px`,
-          `${result.matchedElements} of ${result.originalElements}`,
-          String(result.differences.length),
-          String(result.landmarkDifferences.length),
-          `${result.pixels.mismatch}%`,
-          `${result.pixels.heightDelta > 0 ? "+" : ""}${result.pixels.heightDelta}px`,
-        ]),
-        ["l", "r", "r", "r", "r", "r"],
-      ),
+      table(VISUAL_HEADINGS, visualRows(report), [
+        "l",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+      ]),
     );
     for (const result of visual.widths) {
       const capture = (side: "original" | "ported") =>
@@ -216,7 +294,7 @@ export function renderMarkdown(report: BenchReport, outDir: string) {
         )!;
       push(
         `### ${result.width}px`,
-        `Screenshots: [original](${path(capture("original").screenshot)}), [ported](${path(capture("ported").screenshot)}), [diff](${path(result.pixels.diff)})`,
+        `Screenshots: ${link("original", capture("original").screenshot)}, ${link("ported", capture("ported").screenshot)}, ${link("diff", result.pixels.diff)}`,
       );
       if (result.differences.length > 0) {
         push(
@@ -256,11 +334,7 @@ export function renderMarkdown(report: BenchReport, outDir: string) {
           ),
         );
       }
-      const unmatched = (counts: Record<string, number>) =>
-        Object.entries(counts)
-          .sort((a, b) => b[1] - a[1])
-          .map(([slot, count]) => `${slot} (${count})`)
-          .join(", ");
+
       if (
         Object.keys(result.unmatchedOriginal).length +
           Object.keys(result.unmatchedPorted).length >
@@ -268,8 +342,8 @@ export function renderMarkdown(report: BenchReport, outDir: string) {
       ) {
         push(
           [
-            `- Only in original: ${unmatched(result.unmatchedOriginal) || "none"}`,
-            `- Only in ported: ${unmatched(result.unmatchedPorted) || "none"}`,
+            `- Only in original: ${unmatchedSlots(result.unmatchedOriginal) || "none"}`,
+            `- Only in ported: ${unmatchedSlots(result.unmatchedPorted) || "none"}`,
           ].join("\n"),
         );
       }
@@ -281,37 +355,11 @@ export function renderMarkdown(report: BenchReport, outDir: string) {
     push(
       "## Page quality",
       `Measured at ${viewport.width}×${viewport.height}.`,
-      table(
-        ["Measure", "Original", "Ported"],
-        [
-          [
-            "DOM elements",
-            String(original.domElements),
-            String(ported.domElements),
-          ],
-          [
-            "Serialized DOM",
-            formatBytes(original.domBytes),
-            formatBytes(ported.domBytes),
-          ],
-          [
-            "axe-core violations",
-            String(original.violations.length),
-            String(ported.violations.length),
-          ],
-          [
-            "Browser errors",
-            String(original.errors.length),
-            String(ported.errors.length),
-          ],
-          [
-            "Failed requests",
-            String(original.failedRequests.length),
-            String(ported.failedRequests.length),
-          ],
-        ],
-        ["l", "r", "r"],
-      ),
+      table(["Measure", "Original", "Ported"], qualityRows(report), [
+        "l",
+        "r",
+        "r",
+      ]),
     );
     if (!text.identical) {
       push(
@@ -345,26 +393,4 @@ export function renderMarkdown(report: BenchReport, outDir: string) {
   }
 
   return `${lines.join("\n").trim()}\n`;
-}
-
-/** Compact summary for the terminal. */
-export function renderSummary(report: BenchReport) {
-  const sections = [checksTable(report)];
-  if (report.budgets.length > 0) {
-    sections.push(
-      table(
-        ["Budget", "Status", "Detail"],
-        report.budgets.map((budget) => [
-          budget.budget,
-          STATUS_LABEL[budget.status],
-          budget.detail,
-        ]),
-      ),
-    );
-  }
-  if (report.lighthouse) sections.push(lighthouseTable(report));
-  if (report.assets) sections.push(assetsTable(report));
-  for (const error of report.errors)
-    sections.push(`${error.stage} failed: ${error.message}`);
-  return sections.join("\n\n");
 }
