@@ -1,4 +1,4 @@
-// Usage: bun /tmp/bui-ports/_tools/shot.mjs <url> <out.png> [width=1440] [--dark]
+// Usage: bun shot.mjs <url> <out.png> [width=1440] [--dark] [--chunks]
 // Full-page screenshot (add --chunks to also save viewport-height slices out-1.png, out-2.png ...). Scrolls through the page first so in-view animations run.
 import { chromium } from "playwright";
 const [url, out, widthArg] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
