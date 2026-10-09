@@ -411,7 +411,7 @@ These port by translating syntax only.
 #### Toggle Group
 
 - `multiple` (Base UI) replaces Radix `type="multiple"`.
-- `spacing` defaults to `0`; shadcn changed its default to `2` in May 2026, so add `spacing={2}` when porting newer shadcn markup.
+- `spacing` defaults to `0`; shadcn's current default is `2`, so add `spacing={2}` when porting shadcn markup that omits it.
 - When both the group and an item set `variant` / `size`, the item wins (in shadcn the group wins).
 - Events: `toggle-group:change` (`{ value: string[] }`), `toggle-group:set`.
 
@@ -437,7 +437,7 @@ These port by translating syntax only.
 
 #### Drawer
 
-shadcn now ships two drawers — Base UI (`swipeDirection`, snap points) and Radix/vaul (`direction`). The `bejamas/ui` Drawer has its own API:
+shadcn ships two drawers — Base UI (`swipeDirection`, snap points) and Radix/vaul (`direction`). The `bejamas/ui` Drawer has its own API:
 
 - **Direction:** `side="left" | "right" | "bottom"` on `Drawer` (default `right`). There is no top drawer.
 - **Parts:** `Drawer`, `DrawerTrigger`, `DrawerContent`, `DrawerHeader`, `DrawerTitle`, `DrawerDescription`, `DrawerFooter`, `DrawerClose`, plus `DrawerBody` for the scrollable middle section. `DrawerPortal`, `DrawerOverlay` and `DrawerSwipeHandle` aren't exported.
@@ -474,7 +474,7 @@ These shadcn/ui components don't have a `bejamas/ui` equivalent yet.
 
 ### AI and chat components
 
-shadcn/ui recently added components for chat and agent interfaces. `bejamas/ui` focuses on content sites and marketing pages and doesn't ship these:
+shadcn/ui includes components for chat and agent interfaces. `bejamas/ui` doesn't ship these yet:
 
 | shadcn/ui | What it is |
 | --- | --- |
@@ -483,7 +483,7 @@ shadcn/ui recently added components for chat and agent interfaces. `bejamas/ui` 
 | Marker | Inline status or system note in a conversation ("Thinking…") |
 | Message | A single chat message with avatar, header and footer |
 | Message Scroller | Chat transcript scroller that follows streamed output |
-| Questionnaire | Multi-step question form, framed as "the agent asks the user" |
+| Questionnaire | Multi-step question form for agents asking the user questions |
 
 Attachment, Bubble, Marker and Message are plain markup in shadcn/ui and can be ported to Astro by hand. The `shimmer` utility used for streaming states is already available in `bejamas/tailwind.css`.
 
@@ -541,13 +541,13 @@ The `bejamas` CLI is a thin, Astro-first wrapper around a pinned version of the 
 | Fonts | 26 | 24 (no EB Garamond or Instrument Serif yet) |
 | Icon libraries | Lucide, Hugeicons, Tabler, Phosphor, Remix Icon — rewritten at **install** time | The same five — resolved at **render** time by `SemanticIcon` |
 
-Sera and Rhea, the two newest shadcn styles, aren't available in `bejamas/ui` yet. Preset codes that only use shared values decode the same way in both CLIs; Bejamas-only values (Juno, the Bejamas themes) only work with the `bejamas` CLI.
+The Sera and Rhea styles aren't available in `bejamas/ui` yet. Preset codes that only use shared values decode the same way in both CLIs; Bejamas-only values (Juno, the Bejamas themes) only work with the `bejamas` CLI.
 
 Because the token names are identical, a theme generated for shadcn/ui works with `bejamas/ui` and vice versa. See [Theming](/docs/theming).
 
 ### Utilities
 
-- **`cn()`** — `bejamas/ui` builds `cn` from `clsx` and `tailwind-merge`. shadcn/ui now imports it from the `cn` package; both behave the same.
+- **`cn()`** — `bejamas/ui` builds `cn` from `clsx` and `tailwind-merge`. shadcn/ui imports it from the `cn` package; both behave the same.
 - **Tailwind utilities** — `bejamas/tailwind.css` provides the same custom variants as shadcn's `tailwind.css`, plus the `shimmer`, `scroll-fade-*` and `no-scrollbar` utilities.
 - **Hooks** — shadcn's only hook, `useIsMobile`, exists to support Sidebar. `bejamas/ui` has no hooks; responsive behaviour uses CSS.
 
