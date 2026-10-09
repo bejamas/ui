@@ -165,7 +165,7 @@ import { PlusIcon } from "@lucide/astro";
 
 ## Component parity
 
-Each component name below links to its docs page. See [Porting notes](#porting-notes) for the details behind each summary.
+Drop-in component names link to their docs pages. In the Close and Different API tables, each name links to its [porting notes](#porting-notes).
 
 ### Drop-in
 
@@ -192,31 +192,31 @@ Same anatomy, but some props, variants or sub-components are missing, renamed or
 
 | Component | Summary |
 | --- | --- |
-| [Accordion](/components/accordion) | Same 4 parts. Base UI `multiple` (Radix `type="multiple"`); no controlled `value`. |
-| [Alert](/components/alert) | `AlertAction` not available yet. |
-| [Avatar](/components/avatar) | All 6 parts and `size`. No image-load detection or fallback `delay`. |
-| [Badge](/components/badge) | No `ghost` / `link` variants; uses `as` instead of `render`; extra `shape` and `size`. |
-| [Breadcrumb](/components/breadcrumb) | `BreadcrumbLink`, `BreadcrumbPage`, `BreadcrumbEllipsis` not available yet. |
-| [Button](/components/button) | No `xs` / `icon-xs` sizes; `as="a"` instead of `render`; `buttonVariants` not exported. |
-| [Button Group](/components/button-group) | Same 3 parts; `ButtonGroupText` has no `render`. |
-| [Card](/components/card) | All 7 parts; no `size` prop; extra `CardMedia`, `CardOverlay`, `variant="ghost"`. |
-| [Checkbox](/components/checkbox) | Native checkbox wrapped in a `<label>`; no `indeterminate` or `onCheckedChange`. |
-| [Collapsible](/components/collapsible) | Initial state is `open` (no `defaultOpen`); state via `data-state`. |
-| [Combobox](/components/combobox) | Single-select matches; no multi-select / chips, no `items` prop. |
-| [Command](/components/command) | Same 9 parts; `command:select` instead of `onSelect`; no custom `filter`. |
-| [Dialog](/components/dialog) | Same core parts; always modal; no `DialogPortal` / `DialogOverlay` exports. |
-| [Dropdown Menu](/components/dropdown-menu) | Everything except submenus; styled `Button` trigger; one radio group per menu. |
-| [Hover Card](/components/hover-card) | Delays live on `HoverCard`, not the trigger; trigger is a `<button>`. |
-| [Item](/components/item) | No `size="xs"`; no link items (`render`); `ItemMedia variant` is `mediaVariant`. |
-| [Navigation Menu](/components/navigation-menu) | Items need a `value`; animated hover indicator; placement props on content. |
-| [Popover](/components/popover) | Header / Title / Description match; trigger is a styled `Button`; extra `PopoverClose`. |
-| [Select](/components/select) | Same core parts; `position` instead of `alignItemWithTrigger`; no `items` / `multiple`. |
-| [Separator](/components/separator) | Same `orientation` / `decorative` props; class-based orientation styling. |
-| [Slider](/components/slider) | Scalar or 2-thumb range only; `defaultValue={[33]}` must become `defaultValue={33}`. |
-| [Tabs](/components/tabs) | `TabsList` defaults to the animated `indicator` variant; active state is `data-state="active"`. |
-| [Toggle](/components/toggle) | `defaultPressed` only; `toggleVariants` lives in `lib/toggle-shared`. |
-| [Toggle Group](/components/toggle-group) | Default `spacing` is `0` (shadcn: `2`); item-level variant/size wins. |
-| [Tooltip](/components/tooltip) | No `TooltipProvider`; `delay` per tooltip; `asChild` wrapper trigger. |
+| [Accordion](#accordion) | Same 4 parts. Base UI `multiple` (Radix `type="multiple"`); no controlled `value`. |
+| [Alert](#alert) | `AlertAction` not available yet. |
+| [Avatar](#avatar) | All 6 parts and `size`. No image-load detection or fallback `delay`. |
+| [Badge](#badge) | No `ghost` / `link` variants; uses `as` instead of `render`; extra `shape` and `size`. |
+| [Breadcrumb](#breadcrumb) | `BreadcrumbLink`, `BreadcrumbPage`, `BreadcrumbEllipsis` not available yet. |
+| [Button](#button) | No `xs` / `icon-xs` sizes; `as="a"` instead of `render`; `buttonVariants` not exported. |
+| [Button Group](#button-group) | Same 3 parts; `ButtonGroupText` has no `render`. |
+| [Card](#card) | All 7 parts; no `size` prop; extra `CardMedia`, `CardOverlay`, `variant="ghost"`. |
+| [Checkbox](#checkbox) | Native checkbox wrapped in a `<label>`; no `indeterminate` or `onCheckedChange`. |
+| [Collapsible](#collapsible) | Initial state is `open` (no `defaultOpen`); state via `data-state`. |
+| [Combobox](#combobox) | Single-select matches; no multi-select / chips, no `items` prop. |
+| [Command](#command) | Same 9 parts; `command:select` instead of `onSelect`; no custom `filter`. |
+| [Dialog](#dialog) | Same core parts; always modal; no `DialogPortal` / `DialogOverlay` exports. |
+| [Dropdown Menu](#dropdown-menu) | Everything except submenus; styled `Button` trigger; one radio group per menu. |
+| [Hover Card](#hover-card) | Delays live on `HoverCard`, not the trigger; trigger is a `<button>`. |
+| [Item](#item) | No `size="xs"`; no link items (`render`); `ItemMedia variant` is `mediaVariant`. |
+| [Navigation Menu](#navigation-menu) | Items need a `value`; animated hover indicator; placement props on content. |
+| [Popover](#popover) | Header / Title / Description match; trigger is a styled `Button`; extra `PopoverClose`. |
+| [Select](#select) | Same core parts; `position` instead of `alignItemWithTrigger`; no `items` / `multiple`. |
+| [Separator](#separator) | Same `orientation` / `decorative` props; class-based orientation styling. |
+| [Slider](#slider) | Scalar or 2-thumb range only; `defaultValue={[33]}` must become `defaultValue={33}`. |
+| [Tabs](#tabs) | `TabsList` defaults to the animated `indicator` variant; active state is `data-state="active"`. |
+| [Toggle](#toggle) | `defaultPressed` only; `toggleVariants` lives in `lib/toggle-shared`. |
+| [Toggle Group](#toggle-group) | Default `spacing` is `0` (shadcn: `2`); item-level variant/size wins. |
+| [Tooltip](#tooltip) | No `TooltipProvider`; `delay` per tooltip; `asChild` wrapper trigger. |
 
 ### Different API
 
@@ -224,226 +224,352 @@ The anatomy or API differs enough that you should read the porting notes before 
 
 | Component | Summary |
 | --- | --- |
-| [Carousel](/components/carousel) | Native scroll-snap instead of Embla; `CarouselItem` → `CarouselSlide`; no `opts` / `plugins` / `setApi`. |
-| [Drawer](/components/drawer) | `side` on the root (left / right / bottom); no snap points; also covers Sheet. |
+| [Carousel](#carousel) | Native scroll-snap instead of Embla; `CarouselItem` → `CarouselSlide`; no `opts` / `plugins` / `setApi`. |
+| [Drawer](#drawer) | `side` on the root (left / right / bottom); no snap points; also covers Sheet. |
 
 ---
 
 ## Porting notes
 
-The notes below assume the general translation from [Astro props vs React props](#astro-props-vs-react-props): `className` → `class`, `htmlFor` → `for`, `render` → `as` / `asChild` / `data-slot`, and controlled props → `default*` props plus events. Only component-specific differences are listed.
+Each note lists only what changes beyond the general translation in [Astro props vs React props](#astro-props-vs-react-props). Each note links to the component's docs page.
 
 ### Drop-in components
 
-These port by translating syntax only.
+These need only the general React → Astro translation. Good to know:
 
-- **Field** — Same anatomy: `Field` (`orientation` = `vertical`, `horizontal` or `responsive`), `FieldSet`, `FieldLegend` (`variant` = `legend` or `label`), `FieldGroup`, `FieldContent`, `FieldLabel`, `FieldTitle`, `FieldDescription`, `FieldError` (`errors={[{ message }]}`) and `FieldSeparator`. Set `data-invalid` on `Field` and `aria-invalid` on the control yourself, exactly as in shadcn/ui. `FieldError` adds `forceMount` to always render the error container for client-side validation. `FieldTitle` uses `data-slot="field-title"` (shadcn: `field-label`).
-- **Input** / **Textarea** / **Native Select** / **Label** / **Kbd** — Plain HTML elements with the same classes. `Textarea` takes its initial text as children or via `value` / `defaultValue`. Use native `input` / `change` events. `KbdGroup` renders a `<div>`, so don't nest it inside a `<p>`.
-- **Input Group** — Same `InputGroupAddon align` values (`inline-start`, `inline-end`, `block-start`, `block-end`) and `InputGroupButton` sizes (`xs`, `sm`, `icon-xs`, `icon-sm`). `bejamas/ui` sets `data-disabled` on the group automatically from the control's `disabled` attribute, and focuses textareas as well as inputs when an addon is clicked. `InputGroupButton` uses `data-slot="input-group-button"` instead of `button`.
-- **Radio Group** — `RadioGroup` takes `defaultValue`, `name`, `disabled`, `readOnly` and `required`. Listen for `radio-group:change`. The root has no `w-full` by default.
-- **Skeleton** / **Spinner** — Identical.
-- **Switch** — `size` = `sm` or `default`. `defaultChecked` + `switch:change` replaces `checked` + `onCheckedChange`; `name`, `value` and `uncheckedValue` submit natively.
-- **Table** — Same 8 parts. shadcn's [Data Table](https://ui.shadcn.com/docs/components/base/data-table) guide is built on TanStack Table for React and has no `bejamas/ui` equivalent; use the static `Table` with server-side sorting and pagination, or your own client script.
+- **Textarea** — pass initial text as children, or with `value` / `defaultValue`.
+- **Field** — set `data-invalid` on `Field` and `aria-invalid` on the control yourself, as in shadcn/ui. `FieldError` also takes `forceMount` for client-side validation.
+- **Input Group** — the group gets `data-disabled` automatically from the control's `disabled` attribute.
+- **Radio Group, Switch** — submit natively with `name`. Listen for `radio-group:change` or `switch:change`.
+- **Kbd** — `KbdGroup` renders a `<div>`, so don't nest it inside a `<p>`.
+- **Table** — there's no equivalent of shadcn's [Data Table](https://ui.shadcn.com/docs/components/base/data-table) guide. Use the static `Table` with server-side sorting and pagination, or your own script.
 
 ### Close components
 
 #### Accordion
 
-- Radix `type="single" collapsible` → drop both (single mode is the default and items are collapsible). `type="multiple"` → `multiple`.
-- `defaultValue` accepts a string or an array.
-- `value` / `onValueChange` → `accordion:change` (`{ value: string[] }`) and `accordion:set`.
-- `disabled` and `orientation` aren't typed props; pass `data-disabled` on `AccordionItem` (or the root) and `data-orientation` on the root.
-- Extras: `collapsible` (default `true`) and the `icon` slot on `AccordionTrigger`.
+<small>[Docs →](/components/accordion)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Accordion type="single" collapsible>` (Radix) | `<Accordion>` |
+| `<Accordion type="multiple">` (Radix) | `<Accordion multiple>` |
+| `value` + `onValueChange` | `defaultValue` + `accordion:change` |
+| `<AccordionItem disabled>` | `<AccordionItem data-disabled>` |
 
 #### Alert
 
-- `AlertAction` isn't available yet. Add your own element positioned in the alert's top-right corner, for example `<div class="absolute top-2 right-2">`.
+<small>[Docs →](/components/alert)</small>
+
+**Not available:** `AlertAction`. Add your own element in the top-right corner instead, for example `<div class="absolute top-2 right-2">`.
 
 #### Avatar
 
-- `Avatar`, `AvatarImage`, `AvatarFallback`, `AvatarBadge`, `AvatarGroup`, `AvatarGroupCount` and `size` (`default`, `sm`, `lg`) all match.
-- There is no image-loading detection: the fallback renders underneath the image rather than being swapped in, and there is no `delay` or `onLoadingStatusChange`.
-- `AvatarImage` without `src` acts as a wrapper for an `astro:assets` `<Image>`.
+<small>[Docs →](/components/avatar)</small>
+
+**Not available:** the fallback `delay` prop and `onLoadingStatusChange`.
+
+**Watch out:** there's no image-load detection. The fallback renders underneath the image, so a broken image URL won't fall back to it.
 
 #### Badge
 
-- Variants: `default`, `secondary`, `destructive`, `outline`. `ghost` and `link` aren't available yet.
-- `render={<a href="…" />}` → `as="a" href="…"`.
-- Extra props: `shape` (`default`, `pill`) and `size` (`default`, `sm`). The default badge is taller and less rounded than shadcn's in the same style.
-- `badgeVariants` isn't exported.
+<small>[Docs →](/components/badge)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Badge render={<a href="…" />}>` | `<Badge as="a" href="…">` |
+
+**Not available:** the `ghost` and `link` variants, and `badgeVariants`.
+
+**Watch out:** the default badge is taller and less rounded than shadcn's in the same style. Use `size="sm"` and `shape="pill"` to get closer.
 
 #### Breadcrumb
 
-- `Breadcrumb`, `BreadcrumbList`, `BreadcrumbItem` and `BreadcrumbSeparator` match.
-- `BreadcrumbLink`, `BreadcrumbPage` and `BreadcrumbEllipsis` aren't available yet. Use a plain `<a>` for links (for example `class="transition-colors hover:text-foreground"`) and `<span aria-current="page" class="text-foreground">` for the current page.
+<small>[Docs →](/components/breadcrumb)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<BreadcrumbLink href="/">Home</BreadcrumbLink>` | `<a href="/" class="transition-colors hover:text-foreground">Home</a>` |
+| `<BreadcrumbPage>Docs</BreadcrumbPage>` | `<span aria-current="page" class="text-foreground">Docs</span>` |
+
+**Not available:** `BreadcrumbEllipsis`.
 
 #### Button
 
-- Variants match (`default`, `outline`, `secondary`, `ghost`, `destructive`, `link`).
-- Sizes: `default`, `sm`, `lg`, `icon`, `icon-sm`, `icon-lg`. `xs` and `icon-xs` aren't available yet.
-- Links: `<Button as="a" href="…">` (typed so `href` is only allowed with `as="a"`). `buttonVariants` isn't exported, so `<a className={buttonVariants()}>` becomes `<Button as="a">`.
-- `data-icon="inline-start"` / `"inline-end"` on icons works the same.
-- `Button` doesn't default to `type="button"`; add it inside forms when the button shouldn't submit.
+<small>[Docs →](/components/button)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Button render={<a href="…" />} nativeButton={false}>` | `<Button as="a" href="…">` |
+| `<a className={buttonVariants({ variant: "outline" })}>` | `<Button as="a" variant="outline" href="…">` |
+
+**Not available:** the `xs` and `icon-xs` sizes, and `buttonVariants`.
+
+**Watch out:** `Button` doesn't default to `type="button"`. Add it inside forms when the button shouldn't submit.
 
 #### Button Group
 
-- `ButtonGroup` (`orientation`), `ButtonGroupSeparator` and `ButtonGroupText` match, and `buttonGroupVariants` is exported.
-- `ButtonGroupText` has no `render`; wrap a `<label>` yourself instead of `render={<Label />}`.
+<small>[Docs →](/components/button-group)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<ButtonGroupText render={<Label htmlFor="…" />}>` | `<ButtonGroupText><label for="…">…</label></ButtonGroupText>` |
 
 #### Card
 
-- All shadcn parts exist: `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`, `CardContent`, `CardFooter`.
-- No `size` prop; `<Card data-size="sm">` gives the same styling.
-- `CardFooter` adds `justify-between`.
-- Extras: `variant="ghost"`, `CardMedia`, `CardOverlay` (`variant` = `default` or `glass`).
+<small>[Docs →](/components/card)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Card size="sm">` | `<Card data-size="sm">` |
+
+**Watch out:** `CardFooter` adds `justify-between`. Override it with `class="justify-start"` if needed.
 
 #### Checkbox
 
-- `bejamas/ui` renders a native `<input type="checkbox">` inside a `<label>` and accepts inline label text as children. Don't wrap it in another `<Label>`.
-- Use `checked` for the initial state and the native `change` event instead of `onCheckedChange`.
-- No `indeterminate` prop; set `input.indeterminate = true` in a script.
-- Style the checked state with `checked:` variants rather than `data-checked:`. There is no `data-slot="checkbox"` on the input.
+<small>[Docs →](/components/checkbox)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Checkbox defaultChecked />` | `<Checkbox checked />` |
+| `onCheckedChange` | the native `change` event |
+| `data-checked:` classes | `checked:` classes |
+
+**Not available:** `indeterminate`. Set `input.indeterminate = true` in a script instead.
+
+**Watch out:** the checkbox renders its own `<label>` and takes label text as children, so don't wrap it in another `<Label>`.
 
 #### Collapsible
 
-- `defaultOpen` → `open` (still only the initial state). `onOpenChange` → `collapsible:change`; `collapsible:set` to toggle.
-- `disabled` goes on `CollapsibleTrigger`, not the root.
-- State is exposed as `data-state="open"` / `"closed"`, not `data-open` / `data-panel-open`.
-- Extra: `CollapsibleContent animation="slide"`.
+<small>[Docs →](/components/collapsible)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Collapsible defaultOpen>` | `<Collapsible open>` |
+| `onOpenChange` | `collapsible:change` |
+| `<Collapsible disabled>` | `<CollapsibleTrigger disabled>` |
+| `data-open:` / `data-panel-open:` classes | `data-[state=open]:` classes |
 
 #### Combobox
 
-- All single-select parts match: `Combobox`, `ComboboxInput` (`showTrigger`, `showClear`), `ComboboxContent`, `ComboboxList`, `ComboboxItem`, `ComboboxGroup`, `ComboboxLabel`, `ComboboxSeparator`, `ComboboxEmpty`, `ComboboxTrigger`, `ComboboxValue`.
-- Not available: `multiple`, `ComboboxChips` / `ComboboxChip` / `ComboboxChipsInput`, `ComboboxCollection`, `useComboboxAnchor`, and the `items` prop with render-function children. Map your items in Astro instead: `{items.map((item) => <ComboboxItem value={item.value} label={item.label}>…</ComboboxItem>)}`. Values are strings.
-- Put `ComboboxEmpty` **inside** `ComboboxList`.
-- `ComboboxContent align` defaults to `center` (shadcn: `start`) and `side` is `top` or `bottom`.
-- `ComboboxInput` doesn't accept children, so input-group addons inside it aren't supported.
-- Events: `combobox:change`, `combobox:open-change`, `combobox:input-change`, `combobox:set`. `name` submits natively.
+<small>[Docs →](/components/combobox)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Combobox items={items}>` with a render function | `{items.map((item) => <ComboboxItem value={item.value} label={item.label}>…</ComboboxItem>)}` |
+| `<ComboboxEmpty>` next to `<ComboboxList>` | `<ComboboxEmpty>` inside `<ComboboxList>` |
+| `<ComboboxContent>` | `<ComboboxContent align="start">` to match shadcn's alignment |
+
+**Not available:** `multiple` and the chips parts, `ComboboxCollection`, `useComboboxAnchor`, object values, and addons inside `ComboboxInput`.
 
 #### Command
 
-- Same 9 parts, including `CommandDialog` and `CommandShortcut`.
-- `onSelect` → listen for `command:select` (`{ value }`). The search text moves from `CommandInput value` to the root's `defaultSearch` and `command:set`.
-- No custom `filter`; `CommandGroup heading` is a string.
-- `CommandDialog` has no `open` / `onOpenChange`. Give it an `id` and dispatch `dialog:set`, or use `defaultOpen`.
-- The search icon sits at the end of the input, and items have no check indicator.
+<small>[Docs →](/components/command)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<CommandItem onSelect={…}>` | `<CommandItem value="…">` + `command:select` |
+| `<CommandDialog open={open} onOpenChange={setOpen}>` | `<CommandDialog id="…">` + `dialog:set` / `dialog:change` |
+| `<CommandInput value={search} onValueChange={…}>` | `<Command defaultSearch="…">` + `command:search-change` |
+
+**Not available:** a custom `filter` function, and non-text `CommandGroup` headings.
+
+**Watch out:** the search icon sits at the end of the input, and items have no check indicator.
 
 #### Dialog
 
-- `Dialog`, `DialogTrigger`, `DialogContent` (`showCloseButton`), `DialogHeader`, `DialogFooter`, `DialogTitle`, `DialogDescription` and `DialogClose` match. `DialogPortal` and `DialogOverlay` aren't exported; `DialogContent` takes `overlayClass` instead.
-- Root props: `defaultOpen`, `closeOnClickOutside` (replaces `disablePointerDismissal`), `closeOnEscape`, `lockScroll`. Dialogs are always modal.
-- `DialogFooter showCloseButton` isn't available.
-- For footer actions, use `<Button variant="outline" data-slot="dialog-close">Cancel</Button>`. `DialogClose` itself is styled as the top-right close button.
-- There is no `AlertDialog` yet — see [What bejamas/ui does not offer](#what-bejamasui-does-not-offer).
+<small>[Docs →](/components/dialog)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<DialogTrigger render={<Button variant="outline" />}>` | `<Button variant="outline" data-slot="dialog-trigger">` |
+| `<DialogClose render={<Button variant="outline" />}>` | `<Button variant="outline" data-slot="dialog-close">` |
+| `<Dialog disablePointerDismissal>` | `<Dialog closeOnClickOutside={false}>` |
+| `<DialogFooter showCloseButton>` | a close `Button` in the footer |
+| `<DialogOverlay className="…">` | `<DialogContent overlayClass="…">` |
+
+**Not available:** non-modal dialogs, `DialogPortal`, and Alert Dialog (see [What bejamas/ui does not offer](#what-bejamasui-does-not-offer)).
+
+**Watch out:** `DialogClose` is styled as the top-right close button. Use a `Button` with `data-slot="dialog-close"` for footer actions.
 
 #### Dropdown Menu
 
-- Available: `DropdownMenu`, `DropdownMenuPortal`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuGroup`, `DropdownMenuLabel` (`inset`), `DropdownMenuItem` (`inset`, `variant="destructive"`), `DropdownMenuCheckboxItem`, `DropdownMenuRadioGroup`, `DropdownMenuRadioItem`, `DropdownMenuSeparator`, `DropdownMenuShortcut`.
-- **Not available: submenus** (`DropdownMenuSub`, `DropdownMenuSubTrigger`, `DropdownMenuSubContent`).
-- `DropdownMenuTrigger` is a `Button`: `render={<Button variant="outline" />}` → `variant="outline"`.
-- Radio state lives on the root: `<DropdownMenu defaultValue="…">` plus `dropdown-menu:value-change`. One radio group per menu.
-- Checkbox items need a `value`; use `defaultChecked` or root `defaultValues` plus `dropdown-menu:values-change`. Set `closeOnSelect={false}` on the root for checkbox menus.
-- Item `onClick` → listen for `dropdown-menu:select` (`{ value }`) and give items a `value`.
+<small>[Docs →](/components/dropdown-menu)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<DropdownMenuTrigger render={<Button variant="outline" />}>` | `<DropdownMenuTrigger variant="outline">` |
+| `<DropdownMenuItem onClick={…}>` | `<DropdownMenuItem value="…">` + `dropdown-menu:select` |
+| `<DropdownMenuCheckboxItem checked onCheckedChange>` | `<DropdownMenuCheckboxItem value="…" defaultChecked>` + `dropdown-menu:values-change` |
+| `<DropdownMenuRadioGroup value onValueChange>` | `<DropdownMenu defaultValue="…">` + `dropdown-menu:value-change` |
+
+**Not available:** submenus (`DropdownMenuSub`, `DropdownMenuSubTrigger`, `DropdownMenuSubContent`).
+
+**Watch out:** each menu supports one radio group. Set `closeOnSelect={false}` on menus with checkbox items.
 
 #### Hover Card
 
-- Delays move to the root: `<HoverCard delay={…} closeDelay={…}>` (Base UI puts them on the trigger; Radix calls it `openDelay`). Default open delay is 700 ms.
-- `HoverCardTrigger` renders a `<button>`; wrap an `<a>` with `asChild` for a link trigger.
-- `side` = `top`, `bottom`, `left` or `right` (no `inline-start` / `inline-end`). `alignOffset` defaults to `0` (shadcn: `4`).
-- Events: `hover-card:change`, `hover-card:set`. Extras: `skipDelayDuration`, `closeOnClickOutside`, `closeOnEscape`.
+<small>[Docs →](/components/hover-card)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<HoverCardTrigger delay={…} closeDelay={…}>` | `<HoverCard delay={…} closeDelay={…}>` |
+| `<HoverCard openDelay={…}>` (Radix) | `<HoverCard delay={…}>` |
+| `<HoverCardTrigger render={<a href="…" />}>` | `<HoverCardTrigger asChild><a href="…">…</a></HoverCardTrigger>` |
+| `side="inline-start"` / `"inline-end"` | `side="left"` / `"right"` |
+
+**Watch out:** the defaults differ: a 700 ms open delay, and an `alignOffset` of `0` (shadcn: `4`).
 
 #### Item
 
-- All 10 parts match.
-- `size` = `default` or `sm` (no `xs` yet).
-- `Item` has no `render` / `asChild` / `as`, so link items need a hand-written `<a data-slot="item">` that copies the classes from your installed `Item` component.
-- `ItemMedia variant` is named **`mediaVariant`** (`default`, `icon`, `image`).
+<small>[Docs →](/components/item)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<ItemMedia variant="icon">` | `<ItemMedia mediaVariant="icon">` |
+| `<Item size="xs">` | `<Item size="sm">` |
+| `<Item render={<a href="…" />}>` | an `<a data-slot="item">` with the classes copied from your installed `Item` |
+
+**Watch out:** `variant` on `ItemMedia` is silently ignored, so make sure to rename it.
 
 #### Navigation Menu
 
-- All parts match, plus `NavigationMenuViewport`, and `navigationMenuTriggerStyle` is exported.
-- Give every `NavigationMenuItem` that has a trigger a unique `value`.
-- `NavigationMenuIndicator` is an animated hover highlight placed inside `NavigationMenuList`, not an arrow.
-- `NavigationMenuLink` is always an `<a>`: use `href` instead of `render`, and `data-active` instead of `active`.
-- Put `side`, `align` and `sideOffset` on `NavigationMenuContent`. `delay` / `closeDelay` → `delayOpen` / `delayClose`. Extras: `viewport`, `openOnFocus`.
-- Events: `navigation-menu:change`, `navigation-menu:set`.
+<small>[Docs →](/components/navigation-menu)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<NavigationMenuItem>` | `<NavigationMenuItem value="…">` (required for items with a trigger) |
+| `<NavigationMenuLink render={<a href="…" />}>` | `<NavigationMenuLink href="…">` |
+| `<NavigationMenuLink active>` | `<NavigationMenuLink data-active>` |
+| `<NavigationMenu delay={…} closeDelay={…}>` | `<NavigationMenu delayOpen={…} delayClose={…}>` |
+
+**Watch out:** `NavigationMenuIndicator` is an animated hover highlight that goes inside `NavigationMenuList`, not an arrow. Set `side`, `align` and `sideOffset` on `NavigationMenuContent`.
 
 #### Popover
 
-- `Popover`, `PopoverTrigger`, `PopoverContent`, `PopoverHeader`, `PopoverTitle`, `PopoverDescription` match; `PopoverClose` is an extra. `PopoverAnchor` (Radix only) isn't available.
-- `PopoverTrigger` is a `Button`: `render={<Button variant="outline" />}` → `variant="outline"`.
-- `sideOffset` defaults to `6` (shadcn: `4`), and content has no default `w-72` width.
-- Events: `popover:change`, `popover:set`.
+<small>[Docs →](/components/popover)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<PopoverTrigger render={<Button variant="outline" />}>` | `<PopoverTrigger variant="outline">` |
+| `<PopoverContent>` | `<PopoverContent class="w-72" sideOffset={4}>` to match shadcn's width and spacing |
+
+**Not available:** `PopoverAnchor` (Radix only).
+
+**Watch out:** a bare `PopoverTrigger` renders a filled primary button.
 
 #### Select
 
-- `Select`, `SelectTrigger` (`size`), `SelectValue`, `SelectContent`, `SelectItem`, `SelectGroup`, `SelectLabel`, `SelectSeparator` match.
-- Scroll buttons are built into `SelectContent` (customise them with the `scroll-up` / `scroll-down` slots) instead of `SelectScrollUpButton` / `SelectScrollDownButton`.
-- `alignItemWithTrigger` → `position="item-aligned"` (default) or `position="popper"`. `side` is `top` or `bottom`.
-- Not available: the `items` prop, `multiple`, `readOnly`, object values.
-- `name` submits natively. Events: `select:change`, `select:open-change`, `select:set`.
+<small>[Docs →](/components/select)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Select items={items}>` | `{items.map((item) => <SelectItem value={item.value}>…</SelectItem>)}` |
+| `<SelectContent alignItemWithTrigger={false}>` | `<SelectContent position="popper">` |
+| `<SelectScrollUpButton />` / `<SelectScrollDownButton />` | built in; customise with the `scroll-up` / `scroll-down` slots |
+
+**Not available:** `multiple`, `readOnly`, object values, and `side="left"` / `"right"`.
 
 #### Separator
 
-- `orientation` and `decorative` work the same.
-- Orientation is styled through classes rather than `data-horizontal:` / `data-vertical:`, so those variants in your own `class` won't apply.
+<small>[Docs →](/components/separator)</small>
+
+**Watch out:** orientation is styled with classes, so `data-horizontal:` and `data-vertical:` variants in your own `class` won't apply.
 
 #### Slider
 
-- `defaultValue` is a number or a `[min, max]` pair, so at most two thumbs. Convert `defaultValue={[33]}` to `defaultValue={33}`; a single-item array renders a range.
-- `onValueChange` → `slider:change` (while dragging); `onValueCommitted` → `slider:commit`; `slider:set` to update.
-- No `name` / form input.
+<small>[Docs →](/components/slider)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Slider defaultValue={[33]} />` | `<Slider defaultValue={33} />` |
+| `onValueChange` | `slider:change` (fires while dragging) |
+| `onValueCommitted` | `slider:commit` |
+
+**Not available:** more than two thumbs, and form submission with `name`.
 
 #### Tabs
 
-- `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` and `tabsListVariants` match.
-- `TabsList` defaults to `variant="indicator"` (an animated pill). Set `variant="default"` for shadcn's look. Also available: `line`, `line-animated`, and `size` (`sm`, `default`, `lg`).
-- The active trigger has `data-state="active"`; replace `data-active:` utilities with `data-[state=active]:`.
-- Activation is automatic by default; pass `data-activation-mode="manual"` on `Tabs` for manual activation.
-- Extra: `TabsContent animation` (`none`, `fade`, `slide`, `direction`). Events: `tabs:change`, `tabs:set`.
+<small>[Docs →](/components/tabs)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<TabsList>` | `<TabsList variant="default">` to match shadcn's look |
+| `data-active:` classes | `data-[state=active]:` classes |
+| `<Tabs activationMode="manual">` (Radix) | `<Tabs data-activation-mode="manual">` |
+
+**Watch out:** `TabsList` defaults to the animated `indicator` variant.
 
 #### Toggle
 
-- `variant` (`default`, `outline`) and `size` (`default`, `sm`, `lg`) match.
-- `pressed` → `defaultPressed`; `onPressedChange` → `toggle:change`; `toggle:set` to update. State is `aria-pressed` and `data-state="on"` (not `data-pressed`).
-- Import `toggleVariants` from `lib/toggle-shared`.
+<small>[Docs →](/components/toggle)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Toggle pressed={…} onPressedChange={…}>` | `<Toggle defaultPressed>` + `toggle:change` |
+| `data-pressed:` classes | `aria-pressed:` or `data-[state=on]:` classes |
+| `toggleVariants` from the toggle component | `toggleVariants` from `lib/toggle-shared` |
 
 #### Toggle Group
 
-- `multiple` (Base UI) replaces Radix `type="multiple"`.
-- `spacing` defaults to `0`; shadcn's current default is `2`, so add `spacing={2}` when porting shadcn markup that omits it.
-- When both the group and an item set `variant` / `size`, the item wins (in shadcn the group wins).
-- Events: `toggle-group:change` (`{ value: string[] }`), `toggle-group:set`.
+<small>[Docs →](/components/toggle-group)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<ToggleGroup type="multiple">` (Radix) | `<ToggleGroup multiple>` |
+| `<ToggleGroup>` | `<ToggleGroup spacing={2}>` to match shadcn's default spacing |
+
+**Watch out:** when both the group and an item set `variant` or `size`, the item wins. In shadcn, the group wins.
 
 #### Tooltip
 
-- There is no `TooltipProvider`. Remove it and set `delay` on each `Tooltip` (default 300 ms; use `delay={0}` for shadcn's instant feel). Radix `delayDuration` → `delay`.
-- `side` (including `inline-start` / `inline-end`), `align`, `sideOffset` and `alignOffset` match the Base UI flavour.
-- `render={<Button />}` → `asChild` with the `Button` inside. The `Tooltip` root renders an `inline-block` wrapper element.
-- Events: `tooltip:change`, `tooltip:set`.
+<small>[Docs →](/components/tooltip)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<TooltipProvider delay={0}>` | remove it and set `delay={0}` on each `Tooltip` |
+| `delayDuration={…}` (Radix) | `<Tooltip delay={…}>` |
+| `<TooltipTrigger render={<Button />}>` | `<TooltipTrigger asChild><Button>…</Button></TooltipTrigger>` |
+
+**Watch out:** the default delay is 300 ms, and the `Tooltip` root renders an `inline-block` wrapper element.
 
 ### Different API components
 
 #### Carousel
 
+<small>[Docs →](/components/carousel)</small>
+
 `bejamas/ui` uses native CSS scroll snapping with a `@data-slot/carousel` controller instead of Embla.
 
-- **Root:** use `CarouselRoot` for shadcn-style composition. `Carousel` in `bejamas/ui` is an all-in-one widget that renders its own viewport, previous/next buttons and an optional counter.
-- **Items:** `CarouselItem` → `CarouselSlide`.
-- **Spacing:** drop the `-ml-4` / `pl-4` pattern; `CarouselContent` uses `gap-4`. `basis-1/2` / `basis-1/3` on slides still works.
-- **Controls:** `CarouselPrevious` / `CarouselNext` sit in normal flow rather than being absolutely positioned outside the viewport. Place them yourself, or use `Carousel` with `controls`.
-- **Options:** `opts={{ loop: true }}` → `data-loop="true"`. `orientation`, `defaultIndex` and `drag` are props. There is no equivalent for `plugins` (Autoplay etc.); dispatch `carousel:set` with `{ action: "next" }` from a timer instead.
-- **API:** `setApi` / `api.on("select")` → listen for `carousel:change` (`{ index }`) and read `data-index` on the root.
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Carousel>` | `<CarouselRoot>` (the `bejamas/ui` `Carousel` is an all-in-one widget with built-in controls) |
+| `<CarouselItem>` | `<CarouselSlide>` |
+| `-ml-4` on `CarouselContent` and `pl-4` on items | nothing; `CarouselContent` already uses `gap-4` |
+| `opts={{ loop: true }}` | `data-loop="true"` |
+| `setApi` + `api.on("select")` | `carousel:change` and `data-index` on the root |
+
+**Not available:** `plugins`. For autoplay, dispatch `carousel:set` with `{ action: "next" }` from a timer.
+
+**Watch out:** `CarouselPrevious` and `CarouselNext` sit in normal flow instead of overlaying the slides, so place them yourself.
 
 #### Drawer
 
-shadcn ships two drawers — Base UI (`swipeDirection`, snap points) and Radix/vaul (`direction`). The `bejamas/ui` Drawer has its own API:
+<small>[Docs →](/components/drawer)</small>
 
-- **Direction:** `side="left" | "right" | "bottom"` on `Drawer` (default `right`). There is no top drawer.
-- **Parts:** `Drawer`, `DrawerTrigger`, `DrawerContent`, `DrawerHeader`, `DrawerTitle`, `DrawerDescription`, `DrawerFooter`, `DrawerClose`, plus `DrawerBody` for the scrollable middle section. `DrawerPortal`, `DrawerOverlay` and `DrawerSwipeHandle` aren't exported.
-- **Props:** `defaultOpen`, `modal`, `disablePointerDismissal`, `closeOnEscape`. Snap points and `showSwipeHandle` aren't exposed.
-- **Events:** `drawer:change`, `drawer:change-complete`, `drawer:set`.
-- **Sheet:** the `bejamas/ui` Drawer covers shadcn's `Sheet` for the left, right and bottom sides, and adds swipe-to-dismiss. `<Sheet><SheetContent side="right">` becomes `<Drawer side="right"><DrawerContent>`. Add your own close button with `data-slot="drawer-close"`.
+shadcn ships two drawers: Base UI (`swipeDirection`, snap points) and Radix/vaul (`direction`). The `bejamas/ui` Drawer has its own API, and also covers shadcn's Sheet.
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Drawer swipeDirection="down">` (Base UI) or `<Drawer direction="bottom">` (Radix) | `<Drawer side="bottom">` |
+| `<Sheet>` + `<SheetContent side="right">` | `<Drawer side="right">` + `<DrawerContent>` |
+| `<DrawerTrigger render={<Button />}>` | `<Button data-slot="drawer-trigger">` |
+| `<div className="p-4">` around the content | `<DrawerBody>` |
+| `[data-slot=drawer-overlay]` selectors | `[data-slot=drawer-backdrop]` |
+
+**Not available:** a top drawer, snap points, `showSwipeHandle`, `DrawerPortal` and `DrawerOverlay`.
+
+**Watch out:** the default side is `right` (shadcn: bottom), and there's no built-in close button. Add one with `data-slot="drawer-close"`.
 
 ---
 
