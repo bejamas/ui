@@ -38,9 +38,22 @@
  *   />
  *   <FieldError id="message-invalid-error">Message is required.</FieldError>
  * </Field>
+ *
+ * ### Initial Value
+ *
+ * Pass the initial text as children, or with `value` / `defaultValue`.
+ *
+ * <Textarea class="max-w-sm">Thanks for the quick reply!</Textarea>
  */
 
-const { class: className = "", ...props } = Astro.props;
+const {
+  class: className = "",
+  value,
+  defaultValue,
+  ...props
+} = Astro.props;
+
+const initialValue = value ?? defaultValue;
 
 const baseClass =
   "flex field-sizing-content min-h-16 w-full outline-none disabled:cursor-not-allowed disabled:opacity-50";
@@ -51,4 +64,4 @@ import { cn } from "@bejamas/ui/lib/utils";
 <textarea
   data-slot={props["data-slot"] ?? "textarea"}
   class={cn("border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 rounded-md border bg-transparent px-2.5 py-2 text-base shadow-xs transition-[color,box-shadow] focus-visible:ring-3 md:text-sm px-3", baseClass, className)}
-  {...props}></textarea>
+  {...props}>{initialValue ?? <slot />}</textarea>
