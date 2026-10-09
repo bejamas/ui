@@ -1,28 +1,23 @@
-// Usage: bun shot.mjs <url> <out.png> [width=1440] [--dark] [--chunks]
-// Full-page screenshot (add --chunks to also save viewport-height slices out-1.png, out-2.png ...). Scrolls through the page first so in-view animations run.
-import { chromium } from "playwright";
-const [url, out, widthArg] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
-const dark = process.argv.includes("--dark");
-const width = Number(widthArg ?? 1440);
-const browser = await chromium.launch();
-const page = await browser.newPage({
-  viewport: { width, height: width < 768 ? 844 : 900 },
-  colorScheme: dark ? "dark" : "light",
-  userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36",
-});
-await page.goto(url, { waitUntil: "networkidle", timeout: 60000 }).catch(() => {});
-const h = await page.evaluate(() => document.documentElement.scrollHeight);
-for (let y = 0; y < h; y += 400) { await page.evaluate((y) => window.scrollTo(0, y), y); await page.waitForTimeout(120); }
-await page.evaluate(() => window.scrollTo(0, 0));
-await page.waitForTimeout(1200);
-await page.screenshot({ path: out, fullPage: true });
-if (process.argv.includes("--chunks")) {
-  const vh = page.viewportSize().height;
-  const total = await page.evaluate(() => document.documentElement.scrollHeight);
-  for (let i = 0, y = 0; y < total; i++, y += vh) {
-    const p = out.replace(/\.png$/, `-${i + 1}.png`);
-    await page.screenshot({ path: p, fullPage: true, clip: { x: 0, y, width, height: Math.min(vh, total - y) } });
-  }
+// Viewport-sized screenshots of a whole page, top to bottom: <out>-1.png, <out>-2.png ...
+// Each slice is taken scrolled to that position, so sticky headers and scroll-linked effects show as a visitor sees them.
+// Usage: node shot.mjs <url> <out.png> [width=1440] [--dark] [--storage=theme=dark]
+import { writeFileSync } from "node:fs";
+import { launch, parseArgs, storageFlag } from "./browser.mjs";
+
+const { positional: [url, out, widthArg], flags } = parseArgs();
+const browser = await launch();
+const page = await browser.newPage({ width: Number(widthArg ?? 1440), dark: !!flags.dark, localStorage: storageFlag(flags) });
+await page.goto(url);
+await page.scrollThrough(400, 120);
+await page.wait(1200);
+const total = await page.evaluate(() => document.documentElement.scrollHeight);
+const files = [];
+for (let i = 0, y = 0; y < total; i++, y += page.height) {
+  await page.evaluate((y) => scrollTo(0, y), y);
+  await page.wait(300);
+  const file = out.replace(/\.png$/, "") + `-${i + 1}.png`;
+  writeFileSync(file, await page.screenshot());
+  files.push(file);
 }
 await browser.close();
-console.log(`saved ${out} (${width}px)`);
+console.log(`saved ${files.length} slices (${page.width}px, page ${total}px): ${files.join(" ")}`);

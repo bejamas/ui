@@ -1,14 +1,10 @@
 // Compare element geometry and key computed styles between the original site and the port.
-// Usage: bun compare-boxes.mjs <originalUrl> <portUrl> [width=1440] [--dark] [--threshold=2] [--json=out.json]
+// Usage: node compare-boxes.mjs <originalUrl> <portUrl> [width=1440] [--dark] [--storage=theme=dark] [--threshold=2] [--json=out.json]
 // Matches elements by tag + normalized text (+ occurrence index) and reports boxes or styles that differ.
-import { chromium } from "playwright";
+import { writeFileSync } from "node:fs";
+import { launch, parseArgs, storageFlag } from "./browser.mjs";
 
-const args = process.argv.slice(2);
-const flags = Object.fromEntries(args.filter((a) => a.startsWith("--")).map((a) => {
-  const [k, v] = a.slice(2).split("=");
-  return [k, v ?? true];
-}));
-const [origUrl, portUrl, widthArg] = args.filter((a) => !a.startsWith("--"));
+const { positional: [origUrl, portUrl, widthArg], flags } = parseArgs();
 const width = Number(widthArg ?? 1440);
 const threshold = Number(flags.threshold ?? 2);
 
@@ -16,16 +12,10 @@ const SELECTOR = "header, nav, main > *, section, footer, h1, h2, h3, h4, p, a, 
 const STYLE_KEYS = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "color", "backgroundColor", "borderTopWidth", "borderTopStyle", "borderTopColor", "borderRadius", "paddingTop", "paddingLeft", "boxShadow"];
 
 async function collect(browser, url) {
-  const page = await browser.newPage({
-    viewport: { width, height: width < 768 ? 844 : 900 },
-    colorScheme: flags.dark ? "dark" : "light",
-    reducedMotion: "reduce",
-  });
-  await page.goto(url, { waitUntil: "networkidle", timeout: 60000 }).catch(() => {});
-  const h = await page.evaluate(() => document.documentElement.scrollHeight);
-  for (let y = 0; y < h; y += 500) { await page.evaluate((y) => scrollTo(0, y), y); await page.waitForTimeout(80); }
-  await page.evaluate(() => scrollTo(0, 0));
-  await page.waitForTimeout(1500);
+  const page = await browser.newPage({ width, dark: !!flags.dark, reducedMotion: true, localStorage: storageFlag(flags) });
+  await page.goto(url);
+  await page.scrollThrough(500, 80);
+  await page.wait(1500);
   const data = await page.evaluate(({ SELECTOR, STYLE_KEYS }) => {
     const seen = new Map();
     const out = [];
@@ -64,7 +54,7 @@ async function collect(browser, url) {
   return data;
 }
 
-const browser = await chromium.launch();
+const browser = await launch();
 const [a, b] = await Promise.all([collect(browser, origUrl), collect(browser, portUrl)]);
 await browser.close();
 
@@ -85,7 +75,7 @@ const extra = [...mapB.keys()];
 
 // Report the first drift in document order: later boxes usually inherit its vertical offset.
 boxDiffs.sort((p, q) => p.orig[1] - q.orig[1]);
-console.log(`page height: original ${a.height}px, port ${b.height}px (Δ ${b.height - a.height})  @ ${width}px ${flags.dark ? "dark" : "light"}`);
+console.log(`page height: original ${a.height}px, port ${b.height}px (Δ ${b.height - a.height})  @ ${width}px ${flags.dark ? "dark" : "light"}${flags.storage ? `, localStorage ${flags.storage}` : ""}`);
 console.log(`matched ${a.items.length - missing.length}/${a.items.length} original elements; ${boxDiffs.length} box diffs > ${threshold}px; ${styleDiffs.length} style diffs; ${missing.length} missing; ${extra.length} extra in port`);
 console.log("\n## Box diffs (document order; fix the first one, then re-run)");
 for (const d of boxDiffs.slice(0, 40)) console.log(`${d.key}\n   orig x,y,w,h ${d.orig.join(",")}  port ${d.port.join(",")}  Δ ${d.delta.join(",")}`);
@@ -93,4 +83,4 @@ console.log("\n## Style diffs");
 for (const d of styleDiffs.slice(0, 40)) console.log(`${d.key}\n   ${d.diffs.join("\n   ")}`);
 console.log("\n## Missing in port (first 30)\n" + missing.slice(0, 30).join("\n"));
 console.log("\n## Extra in port (first 30)\n" + extra.slice(0, 30).join("\n"));
-if (flags.json) await Bun.write(flags.json, JSON.stringify({ a, b, boxDiffs, styleDiffs, missing, extra }, null, 2));
+if (flags.json) writeFileSync(flags.json, JSON.stringify({ a, b, boxDiffs, styleDiffs, missing, extra }, null, 2));
