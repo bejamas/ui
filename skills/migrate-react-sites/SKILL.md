@@ -29,7 +29,7 @@ Effort concentrates in four places. Plan for them from the start:
 
 ### 2. Extract the effective design system from the demo
 
-Run `scripts/tokens.mjs <demo>` in both color schemes. Then record:
+Run `node scripts/tokens.mjs <demo>`, and again with `--dark`. Then record:
 
 - **Tokens:** every `:root`/`.dark` custom property as the browser computes it. Repos can have two token blocks, layered palettes that lose, or tokens that come from a framework (fumadocs) or a customizer. Trust computed values over the CSS file.
 - **Fonts:** the families actually rendered (computed `font-family`, `document.fonts`), with weights. Check the optical-size axis for Inter.
@@ -92,7 +92,7 @@ Interactive behavior comes from `@data-slot` primitives, through bejamas compone
 
 Interaction logic itself (focus, keyboard, open state, ARIA) stays inside the primitives. Known gaps and their accepted workarounds are in [known issues](references/known-issues.md).
 
-**Done when** a scripted click-through (menus, accordion, carousel, dialogs, mobile nav, theme persistence across reload, keyboard Enter on menu links) passes with no console errors.
+**Done when** a click-through in whatever browser tool you have (menus, accordion, carousel, dialogs, mobile nav, theme persistence across reload, keyboard Enter on menu links) passes with no console errors.
 
 ### 6. Motion
 
@@ -108,16 +108,16 @@ Gate every effect behind `prefers-reduced-motion: no-preference`. Write `animati
 
 ### 7. Verify
 
-Build, run the preview, then compare with the scripts in `scripts/`. Each has a usage line at the top. Copy them into a tools directory outside the port and run `bun add playwright` there: Bun resolves `playwright` from the script's own location, not the working directory.
+Build, run the preview, then compare with the scripts in `scripts/`. Each has a usage line at the top. They have no npm dependencies: run them with `node` (22+) or `bun`, straight from the skill folder. They drive an installed Chrome, Chromium, Edge or Brave headlessly; set `CHROME_PATH` if none is found.
 
 - `compare-boxes.mjs <demo> <port> <width>` at 1440, 768 and 390, in each color scheme the original supports.
   - It reports page height, box diffs in document order (fix the first one and re-run), computed style diffs, and missing or extra elements.
   - Colors are normalized, so `lab()` vs `oklch()` doesn't count as a diff.
-- `shot.mjs <url> <out.png> <width> --chunks` for viewport-sized screenshots of both sites, viewed side by side.
+- `shot.mjs <url> <out.png> <width>` saves viewport-sized slices (`<out>-1.png`, `<out>-2.png` …) taken while scrolled, so sticky headers and scroll-linked effects show as a visitor sees them. Shoot both sites and view matching slices side by side.
 - Known headless artifacts to ignore:
   - The scroll lock's `scrollbar-gutter: stable` shifts content 7.5–15px while overlays are open.
   - Autoplaying carousels and marquees differ by phase.
-- Some sites set `enableSystem={false}`. For those, `--dark` emulation doesn't switch the theme, so seed `localStorage.theme` instead.
+- Some sites set `enableSystem={false}`. For those, `--dark` emulation doesn't switch the theme, so seed the storage key instead: every script takes `--storage=theme=dark` (use the source's key).
 
 **Done when** page heights match within a few px at every width, the remaining box and style diffs are each explained, and the click-through passes.
 

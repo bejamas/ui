@@ -1,14 +1,13 @@
 // Dump the effective design tokens of a live page: every custom property on :root, the color-mode
 // state, and the fonts actually rendered. Use it on the original demo before writing globals.css.
-// Usage: bun tokens.mjs <url> [--dark] [--prefix=--]
-import { chromium } from "playwright";
-const args = process.argv.slice(2);
-const url = args.find((a) => !a.startsWith("--"));
-const dark = args.includes("--dark");
-const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: dark ? "dark" : "light" });
-await page.goto(url, { waitUntil: "networkidle", timeout: 60000 }).catch(() => {});
-await page.waitForTimeout(1000);
+// Usage: node tokens.mjs <url> [--dark] [--storage=theme=dark]
+import { launch, parseArgs, storageFlag } from "./browser.mjs";
+
+const { positional: [url], flags } = parseArgs();
+const browser = await launch();
+const page = await browser.newPage({ dark: !!flags.dark, localStorage: storageFlag(flags) });
+await page.goto(url);
+await page.wait(1000);
 const out = await page.evaluate(() => {
   const root = document.documentElement;
   const cs = getComputedStyle(root);
