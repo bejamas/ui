@@ -1,6 +1,6 @@
 ---
 name: migrate-react-sites
-description: Port a React/Next.js + shadcn/ui website or landing page to Astro with bejamas/ui, matching the original's layout, tokens, fonts, assets and behavior. Use when recreating a whole site, page or live demo in Astro/bejamas. For a single block headed into the bejamas registry, use migrate-react-blocks.
+description: Port a React/Next.js + shadcn/ui website or landing page to Astro with bejamas/ui, matching the original's layout, tokens, fonts, assets and behavior. Use when recreating a whole site, page or live demo in Astro/bejamas.
 ---
 
 # React/shadcn site → Astro / bejamas/ui
@@ -108,7 +108,7 @@ Gate every effect behind `prefers-reduced-motion: no-preference`. Write `animati
 
 ### 7. Verify
 
-Build, run the preview, then compare with the scripts in `scripts/`. Each has a usage line at the top. Install Playwright in a tools directory outside the port.
+Build, run the preview, then compare with the scripts in `scripts/`. Each has a usage line at the top. Copy them into a tools directory outside the port and run `bun add playwright` there: Bun resolves `playwright` from the script's own location, not the working directory.
 
 - `compare-boxes.mjs <demo> <port> <width>` at 1440, 768 and 390, in each color scheme the original supports.
   - It reports page height, box diffs in document order (fix the first one and re-run), computed style diffs, and missing or extra elements.
@@ -134,9 +134,3 @@ Write the port's findings. Include:
 - verification evidence
 
 Keep upstream defects you reproduced on purpose separate from port defects. Add general lessons to [known issues](references/known-issues.md) or [parity](references/parity.md) only when a port demonstrated them.
-
-## Evidence
-
-- **[Consolidated findings](references/findings.md):** the evidence behind this skill, from 15 site ports. It has verified bug locations (file:line), how often each issue occurred, and prioritized fixes for bejamas/ui. Read it when a port hits behavior the references don't explain, or before filing a bejamas issue.
-- **[Port reports](references/port-reports/):** one per site. Read the report of a similar site (SaaS starter, studio template, animation-heavy, monorepo) when estimating or planning a port.
-- **[Port brief](references/port-brief.md):** the instructions those ports followed. Reuse it when farming out several site ports to parallel agents.
