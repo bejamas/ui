@@ -83,3 +83,19 @@ import { Textarea } from '@bejamas/registry/ui/textarea';
   <FieldError id="message-invalid-error">Message is required.</FieldError>
 </Field>
 ```
+
+### Initial Value
+
+Pass the initial text as children, or with `value` / `defaultValue`.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Textarea class="max-w-sm">{"Thanks for the quick reply!"}</Textarea>
+</div>
+
+```astro
+---
+import { Textarea } from '@bejamas/registry/ui/textarea';
+---
+
+<Textarea class="max-w-sm">Thanks for the quick reply!</Textarea>
+```

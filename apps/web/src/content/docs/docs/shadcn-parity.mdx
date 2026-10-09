@@ -1,0 +1,690 @@
+---
+title: shadcn/ui Parity
+description: How bejamas/ui maps to shadcn/ui — which components are drop-in, which differ, what is missing, and how Astro props differ from React props.
+sidebar:
+  order: 4
+---
+
+`bejamas/ui` follows shadcn/ui closely: the same component names, the same anatomy, the same `data-slot` attributes, and the same shared styles (Vega, Nova, Lyra, Maia, Mira, Luma). If you know shadcn/ui, most of `bejamas/ui` will feel familiar.
+
+But it is **not a line-by-line port**. Components are Astro files rendered on the server, interactivity comes from [`@data-slot`](https://data-slot.com) vanilla controllers instead of React, and a handful of shadcn/ui components are not available yet.
+
+:::note
+`bejamas/ui` aligns with shadcn's **Base UI** flavour. Radix-flavour differences are called out where relevant.
+:::
+
+## At a glance
+
+| | Count |
+| --- | --- |
+| Components shadcn/ui and bejamas/ui both ship | **39** |
+| ↳ Drop-in (same parts, same props) | 12 |
+| ↳ Close (same anatomy, some props or parts differ) | 25 |
+| ↳ Different API (materially different anatomy) | 2 |
+| shadcn/ui components bejamas/ui does not ship | **20** (+ `form` and 3 docs-only recipes) |
+| bejamas/ui-only components | **6** |
+
+**What the verdicts mean:**
+
+- **Drop-in** — Same sub-components and same props. Porting shadcn/ui markup only needs the general React → Astro translation described in [Astro props vs React props](#astro-props-vs-react-props) (`className` → `class`, event handlers → events, and so on).
+- **Close** — Same anatomy, but some props, variants or sub-components are missing, renamed or behave differently. Each one has porting notes below.
+- **Different API** — The anatomy or API differs enough that you should read the porting notes before copying code.
+
+---
+
+## Astro props vs React props
+
+This is the single biggest difference between the two libraries, and it applies to **every** component — including the ones marked drop-in. shadcn/ui components are React client components; `bejamas/ui` components are `.astro` files that render HTML on the server. That changes what a "prop" can be.
+
+### Quick translation table
+
+| shadcn/ui (React) | bejamas/ui (Astro) |
+| --- | --- |
+| `className="…"` | `class="…"` |
+| `htmlFor="email"` | `for="email"` |
+| `colSpan={2}`, `tabIndex={0}` | `colspan={2}`, `tabindex={0}` (HTML attribute names) |
+| `style={{ width: 200 }}` | `style="width: 200px"` (prefer a string) |
+| `children` | default `<slot />` |
+| `render={<a href="/" />}` (Base UI) / `asChild` (Radix) | `as="a"` on components that support it, `asChild` on triggers, or `data-slot` on your own element — see [Composition](#composition-render-aschild-and-as) |
+| `value` + `onValueChange` (controlled) | `defaultValue` + listen for `<component>:change` |
+| `open` + `onOpenChange` | `defaultOpen` + listen for `<component>:change` |
+| `onClick`, `onSelect`, `onCheckedChange` … | native DOM events or `<component>:*` CustomEvents in a `<script>` |
+| imperative `ref` / `setApi` | `id` + `document.getElementById()` + `<component>:set` events |
+| `"use client"`, `client:load` | not needed — behaviour is attached by the component's own `<script>` |
+| `React.ComponentProps<"div">` | `HTMLAttributes<"div">` from `astro/types` |
+
+### Props must serialize to HTML
+
+An Astro component renders once, on the server (or at build time). Its props end up as HTML attributes, so they have to be serializable:
+
+- **No function props.** There is no `onValueChange`, `onOpenChange`, `onClick`, `filter`, `itemToStringLabel` or render-function children. Behaviour is wired up in a `<script>` instead.
+- **No React context.** Sub-components don't talk to each other through context. They find each other through the DOM (`data-slot` attributes) once the page loads.
+- **No `ref`.** Give the element an `id` and query it.
+- **Strings and numbers, mostly.** `Select`, `Combobox` and `ToggleGroup` values are always strings. Arrays are accepted where documented (for example `Accordion defaultValue={["a", "b"]}`).
+
+### State is uncontrolled: initial props + events
+
+shadcn/ui lets you control state with React (`value` + `onValueChange`). In `bejamas/ui` every interactive component is **uncontrolled**: props only set the **initial** state, and the `@data-slot` controller owns the state after that.
+
+- **Initial state props** — `defaultValue` (Tabs, Accordion, ToggleGroup, Select, Combobox, RadioGroup, Command, DropdownMenu, Slider), `defaultOpen` (Dialog, Drawer, HoverCard, DropdownMenu, CommandDialog, HamburgerMenu), `defaultChecked` (Switch, DropdownMenu items). A few components use a different name for the same idea: `Collapsible` takes `open`, and `Switch` (`checked`) and `Slider` (`value`) also accept the shadcn-style name, but it still only sets the initial state.
+- **Change events** — every interactive component dispatches a `<component>:change` CustomEvent on its root (for example `tabs:change` with `{ value }`, `dialog:change` with `{ open }`). Some also dispatch more specific events such as `command:select`, `select:open-change` or `slider:commit`.
+- **Programmatic control** — dispatch `<component>:set` on the root (for example `tabs:set` with `{ value: "account" }`, `dialog:set` with `{ open: true }`).
+- **Styling state** — components expose `data-state`, `data-open` / `data-closed`, `data-checked`, `data-disabled` and similar attributes. `bejamas/tailwind.css` registers the same custom variants as shadcn's `tailwind.css` (`data-open:`, `data-closed:`, `data-checked:`, `data-unchecked:`, `data-selected:`, `data-disabled:`, `data-active:`, `data-horizontal:`, `data-vertical:`).
+
+Here is a controlled dialog in shadcn/ui:
+
+```tsx title="shadcn/ui (React)"
+const [open, setOpen] = useState(false);
+
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogTrigger render={<Button variant="outline" />}>Open</DialogTrigger>
+  <DialogContent>…</DialogContent>
+</Dialog>;
+```
+
+And the same thing in `bejamas/ui`:
+
+```astro title="bejamas/ui (Astro)"
+<Dialog id="settings-dialog">
+  <Button variant="outline" data-slot="dialog-trigger">Open</Button>
+  <DialogContent>…</DialogContent>
+</Dialog>
+
+<Button id="open-settings">Open from elsewhere</Button>
+
+<script>
+  const dialog = document.getElementById("settings-dialog")!;
+
+  // React to changes (replaces onOpenChange)
+  dialog.addEventListener("dialog:change", (event) => {
+    console.log("open:", (event as CustomEvent).detail.open);
+  });
+
+  // Change state from code (replaces setOpen(true))
+  document.getElementById("open-settings")!.addEventListener("click", () => {
+    dialog.dispatchEvent(new CustomEvent("dialog:set", { detail: { open: true } }));
+  });
+</script>
+```
+
+### Composition: `render`, `asChild` and `as`
+
+shadcn/ui composes with `render={<Button />}` (Base UI) or `asChild` (Radix), which merges the component's behaviour into your element. Astro can't clone and merge props into a child element, so `bejamas/ui` offers three alternatives:
+
+1. **`as` prop** — on `Button`, `Badge`, `AvatarGroup`, `AvatarGroupCount`, `ItemGroup`, `CarouselPrevious`, `CarouselNext` and `StickySurface`. The most common case is a link that looks like a button:
+
+   ```tsx title="shadcn/ui"
+   <Button render={<a href="/login" />} nativeButton={false}>Login</Button>
+   // or, as the shadcn docs recommend
+   <a className={buttonVariants()} href="/login">Login</a>
+   ```
+
+   ```astro title="bejamas/ui"
+   <Button as="a" href="/login">Login</Button>
+   ```
+
+2. **`asChild` on triggers** — `DialogTrigger`, `PopoverTrigger`, `TooltipTrigger`, `HoverCardTrigger`, `DropdownMenuTrigger`, `CollapsibleTrigger` and `AccordionTrigger` accept `asChild`. Unlike Radix, this renders a **wrapper** `<div data-slot="…-trigger" data-as-child>` around your element instead of merging into it. ARIA attributes land on the wrapper, and other props passed to the trigger are not forwarded — put them on the child.
+
+3. **`data-slot` on your own element** — because the controllers find parts by `data-slot`, you can turn any element into a part. This is the closest equivalent to `render`:
+
+   ```astro
+   <Button variant="outline" data-slot="dialog-trigger">Open</Button>
+   <Button variant="ghost" data-slot="dialog-close">Cancel</Button>
+   ```
+
+Some triggers are already styled buttons. `PopoverTrigger` and `DropdownMenuTrigger` render a `bejamas/ui` `Button` and accept its `variant` and `size` props directly — write `<PopoverTrigger variant="outline">` instead of `<PopoverTrigger render={<Button variant="outline" />}>`. Note that their default variant is `default` (a filled primary button), not an unstyled trigger.
+
+### Slots instead of children
+
+`children` becomes Astro's default `<slot />`. A few components also accept **named slots** for parts you would otherwise replace by editing the component:
+
+| Component | Named slots |
+| --- | --- |
+| `AccordionTrigger` | `icon` — replaces the chevron |
+| `SelectContent` | `scroll-up`, `scroll-down` — replaces the scroll button contents |
+| `HamburgerMenu` | `brand`, `actions`, `footer` |
+
+```astro
+---
+import { PlusIcon } from "@lucide/astro";
+---
+
+<AccordionTrigger>
+  Is it accessible?
+  <PlusIcon slot="icon" />
+</AccordionTrigger>
+```
+
+### JavaScript, hydration and View Transitions
+
+- **Zero JS by default.** 23 of the 45 component families ship no client JavaScript at all (Button, Card, Badge, Field, Input, Table, …). The rest attach a small bundled `<script>`, usually a `@data-slot` controller — you never add a `client:*` directive. See [Design Principles](/docs/design-principles) and [How bejamas/ui ships less JavaScript than shadcn/ui](/blog/how-bejamas-ui-ships-5x-less-javascript-than-shadcn-ui).
+- **Initialization runs on page load.** Each component script binds the elements present when the page loads. If you inject markup later, or use Astro's `<ClientRouter />`, call the controller yourself (for example `createDialog(el)` from `@data-slot/dialog`) for the new elements.
+- **Native forms.** `Select`, `Combobox`, `RadioGroup` and `Switch` take `name` (and `required` where relevant) and generate hidden native inputs, so they submit with a plain `<form>` — no form library required. `Slider` does not generate an input yet; mirror its value from `slider:change` into a hidden input if you need to submit it.
+
+---
+
+## Component parity
+
+Drop-in component names link to their docs pages. In the Close and Different API tables, each name links to its [porting notes](#porting-notes).
+
+### Drop-in
+
+Same sub-components and same props. These port with the general React → Astro translation only.
+
+| Component | Summary |
+| --- | --- |
+| [Field](/components/field) | Same 10 parts and props; extra `FieldError forceMount`. |
+| [Input](/components/input) | Native `<input>`. |
+| [Input Group](/components/input-group) | Same 6 parts, `align` values and button sizes. |
+| [Kbd](/components/kbd) | `Kbd`, `KbdGroup`. |
+| [Label](/components/label) | Use `for` instead of `htmlFor`. |
+| [Native Select](/components/native-select) | Same 3 parts and `size`. |
+| [Radio Group](/components/radio-group) | Same 2 parts; submits natively via `name`. |
+| [Skeleton](/components/skeleton) | Identical. |
+| [Spinner](/components/spinner) | Identical markup. |
+| [Switch](/components/switch) | Same `size` values; submits natively via `name`. |
+| [Table](/components/table) | Same 8 parts. No TanStack data-table recipe. |
+| [Textarea](/components/textarea) | Native `<textarea>`; initial text via children, `value` or `defaultValue`. |
+
+### Close
+
+Same anatomy, but some props, variants or sub-components are missing, renamed or behave differently.
+
+| Component | Summary |
+| --- | --- |
+| [Accordion](#accordion) | Same 4 parts. Base UI `multiple` (Radix `type="multiple"`); no controlled `value`. |
+| [Alert](#alert) | `AlertAction` not available yet. |
+| [Avatar](#avatar) | All 6 parts and `size`. No image-load detection or fallback `delay`. |
+| [Badge](#badge) | No `ghost` / `link` variants; uses `as` instead of `render`; extra `shape` and `size`. |
+| [Breadcrumb](#breadcrumb) | `BreadcrumbLink`, `BreadcrumbPage`, `BreadcrumbEllipsis` not available yet. |
+| [Button](#button) | No `xs` / `icon-xs` sizes; `as="a"` instead of `render`; `buttonVariants` not exported. |
+| [Button Group](#button-group) | Same 3 parts; `ButtonGroupText` has no `render`. |
+| [Card](#card) | All 7 parts; no `size` prop; extra `CardMedia`, `CardOverlay`, `variant="ghost"`. |
+| [Checkbox](#checkbox) | Native checkbox wrapped in a `<label>`; no `indeterminate` or `onCheckedChange`. |
+| [Collapsible](#collapsible) | Initial state is `open` (no `defaultOpen`); state via `data-state`. |
+| [Combobox](#combobox) | Single-select matches; no multi-select / chips, no `items` prop. |
+| [Command](#command) | Same 9 parts; `command:select` instead of `onSelect`; no custom `filter`. |
+| [Dialog](#dialog) | Same core parts; always modal; no `DialogPortal` / `DialogOverlay` exports. |
+| [Dropdown Menu](#dropdown-menu) | Everything except submenus; styled `Button` trigger; one radio group per menu. |
+| [Hover Card](#hover-card) | Delays live on `HoverCard`, not the trigger; trigger is a `<button>`. |
+| [Item](#item) | No `size="xs"`; no link items (`render`); `ItemMedia variant` is `mediaVariant`. |
+| [Navigation Menu](#navigation-menu) | Items need a `value`; animated hover indicator; placement props on content. |
+| [Popover](#popover) | Header / Title / Description match; trigger is a styled `Button`; extra `PopoverClose`. |
+| [Select](#select) | Same core parts; `position` instead of `alignItemWithTrigger`; no `items` / `multiple`. |
+| [Separator](#separator) | Same `orientation` / `decorative` props; class-based orientation styling. |
+| [Slider](#slider) | Scalar or 2-thumb range only; `defaultValue={[33]}` must become `defaultValue={33}`. |
+| [Tabs](#tabs) | `TabsList` defaults to the animated `indicator` variant; active state is `data-state="active"`. |
+| [Toggle](#toggle) | `defaultPressed` only; `toggleVariants` lives in `lib/toggle-shared`. |
+| [Toggle Group](#toggle-group) | Default `spacing` is `0` (shadcn: `2`); item-level variant/size wins. |
+| [Tooltip](#tooltip) | No `TooltipProvider`; `delay` per tooltip; `asChild` wrapper trigger. |
+
+### Different API
+
+The anatomy or API differs enough that you should read the porting notes before copying code.
+
+| Component | Summary |
+| --- | --- |
+| [Carousel](#carousel) | Native scroll-snap instead of Embla; `CarouselItem` → `CarouselSlide`; no `opts` / `plugins` / `setApi`. |
+| [Drawer](#drawer) | `side` on the root (left / right / bottom); no snap points; also covers Sheet. |
+
+---
+
+## Porting notes
+
+Each note lists only what changes beyond the general translation in [Astro props vs React props](#astro-props-vs-react-props). Each note links to the component's docs page.
+
+### Drop-in components
+
+These need only the general React → Astro translation. Good to know:
+
+- **Textarea** — pass initial text as children, or with `value` / `defaultValue`.
+- **Field** — set `data-invalid` on `Field` and `aria-invalid` on the control yourself, as in shadcn/ui. `FieldError` also takes `forceMount` for client-side validation.
+- **Input Group** — the group gets `data-disabled` automatically from the control's `disabled` attribute.
+- **Radio Group, Switch** — submit natively with `name`. Listen for `radio-group:change` or `switch:change`.
+- **Kbd** — `KbdGroup` renders a `<div>`, so don't nest it inside a `<p>`.
+- **Table** — there's no equivalent of shadcn's [Data Table](https://ui.shadcn.com/docs/components/base/data-table) guide. Use the static `Table` with server-side sorting and pagination, or your own script.
+
+### Close components
+
+#### Accordion
+
+<small>[Docs →](/components/accordion)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Accordion type="single" collapsible>` (Radix) | `<Accordion>` |
+| `<Accordion type="multiple">` (Radix) | `<Accordion multiple>` |
+| `value` + `onValueChange` | `defaultValue` + `accordion:change` |
+| `<AccordionItem disabled>` | `<AccordionItem data-disabled>` |
+
+#### Alert
+
+<small>[Docs →](/components/alert)</small>
+
+**Not available:** `AlertAction`. Add your own element in the top-right corner instead, for example `<div class="absolute top-2 right-2">`.
+
+#### Avatar
+
+<small>[Docs →](/components/avatar)</small>
+
+**Not available:** the fallback `delay` prop and `onLoadingStatusChange`.
+
+**Watch out:** there's no image-load detection. The fallback renders underneath the image, so a broken image URL won't fall back to it.
+
+#### Badge
+
+<small>[Docs →](/components/badge)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Badge render={<a href="…" />}>` | `<Badge as="a" href="…">` |
+
+**Not available:** the `ghost` and `link` variants, and `badgeVariants`.
+
+**Watch out:** the default badge is taller and less rounded than shadcn's in the same style. Use `size="sm"` and `shape="pill"` to get closer.
+
+#### Breadcrumb
+
+<small>[Docs →](/components/breadcrumb)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<BreadcrumbLink href="/">Home</BreadcrumbLink>` | `<a href="/" class="transition-colors hover:text-foreground">Home</a>` |
+| `<BreadcrumbPage>Docs</BreadcrumbPage>` | `<span aria-current="page" class="text-foreground">Docs</span>` |
+
+**Not available:** `BreadcrumbEllipsis`.
+
+#### Button
+
+<small>[Docs →](/components/button)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Button render={<a href="…" />} nativeButton={false}>` | `<Button as="a" href="…">` |
+| `<a className={buttonVariants({ variant: "outline" })}>` | `<Button as="a" variant="outline" href="…">` |
+
+**Not available:** the `xs` and `icon-xs` sizes, and `buttonVariants`.
+
+**Watch out:** `Button` doesn't default to `type="button"`. Add it inside forms when the button shouldn't submit.
+
+#### Button Group
+
+<small>[Docs →](/components/button-group)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<ButtonGroupText render={<Label htmlFor="…" />}>` | `<ButtonGroupText><label for="…">…</label></ButtonGroupText>` |
+
+#### Card
+
+<small>[Docs →](/components/card)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Card size="sm">` | `<Card data-size="sm">` |
+
+**Watch out:** `CardFooter` adds `justify-between`. Override it with `class="justify-start"` if needed.
+
+#### Checkbox
+
+<small>[Docs →](/components/checkbox)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Checkbox defaultChecked />` | `<Checkbox checked />` |
+| `onCheckedChange` | the native `change` event |
+| `data-checked:` classes | `checked:` classes |
+
+**Not available:** `indeterminate`. Set `input.indeterminate = true` in a script instead.
+
+**Watch out:** the checkbox renders its own `<label>` and takes label text as children, so don't wrap it in another `<Label>`.
+
+#### Collapsible
+
+<small>[Docs →](/components/collapsible)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Collapsible defaultOpen>` | `<Collapsible open>` |
+| `onOpenChange` | `collapsible:change` |
+| `<Collapsible disabled>` | `<CollapsibleTrigger disabled>` |
+| `data-open:` / `data-panel-open:` classes | `data-[state=open]:` classes |
+
+#### Combobox
+
+<small>[Docs →](/components/combobox)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Combobox items={items}>` with a render function | `{items.map((item) => <ComboboxItem value={item.value} label={item.label}>…</ComboboxItem>)}` |
+| `<ComboboxEmpty>` next to `<ComboboxList>` | `<ComboboxEmpty>` inside `<ComboboxList>` |
+| `<ComboboxContent>` | `<ComboboxContent align="start">` to match shadcn's alignment |
+
+**Not available:** `multiple` and the chips parts, `ComboboxCollection`, `useComboboxAnchor`, object values, and addons inside `ComboboxInput`.
+
+#### Command
+
+<small>[Docs →](/components/command)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<CommandItem onSelect={…}>` | `<CommandItem value="…">` + `command:select` |
+| `<CommandDialog open={open} onOpenChange={setOpen}>` | `<CommandDialog id="…">` + `dialog:set` / `dialog:change` |
+| `<CommandInput value={search} onValueChange={…}>` | `<Command defaultSearch="…">` + `command:search-change` |
+
+**Not available:** a custom `filter` function, and non-text `CommandGroup` headings.
+
+**Watch out:** the search icon sits at the end of the input, and items have no check indicator.
+
+#### Dialog
+
+<small>[Docs →](/components/dialog)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<DialogTrigger render={<Button variant="outline" />}>` | `<Button variant="outline" data-slot="dialog-trigger">` |
+| `<DialogClose render={<Button variant="outline" />}>` | `<Button variant="outline" data-slot="dialog-close">` |
+| `<Dialog disablePointerDismissal>` | `<Dialog closeOnClickOutside={false}>` |
+| `<DialogFooter showCloseButton>` | a close `Button` in the footer |
+| `<DialogOverlay className="…">` | `<DialogContent overlayClass="…">` |
+
+**Not available:** non-modal dialogs, `DialogPortal`, and Alert Dialog (see [What bejamas/ui does not offer](#what-bejamasui-does-not-offer)).
+
+**Watch out:** `DialogClose` is styled as the top-right close button. Use a `Button` with `data-slot="dialog-close"` for footer actions.
+
+#### Dropdown Menu
+
+<small>[Docs →](/components/dropdown-menu)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<DropdownMenuTrigger render={<Button variant="outline" />}>` | `<DropdownMenuTrigger variant="outline">` |
+| `<DropdownMenuItem onClick={…}>` | `<DropdownMenuItem value="…">` + `dropdown-menu:select` |
+| `<DropdownMenuCheckboxItem checked onCheckedChange>` | `<DropdownMenuCheckboxItem value="…" defaultChecked>` + `dropdown-menu:values-change` |
+| `<DropdownMenuRadioGroup value onValueChange>` | `<DropdownMenu defaultValue="…">` + `dropdown-menu:value-change` |
+
+**Not available:** submenus (`DropdownMenuSub`, `DropdownMenuSubTrigger`, `DropdownMenuSubContent`).
+
+**Watch out:** each menu supports one radio group. Set `closeOnSelect={false}` on menus with checkbox items.
+
+#### Hover Card
+
+<small>[Docs →](/components/hover-card)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<HoverCardTrigger delay={…} closeDelay={…}>` | `<HoverCard delay={…} closeDelay={…}>` |
+| `<HoverCard openDelay={…}>` (Radix) | `<HoverCard delay={…}>` |
+| `<HoverCardTrigger render={<a href="…" />}>` | `<HoverCardTrigger asChild><a href="…">…</a></HoverCardTrigger>` |
+| `side="inline-start"` / `"inline-end"` | `side="left"` / `"right"` |
+
+**Watch out:** the defaults differ: a 700 ms open delay, and an `alignOffset` of `0` (shadcn: `4`).
+
+#### Item
+
+<small>[Docs →](/components/item)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<ItemMedia variant="icon">` | `<ItemMedia mediaVariant="icon">` |
+| `<Item size="xs">` | `<Item size="sm">` |
+| `<Item render={<a href="…" />}>` | an `<a data-slot="item">` with the classes copied from your installed `Item` |
+
+**Watch out:** `variant` on `ItemMedia` is silently ignored, so make sure to rename it.
+
+#### Navigation Menu
+
+<small>[Docs →](/components/navigation-menu)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<NavigationMenuItem>` | `<NavigationMenuItem value="…">` (required for items with a trigger) |
+| `<NavigationMenuLink render={<a href="…" />}>` | `<NavigationMenuLink href="…">` |
+| `<NavigationMenuLink active>` | `<NavigationMenuLink data-active>` |
+| `<NavigationMenu delay={…} closeDelay={…}>` | `<NavigationMenu delayOpen={…} delayClose={…}>` |
+
+**Watch out:** `NavigationMenuIndicator` is an animated hover highlight that goes inside `NavigationMenuList`, not an arrow. Set `side`, `align` and `sideOffset` on `NavigationMenuContent`.
+
+#### Popover
+
+<small>[Docs →](/components/popover)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<PopoverTrigger render={<Button variant="outline" />}>` | `<PopoverTrigger variant="outline">` |
+| `<PopoverContent>` | `<PopoverContent class="w-72" sideOffset={4}>` to match shadcn's width and spacing |
+
+**Not available:** `PopoverAnchor` (Radix only).
+
+**Watch out:** a bare `PopoverTrigger` renders a filled primary button.
+
+#### Select
+
+<small>[Docs →](/components/select)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Select items={items}>` | `{items.map((item) => <SelectItem value={item.value}>…</SelectItem>)}` |
+| `<SelectContent alignItemWithTrigger={false}>` | `<SelectContent position="popper">` |
+| `<SelectScrollUpButton />` / `<SelectScrollDownButton />` | built in; customise with the `scroll-up` / `scroll-down` slots |
+
+**Not available:** `multiple`, `readOnly`, object values, and `side="left"` / `"right"`.
+
+#### Separator
+
+<small>[Docs →](/components/separator)</small>
+
+**Watch out:** orientation is styled with classes, so `data-horizontal:` and `data-vertical:` variants in your own `class` won't apply.
+
+#### Slider
+
+<small>[Docs →](/components/slider)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Slider defaultValue={[33]} />` | `<Slider defaultValue={33} />` |
+| `onValueChange` | `slider:change` (fires while dragging) |
+| `onValueCommitted` | `slider:commit` |
+
+**Not available:** more than two thumbs, and form submission with `name`.
+
+#### Tabs
+
+<small>[Docs →](/components/tabs)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<TabsList>` | `<TabsList variant="default">` to match shadcn's look |
+| `data-active:` classes | `data-[state=active]:` classes |
+| `<Tabs activationMode="manual">` (Radix) | `<Tabs data-activation-mode="manual">` |
+
+**Watch out:** `TabsList` defaults to the animated `indicator` variant.
+
+#### Toggle
+
+<small>[Docs →](/components/toggle)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Toggle pressed={…} onPressedChange={…}>` | `<Toggle defaultPressed>` + `toggle:change` |
+| `data-pressed:` classes | `aria-pressed:` or `data-[state=on]:` classes |
+| `toggleVariants` from the toggle component | `toggleVariants` from `lib/toggle-shared` |
+
+#### Toggle Group
+
+<small>[Docs →](/components/toggle-group)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<ToggleGroup type="multiple">` (Radix) | `<ToggleGroup multiple>` |
+| `<ToggleGroup>` | `<ToggleGroup spacing={2}>` to match shadcn's default spacing |
+
+**Watch out:** when both the group and an item set `variant` or `size`, the item wins. In shadcn, the group wins.
+
+#### Tooltip
+
+<small>[Docs →](/components/tooltip)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<TooltipProvider delay={0}>` | remove it and set `delay={0}` on each `Tooltip` |
+| `delayDuration={…}` (Radix) | `<Tooltip delay={…}>` |
+| `<TooltipTrigger render={<Button />}>` | `<TooltipTrigger asChild><Button>…</Button></TooltipTrigger>` |
+
+**Watch out:** the default delay is 300 ms, and the `Tooltip` root renders an `inline-block` wrapper element.
+
+### Different API components
+
+#### Carousel
+
+<small>[Docs →](/components/carousel)</small>
+
+`bejamas/ui` uses native CSS scroll snapping with a `@data-slot/carousel` controller instead of Embla.
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Carousel>` | `<CarouselRoot>` (the `bejamas/ui` `Carousel` is an all-in-one widget with built-in controls) |
+| `<CarouselItem>` | `<CarouselSlide>` |
+| `-ml-4` on `CarouselContent` and `pl-4` on items | nothing; `CarouselContent` already uses `gap-4` |
+| `opts={{ loop: true }}` | `data-loop="true"` |
+| `setApi` + `api.on("select")` | `carousel:change` and `data-index` on the root |
+
+**Not available:** `plugins`. For autoplay, dispatch `carousel:set` with `{ action: "next" }` from a timer.
+
+**Watch out:** `CarouselPrevious` and `CarouselNext` sit in normal flow instead of overlaying the slides, so place them yourself.
+
+#### Drawer
+
+<small>[Docs →](/components/drawer)</small>
+
+shadcn ships two drawers: Base UI (`swipeDirection`, snap points) and Radix/vaul (`direction`). The `bejamas/ui` Drawer has its own API, and also covers shadcn's Sheet.
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Drawer swipeDirection="down">` (Base UI) or `<Drawer direction="bottom">` (Radix) | `<Drawer side="bottom">` |
+| `<Sheet>` + `<SheetContent side="right">` | `<Drawer side="right">` + `<DrawerContent>` |
+| `<DrawerTrigger render={<Button />}>` | `<Button data-slot="drawer-trigger">` |
+| `<div className="p-4">` around the content | `<DrawerBody>` |
+| `[data-slot=drawer-overlay]` selectors | `[data-slot=drawer-backdrop]` |
+
+**Not available:** a top drawer, snap points, `showSwipeHandle`, `DrawerPortal` and `DrawerOverlay`.
+
+**Watch out:** the default side is `right` (shadcn: bottom), and there's no built-in close button. Add one with `data-slot="drawer-close"`.
+
+---
+
+## What bejamas/ui does not offer
+
+These shadcn/ui components don't have a `bejamas/ui` equivalent yet.
+
+| shadcn/ui | What it is | Closest option in bejamas/ui |
+| --- | --- | --- |
+| Alert Dialog | Blocking confirmation modal | `Dialog` with `closeOnClickOutside={false}` and your own action buttons (`data-slot="dialog-close"`). |
+| Aspect Ratio | Fixed-ratio box | Tailwind `aspect-video`, `aspect-square` or `aspect-[4/3]`. |
+| Calendar | Date / range grid (`react-day-picker`) | `<Input type="date">`, or a React island. |
+| Chart | Recharts wrappers | A React island, a framework-agnostic chart library, or server-rendered SVG. |
+| Context Menu | Right-click menu | A React island. `DropdownMenu` only opens from a trigger. |
+| Direction | React RTL provider | Not needed: set `dir="rtl"` on `<html>` (`bejamas init --rtl --lang ar`). |
+| Empty | Empty-state layout | Compose `Card` or `Item` with `SemanticIcon`. |
+| Input OTP | Segmented one-time-code input | `Input` with `autocomplete="one-time-code"`, `inputmode="numeric"` and `maxlength`. |
+| Menubar | Desktop-style menu bar | A row of `DropdownMenu`s, or a React island. |
+| Pagination | Page links | `Button as="a"` links inside a `<nav>`. |
+| Progress | Progress bar | Native `<progress>` or `<meter>`. |
+| Scroll Area | Custom scrollbars | `overflow-auto` with the `no-scrollbar` and `scroll-fade-*` utilities from `bejamas/tailwind.css`. |
+| Sheet | Side panel | `Drawer` with `side="left"`, `"right"` or `"bottom"`. |
+| Sidebar | Application sidebar | `<aside>` with `Collapsible` sections and a `Drawer side="left"` on mobile. |
+| Form | `react-hook-form` wrappers (legacy, new-york-v4 only) | `Field` + a native `<form>` + [Astro Actions](/docs/forms-astro-actions). |
+| Data Table (recipe) | TanStack Table guide | Static `Table` plus server-side or client-side logic. |
+| Date Picker (recipe) | Popover + Calendar | `Popover` with `<Input type="date">`. |
+| Typography (recipe) | Prose styles | `@tailwindcss/typography` or your own prose CSS. |
+
+### AI and chat components
+
+shadcn/ui includes components for chat and agent interfaces. `bejamas/ui` doesn't ship these yet:
+
+| shadcn/ui | What it is |
+| --- | --- |
+| Attachment | File or image chip with upload state |
+| Bubble | Chat bubble with variants, groups and reactions |
+| Marker | Inline status or system note in a conversation ("Thinking…") |
+| Message | A single chat message with avatar, header and footer |
+| Message Scroller | Chat transcript scroller that follows streamed output |
+| Questionnaire | Multi-step question form for agents asking the user questions |
+
+Attachment, Bubble, Marker and Message are plain markup in shadcn/ui and can be ported to Astro by hand. The `shimmer` utility used for streaming states is already available in `bejamas/tailwind.css`.
+
+### Using shadcn/ui React components alongside bejamas/ui
+
+If you need one of the components above today, you can run a shadcn/ui React component as an [Astro island](https://docs.astro.build/en/concepts/islands/) next to `bejamas/ui`: add the React integration (`npx astro add react`), copy the component's source and its dependencies from [ui.shadcn.com](https://ui.shadcn.com), and render it with a `client:*` directive. Both libraries use the same design tokens and CSS variables, so the island matches your theme. Keep in mind that each island ships React to the browser.
+
+---
+
+## Components only in bejamas/ui
+
+| Component | What it does |
+| --- | --- |
+| [Date](/components/date) | Formats a date into a semantic `<time datetime>` element with `Intl.DateTimeFormat` on the server (`format` = `long`, `short`, `full` or `time`; `includeTime`; `locale`). A formatter, not a date picker. |
+| [Hamburger Menu](/components/hamburger-menu) | Mobile navigation: a header bar with `brand` / `actions` slots and a full-height panel with `HamburgerMenuGroup` (native `<details>`) and `HamburgerMenuItem` links. |
+| [Semantic Icon](/components/semantic-icon) | Renders an icon by semantic name (`chevron-down`, `check`, …) from Lucide, Hugeicons, Tabler, Phosphor or Remix Icon, resolved at render time from your theme's icon library. |
+| [Link Group](/components/link-group) | Titled link lists for footers: `LinkGroup`, `LinkGroupTitle`, `LinkGroupList`, `LinkGroupItem`. |
+| [Marquee](/components/marquee) | CSS-only infinite scroller (`direction`, `time`, `variant`) that pauses for reduced motion. |
+| [Sticky Surface](/components/sticky-surface) | Sticky header wrapper with scroll-driven "stuck" effects (`line`, `elevate`, `backdrop`) and an optional `.is-stuck` class. |
+
+`bejamas/ui` also adds extras to shared components that shadcn/ui doesn't have, such as `CardMedia` and `CardOverlay`, `PopoverClose`, `DrawerBody`, `FieldError forceMount`, the animated `indicator` and `line-animated` tab variants, and `Badge shape="pill"`.
+
+### Blocks
+
+`bejamas/ui` currently ships a small set of blocks for marketing and content sites — `navigation-headers-01`, `navigation-headers-02` and `footer-01` — with more on the way. Browse them at [/blocks](/blocks) and install them with `bejamas add <block>`.
+
+shadcn/ui's blocks focus on application screens (dashboards, login and signup pages, sidebars, and a chart gallery) built on Sidebar, Chart and Calendar, which `bejamas/ui` doesn't ship.
+
+---
+
+## Beyond components
+
+### CLI and registry
+
+The `bejamas` CLI is a thin, Astro-first wrapper around a pinned version of the shadcn CLI. It uses the same registry item format, so `components.json` and `registries` work the way you expect from shadcn.
+
+| Task | shadcn | bejamas |
+| --- | --- | --- |
+| Create a project | `shadcn init` | `bejamas init` (Astro app, monorepo, or monorepo + docs) |
+| Add components and blocks | `shadcn add` | `bejamas add` (rewrites imports for Astro and installs components into per-component folders) |
+| Presets | `shadcn apply`, `shadcn preset` | `bejamas apply`, `bejamas preset` (decode, url, open, resolve) |
+| Project info | `shadcn info` | `bejamas info` (proxies shadcn) |
+| Generate docs from components | — | `bejamas docs:build`, `bejamas docs:check` |
+| Browse, build registries, MCP | `shadcn view`, `search`, `build`, `registry`, `mcp` | Use the shadcn CLI directly |
+
+`bejamas/ui` serves a registry per style (`bejamas-juno`, `bejamas-vega`, `bejamas-nova`, …) instead of shadcn's `base-*` / `radix-*` style names, and its `components.json` has no `rsc` / `tsx` fields but adds an `aliases.docs` entry. See the [CLI docs](/docs/cli).
+
+### Styles, themes and fonts
+
+| | shadcn/ui | bejamas/ui |
+| --- | --- | --- |
+| Styles | Vega, Nova (default), Maia, Lyra, Mira, Luma, Sera, Rhea | **Juno** (default, Bejamas-authored), Vega, Nova, Lyra, Maia, Mira, Luma |
+| Themes | 24 | The same 24, plus 8 Bejamas themes (`bejamas-blue`, `bejamas-neon-yellow`, `bejamas-apple`, `bejamas-orange`, `bejamas-sunflower`, `bejamas-violet`, `bejamas-turquoise`, `bejamas-magenta`) |
+| Design tokens | `background`, `primary`, …, `chart-1`–`5`, `sidebar-*`, `radius` | The same token names |
+| Fonts | 26 | 24 (no EB Garamond or Instrument Serif yet) |
+| Icon libraries | Lucide, Hugeicons, Tabler, Phosphor, Remix Icon — rewritten at **install** time | The same five — resolved at **render** time by `SemanticIcon` |
+
+The Sera and Rhea styles aren't available in `bejamas/ui` yet. Preset codes that only use shared values decode the same way in both CLIs; Bejamas-only values (Juno, the Bejamas themes) only work with the `bejamas` CLI.
+
+Because the token names are identical, a theme generated for shadcn/ui works with `bejamas/ui` and vice versa. See [Theming](/docs/theming).
+
+### Utilities
+
+- **`cn()`** — `bejamas/ui` builds `cn` from `clsx` and `tailwind-merge`. shadcn/ui imports it from the `cn` package; both behave the same.
+- **Tailwind utilities** — `bejamas/tailwind.css` provides the same custom variants as shadcn's `tailwind.css`, plus the `shimmer`, `scroll-fade-*` and `no-scrollbar` utilities.
+- **Hooks** — shadcn's only hook, `useIsMobile`, exists to support Sidebar. `bejamas/ui` has no hooks; responsive behaviour uses CSS.
+
+### Dark mode, RTL and forms
+
+- **Dark mode** — Both use a `.dark` class on `<html>` set by an inline script. The `bejamas/ui` dark mode guide builds an Astro theme switcher with no hydration instead of a React `ModeToggle` or `next-themes`. See [Dark Mode](/docs/dark-mode).
+- **RTL** — shadcn/ui converts physical classes to logical ones when installing (`--rtl`, `shadcn migrate rtl`). `bejamas init --rtl --lang <ar|fa|he>` sets up `dir` and i18n wiring; there is no install-time class transform.
+- **Forms** — shadcn/ui documents React Hook Form, TanStack Form, Formisch and Next.js Server Actions. `bejamas/ui` uses native forms with [Astro Actions](/docs/forms-astro-actions) and the same `Field` components.
+
+### Docs and tooling
+
+- `bejamas/ui` generates component docs from JSDoc comments inside each `.astro` file (`bejamas docs:build`, `bejamas docs:check`). See [Auto-generated Docs](/docs/auto-generated-docs).
+- A [Starlight](https://starlight.astro.build) theme (`starlight-theme-bejamas`) is available for documentation sites.
+- shadcn/ui additionally offers an MCP server and agent skills for its registry.
