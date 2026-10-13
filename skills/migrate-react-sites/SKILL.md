@@ -43,9 +43,11 @@ Run `node scripts/tokens.mjs <demo>`, and again with `--dark`. Then record:
 ### 3. Scaffold
 
 ```sh
-mkdir -p /tmp/scaffold && cd /tmp/scaffold
-npm_config_user_agent=bun bunx bejamas@latest init -t astro -b neutral -y -d -f   # creates ./my-app
-mv my-app <port-dir> && cd <port-dir> && git init
+# <port-dir> must not exist yet: otherwise mv puts the app inside it. init always creates
+# my-app in its -c folder and refuses if one is there, so scaffold in a fresh temp dir.
+test ! -e <port-dir> && scaffold="$(mktemp -d)" &&
+  npm_config_user_agent=bun bunx bejamas@latest init -t astro -b neutral -y -d -f -c "$scaffold" &&
+  mv "$scaffold/my-app" <port-dir> && cd <port-dir> && git init
 bun add bejamas@latest
 bunx bejamas add button --overwrite -y   # the template's Button predates the registry one
 ```
