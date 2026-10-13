@@ -26,6 +26,9 @@ export async function launch() {
     "--headless=new", "--remote-debugging-port=0", `--user-data-dir=${userDataDir}`, "--hide-scrollbars",
     "--no-first-run", "--no-default-browser-check", "--mute-audio", "about:blank",
   ], { stdio: ["ignore", "ignore", "pipe"] });
+  // Don't leave Chrome and its profile behind when a script throws before close().
+  const cleanup = () => { proc.kill(); rmSync(userDataDir, { recursive: true, force: true }); };
+  process.once("exit", cleanup);
   const wsUrl = await new Promise((resolve, reject) => {
     let log = "";
     proc.stderr.on("data", (d) => { log += d; const m = log.match(/DevTools listening on (ws:\/\/\S+)/); if (m) resolve(m[1]); });
@@ -54,7 +57,8 @@ export async function launch() {
   return {
     // width, height, dark: emulate prefers-color-scheme; reducedMotion; localStorage: { key: value } seeded before any page script runs.
     async newPage({ width = 1440, height = width < 768 ? 844 : 900, dark = false, reducedMotion = false, localStorage = {} } = {}) {
-      const { targetId } = await send("Target.createTarget", { url: "about:blank" });
+      // A window per page: background tabs are hidden, which pauses rAF and in-view effects.
+      const { targetId } = await send("Target.createTarget", { url: "about:blank", newWindow: true });
       const { sessionId } = await send("Target.attachToTarget", { targetId, flatten: true });
       const cmd = (method, params) => send(method, params, sessionId);
       await cmd("Page.enable");
@@ -74,25 +78,33 @@ export async function launch() {
       const page = {
         width, height,
         // Navigate, then wait for the load event and 500ms without network requests (60s cap).
+        // Throws when the page fails to load or responds with an HTTP error.
         async goto(url, timeout = 60000) {
           const inflight = new Set();
           let loaded = false;
+          let status;
           let lastActivity = Date.now();
           const onEvent = (msg) => {
             if (msg.sessionId !== sessionId) return;
             if (msg.method === "Page.loadEventFired") loaded = true;
+            else if (msg.method === "Network.responseReceived" && msg.params.type === "Document" && status === undefined) status = msg.params.response.status;
             else if (msg.method === "Network.requestWillBeSent") inflight.add(msg.params.requestId);
             else if (msg.method === "Network.loadingFinished" || msg.method === "Network.loadingFailed") inflight.delete(msg.params.requestId);
             else return;
             lastActivity = Date.now();
           };
           listeners.add(onEvent);
-          await cmd("Page.navigate", { url });
+          const { errorText } = await cmd("Page.navigate", { url });
+          if (errorText) { listeners.delete(onEvent); throw new Error(`Failed to load ${url}: ${errorText}`); }
           const start = Date.now();
           while (Date.now() - start < timeout && !(loaded && inflight.size === 0 && Date.now() - lastActivity > 500)) {
             await new Promise((r) => setTimeout(r, 100));
           }
           listeners.delete(onEvent);
+          if (status >= 400) throw new Error(`Failed to load ${url}: HTTP ${status}`);
+          if (Date.now() - start >= timeout) {
+            console.error(`warning: ${url} ${loaded ? `still had ${inflight.size} request(s) in flight` : "never fired load"} after ${timeout / 1000}s; measuring anyway`);
+          }
         },
         // Run fn(arg) in the page and return its (awaited, JSON-serializable) result.
         async evaluate(fn, arg) {
@@ -123,6 +135,7 @@ export async function launch() {
       ws.close();
       proc.kill();
       await new Promise((r) => (proc.exitCode !== null ? r() : proc.once("exit", r)));
+      process.off("exit", cleanup);
       rmSync(userDataDir, { recursive: true, force: true });
     },
   };
