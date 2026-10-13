@@ -23,9 +23,19 @@ const {
   class={cn(
     // Orientation follows the parent group so the handle renders correctly
     // before the primitive sets aria-orientation, including in nested groups.
-    "relative flex w-px shrink-0 items-center justify-center bg-border outline-none after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 [[data-direction=vertical]>&]:h-px [[data-direction=vertical]>&]:w-full [[data-direction=vertical]>&]:after:left-0 [[data-direction=vertical]>&]:after:h-1 [[data-direction=vertical]>&]:after:w-full [[data-direction=vertical]>&]:after:translate-x-0 [[data-direction=vertical]>&]:after:-translate-y-1/2 [[data-direction=vertical]>&>div]:rotate-90",
+    // The primitive only sets a resize cursor while dragging, so hover gets
+    // the same cursor and a highlight to make the handle discoverable.
+    "group/resizable-handle relative flex w-px shrink-0 cursor-ew-resize items-center justify-center bg-border outline-none transition-colors after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 hover:bg-ring focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[active=pointer]:bg-ring [[data-direction=vertical]>&]:h-px [[data-direction=vertical]>&]:w-full [[data-direction=vertical]>&]:cursor-ns-resize [[data-direction=vertical]>&]:after:left-0 [[data-direction=vertical]>&]:after:h-1 [[data-direction=vertical]>&]:after:w-full [[data-direction=vertical]>&]:after:translate-x-0 [[data-direction=vertical]>&]:after:-translate-y-1/2 [[data-direction=vertical]>&>div]:rotate-90",
     className,
   )}
 >
-  {withHandle && <div class="bg-border h-6 w-1 rounded-lg z-10 flex shrink-0" />}
+  {
+    withHandle && (
+      <div
+        class={cn(
+          "bg-border h-6 w-1 rounded-lg z-10 flex shrink-0 bg-muted-foreground/50 transition-colors group-hover/resizable-handle:bg-ring group-data-[active=pointer]/resizable-handle:bg-ring",
+        )}
+      />
+    )
+  }
 </div>
