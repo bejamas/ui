@@ -263,6 +263,13 @@ export const KITCHEN_SINK_PAGES: KitchenSinkPage[] = [
     description: "Basic, with label, disabled, error, character count, form",
   },
   {
+    id: "toast",
+    href: "/kitchen-sink/toast",
+    label: "Toast",
+    description: "Types, description, action, promise, update, positions, stacking",
+    js: true,
+  },
+  {
     id: "toggle",
     href: "/kitchen-sink/toggle",
     label: "Toggle",

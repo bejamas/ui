@@ -1100,6 +1100,28 @@
       ]
     },
     {
+      "name": "toast",
+      "type": "registry:ui",
+      "dependencies": [
+        "@data-slot/toast"
+      ],
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/toast/Toast.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/toast/toast.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/toast/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "toggle",
       "type": "registry:ui",
       "dependencies": ["@data-slot/toggle"],
