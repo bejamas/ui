@@ -1,4 +1,4 @@
-# Recipes: Next.js → Astro, theming, motion, Tailwind v3 → v4
+# Recipes: Next.js → Astro, theming, motion, Tailwind v3 → v4, in-repo migration
 
 ## Next.js features
 
@@ -130,3 +130,66 @@ Gate every effect behind `@media (prefers-reduced-motion: no-preference)`, and a
 | Demo is another build (Vite vs Next) | `<title>`, favicon, storage keys | treat the content as identical |
 | Dead CSS (two token blocks, layered palette losing, `@layer base` overrides) | computed styles on the demo | port the effective cascade |
 | Upstream visual defects | screenshots + measurement | reproduce and document them; record intentional fixes separately |
+
+## In-repo migration
+
+Used by the in-repo workflow, where the Astro app lives next to the legacy Next app.
+
+### Shared code alias
+
+Import the legacy app's portable modules instead of copying them:
+
+```js
+// astro.config.mjs (adjust the path to the legacy app's source root)
+import { fileURLToPath } from "node:url";
+export default defineConfig({
+  vite: { resolve: { alias: { "@legacy": fileURLToPath(new URL("../src", import.meta.url)) } } },
+});
+```
+
+Add the same mapping to `tsconfig.json` (`"paths": { "@legacy/*": ["../src/*"] }`).
+
+| Trap | Fix |
+|---|---|
+| A shared module importing through the legacy `@/` alias resolves `@/` to the Astro app's own `src/` | alias only modules whose imports are relative or packages, or move the module |
+| Tailwind only scans the Astro app, so class strings in shared data never generate | `@source "<relative path to the legacy folder>";` in the global CSS |
+| A package a shared module imports is missing from the Astro app; workspace hoisting hides it until the legacy app is removed | add it to the Astro app's `dependencies` |
+| MDX or Markdown content | a content collection whose `glob()` loader `base` points at the legacy content folder |
+
+### Next platform features
+
+| Next.js | Astro | Watch for |
+|---|---|---|
+| `redirects()` in `next.config` | the host's redirect config (`vercel.json`, `_redirects`), or Astro `redirects` with an adapter | Without an adapter, Astro's static `redirects` emit meta-refresh pages that answer 200, not 301/308. `astro preview` doesn't apply host redirects, so check them on a preview deployment |
+| `rewrites()` | host rewrites | Proxies to other origins stay in host config |
+| `headers()` | host config (`vercel.json` `headers`, `_headers`) | |
+| `middleware.ts` | Astro middleware on server-rendered routes; host edge config for prerendered ones | Middleware doesn't run per request on prerendered pages |
+| Route handlers and server actions behind forms | Astro actions, or `src/pages/api/*.ts` endpoints with `export const prerender = false`, plus the adapter for the deploy target | Reuse the legacy zod schema through the alias. Keep the endpoint path when third parties post to it |
+| `revalidate` / ISR | prerender + a rebuild hook from the CMS; or server-render the route with `Cache-Control: s-maxage=…, stale-while-revalidate=…`; the Vercel adapter also has an `isr` option | Ask the developer how fresh the content must be |
+| `NEXT_PUBLIC_*` env vars | `PUBLIC_*` via `import.meta.env`, or an `astro:env` schema | Rename them on the host too; server-only names stay |
+| `sitemap.ts` | `@astrojs/sitemap` (needs `site`) or a `sitemap.xml.ts` endpoint | Diff the URL set against the legacy sitemap |
+| `robots.ts` | `public/robots.txt` or a `robots.txt.ts` endpoint | |
+| `opengraph-image.*` (`next/og`) | a prerendered endpoint with satori + `@resvg/resvg-js`, or static images in `public/` | Load the same font files the legacy image used |
+| `next/script` | `<script is:inline>` with `defer`/`async` to match the strategy | |
+| `@vercel/analytics`, `@vercel/speed-insights` | their Astro components (`@vercel/analytics/astro`, `@vercel/speed-insights/astro`) | |
+| `basePath`, `trailingSlash` | `base`, `trailingSlash` in `astro.config` | Next's default strips trailing slashes with a redirect; mirror it with `trailingSlash: "never"` and the host config |
+| i18n routing | Astro `i18n` with the same locales, default locale and prefix rules | Port every locale; the rebuild recipe's "link other locales to the original" doesn't apply |
+| `images.remotePatterns` | `image.remotePatterns` in `astro.config` for `<Image>` | |
+
+### e2e tests against both apps
+
+Make the suite's base URL configurable (Playwright: `use: { baseURL: process.env.BASE_URL ?? "http://localhost:3000" }`, and skip its `webServer` when `BASE_URL` is set), then run it once per app. Selectors tied to Next or React internals (`#__next`, generated class names) need neutral replacements such as roles, text or `data-testid`.
+
+### URL parity
+
+```sh
+# urls.txt: one path per line (legacy routes, legacy sitemap, redirect sources)
+while read -r p; do
+  for base in http://localhost:3000 http://localhost:4321; do
+    curl -s -o /dev/null -w "%{http_code} %{redirect_url}  " "$base$p"
+  done
+  echo "$p"
+done < urls.txt
+```
+
+Each line shows the legacy and Astro status and redirect target for one path. Redirects that live in host config only show on a preview deployment.
