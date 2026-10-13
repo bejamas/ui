@@ -32,7 +32,9 @@ const {
     withHandle && (
       <div
         class={cn(
-          "cn-resizable-handle-icon z-10 flex shrink-0 bg-muted-foreground/50 transition-colors group-hover/resizable-handle:bg-ring group-data-[active=pointer]/resizable-handle:bg-ring",
+          // An odd width overhangs the 1px line by whole pixels, so both snap
+          // the same way at fractional panel sizes and the grip stays centred.
+          "cn-resizable-handle-icon z-10 flex w-[5px] shrink-0 bg-muted-foreground/50 transition-colors group-hover/resizable-handle:bg-ring group-data-[active=pointer]/resizable-handle:bg-ring",
         )}
       />
     )
