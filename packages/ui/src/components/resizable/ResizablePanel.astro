@@ -1,0 +1,48 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/resizable/ResizablePanel.astro directly.
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  defaultSize?: number;
+  minSize?: number;
+  maxSize?: number;
+  collapsible?: boolean;
+  collapsedSize?: number;
+  class?: string;
+}
+
+const {
+  defaultSize,
+  minSize,
+  maxSize,
+  collapsible = false,
+  collapsedSize,
+  class: className = "",
+  style,
+  ...rest
+} = Astro.props as Props;
+
+// Match the primitive's inline flex-grow before it initializes so panels do
+// not jump from an even split to their default sizes.
+const panelStyle =
+  defaultSize === undefined
+    ? style
+    : typeof style === "object" && style !== null
+      ? { "flex-grow": defaultSize, ...style }
+      : [`flex-grow: ${defaultSize}`, style].filter(Boolean).join("; ");
+---
+
+<div
+  {...rest}
+  data-slot="resizable-panel"
+  data-default-size={defaultSize}
+  data-min-size={minSize}
+  data-max-size={maxSize}
+  data-collapsible={collapsible ? "true" : undefined}
+  data-collapsed-size={collapsedSize}
+  style={panelStyle}
+  class={cn("shrink grow basis-0 overflow-hidden", className)}
+>
+  <slot />
+</div>

@@ -199,6 +199,13 @@ export const KITCHEN_SINK_PAGES: KitchenSinkPage[] = [
     description: "Basic, default selected, descriptions, disabled, horizontal, form",
   },
   {
+    id: "resizable",
+    href: "/kitchen-sink/resizable",
+    label: "Resizable",
+    description: "Horizontal, vertical, nested, with handle, collapsible, programmatic layout",
+    js: true,
+  },
+  {
     id: "select",
     href: "/kitchen-sink/select",
     label: "Select",

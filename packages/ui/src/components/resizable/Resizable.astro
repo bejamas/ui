@@ -1,0 +1,179 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/resizable/Resizable.astro directly.
+/**
+ * @component Resizable
+ * @title Resizable
+ * @description Accessible resizable panel groups with pointer and keyboard support.
+ *
+ * @preview
+ * <Resizable direction="horizontal" class="max-w-md rounded-lg border md:min-w-[450px]">
+ *   <ResizablePanel defaultSize={50}>
+ *     <div class="flex h-[200px] items-center justify-center p-6"><span class="font-semibold">One</span></div>
+ *   </ResizablePanel>
+ *   <ResizableHandle />
+ *   <ResizablePanel defaultSize={50}>
+ *     <Resizable direction="vertical">
+ *       <ResizablePanel defaultSize={25}>
+ *         <div class="flex h-full items-center justify-center p-6"><span class="font-semibold">Two</span></div>
+ *       </ResizablePanel>
+ *       <ResizableHandle />
+ *       <ResizablePanel defaultSize={75}>
+ *         <div class="flex h-full items-center justify-center p-6"><span class="font-semibold">Three</span></div>
+ *       </ResizablePanel>
+ *     </Resizable>
+ *   </ResizablePanel>
+ * </Resizable>
+ *
+ * @usage
+ * ```astro nocollapse
+ * ---
+ * import { Resizable, ResizablePanel, ResizableHandle } from '@bejamas/ui/components/resizable';
+ * ---
+ * <Resizable direction="horizontal">
+ *   <ResizablePanel defaultSize={50}>One</ResizablePanel>
+ *   <ResizableHandle />
+ *   <ResizablePanel defaultSize={50}>Two</ResizablePanel>
+ * </Resizable>
+ * ```
+ *
+ * @api
+ *
+ * ### Panel Constraints
+ *
+ * Sizes are percentages of the group. Set them on each `ResizablePanel`:
+ *
+ * | Prop | Type | Default | Description |
+ * |------|------|---------|-------------|
+ * | `defaultSize` | `number` | even split | Initial size |
+ * | `minSize` | `number` | `0` | Minimum size |
+ * | `maxSize` | `number` | `100` | Maximum size |
+ * | `collapsible` | `boolean` | `false` | Whether the panel can collapse below `minSize` |
+ * | `collapsedSize` | `number` | `0` | Size when collapsed; must not exceed `minSize` |
+ *
+ * ### Events
+ *
+ * The group emits custom events on its root element:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `resizable:change` | `{ layout: number[] }` | Fired when the panel sizes change |
+ *
+ * ```js nocollapse
+ * const group = document.getElementById('my-resizable');
+ *
+ * group.addEventListener('resizable:change', (event) => {
+ *   console.log('Layout:', event.detail.layout);
+ * });
+ * ```
+ *
+ * ### Programmatic Control
+ *
+ * Dispatch `resizable:set` on the root with one size per panel. Values are normalized to 100% and clamped to each panel's constraints:
+ *
+ * ```js nocollapse
+ * const group = document.getElementById('my-resizable');
+ *
+ * group.dispatchEvent(new CustomEvent('resizable:set', {
+ *   detail: { layout: [30, 70] }
+ * }));
+ * ```
+ *
+ * ### Keyboard
+ *
+ * | Key | Action |
+ * |-----|--------|
+ * | `ArrowLeft` / `ArrowRight` | Resize a horizontal group by `keyboardResizeBy` percent |
+ * | `ArrowUp` / `ArrowDown` | Resize a vertical group by `keyboardResizeBy` percent |
+ * | `Shift` + arrow | Move to the limit in that direction |
+ * | `Home` / `End` | Minimize / maximize the preceding panel |
+ * | `Enter` | Toggle the preceding panel when it is collapsible |
+ * | `F6` / `Shift` + `F6` | Focus the next / previous handle in the group |
+ *
+ * ### Data Attributes
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-direction` | group, panel, handle | Layout axis (`horizontal` or `vertical`) |
+ * | `data-state` | panel | `expanded` or `collapsed` |
+ * | `data-collapsed`, `data-expanded` | panel | Present for the matching state |
+ * | `data-active` | handle | `pointer` while dragging, `keyboard` while focused |
+ *
+ * @examples
+ * ### Vertical
+ *
+ * <Resizable direction="vertical" class="min-h-[200px] max-w-md rounded-lg border md:min-w-[450px]">
+ *   <ResizablePanel defaultSize={25}>
+ *     <div class="flex h-full items-center justify-center p-6"><span class="font-semibold">Header</span></div>
+ *   </ResizablePanel>
+ *   <ResizableHandle />
+ *   <ResizablePanel defaultSize={75}>
+ *     <div class="flex h-full items-center justify-center p-6"><span class="font-semibold">Content</span></div>
+ *   </ResizablePanel>
+ * </Resizable>
+ *
+ * ### Handle
+ *
+ * <Resizable direction="horizontal" class="min-h-[200px] max-w-md rounded-lg border md:min-w-[450px]">
+ *   <ResizablePanel defaultSize={25}>
+ *     <div class="flex h-full items-center justify-center p-6"><span class="font-semibold">Sidebar</span></div>
+ *   </ResizablePanel>
+ *   <ResizableHandle withHandle />
+ *   <ResizablePanel defaultSize={75}>
+ *     <div class="flex h-full items-center justify-center p-6"><span class="font-semibold">Content</span></div>
+ *   </ResizablePanel>
+ * </Resizable>
+ *
+ * ### Collapsible
+ *
+ * <Resizable direction="horizontal" class="min-h-[200px] max-w-md rounded-lg border md:min-w-[450px]">
+ *   <ResizablePanel defaultSize={30} minSize={20} collapsible collapsedSize={5}>
+ *     <div class="flex h-full items-center justify-center p-6"><span class="font-semibold">Sidebar</span></div>
+ *   </ResizablePanel>
+ *   <ResizableHandle withHandle />
+ *   <ResizablePanel defaultSize={70}>
+ *     <div class="flex h-full items-center justify-center p-6"><span class="font-semibold">Content</span></div>
+ *   </ResizablePanel>
+ * </Resizable>
+ */
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  direction?: "horizontal" | "vertical";
+  keyboardResizeBy?: number;
+  class?: string;
+}
+
+const {
+  direction = "horizontal",
+  keyboardResizeBy,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="resizable"
+  data-direction={direction}
+  data-keyboard-resize-by={keyboardResizeBy}
+  class={cn(
+    "flex h-full w-full overflow-hidden data-[direction=vertical]:flex-col",
+    className,
+  )}
+>
+  <slot />
+</div>
+
+<script>
+  import { createResizable } from "@data-slot/resizable";
+
+  document
+    .querySelectorAll<HTMLElement>('[data-slot="resizable"]')
+    .forEach((root) => {
+      if (!root.hasAttribute("data-resizable-initialized")) {
+        root.setAttribute("data-resizable-initialized", "");
+        createResizable(root);
+      }
+    });
+</script>

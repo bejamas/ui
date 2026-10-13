@@ -864,6 +864,31 @@
       ]
     },
     {
+      "name": "resizable",
+      "type": "registry:ui",
+      "dependencies": [
+        "@data-slot/resizable"
+      ],
+      "files": [
+        {
+          "path": "ui/resizable/Resizable.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/resizable/ResizablePanel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/resizable/ResizableHandle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "ui/resizable/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "select",
       "type": "registry:ui",
       "dependencies": ["@data-slot/select"],

@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "bejamas-ui",
@@ -175,6 +176,7 @@
         "@data-slot/navigation-menu": "^1.1.1",
         "@data-slot/popover": "^1.1.1",
         "@data-slot/radio-group": "^1.1.1",
+        "@data-slot/resizable": "^1.1.1",
         "@data-slot/select": "^1.1.1",
         "@data-slot/slider": "^1.1.1",
         "@data-slot/switch": "^1.1.1",
@@ -196,11 +198,11 @@
     },
     "packages/semantic-icons": {
       "name": "@bejamas/semantic-icons",
-      "version": "0.1.1",
+      "version": "0.2.0",
     },
     "packages/starlight-theme-bejamas": {
       "name": "starlight-theme-bejamas",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "dependencies": {
         "@bejamas/semantic-icons": "workspace:*",
         "@fontsource-variable/inter": "^5.3.0",
@@ -229,6 +231,7 @@
         "@data-slot/navigation-menu": "^1.1.1",
         "@data-slot/popover": "^1.1.1",
         "@data-slot/radio-group": "^1.1.1",
+        "@data-slot/resizable": "^1.1.1",
         "@data-slot/select": "^1.1.1",
         "@data-slot/slider": "^1.1.1",
         "@data-slot/switch": "^1.1.1",
@@ -496,6 +499,8 @@
     "@data-slot/popover": ["@data-slot/popover@1.1.1", "", { "dependencies": { "@data-slot/core": "1.1.1" } }, "sha512-tiK+Eyu8qDQ+JWe4CM+Rf1bsXWV8drwpttPWaPFPf7Gnwf6jmx03uwvXmPsTsqw0dpfPeK+JNnu7hR47kNyOfg=="],
 
     "@data-slot/radio-group": ["@data-slot/radio-group@1.1.1", "", { "dependencies": { "@data-slot/core": "1.1.1" } }, "sha512-9pp65gglkWe3zOqhCf4984ge/8FAqOVi0h0/9A2FOlNDIPDkK8aaqINdto4zPDXl/A3ZnN/kaUfBwtuyL8an3w=="],
+
+    "@data-slot/resizable": ["@data-slot/resizable@1.1.1", "", { "dependencies": { "@data-slot/core": "1.1.1" } }, "sha512-d9DFA4iA4CWD7AKru3FJSYUOFch0QrhZX5ojHYFyiL4nJIvPb6xhB8tVnqT8luB8MMYviwl156QEofZGJ5HMng=="],
 
     "@data-slot/select": ["@data-slot/select@1.1.1", "", { "dependencies": { "@data-slot/core": "1.1.1" } }, "sha512-bfTy+C59/85hSiSD4Vl5nAvbeGpIxMU7ZGxI7yu4mWdu+y08WCbg/ubFiZsBU2gsER9C99YBiujLObVDPLTeug=="],
 
