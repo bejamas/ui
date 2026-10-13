@@ -25,10 +25,23 @@ export async function launch() {
   const userDataDir = mkdtempSync(join(tmpdir(), "port-chrome-"));
   const proc = spawn(chrome, [
     "--headless=new", "--remote-debugging-port=0", `--user-data-dir=${userDataDir}`, "--hide-scrollbars",
-    "--no-first-run", "--no-default-browser-check", "--mute-audio", "about:blank",
+    "--no-first-run", "--no-default-browser-check", "--mute-audio",
+    // No component downloads or background traffic: they add network noise and keep writing the profile.
+    "--disable-component-update", "--disable-background-networking", "--disable-sync",
+    "about:blank",
   ], { stdio: ["ignore", "ignore", "pipe"] });
-  // Don't leave Chrome and its profile behind when a script throws before close().
-  const cleanup = () => { proc.kill(); rmSync(userDataDir, { recursive: true, force: true }); };
+  // Chrome's helper processes can still write the profile for a moment after Chrome dies, so keep
+  // removing it until it stays gone (up to ~2s; this also runs inside a synchronous exit handler).
+  const removeProfile = () => {
+    for (let i = 0, gone = 0; i < 20 && gone < 3; i++) {
+      try { rmSync(userDataDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 }); } catch {}
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100);
+      gone = existsSync(userDataDir) ? 0 : gone + 1;
+    }
+  };
+  // Don't leave Chrome and its profile behind when a script throws before close(). An exit handler
+  // can't wait for a graceful shutdown, so kill Chrome outright before it writes more of the profile.
+  const cleanup = () => { proc.kill("SIGKILL"); removeProfile(); };
   process.once("exit", cleanup);
   const wsUrl = await new Promise((resolve, reject) => {
     let log = "";
@@ -88,8 +101,10 @@ export async function launch() {
       const page = {
         width, height,
         // Navigate, then wait for the load event and 500ms without network requests (60s cap).
-        // Throws when the page fails to load or responds with an HTTP error.
-        async goto(url, timeout = 60000) {
+        // Throws when the page fails to load or responds with an HTTP error not in allowStatus.
+        // Long-lived requests never finish, so EventSource streams (CMS live updates) and URLs
+        // matching ignoreInflight don't count as activity.
+        async goto(url, { timeout = 60000, allowStatus = [], ignoreInflight } = {}) {
           const inflight = new Set();
           let loaded = false;
           let status;
@@ -98,7 +113,10 @@ export async function launch() {
             if (msg.sessionId !== sessionId) return;
             if (msg.method === "Page.loadEventFired") loaded = true;
             else if (msg.method === "Network.responseReceived" && msg.params.type === "Document" && status === undefined) status = msg.params.response.status;
-            else if (msg.method === "Network.requestWillBeSent") inflight.add(msg.params.requestId);
+            else if (msg.method === "Network.requestWillBeSent") {
+              if (msg.params.type === "EventSource" || ignoreInflight?.test(msg.params.request.url)) return;
+              inflight.add(msg.params.requestId);
+            }
             else if (msg.method === "Network.loadingFinished" || msg.method === "Network.loadingFailed") inflight.delete(msg.params.requestId);
             else return;
             lastActivity = Date.now();
@@ -111,7 +129,7 @@ export async function launch() {
             await new Promise((r) => setTimeout(r, 100));
           }
           listeners.delete(onEvent);
-          if (status >= 400) throw new Error(`Failed to load ${url}: HTTP ${status}`);
+          if (status >= 400 && !allowStatus.includes(status)) throw new Error(`Failed to load ${url}: HTTP ${status} (pass --allow-status=${status} if that's expected)`);
           if (Date.now() - start >= timeout) {
             console.error(`warning: ${url} ${loaded ? `still had ${inflight.size} request(s) in flight` : "never fired load"} after ${timeout / 1000}s; measuring anyway`);
           }
@@ -146,7 +164,7 @@ export async function launch() {
       proc.kill();
       await new Promise((r) => (proc.exitCode !== null || proc.signalCode !== null ? r() : proc.once("exit", r)));
       process.off("exit", cleanup);
-      rmSync(userDataDir, { recursive: true, force: true });
+      removeProfile();
     },
   };
 }
@@ -171,6 +189,12 @@ export const widthArg = (arg, fallback = 1440) => {
 export const requireArgs = (values, usage) => {
   if (values.some((v) => !v)) { console.error(`Usage: ${usage}`); process.exit(1); }
 };
+
+// Navigation flags shared by every script: --allow-status=404,410 and --ignore-inflight=<regex>.
+export const navFlags = (flags) => ({
+  allowStatus: typeof flags["allow-status"] === "string" ? flags["allow-status"].split(",").map(Number) : [],
+  ignoreInflight: typeof flags["ignore-inflight"] === "string" ? new RegExp(flags["ignore-inflight"]) : undefined,
+});
 
 // --storage=key=value seeds localStorage, e.g. --storage=theme=dark for enableSystem={false} sites.
 export const storageFlag = (flags) => {

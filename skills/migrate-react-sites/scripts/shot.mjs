@@ -1,15 +1,15 @@
 // Viewport-sized screenshots of a whole page, top to bottom: <out>-1.png, <out>-2.png ...
 // Each slice is taken scrolled to that position, so sticky headers and scroll-linked effects show as a visitor sees them.
-// Usage: node shot.mjs <url> <out.png> [width=1440] [--dark] [--storage=theme=dark]
+// Usage: node shot.mjs <url> <out.png> [width=1440] [--dark] [--storage=theme=dark] [--allow-status=404] [--ignore-inflight=<regex>]
 import { writeFileSync } from "node:fs";
-import { launch, parseArgs, requireArgs, storageFlag, widthArg } from "./browser.mjs";
+import { launch, navFlags, parseArgs, requireArgs, storageFlag, widthArg } from "./browser.mjs";
 
 const { positional: [url, out, widthPos], flags } = parseArgs();
-requireArgs([url, out], "node shot.mjs <url> <out.png> [width=1440] [--dark] [--storage=theme=dark]");
+requireArgs([url, out], "node shot.mjs <url> <out.png> [width=1440] [--dark] [--storage=theme=dark] [--allow-status=404] [--ignore-inflight=<regex>]");
 const width = widthArg(widthPos);
 const browser = await launch();
 const page = await browser.newPage({ width, dark: !!flags.dark, localStorage: storageFlag(flags) });
-await page.goto(url);
+await page.goto(url, navFlags(flags));
 await page.scrollThrough(400, 120);
 await page.wait(1200);
 const total = await page.evaluate(() => document.documentElement.scrollHeight);

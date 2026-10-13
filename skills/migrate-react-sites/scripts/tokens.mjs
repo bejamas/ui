@@ -1,13 +1,13 @@
 // Dump the effective design tokens of a live page: every custom property on :root, the color-mode
 // state, and the fonts actually rendered. Use it on the original demo before writing globals.css.
-// Usage: node tokens.mjs <url> [--dark] [--storage=theme=dark]
-import { launch, parseArgs, requireArgs, storageFlag } from "./browser.mjs";
+// Usage: node tokens.mjs <url> [--dark] [--storage=theme=dark] [--allow-status=404] [--ignore-inflight=<regex>]
+import { launch, navFlags, parseArgs, requireArgs, storageFlag } from "./browser.mjs";
 
 const { positional: [url], flags } = parseArgs();
-requireArgs([url], "node tokens.mjs <url> [--dark] [--storage=theme=dark]");
+requireArgs([url], "node tokens.mjs <url> [--dark] [--storage=theme=dark] [--allow-status=404] [--ignore-inflight=<regex>]");
 const browser = await launch();
 const page = await browser.newPage({ dark: !!flags.dark, localStorage: storageFlag(flags) });
-await page.goto(url);
+await page.goto(url, navFlags(flags));
 await page.wait(1000);
 const out = await page.evaluate(() => {
   const root = document.documentElement;

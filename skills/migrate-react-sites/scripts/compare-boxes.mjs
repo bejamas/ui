@@ -1,23 +1,27 @@
 // Compare element geometry and key computed styles between the original site and the port.
-// Usage: node compare-boxes.mjs <originalUrl> <portUrl> [width=1440] [--dark] [--storage=theme=dark] [--threshold=2] [--json=out.json]
+// Usage: node compare-boxes.mjs <originalUrl> <portUrl> [width=1440] [--dark] [--storage=theme=dark] [--allow-status=404] [--ignore-inflight=<regex>] [--threshold=2] [--json=out.json]
 // Matches elements by tag + normalized text (+ occurrence index) and reports boxes or styles that differ.
 import { writeFileSync } from "node:fs";
-import { launch, parseArgs, requireArgs, storageFlag, widthArg } from "./browser.mjs";
+import { launch, navFlags, parseArgs, requireArgs, storageFlag, widthArg } from "./browser.mjs";
 
 const { positional: [origUrl, portUrl, widthPos], flags } = parseArgs();
-requireArgs([origUrl, portUrl], "node compare-boxes.mjs <originalUrl> <portUrl> [width=1440] [--dark] [--storage=theme=dark] [--threshold=2] [--json=out.json]");
+requireArgs([origUrl, portUrl], "node compare-boxes.mjs <originalUrl> <portUrl> [width=1440] [--dark] [--storage=theme=dark] [--allow-status=404] [--ignore-inflight=<regex>] [--threshold=2] [--json=out.json]");
 const width = widthArg(widthPos);
 const threshold = Number(flags.threshold ?? 2);
 
-const SELECTOR = "header, nav, main > *, section, footer, h1, h2, h3, h4, p, a, button, img, svg[role=img], input, textarea, label, li, [data-slot]";
+// Top-level page regions. Astro wraps hydrated islands in <astro-island> and emits helper <script>/<style> tags
+// inside <main>; skipping them keeps landmark keys aligned between a React original and an Astro port.
+const REGIONS = "header, nav, main > :not(astro-island, script, style, template), main > astro-island > *, section, footer";
+// PrimeReact marks internal wrappers data-slot=root|outer|inner; they aren't component slots to match.
+const SELECTOR = `${REGIONS}, h1, h2, h3, h4, p, a, button, img, svg[role=img], input, textarea, label, li, [data-slot]:not([data-slot=root], [data-slot=outer], [data-slot=inner])`;
 const STYLE_KEYS = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "color", "backgroundColor", "borderTopWidth", "borderTopStyle", "borderTopColor", "borderRadius", "paddingTop", "paddingLeft", "boxShadow"];
 
 async function collect(browser, url) {
   const page = await browser.newPage({ width, dark: !!flags.dark, reducedMotion: true, localStorage: storageFlag(flags) });
-  await page.goto(url);
+  await page.goto(url, navFlags(flags));
   await page.scrollThrough(500, 80);
   await page.wait(1500);
-  const data = await page.evaluate(async ({ SELECTOR, STYLE_KEYS }) => {
+  const data = await page.evaluate(async ({ SELECTOR, STYLE_KEYS, REGIONS }) => {
     const seen = new Map();
     const out = [];
     // Normalize any CSS color syntax (lab, oklch, hsl...) to rgba so serialization differences don't count.
@@ -38,7 +42,7 @@ async function collect(browser, url) {
       }
       return prints.get(family);
     };
-    const landmarks = [...document.querySelectorAll("header, nav, main > *, section, footer")];
+    const landmarks = [...document.querySelectorAll(REGIONS)];
     for (const el of document.querySelectorAll(SELECTOR)) {
       if (el.closest("[data-compare-ignore]")) continue;
       const r = el.getBoundingClientRect();
@@ -65,7 +69,7 @@ async function collect(browser, url) {
       out.push({ key: `${base}#${n}`, x: Math.round(r.left), y: Math.round(r.top + scrollY), w: Math.round(r.width), h: Math.round(r.height), style, fontPrint: await fontPrint(cs.fontFamily) });
     }
     return { height: document.documentElement.scrollHeight, items: out };
-  }, { SELECTOR, STYLE_KEYS });
+  }, { SELECTOR, STYLE_KEYS, REGIONS });
   await page.close();
   return data;
 }

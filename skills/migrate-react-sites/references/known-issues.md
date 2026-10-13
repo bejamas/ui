@@ -1,6 +1,6 @@
 # Known issues and primitive gaps
 
-Observed on bejamas 0.5.0 across 15 site ports. Before applying a workaround, check the installed component, since the issue may already be fixed. When a gap blocks fidelity, record it and pick the accepted approach below rather than writing a new controller.
+Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. Before applying a workaround, check the installed component, since the issue may already be fixed. When a gap blocks fidelity, record it and pick the accepted approach below rather than writing a new controller.
 
 ## Setup and CLI
 
@@ -13,7 +13,10 @@ Observed on bejamas 0.5.0 across 15 site ports. Before applying a workaround, ch
 | `@theme inline { --font-sans: var(--font-sans) }` is self-referential without a `<Font>` | for system-stack sites, write the stack literally |
 | `:root { --font-heading: var(--font-sans) }` overrides a real heading font | delete the line |
 | no color-mode script | see the color-mode recipe |
-| `bejamas add` puts `shadcn` in devDependencies | `bun remove shadcn` |
+| `bejamas add` puts `shadcn` back in devDependencies and re-inserts base rules (`* { border-border outline-ring/50 }`, `body { bg-background text-foreground }`) into `globals.css` | `bun remove shadcn`; re-check `globals.css` and `package.json` after every `bejamas add` |
+| Registry components fail `eslint-plugin-astro`'s recommended rules (`no-exports-from-components`, `no-explicit-any`) | a lint override for `src/ui/**` in repos that lint `.astro` files |
+| In a workspace, the template's package name `astro` shadows the real `astro` package, and its TypeScript major can differ from the workspace's | rename the package before installing; align shared tool versions |
+| Astro 7's `astro preview` can detach and return immediately | `astro preview status`, `logs` or `stop` |
 | `bejamas add marquee`: the `marquee-x`/`marquee-y` keyframes are missing, so the marquee is static | add both to `globals.css` inside `@layer theme`: `@keyframes marquee-x { from { transform: translateX(0) } to { transform: translateX(-100%) } }`, and the same for `marquee-y` with `translateY`. For a seamless loop with a gap between copies, subtract it: `translateX(calc(-100% - var(--marquee-gap, 0px)))` |
 | `bejamas add select` fails to build (`Rolldown failed to resolve import "@/lib/select"`); `@data-slot/select` isn't installed | `bun add @data-slot/select`; copy `lib/select.ts` from the bejamas registry source into `src/lib/` |
 | `astro check` needs `@astrojs/check` | `bun add -d @astrojs/check` |
@@ -38,6 +41,16 @@ Observed on bejamas 0.5.0 across 15 site ports. Before applying a workaround, ch
 | `Separator` has no `data-orientation`, so source `data-vertical:` classes never match | plain classes |
 | The scroll lock reserves `scrollbar-gutter: stable` even without a scrollbar: a 7.5–15px shift while menus, dialogs or drawers are open (seen in headless Chromium) | accept it; don't chase it in screenshot diffs |
 | An interactive component's in-place `<script>` sibling picks up `space-*` margins | `gap-*`, or wrap the component in a div |
+| The NavigationMenu wrapper hardcodes a `<nav>` root and `<button>` triggers, so a trigger that is also a link (opening on hover) can't be built | use the `@data-slot/navigation-menu` primitive directly |
+| A modal Drawer makes everything outside it `inert`: a dialog opened from inside the drawer but rendered outside it is unreachable, and the drawer's Escape handler fires first. The wrapper's `modal` prop only takes a boolean | set `data-modal="trap-focus"` on the drawer root, and handle Escape in the dialog (the primitive skips events already prevented) |
+
+## Astro gotchas
+
+| Issue | Workaround |
+|---|---|
+| A component's `<script>` is emitted where the component first appears; inside a `<template>` (an inactive view) it never runs | import the behavior from a component rendered outside the template |
+| Spreading CMS objects as props renders object-valued and camelCase props that React silently dropped (`[object Object]` attributes) | filter props with a small `domProps()` helper, and diff section-root attributes against the legacy HTML |
+| Astro inlines small scripts, which a strict CSP copied from the legacy headers blocks | `vite: { build: { assetsInlineLimit: 0 } }` |
 
 ## Gaps and accepted approaches
 

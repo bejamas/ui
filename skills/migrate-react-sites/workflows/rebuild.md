@@ -60,8 +60,8 @@ Then:
 For each section, in page order:
 
 - **Content:** read the source component and everything it imports (data, utils, global CSS). Render arrays from frontmatter.
-- **Components:** use bejamas components wherever the source uses shadcn ones, and apply **parity resets** from one shared module (e.g. `src/lib/shadcn.ts`). The defaults that differ, and how to override them, are in [parity](../references/parity.md). Read it before your first Button, Card, Badge or Accordion.
-- **Classes:** port the *post-merge* class list the source actually rendered, not the literal props. Classes that never existed in the source's config are no-ops on the demo, so leave them out.
+- **Components:** use bejamas components wherever the source uses shadcn ones, and apply **parity resets** from one shared module (e.g. `src/lib/shadcn.ts`). The defaults that differ, and how to override them, are in [parity](../references/parity.md). Read it before your first Button, Card, Badge or Accordion. A source on another component library (see *Identify the source library* in SKILL.md) follows [other libraries](../references/other-libraries.md) instead.
+- **Classes:** port the *post-merge* class list the source actually rendered, not the literal props. A source that joins classes without tailwind-merge keeps every class, so join them plainly too. Classes that never existed in the source's config are no-ops on the demo, so leave them out.
 - **Overrides:** a default with a variant prefix (`md:`, `has-[>svg]:`, `data-[size=default]:`, `group-data-[…]:`, `aria-pressed:`) must be overridden **with the same prefix**. tailwind-merge only dedupes within one variant.
 - **Spacing:** use `gap-*` around interactive bejamas components. Astro emits each component's `<script>` as a sibling, which breaks `space-x/y-*` and `:last-child`.
 - **Next.js features:** next/image, next/link, next/font, i18n, server data, metadata and SVG components are covered in [recipes](../references/recipes.md).
