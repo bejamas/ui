@@ -2,11 +2,13 @@
 // Each slice is taken scrolled to that position, so sticky headers and scroll-linked effects show as a visitor sees them.
 // Usage: node shot.mjs <url> <out.png> [width=1440] [--dark] [--storage=theme=dark]
 import { writeFileSync } from "node:fs";
-import { launch, parseArgs, storageFlag } from "./browser.mjs";
+import { launch, parseArgs, requireArgs, storageFlag, widthArg } from "./browser.mjs";
 
-const { positional: [url, out, widthArg], flags } = parseArgs();
+const { positional: [url, out, widthPos], flags } = parseArgs();
+requireArgs([url, out], "node shot.mjs <url> <out.png> [width=1440] [--dark] [--storage=theme=dark]");
+const width = widthArg(widthPos);
 const browser = await launch();
-const page = await browser.newPage({ width: Number(widthArg ?? 1440), dark: !!flags.dark, localStorage: storageFlag(flags) });
+const page = await browser.newPage({ width, dark: !!flags.dark, localStorage: storageFlag(flags) });
 await page.goto(url);
 await page.scrollThrough(400, 120);
 await page.wait(1200);

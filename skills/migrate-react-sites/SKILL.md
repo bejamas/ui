@@ -115,6 +115,7 @@ Build, run the preview, then compare with the scripts in `scripts/`. Each has a 
   - Colors are normalized, so `lab()` vs `oklch()` doesn't count as a diff.
   - Fonts are compared by the glyphs that render, not by family name, so `__Inter_f367f3`, `fontSans` (next/font/local) and Astro's `Inter-<hash>` match when they're the same font file.
 - `shot.mjs <url> <out.png> <width>` saves viewport-sized slices (`<out>-1.png`, `<out>-2.png` …) taken while scrolled, so sticky headers and scroll-linked effects show as a visitor sees them. Shoot both sites and view matching slices side by side.
+- Narrow widths emulate a narrow desktop window, not a phone: `hover` and `pointer: fine` still match. Check hover-only and `pointer: coarse` styles by hand.
 - Known headless artifacts to ignore:
   - The scroll lock's `scrollbar-gutter: stable` shifts content 7.5–15px while overlays are open.
   - Autoplaying carousels and marquees differ by phase.

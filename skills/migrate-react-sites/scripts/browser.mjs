@@ -21,8 +21,9 @@ function findChrome() {
 }
 
 export async function launch() {
+  const chrome = findChrome();
   const userDataDir = mkdtempSync(join(tmpdir(), "port-chrome-"));
-  const proc = spawn(findChrome(), [
+  const proc = spawn(chrome, [
     "--headless=new", "--remote-debugging-port=0", `--user-data-dir=${userDataDir}`, "--hide-scrollbars",
     "--no-first-run", "--no-default-browser-check", "--mute-audio", "about:blank",
   ], { stdio: ["ignore", "ignore", "pipe"] });
@@ -31,8 +32,17 @@ export async function launch() {
   process.once("exit", cleanup);
   const wsUrl = await new Promise((resolve, reject) => {
     let log = "";
-    proc.stderr.on("data", (d) => { log += d; const m = log.match(/DevTools listening on (ws:\/\/\S+)/); if (m) resolve(m[1]); });
-    proc.on("exit", (code) => reject(new Error(`Chrome exited (${code}) before DevTools was ready:\n${log}`)));
+    const fail = (message) => { clearTimeout(timer); reject(new Error(`${message}\n${log}`)); };
+    const timer = setTimeout(() => fail("Chrome didn't open DevTools within 30s:"), 30000);
+    const onData = (d) => {
+      log += d;
+      const m = log.match(/DevTools listening on (ws:\/\/\S+)/);
+      // Stop collecting once ready; the stream keeps draining so Chrome never blocks on a full pipe.
+      if (m) { clearTimeout(timer); proc.stderr.off("data", onData); proc.stderr.resume(); resolve(m[1]); }
+    };
+    proc.stderr.on("data", onData);
+    proc.once("error", (e) => fail(`Couldn't start ${chrome}: ${e.message}. Set CHROME_PATH to a Chrome, Chromium, Edge or Brave binary.`));
+    proc.once("exit", (code, signal) => fail(`Chrome exited (${code ?? signal}) before DevTools was ready:`));
   });
   const ws = new WebSocket(wsUrl);
   await new Promise((resolve, reject) => { ws.onopen = resolve; ws.onerror = reject; });
@@ -134,7 +144,7 @@ export async function launch() {
     async close() {
       ws.close();
       proc.kill();
-      await new Promise((r) => (proc.exitCode !== null ? r() : proc.once("exit", r)));
+      await new Promise((r) => (proc.exitCode !== null || proc.signalCode !== null ? r() : proc.once("exit", r)));
       process.off("exit", cleanup);
       rmSync(userDataDir, { recursive: true, force: true });
     },
@@ -149,6 +159,18 @@ export function parseArgs(argv = process.argv.slice(2)) {
   }));
   return { positional: argv.filter((a) => !a.startsWith("--")), flags };
 }
+
+// Positional viewport width in px; a non-number usually means a flag was written as "--key value".
+export const widthArg = (arg, fallback = 1440) => {
+  const width = Number(arg ?? fallback);
+  if (!Number.isInteger(width) || width <= 0) throw new Error(`Invalid width "${arg}": pass pixels, and write flags as --key=value (e.g. --json=out.json).`);
+  return width;
+};
+
+// Exit with the script's usage line when required positional args are missing.
+export const requireArgs = (values, usage) => {
+  if (values.some((v) => !v)) { console.error(`Usage: ${usage}`); process.exit(1); }
+};
 
 // --storage=key=value seeds localStorage, e.g. --storage=theme=dark for enableSystem={false} sites.
 export const storageFlag = (flags) => {

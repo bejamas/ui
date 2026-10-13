@@ -2,10 +2,11 @@
 // Usage: node compare-boxes.mjs <originalUrl> <portUrl> [width=1440] [--dark] [--storage=theme=dark] [--threshold=2] [--json=out.json]
 // Matches elements by tag + normalized text (+ occurrence index) and reports boxes or styles that differ.
 import { writeFileSync } from "node:fs";
-import { launch, parseArgs, storageFlag } from "./browser.mjs";
+import { launch, parseArgs, requireArgs, storageFlag, widthArg } from "./browser.mjs";
 
-const { positional: [origUrl, portUrl, widthArg], flags } = parseArgs();
-const width = Number(widthArg ?? 1440);
+const { positional: [origUrl, portUrl, widthPos], flags } = parseArgs();
+requireArgs([origUrl, portUrl], "node compare-boxes.mjs <originalUrl> <portUrl> [width=1440] [--dark] [--storage=theme=dark] [--threshold=2] [--json=out.json]");
+const width = widthArg(widthPos);
 const threshold = Number(flags.threshold ?? 2);
 
 const SELECTOR = "header, nav, main > *, section, footer, h1, h2, h3, h4, p, a, button, img, svg[role=img], input, textarea, label, li, [data-slot]";
