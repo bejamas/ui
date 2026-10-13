@@ -113,6 +113,7 @@ Build, run the preview, then compare with the scripts in `scripts/`. Each has a 
 - `compare-boxes.mjs <demo> <port> <width>` at 1440, 768 and 390, in each color scheme the original supports.
   - It reports page height, box diffs in document order (fix the first one and re-run), computed style diffs, and missing or extra elements.
   - Colors are normalized, so `lab()` vs `oklch()` doesn't count as a diff.
+  - Fonts are compared by the glyphs that render, not by family name, so `__Inter_f367f3`, `fontSans` (next/font/local) and Astro's `Inter-<hash>` match when they're the same font file.
 - `shot.mjs <url> <out.png> <width>` saves viewport-sized slices (`<out>-1.png`, `<out>-2.png` …) taken while scrolled, so sticky headers and scroll-linked effects show as a visitor sees them. Shoot both sites and view matching slices side by side.
 - Known headless artifacts to ignore:
   - The scroll lock's `scrollbar-gutter: stable` shifts content 7.5–15px while overlays are open.

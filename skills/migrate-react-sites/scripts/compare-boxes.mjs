@@ -16,13 +16,27 @@ async function collect(browser, url) {
   await page.goto(url);
   await page.scrollThrough(500, 80);
   await page.wait(1500);
-  const data = await page.evaluate(({ SELECTOR, STYLE_KEYS }) => {
+  const data = await page.evaluate(async ({ SELECTOR, STYLE_KEYS }) => {
     const seen = new Map();
     const out = [];
     // Normalize any CSS color syntax (lab, oklch, hsl...) to rgba so serialization differences don't count.
     const ctx = Object.assign(document.createElement("canvas"), { width: 1, height: 1 }).getContext("2d", { willReadFrequently: true });
     const norm = (c) => { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = "#000"; ctx.fillStyle = c; ctx.fillRect(0, 0, 1, 1); const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data; return `rgba(${r},${g},${b},${+(a / 255).toFixed(2)})`; };
     const normAll = (v) => v.replace(/(?:rgba?|hsla?|lab|lch|oklab|oklch|color)\([^()]*\)/g, norm);
+    // Fingerprint the font that actually renders: family names are build artifacts (next/font's
+    // __Inter_f367f3, Astro's Inter-<hash>, or next/font/local's variable name like fontSans).
+    // Measured at regular weight so a weight change is reported as fontWeight, not as another font.
+    const PROBES = ["abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "0123456789 .,:;!?-()&@"];
+    const prints = new Map();
+    const fontPrint = async (family) => {
+      if (!prints.has(family)) {
+        const font = `400 100px ${family}`;
+        await document.fonts.load(font, PROBES.join("")).catch(() => {});
+        ctx.font = font;
+        prints.set(family, PROBES.map((s) => ctx.measureText(s).width.toFixed(1)).join("/"));
+      }
+      return prints.get(family);
+    };
     const landmarks = [...document.querySelectorAll("header, nav, main > *, section, footer")];
     for (const el of document.querySelectorAll(SELECTOR)) {
       if (el.closest("[data-compare-ignore]")) continue;
@@ -45,8 +59,9 @@ async function collect(browser, url) {
       // Ignore properties that can't show: border color/style without width, text color on images.
       if (style.borderTopWidth === "0px") style.borderTopColor = style.borderTopStyle = "-";
       if (tag === "img") style.color = "-";
-      style.fontFamily = cs.fontFamily.split(",")[0].replace(/["']/g, "").replace(/-[a-f0-9]{6,}$/i, "").trim();
-      out.push({ key: `${base}#${n}`, x: Math.round(r.left), y: Math.round(r.top + scrollY), w: Math.round(r.width), h: Math.round(r.height), style });
+      // The name is only for display; fonts are compared by fontPrint.
+      style.fontFamily = cs.fontFamily.split(",")[0].replace(/["']/g, "").trim().replace(/^__|_[a-f0-9]{6}$|-[a-f0-9]{6,}$/gi, "");
+      out.push({ key: `${base}#${n}`, x: Math.round(r.left), y: Math.round(r.top + scrollY), w: Math.round(r.width), h: Math.round(r.height), style, fontPrint: await fontPrint(cs.fontFamily) });
     }
     return { height: document.documentElement.scrollHeight, items: out };
   }, { SELECTOR, STYLE_KEYS });
@@ -68,7 +83,8 @@ for (const ia of a.items) {
   mapB.delete(ia.key);
   const d = ["x", "y", "w", "h"].map((k) => ib[k] - ia[k]);
   if (d.some((v) => Math.abs(v) > threshold)) boxDiffs.push({ key: ia.key, orig: [ia.x, ia.y, ia.w, ia.h], port: [ib.x, ib.y, ib.w, ib.h], delta: d });
-  const sd = Object.keys(ia.style).filter((k) => ia.style[k] !== ib.style[k]).map((k) => `${k}: ${ia.style[k]} → ${ib.style[k]}`);
+  const sd = Object.keys(ia.style).filter((k) => k !== "fontFamily" && ia.style[k] !== ib.style[k]).map((k) => `${k}: ${ia.style[k]} → ${ib.style[k]}`);
+  if (ia.fontPrint !== ib.fontPrint) sd.unshift(`fontFamily: ${ia.style.fontFamily} → ${ib.style.fontFamily}${ia.style.fontFamily === ib.style.fontFamily ? " (same name, renders differently)" : ""}`);
   if (sd.length) styleDiffs.push({ key: ia.key, diffs: sd });
 }
 const extra = [...mapB.keys()];
