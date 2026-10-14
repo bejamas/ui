@@ -17,10 +17,10 @@ But it is **not a line-by-line port**. Components are Astro files rendered on th
 
 | | Count |
 | --- | --- |
-| Components shadcn/ui and bejamas/ui both ship | **39** |
+| Components shadcn/ui and bejamas/ui both ship | **41** |
 | ↳ Drop-in (same parts, same props) | 12 |
-| ↳ Close (same anatomy, some props or parts differ) | 25 |
-| ↳ Different API (materially different anatomy) | 2 |
+| ↳ Close (same anatomy, some props or parts differ) | 26 |
+| ↳ Different API (materially different anatomy) | 3 |
 | shadcn/ui components bejamas/ui does not ship | **20** (+ `form` and 3 docs-only recipes) |
 | bejamas/ui-only components | **6** |
 
@@ -210,6 +210,7 @@ Same anatomy, but some props, variants or sub-components are missing, renamed or
 | [Item](#item) | No `size="xs"`; no link items (`render`); `ItemMedia variant` is `mediaVariant`. |
 | [Navigation Menu](#navigation-menu) | Items need a `value`; animated hover indicator; placement props on content. |
 | [Popover](#popover) | Header / Title / Description match; trigger is a styled `Button`; extra `PopoverClose`. |
+| [Resizable](#resizable) | Root is `Resizable` (shadcn: `ResizablePanelGroup`); `direction` instead of `orientation`; sizes are percentages. |
 | [Select](#select) | Same core parts; `position` instead of `alignItemWithTrigger`; no `items` / `multiple`. |
 | [Separator](#separator) | Same `orientation` / `decorative` props; class-based orientation styling. |
 | [Slider](#slider) | Scalar or 2-thumb range only; `defaultValue={[33]}` must become `defaultValue={33}`. |
@@ -226,6 +227,7 @@ The anatomy or API differs enough that you should read the porting notes before 
 | --- | --- |
 | [Carousel](#carousel) | Native scroll-snap instead of Embla; `CarouselItem` → `CarouselSlide`; no `opts` / `plugins` / `setApi`. |
 | [Drawer](#drawer) | `side` on the root (left / right / bottom); no snap points; also covers Sheet. |
+| [Toast](#toast) | Sonner-style `toast(title, options)` instead of Base UI's `toast.add()`; fixed template, no composable parts. |
 
 ---
 
@@ -458,6 +460,22 @@ These need only the general React → Astro translation. Good to know:
 
 **Watch out:** a bare `PopoverTrigger` renders a filled primary button.
 
+#### Resizable
+
+<small>[Docs →](/components/resizable)</small>
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<ResizablePanelGroup orientation="vertical">` | `<Resizable direction="vertical">` |
+| `<ResizablePanel defaultSize="25%">` | `<ResizablePanel defaultSize={25}>` |
+| `onLayoutChange` on the group | `resizable:change` with `{ layout }` |
+| `panelRef` with `collapse()`, `expand()` or `resize()` | dispatch `resizable:set` with a full layout |
+| `aria-[orientation=…]:` classes | `data-[direction=…]:` classes (`data-direction` is set on the group, panels and handles) |
+
+**Not available:** sizes in pixels, `rem` or other units, and `useDefaultLayout` persistence. To persist a layout, save it from `resizable:change` and restore it with `defaultSize` or `resizable:set`.
+
+**Watch out:** in react-resizable-panels v4 a bare number is in pixels (`defaultSize={200}` is 200px). In `bejamas/ui` every size is a percentage of the group.
+
 #### Select
 
 <small>[Docs →](/components/select)</small>
@@ -571,6 +589,28 @@ shadcn ships two drawers: Base UI (`swipeDirection`, snap points) and Radix/vaul
 
 **Watch out:** the default side is `right` (shadcn: bottom), and there's no built-in close button. Add one with `data-slot="drawer-close"`.
 
+#### Toast
+
+<small>[Docs →](/components/toast)</small>
+
+shadcn's Base UI Toast wraps Base UI's toast manager, and its Radix flavour uses Sonner. The `bejamas/ui` Toast runs on `@data-slot/toast`, and its `toast()` function follows Sonner's API, so Sonner code ports almost unchanged.
+
+| shadcn/ui | bejamas/ui |
+| --- | --- |
+| `<Toaster />` | `<Toast />`, rendered once (usually in your layout) |
+| `toast.add({ title, description })` | `toast(title, { description })` |
+| `toast.add({ title, type: "success" })` | `toast.success(title)` (also `error`, `warning`, `info` and `loading`) |
+| `timeout` | `duration` (`0` keeps the toast open) |
+| `actionProps: { children: "Undo", onClick }` | `action: { label: "Undo", onClick }` |
+| `toast.close(id)` | `toast.dismiss(id)`, or `toast.dismiss()` to clear all |
+| `onClose` | `toast:change` events on the `<Toast />` root |
+
+`toast.update(id, …)` and `toast.promise(…)` work the same way in both.
+
+**Not available:** custom toast markup built from the `Toast`, `ToastContent` and `ToastTitle` parts, `useToastManager` and `createToastManager`, and the `priority` and `data` options. From Sonner: `toast.custom()`, `toast.message()`, `cancel`, `richColors` and per-toast `position`.
+
+**Watch out:** the close button is off by default (`<Toast closeButton />`), `position` is set on `<Toast />` (shadcn's viewport is fixed to the bottom right), and `toast()` throws if no `<Toast />` is rendered.
+
 ---
 
 ## What bejamas/ui does not offer
@@ -630,7 +670,7 @@ If you need one of the components above today, you can run a shadcn/ui React com
 | [Marquee](/components/marquee) | CSS-only infinite scroller (`direction`, `time`, `variant`) that pauses for reduced motion. |
 | [Sticky Surface](/components/sticky-surface) | Sticky header wrapper with scroll-driven "stuck" effects (`line`, `elevate`, `backdrop`) and an optional `.is-stuck` class. |
 
-`bejamas/ui` also adds extras to shared components that shadcn/ui doesn't have, such as `CardMedia` and `CardOverlay`, `PopoverClose`, `DrawerBody`, `FieldError forceMount`, the animated `indicator` and `line-animated` tab variants, and `Badge shape="pill"`.
+`bejamas/ui` also adds extras to shared components that shadcn/ui doesn't have, such as `CardMedia` and `CardOverlay`, `PopoverClose`, `DrawerBody`, `FieldError forceMount`, the animated `indicator` and `line-animated` tab variants, `Badge shape="pill"`, and `data-slot="toast-trigger"` buttons that show a toast without a script.
 
 ### Blocks
 
