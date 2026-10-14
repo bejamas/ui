@@ -141,8 +141,7 @@ const positions = [
   });
 
   on("toast-update", () => {
-    const id = toast.loading("Uploading file…", { duration: 0 });
-    if (!id) return;
+    const id = toast.loading("Uploading file…");
     setTimeout(() => {
       toast.update(id, {
         title: "File uploaded",

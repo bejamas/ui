@@ -39,7 +39,7 @@
  *
  * ### toast()
  *
- * Import `toast` from the component's `toast.ts` module. Each call returns the toast id:
+ * Import `toast` from the `toast.ts` module next to the component. Each call returns the toast id, and throws if no `<Toast />` is rendered:
  *
  * ```js nocollapse
  * import { toast } from '@bejamas/ui/components/toast/toast';
@@ -65,7 +65,7 @@
  * |--------|------|-------------|
  * | `description` | `string` | Secondary text |
  * | `type` | `"default" \| "success" \| "error" \| "warning" \| "info" \| "loading"` | Icon and live-region politeness (`error` and `warning` are assertive) |
- * | `duration` | `number` | Auto-dismiss delay in ms; `0` keeps the toast open |
+ * | `duration` | `number` | Auto-dismiss delay in ms; `0` keeps the toast open (the default for `toast.loading`) |
  * | `action` | `{ label, onClick?, value? }` | Action button; call `event.preventDefault()` in `onClick` to keep the toast open |
  * | `dismissible` | `boolean` | Set `false` to disable swipe and the close button |
  * | `id` | `string` | Reusing an id replaces that toast |
@@ -132,7 +132,6 @@ import type { HTMLAttributes } from "astro/types";
 
 import { Button } from "../button";
 import SemanticIcon from "../icon/SemanticIcon.astro";
-import { cn } from "@bejamas/registry/lib/utils";
 
 interface Props extends HTMLAttributes<"div"> {
   position?: "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right";
@@ -161,7 +160,7 @@ const {
   data-duration={duration}
   data-limit={limit}
   data-portal={portal}
-  class={cn(className)}
+  class={className}
 >
   <template data-slot="toast-template">
     <li
@@ -207,9 +206,33 @@ const {
 </div>
 
 <script>
-  import { initializeToasts } from "./toast";
+  import { bindToaster } from "./toast";
 
-  initializeToasts();
+  const roots = document.querySelectorAll('[data-slot="toast"]');
+  roots.forEach((root) => bindToaster(root));
+
+  // `<Button data-slot="toast-trigger" data-toast-title="Saved">` shows a toast
+  // on click without a client script. The root validates `toast:show` details,
+  // so the data attributes go through as-is and invalid ones are ignored.
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const trigger = event.target.closest<HTMLElement>(
+      '[data-slot="toast-trigger"]',
+    );
+    if (!trigger) return;
+    const { toastTitle, toastDescription, toastType, toastDuration } =
+      trigger.dataset;
+    roots[0].dispatchEvent(
+      new CustomEvent("toast:show", {
+        detail: {
+          title: toastTitle,
+          description: toastDescription,
+          type: toastType,
+          duration: Number(toastDuration),
+        },
+      }),
+    );
+  });
 </script>
 
 <style is:global>
@@ -258,14 +281,28 @@ const {
     }
   }
 
+  /*
+   * The transform is declared once. State rules only move its inputs:
+   * --toast-y/--toast-scale place the toast in the stack, --toast-drag-*
+   * follow the pointer during a swipe.
+   */
   [data-slot="toast-item"] {
+    --toast-y: calc(var(--toast-lift) * -100%);
+    --toast-scale: 1;
+    --toast-drag-x: 0px;
+    --toast-drag-y: 0px;
     position: absolute;
     inset-inline: 0;
     bottom: 0;
     box-sizing: border-box;
     opacity: 0;
     touch-action: none;
-    transform: translate3d(0, calc(var(--toast-lift, -1) * -100%), 0);
+    transform: translate3d(
+        var(--toast-drag-x),
+        calc(var(--toast-y) + var(--toast-drag-y)),
+        0
+      )
+      scale(var(--toast-scale));
     transition:
       transform 400ms ease,
       opacity 400ms ease,
@@ -284,7 +321,7 @@ const {
     position: absolute;
     left: 0;
     width: 100%;
-    height: calc(var(--toast-gap, 0px) + 1px);
+    height: calc(var(--toast-gap) + 1px);
     bottom: 100%;
   }
 
@@ -293,29 +330,21 @@ const {
     bottom: auto;
   }
 
+  /* The front toast always has a zero offset, so one rule places it too. */
   [data-slot="toast-item"][data-mounted="true"] {
+    --toast-y: calc(var(--toast-offset) * var(--toast-lift));
     opacity: 1;
-    transform: translate3d(0, 0, 0);
   }
 
   [data-slot="toast-item"][data-mounted="true"][data-expanded="false"][data-front="false"] {
+    --toast-y: calc(var(--toast-collapsed-offset-y) * var(--toast-lift));
+    --toast-scale: calc(1 - var(--toast-index) * 0.05);
     height: var(--toast-front-height);
     overflow: hidden;
-    transform: translate3d(
-        0,
-        calc(var(--toast-collapsed-offset-y, 0px) * var(--toast-lift, -1)),
-        0
-      )
-      scale(calc(1 - var(--toast-index, 0) * 0.05));
   }
 
   [data-slot="toast-item"][data-mounted="true"][data-expanded="true"] {
     height: var(--toast-initial-height);
-    transform: translate3d(
-      0,
-      calc(var(--toast-offset, 0px) * var(--toast-lift, -1)),
-      0
-    );
   }
 
   [data-slot="toast-item"][data-expanded="false"][data-front="false"][data-state="open"] > * {
@@ -331,26 +360,19 @@ const {
     pointer-events: none;
   }
 
-  [data-slot="toast-item"][data-removed="true"][data-front="true"] {
-    opacity: 0;
-    transform: translate3d(0, calc(var(--toast-lift, -1) * -100%), 0);
-  }
-
-  [data-slot="toast-item"][data-removed="true"][data-front="false"][data-expanded="true"] {
-    opacity: 0;
-    transform: translate3d(
-      0,
-      calc(
-        var(--toast-lift, -1) * var(--toast-offset, 0px) +
-          var(--toast-lift, -1) * -100%
-      ),
-      0
+  /* Visible toasts (front, or anywhere in an expanded stack) slide out a full height. */
+  [data-slot="toast-item"][data-removed="true"]:is([data-front="true"], [data-expanded="true"]) {
+    --toast-y: calc(
+      var(--toast-lift) * var(--toast-offset) - var(--toast-lift) * 100%
     );
+    opacity: 0;
   }
 
+  /* Toasts tucked behind a collapsed stack sink instead. */
   [data-slot="toast-item"][data-removed="true"][data-front="false"][data-expanded="false"] {
+    --toast-y: 40%;
+    --toast-scale: 1;
     opacity: 0;
-    transform: translate3d(0, 40%, 0);
     transition:
       transform 500ms ease,
       opacity 200ms ease;
@@ -360,44 +382,15 @@ const {
     transition: none;
   }
 
-  [data-slot="toast-item"][data-swiping="true"][data-front="true"] {
-    transform: translate3d(
-      var(--toast-swipe-amount-x, 0px),
-      var(--toast-swipe-amount-y, 0px),
-      0
-    );
+  [data-slot="toast-item"][data-swiping="true"]:is([data-front="true"], [data-expanded="true"]) {
+    --toast-drag-x: var(--toast-swipe-amount-x);
+    --toast-drag-y: var(--toast-swipe-amount-y);
   }
 
-  [data-slot="toast-item"][data-swiping="true"][data-expanded="true"] {
-    transform: translate3d(
-      var(--toast-swipe-amount-x, 0px),
-      calc(
-        var(--toast-offset, 0px) * var(--toast-lift, -1) +
-          var(--toast-swipe-amount-y, 0px)
-      ),
-      0
-    );
-  }
-
-  [data-slot="toast-item"][data-removed="true"][data-swipe-out="true"][data-front="true"] {
-    opacity: 0;
-    transform: translate3d(
-      var(--toast-swipe-end-x, 0px),
-      var(--toast-swipe-end-y, 0px),
-      0
-    );
-  }
-
-  [data-slot="toast-item"][data-removed="true"][data-swipe-out="true"][data-front="false"][data-expanded="true"] {
-    opacity: 0;
-    transform: translate3d(
-      var(--toast-swipe-end-x, 0px),
-      calc(
-        var(--toast-lift, -1) * var(--toast-offset, 0px) +
-          var(--toast-swipe-end-y, 0px)
-      ),
-      0
-    );
+  [data-slot="toast-item"][data-removed="true"][data-swipe-out="true"]:is([data-front="true"], [data-expanded="true"]) {
+    --toast-y: calc(var(--toast-offset) * var(--toast-lift));
+    --toast-drag-x: var(--toast-swipe-end-x);
+    --toast-drag-y: var(--toast-swipe-end-y);
   }
 
   /* Only the icon for the current type is shown; default and info have none. */

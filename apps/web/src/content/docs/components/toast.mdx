@@ -127,7 +127,7 @@ import { Button } from '@bejamas/registry/ui/button';
 
 ### toast()
 
-Import `toast` from the component's `toast.ts` module. Each call returns the toast id:
+Import `toast` from the `toast.ts` module next to the component. Each call returns the toast id, and throws if no `<Toast />` is rendered:
 
 ```js nocollapse
 import { toast } from '@bejamas/registry/ui/toast/toast';
@@ -153,7 +153,7 @@ toast.promise(fetch('/api/save'), {
 |--------|------|-------------|
 | `description` | `string` | Secondary text |
 | `type` | `"default" \| "success" \| "error" \| "warning" \| "info" \| "loading"` | Icon and live-region politeness (`error` and `warning` are assertive) |
-| `duration` | `number` | Auto-dismiss delay in ms; `0` keeps the toast open |
+| `duration` | `number` | Auto-dismiss delay in ms; `0` keeps the toast open (the default for `toast.loading`) |
 | `action` | `{ label, onClick?, value? }` | Action button; call `event.preventDefault()` in `onClick` to keep the toast open |
 | `dismissible` | `boolean` | Set `false` to disable swipe and the close button |
 | `id` | `string` | Reusing an id replaces that toast |

@@ -2,7 +2,6 @@
 import {
   createToast,
   type ToastController,
-  type ToastPromiseHandle,
   type ToastPromiseOptions,
   type ToastShowOptions,
   type ToastUpdateOptions,
@@ -10,34 +9,37 @@ import {
 
 export type ToastOptions = Omit<ToastShowOptions, "title">;
 
-const toasters = new Map<HTMLElement, ToastController>();
+const toasters = new WeakMap<Element, ToastController>();
 
-export function initializeToasts() {
-  document
-    .querySelectorAll<HTMLElement>('[data-slot="toast"]')
-    .forEach((root) => {
-      if (!toasters.has(root)) toasters.set(root, createToast(root));
-    });
+/** Bind a `<Toast />` root, reusing its controller when already bound. */
+export function bindToaster(root: Element) {
+  let toaster = toasters.get(root);
+  if (!toaster) {
+    toaster = createToast(root);
+    toasters.set(root, toaster);
+  }
+  return toaster;
 }
 
 /** The controller for the first `<Toast />` on the page. */
 export function getToaster() {
-  const root = document.querySelector<HTMLElement>('[data-slot="toast"]');
+  const root = document.querySelector('[data-slot="toast"]');
   if (!root) {
-    console.warn("[toast] Render <Toast /> on the page before calling toast().");
-    return null;
+    throw new Error("[toast] Render <Toast /> on the page before calling toast().");
   }
-  initializeToasts();
-  return toasters.get(root) ?? null;
+  return bindToaster(root);
 }
 
 function show(title: string, options: ToastOptions = {}) {
-  return getToaster()?.show({ ...options, title });
+  return getToaster().show({ ...options, title });
 }
 
-function withType(type: NonNullable<ToastOptions["type"]>) {
+function withType(
+  type: NonNullable<ToastOptions["type"]>,
+  defaults: ToastOptions = {},
+) {
   return (title: string, options: Omit<ToastOptions, "type"> = {}) =>
-    show(title, { ...options, type });
+    show(title, { ...defaults, ...options, type });
 }
 
 /**
@@ -54,44 +56,21 @@ export const toast = Object.assign(show, {
   error: withType("error"),
   warning: withType("warning"),
   info: withType("info"),
-  loading: withType("loading"),
+  // Loading toasts stay open until they are updated or dismissed.
+  loading: withType("loading", { duration: 0 }),
   promise<T>(
     input: Promise<T> | (() => Promise<T>),
     options: ToastPromiseOptions<T>,
-  ): ToastPromiseHandle<T> | undefined {
-    return getToaster()?.promise(input, options);
+  ) {
+    return getToaster().promise(input, options);
   },
   update(id: string, patch: ToastUpdateOptions) {
-    getToaster()?.update(id, patch);
+    getToaster().update(id, patch);
   },
   /** Dismiss one toast, or every toast when `id` is omitted. */
   dismiss(id?: string) {
     const toaster = getToaster();
-    if (id === undefined) toaster?.dismissAll();
-    else toaster?.dismiss(id);
+    if (id === undefined) toaster.dismissAll();
+    else toaster.dismiss(id);
   },
-});
-
-// `<Button data-slot="toast-trigger" data-toast-title="Saved">` shows a toast
-// on click without a client script.
-function handleTriggerClick(event: MouseEvent) {
-  if (!(event.target instanceof Element)) return;
-  const trigger = event.target.closest<HTMLElement>(
-    '[data-slot="toast-trigger"]',
-  );
-  const { toastTitle, toastDescription, toastType, toastDuration } =
-    trigger?.dataset ?? {};
-  if (!toastTitle) return;
-  show(toastTitle, {
-    description: toastDescription,
-    type: toastType as ToastOptions["type"],
-    duration: toastDuration === undefined ? undefined : Number(toastDuration),
-  });
-}
-
-document.addEventListener("click", handleTriggerClick);
-document.addEventListener("astro:page-load", initializeToasts);
-document.addEventListener("astro:before-swap", () => {
-  toasters.forEach((toaster) => toaster.destroy());
-  toasters.clear();
 });
