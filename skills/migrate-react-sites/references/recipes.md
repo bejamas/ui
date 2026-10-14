@@ -86,7 +86,7 @@ Gate every effect behind `@media (prefers-reduced-motion: no-preference)`, and a
 | `useScroll({ target })` (container scroll, timelines, tilt) | `view-timeline-name` on the target + `animation-range: contain 0% contain 100%`; keep framer's transform order (scale before rotate) | No spring smoothing. Never put it under `overflow-hidden`, which captures the timeline; use `overflow-clip` |
 | "scrolled" header (shadow, border, blur) | keyframes + `animation-timeline: scroll(root block); animation-range: 0 1px`, or StickySurface effects | |
 | scroll-spy nav | `scroll-target-group: auto` + `a:target-current` (Chromium 140+) with an `@supports not` fallback; or `timeline-scope` + per-section `view-timeline` | Keeps the last passed section active |
-| marquee (magic ui, embla AutoScroll) | bejamas `Marquee` + keyframes (see known-issues) + the overrides in parity; scale `--duration` to match the source's px/s | Two copies, no drag |
+| marquee (magic ui, embla AutoScroll) | bejamas `Marquee` + the overrides in parity; scale `--duration` to match the source's px/s | Two copies, no drag |
 | typewriter / typing terminal | replay the algorithm in frontmatter → per-character keyframes using `step-end` and `font-size: 0 ↔ 1em` (`display` can't animate); one shared cycle | |
 | step reveal (setTimeout counter) | `animation-delay: calc(var(--step) * 500ms); animation-fill-mode: both` | |
 | animated list / feed | precomputed keyframes growing `grid-template-rows: 0fr → 1fr` with staggered delays | No spring overshoot |

@@ -17,7 +17,6 @@ Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. Before
 | Registry components fail `eslint-plugin-astro`'s recommended rules (`no-exports-from-components`, `no-explicit-any`) | a lint override for `src/ui/**` in repos that lint `.astro` files |
 | In a workspace, the template's package name `astro` shadows the real `astro` package, and its TypeScript major can differ from the workspace's | rename the package before installing; align shared tool versions |
 | Astro 7's `astro preview` can detach and return immediately | `astro preview status`, `logs` or `stop` |
-| `bejamas add marquee`: the `marquee-x`/`marquee-y` keyframes are missing, so the marquee is static | add both to `globals.css` inside `@layer theme`: `@keyframes marquee-x { from { transform: translateX(0) } to { transform: translateX(-100%) } }`, and the same for `marquee-y` with `translateY`. For a seamless loop with a gap between copies, subtract it: `translateX(calc(-100% - var(--marquee-gap, 0px)))` |
 | `bejamas add select` fails to build (`Rolldown failed to resolve import "@/lib/select"`); `@data-slot/select` isn't installed | `bun add @data-slot/select`; copy `lib/select.ts` from the bejamas registry source into `src/lib/` |
 | `astro check` needs `@astrojs/check` | `bun add -d @astrojs/check` |
 | `<html  lang>` (double space), no `initial-scale=1`, scaffold favicon and `bejamas.svg` | fix and delete |
@@ -33,7 +32,6 @@ Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. Before
 | Button `variant="link"` is `text-accent` | `text-primary` |
 | Drawer width, radius and backdrop are set in unlayered global CSS | `!` utilities or global `[data-slot=drawer-popup]` / `[data-slot=drawer-backdrop]` rules |
 | ToggleGroup's runtime re-adds variant classes after merge | `!` utilities on items |
-| ToggleGroup `multiple` `defaultValue` array is joined with `,` but split on whitespace | pass a space-separated string |
 | CarouselSlide applies 2-up grid tracks outside `variant="multiple"` | `group-data-[orientation=vertical]/carousel:grid-rows-none` (or `grid-cols-none`) |
 | `AvatarFallback` and src-less `AvatarImage` render `<div>`, which breaks a surrounding `<p>` | make the wrapper a `div` |
 | `RadioGroupItem` renders an empty `id` | pass an explicit `id` |
