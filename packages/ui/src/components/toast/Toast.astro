@@ -174,8 +174,9 @@ const {
         aria-hidden="true"
       >
         <SemanticIcon name="check" data-toast-icon="success" />
+        <SemanticIcon name="info" data-toast-icon="info" />
         <SemanticIcon name="alert-circle" data-toast-icon="error" />
-        <SemanticIcon name="alert-circle" data-toast-icon="warning" />
+        <SemanticIcon name="alert-triangle" data-toast-icon="warning" />
         <SemanticIcon
           name="loader-circle"
           data-toast-icon="loading"
@@ -394,17 +395,17 @@ const {
     --toast-drag-y: var(--toast-swipe-end-y);
   }
 
-  /* Only the icon for the current type is shown; default and info have none. */
+  /* Only the icon for the current type is shown; default has none. */
   [data-slot="toast-icon"] > [data-toast-icon] {
     display: none;
   }
 
-  [data-slot="toast-item"]:is([data-type="default"], [data-type="info"])
-    [data-slot="toast-icon"] {
+  [data-slot="toast-item"][data-type="default"] [data-slot="toast-icon"] {
     display: none;
   }
 
   [data-slot="toast-item"][data-type="success"] [data-toast-icon="success"],
+  [data-slot="toast-item"][data-type="info"] [data-toast-icon="info"],
   [data-slot="toast-item"][data-type="error"] [data-toast-icon="error"],
   [data-slot="toast-item"][data-type="warning"] [data-toast-icon="warning"],
   [data-slot="toast-item"][data-type="loading"] [data-toast-icon="loading"] {
