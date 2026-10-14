@@ -1,0 +1,425 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/toast/Toast.astro directly.
+/**
+ * @component Toast
+ * @title Toast
+ * @description Stacked, swipeable toast notifications with auto-dismiss, actions and promise states.
+ *
+ * @preview
+ * <Toast />
+ * <Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-description="Sunday, December 03, 2023 at 9:00 AM" variant="outline">Show toast</Button>
+ *
+ * @usage
+ * Render `<Toast />` once, usually in your layout:
+ *
+ * ```astro nocollapse
+ * ---
+ * import { Toast } from '@bejamas/ui/components/toast';
+ * ---
+ * <Toast />
+ * ```
+ *
+ * Then show toasts from any client script:
+ *
+ * ```js nocollapse
+ * import { toast } from '@bejamas/ui/components/toast/toast';
+ *
+ * toast('Event has been created', {
+ *   description: 'Sunday, December 03, 2023 at 9:00 AM',
+ *   action: { label: 'Undo', onClick: () => console.log('Undo') },
+ * });
+ * ```
+ *
+ * Or without a script, from any element with `data-slot="toast-trigger"`:
+ *
+ * ```astro nocollapse
+ * <Button data-slot="toast-trigger" data-toast-title="Event has been created">Show toast</Button>
+ * ```
+ *
+ * @api
+ *
+ * ### toast()
+ *
+ * Import `toast` from the `toast.ts` module next to the component. Each call returns the toast id, and throws if no `<Toast />` is rendered:
+ *
+ * ```js nocollapse
+ * import { toast } from '@bejamas/ui/components/toast/toast';
+ *
+ * const id = toast('Saved', { description: 'All changes synced', duration: 4000 });
+ * toast.success('Profile updated');
+ * toast.error('Upload failed');
+ * toast.warning('Storage almost full');
+ * toast.info('New version available');
+ * toast.loading('Uploading…');
+ *
+ * toast.update(id, { title: 'Saved again' });
+ * toast.dismiss(id); // or toast.dismiss() to clear all
+ *
+ * toast.promise(fetch('/api/save'), {
+ *   loading: 'Saving…',
+ *   success: 'Saved',
+ *   error: 'Could not save',
+ * });
+ * ```
+ *
+ * | Option | Type | Description |
+ * |--------|------|-------------|
+ * | `description` | `string` | Secondary text |
+ * | `type` | `"default" \| "success" \| "error" \| "warning" \| "info" \| "loading"` | Icon and live-region politeness (`error` and `warning` are assertive) |
+ * | `duration` | `number` | Auto-dismiss delay in ms; `0` keeps the toast open (the default for `toast.loading`) |
+ * | `action` | `{ label, onClick?, value? }` | Action button; call `event.preventDefault()` in `onClick` to keep the toast open |
+ * | `dismissible` | `boolean` | Set `false` to disable swipe and the close button |
+ * | `id` | `string` | Reusing an id replaces that toast |
+ *
+ * ### Trigger Attributes
+ *
+ * | Attribute | Description |
+ * |-----------|-------------|
+ * | `data-slot="toast-trigger"` | Shows a toast on click |
+ * | `data-toast-title` | Title (required) |
+ * | `data-toast-description` | Description |
+ * | `data-toast-type` | Toast type |
+ * | `data-toast-duration` | Duration in ms |
+ *
+ * ### Events
+ *
+ * The root emits and listens for custom events:
+ *
+ * | Event | Detail | Description |
+ * |-------|--------|-------------|
+ * | `toast:change` | `{ id, action: "show" \| "dismiss" }` | Fired when a toast is shown or starts dismissing |
+ * | `toast:action` | `{ id, value }` | Fired when an action button is clicked |
+ * | `toast:show` | toast options with `title` | Show a toast |
+ * | `toast:update` | `{ id, ...patch }` | Update a toast in place |
+ * | `toast:dismiss` | `{ id }` | Dismiss a toast |
+ * | `toast:clear` | none | Dismiss every toast |
+ *
+ * ```js nocollapse
+ * const toaster = document.querySelector('[data-slot="toast"]');
+ *
+ * toaster.dispatchEvent(new CustomEvent('toast:show', {
+ *   detail: { title: 'Background sync complete', type: 'success' }
+ * }));
+ * ```
+ *
+ * ### Data Attributes
+ *
+ * | Attribute | Element | Description |
+ * |-----------|---------|-------------|
+ * | `data-position` | root, viewport | Placement token |
+ * | `data-type` | item | Toast type |
+ * | `data-state` | item | `open` or `closed` |
+ * | `data-front` | item | `true` for the newest toast |
+ * | `data-expanded` | viewport, item | Present or `true` while the stack is hovered or focused |
+ * | `data-swiping` | item | `true` during a swipe |
+ *
+ * @examples
+ * ### Types
+ *
+ * <div class="flex flex-wrap justify-center gap-2">
+ *   <Button data-slot="toast-trigger" data-toast-title="Event has been created" variant="outline">Default</Button>
+ *   <Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-type="success" variant="outline">Success</Button>
+ *   <Button data-slot="toast-trigger" data-toast-title="Be at the area 10 minutes before the event time" data-toast-type="info" variant="outline">Info</Button>
+ *   <Button data-slot="toast-trigger" data-toast-title="Event start time cannot be earlier than 8am" data-toast-type="warning" variant="outline">Warning</Button>
+ *   <Button data-slot="toast-trigger" data-toast-title="Event has not been created" data-toast-type="error" variant="outline">Error</Button>
+ *   <Button data-slot="toast-trigger" data-toast-title="Loading events…" data-toast-type="loading" data-toast-duration="3000" variant="outline">Loading</Button>
+ * </div>
+ *
+ * ### Description
+ *
+ * <Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-description="Monday, January 3rd at 6:00pm" variant="outline">Show toast</Button>
+ */
+import type { HTMLAttributes } from "astro/types";
+
+import { Button } from "../button";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"div"> {
+  position?: "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right";
+  duration?: number;
+  limit?: number;
+  closeButton?: boolean;
+  portal?: boolean;
+  class?: string;
+}
+
+const {
+  position = "bottom-right",
+  duration = 5000,
+  limit = 3,
+  closeButton = false,
+  portal = true,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<div
+  {...rest}
+  data-slot="toast"
+  data-position={position}
+  data-duration={duration}
+  data-limit={limit}
+  data-portal={portal}
+  class={className}
+>
+  <template data-slot="toast-template">
+    <li
+      data-slot="toast-item"
+      class="rounded-2xl group/toast flex w-full items-center gap-2 border border-border bg-popover p-4 text-sm text-popover-foreground shadow-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+    >
+      <span
+        data-slot="toast-icon"
+        class="flex size-4 shrink-0 items-center justify-center [&_svg]:size-4"
+        aria-hidden="true"
+      >
+        <SemanticIcon name="check" data-toast-icon="success" />
+        <SemanticIcon name="info" data-toast-icon="info" />
+        <SemanticIcon name="alert-circle" data-toast-icon="error" />
+        <SemanticIcon name="alert-triangle" data-toast-icon="warning" />
+        <SemanticIcon
+          name="loader-circle"
+          data-toast-icon="loading"
+          class="animate-spin"
+        />
+      </span>
+      <div data-slot="toast-content" class="flex min-w-0 flex-1 flex-col gap-0.5">
+        <div data-slot="toast-title" class="font-medium"></div>
+        <div data-slot="toast-description" class="text-muted-foreground"></div>
+      </div>
+      <Button data-slot="toast-action" type="button" size="sm" class="shrink-0" />
+      {
+        closeButton && (
+          <Button
+            data-slot="toast-close"
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            class="shrink-0"
+            aria-label="Close"
+          >
+            <SemanticIcon name="x" />
+          </Button>
+        )
+      }
+    </li>
+  </template>
+  <ol data-slot="toast-viewport" aria-label="Notifications"></ol>
+</div>
+
+<script>
+  import { bindToaster } from "./toast";
+
+  const roots = document.querySelectorAll('[data-slot="toast"]');
+  roots.forEach((root) => bindToaster(root));
+
+  // `<Button data-slot="toast-trigger" data-toast-title="Saved">` shows a toast
+  // on click without a client script. The root validates `toast:show` details,
+  // so the data attributes go through as-is and invalid ones are ignored.
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const trigger = event.target.closest<HTMLElement>(
+      '[data-slot="toast-trigger"]',
+    );
+    if (!trigger) return;
+    const { toastTitle, toastDescription, toastType, toastDuration } =
+      trigger.dataset;
+    roots[0].dispatchEvent(
+      new CustomEvent("toast:show", {
+        detail: {
+          title: toastTitle,
+          description: toastDescription,
+          type: toastType,
+          duration: Number(toastDuration),
+        },
+      }),
+    );
+  });
+</script>
+
+<style is:global>
+  [data-slot="toast-viewport"] {
+    --toast-gap: 14px;
+    --toast-collapsed-peek: 14px;
+    --toast-offset-edge: 24px;
+    position: fixed;
+    z-index: 100;
+    width: 356px;
+    height: var(--toast-stack-size, 0px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    outline: none;
+  }
+
+  [data-slot="toast-viewport"][data-position^="top"] {
+    top: var(--toast-offset-edge);
+  }
+
+  [data-slot="toast-viewport"][data-position^="bottom"] {
+    bottom: var(--toast-offset-edge);
+  }
+
+  [data-slot="toast-viewport"][data-position$="left"] {
+    left: var(--toast-offset-edge);
+  }
+
+  [data-slot="toast-viewport"][data-position$="right"] {
+    right: var(--toast-offset-edge);
+  }
+
+  [data-slot="toast-viewport"][data-position$="center"] {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @media (max-width: 600px) {
+    [data-slot="toast-viewport"] {
+      --toast-offset-edge: 16px;
+      right: var(--toast-offset-edge);
+      left: var(--toast-offset-edge);
+      width: auto;
+      transform: none;
+    }
+  }
+
+  /*
+   * The transform is declared once. State rules only move its inputs:
+   * --toast-y/--toast-scale place the toast in the stack, --toast-drag-*
+   * follow the pointer during a swipe.
+   */
+  [data-slot="toast-item"] {
+    --toast-y: calc(var(--toast-lift) * -100%);
+    --toast-scale: 1;
+    --toast-drag-x: 0px;
+    --toast-drag-y: 0px;
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    opacity: 0;
+    touch-action: none;
+    transform: translate3d(
+        var(--toast-drag-x),
+        calc(var(--toast-y) + var(--toast-drag-y)),
+        0
+      )
+      scale(var(--toast-scale));
+    transition:
+      transform 400ms ease,
+      opacity 400ms ease,
+      height 400ms ease,
+      box-shadow 200ms ease;
+  }
+
+  [data-position^="top"] > [data-slot="toast-item"] {
+    top: 0;
+    bottom: auto;
+  }
+
+  /* Keep the pointer inside the stack while moving across the gaps. */
+  [data-slot="toast-item"][data-expanded="true"]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: calc(var(--toast-gap) + 1px);
+    bottom: 100%;
+  }
+
+  [data-position^="top"] > [data-slot="toast-item"][data-expanded="true"]::after {
+    top: 100%;
+    bottom: auto;
+  }
+
+  /* The front toast always has a zero offset, so one rule places it too. */
+  [data-slot="toast-item"][data-mounted="true"] {
+    --toast-y: calc(var(--toast-offset) * var(--toast-lift));
+    opacity: 1;
+  }
+
+  [data-slot="toast-item"][data-mounted="true"][data-expanded="false"][data-front="false"] {
+    --toast-y: calc(var(--toast-collapsed-offset-y) * var(--toast-lift));
+    --toast-scale: calc(1 - var(--toast-index) * 0.05);
+    height: var(--toast-front-height);
+    overflow: hidden;
+  }
+
+  [data-slot="toast-item"][data-mounted="true"][data-expanded="true"] {
+    height: var(--toast-initial-height);
+  }
+
+  [data-slot="toast-item"][data-expanded="false"][data-front="false"][data-state="open"] > * {
+    opacity: 0;
+  }
+
+  [data-slot="toast-item"] > * {
+    transition: opacity 400ms ease;
+  }
+
+  [data-slot="toast-item"][data-visible="false"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Visible toasts (front, or anywhere in an expanded stack) slide out a full height. */
+  [data-slot="toast-item"][data-removed="true"]:is([data-front="true"], [data-expanded="true"]) {
+    --toast-y: calc(
+      var(--toast-lift) * var(--toast-offset) - var(--toast-lift) * 100%
+    );
+    opacity: 0;
+  }
+
+  /* Toasts tucked behind a collapsed stack sink instead. */
+  [data-slot="toast-item"][data-removed="true"][data-front="false"][data-expanded="false"] {
+    --toast-y: 40%;
+    --toast-scale: 1;
+    opacity: 0;
+    transition:
+      transform 500ms ease,
+      opacity 200ms ease;
+  }
+
+  [data-slot="toast-item"][data-swiping="true"] {
+    transition: none;
+  }
+
+  [data-slot="toast-item"][data-swiping="true"]:is([data-front="true"], [data-expanded="true"]) {
+    --toast-drag-x: var(--toast-swipe-amount-x);
+    --toast-drag-y: var(--toast-swipe-amount-y);
+  }
+
+  [data-slot="toast-item"][data-removed="true"][data-swipe-out="true"]:is([data-front="true"], [data-expanded="true"]) {
+    --toast-y: calc(var(--toast-offset) * var(--toast-lift));
+    --toast-drag-x: var(--toast-swipe-end-x);
+    --toast-drag-y: var(--toast-swipe-end-y);
+  }
+
+  /* Only the icon for the current type is shown; default has none. */
+  [data-slot="toast-icon"] > [data-toast-icon] {
+    display: none;
+  }
+
+  [data-slot="toast-item"][data-type="default"] [data-slot="toast-icon"] {
+    display: none;
+  }
+
+  [data-slot="toast-item"][data-type="success"] [data-toast-icon="success"],
+  [data-slot="toast-item"][data-type="info"] [data-toast-icon="info"],
+  [data-slot="toast-item"][data-type="error"] [data-toast-icon="error"],
+  [data-slot="toast-item"][data-type="warning"] [data-toast-icon="warning"],
+  [data-slot="toast-item"][data-type="loading"] [data-toast-icon="loading"] {
+    display: block;
+  }
+
+  [data-slot="toast-item"][data-dismissible="false"] [data-slot="toast-close"] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="toast-item"],
+    [data-slot="toast-item"] > * {
+      transition-duration: 0ms;
+    }
+  }
+</style>

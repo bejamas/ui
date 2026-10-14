@@ -1,0 +1,176 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Button } from "@bejamas/registry/ui/button";
+import { Toast } from "@bejamas/registry/ui/toast";
+
+const positions = [
+  "top-left",
+  "top-center",
+  "top-right",
+  "bottom-left",
+  "bottom-center",
+  "bottom-right",
+] as const;
+---
+
+<KitchenSinkLayout>
+  <Toast closeButton />
+  {
+    positions.map((position) => (
+      <Toast id={`kitchen-sink-toast-${position}`} position={position} />
+    ))
+  }
+
+  <section class="mx-auto max-w-5xl space-y-12 px-5 py-20">
+    <h1 class="mb-10 text-3xl font-bold">Toast</h1>
+    <p class="text-muted-foreground">
+      Hover or focus the stack to expand it, swipe a toast toward its edge to
+      dismiss it.
+    </p>
+
+    <div class="grid gap-8 md:grid-cols-2">
+      <KitchenSinkSection title="Types">
+        <div class="flex flex-wrap gap-2">
+          <Button data-slot="toast-trigger" data-toast-title="Event has been created" variant="outline">
+            Default
+          </Button>
+          <Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-type="success" variant="outline">
+            Success
+          </Button>
+          <Button data-slot="toast-trigger" data-toast-title="Be at the area 10 minutes before the event time" data-toast-type="info" variant="outline">
+            Info
+          </Button>
+          <Button data-slot="toast-trigger" data-toast-title="Event start time cannot be earlier than 8am" data-toast-type="warning" variant="outline">
+            Warning
+          </Button>
+          <Button data-slot="toast-trigger" data-toast-title="Event has not been created" data-toast-type="error" variant="outline">
+            Error
+          </Button>
+          <Button data-slot="toast-trigger" data-toast-title="Loading events…" data-toast-type="loading" data-toast-duration="3000" variant="outline">
+            Loading
+          </Button>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Description">
+        <Button
+          data-slot="toast-trigger"
+          data-toast-title="Event has been created"
+          data-toast-description="Sunday, December 03, 2023 at 9:00 AM"
+          variant="outline"
+        >
+          Show toast
+        </Button>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Action">
+        <Button id="toast-with-action" variant="outline">Show toast</Button>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Promise">
+        <div class="flex flex-wrap gap-2">
+          <Button id="toast-promise-resolve" variant="outline">Resolves</Button>
+          <Button id="toast-promise-reject" variant="outline">Rejects</Button>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Update and dismiss">
+        <div class="flex flex-wrap gap-2">
+          <Button id="toast-update" variant="outline">Upload, then update</Button>
+          <Button id="toast-persistent" variant="outline">Persistent</Button>
+          <Button id="toast-dismiss-all" variant="secondary">Dismiss all</Button>
+        </div>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Positions">
+        <div class="grid grid-cols-3 gap-2">
+          {
+            positions.map((position) => (
+              <Button size="sm" variant="outline" data-toast-position={position}>
+                {position}
+              </Button>
+            ))
+          }
+        </div>
+      </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>
+
+<script>
+  import { toast } from "@bejamas/registry/ui/toast/toast";
+
+  const on = (id: string, handler: () => void) =>
+    document.getElementById(id)?.addEventListener("click", handler);
+
+  on("toast-with-action", () => {
+    toast("Event has been created", {
+      description: "Sunday, December 03, 2023 at 9:00 AM",
+      action: { label: "Undo", onClick: () => toast.info("Undone") },
+    });
+  });
+
+  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  on("toast-promise-resolve", () => {
+    toast.promise(
+      wait(2000).then(() => ({ name: "Event" })),
+      {
+        loading: "Loading…",
+        success: (data) => `${data.name} has been created`,
+        error: "Error",
+      },
+    );
+  });
+
+  on("toast-promise-reject", () => {
+    toast.promise(
+      wait(2000).then(() => {
+        throw new Error("Server unavailable");
+      }),
+      {
+        loading: "Saving…",
+        success: "Saved",
+        error: (error) => ({
+          title: "Could not save",
+          description: error instanceof Error ? error.message : undefined,
+        }),
+      },
+    );
+  });
+
+  on("toast-update", () => {
+    const id = toast.loading("Uploading file…");
+    setTimeout(() => {
+      toast.update(id, {
+        title: "File uploaded",
+        description: "report.pdf is ready to share",
+        type: "success",
+        duration: 4000,
+      });
+    }, 1500);
+  });
+
+  on("toast-persistent", () => {
+    toast("This toast stays until dismissed", { duration: 0 });
+  });
+
+  on("toast-dismiss-all", () => toast.dismiss());
+
+  // toast() uses the first region; the others are addressed by event.
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-toast-position]")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        const position = button.dataset.toastPosition!;
+        document
+          .getElementById(`kitchen-sink-toast-${position}`)
+          ?.dispatchEvent(
+            new CustomEvent("toast:show", {
+              detail: { title: `Toast at ${position.replace("-", " ")}` },
+            }),
+          );
+      });
+    });
+</script>

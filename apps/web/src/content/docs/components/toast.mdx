@@ -1,0 +1,201 @@
+---
+title: "Toast"
+description: "Stacked, swipeable toast notifications with auto-dismiss, actions and promise states."
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Button } from '@bejamas/registry/ui/button';
+import { Toast } from '@bejamas/registry/ui/toast';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Toast /> <Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-description="Sunday, December 03, 2023 at 9:00 AM" variant="outline">{"Show toast"}</Button>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+import { Toast } from '@bejamas/registry/ui/toast';
+---
+
+<Toast />
+<Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-description="Sunday, December 03, 2023 at 9:00 AM" variant="outline">Show toast</Button>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add toast
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add toast
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add toast
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add toast
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+Render `<Toast />` once, usually in your layout:
+
+```astro nocollapse
+---
+import { Toast } from '@bejamas/registry/ui/toast';
+---
+<Toast />
+```
+
+Then show toasts from any client script:
+
+```js nocollapse
+import { toast } from '@bejamas/registry/ui/toast/toast';
+
+toast('Event has been created', {
+  description: 'Sunday, December 03, 2023 at 9:00 AM',
+  action: { label: 'Undo', onClick: () => console.log('Undo') },
+});
+```
+
+Or without a script, from any element with `data-slot="toast-trigger"`:
+
+```astro nocollapse
+<Button data-slot="toast-trigger" data-toast-title="Event has been created">Show toast</Button>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>position</code> | `"top-left" \| "top-center" \| "top-right" \| "bottom-left" \| "bottom-center" \| "bottom-right"` | `"bottom-right"` |
+| <code>duration</code> | `number` | `5000` |
+| <code>limit</code> | `number` | `3` |
+| <code>closeButton</code> | `boolean` | `false` |
+| <code>portal</code> | `boolean` | `true` |
+| <code>class</code> | `string` | `""` |
+
+## Examples
+
+### Types
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<div class="flex flex-wrap justify-center gap-2"> <Button data-slot="toast-trigger" data-toast-title="Event has been created" variant="outline">{"Default"}</Button> <Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-type="success" variant="outline">{"Success"}</Button> <Button data-slot="toast-trigger" data-toast-title="Be at the area 10 minutes before the event time" data-toast-type="info" variant="outline">{"Info"}</Button> <Button data-slot="toast-trigger" data-toast-title="Event start time cannot be earlier than 8am" data-toast-type="warning" variant="outline">{"Warning"}</Button> <Button data-slot="toast-trigger" data-toast-title="Event has not been created" data-toast-type="error" variant="outline">{"Error"}</Button> <Button data-slot="toast-trigger" data-toast-title="Loading events…" data-toast-type="loading" data-toast-duration="3000" variant="outline">{"Loading"}</Button> </div>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<div class="flex flex-wrap justify-center gap-2">
+  <Button data-slot="toast-trigger" data-toast-title="Event has been created" variant="outline">Default</Button>
+  <Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-type="success" variant="outline">Success</Button>
+  <Button data-slot="toast-trigger" data-toast-title="Be at the area 10 minutes before the event time" data-toast-type="info" variant="outline">Info</Button>
+  <Button data-slot="toast-trigger" data-toast-title="Event start time cannot be earlier than 8am" data-toast-type="warning" variant="outline">Warning</Button>
+  <Button data-slot="toast-trigger" data-toast-title="Event has not been created" data-toast-type="error" variant="outline">Error</Button>
+  <Button data-slot="toast-trigger" data-toast-title="Loading events…" data-toast-type="loading" data-toast-duration="3000" variant="outline">Loading</Button>
+</div>
+```
+
+### Description
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-description="Monday, January 3rd at 6:00pm" variant="outline">{"Show toast"}</Button>
+</div>
+
+```astro
+---
+import { Button } from '@bejamas/registry/ui/button';
+---
+
+<Button data-slot="toast-trigger" data-toast-title="Event has been created" data-toast-description="Monday, January 3rd at 6:00pm" variant="outline">Show toast</Button>
+```
+
+## API Reference
+
+### toast()
+
+Import `toast` from the `toast.ts` module next to the component. Each call returns the toast id, and throws if no `<Toast />` is rendered:
+
+```js nocollapse
+import { toast } from '@bejamas/registry/ui/toast/toast';
+
+const id = toast('Saved', { description: 'All changes synced', duration: 4000 });
+toast.success('Profile updated');
+toast.error('Upload failed');
+toast.warning('Storage almost full');
+toast.info('New version available');
+toast.loading('Uploading…');
+
+toast.update(id, { title: 'Saved again' });
+toast.dismiss(id); // or toast.dismiss() to clear all
+
+toast.promise(fetch('/api/save'), {
+  loading: 'Saving…',
+  success: 'Saved',
+  error: 'Could not save',
+});
+```
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `description` | `string` | Secondary text |
+| `type` | `"default" \| "success" \| "error" \| "warning" \| "info" \| "loading"` | Icon and live-region politeness (`error` and `warning` are assertive) |
+| `duration` | `number` | Auto-dismiss delay in ms; `0` keeps the toast open (the default for `toast.loading`) |
+| `action` | `{ label, onClick?, value? }` | Action button; call `event.preventDefault()` in `onClick` to keep the toast open |
+| `dismissible` | `boolean` | Set `false` to disable swipe and the close button |
+| `id` | `string` | Reusing an id replaces that toast |
+
+### Trigger Attributes
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-slot="toast-trigger"` | Shows a toast on click |
+| `data-toast-title` | Title (required) |
+| `data-toast-description` | Description |
+| `data-toast-type` | Toast type |
+| `data-toast-duration` | Duration in ms |
+
+### Events
+
+The root emits and listens for custom events:
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `toast:change` | `{ id, action: "show" \| "dismiss" }` | Fired when a toast is shown or starts dismissing |
+| `toast:action` | `{ id, value }` | Fired when an action button is clicked |
+| `toast:show` | toast options with `title` | Show a toast |
+| `toast:update` | `{ id, ...patch }` | Update a toast in place |
+| `toast:dismiss` | `{ id }` | Dismiss a toast |
+| `toast:clear` | none | Dismiss every toast |
+
+```js nocollapse
+const toaster = document.querySelector('[data-slot="toast"]');
+
+toaster.dispatchEvent(new CustomEvent('toast:show', {
+  detail: { title: 'Background sync complete', type: 'success' }
+}));
+```
+
+### Data Attributes
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-position` | root, viewport | Placement token |
+| `data-type` | item | Toast type |
+| `data-state` | item | `open` or `closed` |
+| `data-front` | item | `true` for the newest toast |
+| `data-expanded` | viewport, item | Present or `true` while the stack is hovered or focused |
+| `data-swiping` | item | `true` during a swipe |
