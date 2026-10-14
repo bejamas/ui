@@ -138,6 +138,7 @@ export default defineConfig({
           items: [
             "docs/theming",
             "docs/design-principles",
+            "docs/shadcn-parity",
             "docs/monorepo",
             "docs/auto-generated-docs",
             "docs/changelog",
