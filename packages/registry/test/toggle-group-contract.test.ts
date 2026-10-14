@@ -38,6 +38,14 @@ describe("toggle-group compatibility contract", () => {
     );
   });
 
+  test("toggle-group serializes multiple default values the way the primitive splits them", () => {
+    const source = fs.readFileSync(toggleGroupFile, "utf8");
+
+    // @data-slot/toggle-group splits data-default-value on whitespace.
+    expect(source).toContain('defaultValue.join(" ")');
+    expect(source).not.toContain('defaultValue.join(",")');
+  });
+
   test("toggle-group item reuses shared toggle variants", () => {
     const source = fs.readFileSync(toggleGroupItemFile, "utf8");
 

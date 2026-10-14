@@ -204,7 +204,7 @@ const {
   data-orientation={orientation}
   data-vertical={orientation === "vertical" ? "" : undefined}
   data-disabled={disabled ? "true" : undefined}
-  data-default-value={Array.isArray(defaultValue) ? defaultValue.join(",") : defaultValue}
+  data-default-value={Array.isArray(defaultValue) ? defaultValue.join(" ") : defaultValue}
   data-multiple={multiple ? "true" : undefined}
   class={cn(
     "rounded-md data-[spacing=0]:data-[variant=outline]:shadow-xs",
