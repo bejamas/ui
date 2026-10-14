@@ -1,0 +1,186 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Resizable,
+  ResizableHandle,
+  ResizablePanel,
+} from "@bejamas/registry/ui/resizable";
+---
+
+<KitchenSinkLayout>
+  <section class="mx-auto max-w-5xl space-y-12 px-5 py-20">
+    <h1 class="mb-10 text-3xl font-bold">Resizable</h1>
+    <p class="text-muted-foreground">
+      Drag a handle, or focus it with Tab and use the arrow keys, Home, End,
+      Enter, and F6.
+    </p>
+
+    <div class="grid gap-8 md:grid-cols-2">
+      <KitchenSinkSection title="Horizontal">
+        <Resizable direction="horizontal" class="min-h-[200px] rounded-lg border">
+          <ResizablePanel defaultSize={50}>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">One</span>
+            </div>
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel defaultSize={50}>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Two</span>
+            </div>
+          </ResizablePanel>
+        </Resizable>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Vertical">
+        <Resizable direction="vertical" class="min-h-[200px] rounded-lg border">
+          <ResizablePanel defaultSize={25}>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Header</span>
+            </div>
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel defaultSize={75}>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Content</span>
+            </div>
+          </ResizablePanel>
+        </Resizable>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Nested">
+        <Resizable direction="horizontal" class="rounded-lg border">
+          <ResizablePanel defaultSize={50}>
+            <div class="flex h-[200px] items-center justify-center p-6">
+              <span class="font-semibold">One</span>
+            </div>
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel defaultSize={50}>
+            <Resizable direction="vertical">
+              <ResizablePanel defaultSize={25}>
+                <div class="flex h-full items-center justify-center p-6">
+                  <span class="font-semibold">Two</span>
+                </div>
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel defaultSize={75}>
+                <div class="flex h-full items-center justify-center p-6">
+                  <span class="font-semibold">Three</span>
+                </div>
+              </ResizablePanel>
+            </Resizable>
+          </ResizablePanel>
+        </Resizable>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="With handle">
+        <Resizable direction="horizontal" class="min-h-[200px] rounded-lg border">
+          <ResizablePanel defaultSize={25}>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Sidebar</span>
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={75}>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Content</span>
+            </div>
+          </ResizablePanel>
+        </Resizable>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Vertical with handle">
+        <Resizable direction="vertical" class="min-h-[200px] rounded-lg border">
+          <ResizablePanel defaultSize={50}>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Top</span>
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={50}>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Bottom</span>
+            </div>
+          </ResizablePanel>
+        </Resizable>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Collapsible">
+        <Resizable direction="horizontal" class="min-h-[200px] rounded-lg border">
+          <ResizablePanel
+            defaultSize={30}
+            minSize={20}
+            collapsible
+            collapsedSize={5}
+            class="data-collapsed:bg-muted"
+          >
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Sidebar</span>
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={70}>
+            <div class="flex h-full items-center justify-center p-6">
+              <span class="font-semibold">Drag left or press Enter</span>
+            </div>
+          </ResizablePanel>
+        </Resizable>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Programmatic layout">
+        <div class="space-y-4">
+          <Resizable
+            id="kitchen-sink-resizable-programmatic"
+            direction="horizontal"
+            class="min-h-[160px] rounded-lg border"
+          >
+            <ResizablePanel defaultSize={50} minSize={10}>
+              <div class="flex h-full items-center justify-center p-6">
+                <span class="font-semibold">A</span>
+              </div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={50} minSize={10}>
+              <div class="flex h-full items-center justify-center p-6">
+                <span class="font-semibold">B</span>
+              </div>
+            </ResizablePanel>
+          </Resizable>
+          <div class="flex flex-wrap items-center gap-2">
+            <Button size="sm" variant="outline" data-layout="30,70">30 / 70</Button>
+            <Button size="sm" variant="outline" data-layout="50,50">50 / 50</Button>
+            <Button size="sm" variant="outline" data-layout="70,30">70 / 30</Button>
+            <span
+              id="kitchen-sink-resizable-layout"
+              class="text-sm text-muted-foreground"
+              aria-live="polite">50 / 50</span>
+          </div>
+        </div>
+      </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>
+
+<script>
+  const group = document.getElementById("kitchen-sink-resizable-programmatic");
+  const output = document.getElementById("kitchen-sink-resizable-layout");
+
+  group?.addEventListener("resizable:change", (event) => {
+    const { layout } = (event as CustomEvent<{ layout: number[] }>).detail;
+    if (output) output.textContent = layout.map((size) => Math.round(size)).join(" / ");
+  });
+
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-layout]")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        const layout = button.dataset.layout!.split(",").map(Number);
+        group?.dispatchEvent(
+          new CustomEvent("resizable:set", { detail: { layout } }),
+        );
+      });
+    });
+</script>

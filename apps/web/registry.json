@@ -864,6 +864,31 @@
       ]
     },
     {
+      "name": "resizable",
+      "type": "registry:ui",
+      "dependencies": [
+        "@data-slot/resizable"
+      ],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/resizable/Resizable.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/resizable/ResizablePanel.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/resizable/ResizableHandle.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/resizable/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "select",
       "type": "registry:ui",
       "dependencies": ["@data-slot/select"],
