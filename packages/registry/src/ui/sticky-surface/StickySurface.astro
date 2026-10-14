@@ -127,6 +127,10 @@ const styleVars = Object.entries(defaultVars)
     from { box-shadow: none }
     to { box-shadow: var(--stuck-shadow) }
   }
+  /* Backdrop blur fade-in, up to the surface's own backdrop-blur */
+  @keyframes stuck-backdrop {
+    from { backdrop-filter: none }
+  }
 }
 </style>
 
