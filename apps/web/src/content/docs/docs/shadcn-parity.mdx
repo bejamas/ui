@@ -66,7 +66,7 @@ An Astro component renders once, on the server (or at build time). Its props end
 
 shadcn/ui lets you control state with React (`value` + `onValueChange`). In `bejamas/ui` every interactive component is **uncontrolled**: props only set the **initial** state, and the `@data-slot` controller owns the state after that.
 
-- **Initial state props** — `defaultValue` (Tabs, Accordion, ToggleGroup, Select, Combobox, RadioGroup, Command, DropdownMenu, Slider), `defaultOpen` (Dialog, Drawer, HoverCard, DropdownMenu, CommandDialog, HamburgerMenu), `defaultChecked` (Switch, DropdownMenu items). A few components use a different name for the same idea: `Collapsible` takes `open`, and `Switch` (`checked`) and `Slider` (`value`) also accept the shadcn-style name, but it still only sets the initial state.
+- **Initial state props** — `defaultValue` (Tabs, Accordion, ToggleGroup, Select, Combobox, RadioGroup, Command, DropdownMenu, Slider), `defaultOpen` (Dialog, Drawer, HoverCard, DropdownMenu, CommandDialog, HamburgerMenu), `defaultChecked` (Checkbox, Switch, DropdownMenu items). A few components use a different name for the same idea: `Collapsible` takes `open`, and `Switch` (`checked`) and `Slider` (`value`) also accept the shadcn-style name, but it still only sets the initial state.
 - **Change events** — every interactive component dispatches a `<component>:change` CustomEvent on its root (for example `tabs:change` with `{ value }`, `dialog:change` with `{ open }`). Some also dispatch more specific events such as `command:select`, `select:open-change` or `slider:commit`.
 - **Programmatic control** — dispatch `<component>:set` on the root (for example `tabs:set` with `{ value: "account" }`, `dialog:set` with `{ open: true }`).
 - **Styling state** — components expose `data-state`, `data-open` / `data-closed`, `data-checked`, `data-disabled` and similar attributes. `bejamas/tailwind.css` registers the same custom variants as shadcn's `tailwind.css` (`data-open:`, `data-closed:`, `data-checked:`, `data-unchecked:`, `data-selected:`, `data-disabled:`, `data-active:`, `data-horizontal:`, `data-vertical:`).
@@ -333,7 +333,6 @@ These need only the general React → Astro translation. Good to know:
 
 | shadcn/ui | bejamas/ui |
 | --- | --- |
-| `<Checkbox defaultChecked />` | `<Checkbox checked />` |
 | `onCheckedChange` | the native `change` event |
 | `data-checked:` classes | `checked:` classes |
 
