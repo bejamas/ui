@@ -51,7 +51,7 @@ Base tokens & CSS variables
 
 components.json (Bejamas schema)
 
-Compatibility note: Bejamas runs exact `shadcn` v4.6.0 for managed CLI commands. Bejamas still preserves its custom `init` behavior, including preset switching, style support, and `init --base-color`.
+Compatibility note: Bejamas runs a pinned `shadcn` version for managed CLI commands. Bejamas still preserves its custom `init` behavior, including preset switching, style support, and `init --base-color`.
 
 ### apply <preset>
 
@@ -80,14 +80,13 @@ npx bejamas add <name>
 npx bejamas add button
 npx bejamas add navigation-headers-01
 npx bejamas add @bejamas/footer-01
-npx bejamas add @shadcn/button
 ```
 
 Run `add` without arguments to pick components and blocks interactively. `--all` installs every UI component; blocks stay opt-in.
 
 **Notes**
 
-Namespaced form `@namespace/name` targets a specific registry. `@bejamas/<name>` always resolves to the Bejamas registry for your configured style.
+Namespaced form `@namespace/name` targets a specific registry. `@bejamas/<name>` always resolves to the Bejamas registry for your configured style. shadcn's built-in `@shadcn` namespace also resolves to the Bejamas registry, so `bejamas add @shadcn/button` installs the Bejamas button. To add shadcn/ui's React components, use the shadcn CLI.
 
 Available blocks: `navigation-headers-01`, `navigation-headers-02`, and `footer-01`. Browse them at [/blocks](/blocks).
 
