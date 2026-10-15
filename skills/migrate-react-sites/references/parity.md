@@ -47,8 +47,6 @@ bejamas components carry their own style (juno), which differs from shadcn's new
 | svg sizing | `[&_svg:not([class*='size-'])]:size-4` | v3 `[&_svg]:size-4` beats an icon's own `size-5`, so pass `size-4` to match what renders |
 | polymorphism | `as="a"` + `href` | `asChild` + `<Link>`; collapse `<Link><Button/></Link>` into one `<Button as="a">` |
 
-The Button that `bejamas init` scaffolds predates the registry version (it lacks `data-slot`/`data-size`, and outline has no background). Run `bunx bejamas add button --overwrite -y` right after init and re-measure. Source CSS that targets `[data-slot=button][data-size=…]` only matches the registry version.
-
 ### Card
 
 - **Edge:** `ring-1 ring-foreground/10`. The border classes cancel each other out (`border-none` + `border`), so a border needs `border-solid`, and usually `ring-0`.

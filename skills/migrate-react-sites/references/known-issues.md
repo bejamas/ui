@@ -1,25 +1,18 @@
 # Known issues and primitive gaps
 
-Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. Before applying a workaround, check the installed component, since the issue may already be fixed. When a gap blocks fidelity, record it and pick the accepted approach below rather than writing a new controller.
+Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. The setup bugs fixed after 0.5.0 (base color theme, font weights and variables, the template Button, `add select`, the layout's `<html>` and viewport) are no longer listed. Before applying a workaround, check the installed component, since the issue may already be fixed. When a gap blocks fidelity, record it and pick the accepted approach below rather than writing a new controller.
 
 ## Setup and CLI
 
 | Issue | Workaround |
 |---|---|
-| The template pins an older `bejamas` | `bun add bejamas@latest` after init |
-| The template's Button predates the registry one; `add button` reports "Skipped … (files might be identical)" | `bunx bejamas add button --overwrite -y` |
-| `-b neutral` still ships the blue `bejamas-blue` primary (plus sidebar and chart tokens) | replace `:root`/`.dark` wholesale with the source's tokens; add `--destructive-foreground` if the source uses it |
-| Generated fonts have no `weights`, so only 400 loads and bold is synthesized | `weights: ["100 900"]` (variable fonts) or an explicit list |
-| `@theme inline { --font-sans: var(--font-sans) }` is self-referential without a `<Font>` | for system-stack sites, write the stack literally |
-| `:root { --font-heading: var(--font-sans) }` overrides a real heading font | delete the line |
 | no color-mode script | see the color-mode recipe |
 | `bejamas add` puts `shadcn` back in devDependencies and re-inserts base rules (`* { border-border outline-ring/50 }`, `body { bg-background text-foreground }`) into `globals.css` | `bun remove shadcn`; re-check `globals.css` and `package.json` after every `bejamas add` |
 | Registry components fail `eslint-plugin-astro`'s recommended rules (`no-exports-from-components`, `no-explicit-any`) | a lint override for `src/ui/**` in repos that lint `.astro` files |
-| In a workspace, the template's package name `astro` shadows the real `astro` package, and its TypeScript major can differ from the workspace's | rename the package before installing; align shared tool versions |
+| In a workspace, the template's TypeScript major can differ from the workspace's | align shared tool versions before installing |
 | Astro 7's `astro preview` can detach and return immediately | `astro preview status`, `logs` or `stop` |
-| `bejamas add select` fails to build (`Rolldown failed to resolve import "@/lib/select"`); `@data-slot/select` isn't installed | `bun add @data-slot/select`; copy `lib/select.ts` from the bejamas registry source into `src/lib/` |
 | `astro check` needs `@astrojs/check` | `bun add -d @astrojs/check` |
-| `<html  lang>` (double space), no `initial-scale=1`, scaffold favicon and `bejamas.svg` | fix and delete |
+| Scaffold favicon and `bejamas.svg` | delete |
 
 ## Components
 

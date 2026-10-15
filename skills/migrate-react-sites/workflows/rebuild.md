@@ -34,22 +34,18 @@ Run `node scripts/tokens.mjs <demo>`, and again with `--dark`. Then record:
 test ! -e <port-dir> && scaffold="$(mktemp -d)" &&
   npm_config_user_agent=bun bunx bejamas@latest init -t astro -b neutral -y -d -f -c "$scaffold" &&
   mv "$scaffold/my-app" <port-dir> && cd <port-dir> && git init
-bun add bejamas@latest
-bunx bejamas add button --overwrite -y   # the template's Button predates the registry one
 ```
 
 Then:
 
-1. **Tokens:** replace the theme `:root` and `.dark` blocks wholesale with the step 2 values. The scaffold's primary color is blue even with `-b neutral`. Wrap v3 HSL triplets in `hsl()`.
+1. **Tokens:** replace the theme `:root` and `.dark` blocks wholesale with the step 2 values. Wrap v3 HSL triplets in `hsl()`.
 2. **Fonts:**
    - Configure them in `astro.config.mjs` (`BEJAMAS_ASTRO_FONTS`) with explicit `weights` (`["100 900"]` for variable fonts).
    - Map `--font-sans`, `--font-heading` and `--font-mono` the way the original does.
-   - Delete the scaffold's `--font-heading: var(--font-sans)` once a heading font exists.
-   - If the site uses the system stack, set `BEJAMAS_ASTRO_FONTS = []`, remove `<Font>`, and write the stack literally. The scaffold's `--font-sans: var(--font-sans)` is self-referential without a `<Font>`.
+   - If the site uses a system stack, set `BEJAMAS_ASTRO_FONTS = []`, remove `<Font>`, and set the source's stack as `--font-sans` in `@theme` (Tailwind's default stack applies otherwise).
 3. **Color mode:** add the color-mode head script from [recipes](../references/recipes.md#color-mode) whenever the original uses next-themes.
 4. **Cleanup:**
    - Remove the scaffold favicon and `bejamas.svg`.
-   - Fix `<html  lang>` (double space) and the viewport `initial-scale=1`.
    - Remove `shadcn` from devDependencies.
 5. **Assets:** copy into `public/` only the assets the page uses, and vendor remote images.
 

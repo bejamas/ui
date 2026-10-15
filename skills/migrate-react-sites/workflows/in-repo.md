@@ -52,9 +52,9 @@ test ! -e <astro-dir> && scaffold="$(mktemp -d)" &&
   mv "$scaffold/my-app" <astro-dir>
 ```
 
-Before installing, rename the app's package to the repo's naming scheme: the template is named `astro`, which shadows the real `astro` package in a workspace. Align shared tool versions (TypeScript, ESLint) with the workspace. In a workspace, delete the app's own lockfile and install from the repo root. Then, in the Astro app:
+Before installing, rename the app's package (`my-app`) to the repo's naming scheme. Align shared tool versions (TypeScript, ESLint) with the workspace. In a workspace, delete the app's own lockfile and install from the repo root. Then, in the Astro app:
 
-1. **Setup fixes:** `bejamas@latest`, `bejamas add button --overwrite -y`, and the cleanup items from [rebuild step 3](rebuild.md#3-scaffold) and the *Setup and CLI* table in [known issues](../references/known-issues.md).
+1. **Setup fixes:** the cleanup items from [rebuild step 3](rebuild.md#3-scaffold) and the *Setup and CLI* table in [known issues](../references/known-issues.md).
 2. **Tokens:** copy the legacy `:root`/`.dark` blocks, then confirm them against the legacy build with `tokens.mjs` in both schemes; computed values win where they disagree.
 3. **Fonts:** reuse the legacy app's font choices and files (`next/font/local` files move into `src/assets/fonts/`); see the font rows in [recipes](../references/recipes.md#nextjs-features).
 4. **Color mode:** the head script from [recipes](../references/recipes.md#color-mode) when the legacy app uses next-themes, with its storage key.
