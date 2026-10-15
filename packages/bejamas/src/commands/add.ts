@@ -18,10 +18,7 @@ import {
   fetchRegistryTree,
   resolveBejamasRegistryItemName,
 } from "@/src/utils/reorganize-components";
-import {
-  buildPinnedShadcnInvocation,
-  ensurePinnedShadcnExecPrefix,
-} from "@/src/utils/shadcn-cli";
+import { PINNED_SHADCN } from "@/src/utils/shadcn-cli";
 import { spinner } from "@/src/utils/spinner";
 import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
 
@@ -389,9 +386,9 @@ async function addComponents(
     ...process.env,
     REGISTRY_URL: resolveRegistryUrl(),
   };
-  await ensurePinnedShadcnExecPrefix();
+  await PINNED_SHADCN.ensureExecPrefix();
   const shadcnArgs = buildShadcnAddArgs(packages, forwardedOptions);
-  const invocation = buildPinnedShadcnInvocation(shadcnArgs);
+  const invocation = PINNED_SHADCN.invocation(shadcnArgs);
 
   if (isVerbose) {
     logger.info(`[bejamas-ui] ${invocation.cmd} ${invocation.args.join(" ")}`);

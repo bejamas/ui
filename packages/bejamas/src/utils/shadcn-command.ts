@@ -1,8 +1,5 @@
 import { execa } from "execa";
-import {
-  buildPinnedShadcnInvocation,
-  ensurePinnedShadcnExecPrefix,
-} from "@/src/utils/shadcn-cli";
+import { PINNED_SHADCN } from "@/src/utils/shadcn-cli";
 
 export function extractPassthroughArgs(rawArgv: string[], commandName: string) {
   const commandIndex = rawArgv.findIndex((arg) => arg === commandName);
@@ -29,8 +26,8 @@ export async function runShadcnCommand({
   args: string[];
   env?: NodeJS.ProcessEnv;
 }) {
-  await ensurePinnedShadcnExecPrefix();
-  const invocation = buildPinnedShadcnInvocation(args);
+  await PINNED_SHADCN.ensureExecPrefix();
+  const invocation = PINNED_SHADCN.invocation(args);
 
   await execa(invocation.cmd, invocation.args, {
     cwd,
