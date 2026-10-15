@@ -1,0 +1,35 @@
+---
+import type { Props as PaginationLinkProps } from "./PaginationLink.astro";
+import { cn } from "@bejamas/registry/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+import PaginationLink from "./PaginationLink.astro";
+
+type Props = PaginationLinkProps & {
+  text?: string;
+};
+
+const {
+  text = "Next",
+  size,
+  class: className = "",
+  "aria-label": ariaLabel = "Go to next page",
+  ...rest
+} = Astro.props as Props;
+
+// An empty `text` renders an icon-only control.
+const iconOnly = !text;
+---
+
+<PaginationLink
+  {...rest}
+  aria-label={ariaLabel}
+  size={size ?? (iconOnly ? "icon" : "default")}
+  class={cn(!iconOnly && "cn-pagination-next", className)}
+>
+  {iconOnly ? null : <span class="cn-pagination-next-text hidden sm:block">{text}</span>}
+  <SemanticIcon
+    name="chevron-right"
+    data-icon="inline-end"
+    class="cn-rtl-flip rtl:rotate-180"
+  />
+</PaginationLink>

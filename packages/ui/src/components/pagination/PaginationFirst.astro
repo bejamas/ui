@@ -1,0 +1,36 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/pagination/PaginationFirst.astro directly.
+import type { Props as PaginationLinkProps } from "./PaginationLink.astro";
+import { cn } from "@bejamas/ui/lib/utils";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+import PaginationLink from "./PaginationLink.astro";
+
+type Props = PaginationLinkProps & {
+  text?: string;
+};
+
+const {
+  text = "First",
+  size,
+  class: className = "",
+  "aria-label": ariaLabel = "Go to first page",
+  ...rest
+} = Astro.props as Props;
+
+// An empty `text` renders an icon-only control.
+const iconOnly = !text;
+---
+
+<PaginationLink
+  {...rest}
+  aria-label={ariaLabel}
+  size={size ?? (iconOnly ? "icon" : "default")}
+  class={cn(!iconOnly && "pl-2!", className)}
+>
+  <SemanticIcon
+    name="chevrons-right"
+    data-icon="inline-start"
+    class="rotate-180 rtl:rotate-0"
+  />
+  {iconOnly ? null : <span class="hidden sm:block">{text}</span>}
+</PaginationLink>

@@ -1,0 +1,195 @@
+---
+import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
+import KitchenSinkSection from "@/components/KitchenSinkSection.astro";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationItem,
+  PaginationLast,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@bejamas/registry/ui/pagination";
+
+const total = 10;
+const middlePage = 5;
+const middlePages = [1, middlePage - 1, middlePage, middlePage + 1, total];
+---
+
+<KitchenSinkLayout>
+  <section class="max-w-5xl mx-auto py-20 px-5 space-y-12">
+    <h1 class="text-3xl font-bold mb-10">Pagination</h1>
+
+    <div class="grid gap-x-8 gap-y-12">
+      <KitchenSinkSection title="Basic">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem><PaginationPrevious href="#" /></PaginationItem>
+            <PaginationItem><PaginationLink href="#">1</PaginationLink></PaginationItem>
+            <PaginationItem
+              ><PaginationLink href="#" isActive>2</PaginationLink></PaginationItem
+            >
+            <PaginationItem><PaginationLink href="#">3</PaginationLink></PaginationItem>
+            <PaginationItem><PaginationEllipsis /></PaginationItem>
+            <PaginationItem><PaginationNext href="#" /></PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="First and Last">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem><PaginationFirst href="#" disabled /></PaginationItem>
+            <PaginationItem><PaginationPrevious href="#" disabled /></PaginationItem>
+            <PaginationItem
+              ><PaginationLink href="#" isActive>1</PaginationLink></PaginationItem
+            >
+            <PaginationItem><PaginationLink href="#">2</PaginationLink></PaginationItem>
+            <PaginationItem><PaginationLink href="#">3</PaginationLink></PaginationItem>
+            <PaginationItem><PaginationEllipsis /></PaginationItem>
+            <PaginationItem><PaginationLink href="#">{total}</PaginationLink></PaginationItem>
+            <PaginationItem><PaginationNext href="#" /></PaginationItem>
+            <PaginationItem><PaginationLast href="#" /></PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Icon Only">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem><PaginationFirst href="#" text="" /></PaginationItem>
+            <PaginationItem><PaginationPrevious href="#" text="" /></PaginationItem>
+            {
+              middlePages.map((page, index) => (
+                <>
+                  {index > 0 && page - middlePages[index - 1] > 1 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+                  <PaginationItem>
+                    <PaginationLink href="#" isActive={page === middlePage}>
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                </>
+              ))
+            }
+            <PaginationItem><PaginationNext href="#" text="" /></PaginationItem>
+            <PaginationItem><PaginationLast href="#" text="" /></PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Outlined">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem
+              ><PaginationFirst href="#" text="" variant="outline" disabled
+              /></PaginationItem
+            >
+            <PaginationItem
+              ><PaginationPrevious href="#" text="" variant="outline" disabled
+              /></PaginationItem
+            >
+            <PaginationItem
+              ><PaginationLink href="#" variant="default" isActive>1</PaginationLink
+              ></PaginationItem
+            >
+            <PaginationItem
+              ><PaginationLink href="#" variant="outline">2</PaginationLink
+              ></PaginationItem
+            >
+            <PaginationItem
+              ><PaginationLink href="#" variant="outline">3</PaginationLink
+              ></PaginationItem
+            >
+            <PaginationItem><PaginationEllipsis /></PaginationItem>
+            <PaginationItem
+              ><PaginationLink href="#" variant="outline">{total}</PaginationLink
+              ></PaginationItem
+            >
+            <PaginationItem
+              ><PaginationNext href="#" text="" variant="outline" /></PaginationItem
+            >
+            <PaginationItem
+              ><PaginationLast href="#" text="" variant="outline" /></PaginationItem
+            >
+          </PaginationContent>
+        </Pagination>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Simple">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem><PaginationLink href="#">1</PaginationLink></PaginationItem>
+            <PaginationItem
+              ><PaginationLink href="#" isActive>2</PaginationLink></PaginationItem
+            >
+            <PaginationItem><PaginationLink href="#">3</PaginationLink></PaginationItem>
+            <PaginationItem><PaginationLink href="#">4</PaginationLink></PaginationItem>
+            <PaginationItem><PaginationLink href="#">5</PaginationLink></PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="Small, Start Aligned">
+        <Pagination class="justify-start">
+          <PaginationContent>
+            <PaginationItem
+              ><PaginationPrevious href="#" size="sm" /></PaginationItem
+            >
+            <PaginationItem
+              ><PaginationLink href="#" size="icon-sm">1</PaginationLink
+              ></PaginationItem
+            >
+            <PaginationItem
+              ><PaginationLink href="#" size="icon-sm" isActive>2</PaginationLink
+              ></PaginationItem
+            >
+            <PaginationItem
+              ><PaginationLink href="#" size="icon-sm">3</PaginationLink
+              ></PaginationItem
+            >
+            <PaginationItem><PaginationNext href="#" size="sm" /></PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </KitchenSinkSection>
+
+      <KitchenSinkSection title="RTL">
+        <div dir="rtl">
+          <Pagination aria-label="ترقيم الصفحات">
+            <PaginationContent>
+              <PaginationItem
+                ><PaginationFirst href="#" text="الأولى" aria-label="الصفحة الأولى"
+                /></PaginationItem
+              >
+              <PaginationItem
+                ><PaginationPrevious
+                  href="#"
+                  text="السابق"
+                  aria-label="الصفحة السابقة"
+                /></PaginationItem
+              >
+              <PaginationItem><PaginationLink href="#">1</PaginationLink></PaginationItem>
+              <PaginationItem
+                ><PaginationLink href="#" isActive>2</PaginationLink></PaginationItem
+              >
+              <PaginationItem><PaginationLink href="#">3</PaginationLink></PaginationItem>
+              <PaginationItem
+                ><PaginationNext href="#" text="التالي" aria-label="الصفحة التالية"
+                /></PaginationItem
+              >
+              <PaginationItem
+                ><PaginationLast href="#" text="الأخيرة" aria-label="الصفحة الأخيرة"
+                /></PaginationItem
+              >
+            </PaginationContent>
+          </Pagination>
+        </div>
+      </KitchenSinkSection>
+    </div>
+  </section>
+</KitchenSinkLayout>

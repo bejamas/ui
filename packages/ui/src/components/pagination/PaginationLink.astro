@@ -1,0 +1,43 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/pagination/PaginationLink.astro directly.
+import type { HTMLAttributes } from "astro/types";
+import type { Props as ButtonProps } from "../button/Button.astro";
+import { cn } from "@bejamas/ui/lib/utils";
+import Button from "../button/Button.astro";
+
+export type Props = HTMLAttributes<"a"> & {
+  class?: string;
+  isActive?: boolean;
+  disabled?: boolean;
+  size?: ButtonProps["size"];
+  variant?: ButtonProps["variant"];
+};
+
+const {
+  isActive = false,
+  disabled = false,
+  size = "icon",
+  variant,
+  href,
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<Button
+  {...rest}
+  as="a"
+  href={disabled ? undefined : href}
+  variant={variant ?? (isActive ? "outline" : "ghost")}
+  size={size}
+  aria-current={isActive ? "page" : undefined}
+  aria-disabled={disabled ? "true" : undefined}
+  data-slot="pagination-link"
+  data-active={isActive ? "true" : "false"}
+  class={cn(
+    "aria-disabled:pointer-events-none aria-disabled:opacity-50",
+    className,
+  )}
+>
+  <slot />
+</Button>

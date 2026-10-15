@@ -1,0 +1,24 @@
+---
+import { cn } from "@bejamas/registry/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+import SemanticIcon from "../icon/SemanticIcon.astro";
+
+interface Props extends HTMLAttributes<"span"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<span
+  {...rest}
+  aria-hidden="true"
+  data-slot="pagination-ellipsis"
+  class={cn("cn-pagination-ellipsis flex items-center justify-center", className)}
+>
+  <SemanticIcon name="ellipsis" />
+  <span class="sr-only">More pages</span>
+</span>

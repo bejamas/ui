@@ -806,6 +806,53 @@
       ]
     },
     {
+      "name": "pagination",
+      "type": "registry:ui",
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "../../packages/ui/src/components/pagination/Pagination.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/pagination/PaginationContent.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/pagination/PaginationItem.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/pagination/PaginationLink.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/pagination/PaginationPrevious.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/pagination/PaginationNext.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/pagination/PaginationFirst.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/pagination/PaginationLast.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/pagination/PaginationEllipsis.astro",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../../packages/ui/src/components/pagination/index.ts",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "popover",
       "type": "registry:ui",
       "dependencies": ["@data-slot/popover"],

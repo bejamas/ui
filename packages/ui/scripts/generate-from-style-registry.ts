@@ -167,6 +167,12 @@ async function walk(dir: string): Promise<string[]> {
   return files;
 }
 
+// Registry items may pin a range ("@data-slot/collapsible@^1.1.1") so
+// installers upgrade an existing package; package.json keys are bare names.
+export function toPackageName(dependency: string) {
+  return dependency.match(/^(@[^/]+\/[^@/]+|[^@/]+)/)?.[1] ?? dependency;
+}
+
 async function readPackageDependencies() {
   const packageJson = JSON.parse(
     await fs.readFile(packageJsonPath, "utf8"),
@@ -298,7 +304,9 @@ export async function checkUiPackageSync(
 
   const packageDependencies = await readPackageDependencies();
   const missingDependencies = Array.from(generated.dependencies)
-    .filter((dependency) => !packageDependencies.has(dependency))
+    .filter(
+      (dependency) => !packageDependencies.has(toPackageName(dependency)),
+    )
     .sort();
 
   return {

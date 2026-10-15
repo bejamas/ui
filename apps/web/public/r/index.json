@@ -803,6 +803,53 @@
     ]
   },
   {
+    "name": "pagination",
+    "type": "registry:ui",
+    "registryDependencies": ["button"],
+    "files": [
+      {
+        "path": "ui/pagination/Pagination.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/pagination/PaginationContent.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/pagination/PaginationItem.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/pagination/PaginationLink.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/pagination/PaginationPrevious.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/pagination/PaginationNext.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/pagination/PaginationFirst.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/pagination/PaginationLast.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/pagination/PaginationEllipsis.astro",
+        "type": "registry:ui"
+      },
+      {
+        "path": "ui/pagination/index.ts",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
     "name": "popover",
     "type": "registry:ui",
     "dependencies": ["@data-slot/popover"],

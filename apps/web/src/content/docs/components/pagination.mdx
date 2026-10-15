@@ -1,0 +1,301 @@
+---
+title: "Pagination"
+description: "Page navigation with previous, next, first and last links, numbered pages and an ellipsis for skipped ranges."
+---
+
+import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
+
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationFirst, PaginationItem, PaginationLast, PaginationLink, PaginationNext, PaginationPrevious } from '@bejamas/registry/ui/pagination';
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Pagination> <PaginationContent> <PaginationItem><PaginationPrevious href="#" /></PaginationItem> <PaginationItem><PaginationLink href="#">{"1"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#" isActive>{"2"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#">{"3"}</PaginationLink></PaginationItem> <PaginationItem><PaginationEllipsis /></PaginationItem> <PaginationItem><PaginationNext href="#" /></PaginationItem> </PaginationContent> </Pagination>
+</div>
+
+```astro
+---
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@bejamas/registry/ui/pagination';
+---
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem><PaginationPrevious href="#" /></PaginationItem>
+    <PaginationItem><PaginationLink href="#">1</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#" isActive>2</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#">3</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationEllipsis /></PaginationItem>
+    <PaginationItem><PaginationNext href="#" /></PaginationItem>
+  </PaginationContent>
+</Pagination>
+```
+
+## Installation
+
+<DocsTabs syncKey="pkg">
+  <DocsTabItem label="bun">
+  ```bash
+  bunx bejamas add pagination
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="npm">
+  ```bash
+  npx bejamas add pagination
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="pnpm">
+  ```bash
+  pnpm dlx bejamas add pagination
+  ```
+  </DocsTabItem>
+  <DocsTabItem label="yarn">
+  ```bash
+  yarn dlx bejamas add pagination
+  ```
+  </DocsTabItem>
+</DocsTabs>
+
+## Usage
+
+```astro nocollapse
+---
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@bejamas/registry/ui/pagination';
+---
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious href="?page=1" />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="?page=1">1</PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="?page=2" isActive>2</PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="?page=3">3</PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationEllipsis />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationNext href="?page=3" />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>
+```
+
+## Rendering pages
+
+Pagination is plain links and ships no JavaScript. Work out the pages on the server and map them to items:
+
+```astro nocollapse
+---
+const current = Number(Astro.url.searchParams.get('page') ?? 1);
+const total = 10;
+const pages = [...new Set([1, current - 1, current, current + 1, total])]
+  .filter((page) => page >= 1 && page <= total)
+  .sort((a, b) => a - b);
+---
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious href={`?page=${current - 1}`} disabled={current === 1} />
+    </PaginationItem>
+    {pages.map((page, index) => (
+      <>
+        {index > 0 && page - pages[index - 1] > 1 && (
+          <PaginationItem><PaginationEllipsis /></PaginationItem>
+        )}
+        <PaginationItem>
+          <PaginationLink href={`?page=${page}`} isActive={page === current}>{page}</PaginationLink>
+        </PaginationItem>
+      </>
+    ))}
+    <PaginationItem>
+      <PaginationNext href={`?page=${current + 1}`} disabled={current === total} />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>
+```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>class</code> | `string` | `""` |
+
+## Examples
+
+### First and last
+
+`PaginationFirst` and `PaginationLast` jump to either end. Pass `disabled` to the controls that lead nowhere; they render without an `href` and with `aria-disabled="true"`.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Pagination> <PaginationContent> <PaginationItem><PaginationFirst href="#" disabled /></PaginationItem> <PaginationItem><PaginationPrevious href="#" disabled /></PaginationItem> <PaginationItem><PaginationLink href="#" isActive>{"1"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#">{"2"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#">{"3"}</PaginationLink></PaginationItem> <PaginationItem><PaginationEllipsis /></PaginationItem> <PaginationItem><PaginationLink href="#">{"10"}</PaginationLink></PaginationItem> <PaginationItem><PaginationNext href="#" /></PaginationItem> <PaginationItem><PaginationLast href="#" /></PaginationItem> </PaginationContent> </Pagination>
+</div>
+
+```astro
+---
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationFirst, PaginationItem, PaginationLast, PaginationLink, PaginationNext, PaginationPrevious } from '@bejamas/registry/ui/pagination';
+---
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem><PaginationFirst href="#" disabled /></PaginationItem>
+    <PaginationItem><PaginationPrevious href="#" disabled /></PaginationItem>
+    <PaginationItem><PaginationLink href="#" isActive>1</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#">2</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#">3</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationEllipsis /></PaginationItem>
+    <PaginationItem><PaginationLink href="#">10</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationNext href="#" /></PaginationItem>
+    <PaginationItem><PaginationLast href="#" /></PaginationItem>
+  </PaginationContent>
+</Pagination>
+```
+
+### Icon only
+
+Set `text=""` on the previous, next, first and last controls to render square icon buttons. Their `aria-label` still names the destination.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Pagination> <PaginationContent> <PaginationItem><PaginationFirst href="#" text="" disabled /></PaginationItem> <PaginationItem><PaginationPrevious href="#" text="" disabled /></PaginationItem> <PaginationItem><PaginationLink href="#" isActive>{"1"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#">{"2"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#">{"3"}</PaginationLink></PaginationItem> <PaginationItem><PaginationEllipsis /></PaginationItem> <PaginationItem><PaginationLink href="#">{"10"}</PaginationLink></PaginationItem> <PaginationItem><PaginationNext href="#" text="" /></PaginationItem> <PaginationItem><PaginationLast href="#" text="" /></PaginationItem> </PaginationContent> </Pagination>
+</div>
+
+```astro
+---
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationFirst, PaginationItem, PaginationLast, PaginationLink, PaginationNext, PaginationPrevious } from '@bejamas/registry/ui/pagination';
+---
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem><PaginationFirst href="#" text="" disabled /></PaginationItem>
+    <PaginationItem><PaginationPrevious href="#" text="" disabled /></PaginationItem>
+    <PaginationItem><PaginationLink href="#" isActive>1</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#">2</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#">3</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationEllipsis /></PaginationItem>
+    <PaginationItem><PaginationLink href="#">10</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationNext href="#" text="" /></PaginationItem>
+    <PaginationItem><PaginationLast href="#" text="" /></PaginationItem>
+  </PaginationContent>
+</Pagination>
+```
+
+### Outlined
+
+`variant` overrides the default `ghost` (inactive) and `outline` (active) button variants.
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Pagination> <PaginationContent> <PaginationItem><PaginationFirst href="#" text="" variant="outline" disabled /></PaginationItem> <PaginationItem><PaginationPrevious href="#" text="" variant="outline" disabled /></PaginationItem> <PaginationItem><PaginationLink href="#" variant="default" isActive>{"1"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#" variant="outline">{"2"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#" variant="outline">{"3"}</PaginationLink></PaginationItem> <PaginationItem><PaginationEllipsis /></PaginationItem> <PaginationItem><PaginationLink href="#" variant="outline">{"10"}</PaginationLink></PaginationItem> <PaginationItem><PaginationNext href="#" text="" variant="outline" /></PaginationItem> <PaginationItem><PaginationLast href="#" text="" variant="outline" /></PaginationItem> </PaginationContent> </Pagination>
+</div>
+
+```astro
+---
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationFirst, PaginationItem, PaginationLast, PaginationLink, PaginationNext, PaginationPrevious } from '@bejamas/registry/ui/pagination';
+---
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem><PaginationFirst href="#" text="" variant="outline" disabled /></PaginationItem>
+    <PaginationItem><PaginationPrevious href="#" text="" variant="outline" disabled /></PaginationItem>
+    <PaginationItem><PaginationLink href="#" variant="default" isActive>1</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#" variant="outline">2</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#" variant="outline">3</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationEllipsis /></PaginationItem>
+    <PaginationItem><PaginationLink href="#" variant="outline">10</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationNext href="#" text="" variant="outline" /></PaginationItem>
+    <PaginationItem><PaginationLast href="#" text="" variant="outline" /></PaginationItem>
+  </PaginationContent>
+</Pagination>
+```
+
+### Simple
+
+<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
+<Pagination> <PaginationContent> <PaginationItem><PaginationLink href="#">{"1"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#" isActive>{"2"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#">{"3"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#">{"4"}</PaginationLink></PaginationItem> <PaginationItem><PaginationLink href="#">{"5"}</PaginationLink></PaginationItem> </PaginationContent> </Pagination>
+</div>
+
+```astro
+---
+import { Pagination, PaginationContent, PaginationItem, PaginationLink } from '@bejamas/registry/ui/pagination';
+---
+
+<Pagination>
+  <PaginationContent>
+    <PaginationItem><PaginationLink href="#">1</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#" isActive>2</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#">3</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#">4</PaginationLink></PaginationItem>
+    <PaginationItem><PaginationLink href="#">5</PaginationLink></PaginationItem>
+  </PaginationContent>
+</Pagination>
+```
+
+## API Reference
+
+### Parts
+
+| Part | Element | Description |
+|------|---------|-------------|
+| `Pagination` | `<nav>` | Landmark with `aria-label="pagination"` |
+| `PaginationContent` | `<ul>` | Row of items |
+| `PaginationItem` | `<li>` | Wraps one link or the ellipsis |
+| `PaginationLink` | `<a>` | A page link, styled as a `Button` |
+| `PaginationPrevious`, `PaginationNext` | `<a>` | Adjacent page links with a chevron and a label |
+| `PaginationFirst`, `PaginationLast` | `<a>` | First and last page links with a double chevron and a label |
+| `PaginationEllipsis` | `<span>` | Marks a skipped range of pages |
+
+### PaginationLink
+
+`PaginationPrevious`, `PaginationNext`, `PaginationFirst` and `PaginationLast` take the same props.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `href` | `string` | | Page URL |
+| `isActive` | `boolean` | `false` | Marks the current page with `aria-current="page"` |
+| `disabled` | `boolean` | `false` | Drops the `href` and sets `aria-disabled="true"` |
+| `size` | `"default" \| "sm" \| "lg" \| "icon" \| "icon-sm" \| "icon-lg"` | `"icon"` | Button size |
+| `variant` | `"default" \| "outline" \| "secondary" \| "ghost" \| "destructive" \| "link"` | `"outline"` when active, `"ghost"` otherwise | Button variant |
+
+### PaginationPrevious, PaginationNext, PaginationFirst, PaginationLast
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `text` | `string` | `"Previous"`, `"Next"`, `"First"`, `"Last"` | Visible label, hidden below the `sm` breakpoint. Pass `""` for an icon-only control |
+| `aria-label` | `string` | `"Go to previous page"`, `"Go to next page"`, `"Go to first page"`, `"Go to last page"` | Accessible name |
+| `size` | Button size | `"default"`, or `"icon"` when `text` is empty | Button size |
+
+### Accessibility
+
+- The root is a `<nav>` landmark labelled `pagination`.
+- The current page link has `aria-current="page"`, so screen readers announce it as the current page.
+- Previous, next, first and last links have an `aria-label` that names their destination.
+- Disabled controls have no `href`, so they are skipped by the keyboard, and `aria-disabled="true"` for assistive technology.
+- The ellipsis is hidden from assistive technology.
+
+### Keyboard
+
+Every page is a native link, so no script is needed.
+
+| Key | Action |
+|-----|--------|
+| `Tab` / `Shift` + `Tab` | Move focus to the next / previous link |
+| `Enter` | Follow the focused link |
+
+### Data Attributes
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-active` | link | `"true"` on the current page, `"false"` otherwise |
+| `aria-current` | link | `"page"` on the current page |
+| `aria-disabled` | link | `"true"` when `disabled` |
