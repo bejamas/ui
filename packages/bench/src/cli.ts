@@ -1,62 +1,40 @@
 #!/usr/bin/env node
 import { relative } from "node:path";
-import { Command, InvalidArgumentError, Option } from "commander";
+import { Command, Option } from "commander";
 import kleur from "kleur";
 import pkg from "../package.json" with { type: "json" };
-import { BUDGET_HELP, parseBudgets } from "./budgets";
+import {
+  collect,
+  nonNegativeNumber,
+  positiveInteger,
+  resolveTargetUrls,
+  selectStages,
+  stageList,
+  widthList,
+} from "./args";
+import { BUDGET_HELP } from "./budgets";
 import { BenchError } from "./errors";
 import { renderSummary } from "./summary";
 import { runBench } from "./run";
-import { normalizeUrl, resolveTargetUrls } from "./targets";
 import { STAGES, type FormFactor, type StageName } from "./types";
 
-function positiveInteger(value: string) {
-  const parsed = Number(value);
-  if (!Number.isInteger(parsed) || parsed < 1)
-    throw new InvalidArgumentError("Expected a positive integer.");
-  return parsed;
-}
-
-function nonNegativeNumber(value: string) {
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed) || parsed < 0)
-    throw new InvalidArgumentError("Expected a non-negative number.");
-  return parsed;
-}
-
-function widthList(value: string) {
-  const widths = value.split(",").map((part) => Number(part.trim()));
-  if (
-    widths.length === 0 ||
-    widths.some(
-      (width) => !Number.isInteger(width) || width < 200 || width > 3840,
-    )
-  ) {
-    throw new InvalidArgumentError(
-      "Expected comma-separated widths between 200 and 3840.",
-    );
-  }
-  return [...new Set(widths)];
-}
-
-function stageList(value: string) {
-  const stages = value
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean);
-  const unknown = stages.filter(
-    (stage) => !STAGES.includes(stage as StageName),
-  );
-  if (stages.length === 0 || unknown.length > 0) {
-    throw new InvalidArgumentError(
-      `Expected a comma-separated list of: ${STAGES.join(", ")}.`,
-    );
-  }
-  return stages as StageName[];
-}
-
-function collect(value: string, previous: string[]) {
-  return [...previous, value];
+/** Parsed options, as the parsers and defaults below produce them. */
+interface CliOptions {
+  original?: string;
+  ported?: string;
+  out?: string;
+  runs: number;
+  widths: number[];
+  formFactor: FormFactor;
+  only?: StageName[];
+  skip?: StageName[];
+  tolerance: number;
+  failOn: string[];
+  reportOnly?: true;
+  allowDev?: true;
+  chromePath?: string;
+  timeout: number;
+  json?: true;
 }
 
 function createProgram() {
@@ -143,20 +121,12 @@ Examples:
   $ bejamas-bench --original https://example.com --ported https://new.example.com --fail-on "lcp>10%,js>0,pixels>1%"
   $ bejamas-bench --original localhost:3000 --ported localhost:4321 --only visual,quality --widths 375,768,1440`,
     )
-    .action(async (positional: string[], opts) => {
+    .action(async (positional: string[], opts: CliOptions) => {
+      const warn = (message: string) =>
+        process.stderr.write(`${kleur.yellow("warning")} ${message}\n`);
       const { original, ported, warning } = resolveTargetUrls(opts, positional);
-      for (const url of [original, ported]) normalizeUrl(url);
-      if (warning)
-        process.stderr.write(`${kleur.yellow("warning")} ${warning}\n`);
-      parseBudgets(opts.failOn);
-      const skip = new Set<StageName>(opts.skip ?? []);
-      const stages = (
-        (opts.only as StageName[] | undefined) ?? [...STAGES]
-      ).filter((stage) => !skip.has(stage));
-      if (stages.length === 0) throw new BenchError("No stages left to run.");
+      if (warning) warn(warning);
 
-      const log = (message: string) =>
-        process.stderr.write(`${kleur.dim("›")} ${message}\n`);
       const { report, files } = await runBench(
         {
           original,
@@ -164,21 +134,20 @@ Examples:
           outDir: opts.out,
           runs: opts.runs,
           widths: opts.widths,
-          formFactor: opts.formFactor as FormFactor,
-          stages,
+          formFactor: opts.formFactor,
+          stages: selectStages(opts.only, opts.skip),
           tolerance: opts.tolerance,
           budgets: opts.failOn,
-          allowDev: Boolean(opts.allowDev),
+          allowDev: opts.allowDev ?? false,
           chromePath: opts.chromePath,
           timeout: opts.timeout,
         },
-        log,
+        (message) => process.stderr.write(`${kleur.dim("›")} ${message}\n`),
       );
 
       if (opts.json) {
-        // The summary carries warnings; JSON consumers get them on stderr.
-        for (const warning of report.warnings)
-          process.stderr.write(`${kleur.yellow("warning")} ${warning}\n`);
+        // The summary shows comparability; JSON consumers get it on stderr.
+        for (const reason of report.comparability.reasons) warn(reason);
         process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
       } else {
         process.stdout.write(`\n${renderSummary(report)}\n`);

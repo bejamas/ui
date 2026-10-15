@@ -1,25 +1,21 @@
-import { mkdirSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
-import { PNG } from "pngjs";
 import pkg from "../package.json" with { type: "json" };
+import { createArtifacts } from "./artifacts";
 import { launchBrowser, resolveChromePath } from "./browser";
 import { evaluateBudgets, parseBudgets } from "./budgets";
-import { comparabilityCheck, qualityChecks, visualChecks } from "./checks";
+import { reportChecks } from "./checks";
 import { renderMarkdown } from "./report";
 import { measureAssets } from "./stages/assets";
 import { runLighthouse } from "./stages/lighthouse";
-import {
-  QUALITY_VIEWPORT,
-  compareText,
-  measureQuality,
-} from "./stages/quality";
-import { captureVisual, compareGeometry, comparePixels } from "./stages/visual";
-import { assessComparability, inspectTarget } from "./targets";
+import { measureQuality } from "./stages/quality";
+import { measureVisual } from "./stages/visual";
+import { assessComparability, inspectTarget, normalizeUrl } from "./targets";
 import type {
   BenchOptions,
   BenchReport,
-  Capture,
+  Paired,
   Side,
+  SkippedStage,
+  StageError,
   StageName,
   Target,
 } from "./types";
@@ -30,196 +26,152 @@ export interface RunResult {
   files?: { json: string; markdown: string };
 }
 
+/** Stages that measure performance, which development servers distort. */
+const PRODUCTION_ONLY: readonly StageName[] = ["assets", "lighthouse"];
+
 export async function runBench(
   options: BenchOptions,
   log: (message: string) => void = () => {},
 ): Promise<RunResult> {
-  // Validate budgets before spending minutes on measurements.
+  // Reject bad input before spending minutes on measurements.
   const budgets = parseBudgets(options.budgets);
-  const outDir = options.outDir ? resolve(options.outDir) : undefined;
-  if (outDir) mkdirSync(outDir, { recursive: true });
-
+  const inputs: Paired<URL> = {
+    original: normalizeUrl(options.original),
+    ported: normalizeUrl(options.ported),
+  };
   const chromePath = resolveChromePath(options.chromePath);
+  const artifacts = createArtifacts(options.outDir);
+  const measuredAt = new Date().toISOString();
+
   const browser = await launchBrowser(chromePath);
-  let targets: [Target, Target];
+  const browserVersion = browser.version();
+  const inspect = (side: Side) =>
+    inspectTarget(browser, {
+      side,
+      input: options[side],
+      url: inputs[side],
+      timeout: options.timeout,
+    });
+  let targets: Paired<Target>;
   try {
     log("Checking both URLs");
-    targets = await Promise.all([
-      inspectTarget(browser, "original", options.original, options.timeout),
-      inspectTarget(browser, "ported", options.ported, options.timeout),
+    const [original, ported] = await Promise.all([
+      inspect("original"),
+      inspect("ported"),
     ]);
+    targets = { original, ported };
   } catch (error) {
     await browser.close();
     throw error;
   }
-  const [original, ported] = targets;
-  const urls: Record<Side, string> = {
-    original: original.finalUrl,
-    ported: ported.finalUrl,
+  const urls: Paired<string> = {
+    original: targets.original.finalUrl,
+    ported: targets.ported.finalUrl,
   };
-  const comparability = assessComparability(original, ported);
+  const comparability = assessComparability(targets.original, targets.ported);
 
-  const report: BenchReport = {
-    schemaVersion: 1,
-    tool: { name: pkg.name, version: pkg.version },
-    measuredAt: new Date().toISOString(),
-    environment: {
-      node: process.version,
-      platform: process.platform,
-      arch: process.arch,
-      browser: `Chrome ${browser.version()}`,
-    },
-    options: {
-      outDir,
-      runs: options.runs,
-      widths: options.widths,
-      formFactor: options.formFactor,
-      stages: options.stages,
-      tolerance: options.tolerance,
-      budgets: options.budgets,
-      allowDev: options.allowDev,
-      chromePath: options.chromePath,
-      timeout: options.timeout,
-    },
-    targets: { original, ported },
-    comparability,
-    warnings: [...comparability.reasons],
-    skipped: [],
-    errors: [],
-    checks: [comparabilityCheck(comparability)],
-    budgets: [],
-    passed: false,
-  };
+  const devServer = targets.original.devServer ?? targets.ported.devServer;
+  const blocked = devServer && !options.allowDev ? PRODUCTION_ONLY : [];
+  const stages = options.stages.filter((stage) => !blocked.includes(stage));
+  const skipped: SkippedStage[] = options.stages
+    .filter((stage) => blocked.includes(stage))
+    .map((stage) => ({
+      stage,
+      reason: `A development server (${devServer}) was detected. Measure production builds, or pass --allow-dev to measure anyway.`,
+    }));
 
-  const stages = new Set(options.stages);
-  const devServer = original.devServer ?? ported.devServer;
-  if (devServer && !options.allowDev) {
-    for (const stage of ["assets", "lighthouse"] as const) {
-      if (!stages.delete(stage)) continue;
-      report.skipped.push({
-        stage,
-        reason: `A development server (${devServer}) was detected. Measure production builds, or pass --allow-dev to measure anyway.`,
-      });
-    }
-  }
-
-  async function stage(name: StageName, run: () => Promise<void>) {
-    if (!stages.has(name)) return;
+  const errors: StageError[] = [];
+  async function stage<T>(name: StageName, run: () => Promise<T>) {
+    if (!stages.includes(name)) return undefined;
     try {
-      await run();
+      return await run();
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      report.errors.push({ stage: name, message });
+      errors.push({ stage: name, message });
       log(`${name} failed: ${message}`);
+      return undefined;
     }
   }
 
+  const { timeout } = options;
+  let measured: Pick<BenchReport, "assets" | "quality" | "visual">;
   try {
-    await stage("assets", async () => {
-      log("Measuring route assets");
-      report.assets = {
-        original: await measureAssets(browser, urls.original, options.timeout),
-        ported: await measureAssets(browser, urls.ported, options.timeout),
-      };
-    });
-
-    await stage("quality", async () => {
-      log("Checking text, headings, accessibility and browser errors");
-      const originalQuality = await measureQuality(
-        browser,
-        urls.original,
-        options.timeout,
-      );
-      const portedQuality = await measureQuality(
-        browser,
-        urls.ported,
-        options.timeout,
-      );
-      report.quality = {
-        viewport: QUALITY_VIEWPORT,
-        original: originalQuality,
-        ported: portedQuality,
-        text: compareText(originalQuality.text, portedQuality.text),
-      };
-      report.checks.push(...qualityChecks(report.quality));
-    });
-
-    await stage("visual", async () => {
-      const screenshotDir = outDir && join(outDir, "screenshots");
-      if (screenshotDir) mkdirSync(screenshotDir, { recursive: true });
-      const captures: Capture[] = [];
-      const widths = [];
-      for (const width of options.widths) {
-        log(`Capturing layout at ${width}px`);
-        const [a, b] = [
-          await captureVisual(browser, {
-            side: "original",
-            url: urls.original,
-            width,
-            timeout: options.timeout,
-          }),
-          await captureVisual(browser, {
-            side: "ported",
-            url: urls.ported,
-            width,
-            timeout: options.timeout,
-          }),
-        ];
-        const { comparison, diff } = comparePixels(a.image, b.image);
-        if (screenshotDir) {
-          for (const { capture, image } of [a, b]) {
-            capture.screenshot = join(
-              screenshotDir,
-              `${capture.side}-${width}.png`,
-            );
-            writeFileSync(capture.screenshot, image);
-          }
-          comparison.diff = join(screenshotDir, `diff-${width}.png`);
-          writeFileSync(comparison.diff, PNG.sync.write(diff));
-        }
-        captures.push(a.capture, b.capture);
-        widths.push({
-          width,
-          ...compareGeometry(a.capture, b.capture, options.tolerance),
-          pixels: comparison,
-        });
-      }
-      report.visual = { tolerance: options.tolerance, captures, widths };
-      report.checks.push(...visualChecks(report.visual));
-    });
+    measured = {
+      assets: await stage("assets", () => {
+        log("Measuring route assets");
+        return measureAssets(browser, urls, timeout);
+      }),
+      quality: await stage("quality", () => {
+        log("Checking text, headings, accessibility and browser errors");
+        return measureQuality(browser, urls, timeout);
+      }),
+      visual: await stage("visual", () =>
+        measureVisual(browser, {
+          urls,
+          widths: options.widths,
+          tolerance: options.tolerance,
+          timeout,
+          artifacts,
+          onProgress: log,
+        }),
+      ),
+    };
   } finally {
     await browser.close();
   }
 
   // Lighthouse runs last and alone so other browser work cannot skew timings.
-  await stage("lighthouse", async () => {
-    report.lighthouse = await runLighthouse({
+  const lighthouse = await stage("lighthouse", () =>
+    runLighthouse({
       urls,
       runs: options.runs,
       formFactor: options.formFactor,
       chromePath,
-      reportDir: outDir && join(outDir, "lighthouse"),
+      artifacts,
       onProgress: log,
-    });
-  });
+    }),
+  );
 
-  report.budgets = evaluateBudgets(budgets, {
-    assets: report.assets,
-    lighthouse: report.lighthouse,
-    visual: report.visual,
+  const results = { ...measured, lighthouse };
+  const checks = reportChecks({ comparability, ...results });
+  const budgetResults = evaluateBudgets(budgets, { comparability, ...results });
+  const { original: _original, ported: _ported, ...rest } = options;
+  const report: BenchReport = {
+    schemaVersion: 1,
+    tool: { name: pkg.name, version: pkg.version },
+    measuredAt,
+    environment: {
+      node: process.version,
+      platform: process.platform,
+      arch: process.arch,
+      browser: `Chrome ${browserVersion}`,
+    },
+    options: { ...rest, outDir: artifacts?.dir },
+    targets,
     comparability,
-  });
-  report.passed =
-    report.errors.length === 0 &&
-    report.checks.every((check) => check.status !== "fail") &&
-    report.budgets.every((budget) => budget.status !== "fail");
-
-  if (!outDir) return { report };
-  const files = {
-    json: join(outDir, "report.json"),
-    markdown: join(outDir, "report.md"),
+    skipped,
+    errors,
+    ...results,
+    checks,
+    budgets: budgetResults,
+    passed:
+      errors.length === 0 &&
+      checks.every((check) => check.status !== "fail") &&
+      budgetResults.every((budget) => budget.status !== "fail"),
   };
-  writeFileSync(files.json, `${JSON.stringify(report, null, 2)}\n`);
-  writeFileSync(files.markdown, renderMarkdown(report, outDir));
-  return { report, files };
+
+  if (!artifacts) return { report };
+  return {
+    report,
+    files: {
+      json: artifacts.write(
+        "report.json",
+        `${JSON.stringify(report, null, 2)}\n`,
+      ),
+      markdown: artifacts.write(
+        "report.md",
+        renderMarkdown(report, artifacts.dir),
+      ),
+    },
+  };
 }

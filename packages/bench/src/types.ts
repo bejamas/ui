@@ -1,6 +1,9 @@
 export type Side = "original" | "ported";
 export const SIDES: readonly Side[] = ["original", "ported"];
 
+/** One value per side. */
+export type Paired<T> = Record<Side, T>;
+
 export type StageName = "assets" | "quality" | "visual" | "lighthouse";
 export const STAGES: readonly StageName[] = [
   "assets",
@@ -63,33 +66,28 @@ export interface AssetEntry {
   raw: number;
   /** Deterministic gzip level 9 estimate, compressible categories only. */
   gzip: number | null;
-  /** Deterministic Brotli quality 11 estimate, compressible categories only. */
-  brotli: number | null;
 }
 
 export interface AssetSummary {
   count: number;
   transfer: number;
   raw: number;
-  gzip: number | null;
-  brotli: number | null;
+  /** Comparable size: the gzip estimate for HTML, CSS and JS, transferred bytes otherwise. */
+  size: number;
 }
 
 export interface SideAssets {
   finalUrl: string;
   viewport: { width: number; height: number };
   categories: Record<AssetCategory, AssetSummary>;
-  /** HTML + CSS + JS (gzip estimate) plus encoded font bytes, as in ui-benchmark. */
-  coreGzip: number;
+  /** Comparable size of HTML + CSS + JS + fonts. */
+  coreSize: number;
   requests: number;
   transfer: number;
   entries: AssetEntry[];
 }
 
-export interface AssetsResult {
-  original: SideAssets;
-  ported: SideAssets;
-}
+export type AssetsResult = Paired<SideAssets>;
 
 export interface AxeViolation {
   id: string;
@@ -109,7 +107,6 @@ export interface SideQuality {
   description: string | null;
   lang: string | null;
   text: string;
-  textHash: string;
   headings: Heading[];
   domElements: number;
   domBytes: number;
@@ -128,10 +125,8 @@ export interface TextDifference {
   ported?: string;
 }
 
-export interface QualityResult {
+export interface QualityResult extends Paired<SideQuality> {
   viewport: { width: number; height: number };
-  original: SideQuality;
-  ported: SideQuality;
   text: TextDifference;
 }
 
@@ -227,13 +222,16 @@ export interface LighthouseRun extends LighthouseValues {
   report: string | null;
 }
 
-export interface LighthouseResult {
+export interface LighthouseSide {
+  runs: LighthouseRun[];
+  median: LighthouseValues;
+}
+
+export interface LighthouseResult extends Paired<LighthouseSide> {
   formFactor: FormFactor;
   version: string;
   runs: number;
   order: string;
-  original: { runs: LighthouseRun[]; median: LighthouseValues };
-  ported: { runs: LighthouseRun[]; median: LighthouseValues };
 }
 
 export type CheckStatus = "pass" | "fail" | "warn" | "skip";
@@ -272,9 +270,8 @@ export interface BenchReport {
     browser: string | null;
   };
   options: Omit<BenchOptions, "original" | "ported">;
-  targets: { original: Target; ported: Target };
+  targets: Paired<Target>;
   comparability: Comparability;
-  warnings: string[];
   skipped: SkippedStage[];
   errors: StageError[];
   assets?: AssetsResult;

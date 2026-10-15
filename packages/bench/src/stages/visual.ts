@@ -1,32 +1,82 @@
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import type { Browser } from "playwright-core";
+import type { Artifacts } from "../artifacts";
 import { loadPage } from "../browser";
+import { bothSides } from "../sides";
 import type {
   Box,
   Capture,
   GeometryComparison,
   LandmarkDifference,
+  Paired,
   PixelComparison,
   Side,
   SlotDifference,
   SlotElement,
+  VisualResult,
+  VisualWidthResult,
 } from "../types";
 
-export const VISUAL_HEIGHT = 823;
+const VISUAL_HEIGHT = 823;
 
-export async function captureVisual(
+export async function measureVisual(
+  browser: Browser,
+  {
+    urls,
+    widths,
+    tolerance,
+    timeout,
+    artifacts,
+    onProgress,
+  }: {
+    urls: Paired<string>;
+    widths: readonly number[];
+    tolerance: number;
+    timeout: number;
+    artifacts: Artifacts | undefined;
+    onProgress: (message: string) => void;
+  },
+): Promise<VisualResult> {
+  const captures: Capture[] = [];
+  const results: VisualWidthResult[] = [];
+  for (const width of widths) {
+    onProgress(`Capturing layout at ${width}px`);
+    const { original, ported } = await bothSides((side) =>
+      capture(browser, { side, url: urls[side], width, timeout, artifacts }),
+    );
+    const { comparison, diff } = comparePixels(original.image, ported.image);
+    captures.push(original.capture, ported.capture);
+    results.push({
+      width,
+      ...compareGeometry(original.capture, ported.capture, tolerance),
+      pixels: {
+        ...comparison,
+        diff:
+          artifacts?.write(
+            `screenshots/diff-${width}.png`,
+            PNG.sync.write(diff),
+          ) ?? null,
+      },
+    });
+  }
+  return { tolerance, captures, widths: results };
+}
+
+async function capture(
   browser: Browser,
   {
     side,
     url,
     width,
     timeout,
+    artifacts,
   }: {
     side: Side;
     url: string;
     width: number;
     timeout: number;
+    artifacts: Artifacts | undefined;
   },
 ): Promise<{ capture: Capture; image: Buffer }> {
   const context = await browser.newContext({
@@ -84,7 +134,9 @@ export async function captureVisual(
         pageHeight: document.documentElement.scrollHeight,
       };
     });
-    return { capture: { side, width, screenshot: null, ...data }, image };
+    const screenshot =
+      artifacts?.write(`screenshots/${side}-${width}.png`, image) ?? null;
+    return { capture: { side, width, screenshot, ...data }, image };
   } finally {
     await context.close();
   }
@@ -202,7 +254,7 @@ function crop(png: PNG, width: number, height: number) {
 export function comparePixels(
   original: Buffer,
   ported: Buffer,
-): { comparison: PixelComparison; diff: PNG } {
+): { comparison: Omit<PixelComparison, "diff">; diff: PNG } {
   const a = PNG.sync.read(original);
   const b = PNG.sync.read(ported);
   const width = Math.min(a.width, b.width);
@@ -221,7 +273,6 @@ export function comparePixels(
   const total = width * height;
   return {
     comparison: {
-      diff: null,
       comparedWidth: width,
       comparedHeight: height,
       heightDelta: b.height - a.height,

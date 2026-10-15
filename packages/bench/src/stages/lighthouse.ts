@@ -1,44 +1,53 @@
-import { mkdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { join } from "node:path";
+import type { Artifacts } from "../artifacts";
+import { LIGHTHOUSE } from "../metrics";
 import { median, round } from "../stats";
 import {
   LIGHTHOUSE_METRICS,
   SIDES,
   type FormFactor,
+  type LighthouseMetric,
   type LighthouseResult,
   type LighthouseRun,
-  type LighthouseValues,
+  type LighthouseSide,
+  type Paired,
   type Side,
 } from "../types";
 
-const AUDITS = {
+/** The score comes from the performance category, the rest from audits. */
+const AUDITS: Record<Exclude<LighthouseMetric, "score">, string> = {
   fcp: "first-contentful-paint",
   lcp: "largest-contentful-paint",
   tbt: "total-blocking-time",
   cls: "cumulative-layout-shift",
   si: "speed-index",
-} as const;
+};
 
 /** Run order for one round. Alternating cancels out drift such as thermal throttling. */
 export function roundOrder(run: number): Side[] {
   return run % 2 === 1 ? [...SIDES] : [...SIDES].reverse();
 }
 
+const roundMetric = (
+  metric: LighthouseMetric,
+  value: number | null | undefined,
+) =>
+  typeof value === "number" ? round(value, LIGHTHOUSE[metric].digits) : null;
+
 export async function runLighthouse({
   urls,
   runs,
   formFactor,
   chromePath,
-  reportDir,
+  artifacts,
   onProgress,
 }: {
-  urls: Record<Side, string>;
+  urls: Paired<string>;
   runs: number;
   formFactor: FormFactor;
   chromePath: string;
-  /** Save every full Lighthouse report here, when set. */
-  reportDir?: string;
+  /** Saves every full Lighthouse report, when report files are written. */
+  artifacts: Artifacts | undefined;
   onProgress: (message: string) => void;
 }): Promise<LighthouseResult> {
   const { default: lighthouse, desktopConfig } = await import("lighthouse");
@@ -46,13 +55,12 @@ export async function runLighthouse({
   const version: string = createRequire(import.meta.url)(
     "lighthouse/package.json",
   ).version;
-  if (reportDir) mkdirSync(reportDir, { recursive: true });
 
   const chrome = await launch({
     chromePath,
     chromeFlags: ["--headless=new", "--disable-dev-shm-usage"],
   });
-  const results: Record<Side, LighthouseRun[]> = { original: [], ported: [] };
+  const results: Paired<LighthouseRun[]> = { original: [], ported: [] };
   try {
     for (let run = 1; run <= runs; run++) {
       for (const side of roundOrder(run)) {
@@ -71,38 +79,33 @@ export async function runLighthouse({
         );
         if (!result)
           throw new Error(`Lighthouse returned no result for the ${side} URL`);
-        if (result.lhr.runtimeError) {
+        const { lhr } = result;
+        if (lhr.runtimeError) {
           throw new Error(
-            `Lighthouse failed for the ${side} URL: ${result.lhr.runtimeError.message}`,
+            `Lighthouse failed for the ${side} URL: ${lhr.runtimeError.message}`,
           );
         }
-        const report = reportDir
-          ? join(reportDir, `${side}-run-${run}.json`)
-          : null;
-        if (report) {
-          writeFileSync(
-            report,
-            typeof result.report === "string"
-              ? result.report
-              : JSON.stringify(result.lhr),
-          );
-        }
-        const score = result.lhr.categories.performance?.score;
-        const metric = (audit: string) => {
-          const value = result.lhr.audits[audit]?.numericValue;
-          return typeof value === "number"
-            ? round(value, audit === AUDITS.cls ? 4 : 2)
-            : null;
-        };
+        const score = lhr.categories.performance?.score;
+        const audit = (metric: keyof typeof AUDITS) =>
+          roundMetric(metric, lhr.audits[AUDITS[metric]]?.numericValue);
         results[side].push({
           run,
-          report,
-          score: typeof score === "number" ? round(score * 100) : null,
-          fcp: metric(AUDITS.fcp),
-          lcp: metric(AUDITS.lcp),
-          tbt: metric(AUDITS.tbt),
-          cls: metric(AUDITS.cls),
-          si: metric(AUDITS.si),
+          report:
+            artifacts?.write(
+              `lighthouse/${side}-run-${run}.json`,
+              typeof result.report === "string"
+                ? result.report
+                : JSON.stringify(lhr),
+            ) ?? null,
+          score: roundMetric(
+            "score",
+            typeof score === "number" ? score * 100 : null,
+          ),
+          fcp: audit("fcp"),
+          lcp: audit("lcp"),
+          tbt: audit("tbt"),
+          cls: audit("cls"),
+          si: audit("si"),
         });
       }
     }
@@ -110,23 +113,22 @@ export async function runLighthouse({
     chrome.kill();
   }
 
-  const medians = (side: Side) =>
-    Object.fromEntries(
-      LIGHTHOUSE_METRICS.map((metric) => {
-        const value = median(results[side].map((run) => run[metric]));
-        return [
-          metric,
-          value === null ? null : round(value, metric === "cls" ? 4 : 2),
-        ];
-      }),
-    ) as LighthouseValues;
+  const summarize = (side: Side): LighthouseSide => ({
+    runs: results[side],
+    median: Object.fromEntries(
+      LIGHTHOUSE_METRICS.map((metric) => [
+        metric,
+        roundMetric(metric, median(results[side].map((run) => run[metric]))),
+      ]),
+    ) as LighthouseSide["median"],
+  });
 
   return {
     formFactor,
     version,
     runs,
     order: "alternating (original, ported), then (ported, original)",
-    original: { runs: results.original, median: medians("original") },
-    ported: { runs: results.ported, median: medians("ported") },
+    original: summarize("original"),
+    ported: summarize("ported"),
   };
 }

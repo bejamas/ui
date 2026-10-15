@@ -1,5 +1,6 @@
 import type {
   Check,
+  CheckStatus,
   Comparability,
   QualityResult,
   SideQuality,
@@ -7,6 +8,19 @@ import type {
 } from "./types";
 
 const PIXEL_WARNING = 1;
+
+type Outcome = [status: CheckStatus, detail: string];
+
+const check = (
+  id: string,
+  label: string,
+  [status, detail]: Outcome,
+): Check => ({
+  id,
+  label,
+  status,
+  detail,
+});
 
 function list(values: readonly string[], limit = 3) {
   const shown = values.slice(0, limit).join("; ");
@@ -34,15 +48,31 @@ function newEntries(
   );
 }
 
+/** Every check for the stages that produced results, in report order. */
+export function reportChecks({
+  comparability,
+  quality,
+  visual,
+}: {
+  comparability: Comparability;
+  quality?: QualityResult;
+  visual?: VisualResult;
+}): Check[] {
+  return [
+    comparabilityCheck(comparability),
+    ...(quality ? qualityChecks(quality) : []),
+    ...(visual ? visualChecks(visual) : []),
+  ];
+}
+
 export function comparabilityCheck(comparability: Comparability): Check {
-  return {
-    id: "comparability",
-    label: "Timing comparability",
-    status: comparability.comparable ? "pass" : "warn",
-    detail: comparability.comparable
-      ? "Both URLs run in the same kind of environment."
-      : comparability.reasons.join(" "),
-  };
+  return check(
+    "comparability",
+    "Timing comparability",
+    comparability.comparable
+      ? ["pass", "Both URLs run in the same kind of environment."]
+      : ["warn", comparability.reasons.join(" ")],
+  );
 }
 
 export function qualityChecks({
@@ -50,34 +80,9 @@ export function qualityChecks({
   ported,
   text,
 }: QualityResult): Check[] {
-  const checks: Check[] = [];
-
-  checks.push({
-    id: "text",
-    label: "Visible text",
-    status: text.identical ? "pass" : "fail",
-    detail: text.identical
-      ? `Identical (${text.portedWords} words).`
-      : `Differs: ${text.originalWords} → ${text.portedWords} words. First difference: “${text.original}” vs “${text.ported}”.`,
-  });
-
   const metadata = (["title", "description", "lang"] as const).filter(
     (key) => original[key] !== ported[key],
   );
-  checks.push({
-    id: "metadata",
-    label: "Title, description and lang",
-    status: metadata.length === 0 ? "pass" : "fail",
-    detail:
-      metadata.length === 0
-        ? "Identical."
-        : list(
-            metadata.map(
-              (key) =>
-                `${key}: ${JSON.stringify(original[key])} → ${JSON.stringify(ported[key])}`,
-            ),
-          ),
-  });
 
   const outline = (side: SideQuality) =>
     side.headings.map((heading) => `h${heading.level} ${heading.text}`);
@@ -89,14 +94,6 @@ export function qualityChecks({
   const headingsMatch =
     originalOutline.length === portedOutline.length && mismatch === -1;
   const firstDifference = mismatch === -1 ? originalOutline.length : mismatch;
-  checks.push({
-    id: "headings",
-    label: "Heading outline",
-    status: headingsMatch ? "pass" : "fail",
-    detail: headingsMatch
-      ? `Identical (${originalOutline.length} headings).`
-      : `${originalOutline.length} → ${portedOutline.length} headings. First difference: “${originalOutline[firstDifference] ?? "(none)"}” vs “${portedOutline[firstDifference] ?? "(none)"}”.`,
-  });
 
   const originalViolations = new Map(
     original.violations.map((violation) => [violation.id, violation.nodes]),
@@ -105,83 +102,118 @@ export function qualityChecks({
     (violation) =>
       violation.nodes > (originalViolations.get(violation.id) ?? 0),
   );
-  checks.push({
-    id: "accessibility",
-    label: "Accessibility (axe-core)",
-    status:
-      regressions.length > 0
-        ? "fail"
-        : ported.violations.length > 0
-          ? "warn"
-          : "pass",
-    detail:
-      regressions.length > 0
-        ? `New or more frequent violations: ${list(regressions.map((violation) => `${violation.id} (${violation.nodes})`))}.`
-        : ported.violations.length > 0
-          ? `No regressions, but ${ported.violations.length} violations remain from the original: ${list(ported.violations.map((violation) => violation.id))}.`
-          : "No violations.",
-  });
 
-  const errors = newEntries(original, ported, "errors");
-  const failedRequests = newEntries(original, ported, "failedRequests");
-  checks.push({
-    id: "errors",
-    label: "Browser errors and failed requests",
-    status:
-      errors.length + failedRequests.length > 0
-        ? "fail"
-        : ported.errors.length + ported.failedRequests.length > 0
-          ? "warn"
-          : "pass",
-    detail:
-      errors.length + failedRequests.length > 0
-        ? list([...errors, ...failedRequests])
-        : ported.errors.length + ported.failedRequests.length > 0
-          ? "Only errors that the original also has."
-          : "None.",
-  });
+  const newProblems = [
+    ...newEntries(original, ported, "errors"),
+    ...newEntries(original, ported, "failedRequests"),
+  ];
+  const portedProblems = ported.errors.length + ported.failedRequests.length;
 
-  checks.push({
-    id: "nested-controls",
-    label: "Nested interactive controls",
-    status:
+  return [
+    check(
+      "text",
+      "Visible text",
+      text.identical
+        ? ["pass", `Identical (${text.portedWords} words).`]
+        : [
+            "fail",
+            `Differs: ${text.originalWords} → ${text.portedWords} words. First difference: “${text.original}” vs “${text.ported}”.`,
+          ],
+    ),
+    check(
+      "metadata",
+      "Title, description and lang",
+      metadata.length === 0
+        ? ["pass", "Identical."]
+        : [
+            "fail",
+            list(
+              metadata.map(
+                (key) =>
+                  `${key}: ${JSON.stringify(original[key])} → ${JSON.stringify(ported[key])}`,
+              ),
+            ),
+          ],
+    ),
+    check(
+      "headings",
+      "Heading outline",
+      headingsMatch
+        ? ["pass", `Identical (${originalOutline.length} headings).`]
+        : [
+            "fail",
+            `${originalOutline.length} → ${portedOutline.length} headings. First difference: “${originalOutline[firstDifference] ?? "(none)"}” vs “${portedOutline[firstDifference] ?? "(none)"}”.`,
+          ],
+    ),
+    check(
+      "accessibility",
+      "Accessibility (axe-core)",
+      regressions.length > 0
+        ? [
+            "fail",
+            `New or more frequent violations: ${list(regressions.map((violation) => `${violation.id} (${violation.nodes})`))}.`,
+          ]
+        : ported.violations.length > 0
+          ? [
+              "warn",
+              `No regressions, but ${ported.violations.length} violations remain from the original: ${list(ported.violations.map((violation) => violation.id))}.`,
+            ]
+          : ["pass", "No violations."],
+    ),
+    check(
+      "errors",
+      "Browser errors and failed requests",
+      newProblems.length > 0
+        ? ["fail", list(newProblems)]
+        : portedProblems > 0
+          ? ["warn", "Only errors that the original also has."]
+          : ["pass", "None."],
+    ),
+    check("nested-controls", "Nested interactive controls", [
       ported.nestedInteractiveControls > original.nestedInteractiveControls
         ? "fail"
         : "pass",
-    detail: `${original.nestedInteractiveControls} → ${ported.nestedInteractiveControls}.`,
-  });
-
-  return checks;
+      `${original.nestedInteractiveControls} → ${ported.nestedInteractiveControls}.`,
+    ]),
+  ];
 }
 
 export function visualChecks(visual: VisualResult): Check[] {
   return visual.widths.flatMap((result) => {
-    const geometryFailed =
-      result.differences.length > 0 || result.landmarkDifferences.length > 0;
-    const geometry: Check = {
-      id: `geometry-${result.width}`,
-      label: `Layout geometry at ${result.width}px`,
-      status: geometryFailed
-        ? "fail"
-        : result.matchedElements === 0
-          ? "warn"
-          : "pass",
-      detail: geometryFailed
-        ? `${result.differences.length} of ${result.matchedElements} matched components and ${result.landmarkDifferences.length} page regions differ by more than ${visual.tolerance}px.`
-        : result.matchedElements === 0
-          ? "No data-slot components matched; only page regions were compared."
-          : `${result.matchedElements} matched components and all page regions are within ${visual.tolerance}px.`,
-    };
-    const pixels: Check = {
-      id: `pixels-${result.width}`,
-      label: `Screenshot pixels at ${result.width}px`,
-      status:
-        result.pixels.mismatch > PIXEL_WARNING ||
-        result.pixels.heightDelta !== 0
-          ? "warn"
-          : "pass",
-      detail: `${result.pixels.mismatch}% of pixels differ; page height ${result.pixels.heightDelta === 0 ? "matches" : `changes by ${result.pixels.heightDelta > 0 ? "+" : ""}${result.pixels.heightDelta}px`}.`,
-    };
-    return [geometry, pixels];
+    const { pixels } = result;
+    const height =
+      pixels.heightDelta === 0
+        ? "matches"
+        : `changes by ${pixels.heightDelta > 0 ? "+" : ""}${pixels.heightDelta}px`;
+    return [
+      check(
+        `geometry-${result.width}`,
+        `Layout geometry at ${result.width}px`,
+        result.differences.length > 0 || result.landmarkDifferences.length > 0
+          ? [
+              "fail",
+              `${result.differences.length} of ${result.matchedElements} matched components and ${result.landmarkDifferences.length} page regions differ by more than ${visual.tolerance}px.`,
+            ]
+          : result.matchedElements === 0
+            ? [
+                "warn",
+                "No data-slot components matched; only page regions were compared.",
+              ]
+            : [
+                "pass",
+                `${result.matchedElements} matched components and all page regions are within ${visual.tolerance}px.`,
+              ],
+      ),
+      check(
+        `pixels-${result.width}`,
+        `Screenshot pixels at ${result.width}px`,
+        [
+          pixels.mismatch > PIXEL_WARNING || pixels.heightDelta !== 0
+            ? "warn"
+            : "pass",
+          `${pixels.mismatch}% of pixels differ; page height ${height}.`,
+        ],
+      ),
+    ];
   });
 }

@@ -1,5 +1,5 @@
 import { BenchError } from "./errors";
-import { formatBytes, formatMs } from "./format";
+import { LIGHTHOUSE, UNIT_FACTORS, formatValue, type Unit } from "./metrics";
 import { round } from "./stats";
 import type {
   AssetsResult,
@@ -7,12 +7,20 @@ import type {
   Comparability,
   LighthouseMetric,
   LighthouseResult,
+  Paired,
+  SideAssets,
   VisualResult,
 } from "./types";
 
-type SizeMetric = "js" | "css" | "html" | "fonts" | "total";
 export type BudgetMetric =
-  LighthouseMetric | SizeMetric | "requests" | "pixels";
+  | LighthouseMetric
+  | "js"
+  | "css"
+  | "html"
+  | "fonts"
+  | "total"
+  | "requests"
+  | "pixels";
 
 export interface Budget {
   source: string;
@@ -23,34 +31,93 @@ export interface Budget {
   relative: boolean;
 }
 
-const TIME_METRICS = new Set<BudgetMetric>(["fcp", "lcp", "tbt", "si"]);
-const SIZE_METRICS = new Set<BudgetMetric>([
-  "js",
-  "css",
-  "html",
-  "fonts",
-  "total",
-]);
-const METRICS = new Set<BudgetMetric>([
-  "score",
-  "fcp",
-  "lcp",
-  "tbt",
-  "cls",
-  "si",
-  ...SIZE_METRICS,
-  "requests",
-  "pixels",
-]);
-const UNIT_FACTORS: Record<string, number> = {
-  b: 1,
-  kb: 1024,
-  kib: 1024,
-  mb: 1024 ** 2,
-  mib: 1024 ** 2,
-  ms: 1,
-  s: 1000,
+export interface BudgetInputs {
+  assets?: AssetsResult;
+  lighthouse?: LighthouseResult;
+  visual?: VisualResult;
+  comparability: Comparability;
+}
+
+/** Why a budget could not be evaluated. */
+type SkipReason = string;
+
+/**
+ * Most metrics are budgeted by their change from original to ported. Pixel
+ * mismatch is already a comparison, so its budget applies to the value itself.
+ */
+type MetricSpec =
+  | {
+      kind: "change";
+      unit: Unit;
+      read: (inputs: BudgetInputs) => Paired<number> | SkipReason;
+    }
+  | {
+      kind: "absolute";
+      unit: Unit;
+      read: (
+        inputs: BudgetInputs,
+      ) => { value: number; detail: string } | SkipReason;
+    };
+
+const lighthouseMetric = (metric: LighthouseMetric): MetricSpec => ({
+  kind: "change",
+  unit: LIGHTHOUSE[metric].unit,
+  read: ({ lighthouse, comparability }) => {
+    if (!lighthouse) return "the Lighthouse stage did not run";
+    if (!comparability.comparable)
+      return "timings are not comparable between these URLs";
+    const original = lighthouse.original.median[metric];
+    const ported = lighthouse.ported.median[metric];
+    if (original === null || ported === null)
+      return `Lighthouse did not report ${metric}`;
+    return { original, ported };
+  },
+});
+
+const assetMetric = (
+  unit: Unit,
+  read: (side: SideAssets) => number,
+): MetricSpec => ({
+  kind: "change",
+  unit,
+  read: ({ assets }) =>
+    assets
+      ? { original: read(assets.original), ported: read(assets.ported) }
+      : "the assets stage did not run",
+});
+
+const METRICS: Record<BudgetMetric, MetricSpec> = {
+  score: lighthouseMetric("score"),
+  fcp: lighthouseMetric("fcp"),
+  lcp: lighthouseMetric("lcp"),
+  tbt: lighthouseMetric("tbt"),
+  cls: lighthouseMetric("cls"),
+  si: lighthouseMetric("si"),
+  js: assetMetric("bytes", (side) => side.categories.js.size),
+  css: assetMetric("bytes", (side) => side.categories.css.size),
+  html: assetMetric("bytes", (side) => side.categories.html.size),
+  fonts: assetMetric("bytes", (side) => side.categories.fonts.size),
+  total: assetMetric("bytes", (side) => side.coreSize),
+  requests: assetMetric("count", (side) => side.requests),
+  pixels: {
+    kind: "absolute",
+    unit: "percent",
+    read: ({ visual }) => {
+      const widths = visual?.widths ?? [];
+      if (widths.length === 0) return "the visual stage did not run";
+      const worst = widths.reduce((a, b) =>
+        b.pixels.mismatch > a.pixels.mismatch ? b : a,
+      );
+      return {
+        value: worst.pixels.mismatch,
+        detail: `${formatValue("percent", worst.pixels.mismatch)} of pixels differ at ${worst.width}px`,
+      };
+    },
+  },
 };
+
+const isBudgetMetric = (value: string): value is BudgetMetric =>
+  Object.hasOwn(METRICS, value);
 
 export const BUDGET_HELP = `Budgets compare the ported URL with the original. Size and timing budgets
 use the change (ported − original), absolute or relative with %:
@@ -59,7 +126,7 @@ use the change (ported − original), absolute or relative with %:
   total>20kb  fail when HTML + CSS + JS + fonts grow by more than 20 KiB
   score<-5    fail when the Lighthouse score drops by more than 5 points
   pixels>1%   fail when screenshots differ in more than 1% of pixels (absolute)
-Metrics: score, fcp, lcp, tbt, cls, si, js, css, html, fonts, total, requests, pixels.`;
+Metrics: ${Object.keys(METRICS).join(", ")}.`;
 
 export function parseBudgets(inputs: readonly string[]): Budget[] {
   return inputs
@@ -77,119 +144,81 @@ function parseBudget(source: string): Budget {
     throw new BenchError(
       `Invalid budget "${source}". Expected <metric><op><value>, e.g. lcp>10%.`,
     );
-  const metric = match[1]!.toLowerCase() as BudgetMetric;
-  const unit = match[4]?.toLowerCase();
-  if (!METRICS.has(metric)) {
+  const metric = match[1]!.toLowerCase();
+  if (!isBudgetMetric(metric)) {
     throw new BenchError(
-      `Unknown budget metric "${metric}" in "${source}". ${[...METRICS].join(", ")} are supported.`,
+      `Unknown budget metric "${metric}" in "${source}". ${Object.keys(METRICS).join(", ")} are supported.`,
     );
   }
+  const spec = METRICS[metric];
+  const unit = match[4]?.toLowerCase();
   let value = Number(match[3]);
   if (unit && unit !== "%") {
-    const factor = UNIT_FACTORS[unit];
-    const fits =
-      factor !== undefined &&
-      ((SIZE_METRICS.has(metric) &&
-        ["b", "kb", "kib", "mb", "mib"].includes(unit)) ||
-        (TIME_METRICS.has(metric) && ["ms", "s"].includes(unit)));
-    if (!fits)
+    const factors = UNIT_FACTORS[spec.unit] ?? {};
+    if (!Object.hasOwn(factors, unit))
       throw new BenchError(
         `Unit "${unit}" does not apply to ${metric} in "${source}".`,
       );
-    value *= factor;
+    value *= factors[unit]!;
   }
   return {
     source,
     metric,
     op: match[2] as ">" | "<",
     value,
-    relative: unit === "%" && metric !== "pixels",
+    relative: unit === "%" && spec.kind === "change",
   };
 }
 
-export interface BudgetInputs {
-  assets?: AssetsResult;
-  lighthouse?: LighthouseResult;
-  visual?: VisualResult;
-  comparability: Comparability;
-}
+const sign = (value: number) => (value > 0 ? "+" : value < 0 ? "−" : "±");
 
-type Pair = { original: number; ported: number };
+function evaluateBudget(budget: Budget, inputs: BudgetInputs): BudgetResult {
+  const spec = METRICS[budget.metric];
+  const result = (actual: number, detail: string): BudgetResult => ({
+    budget: budget.source,
+    status: (budget.op === ">" ? actual > budget.value : actual < budget.value)
+      ? "fail"
+      : "pass",
+    detail,
+  });
+  const skip = (reason: SkipReason): BudgetResult => ({
+    budget: budget.source,
+    status: "skip",
+    detail: reason,
+  });
 
-function format(metric: BudgetMetric, value: number) {
-  if (TIME_METRICS.has(metric)) return formatMs(value);
-  if (SIZE_METRICS.has(metric)) return formatBytes(value);
-  return String(round(value, 3));
-}
-
-function readPair(metric: BudgetMetric, inputs: BudgetInputs): Pair | string {
-  if (SIZE_METRICS.has(metric) || metric === "requests") {
-    const { assets } = inputs;
-    if (!assets) return "the assets stage did not run";
-    const read = (side: "original" | "ported") => {
-      const data = assets[side];
-      if (metric === "requests") return data.requests;
-      if (metric === "total") return data.coreGzip;
-      if (metric === "fonts") return data.categories.fonts.transfer;
-      return data.categories[metric as "js" | "css" | "html"].gzip ?? 0;
-    };
-    return { original: read("original"), ported: read("ported") };
+  if (spec.kind === "absolute") {
+    const reading = spec.read(inputs);
+    if (typeof reading === "string") return skip(reading);
+    return result(reading.value, reading.detail);
   }
-  const { lighthouse, comparability } = inputs;
-  if (!lighthouse) return "the Lighthouse stage did not run";
-  if (!comparability.comparable)
-    return "timings are not comparable between these URLs";
-  const original = lighthouse.original.median[metric as LighthouseMetric];
-  const ported = lighthouse.ported.median[metric as LighthouseMetric];
-  if (original === null || ported === null)
-    return `Lighthouse did not report ${metric}`;
-  return { original, ported };
+
+  const pair = spec.read(inputs);
+  if (typeof pair === "string") return skip(pair);
+  const format = (value: number) => formatValue(spec.unit, value);
+  const delta = pair.ported - pair.original;
+  const values = `${budget.metric}: ${format(pair.original)} → ${format(pair.ported)}`;
+  if (!budget.relative) {
+    return result(
+      delta,
+      `${values} (${sign(delta)}${format(Math.abs(delta))})`,
+    );
+  }
+  const relative =
+    pair.original === 0
+      ? delta === 0
+        ? 0
+        : Math.sign(delta) * Infinity
+      : (delta / pair.original) * 100;
+  return result(
+    relative,
+    `${values} (${sign(relative)}${round(Math.abs(relative), 1)}%)`,
+  );
 }
 
 export function evaluateBudgets(
   budgets: readonly Budget[],
   inputs: BudgetInputs,
 ): BudgetResult[] {
-  return budgets.map((budget) => {
-    const exceeds = (actual: number) =>
-      budget.op === ">" ? actual > budget.value : actual < budget.value;
-
-    if (budget.metric === "pixels") {
-      const widths = inputs.visual?.widths ?? [];
-      if (widths.length === 0)
-        return {
-          budget: budget.source,
-          status: "skip",
-          detail: "the visual stage did not run",
-        };
-      const worst = widths.reduce((a, b) =>
-        b.pixels.mismatch > a.pixels.mismatch ? b : a,
-      );
-      return {
-        budget: budget.source,
-        status: exceeds(worst.pixels.mismatch) ? "fail" : "pass",
-        detail: `${round(worst.pixels.mismatch, 3)}% of pixels differ at ${worst.width}px`,
-      };
-    }
-
-    const pair = readPair(budget.metric, inputs);
-    if (typeof pair === "string")
-      return { budget: budget.source, status: "skip", detail: pair };
-    const delta = pair.ported - pair.original;
-    const relative =
-      pair.original === 0
-        ? delta === 0
-          ? 0
-          : Math.sign(delta) * Infinity
-        : (delta / pair.original) * 100;
-    const actual = budget.relative ? relative : delta;
-    const change = budget.relative
-      ? `${relative > 0 ? "+" : relative < 0 ? "−" : "±"}${round(Math.abs(relative), 1)}%`
-      : `${delta > 0 ? "+" : delta < 0 ? "−" : "±"}${format(budget.metric, Math.abs(delta))}`;
-    return {
-      budget: budget.source,
-      status: exceeds(actual) ? "fail" : "pass",
-      detail: `${budget.metric}: ${format(budget.metric, pair.original)} → ${format(budget.metric, pair.ported)} (${change})`,
-    };
-  });
+  return budgets.map((budget) => evaluateBudget(budget, inputs));
 }

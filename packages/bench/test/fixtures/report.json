@@ -45,7 +45,6 @@
     "comparable": false,
     "reasons": ["The ported URL is local and the original URL is remote."]
   },
-  "warnings": ["The ported URL is local and the original URL is remote."],
   "skipped": [],
   "errors": [],
   "checks": [
@@ -82,49 +81,43 @@
           "count": 1,
           "transfer": 7000,
           "raw": 21000,
-          "gzip": 7000,
-          "brotli": 7000
+          "size": 7000
         },
         "css": {
           "count": 1,
           "transfer": 20000,
           "raw": 60000,
-          "gzip": 20000,
-          "brotli": 20000
+          "size": 20000
         },
         "js": {
           "count": 17,
           "transfer": 190000,
           "raw": 570000,
-          "gzip": 190000,
-          "brotli": 190000
+          "size": 190000
         },
         "fonts": {
           "count": 1,
           "transfer": 24000,
           "raw": 72000,
-          "gzip": null,
-          "brotli": null
+          "size": 24000
         },
         "images": {
           "count": 0,
           "transfer": 0,
           "raw": 0,
-          "gzip": null,
-          "brotli": null
+          "size": 0
         },
         "other": {
           "count": 0,
           "transfer": 0,
           "raw": 0,
-          "gzip": null,
-          "brotli": null
+          "size": 0
         }
       },
-      "coreGzip": 241000,
       "requests": 3,
       "transfer": 241000,
-      "entries": []
+      "entries": [],
+      "coreSize": 241000
     },
     "ported": {
       "finalUrl": "x",
@@ -137,49 +130,43 @@
           "count": 1,
           "transfer": 7000,
           "raw": 21000,
-          "gzip": 7000,
-          "brotli": 7000
+          "size": 7000
         },
         "css": {
           "count": 1,
           "transfer": 20000,
           "raw": 60000,
-          "gzip": 20000,
-          "brotli": 20000
+          "size": 20000
         },
         "js": {
           "count": 0,
           "transfer": 0,
           "raw": 0,
-          "gzip": 0,
-          "brotli": 0
+          "size": 0
         },
         "fonts": {
           "count": 1,
           "transfer": 24000,
           "raw": 72000,
-          "gzip": null,
-          "brotli": null
+          "size": 24000
         },
         "images": {
           "count": 0,
           "transfer": 0,
           "raw": 0,
-          "gzip": null,
-          "brotli": null
+          "size": 0
         },
         "other": {
           "count": 0,
           "transfer": 0,
           "raw": 0,
-          "gzip": null,
-          "brotli": null
+          "size": 0
         }
       },
-      "coreGzip": 51000,
       "requests": 3,
       "transfer": 51000,
-      "entries": []
+      "entries": [],
+      "coreSize": 51000
     }
   },
   "lighthouse": {
@@ -254,7 +241,6 @@
       "description": null,
       "lang": "en",
       "text": "",
-      "textHash": "",
       "headings": [],
       "domElements": 277,
       "domBytes": 27700,
@@ -269,7 +255,6 @@
       "description": null,
       "lang": "en",
       "text": "",
-      "textHash": "",
       "headings": [],
       "domElements": 180,
       "domBytes": 18000,

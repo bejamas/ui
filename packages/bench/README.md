@@ -19,12 +19,12 @@ Requires Node.js 22.19+ and Google Chrome. Set `CHROME_PATH` or pass
 
 ## What it measures
 
-| Stage        | What it compares                                                                                                                                                                                                                                       |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `lighthouse` | Median performance score, FCP, LCP, TBT, CLS and Speed Index. Runs alternate between the two URLs (original first, then ported first) so drift affects both equally.                                                                                   |
-| `assets`     | Every response of a cold load at 412×823: JavaScript, CSS, HTML, fonts, images and other requests. HTML, CSS and JavaScript are recompressed with gzip level 9 and Brotli quality 11, so a local server without compression and a CDN compare equally. |
-| `quality`    | Visible text, title, description and `lang`, heading outline, axe-core violations, console and page errors, failed requests, DOM size and nested interactive controls.                                                                                 |
-| `visual`     | Visible `data-slot` components matched by slot name, text and order, then compared by size. Top-level header, main, section and footer regions are compared by position and size. Full-page screenshots are pixel-diffed.                              |
+| Stage        | What it compares                                                                                                                                                                                                                 |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lighthouse` | Median performance score, FCP, LCP, TBT, CLS and Speed Index. Runs alternate between the two URLs (original first, then ported first) so drift affects both equally.                                                             |
+| `assets`     | Every response of a cold load at 412×823: JavaScript, CSS, HTML, fonts, images and other requests. HTML, CSS and JavaScript are recompressed with gzip level 9, so a local server without compression and a CDN compare equally. |
+| `quality`    | Visible text, title, description and `lang`, heading outline, axe-core violations, console and page errors, failed requests, DOM size and nested interactive controls.                                                           |
+| `visual`     | Visible `data-slot` components matched by slot name, text and order, then compared by size. Top-level header, main, section and footer regions are compared by position and size. Full-page screenshots are pixel-diffed.        |
 
 Accessibility violations, browser errors and failed requests only fail the run
 when they are new in the ported page. Problems that the original already has are

@@ -76,7 +76,6 @@ function assets(js: number): SideAssets {
       transfer: 100,
       raw: 300,
       gzip: 100,
-      brotli: 90,
     },
     {
       url: "https://a.test/app.js",
@@ -85,7 +84,6 @@ function assets(js: number): SideAssets {
       transfer: js,
       raw: js * 3,
       gzip: js,
-      brotli: js,
     },
   ];
   return {

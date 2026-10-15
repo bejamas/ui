@@ -1,14 +1,13 @@
-import {
-  brotliCompressSync,
-  constants as zlibConstants,
-  gzipSync,
-} from "node:zlib";
+import { gzipSync } from "node:zlib";
 import type { Browser, Request } from "playwright-core";
+import { bothSides } from "../sides";
 import {
   ASSET_CATEGORIES,
   type AssetCategory,
   type AssetEntry,
   type AssetSummary,
+  type AssetsResult,
+  type Paired,
   type SideAssets,
 } from "../types";
 
@@ -37,43 +36,34 @@ export function categorize(
   }
 }
 
-export function compress(body: Buffer) {
-  return {
-    gzip: gzipSync(body, { level: 9 }).byteLength,
-    brotli: brotliCompressSync(body, {
-      params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 11 },
-    }).byteLength,
-  };
-}
+const sum = (
+  entries: readonly AssetEntry[],
+  read: (entry: AssetEntry) => number,
+) => entries.reduce((total, entry) => total + read(entry), 0);
 
 export function summarizeAssets(entries: readonly AssetEntry[]) {
   const categories = Object.fromEntries(
     ASSET_CATEGORIES.map((category) => {
       const files = entries.filter((entry) => entry.category === category);
-      const compressible = COMPRESSIBLE.has(category);
       const summary: AssetSummary = {
         count: files.length,
-        transfer: files.reduce((sum, entry) => sum + entry.transfer, 0),
-        raw: files.reduce((sum, entry) => sum + entry.raw, 0),
-        gzip: compressible
-          ? files.reduce((sum, entry) => sum + (entry.gzip ?? 0), 0)
-          : null,
-        brotli: compressible
-          ? files.reduce((sum, entry) => sum + (entry.brotli ?? 0), 0)
-          : null,
+        transfer: sum(files, (entry) => entry.transfer),
+        raw: sum(files, (entry) => entry.raw),
+        size: COMPRESSIBLE.has(category)
+          ? sum(files, (entry) => entry.gzip ?? 0)
+          : sum(files, (entry) => entry.transfer),
       };
       return [category, summary];
     }),
   ) as Record<AssetCategory, AssetSummary>;
   return {
     categories,
-    coreGzip:
-      categories.html.gzip! +
-      categories.css.gzip! +
-      categories.js.gzip! +
-      categories.fonts.transfer,
+    coreSize: (["html", "css", "js", "fonts"] as const).reduce(
+      (total, category) => total + categories[category].size,
+      0,
+    ),
     requests: entries.length,
-    transfer: entries.reduce((sum, entry) => sum + entry.transfer, 0),
+    transfer: sum(entries, (entry) => entry.transfer),
   };
 }
 
@@ -81,7 +71,15 @@ export function summarizeAssets(entries: readonly AssetEntry[]) {
  * Record every response of a cold page load. Compression is recomputed from
  * the decoded bodies so local and remote servers are measured the same way.
  */
-export async function measureAssets(
+export function measureAssets(
+  browser: Browser,
+  urls: Paired<string>,
+  timeout: number,
+): Promise<AssetsResult> {
+  return bothSides((side) => measureSide(browser, urls[side], timeout));
+}
+
+async function measureSide(
   browser: Browser,
   url: string,
   timeout: number,
@@ -111,16 +109,15 @@ export async function measureAssets(
             request.sizes(),
             response.body().catch(() => null),
           ]);
-          const raw = body?.byteLength ?? 0;
-          const compressed =
-            body && COMPRESSIBLE.has(category) ? compress(body) : null;
           return {
             url: request.url(),
             category,
             transfer: sizes.responseBodySize,
-            raw,
-            gzip: compressed?.gzip ?? null,
-            brotli: compressed?.brotli ?? null,
+            raw: body?.byteLength ?? 0,
+            gzip:
+              body && COMPRESSIBLE.has(category)
+                ? gzipSync(body, { level: 9 }).byteLength
+                : null,
           };
         })().catch(() => null),
       );

@@ -1,15 +1,18 @@
 import kleur from "kleur";
-import { truncate } from "./format";
 import {
-  COMPARISON_HEADINGS,
-  VISUAL_HEADINGS,
-  assetRows,
-  lighthouseRows,
-  qualityRows,
+  assetsSection,
+  budgetItems,
+  componentDifferences,
+  lighthouseSection,
+  qualitySection,
+  stageItems,
   unmatchedSlots,
-  visualRows,
-  type ComparisonRow,
-} from "./report";
+  visualSection,
+  type Cell,
+  type Section,
+  type StatusItem,
+  type Table,
+} from "./sections";
 import type { BenchReport, CheckStatus } from "./types";
 
 const STATUS_SYMBOL: Record<CheckStatus, string> = {
@@ -40,13 +43,17 @@ function wrap(text: string, width: number) {
   return lines;
 }
 
-function columns(
-  headings: string[],
-  rows: string[][],
-  align: ("l" | "r")[] = [],
-) {
+const colorCell = (cell: Cell) =>
+  typeof cell === "string"
+    ? cell
+    : cell.tone === "worse"
+      ? kleur.red(cell.text)
+      : kleur.green(cell.text);
+
+function columns({ headings, align, rows }: Table) {
+  const cells = rows.map((row) => row.map(colorCell));
   const widths = headings.map((_, index) =>
-    Math.max(...[headings, ...rows].map((row) => visibleLength(row[index]!))),
+    Math.max(...[headings, ...cells].map((row) => visibleLength(row[index]!))),
   );
   const line = (row: string[]) =>
     INDENT +
@@ -57,30 +64,11 @@ function columns(
       })
       .join("  ")
       .trimEnd();
-  return [kleur.dim(line(headings)), ...rows.map(line)].join("\n");
-}
-
-function comparisonColumns(label: string, rows: ComparisonRow[]) {
-  return columns(
-    [label, ...COMPARISON_HEADINGS],
-    rows.map(({ cells, trend }) => {
-      const change =
-        trend === 1
-          ? kleur.red(cells[3]!)
-          : trend === -1
-            ? kleur.green(cells[3]!)
-            : cells[3]!;
-      return [cells[0]!, cells[1]!, cells[2]!, change];
-    }),
-    ["l", "r", "r", "r"],
-  );
+  return [kleur.dim(line(headings)), ...cells.map(line)].join("\n");
 }
 
 /** Label/detail list where details wrap to the terminal width. */
-function statusList(
-  items: { status: CheckStatus; label: string; detail: string }[],
-  width: number,
-) {
+function statusList(items: readonly StatusItem[], width: number) {
   const labelWidth = Math.max(...items.map((item) => item.label.length));
   const detailWidth = Math.max(30, width - INDENT.length - labelWidth - 4);
   return items
@@ -93,126 +81,72 @@ function statusList(
     .join("\n");
 }
 
-function heading(title: string, note?: string) {
-  return kleur.bold(title) + (note ? kleur.dim(` · ${note}`) : "");
+function heading(title: string, notes: readonly string[] = []) {
+  return (
+    kleur.bold(title) +
+    (notes.length > 0 ? kleur.dim(` · ${notes.join(" · ")}`) : "")
+  );
 }
+
+const sectionBlock = ({ title, notes, table }: Section) =>
+  `${heading(title, notes)}\n${columns(table)}`;
 
 /** Everything a reader needs from the report, formatted for a terminal. */
 export function renderSummary(
   report: BenchReport,
   width = process.stdout.columns || 100,
 ) {
-  const sections: string[] = [];
   const { original, ported } = report.targets;
-  sections.push(
+  const sections = [
     `${report.passed ? kleur.green().bold("PASS") : kleur.red().bold("FAIL")}  ${original.finalUrl} ${kleur.dim("→")} ${ported.finalUrl}`,
-  );
-
-  sections.push(`${heading("Checks")}\n${statusList(report.checks, width)}`);
-
-  if (report.budgets.length > 0) {
-    sections.push(
-      `${heading("Budgets")}\n${statusList(
-        report.budgets.map((budget) => ({ ...budget, label: budget.budget })),
-        width,
-      )}`,
-    );
-  }
-
-  const problems = [
-    ...report.errors.map((error) => ({
-      status: "fail" as const,
-      label: error.stage,
-      detail: error.message,
-    })),
-    ...report.skipped.map((skip) => ({
-      status: "skip" as const,
-      label: skip.stage,
-      detail: skip.reason,
-    })),
+    `${heading("Checks")}\n${statusList(report.checks, width)}`,
   ];
-  if (problems.length > 0) {
-    sections.push(`${heading("Stages")}\n${statusList(problems, width)}`);
-  }
 
-  if (report.lighthouse) {
-    const { lighthouse } = report;
-    const notes = [
-      `median of ${lighthouse.runs} run${lighthouse.runs === 1 ? "" : "s"}`,
-      ...(report.comparability.comparable ? [] : ["timings not comparable"]),
-    ];
-    sections.push(
-      `${heading(`Lighthouse ${lighthouse.formFactor}`, notes.join(" · "))}\n${comparisonColumns("Metric", lighthouseRows(report))}`,
-    );
-  }
+  const budgets = budgetItems(report);
+  if (budgets.length > 0)
+    sections.push(`${heading("Budgets")}\n${statusList(budgets, width)}`);
+  const stages = stageItems(report);
+  if (stages.length > 0)
+    sections.push(`${heading("Stages")}\n${statusList(stages, width)}`);
 
-  if (report.assets) {
-    const { viewport } = report.assets.original;
-    sections.push(
-      `${heading("Route assets", `cold load at ${viewport.width}×${viewport.height}`)}\n${comparisonColumns("Asset", assetRows(report))}`,
-    );
-  }
+  const { lighthouse, assets, visual, quality, comparability } = report;
+  if (lighthouse)
+    sections.push(sectionBlock(lighthouseSection(lighthouse, comparability)));
+  if (assets) sections.push(sectionBlock(assetsSection(assets)));
 
-  if (report.visual) {
-    const { visual } = report;
-    const lines = [
-      heading("Visual parity", `within ${visual.tolerance}px`),
-      columns(VISUAL_HEADINGS, visualRows(report), [
-        "l",
-        "r",
-        "r",
-        "r",
-        "r",
-        "r",
-      ]),
-    ];
+  if (visual) {
+    const lines = [sectionBlock(visualSection(visual))];
     for (const result of visual.widths) {
-      if (result.differences.length > 0) {
-        lines.push(
-          "",
-          `${INDENT}Component differences at ${result.width}px${result.differences.length > MAX_COMPONENT_DIFFERENCES ? ` (first ${MAX_COMPONENT_DIFFERENCES} of ${result.differences.length})` : ""}`,
-          columns(
-            ["Component", "Text", "Original", "Ported"],
-            result.differences
-              .slice(0, MAX_COMPONENT_DIFFERENCES)
-              .map((difference) => [
-                difference.slot,
-                truncate(difference.text, 32),
-                difference.original.join(" × "),
-                difference.ported.join(" × "),
-              ]),
-          ),
-        );
-      }
-    }
-    // Unmatched slots explain low match counts; widths usually agree.
-    const first = visual.widths[0];
-    if (first && first.matchedElements < first.originalElements) {
+      if (result.differences.length === 0) continue;
+      const shown =
+        result.differences.length > MAX_COMPONENT_DIFFERENCES
+          ? ` (first ${MAX_COMPONENT_DIFFERENCES} of ${result.differences.length})`
+          : "";
       lines.push(
         "",
-        ...wrap(
-          `Only in original: ${unmatchedSlots(first.unmatchedOriginal) || "none"}`,
-          width - INDENT.length,
-        ).map((line) => INDENT + kleur.dim(line)),
-        ...wrap(
-          `Only in ported: ${unmatchedSlots(first.unmatchedPorted) || "none"}`,
-          width - INDENT.length,
-        ).map((line) => INDENT + kleur.dim(line)),
+        `${INDENT}Component differences at ${result.width}px${shown}`,
+        columns(
+          componentDifferences(result, {
+            limit: MAX_COMPONENT_DIFFERENCES,
+            textLength: 32,
+          }),
+        ),
+      );
+    }
+    // Unmatched slots explain low match counts; widths usually agree.
+    const unmatched = visual.widths[0] ? unmatchedSlots(visual.widths[0]) : [];
+    if (unmatched.length > 0) {
+      lines.push(
+        "",
+        ...unmatched
+          .flatMap((line) => wrap(line, width - INDENT.length))
+          .map((line) => INDENT + kleur.dim(line)),
       );
     }
     sections.push(lines.join("\n"));
   }
 
-  if (report.quality) {
-    const { viewport } = report.quality;
-    sections.push(
-      `${heading("Page quality", `${viewport.width}×${viewport.height}`)}\n${columns(
-        ["Measure", "Original", "Ported"],
-        qualityRows(report),
-        ["l", "r", "r"],
-      )}`,
-    );
-  }
+  if (quality) sections.push(sectionBlock(qualitySection(quality)));
 
   return sections.join("\n\n");
 }

@@ -1,34 +1,23 @@
 import { describe, expect, test } from "bun:test";
+import { Command } from "commander";
 import benchPackage from "../../bench/package.json";
-import {
-  buildPinnedBenchInvocation,
-  extractBenchArgs,
-  PINNED_BENCH_EXEC_PREFIX,
-  PINNED_BENCH_VERSION,
-} from "../src/utils/bench-cli";
+import { bench, PINNED_BENCH } from "../src/commands/bench";
 
 describe("bench command", () => {
   test("pins the workspace @bejamas/bench version", () => {
-    expect(PINNED_BENCH_VERSION).toBe(benchPackage.version);
+    expect(PINNED_BENCH.version).toBe(benchPackage.version);
   });
 
   test("runs bejamas-bench through an isolated npm exec", () => {
     expect(
-      buildPinnedBenchInvocation([
-        "--original",
-        "a.test",
-        "--ported",
-        "b.test",
-        "--runs",
-        "3",
-      ]),
+      PINNED_BENCH.invocation(["--original", "a.test", "--ported", "b.test"]),
     ).toEqual({
       cmd: process.platform === "win32" ? "npm.cmd" : "npm",
       args: [
         "exec",
         "--yes",
         "--prefix",
-        PINNED_BENCH_EXEC_PREFIX,
+        PINNED_BENCH.execPrefix,
         `--package=@bejamas/bench@${benchPackage.version}`,
         "--",
         "bejamas-bench",
@@ -36,33 +25,32 @@ describe("bench command", () => {
         "a.test",
         "--ported",
         "b.test",
-        "--runs",
-        "3",
       ],
+      source: "isolated",
     });
   });
 
-  test("passes every argument after the subcommand through", () => {
-    expect(
-      extractBenchArgs([
-        "bench",
-        "--original",
-        "localhost:3000",
-        "--ported",
-        "localhost:4321",
-        "--help",
-        "--fail-on",
-        "lcp>10%",
-      ]),
-    ).toEqual([
+  test("passes every argument after the subcommand through", async () => {
+    let received: string[] = [];
+    const program = new Command()
+      .version("1.0.0", "-v, --version")
+      .enablePositionalOptions()
+      .addCommand(
+        bench.action((args: string[]) => {
+          received = args;
+        }),
+      );
+    const args = [
       "--original",
       "localhost:3000",
       "--ported",
       "localhost:4321",
       "--help",
+      "-v",
       "--fail-on",
       "lcp>10%",
-    ]);
-    expect(extractBenchArgs(["add", "button"])).toEqual([]);
+    ];
+    await program.parseAsync(["bench", ...args], { from: "user" });
+    expect(received).toEqual(args);
   });
 });

@@ -40,7 +40,6 @@ describe("assets", () => {
       transfer,
       raw: transfer * 2,
       gzip,
-      brotli: gzip,
     });
     const summary = summarizeAssets([
       entry("html", 50, 40),
@@ -54,11 +53,11 @@ describe("assets", () => {
       count: 2,
       transfer: 500,
       raw: 1000,
-      gzip: 400,
-      brotli: 400,
+      size: 400,
     });
-    expect(summary.categories.fonts.gzip).toBeNull();
-    expect(summary.coreGzip).toBe(40 + 80 + 400 + 1000);
+    expect(summary.categories.fonts.size).toBe(1000);
+    expect(summary.categories.images.size).toBe(5000);
+    expect(summary.coreSize).toBe(40 + 80 + 400 + 1000);
     expect(summary.requests).toBe(6);
     expect(summary.transfer).toBe(6650);
   });
@@ -192,7 +191,6 @@ describe("comparePixels", () => {
       png(10, 12, (x, y) => (x < 5 && y < 2 ? 0 : 255)),
     );
     expect(comparison).toEqual({
-      diff: null,
       comparedWidth: 10,
       comparedHeight: 10,
       heightDelta: 2,
@@ -210,7 +208,6 @@ function side(overrides: Partial<SideQuality> = {}): SideQuality {
     description: "About us",
     lang: "en",
     text: "Hello world",
-    textHash: "",
     headings: [{ level: 1, text: "Hello" }],
     domElements: 10,
     domBytes: 100,

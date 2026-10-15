@@ -1,11 +1,16 @@
-import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { readFileSync } from "node:fs";
 import type { Browser } from "playwright-core";
 import { loadPage } from "../browser";
-import type { SideQuality, TextDifference } from "../types";
+import { bothSides } from "../sides";
+import type {
+  Paired,
+  QualityResult,
+  SideQuality,
+  TextDifference,
+} from "../types";
 
-export const QUALITY_VIEWPORT = { width: 1280, height: 800 };
+const QUALITY_VIEWPORT = { width: 1280, height: 800 };
 
 const require = createRequire(import.meta.url);
 let axeSource: string | undefined;
@@ -48,6 +53,21 @@ export function compareText(original: string, ported: string): TextDifference {
 }
 
 export async function measureQuality(
+  browser: Browser,
+  urls: Paired<string>,
+  timeout: number,
+): Promise<QualityResult> {
+  const sides = await bothSides((side) =>
+    measureSide(browser, urls[side], timeout),
+  );
+  return {
+    viewport: QUALITY_VIEWPORT,
+    ...sides,
+    text: compareText(sides.original.text, sides.ported.text),
+  };
+}
+
+async function measureSide(
   browser: Browser,
   url: string,
   timeout: number,
@@ -120,7 +140,6 @@ export async function measureQuality(
     return {
       finalUrl: page.url(),
       ...data,
-      textHash: createHash("sha256").update(data.text).digest("hex"),
       violations: violations.sort((a, b) => a.id.localeCompare(b.id)),
       errors,
       failedRequests: [...new Set(failedRequests)],
