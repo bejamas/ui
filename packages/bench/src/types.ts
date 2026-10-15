@@ -101,6 +101,12 @@ export interface Heading {
   text: string;
 }
 
+export interface FailedRequest {
+  url: string;
+  /** An HTTP status, "blocked by CORS" or Chrome's network error. */
+  reason: string;
+}
+
 export interface SideQuality {
   finalUrl: string;
   title: string;
@@ -113,7 +119,7 @@ export interface SideQuality {
   nestedInteractiveControls: number;
   violations: AxeViolation[];
   errors: string[];
-  failedRequests: string[];
+  failedRequests: FailedRequest[];
 }
 
 export interface TextDifference {
@@ -173,6 +179,7 @@ export interface LandmarkDifference {
 }
 
 export interface GeometryComparison {
+  /** Named `data-slot` elements on each side; generic part names are left out. */
   originalElements: number;
   portedElements: number;
   matchedElements: number;

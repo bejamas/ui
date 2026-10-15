@@ -183,7 +183,10 @@ export function renderMarkdown(report: BenchReport, outDir: string) {
             .join("\n"),
         );
       }
-      const problems = [...side.errors, ...side.failedRequests];
+      const problems = [
+        ...side.errors,
+        ...side.failedRequests.map(({ url, reason }) => `${url} (${reason})`),
+      ];
       if (problems.length > 0) {
         push(
           `### Browser errors (${label})`,

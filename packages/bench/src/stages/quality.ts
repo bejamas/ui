@@ -3,12 +3,9 @@ import { readFileSync } from "node:fs";
 import type { Browser } from "playwright-core";
 import { loadPage } from "../browser";
 import { bothSides } from "../sides";
-import type {
-  Paired,
-  QualityResult,
-  SideQuality,
-  TextDifference,
-} from "../types";
+import { compareText } from "../text";
+import { createProblemLog } from "./problems";
+import type { Paired, QualityResult, SideQuality } from "../types";
 
 const QUALITY_VIEWPORT = { width: 1280, height: 800 };
 
@@ -17,39 +14,6 @@ let axeSource: string | undefined;
 function readAxeSource() {
   axeSource ??= readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
   return axeSource;
-}
-
-const CONTEXT_WORDS = 12;
-
-/** Locate the first region where the visible text of the two pages differs. */
-export function compareText(original: string, ported: string): TextDifference {
-  const a = original.split(" ").filter(Boolean);
-  const b = ported.split(" ").filter(Boolean);
-  const result: TextDifference = {
-    identical: original === ported,
-    originalWords: a.length,
-    portedWords: b.length,
-  };
-  if (result.identical) return result;
-
-  let start = 0;
-  while (start < a.length && start < b.length && a[start] === b[start]) start++;
-  let endA = a.length;
-  let endB = b.length;
-  while (endA > start && endB > start && a[endA - 1] === b[endB - 1]) {
-    endA--;
-    endB--;
-  }
-  const excerpt = (words: string[], end: number) => {
-    const from = Math.max(0, start - CONTEXT_WORDS);
-    const to = Math.min(
-      words.length,
-      Math.max(end, start) + CONTEXT_WORDS,
-      from + 80,
-    );
-    return `${from > 0 ? "… " : ""}${words.slice(from, to).join(" ")}${to < words.length ? " …" : ""}`;
-  };
-  return { ...result, original: excerpt(a, endA), ported: excerpt(b, endB) };
 }
 
 export async function measureQuality(
@@ -81,21 +45,20 @@ async function measureSide(
   });
   try {
     const page = await context.newPage();
-    const errors: string[] = [];
-    const failedRequests: string[] = [];
+    const problems = createProblemLog();
     page.on("console", (message) => {
-      if (message.type() === "error") errors.push(message.text());
+      if (message.type() === "error") problems.consoleError(message.text());
     });
-    page.on("pageerror", (error) => errors.push(error.message));
-    page.on("requestfailed", (request) => {
-      failedRequests.push(
-        `${request.url()} (${request.failure()?.errorText ?? "failed"})`,
-      );
-    });
-    page.on("response", (response) => {
-      if (response.status() >= 400)
-        failedRequests.push(`${response.url()} (HTTP ${response.status()})`);
-    });
+    page.on("pageerror", (error) => problems.pageError(error.message));
+    page.on("requestfailed", (request) =>
+      problems.requestFailed(
+        request.url(),
+        request.failure()?.errorText ?? "failed",
+      ),
+    );
+    page.on("response", (response) =>
+      problems.response(response.url(), response.status()),
+    );
 
     await loadPage(page, url, timeout);
 
@@ -141,8 +104,7 @@ async function measureSide(
       finalUrl: page.url(),
       ...data,
       violations: violations.sort((a, b) => a.id.localeCompare(b.id)),
-      errors,
-      failedRequests: [...new Set(failedRequests)],
+      ...problems.result(),
     };
   } finally {
     await context.close();

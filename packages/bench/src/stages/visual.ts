@@ -142,6 +142,16 @@ async function capture(
   }
 }
 
+/**
+ * Part names that don't identify a component (PrimeReact's root, outer and
+ * inner wrappers). Matching on them pairs unrelated elements, so they are left
+ * out of the comparison and the unmatched lists.
+ */
+const GENERIC_SLOTS = new Set(["root", "outer", "inner"]);
+
+const named = (elements: readonly SlotElement[]) =>
+  elements.filter((element) => !GENERIC_SLOTS.has(element.slot));
+
 const slotKey = (element: SlotElement) =>
   `${element.slot}:${element.text.replace(/\s/g, "")}`;
 
@@ -153,17 +163,20 @@ function countBySlot(elements: readonly SlotElement[]) {
 }
 
 /**
- * Match `data-slot` elements by slot name, normalized text and occurrence
- * order, then compare their sizes. Framework wrappers without a matching
- * element on the other side are reported but not treated as differences.
+ * Match named `data-slot` elements by slot name, normalized text and
+ * occurrence order, then compare their sizes. Framework wrappers without a
+ * matching element on the other side are reported but not treated as
+ * differences.
  */
 export function compareGeometry(
   original: Capture,
   ported: Capture,
   tolerance: number,
 ): GeometryComparison {
+  const originalElements = named(original.elements);
+  const portedElements = named(ported.elements);
   const buckets = new Map<string, SlotElement[]>();
-  for (const element of ported.elements) {
+  for (const element of portedElements) {
     const key = slotKey(element);
     if (!buckets.has(key)) buckets.set(key, []);
     buckets.get(key)!.push(element);
@@ -171,7 +184,7 @@ export function compareGeometry(
   const differences: SlotDifference[] = [];
   const unmatchedOriginal: SlotElement[] = [];
   let matchedElements = 0;
-  for (const element of original.elements) {
+  for (const element of originalElements) {
     const other = buckets.get(slotKey(element))?.shift();
     if (!other) {
       unmatchedOriginal.push(element);
@@ -223,8 +236,8 @@ export function compareGeometry(
   }
 
   return {
-    originalElements: original.elements.length,
-    portedElements: ported.elements.length,
+    originalElements: originalElements.length,
+    portedElements: portedElements.length,
     matchedElements,
     differences,
     unmatchedOriginal: countBySlot(unmatchedOriginal),

@@ -30,6 +30,11 @@ Accessibility violations, browser errors and failed requests only fail the run
 when they are new in the ported page. Problems that the original already has are
 reported as warnings.
 
+Each broken resource is reported once, with its HTTP status, a CORS block or
+Chrome's network error. Loads the browser cancels, such as link prefetches, are
+not failures. Generic `data-slot` part names (`root`, `outer`, `inner`) are left
+out of component matching because they don't identify a component.
+
 ## Production builds only
 
 Development servers ship unminified code and HMR clients. When a Vite, Astro,

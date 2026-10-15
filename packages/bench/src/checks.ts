@@ -1,7 +1,9 @@
+import { compareText } from "./text";
 import type {
   Check,
   CheckStatus,
   Comparability,
+  FailedRequest,
   QualityResult,
   SideQuality,
   VisualResult,
@@ -35,16 +37,33 @@ function withoutOrigin(value: string, finalUrl: string) {
   return value.split(origin).join("");
 }
 
-function newEntries(
+/** Entries the port has and the original doesn't, compared without origins. */
+function newEntries<T>(
   original: SideQuality,
   ported: SideQuality,
-  key: "errors" | "failedRequests",
+  read: (side: SideQuality) => readonly T[],
+  key: (value: T) => string,
 ) {
-  const seen = new Set(
-    original[key].map((value) => withoutOrigin(value, original.finalUrl)),
-  );
-  return ported[key].filter(
-    (value) => !seen.has(withoutOrigin(value, ported.finalUrl)),
+  const keyOf = (side: SideQuality) => (value: T) =>
+    withoutOrigin(key(value), side.finalUrl);
+  const seen = new Set(read(original).map(keyOf(original)));
+  return read(ported).filter((value) => !seen.has(keyOf(ported)(value)));
+}
+
+const describeRequest = ({ url, reason }: FailedRequest) =>
+  `${url} (${reason})`;
+
+/** One line per host and reason, so a broken CDN reads as one problem. */
+function groupFailures(requests: readonly FailedRequest[]) {
+  const groups = new Map<string, FailedRequest[]>();
+  for (const request of requests) {
+    const key = `${new URL(request.url).host} ${request.reason}`;
+    groups.set(key, [...(groups.get(key) ?? []), request]);
+  }
+  return [...groups.values()].map((group) =>
+    group.length === 1
+      ? describeRequest(group[0]!)
+      : `${group.length} requests to ${new URL(group[0]!.url).host} (${group[0]!.reason})`,
   );
 }
 
@@ -104,9 +123,26 @@ export function qualityChecks({
   );
 
   const newProblems = [
-    ...newEntries(original, ported, "errors"),
-    ...newEntries(original, ported, "failedRequests"),
+    ...newEntries(
+      original,
+      ported,
+      (side) => side.errors,
+      (error) => error,
+    ),
+    ...groupFailures(
+      newEntries(
+        original,
+        ported,
+        (side) => side.failedRequests,
+        describeRequest,
+      ),
+    ),
   ];
+  // The report keeps the long excerpt; the check names just the change.
+  const difference = compareText(original.text, ported.text, {
+    context: 4,
+    maxWords: 20,
+  });
   const portedProblems = ported.errors.length + ported.failedRequests.length;
 
   return [
@@ -117,7 +153,7 @@ export function qualityChecks({
         ? ["pass", `Identical (${text.portedWords} words).`]
         : [
             "fail",
-            `Differs: ${text.originalWords} → ${text.portedWords} words. First difference: “${text.original}” vs “${text.ported}”.`,
+            `Differs: ${text.originalWords} → ${text.portedWords} words. First difference: “${difference.original}” vs “${difference.ported}”.`,
           ],
     ),
     check(
@@ -192,12 +228,12 @@ export function visualChecks(visual: VisualResult): Check[] {
         result.differences.length > 0 || result.landmarkDifferences.length > 0
           ? [
               "fail",
-              `${result.differences.length} of ${result.matchedElements} matched components and ${result.landmarkDifferences.length} page regions differ by more than ${visual.tolerance}px.`,
+              `${result.matchedElements > 0 ? `${result.differences.length} of ${result.matchedElements} matched components and ` : ""}${result.landmarkDifferences.length} page regions differ by more than ${visual.tolerance}px.`,
             ]
           : result.matchedElements === 0
             ? [
                 "warn",
-                "No data-slot components matched; only page regions were compared.",
+                `No data-slot components matched (${result.originalElements} named in the original, ${result.portedElements} in the port); only page regions were compared.`,
               ]
             : [
                 "pass",

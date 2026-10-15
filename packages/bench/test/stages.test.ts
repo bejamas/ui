@@ -3,7 +3,8 @@ import { PNG } from "pngjs";
 import { qualityChecks, visualChecks } from "../src/checks";
 import { categorize, summarizeAssets } from "../src/stages/assets";
 import { roundOrder } from "../src/stages/lighthouse";
-import { compareText } from "../src/stages/quality";
+import { compareText } from "../src/text";
+import { createProblemLog } from "../src/stages/problems";
 import { comparePixels, compareGeometry } from "../src/stages/visual";
 import type {
   AssetEntry,
@@ -90,6 +91,18 @@ describe("compareText", () => {
     expect(result.ported).toBe("one two 3 four five");
   });
 
+  test("takes shorter context for check details", () => {
+    const words = Array.from({ length: 100 }, (_, index) => `w${index}`);
+    const changed = [...words];
+    changed[50] = "changed";
+    const result = compareText(words.join(" "), changed.join(" "), {
+      context: 4,
+      maxWords: 20,
+    });
+    expect(result.original).toBe("… w46 w47 w48 w49 w50 w51 w52 w53 w54 …");
+    expect(result.ported).toBe("… w46 w47 w48 w49 changed w51 w52 w53 w54 …");
+  });
+
   test("truncates long context", () => {
     const words = Array.from({ length: 100 }, (_, index) => `w${index}`);
     const changed = [...words];
@@ -123,6 +136,27 @@ const capture = (
 });
 
 describe("compareGeometry", () => {
+  test("leaves generic part names out of matching", () => {
+    const wrappers = [
+      { slot: "root", text: "Buy now", width: 100, height: 40 },
+      { slot: "inner", text: "", width: 10, height: 10 },
+    ];
+    const result = compareGeometry(
+      capture("original", { elements: wrappers }),
+      capture("ported", {
+        elements: [{ slot: "button", text: "Buy now", width: 100, height: 40 }],
+      }),
+      0.5,
+    );
+    expect(result).toMatchObject({
+      originalElements: 0,
+      portedElements: 1,
+      matchedElements: 0,
+      unmatchedOriginal: {},
+      unmatchedPorted: { button: 1 },
+    });
+  });
+
   test("matches components by slot, text and occurrence", () => {
     const ported = capture("ported", {
       elements: [
@@ -254,7 +288,9 @@ describe("qualityChecks", () => {
     };
     const original = side({
       violations: [shared],
-      failedRequests: ["http://localhost:3000/missing.png (HTTP 404)"],
+      failedRequests: [
+        { url: "http://localhost:3000/missing.png", reason: "HTTP 404" },
+      ],
     });
     const ported = side({
       finalUrl: "http://localhost:4321/",
@@ -269,7 +305,9 @@ describe("qualityChecks", () => {
           nodes: 1,
         },
       ],
-      failedRequests: ["http://localhost:4321/missing.png (HTTP 404)"],
+      failedRequests: [
+        { url: "http://localhost:4321/missing.png", reason: "HTTP 404" },
+      ],
       nestedInteractiveControls: 1,
     });
     const checks = qualityChecks({
@@ -317,4 +355,55 @@ test("visualChecks warns when no components matched", () => {
       ["pixels-412", "pass"],
     ],
   );
+});
+
+describe("problem log", () => {
+  test("records each broken resource once with its most specific reason", () => {
+    const log = createProblemLog();
+    const svg = "https://cdn.test/icon.svg";
+    log.requestFailed(svg, "net::ERR_FAILED");
+    log.consoleError(
+      `Access to image at '${svg}' from origin 'http://localhost:4321' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.`,
+    );
+    log.consoleError("Failed to load resource: net::ERR_FAILED");
+    log.response("http://localhost:4321/missing.js", 404);
+    log.requestFailed("http://localhost:4321/missing.js", "net::ERR_ABORTED");
+    log.requestFailed(
+      "http://localhost:4321/about?_rsc=abc",
+      "net::ERR_ABORTED",
+    );
+    log.consoleError(
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    );
+    log.pageError("boom");
+    log.consoleError("boom");
+    expect(log.result()).toEqual({
+      errors: ["boom"],
+      failedRequests: [
+        { url: svg, reason: "blocked by CORS" },
+        { url: "http://localhost:4321/missing.js", reason: "HTTP 404" },
+      ],
+    });
+  });
+});
+
+test("the errors check groups new failures by host and reason", () => {
+  const original = side();
+  const ported = side({
+    finalUrl: "http://localhost:4321/",
+    failedRequests: [1, 2, 3].map((index) => ({
+      url: `https://cdn.test/${index}.svg`,
+      reason: "blocked by CORS",
+    })),
+  });
+  const errors = qualityChecks({
+    viewport: { width: 1, height: 1 },
+    original,
+    ported,
+    text: compareText(original.text, ported.text),
+  }).find((check) => check.id === "errors");
+  expect(errors).toMatchObject({
+    status: "fail",
+    detail: "3 requests to cdn.test (blocked by CORS)",
+  });
 });

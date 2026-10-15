@@ -55,11 +55,14 @@ export async function runBench(
   let targets: Paired<Target>;
   try {
     log("Checking both URLs");
-    const [original, ported] = await Promise.all([
+    // Settle both so the error is always the original's first when both fail.
+    const [original, ported] = await Promise.allSettled([
       inspect("original"),
       inspect("ported"),
     ]);
-    targets = { original, ported };
+    if (original.status === "rejected") throw original.reason;
+    if (ported.status === "rejected") throw ported.reason;
+    targets = { original: original.value, ported: ported.value };
   } catch (error) {
     await browser.close();
     throw error;
