@@ -59,19 +59,16 @@ export function resolveDesignSystemConfig(
     }
   }
 
-  const baseColor = options.baseColor ?? DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor;
-
+  // The default theme is the bejamas brand color over the default base. A base
+  // color the user asks for, the default one included, brings its own theme.
   return normalizeDesignSystemConfig(
     designSystemConfigSchema.parse({
       ...DEFAULT_DESIGN_SYSTEM_CONFIG,
       template: options.template ?? DEFAULT_DESIGN_SYSTEM_CONFIG.template,
       rtl: options.rtl ?? false,
       rtlLanguage,
-      baseColor,
-      theme:
-        baseColor === DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor
-          ? DEFAULT_DESIGN_SYSTEM_CONFIG.theme
-          : baseColor,
+      baseColor: options.baseColor ?? DEFAULT_DESIGN_SYSTEM_CONFIG.baseColor,
+      theme: options.baseColor ?? DEFAULT_DESIGN_SYSTEM_CONFIG.theme,
     }),
   );
 }
@@ -280,7 +277,7 @@ export const init = new Command()
   )
   .option(
     "-b, --base-color <base-color>",
-    "the base color to use. (neutral, gray, zinc, stone, slate)",
+    `the base color to use. (${BASE_COLORS.map((color) => color.name).join(", ")})`,
     undefined,
   )
   .option("-p, --preset <preset>", "the encoded create preset to use")

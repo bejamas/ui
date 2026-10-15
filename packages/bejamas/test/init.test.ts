@@ -7,6 +7,7 @@ import {
   resolveDesignSystemConfig,
   shouldReinstallExistingComponents,
 } from "../src/commands/init";
+import { BASE_COLORS } from "../src/registry/constants";
 
 function createInitLikeCommand() {
   return new Command()
@@ -58,6 +59,42 @@ describe("init RTL language support", () => {
 
     expect(config.style).toBe("lyra");
     expect(config.radius).toBe("none");
+  });
+
+  test("an explicit base color brings its own theme, the default one included", () => {
+    const options = {
+      preset: undefined,
+      template: "astro" as const,
+      rtl: false,
+      lang: undefined,
+    };
+    expect(
+      resolveDesignSystemConfig({ ...options, baseColor: undefined }).theme,
+    ).toBe("bejamas-blue");
+    expect(
+      resolveDesignSystemConfig({ ...options, baseColor: "neutral" }),
+    ).toMatchObject({ baseColor: "neutral", theme: "neutral" });
+    expect(
+      resolveDesignSystemConfig({ ...options, baseColor: "mauve" }),
+    ).toMatchObject({ baseColor: "mauve", theme: "mauve" });
+  });
+
+  test("offers only base colors the design system has themes for", () => {
+    const names = BASE_COLORS.map((color) => color.name);
+    expect(names).toContain("neutral");
+    expect(names).toContain("mauve");
+    expect(names).not.toContain("slate");
+    for (const baseColor of names) {
+      expect(() =>
+        resolveDesignSystemConfig({
+          baseColor,
+          preset: undefined,
+          template: "astro",
+          rtl: false,
+          lang: undefined,
+        }),
+      ).not.toThrow();
+    }
   });
 
   test("falls back to Arabic when RTL is disabled", () => {

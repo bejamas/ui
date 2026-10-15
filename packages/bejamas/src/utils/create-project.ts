@@ -75,7 +75,9 @@ function resolvePackageMetadataPath() {
 
 function readPackageMetadata(): BejamasPackageMetadata {
   try {
-    return fs.readJsonSync(resolvePackageMetadataPath()) as BejamasPackageMetadata;
+    return fs.readJsonSync(
+      resolvePackageMetadataPath(),
+    ) as BejamasPackageMetadata;
   } catch {
     return {};
   }
@@ -97,7 +99,10 @@ async function copyTemplateIntoProject(
 }
 
 export function resolveRemoteTemplateRefs(
-  metadata: Pick<BejamasPackageMetadata, "gitHead" | "version"> = BEJAMAS_PACKAGE_METADATA,
+  metadata: Pick<
+    BejamasPackageMetadata,
+    "gitHead" | "version"
+  > = BEJAMAS_PACKAGE_METADATA,
   env: NodeJS.ProcessEnv = process.env,
 ) {
   const refs = [
@@ -126,8 +131,7 @@ function getGitHubRequestHeaders(env: NodeJS.ProcessEnv = process.env) {
     "User-Agent": `bejamas/${BEJAMAS_PACKAGE_METADATA.version ?? "dev"}`,
   };
 
-  const token =
-    env.BEJAMAS_GITHUB_TOKEN?.trim() || env.GITHUB_TOKEN?.trim();
+  const token = env.BEJAMAS_GITHUB_TOKEN?.trim() || env.GITHUB_TOKEN?.trim();
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -187,7 +191,11 @@ async function copyTemplateFromGitHub(
 
     try {
       const extractedRoot = await downloadTemplateArchive(ref, tempDir);
-      const templateSource = path.join(extractedRoot, "templates", templateDirName);
+      const templateSource = path.join(
+        extractedRoot,
+        "templates",
+        templateDirName,
+      );
 
       if (!(await fs.pathExists(templateSource))) {
         throw new Error(`Template templates/${templateDirName} was not found.`);
@@ -214,28 +222,58 @@ async function copyTemplateFromGitHub(
   );
 }
 
-async function applyLocalPackageOverrides(projectPath: string) {
-  const bejamasPackageOverride = process.env.BEJAMAS_PACKAGE_OVERRIDE;
+/** A valid npm package name derived from the project's folder name. */
+function toPackageName(projectName: string) {
+  return (
+    path
+      .basename(projectName)
+      .toLowerCase()
+      .replace(/[^a-z0-9._~-]+/g, "-")
+      .replace(/^[._-]+|-+$/g, "") || "my-app"
+  );
+}
 
-  if (!bejamasPackageOverride) {
-    return;
-  }
-
+/**
+ * Fit the template's manifests to this project: the root package takes the
+ * project's name (the template's `astro` shadows the real `astro` package in a
+ * workspace), and every `bejamas` dependency points at the running CLI version,
+ * or at `BEJAMAS_PACKAGE_OVERRIDE` when testing a local build.
+ */
+export async function applyProjectPackageMetadata(
+  projectPath: string,
+  {
+    projectName,
+    bejamasVersion = BEJAMAS_PACKAGE_METADATA.version,
+    bejamasOverride = process.env.BEJAMAS_PACKAGE_OVERRIDE,
+  }: {
+    projectName: string;
+    bejamasVersion?: string;
+    bejamasOverride?: string;
+  },
+) {
+  const bejamasSpec = bejamasOverride
+    ? `file:${bejamasOverride.replace(/\\/g, "/")}`
+    : bejamasVersion && `^${bejamasVersion}`;
+  const rootPackageJson = path.resolve(projectPath, "package.json");
   const packageJsonPaths = await fg("**/package.json", {
     cwd: projectPath,
     absolute: true,
     ignore: ["**/node_modules/**"],
   });
-  const normalizedOverride = bejamasPackageOverride.replace(/\\/g, "/");
 
   await Promise.all(
     packageJsonPaths.map(async (packageJsonPath) => {
       const packageJson = await fs.readJson(packageJsonPath);
       let changed = false;
 
+      if (path.resolve(packageJsonPath) === rootPackageJson) {
+        packageJson.name = toPackageName(projectName);
+        changed = true;
+      }
+
       for (const field of ["dependencies", "devDependencies"] as const) {
-        if (packageJson[field]?.bejamas) {
-          packageJson[field].bejamas = `file:${normalizedOverride}`;
+        if (bejamasSpec && packageJson[field]?.bejamas) {
+          packageJson[field].bejamas = bejamasSpec;
           changed = true;
         }
       }
@@ -346,6 +384,7 @@ export async function createProject(
   }
 
   await createProjectFromTemplate(projectPath, {
+    projectName,
     templateKey: template,
     packageManager,
     cwd: options.cwd,
@@ -361,6 +400,7 @@ export async function createProject(
 async function createProjectFromTemplate(
   projectPath: string,
   options: {
+    projectName: string;
     templateKey: keyof typeof TEMPLATES;
     packageManager: string;
     cwd: string;
@@ -386,7 +426,9 @@ async function createProjectFromTemplate(
 
     await removeEmptyTemplateI18nDirs(projectPath);
 
-    await applyLocalPackageOverrides(projectPath);
+    await applyProjectPackageMetadata(projectPath, {
+      projectName: options.projectName,
+    });
 
     await execa(options.packageManager, ["install"], {
       cwd: projectPath,

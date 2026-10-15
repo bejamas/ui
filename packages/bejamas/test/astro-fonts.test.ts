@@ -52,7 +52,9 @@ describe("astro font helpers", () => {
     expect(result).toContain(
       '/** @type {NonNullable<import("astro").AstroUserConfig["fonts"]>} */',
     );
-    expect(result).not.toContain("experimental: { fonts: BEJAMAS_ASTRO_FONTS }");
+    expect(result).not.toContain(
+      "experimental: { fonts: BEJAMAS_ASTRO_FONTS }",
+    );
   });
 
   test("patchAstroConfigSource preserves other slots and replaces the active slot", () => {
@@ -82,7 +84,9 @@ describe("astro font helpers", () => {
       },
     ]);
     expect(result.match(/fonts: BEJAMAS_ASTRO_FONTS/g)?.length).toBe(1);
-    expect(result).not.toContain("experimental: { fonts: BEJAMAS_ASTRO_FONTS }");
+    expect(result).not.toContain(
+      "experimental: { fonts: BEJAMAS_ASTRO_FONTS }",
+    );
   });
 
   test("patchAstroConfigSource migrates legacy experimental fonts config", () => {
@@ -90,7 +94,9 @@ describe("astro font helpers", () => {
     const result = patchAstroConfigSource(source, [interFont]);
 
     expect(result).toContain("fonts: BEJAMAS_ASTRO_FONTS");
-    expect(result).not.toContain("experimental: { fonts: BEJAMAS_ASTRO_FONTS }");
+    expect(result).not.toContain(
+      "experimental: { fonts: BEJAMAS_ASTRO_FONTS }",
+    );
     expect(result).toContain('name: "Inter"');
     expect(result).toContain("provider: fontProviders.google()");
   });
@@ -101,7 +107,9 @@ describe("astro font helpers", () => {
 
     expect(result).toContain("fonts: BEJAMAS_ASTRO_FONTS");
     expect(result).toContain("contentIntellisense: true");
-    expect(result).not.toContain("experimental: { fonts: BEJAMAS_ASTRO_FONTS }");
+    expect(result).not.toContain(
+      "experimental: { fonts: BEJAMAS_ASTRO_FONTS }",
+    );
   });
 
   test("patchAstroLayoutSource injects Font tags and applies a mono body class when mono is active", () => {
@@ -135,7 +143,9 @@ describe("astro font helpers", () => {
     const source = `---\nimport "@/styles/globals.css";\n---\n\n<html><head></head><body class="min-h-screen font-mono" data-test="true"></body></html>\n`;
     const result = patchAstroLayoutSource(source, [sansFont], "--font-sans");
 
-    expect(result).toContain('<body data-test="true" class="min-h-screen"></body>');
+    expect(result).toContain(
+      '<body data-test="true" class="min-h-screen"></body>',
+    );
   });
 
   test("patchStarlightHeadSource injects Font tags after the default Starlight head", () => {
@@ -154,6 +164,24 @@ describe("astro font helpers", () => {
     });
 
     expect(result).toContain('Head: "./src/components/Head.astro"');
+  });
+
+  test("toManagedAstroFont loads each font's whole weight axis", () => {
+    expect(toManagedAstroFont("inter")?.weights).toEqual(["100 900"]);
+    expect(toManagedAstroFont("lora")?.weights).toEqual(["400 700"]);
+    expect(
+      toManagedAstroFont("font-heading-playfair-display")?.weights,
+    ).toEqual(["400 900"]);
+  });
+
+  test("weights survive writing and re-reading the config", () => {
+    const weighted = { ...sansFont, weights: ["100 900"] };
+    const source = patchAstroConfigSource(
+      `// @ts-check\nimport { defineConfig } from 'astro/config';\n\nexport default defineConfig({\n  vite: {}\n});\n`,
+      [weighted, monoFont],
+    );
+    expect(source).toContain('weights: ["100 900"],');
+    expect(parseManagedAstroFonts(source)).toEqual([weighted, monoFont]);
   });
 
   test("toManagedAstroFont maps Geist families to the Astro Fontsource provider", () => {

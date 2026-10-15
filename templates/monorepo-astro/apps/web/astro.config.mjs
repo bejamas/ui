@@ -10,6 +10,7 @@ const BEJAMAS_ASTRO_FONTS = [
     provider: fontProviders.fontsource(),
     name: "Geist",
     cssVariable: "--font-sans",
+    weights: ["100 900"],
     subsets: ["latin"],
   },
 ];

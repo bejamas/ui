@@ -1,33 +1,17 @@
 import { resolveRegistryUrl } from "@/src/utils/ui-base-url";
 import { registryConfigSchema } from "@/src/schema";
 import { z } from "zod";
+import { BASE_COLORS as DESIGN_SYSTEM_BASE_COLORS } from "@bejamas/create-config/server";
 
 export const REGISTRY_URL = resolveRegistryUrl();
 
 export const FALLBACK_STYLE = "bejamas-juno";
 
-export const BASE_COLORS = [
-  {
-    name: "neutral",
-    label: "Neutral",
-  },
-  {
-    name: "gray",
-    label: "Gray",
-  },
-  {
-    name: "zinc",
-    label: "Zinc",
-  },
-  {
-    name: "stone",
-    label: "Stone",
-  },
-  {
-    name: "slate",
-    label: "Slate",
-  },
-] as const;
+// The base colors the design system has themes for.
+export const BASE_COLORS = DESIGN_SYSTEM_BASE_COLORS.map(({ name, title }) => ({
+  name,
+  label: title ?? name,
+}));
 
 // Built-in registries that are always available and cannot be overridden
 export const BUILTIN_REGISTRIES: z.infer<typeof registryConfigSchema> = {
