@@ -2,7 +2,7 @@
 import { cn } from "@bejamas/registry/lib/utils";
 import type { HTMLAttributes } from "astro/types";
 
-interface Props extends HTMLAttributes<"div"> {
+interface Props extends HTMLAttributes<"span"> {
   class?: string;
 }
 
@@ -12,7 +12,7 @@ const {
 } = Astro.props as Props;
 ---
 
-<div
+<span
   {...rest}
   data-slot="avatar-fallback"
   class={cn(
@@ -22,4 +22,4 @@ const {
   )}
 >
   <slot />
-</div>
+</span>

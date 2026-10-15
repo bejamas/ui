@@ -80,7 +80,7 @@ const stickySurfaceVariants = cva(
   {
     variants: {
       line: {
-        true: "after:content-[''] after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-black/15 after:opacity-0 supports-[animation-timeline:scroll()]:after:[animation:show-line_linear_both] supports-[animation-timeline:scroll()]:after:[animation-timeline:scroll(nearest_block)] supports-[animation-timeline:scroll()]:after:[animation-range:0_var(--stuck-threshold)]"
+        true: "after:content-[''] after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:opacity-0 supports-[animation-timeline:scroll()]:after:[animation:show-line_linear_both] supports-[animation-timeline:scroll()]:after:[animation-timeline:scroll(nearest_block)] supports-[animation-timeline:scroll()]:after:[animation-range:0_var(--stuck-threshold)]"
       },
       elevate: {
         true: "shadow-none supports-[animation-timeline:scroll()]:[animation:stuck-shadow_linear_both] supports-[animation-timeline:scroll()]:[animation-timeline:scroll(nearest_block)] supports-[animation-timeline:scroll()]:[animation-range:0_var(--stuck-threshold)]"

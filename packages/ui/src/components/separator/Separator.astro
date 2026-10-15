@@ -50,6 +50,9 @@ const {
 
 <div
   data-slot={dataSlot}
+  data-orientation={orientation}
+  data-horizontal={orientation === "horizontal" ? "" : undefined}
+  data-vertical={orientation === "vertical" ? "" : undefined}
   aria-orientation={orientation}
   aria-hidden={decorative ? "true" : undefined}
   class={cn(

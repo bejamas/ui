@@ -30,17 +30,17 @@ const {
       )}
     />
   ) : (
-    <div
+    <span
       {...rest}
       data-slot="avatar-image"
       class={cn(
         "cn-avatar-image",
-        "relative z-10 aspect-square size-full overflow-hidden",
+        "relative z-10 block aspect-square size-full overflow-hidden",
         "[&_img]:size-full [&_img]:object-cover",
         className,
       )}
     >
       <slot />
-    </div>
+    </span>
   )
 }

@@ -48,6 +48,9 @@ describe("style registry build", () => {
 
     expect(styleItem.files).toEqual([]);
     expect(styleItem.dependencies).toContain("bejamas");
+    // bejamas runs shadcn through its own pinned npm exec; projects never
+    // import it, so installing a component must not add it back.
+    expect(styleItem.devDependencies ?? []).not.toContain("shadcn");
     expect(styleItem.css).toEqual(buildBaseStyleCssObject());
     expect(fontItem).toMatchObject({
       $schema: "https://ui.shadcn.com/schema/registry-item.json",

@@ -15,7 +15,7 @@
     },
     {
       "path": "ui/carousel/CarouselSlide.astro",
-      "content": "---\n// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/carousel/CarouselSlide.astro directly.\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst { class: className, ...rest } = Astro.props;\n---\n\n<div\n  {...rest}\n  data-slot=\"carousel-item\"\n  class={cn(\n    \"min-h-0 min-w-0 basis-full shrink-0 snap-start\",\n    \"group-data-[variant=multiple]/carousel:grid group-data-[variant=multiple]/carousel:gap-4 group-data-[orientation=horizontal]/carousel:grid-cols-2 group-data-[orientation=vertical]/carousel:grid-rows-2\",\n    className,\n  )}\n>\n  <slot />\n</div>\n",
+      "content": "---\n// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/carousel/CarouselSlide.astro directly.\nimport { cn } from \"@/lib/utils\";\nimport type { HTMLAttributes } from \"astro/types\";\n\ninterface Props extends HTMLAttributes<\"div\"> {\n  class?: string;\n}\n\nconst { class: className, ...rest } = Astro.props;\n---\n\n<div\n  {...rest}\n  data-slot=\"carousel-item\"\n  class={cn(\n    \"min-h-0 min-w-0 basis-full shrink-0 snap-start\",\n    \"group-data-[variant=multiple]/carousel:grid group-data-[variant=multiple]/carousel:gap-4 group-data-[variant=multiple]/carousel:group-data-[orientation=horizontal]/carousel:grid-cols-2 group-data-[variant=multiple]/carousel:group-data-[orientation=vertical]/carousel:grid-rows-2\",\n    className,\n  )}\n>\n  <slot />\n</div>\n",
       "type": "registry:ui"
     },
     {
