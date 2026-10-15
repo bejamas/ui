@@ -43,11 +43,13 @@ const {
   class: className = "",
   orientation = "horizontal",
   decorative = true,
+  "data-slot": dataSlot = "separator",
   ...props
 } = Astro.props;
 ---
 
 <div
+  data-slot={dataSlot}
   aria-orientation={orientation}
   aria-hidden={decorative ? "true" : undefined}
   class={cn(
