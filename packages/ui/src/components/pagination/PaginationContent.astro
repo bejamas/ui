@@ -1,0 +1,22 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/pagination/PaginationContent.astro directly.
+import { cn } from "@bejamas/ui/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"ul"> {
+  class?: string;
+}
+
+const {
+  class: className = "",
+  ...rest
+} = Astro.props as Props;
+---
+
+<ul
+  {...rest}
+  data-slot="pagination-content"
+  class={cn("gap-1 flex items-center", className)}
+>
+  <slot />
+</ul>

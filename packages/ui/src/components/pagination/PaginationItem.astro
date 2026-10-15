@@ -1,0 +1,14 @@
+---
+// Generated from bejamas-juno style registry. Do not edit packages/ui/src/components/pagination/PaginationItem.astro directly.
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"li"> {
+  class?: string;
+}
+
+const { ...rest } = Astro.props as Props;
+---
+
+<li {...rest} data-slot="pagination-item">
+  <slot />
+</li>

@@ -186,6 +186,12 @@ export const KITCHEN_SINK_PAGES: KitchenSinkPage[] = [
     js: true,
   },
   {
+    id: "pagination",
+    href: "/kitchen-sink/pagination",
+    label: "Pagination",
+    description: "Previous and next, first and last, icon only, outlined, disabled, ellipsis",
+  },
+  {
     id: "popover",
     href: "/kitchen-sink/popover",
     label: "Popover",

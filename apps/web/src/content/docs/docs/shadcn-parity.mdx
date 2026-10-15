@@ -17,11 +17,11 @@ But it is **not a line-by-line port**. Components are Astro files rendered on th
 
 | | Count |
 | --- | --- |
-| Components shadcn/ui and bejamas/ui both ship | **41** |
-| ↳ Drop-in (same parts, same props) | 12 |
+| Components shadcn/ui and bejamas/ui both ship | **42** |
+| ↳ Drop-in (same parts, same props) | 13 |
 | ↳ Close (same anatomy, some props or parts differ) | 26 |
 | ↳ Different API (materially different anatomy) | 3 |
-| shadcn/ui components bejamas/ui does not ship | **20** (+ `form` and 3 docs-only recipes) |
+| shadcn/ui components bejamas/ui does not ship | **19** (+ `form` and 3 docs-only recipes) |
 | bejamas/ui-only components | **6** |
 
 **What the verdicts mean:**
@@ -157,7 +157,7 @@ import { PlusIcon } from "@lucide/astro";
 
 ### JavaScript, hydration and View Transitions
 
-- **Zero JS by default.** 23 of the 45 component families ship no client JavaScript at all (Button, Card, Badge, Field, Input, Table, …). The rest attach a small bundled `<script>`, usually a `@data-slot` controller — you never add a `client:*` directive. See [Design Principles](/docs/design-principles) and [How bejamas/ui ships less JavaScript than shadcn/ui](/blog/how-bejamas-ui-ships-5x-less-javascript-than-shadcn-ui).
+- **Zero JS by default.** 24 of the 46 component families ship no client JavaScript at all (Button, Card, Badge, Field, Input, Pagination, Table, …). The rest attach a small bundled `<script>`, usually a `@data-slot` controller — you never add a `client:*` directive. See [Design Principles](/docs/design-principles) and [How bejamas/ui ships less JavaScript than shadcn/ui](/blog/how-bejamas-ui-ships-5x-less-javascript-than-shadcn-ui).
 - **Initialization runs on page load.** Each component script binds the elements present when the page loads. If you inject markup later, or use Astro's `<ClientRouter />`, call the controller yourself (for example `createDialog(el)` from `@data-slot/dialog`) for the new elements.
 - **Native forms.** `Select`, `Combobox`, `RadioGroup` and `Switch` take `name` (and `required` where relevant) and generate hidden native inputs, so they submit with a plain `<form>` — no form library required. `Slider` does not generate an input yet; mirror its value from `slider:change` into a hidden input if you need to submit it.
 
@@ -179,6 +179,7 @@ Same sub-components and same props. These port with the general React → Astro 
 | [Kbd](/components/kbd) | `Kbd`, `KbdGroup`. |
 | [Label](/components/label) | Use `for` instead of `htmlFor`. |
 | [Native Select](/components/native-select) | Same 3 parts and `size`. |
+| [Pagination](/components/pagination) | Same 7 parts, `isActive`, `size` and `text`; extra `PaginationFirst` / `PaginationLast`, `disabled` and `variant`. |
 | [Radio Group](/components/radio-group) | Same 2 parts; submits natively via `name`. |
 | [Skeleton](/components/skeleton) | Identical. |
 | [Spinner](/components/spinner) | Identical markup. |
@@ -244,7 +245,8 @@ These need only the general React → Astro translation. Good to know:
 - **Input Group** — the group gets `data-disabled` automatically from the control's `disabled` attribute.
 - **Radio Group, Switch** — submit natively with `name`. Listen for `radio-group:change` or `switch:change`.
 - **Kbd** — `KbdGroup` renders a `<div>`, so don't nest it inside a `<p>`.
-- **Table** — there's no equivalent of shadcn's [Data Table](https://ui.shadcn.com/docs/components/base/data-table) guide. Use the static `Table` with server-side sorting and pagination, or your own script.
+- **Pagination** — `PaginationLink` renders `Button as="a"`, so `size` takes the `Button` sizes (no `xs` / `icon-xs`). For the ends of the range, use `disabled` instead of leaving out `href` by hand: it sets `aria-disabled="true"` and dims the link. `PaginationFirst` and `PaginationLast` aren't in shadcn/ui; `text=""` renders any of the four directional links icon-only.
+- **Table** — there's no equivalent of shadcn's [Data Table](https://ui.shadcn.com/docs/components/base/data-table) guide. Use the static `Table` with server-side sorting and [`Pagination`](/components/pagination), or your own script.
 
 ### Close components
 
@@ -627,7 +629,6 @@ These shadcn/ui components don't have a `bejamas/ui` equivalent yet.
 | Empty | Empty-state layout | Compose `Card` or `Item` with `SemanticIcon`. |
 | Input OTP | Segmented one-time-code input | `Input` with `autocomplete="one-time-code"`, `inputmode="numeric"` and `maxlength`. |
 | Menubar | Desktop-style menu bar | A row of `DropdownMenu`s, or a React island. |
-| Pagination | Page links | `Button as="a"` links inside a `<nav>`. |
 | Progress | Progress bar | Native `<progress>` or `<meter>`. |
 | Scroll Area | Custom scrollbars | `overflow-auto` with the `no-scrollbar` and `scroll-fade-*` utilities from `bejamas/tailwind.css`. |
 | Sheet | Side panel | `Drawer` with `side="left"`, `"right"` or `"bottom"`. |
@@ -669,7 +670,7 @@ If you need one of the components above today, you can run a shadcn/ui React com
 | [Marquee](/components/marquee) | CSS-only infinite scroller (`direction`, `time`, `variant`) that pauses for reduced motion. |
 | [Sticky Surface](/components/sticky-surface) | Sticky header wrapper with scroll-driven "stuck" effects (`line`, `elevate`, `backdrop`) and an optional `.is-stuck` class. |
 
-`bejamas/ui` also adds extras to shared components that shadcn/ui doesn't have, such as `CardMedia` and `CardOverlay`, `PopoverClose`, `DrawerBody`, `FieldError forceMount`, the animated `indicator` and `line-animated` tab variants, `Badge shape="pill"`, and `data-slot="toast-trigger"` buttons that show a toast without a script.
+`bejamas/ui` also adds extras to shared components that shadcn/ui doesn't have, such as `CardMedia` and `CardOverlay`, `PaginationFirst` and `PaginationLast`, `PopoverClose`, `DrawerBody`, `FieldError forceMount`, the animated `indicator` and `line-animated` tab variants, `Badge shape="pill"`, and `data-slot="toast-trigger"` buttons that show a toast without a script.
 
 ### Blocks
 
