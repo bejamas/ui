@@ -46,7 +46,6 @@ Then:
 3. **Color mode:** add the color-mode head script from [recipes](../references/recipes.md#color-mode) whenever the original uses next-themes.
 4. **Cleanup:**
    - Remove the scaffold favicon and `bejamas.svg`.
-   - Remove `shadcn` from devDependencies.
 5. **Assets:** copy into `public/` only the assets the page uses, and vendor remote images.
 
 **Done when** `bun run build` passes and an empty page shows the original's background, text color and font.

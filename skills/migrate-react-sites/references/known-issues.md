@@ -1,17 +1,16 @@
 # Known issues and primitive gaps
 
-Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. The setup bugs fixed after 0.5.0 (base color theme, font weights and variables, the template Button, `add select`, the layout's `<html>` and viewport) are no longer listed. Before applying a workaround, check the installed component, since the issue may already be fixed. When a gap blocks fidelity, record it and pick the accepted approach below rather than writing a new controller.
+Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. The setup bugs fixed after 0.5.0 (base color theme, font weights and variables, the template Button, `add select`, the layout's `<html>` and viewport, `astro check`, `shadcn` in devDependencies) and the component bugs fixed in the registry since (Badge `href`, Avatar `<div>`s, RadioGroupItem `id`, Separator orientation attributes, CarouselSlide tracks, StickySurface line, Drawer `modal`) are no longer listed. Before applying a workaround, check the installed component, since the issue may already be fixed. When a gap blocks fidelity, record it and pick the accepted approach below rather than writing a new controller.
 
 ## Setup and CLI
 
 | Issue | Workaround |
 |---|---|
 | no color-mode script | see the color-mode recipe |
-| `bejamas add` puts `shadcn` back in devDependencies and re-inserts base rules (`* { border-border outline-ring/50 }`, `body { bg-background text-foreground }`) into `globals.css` | `bun remove shadcn`; re-check `globals.css` and `package.json` after every `bejamas add` |
+| `bejamas add` re-inserts the style's base rules (`* { border-border outline-ring/50 }`, `body { bg-background text-foreground }`) into `globals.css` when a port removed them | re-check `globals.css` after every `bejamas add` |
 | Registry components fail `eslint-plugin-astro`'s recommended rules (`no-exports-from-components`, `no-explicit-any`) | a lint override for `src/ui/**` in repos that lint `.astro` files |
 | In a workspace, the template's TypeScript major can differ from the workspace's | align shared tool versions before installing |
 | Astro 7's `astro preview` can detach and return immediately | `astro preview status`, `logs` or `stop` |
-| `astro check` needs `@astrojs/check` | `bun add -d @astrojs/check` |
 | Scaffold favicon and `bejamas.svg` | delete |
 
 ## Components
@@ -21,19 +20,13 @@ Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. The se
 | Card border never shows (`border-none` + `border`) | `border-solid` (+ `ring-0`) |
 | Card `shadow-sm` and `shadow-lg` both present; `shadow-lg` wins | set the source's shadow |
 | Badge `shape` and `size` defaults override the style | `shape="pill"`, `size="sm"` or explicit classes |
-| Badge `href` fails `astro check` | spread an attributes object |
 | Button `variant="link"` is `text-accent` | `text-primary` |
 | Drawer width, radius and backdrop are set in unlayered global CSS | `!` utilities or global `[data-slot=drawer-popup]` / `[data-slot=drawer-backdrop]` rules |
 | ToggleGroup's runtime re-adds variant classes after merge | `!` utilities on items |
-| CarouselSlide applies 2-up grid tracks outside `variant="multiple"` | `group-data-[orientation=vertical]/carousel:grid-rows-none` (or `grid-cols-none`) |
-| `AvatarFallback` and src-less `AvatarImage` render `<div>`, which breaks a surrounding `<p>` | make the wrapper a `div` |
-| `RadioGroupItem` renders an empty `id` | pass an explicit `id` |
-| `StickySurface` line is `after:bg-black/15`, invisible in dark mode | `after:bg-border` |
-| `Separator` has no `data-orientation`, so source `data-vertical:` classes never match | plain classes |
 | The scroll lock reserves `scrollbar-gutter: stable` even without a scrollbar: a 7.5–15px shift while menus, dialogs or drawers are open (seen in headless Chromium) | accept it; don't chase it in screenshot diffs |
 | An interactive component's in-place `<script>` sibling picks up `space-*` margins | `gap-*`, or wrap the component in a div |
 | The NavigationMenu wrapper hardcodes a `<nav>` root and `<button>` triggers, so a trigger that is also a link (opening on hover) can't be built | use the `@data-slot/navigation-menu` primitive directly |
-| A modal Drawer makes everything outside it `inert`: a dialog opened from inside the drawer but rendered outside it is unreachable, and the drawer's Escape handler fires first. The wrapper's `modal` prop only takes a boolean | set `data-modal="trap-focus"` on the drawer root, and handle Escape in the dialog (the primitive skips events already prevented) |
+| A modal Drawer makes everything outside it `inert`: a dialog opened from inside the drawer but rendered outside it is unreachable, and the drawer's Escape handler fires first | `modal="trap-focus"` on the Drawer, and handle Escape in the dialog (the primitive skips events already prevented) |
 
 ## Astro gotchas
 
@@ -68,4 +61,4 @@ Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. The se
 | BreadcrumbLink / BreadcrumbPage | plain `<a>` / `<span aria-current="page">` inside BreadcrumbItem |
 | Pressable card (Toggle is a `<button>` only) | a Toggle overlay + `group-has-[[aria-pressed=true]]:` styles |
 | Dismissible banner | Collapsible or Toggle; persistence isn't available |
-| Toast, rating, animated number, scroll-spy primitive | static, CSS, or dropped; record it |
+| Rating, animated number, scroll-spy primitive | static, CSS, or dropped; record it |
