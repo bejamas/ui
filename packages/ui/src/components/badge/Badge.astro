@@ -58,17 +58,26 @@
  * ```
  */
 
-import type { HTMLTag } from "astro/types";
+import type { HTMLAttributes, HTMLTag } from "astro/types";
 import { cva } from "class-variance-authority";
 import { cn } from "@bejamas/ui/lib/utils";
 
-interface Props {
-  as?: HTMLTag;
+type BadgeOwnProps = {
   variant?: "default" | "secondary" | "destructive" | "outline";
   class?: string;
   shape?: "default" | "pill";
   size?: "default" | "sm";
-}
+};
+
+type BadgeAsElement = {
+  as?: Exclude<HTMLTag, "a">;
+} & HTMLAttributes<"span">;
+
+type BadgeAsAnchor = {
+  as: "a";
+} & HTMLAttributes<"a">;
+
+export type Props = (BadgeAsElement | BadgeAsAnchor) & BadgeOwnProps;
 
 const {
   as = "span",
@@ -113,6 +122,13 @@ const Tag = as;
 const classes = cn(badgeVariants({ variant, shape, size, className }));
 ---
 
+{
+  /*
+  As in Button: the public Props are strict (href only with as="a"), but JSX
+  wants every tag's attributes at once for a dynamic intrinsic Tag.
+*/
+}
+<!-- @ts-expect-error – union Props + dynamic Tag confuse JSX typing (see comment above) -->
 <Tag
   data-slot="badge"
   data-variant={variant}

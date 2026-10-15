@@ -139,7 +139,11 @@ import type { HTMLAttributes } from "astro/types";
 interface Props extends HTMLAttributes<"div"> {
   side?: "left" | "right" | "bottom";
   defaultOpen?: boolean;
-  modal?: boolean;
+  /**
+   * `"trap-focus"` keeps focus inside without making the rest of the page
+   * inert, so a dialog opened from the drawer stays reachable.
+   */
+  modal?: boolean | "trap-focus";
   disablePointerDismissal?: boolean;
   closeOnEscape?: boolean;
   class?: string;
