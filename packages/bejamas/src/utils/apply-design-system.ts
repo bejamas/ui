@@ -902,8 +902,8 @@ async function patchLayoutFile(filepath: string, config: DesignSystemConfig) {
   const nextLanguage = getDocumentLanguage(config);
   const nextDirection = getDocumentDirection(config);
   let next = current
-    .replace(/<html([^>]*?)lang="[^"]*"([^>]*)>/, "<html$1$2>")
-    .replace(/<html([^>]*?)dir="[^"]*"([^>]*)>/, "<html$1$2>");
+    .replace(/<html([^>]*?)\slang="[^"]*"([^>]*)>/, "<html$1$2>")
+    .replace(/<html([^>]*?)\sdir="[^"]*"([^>]*)>/, "<html$1$2>");
 
   next = next.replace(
     /<html([^>]*)>/,

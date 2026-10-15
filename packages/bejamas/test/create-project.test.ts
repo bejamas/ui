@@ -2,7 +2,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "bun:test";
+import os from "node:os";
 import {
+  applyProjectPackageMetadata,
   buildTemplateArchiveUrl,
   resolveRemoteTemplateRefs,
 } from "../src/utils/create-project";
@@ -88,4 +90,66 @@ describe("astro template manifests", () => {
       expect(getSemverMajor(lucideRange!)).toBeGreaterThanOrEqual(1);
     },
   );
+});
+
+describe("applyProjectPackageMetadata", () => {
+  async function templateCopy(template: string) {
+    const target = await fs.mkdtemp(path.join(os.tmpdir(), "bejamas-meta-"));
+    await fs.cp(path.resolve(repoRoot, "templates", template), target, {
+      recursive: true,
+      filter: (source) => !source.includes("node_modules"),
+    });
+    return target;
+  }
+
+  test("names the root package after the project and pins the running CLI", async () => {
+    const projectPath = await templateCopy("astro");
+    await applyProjectPackageMetadata(projectPath, {
+      projectName: "My Site",
+      bejamasVersion: "1.2.3",
+      bejamasOverride: undefined,
+    });
+    const packageJson = JSON.parse(
+      await fs.readFile(path.join(projectPath, "package.json"), "utf8"),
+    );
+    expect(packageJson.name).toBe("my-site");
+    expect(packageJson.dependencies.bejamas).toBe("^1.2.3");
+  });
+
+  test("pins every workspace package and keeps workspace package names", async () => {
+    const projectPath = await templateCopy("monorepo-astro");
+    await applyProjectPackageMetadata(projectPath, {
+      projectName: "my-monorepo",
+      bejamasVersion: "1.2.3",
+      bejamasOverride: undefined,
+    });
+    const ui = JSON.parse(
+      await fs.readFile(
+        path.join(projectPath, "packages/ui/package.json"),
+        "utf8",
+      ),
+    );
+    const root = JSON.parse(
+      await fs.readFile(path.join(projectPath, "package.json"), "utf8"),
+    );
+    const template = await readTemplatePackageJson(
+      "templates/monorepo-astro/packages/ui/package.json",
+    );
+    expect(root.name).toBe("my-monorepo");
+    expect(ui.name).toBe((template as { name?: string }).name);
+    expect(ui.dependencies.bejamas).toBe("^1.2.3");
+  });
+
+  test("a local package override wins over the version", async () => {
+    const projectPath = await templateCopy("astro");
+    await applyProjectPackageMetadata(projectPath, {
+      projectName: "my-app",
+      bejamasVersion: "1.2.3",
+      bejamasOverride: "C:\\work\\bejamas",
+    });
+    const packageJson = JSON.parse(
+      await fs.readFile(path.join(projectPath, "package.json"), "utf8"),
+    );
+    expect(packageJson.dependencies.bejamas).toBe("file:C:/work/bejamas");
+  });
 });

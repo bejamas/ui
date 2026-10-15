@@ -80,12 +80,12 @@ describe("applyDesignSystemToProject RTL template i18n", () => {
     expect(
       await fs.pathExists(path.resolve(projectPath, "src/i18n/ui.ts")),
     ).toBe(false);
-    expect(
-      await fs.readFile(
-        path.resolve(projectPath, "src/layouts/Layout.astro"),
-        "utf8",
-      ),
-    ).not.toContain('from "@/i18n/ui"');
+    const layout = await fs.readFile(
+      path.resolve(projectPath, "src/layouts/Layout.astro"),
+      "utf8",
+    );
+    expect(layout).not.toContain('from "@/i18n/ui"');
+    expect(layout).toContain('<html lang="en">');
     expect(
       await fs.readFile(
         path.resolve(projectPath, "src/pages/index.astro"),

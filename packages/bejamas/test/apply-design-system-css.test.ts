@@ -163,7 +163,7 @@ describe("transformDesignSystemCss", () => {
       monorepoUiPackageJson,
       docsMonorepoUiPackageJson,
     ]) {
-      expect(packageJson).toContain('"bejamas": "^0.4.1"');
+      expect(packageJson).toContain('"bejamas": "^0.5.0"');
     }
   });
 
@@ -233,5 +233,10 @@ describe("transformDesignSystemCss", () => {
     expect(astroLayout).toContain('<html lang="en">');
     expect(monorepoLayout).toContain('<html lang="en">');
     expect(docsMonorepoLayout).toContain('<html lang="en">');
+    for (const layout of [astroLayout, monorepoLayout, docsMonorepoLayout]) {
+      expect(layout).toContain(
+        '<meta name="viewport" content="width=device-width, initial-scale=1" />',
+      );
+    }
   });
 });
