@@ -43,7 +43,26 @@ export type ManagedAstroFont = {
   name: string;
   provider: ManagedAstroFontProvider;
   subsets: ManagedAstroFontSubsets;
+  /**
+   * Weights to load, e.g. `["100 900"]` for a variable font. Astro loads only
+   * 400 without it. Absent in configs written before weights were managed.
+   */
+  weights?: string[];
 };
+
+function parseStringArray(source: string | undefined) {
+  if (!source) return undefined;
+  try {
+    const parsed = JSON.parse(source);
+    return Array.isArray(parsed) &&
+      parsed.length > 0 &&
+      parsed.every((value) => typeof value === "string")
+      ? (parsed as string[])
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 function compactSource(source: string) {
   return source.replace(/\n{3,}/g, "\n\n").trimEnd() + "\n";
@@ -103,7 +122,7 @@ function buildAstroConfigFontBlock(fontsToSerialize: ManagedAstroFont[]) {
       : `\n${fontsToSerialize
           .map(
             (font) =>
-              `  {\n    provider: fontProviders.${font.provider}(),\n    name: ${JSON.stringify(font.name)},\n    cssVariable: ${JSON.stringify(font.cssVariable)},\n    subsets: ${JSON.stringify(font.subsets)},\n  },`,
+              `  {\n    provider: fontProviders.${font.provider}(),\n    name: ${JSON.stringify(font.name)},\n    cssVariable: ${JSON.stringify(font.cssVariable)},\n${font.weights ? `    weights: ${JSON.stringify(font.weights)},\n` : ""}    subsets: ${JSON.stringify(font.subsets)},\n  },`,
           )
           .join("\n")}\n`;
 
@@ -171,8 +190,13 @@ export function parseManagedAstroFonts(source: string) {
     .map((entry) => {
       const name = entry.match(/name:\s*"([^"]+)"/)?.[1];
       const cssVariable = entry.match(/cssVariable:\s*"([^"]+)"/)?.[1];
-      const provider = entry.match(/provider:\s*fontProviders\.([a-z]+)\(\)/)?.[1];
+      const provider = entry.match(
+        /provider:\s*fontProviders\.([a-z]+)\(\)/,
+      )?.[1];
       const subsetsSource = entry.match(/subsets:\s*(\[[^\]]*\])/s)?.[1];
+      const weights = parseStringArray(
+        entry.match(/weights:\s*(\[[^\]]*\])/s)?.[1],
+      );
 
       if (
         !name ||
@@ -183,27 +207,16 @@ export function parseManagedAstroFonts(source: string) {
         return null;
       }
 
-      let subsets: ManagedAstroFontSubsets = ["latin"];
-      if (subsetsSource) {
-        try {
-          const parsed = JSON.parse(subsetsSource);
-          if (
-            Array.isArray(parsed) &&
-            parsed.length > 0 &&
-            parsed.every((value) => typeof value === "string")
-          ) {
-            subsets = parsed as ManagedAstroFontSubsets;
-          }
-        } catch {
-          subsets = ["latin"];
-        }
-      }
+      const subsets = (parseStringArray(subsetsSource) ?? [
+        "latin",
+      ]) as ManagedAstroFontSubsets;
 
       return {
         name,
         cssVariable,
         provider: provider as ManagedAstroFontProvider,
         subsets,
+        ...(weights && { weights }),
       };
     })
     .filter((value): value is ManagedAstroFont => value !== null);
@@ -435,16 +448,15 @@ export function patchStarlightHeadSource(
   return compactSource(next);
 }
 
-export function toManagedAstroFont(
-  fontName: string,
-): ManagedAstroFont | null {
-  const normalized = fontName.replace(/^font-heading-/, "").replace(/^font-/, "");
-  const font =
-    fontName.startsWith("font-heading-")
-      ? getHeadingFontValue(
-          normalized as Exclude<DesignSystemConfig["fontHeading"], "inherit">,
-        )
-      : getFontValue(normalized as DesignSystemConfig["font"]);
+export function toManagedAstroFont(fontName: string): ManagedAstroFont | null {
+  const normalized = fontName
+    .replace(/^font-heading-/, "")
+    .replace(/^font-/, "");
+  const font = fontName.startsWith("font-heading-")
+    ? getHeadingFontValue(
+        normalized as Exclude<DesignSystemConfig["fontHeading"], "inherit">,
+      )
+    : getFontValue(normalized as DesignSystemConfig["font"]);
   if (
     !font ||
     font.type !== "registry:font" ||
@@ -466,6 +478,7 @@ export function toManagedAstroFont(
       ? "fontsource"
       : "google",
     subsets: normalizeManagedAstroFontSubsets(font.font.subsets),
+    ...(font.font.weight?.length && { weights: [...font.font.weight] }),
   };
 }
 
@@ -636,11 +649,7 @@ export async function syncAstroFontsInProject(
   await Promise.all(
     ASTRO_LAYOUT_CANDIDATES.map((relativePath) =>
       patchFileIfExists(path.resolve(projectPath, relativePath), (source) =>
-        patchAstroLayoutSource(
-          source,
-          fontsToSerialize,
-          activeFontCssVariable,
-        ),
+        patchAstroLayoutSource(source, fontsToSerialize, activeFontCssVariable),
       ),
     ),
   );

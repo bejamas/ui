@@ -99,8 +99,14 @@ describe("transformDesignSystemCss", () => {
 
     expect(result).toContain('@import "bejamas/tailwind.css";');
     expect(result).not.toContain("@fontsource-variable/geist-mono");
-    expect(result).toContain("--font-mono: var(--font-mono);");
-    expect(result).toContain("--font-heading: var(--font-heading);");
+    // Astro's <Font> defines --font-mono; a theme line would only shadow it.
+    expect(result).not.toContain("--font-mono: var(--font-mono);");
+    expect(result).toContain(
+      "--font-heading: var(--font-heading, var(--font-mono));",
+    );
+    // The heading default lives in @theme inline, not in :root, where it
+    // would compete with a heading <Font> by stylesheet order.
+    expect(result).not.toMatch(/:root\s*\{[^}]*--font-heading/);
     expect(result).toContain("@apply font-mono;");
     expect(result).toContain(".cn-font-heading");
     expect(result).toContain("@apply font-heading;");
@@ -154,7 +160,9 @@ describe("transformDesignSystemCss", () => {
       docsMonorepoUiGlobalsCss,
     ]) {
       expect(source).toContain('@import "bejamas/tailwind.css";');
-      expect(source).toContain("--font-heading: var(--font-heading);");
+      expect(source).toContain(
+        "--font-heading: var(--font-heading, var(--font-sans));",
+      );
       expect(source).toContain(".cn-font-heading");
     }
 

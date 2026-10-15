@@ -496,16 +496,17 @@ function transformStarterPageToI18n(source: string) {
   return compactSource(match.i18nSource);
 }
 
-function upsertThemeInlineFont(source: string, fontVariable?: string) {
+/**
+ * Astro's <Font> defines the font variables outside any cascade layer, so it
+ * beats Tailwind's theme layer. The body font therefore needs no theme line
+ * (without a <Font>, Tailwind's default stack applies), and the heading font
+ * falls back to the body font until a heading <Font> defines it.
+ */
+function upsertThemeInlineFont(source: string, fontVariable = "--font-sans") {
   const pattern = /@theme inline\s*\{[\s\S]*?\n\}/m;
+  const declarations = `  --font-heading: var(--font-heading, var(${fontVariable}));`;
 
   if (!pattern.test(source)) {
-    const declarations = [
-      fontVariable ? `  ${fontVariable}: var(${fontVariable});` : null,
-      "  --font-heading: var(--font-heading);",
-    ]
-      .filter(Boolean)
-      .join("\n");
     const block = `@theme inline {\n${declarations}\n}`;
     const customVariantIndex = source.indexOf("@custom-variant");
 
@@ -524,12 +525,6 @@ function upsertThemeInlineFont(source: string, fontVariable?: string) {
       .replace(/\n\s*--font-(sans|serif|mono|heading):[^\n]+/g, "")
       .replace(/\n\s*--bejamas-font-family:[^\n]+/g, "")
       .replace(/@theme inline\s*\{\n?/, "@theme inline {\n");
-    const declarations = [
-      fontVariable ? `  ${fontVariable}: var(${fontVariable});` : null,
-      "  --font-heading: var(--font-heading);",
-    ]
-      .filter(Boolean)
-      .join("\n");
 
     return withoutManagedFonts.replace(
       "@theme inline {\n",
@@ -575,8 +570,10 @@ export function transformDesignSystemThemeCss(
   const effectiveThemeVars = themeVars ?? buildRegistryTheme(config).cssVars;
   const rootVars = {
     ...Object.fromEntries(
+      // Fonts come from Astro's <Font> and the @theme inline fallbacks; a
+      // font variable here would compete with <Font> by stylesheet order.
       Object.entries(effectiveThemeVars.theme ?? {}).filter(
-        ([key]) => key !== "bejamas-font-family",
+        ([key]) => key !== "bejamas-font-family" && key !== "font-heading",
       ),
     ),
     ...(effectiveThemeVars.light ?? {}),
