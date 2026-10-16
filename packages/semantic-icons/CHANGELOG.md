@@ -1,5 +1,17 @@
 # @bejamas/semantic-icons
 
+## 0.3.0
+
+### Minor Changes
+
+- [#183](https://github.com/bejamas/ui/pull/183) [`0cac89c`](https://github.com/bejamas/ui/commit/0cac89cf39e0414933d6cacff4e00b29cc8996e9) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Add a `chevrons-right` semantic icon for Lucide, Hugeicons, Tabler, Phosphor and Remix Icon.
+
+- [#175](https://github.com/bejamas/ui/pull/175) [`6d9ff06`](https://github.com/bejamas/ui/commit/6d9ff061ba4771e7956f5179c4b15d7e02c0bb64) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Add `info` and `alert-triangle` semantic icons for Lucide, Hugeicons, Tabler, Phosphor and Remix Icon.
+
+### Patch Changes
+
+- [#183](https://github.com/bejamas/ui/pull/183) [`a7eb35f`](https://github.com/bejamas/ui/commit/a7eb35fb24b5a19e4f8aa41d857e93a8005e10ae) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Render the Remix Icon `ellipsis` as horizontal dots (`more-line`), matching the other icon libraries and shadcn/ui.
+
 ## 0.2.0
 
 ### Minor Changes

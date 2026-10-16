@@ -1,5 +1,24 @@
 # bejamas
 
+## 0.6.0
+
+### Minor Changes
+
+- [#171](https://github.com/bejamas/ui/pull/171) [`5827a72`](https://github.com/bejamas/ui/commit/5827a7247031e66c4f318060f6522e7fa6fe2d77) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Add `@bejamas/bench` and the `bejamas bench --original <url> --ported <url>` command to compare an original site with its ported version: Lighthouse medians, route assets, accessibility, text and visual parity, with `--fail-on` budgets.
+
+### Patch Changes
+
+- [#179](https://github.com/bejamas/ui/pull/179) [`0b6c9bb`](https://github.com/bejamas/ui/commit/0b6c9bb89289273c4c8e2060001a3760a3c7ba2e) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Ship the `marquee-x` and `marquee-y` keyframes in `bejamas/tailwind.css` so Marquee animates in projects that install it from the registry.
+
+- [#184](https://github.com/bejamas/ui/pull/184) [`df86a56`](https://github.com/bejamas/ui/commit/df86a56e11550550a42457f5fc6221f55eb1f48e) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - Fix the projects `bejamas init` creates:
+
+  - `-b <base-color>` now applies that base color's theme. `-b neutral` used to keep the blue `bejamas-blue` primary. The accepted base colors now match the design system (adds mauve, olive, mist and taupe; drops gray and slate, which failed).
+  - Fonts load their whole weight range instead of only 400, and the body and heading font variables no longer override Astro's `<Font>`.
+  - `bejamas add select` installs `lib/select.ts` and `@data-slot/select`, so the component builds.
+  - The layout gets `<html lang="en">` without a double space and `initial-scale=1`; the project's package takes the project name and pins the running `bejamas` version; the templates ship the current registry Button.
+
+- [#185](https://github.com/bejamas/ui/pull/185) [`f9e6dbe`](https://github.com/bejamas/ui/commit/f9e6dbe006b1866df3c588f741fa3967a29f5256) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - New projects get `@astrojs/check` and a `check` script, and `bejamas add` no longer adds `shadcn` to devDependencies. Registry fixes for RadioGroupItem, Badge, Separator, Avatar, CarouselSlide, Drawer and StickySurface ship with the registry.
+
 ## 0.5.0
 
 ### Minor Changes
