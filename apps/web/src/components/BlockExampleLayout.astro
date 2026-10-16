@@ -1,32 +1,53 @@
 ---
 import "@/styles/blocks.css";
 import "@bejamas/ui/styles/globals.css";
+import ShadcnblocksLogo from "@/assets/shadcnblocks-logo.svg";
 import { buildThemeChoiceBootstrapInlineScript } from "starlight-theme-bejamas/lib/theme-choice";
 import { buildThemeStylesheetInlineScript } from "@/utils/themes/theme-stylesheet";
 
 interface Props {
   theme?: string;
   title?: string;
+  sourceUrl?: string;
 }
 
-const { theme = "current-theme", title } = Astro.props;
+const { theme = "current-theme", title, sourceUrl } = Astro.props;
 const themeChoiceBootstrapScript = buildThemeChoiceBootstrapInlineScript();
 const themeStylesheetHref = `/r/themes/${theme}.css`;
-const themeStylesheetScript = buildThemeStylesheetInlineScript(themeStylesheetHref);
+const themeStylesheetScript =
+  buildThemeStylesheetInlineScript(themeStylesheetHref);
 ---
 
 <html lang="en" class="bg-background">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     {title && <title>{title}</title>}
-    <script is:inline set:html={themeChoiceBootstrapScript} />
+    <script is:inline set:html={themeChoiceBootstrapScript}></script>
   </head>
   <body class="antialiased bg-background">
-    <script is:inline set:html={themeStylesheetScript} />
-    <noscript><link rel="stylesheet" href={themeStylesheetHref} /></noscript>
+    <script is:inline set:html={themeStylesheetScript}></script>
+    <noscript>
+      <link rel="stylesheet" href={themeStylesheetHref} />
+    </noscript>
 
     <slot />
+    {sourceUrl && (
+      <p class="px-6 py-4 text-center text-xs text-muted-foreground">
+        Adapted for Bejamas UI from{" "}
+        <a
+          href={sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 align-middle underline underline-offset-4"
+        >
+          <ShadcnblocksLogo class="size-4 shrink-0" aria-hidden="true" />
+          Shadcnblocks.com
+        </a>
+        .
+      </p>
+    )}
 
     <script>
       import {

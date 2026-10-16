@@ -1,0 +1,56 @@
+---
+import { Badge } from "@bejamas/registry/ui/badge";
+import { Button } from "@bejamas/registry/ui/button";
+interface Props {
+  badge?: string;
+  heading?: string;
+  description?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  primaryHref?: string;
+  primaryLabel?: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+  class?: string;
+}
+const {
+  badge = "Built for the web",
+  heading = "Build something your users will love.",
+  description = "Thoughtful components that help you turn your next idea into a fast, accessible website.",
+  imageSrc = "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+  imageAlt = "A bright workspace with desks and plants",
+  primaryHref = "/docs",
+  primaryLabel = "Get started",
+  secondaryHref = "/blocks",
+  secondaryLabel = "Explore blocks",
+  class: className = "",
+} = Astro.props;
+---
+
+<section class:list={["px-6 py-20 md:py-32", className]}>
+  <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
+    <div class="flex flex-col items-center gap-6 text-center lg:items-start lg:text-left">
+      <Badge variant="outline">{badge}</Badge>
+      <h1 class="text-balance text-4xl font-semibold tracking-tight md:text-6xl">
+        {heading}
+      </h1>
+      <p class="max-w-xl text-lg text-muted-foreground">{description}</p>
+      <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <Button as="a" href={primaryHref}>
+          {primaryLabel}
+          <span aria-hidden="true">→</span>
+        </Button>
+        <Button as="a" href={secondaryHref} variant="outline">
+          {secondaryLabel}
+        </Button>
+      </div>
+    </div>
+    <img
+      src={imageSrc}
+      alt={imageAlt}
+      width="1200"
+      height="675"
+      class="aspect-video w-full rounded-xl border object-cover object-top"
+    />
+  </div>
+</section>

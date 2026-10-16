@@ -12,6 +12,10 @@ const blocksSlugPageFile = path.resolve(
   import.meta.dir,
   "../../pages/blocks/[slug].astro",
 );
+const blocksLayoutFile = path.resolve(
+  import.meta.dir,
+  "../../components/BlocksLayout.astro",
+);
 const createPageFile = path.resolve(import.meta.dir, "../../pages/create.astro");
 const blogIndexPageFile = path.resolve(
   import.meta.dir,
@@ -32,6 +36,7 @@ describe("page style scoping", () => {
     const themesSource = fs.readFileSync(themesPageFile, "utf8");
     const blocksIndexSource = fs.readFileSync(blocksIndexPageFile, "utf8");
     const blocksSlugSource = fs.readFileSync(blocksSlugPageFile, "utf8");
+    const blocksLayoutSource = fs.readFileSync(blocksLayoutFile, "utf8");
     const createSource = fs.readFileSync(createPageFile, "utf8");
     const sharedThemeSource = fs.readFileSync(sharedThemePageFile, "utf8");
 
@@ -41,11 +46,12 @@ describe("page style scoping", () => {
     expect(themesSource).toContain('data-page-scope="themes"');
     expect(themesSource).toContain(':root:has([data-page-scope="themes"]) .content-panel');
 
-    expect(blocksIndexSource).toContain('data-page-scope="blocks-index"');
-    expect(blocksIndexSource).toContain(':root:has([data-page-scope="blocks-index"]) .content-panel');
-
-    expect(blocksSlugSource).toContain('data-page-scope="blocks-slug"');
-    expect(blocksSlugSource).toContain(':root:has([data-page-scope="blocks-slug"]) .content-panel');
+    // Block index and category pages share BlocksLayout, which owns the blocks scope.
+    expect(blocksIndexSource).toContain("<BlocksLayout");
+    expect(blocksSlugSource).toContain("<BlocksLayout");
+    expect(blocksLayoutSource).toContain('data-page-scope="blocks"');
+    expect(blocksLayoutSource).toContain(':root:has([data-page-scope="blocks"]) .content-panel');
+    expect(blocksLayoutSource).toContain(':root:has([data-page-scope="blocks"]) .sl-container');
 
     expect(createSource).toContain('data-page-scope="create"');
     expect(createSource).toContain(':root:has([data-page-scope="create"]) .content-panel');

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "blog-01",
+  "title": "Blog 01",
+  "description": "A centered blog section with responsive image cards and read-more links.",
+  "dependencies": [
+    "@lucide/astro"
+  ],
+  "registryDependencies": [
+    "badge",
+    "button",
+    "card"
+  ],
+  "files": [
+    {
+      "path": "blocks/blog-01/Blog01.astro",
+      "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin.\n * Upstream license: MIT + Commons Clause; retain its license notice.\n */\nimport { ArrowRight } from \"@lucide/astro\";\n\nimport { Badge } from \"@/registry/bejamas/ui/badge\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  Card,\n  CardContent,\n  CardFooter,\n  CardHeader,\n} from \"@/registry/bejamas/ui/card\";\n\ninterface Post {\n  id: string;\n  title: string;\n  summary: string;\n  label: string;\n  author: string;\n  published: string;\n  url: string;\n  image: string;\n}\n\ninterface Props {\n  class?: string;\n  tagline?: string;\n  heading?: string;\n  description?: string;\n  buttonText?: string;\n  buttonUrl?: string;\n  posts?: Post[];\n}\n\nconst {\n  class: className = \"\",\n  tagline = \"Latest Updates\",\n  heading = \"Blog Posts\",\n  description = \"Discover the latest trends, tips, and best practices in modern web development. From UI components to design systems, stay updated with our expert insights.\",\n  buttonText = \"View all articles\",\n  buttonUrl = \"https://shadcnblocks.com\",\n  posts = [\n    {\n      id: \"post-1\",\n      title: \"Getting Started with shadcn/ui Components\",\n      summary:\n        \"Learn how to quickly integrate and customize shadcn/ui components in your Next.js projects. We'll cover installation, theming, and best practices for building modern interfaces.\",\n      label: \"Tutorial\",\n      author: \"Sarah Chen\",\n      published: \"1 Jan 2024\",\n      url: \"https://shadcnblocks.com\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"post-2\",\n      title: \"Building Accessible Web Applications\",\n      summary:\n        \"Explore how to create inclusive web experiences using shadcn/ui's accessible components. Discover practical tips for implementing ARIA labels, keyboard navigation, and semantic HTML.\",\n      label: \"Accessibility\",\n      author: \"Marcus Rodriguez\",\n      published: \"1 Jan 2024\",\n      url: \"https://shadcnblocks.com\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"post-3\",\n      title: \"Modern Design Systems with Tailwind CSS\",\n      summary:\n        \"Dive into creating scalable design systems using Tailwind CSS and shadcn/ui. Learn how to maintain consistency while building flexible and maintainable component libraries.\",\n      label: \"Design Systems\",\n      author: \"Emma Thompson\",\n      published: \"1 Jan 2024\",\n      url: \"https://shadcnblocks.com\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n  ],\n} = Astro.props;\n---\n\n<section class:list={[\"py-32\", className]}>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] flex flex-col items-center gap-16 lg:px-16\">\n    <div class=\"text-center\">\n      <Badge variant=\"secondary\" class=\"mb-6\">\n        {tagline}\n      </Badge>\n      <h2 class=\"mb-3 text-pretty text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6 lg:max-w-3xl lg:text-5xl\">\n        {heading}\n      </h2>\n      <p class=\"text-muted-foreground mb-8 md:text-base lg:max-w-2xl lg:text-lg\">\n        {description}\n      </p>\n      <Button\n        as=\"a\"\n        href={buttonUrl}\n        target=\"_blank\"\n        rel=\"noopener noreferrer\"\n        variant=\"link\"\n        class=\"w-full sm:w-auto\"\n      >\n        {buttonText}\n        <ArrowRight class=\"ml-2 size-4\" />\n      </Button>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8\">\n      {posts.map((post) => (\n        <Card class=\"grid grid-rows-[auto_auto_1fr_auto] pt-0\">\n          <div class=\"aspect-16/9 w-full\">\n            <a\n              href={post.url}\n              target=\"_blank\"\n              rel=\"noopener noreferrer\"\n              class=\"fade-in transition-opacity duration-200 hover:opacity-70\"\n            >\n              <img\n                src={post.image}\n                alt={post.title}\n                class=\"h-full w-full object-cover object-center\"\n              />\n            </a>\n          </div>\n          <CardHeader>\n            <h3 class=\"text-lg font-semibold hover:underline md:text-xl\">\n              <a href={post.url} target=\"_blank\" rel=\"noopener noreferrer\">\n                {post.title}\n              </a>\n            </h3>\n          </CardHeader>\n          <CardContent>\n            <p class=\"text-muted-foreground\">{post.summary}</p>\n          </CardContent>\n          <CardFooter>\n            <a\n              href={post.url}\n              target=\"_blank\"\n              rel=\"noopener noreferrer\"\n              class=\"text-foreground flex items-center hover:underline\"\n            >\n              Read more\n              <ArrowRight class=\"ml-2 size-4\" />\n            </a>\n          </CardFooter>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/blog-01/Blog01.astro"
+    },
+    {
+      "path": "blocks/blog-01/index.ts",
+      "content": "export { default as Blog01 } from \"./Blog01.astro\";\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/blog-01/index.ts"
+    },
+    {
+      "path": "blocks/blog-01/LICENSE.md",
+      "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/blog-01/LICENSE.md"
+    }
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/blog7"
+  },
+  "type": "registry:block"
+}

@@ -5,6 +5,7 @@ import SidebarPersister from "@astrojs/starlight/components/SidebarPersister.ast
 import SidebarSublist from "@astrojs/starlight/components/SidebarSublist.astro";
 
 import HeaderPresetSwitcher from "@/components/starlight/HeaderPresetSwitcher.astro";
+import options from "virtual:starlight-theme-bejamas/user-config";
 
 const { sidebar } = Astro.locals.starlightRoute;
 const { template } = Astro.locals.starlightRoute.entry.data;
@@ -17,19 +18,32 @@ const isSplashTemplate = template === "splash";
   <LanguageSelect />
 </div>
 
-{
-  isSplashTemplate ? (
-    <>
-      <div class="fade" />
-      <SidebarSublist sublist={sidebar} />
-    </>
-  ) : (
-    <SidebarPersister>
-      <div class="fade" />
-      <SidebarSublist sublist={sidebar} />
-    </SidebarPersister>
-  )
-}
+<nav aria-label="Main navigation" class="mobile-main-nav">
+  <ul>
+    {(options.nav ?? []).map((item) => (
+      <li>
+        <a
+          href={item.href}
+          class="block rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+        >
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+{isSplashTemplate ? (
+  <>
+    <div class="fade" />
+    <SidebarSublist sublist={sidebar} />
+  </>
+) : (
+  <SidebarPersister>
+    <div class="fade" />
+    <SidebarSublist sublist={sidebar} />
+  </SidebarPersister>
+)}
 
 <script>
   // The mobile sidebar is a top-layer popover, so dropdown menus portaled to
@@ -39,9 +53,9 @@ const isSplashTemplate = template === "splash";
     const root = event.target;
     if (!open || !(root instanceof HTMLElement)) return;
 
-    const popover = root.closest<HTMLElement>(
-      ".mobile-preferences-at-top",
-    )?.closest<HTMLElement>("[popover]");
+    const popover = root
+      .closest<HTMLElement>(".mobile-preferences-at-top")
+      ?.closest<HTMLElement>("[popover]");
     const contentId = root
       .querySelector('[data-slot="dropdown-menu-trigger"]')
       ?.getAttribute("aria-controls");
@@ -59,6 +73,12 @@ const isSplashTemplate = template === "splash";
 
 <style>
   @layer bejamas {
+    .mobile-main-nav {
+      padding-block: 0.75rem;
+      border-bottom: 1px solid var(--sl-color-gray-6);
+      margin-bottom: 0.75rem;
+    }
+
     .mobile-preferences-at-top {
       position: sticky;
       top: 0;
@@ -97,7 +117,7 @@ const isSplashTemplate = template === "splash";
     }
 
     /* The theme switches to its desktop sidebar spacing at 50rem, but the
-       mobile menu stays until 64rem. Keep the small-screen spacing here. */
+         mobile menu stays until 64rem. Keep the small-screen spacing here. */
     @media (min-width: 50rem) and (max-width: 63.99rem) {
       :global(#starlight__sidebar .sidebar-content) {
         padding-top: calc(var(--spacing) * 3);
@@ -109,6 +129,10 @@ const isSplashTemplate = template === "splash";
     }
 
     @media (min-width: 64rem) {
+      .mobile-main-nav {
+        display: none;
+      }
+
       .mobile-preferences-at-top {
         display: none;
       }

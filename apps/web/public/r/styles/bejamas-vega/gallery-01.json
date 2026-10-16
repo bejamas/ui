@@ -1,0 +1,35 @@
+{
+  "name": "gallery-01",
+  "type": "registry:block",
+  "title": "Gallery 01",
+  "description": "A multi-card image gallery carousel with previous and next controls.",
+  "registryDependencies": [
+    "index",
+    "carousel"
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/gallery6"
+  },
+  "files": [
+    {
+      "path": "blocks/gallery-01/Gallery01.astro",
+      "type": "registry:component",
+      "target": "src/components/blocks/gallery-01/Gallery01.astro",
+      "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin. MIT + Commons Clause.\n * Retain upstream notice; redistribution of component ports requires permission.\n */\nimport { ArrowRight, ArrowUpRight } from \"@lucide/astro\";\nimport { Carousel, CarouselSlide } from \"@/registry/bejamas/ui/carousel\";\n\ninterface GalleryItem {\n  id: string;\n  title: string;\n  summary: string;\n  url: string;\n  image: string;\n}\n\ninterface Props {\n  heading?: string;\n  demoUrl?: string;\n  items?: GalleryItem[];\n  class?: string;\n}\n\nconst {\n  heading = \"Gallery\",\n  demoUrl = \"https://www.shadcnblocks.com\",\n  items = [\n    {\n      id: \"item-1\",\n      title: \"Build Modern UIs\",\n      summary:\n        \"Create stunning user interfaces with our comprehensive design system.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"item-2\",\n      title: \"Computer Vision Technology\",\n      summary:\n        \"Powerful image recognition and processing capabilities that allow AI systems to analyze, understand, and interpret visual information from the world.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"item-3\",\n      title: \"Machine Learning Automation\",\n      summary:\n        \"Self-improving algorithms that learn from data patterns to automate complex tasks and make intelligent decisions with minimal human intervention.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"item-4\",\n      title: \"Predictive Analytics\",\n      summary:\n        \"Advanced forecasting capabilities that analyze historical data to predict future trends and outcomes, helping businesses make data-driven decisions.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"item-5\",\n      title: \"Neural Network Architecture\",\n      summary:\n        \"Sophisticated AI models inspired by human brain structure, capable of solving complex problems through deep learning and pattern recognition.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n  ],\n  class: className,\n} = Astro.props;\n---\n\n<section class:list={[\"py-32\", className]}>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]\">\n    <div class=\"mb-8 md:mb-14 lg:mb-16\">\n      <h2 class=\"mb-3 text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6\">\n        {heading}\n      </h2>\n      <a\n        href={demoUrl}\n        class=\"group flex items-center gap-1 text-sm font-medium md:text-base lg:text-lg\"\n      >\n        Book a demo\n        <ArrowUpRight class=\"size-4 transition-transform group-hover:translate-x-1\" />\n      </a>\n    </div>\n    <Carousel aria-label={heading} showCounter={false} contentClass=\"gap-8\">\n      {items.map((item) => (\n        <CarouselSlide class=\"md:max-w-[452px]\">\n          <a href={item.url} class=\"group flex flex-col justify-between\">\n            <div>\n              <div class=\"aspect-3/2 flex overflow-clip rounded-xl\">\n                <div class=\"flex-1\">\n                  <div class=\"relative h-full w-full origin-bottom transition duration-300 group-hover:scale-105\">\n                    <img\n                      src={item.image}\n                      alt={item.title}\n                      class=\"h-full w-full object-cover object-center\"\n                    />\n                  </div>\n                </div>\n              </div>\n            </div>\n            <div class=\"mb-2 line-clamp-3 break-words pt-4 text-lg font-medium md:mb-3 md:pt-4 md:text-xl lg:pt-4 lg:text-2xl\">\n              {item.title}\n            </div>\n            <div class=\"text-muted-foreground mb-8 line-clamp-2 text-sm md:mb-12 md:text-base lg:mb-9\">\n              {item.summary}\n            </div>\n            <div class=\"flex items-center text-sm\">\n              Read more\n              <ArrowRight class=\"ml-2 size-5 transition-transform group-hover:translate-x-1\" />\n            </div>\n          </a>\n        </CarouselSlide>\n      ))}\n    </Carousel>\n  </div>\n</section>\n"
+    },
+    {
+      "path": "blocks/gallery-01/index.ts",
+      "type": "registry:component",
+      "target": "src/components/blocks/gallery-01/index.ts",
+      "content": "export { default as Gallery01 } from \"./Gallery01.astro\";\n"
+    },
+    {
+      "path": "blocks/gallery-01/LICENSE.md",
+      "type": "registry:component",
+      "target": "src/components/blocks/gallery-01/LICENSE.md",
+      "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n"
+    }
+  ],
+  "dependencies": [],
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json"
+}

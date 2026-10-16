@@ -1,0 +1,167 @@
+---
+/**
+ * Astro port of a shadcnblocks.com block.
+ * Copyright (c) 2025 shadcnblocks.com - Rob Austin. MIT + Commons Clause.
+ * Retain upstream notice; redistribution of component ports requires permission.
+ */
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@bejamas/registry/ui/accordion";
+interface FeatureItem {
+  id: number;
+  title: string;
+  image: string;
+  description: string;
+}
+interface Props {
+  features?: FeatureItem[];
+  class?: string;
+}
+const {
+  features = [
+    {
+      id: 1,
+      title: "Ready-to-Use UI Blocks",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-1.svg",
+      description:
+        "Browse through our extensive collection of pre-built UI blocks designed with shadcn/ui. Each block is carefully crafted to be responsive, accessible, and easily customizable. Simply copy and paste the code into your project.",
+    },
+    {
+      id: 2,
+      title: "Tailwind CSS & TypeScript",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-2.svg",
+      description:
+        "Built with Tailwind CSS for rapid styling and TypeScript for type safety. Our blocks leverage the full power of Tailwind's utility classes while maintaining clean, type-safe code that integrates seamlessly with your Next.js projects.",
+    },
+    {
+      id: 3,
+      title: "Dark Mode & Customization",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-3.svg",
+      description:
+        "Every block supports dark mode out of the box and can be customized to match your brand. Modify colors, spacing, and typography using Tailwind's configuration. The shadcn/ui theming system makes it easy to maintain consistency across your site.",
+    },
+    {
+      id: 4,
+      title: "Accessibility First",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-4.svg",
+      description:
+        "All blocks are built with accessibility in mind, following WCAG guidelines. They include proper ARIA labels, keyboard navigation support, and semantic HTML structure. Ensure your website is usable by everyone without extra effort.",
+    },
+    {
+      id: 5,
+      title: "Modern Development Stack",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-5.svg",
+      description:
+        "Built for modern web development with React 18, Next.js 14, and the latest shadcn/ui components. Take advantage of React Server Components, TypeScript strict mode, and other cutting-edge features while maintaining excellent performance.",
+    },
+  ],
+  class: className,
+} = Astro.props;
+---
+
+<bejamas-features-03 data-block="features-03" class="block">
+  <section class:list={["py-32", className]}>
+    <div class="mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]">
+      <div class="mb-12 flex w-full items-start justify-between gap-12">
+        <div class="w-full md:w-1/2">
+          <Accordion class="w-full" defaultValue="item-1" collapsible={false}>
+            {features.map((tab) => (
+              <AccordionItem
+                value={`item-${tab.id}`}
+                class="transition-opacity hover:opacity-80"
+                data-feature-image={tab.image}
+              >
+                <AccordionTrigger class="no-underline! cursor-pointer py-5 transition">
+                  <h4
+                    data-feature-title
+                    class:list={[
+                      "text-xl font-semibold",
+                      tab.id === 1
+                        ? "text-foreground"
+                        : "text-muted-foreground",
+                    ]}
+                  >
+                    {tab.title}
+                  </h4>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p class="text-muted-foreground text-base">
+                    {tab.description}
+                  </p>
+                  <div class="mt-4 md:hidden">
+                    <img
+                      src={tab.image}
+                      alt={tab.title}
+                      class="h-full max-h-80 w-full rounded-md object-cover"
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+        <div class="bg-muted relative m-auto hidden w-1/2 overflow-hidden rounded-xl md:block">
+          {features[0] && (
+            <img
+              data-feature-preview
+              src={features[0].image}
+              alt="Feature preview"
+              class="aspect-4/3 w-full object-cover"
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+</bejamas-features-03>
+
+<script>
+  class Features03Element extends HTMLElement {
+    private cleanup?: AbortController;
+    connectedCallback() {
+      if (this.cleanup) return;
+      this.cleanup = new AbortController();
+      const accordion = this.querySelector<HTMLElement>(
+        '[data-slot="accordion"]',
+      );
+      const preview = this.querySelector<HTMLImageElement>(
+        "[data-feature-preview]",
+      );
+      accordion?.addEventListener(
+        "accordion:change",
+        (event) => {
+          const value = (event as CustomEvent<{ value: string[] }>).detail
+            .value[0];
+          if (!value) return;
+          accordion
+            .querySelectorAll<HTMLElement>('[data-slot="accordion-item"]')
+            .forEach((item) => {
+              const active = item.dataset.value === value;
+              const title = item.querySelector<HTMLElement>(
+                "[data-feature-title]",
+              );
+              title?.classList.toggle("text-foreground", active);
+              title?.classList.toggle("text-muted-foreground", !active);
+              if (active && preview && item.dataset.featureImage)
+                preview.src = item.dataset.featureImage;
+            });
+        },
+        { signal: this.cleanup.signal },
+      );
+    }
+    disconnectedCallback() {
+      this.cleanup?.abort();
+      this.cleanup = undefined;
+    }
+  }
+  if (!customElements.get("bejamas-features-03"))
+    customElements.define("bejamas-features-03", Features03Element);
+</script>

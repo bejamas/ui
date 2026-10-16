@@ -1,0 +1,8 @@
+---
+import BlocksHero from "../BlocksHero.astro";
+import PageTitle from "../PageTitle.astro";
+
+const isBlockGallery = /^\/blocks(?:\/[^/]+)?\/?$/.test(Astro.url.pathname);
+---
+
+{isBlockGallery ? <BlocksHero /> : <PageTitle />}

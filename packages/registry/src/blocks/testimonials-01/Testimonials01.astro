@@ -1,0 +1,121 @@
+---
+import { Card, CardHeader, CardContent } from "@bejamas/registry/ui/card";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@bejamas/registry/ui/avatar";
+import { Button } from "@bejamas/registry/ui/button";
+interface Testimonial {
+  name: string;
+  role: string;
+  quote: string;
+  avatarSrc?: string;
+  sourceHref?: string;
+}
+interface Props {
+  heading?: string;
+  description?: string;
+  testimonials?: Testimonial[];
+  class?: string;
+}
+const {
+  heading = "Good work starts with good tools",
+  description = "A few words from the people building with us. Sample testimonials for this demo.",
+  testimonials = [
+    {
+      name: "Alex Morgan",
+      role: "Product designer",
+      quote:
+        "We went from an early sketch to a polished prototype in a single afternoon. The components gave us room to focus on the experience.",
+    },
+    {
+      name: "Sam Taylor",
+      role: "Frontend developer",
+      quote:
+        "Clear source, thoughtful defaults, and no surprises. Exactly what I want in a component library.",
+    },
+    {
+      name: "Jordan Lee",
+      role: "Founder",
+      quote:
+        "Our small team can move quickly without sacrificing the details. It has made a real difference to how we ship, and every page still feels like our own.",
+    },
+    {
+      name: "Casey Rivera",
+      role: "Engineering lead",
+      quote:
+        "The accessible foundations mean we spend less time fixing the basics and more time solving real problems for our customers.",
+    },
+    {
+      name: "Jamie Chen",
+      role: "Creative director",
+      quote:
+        "Easy to shape around a brand. The layouts feel consistent without looking identical.",
+    },
+    {
+      name: "Riley Brooks",
+      role: "Independent developer",
+      quote:
+        "A great starting point for client projects. I can adapt the source to each project and keep the final site fast and simple to maintain.",
+    },
+  ],
+  class: className = "",
+} = Astro.props;
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("");
+---
+
+<section class:list={["px-6 py-20 md:py-32", className]}>
+  <div class="mx-auto max-w-6xl">
+    <div class="mx-auto mb-10 max-w-2xl space-y-4 text-center">
+      <h2 class="text-balance text-3xl font-semibold tracking-tight md:text-4xl">
+        {heading}
+      </h2>
+      <p class="text-lg text-muted-foreground">{description}</p>
+    </div>
+    <div class="columns-1 gap-6 md:columns-2 lg:columns-3">
+      {testimonials.map((testimonial) => (
+        <Card class="mb-6 break-inside-avoid">
+          <CardHeader class="flex flex-row items-center gap-3">
+            <Avatar class="shrink-0">
+              {testimonial.avatarSrc && (
+                <AvatarImage
+                  src={testimonial.avatarSrc}
+                  alt=""
+                  loading="lazy"
+                />
+              )}
+              <AvatarFallback>{initials(testimonial.name)}</AvatarFallback>
+            </Avatar>
+            <div class="min-w-0 flex-1">
+              <p class="font-semibold">{testimonial.name}</p>
+              <p class="text-sm text-muted-foreground">{testimonial.role}</p>
+            </div>
+            {testimonial.sourceHref && (
+              <Button
+                as="a"
+                href={testimonial.sourceHref}
+                variant="ghost"
+                size="icon"
+                aria-label={`View testimonial from ${testimonial.name}`}
+              >
+                <span aria-hidden="true">↗</span>
+              </Button>
+            )}
+          </CardHeader>
+          <CardContent>
+            <blockquote class="text-muted-foreground">
+              <p>“{testimonial.quote}”</p>
+            </blockquote>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  </div>
+</section>
