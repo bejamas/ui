@@ -49,6 +49,20 @@ import Button from "@/ui/Button.astro";
 <Button>Click me</Button>
 ```
 
+## Agent Skill
+
+Use [migrate-react-sites](./skills/migrate-react-sites/SKILL.md) to port a React or Next.js site to Astro with bejamas/ui at pixel parity. It covers rebuilding a site as a new project and migrating inside an existing repository.
+
+Install it into your project with the [Skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add bejamas/ui --skill migrate-react-sites
+```
+
+The installer lets you choose your coding agent. For a non-interactive installation, add `--agent claude-code --yes` or `--agent codex --yes`. Add `--global` to make the skill available across projects.
+
+The skill's measurement scripts require Node.js 22+ or Bun and an installed Chrome, Chromium, Edge, or Brave browser. Set `CHROME_PATH` if the browser isn't in a standard location.
+
 ## Documentation
 
 Visit [ui.bejamas.com](https://ui.bejamas.com) to view the full documentation.
