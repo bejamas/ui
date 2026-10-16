@@ -1,5 +1,12 @@
 # starlight-theme-bejamas
 
+## 0.2.4
+
+### Patch Changes
+
+- Updated dependencies [[`0cac89c`](https://github.com/bejamas/ui/commit/0cac89cf39e0414933d6cacff4e00b29cc8996e9), [`6d9ff06`](https://github.com/bejamas/ui/commit/6d9ff061ba4771e7956f5179c4b15d7e02c0bb64), [`a7eb35f`](https://github.com/bejamas/ui/commit/a7eb35fb24b5a19e4f8aa41d857e93a8005e10ae)]:
+  - @bejamas/semantic-icons@0.3.0
+
 ## 0.2.3
 
 ### Patch Changes
