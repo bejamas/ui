@@ -43,6 +43,12 @@ export async function launch() {
   // can't wait for a graceful shutdown, so kill Chrome outright before it writes more of the profile.
   const cleanup = () => { proc.kill("SIGKILL"); removeProfile(); };
   process.once("exit", cleanup);
+  // Node's default signal handlers don't emit exit. Exit explicitly so cleanup runs on Ctrl-C
+  // and termination too, retaining the conventional 128 + signal exit codes.
+  const onSigint = () => process.exit(130);
+  const onSigterm = () => process.exit(143);
+  process.once("SIGINT", onSigint);
+  process.once("SIGTERM", onSigterm);
   const wsUrl = await new Promise((resolve, reject) => {
     let log = "";
     const fail = (message) => { clearTimeout(timer); reject(new Error(`${message}\n${log}`)); };
@@ -164,6 +170,8 @@ export async function launch() {
       proc.kill();
       await new Promise((r) => (proc.exitCode !== null || proc.signalCode !== null ? r() : proc.once("exit", r)));
       process.off("exit", cleanup);
+      process.off("SIGINT", onSigint);
+      process.off("SIGTERM", onSigterm);
       removeProfile();
     },
   };

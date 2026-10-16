@@ -14,7 +14,7 @@ const threshold = Number(flags.threshold ?? 2);
 const REGIONS = "header, nav, main > :not(astro-island, script, style, template), main > astro-island > *, section, footer";
 // PrimeReact marks internal wrappers data-slot=root|outer|inner; they aren't component slots to match.
 const SELECTOR = `${REGIONS}, h1, h2, h3, h4, p, a, button, img, svg[role=img], input, textarea, label, li, [data-slot]:not([data-slot=root], [data-slot=outer], [data-slot=inner])`;
-const STYLE_KEYS = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "color", "backgroundColor", "borderTopWidth", "borderTopStyle", "borderTopColor", "borderRadius", "paddingTop", "paddingLeft", "boxShadow"];
+const STYLE_KEYS = ["fontFamily", "fontSize", "fontWeight", "fontStyle", "fontVariationSettings", "lineHeight", "letterSpacing", "color", "backgroundColor", "borderTopWidth", "borderTopStyle", "borderTopColor", "borderRadius", "paddingTop", "paddingLeft", "boxShadow"];
 
 async function collect(browser, url) {
   const page = await browser.newPage({ width, dark: !!flags.dark, reducedMotion: true, localStorage: storageFlag(flags) });

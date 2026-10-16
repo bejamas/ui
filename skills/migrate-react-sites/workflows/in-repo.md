@@ -2,7 +2,7 @@
 
 The existing React/Next app is the **legacy app**. A new **Astro app** grows next to it in the same repository. It starts by rendering the legacy pages in place, swaps them for Astro section by section at pixel parity, and takes over the migrated routes at cutover. The legacy app's production build is the reference: where the shared references say *demo*, read *legacy build*; where they say *source*, read *legacy code*.
 
-**Status: tested once** (a Next 16 + PrimeReact + Sanity site, marketing routes only, no deployment). When a step doesn't fit what you find in the repo, follow the repo, and record the mismatch under *Skill feedback* in the ledger.
+When a step doesn't fit what you find in the repo, follow the repo, and record the mismatch under *Skill feedback* in the ledger.
 
 ## Scope and ground rules
 
@@ -16,7 +16,7 @@ The existing React/Next app is the **legacy app**. A new **Astro app** grows nex
 
 ## The ledger
 
-Create `MIGRATION.md` at the repository root in phase 0 (the Astro app's folder doesn't exist yet) and keep it current. It is the single record of progress, so a later session resumes from it. Start it with *How to resume*: the exact commands that start the content source, the legacy build and the Astro preview. Sections:
+Create `MIGRATION.md` at the repository root in phase 0 (the Astro app's folder doesn't exist yet) and keep it current. It is the single record of progress, so a later session resumes from it. Start it with *How to resume*: the exact commands that start the content source, the legacy build and the Astro production server. Sections:
 
 - **Routes:** URL, legacy file, the legacy modules it depends on, status (`todo` → `island` → `ported` → `verified`), notes.
 - **Providers:** every provider the legacy layout wraps pages in.
@@ -59,8 +59,8 @@ Before installing, rename the app's package (`my-app`) to the repo's naming sche
 3. **Fonts:** reuse the legacy app's font choices and files (`next/font/local` files move into `src/assets/fonts/`); see the font rows in [recipes](../references/recipes.md#nextjs-features).
 4. **Color mode:** the head script from [recipes](../references/recipes.md#color-mode) when the legacy app uses next-themes, with its storage key.
 5. **Shared code and assets:** import legacy modules through the `@legacy` alias and its resolver, add the Next stand-ins, and share the legacy `public/` with `publicDir` (all in [recipes](../references/recipes.md#in-repo-migration)), so content edits merged into the legacy app during the migration reach both apps.
-6. **Adapter:** when the deploy target needs one, enable it only on the host (e.g. `adapter: process.env.VERCEL ? vercel() : undefined`): local builds stay static so `astro preview` keeps working.
-7. **Scripts:** `dev`, `build`, `preview`, `check` (`astro check`), plus the repo's lint and format, wired the way the repo runs its other apps. If `astro preview` returns immediately, it's running in the background: `astro preview stop|status|logs`.
+6. **Adapter and local production server:** a fully prerendered app can use `astro preview` without an adapter. Once any route needs server rendering (endpoints, actions, middleware or ISR), configure an adapter for local builds too: disabling it makes `astro build` fail. Use the deployment adapter's supported local runner, or a [Node adapter in standalone mode](https://docs.astro.build/en/guides/integrations-guide/node/) with `node ./dist/server/entry.mjs` when the deployment adapter doesn't support `astro preview`. Keep the deployment adapter on the host, and record both configurations and the exact build/start commands in the ledger. Verify host-specific behavior on a preview deployment.
+7. **Scripts:** `dev`, `build`, `preview` (the local production runner chosen above), `check` (`astro check`), plus the repo's lint and format, wired the way the repo runs its other apps. If `astro preview` returns immediately, it's running in the background: `astro preview stop|status|logs`.
 
 **Done when** the Astro app builds and lints with the repo's package manager, and its preview serves an empty layout with the legacy app's background, text color and font.
 
@@ -93,9 +93,9 @@ When legacy changes land during the migration, rebase and re-verify the routes w
 
 ### 4. Next features
 
-Implement each ledger entry using the mappings in [recipes](../references/recipes.md#in-repo-migration): redirects and headers, middleware, form endpoints, ISR, env vars, sitemap, robots, OG images, analytics, i18n routing, and the coexistence rewrites. Features that need a server (endpoints, actions, middleware) bring an adapter matching the deploy target; keep everything else prerendered.
+Implement each ledger entry using the mappings in [recipes](../references/recipes.md#in-repo-migration): redirects and headers, middleware, form endpoints, ISR, env vars, sitemap, robots, OG images, analytics, i18n routing, and the coexistence rewrites. Features that need a server (endpoints, actions, middleware) bring an adapter matching the deploy target and the local production server from phase 1; keep everything else prerendered.
 
-**Done when** every *Next features* entry is implemented and its local part checked on `astro preview` (sitemap and robots list the same URLs, head and analytics match, each in-scope form submits end to end), env var names are listed for the host, and every check that needs a deployment (redirect statuses, headers, middleware, ISR, rewrites) is written under *Deployment checks*.
+**Done when** every *Next features* entry is implemented and its local part checked on the Astro production server from phase 1 (sitemap and robots list the same URLs, head and analytics match, each in-scope form submits end to end), env var names are listed for the host, and every check that needs a deployment (redirect statuses, headers, middleware, ISR, rewrites) is written under *Deployment checks*.
 
 ### 5. Replace the islands on published pages
 
