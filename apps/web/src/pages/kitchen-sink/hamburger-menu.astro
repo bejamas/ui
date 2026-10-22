@@ -1,6 +1,11 @@
 ---
 import KitchenSinkLayout from "@/components/KitchenSinkLayout.astro";
 import HamburgerMenuExample from "@/components/HamburgerMenuExample.astro";
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  HamburgerMenu,
+  HamburgerMenuItem,
+} from "@bejamas/registry/ui/hamburger-menu";
 ---
 
 <KitchenSinkLayout>
@@ -33,6 +38,34 @@ import HamburgerMenuExample from "@/components/HamburgerMenuExample.astro";
             closeOnOutsideClick={false}
           />
         </div>
+      </div>
+    </div>
+
+    <div class="space-y-3">
+      <h2 class="text-lg font-semibold">Trigger at start, inline panel</h2>
+      <div class="w-full max-w-[375px] overflow-hidden rounded-lg border border-border">
+        <HamburgerMenu
+          closeOnOutsideClick={false}
+          triggerPosition="start"
+          panel="inline"
+          class="[--hamburger-menu-bar-height:4rem]"
+          barClass="px-4"
+          panelClass="px-4 pb-4"
+        >
+          <span
+            slot="brand"
+            class="flex h-8 w-[100px] items-center justify-center rounded-lg bg-muted text-muted-foreground"
+          >
+            Slot area
+          </span>
+          <Button slot="actions" size="sm">Sign up</Button>
+          <HamburgerMenuItem href="#features">Features</HamburgerMenuItem>
+          <HamburgerMenuItem href="#pricing">Pricing</HamburgerMenuItem>
+          <HamburgerMenuItem href="#blog-inline">Blog</HamburgerMenuItem>
+        </HamburgerMenu>
+        <p class="p-4 text-sm text-muted-foreground">
+          The page content moves down while the menu is open.
+        </p>
       </div>
     </div>
   </section>

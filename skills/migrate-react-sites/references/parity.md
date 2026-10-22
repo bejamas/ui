@@ -94,7 +94,7 @@ bejamas components carry their own style (juno), which differs from shadcn's new
 | Carousel content | is the scroll viewport, `gap-4 rounded-lg` | embla `-ml-4`/`pl-4` → `gap-0 -ml-4 w-[calc(100%+1rem)]` + root `overflow-x-clip` |
 | Avatar | no ring | luma/nova: `after:border after:border-border after:mix-blend-darken` |
 | Marquee | 2 copies, `min-w-full justify-around` | `[&_.marquee-content]:min-w-max justify-start gap-4 pr-4`; pause: `hover:[&_.marquee-content]:[animation-play-state:paused]` |
-| HamburgerMenu | its own 48px bar, overlay panel, fixed icon | use Collapsible (inline panel) or Drawer (side sheet) when the layout differs |
+| HamburgerMenu | its own 48px bar, trigger after the actions, overlay panel | `triggerPosition="start"`, `panel="inline"`, `--hamburger-menu-bar-height`, `barClass`/`triggerClass`/`panelClass`, a `trigger` slot for custom icons; Drawer for a side sheet |
 
 ### `asChild` and triggers
 

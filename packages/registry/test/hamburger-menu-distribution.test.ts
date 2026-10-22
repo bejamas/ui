@@ -36,6 +36,13 @@ describe("hamburger menu distribution", () => {
       expect(menu).toContain("data-close-on-click-outside");
       expect(menu).toContain("closeOnOutsideClick?: boolean");
       expect(menu).toContain("triggerLabel?: string");
+      expect(menu).toContain('triggerPosition?: "start" | "end"');
+      expect(menu).toContain('panel?: "overlay" | "inline"');
+      expect(menu).toContain("barClass?: string");
+      expect(menu).toContain("triggerClass?: string");
+      expect(menu).toContain("panelClass?: string");
+      expect(menu).toContain('<slot name="trigger">');
+      expect(menu).toContain("--hamburger-menu-bar-height");
       expect(menu).toContain("<nav");
       expect(menuItem).toContain('data-slot="hamburger-menu-link"');
       expect(group).toContain('data-slot="hamburger-menu-group"');
