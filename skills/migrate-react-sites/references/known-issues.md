@@ -41,7 +41,7 @@ Observed on bejamas 0.5.0 across 15 site ports and one in-repo migration. The se
 | Need | Accepted approach |
 |---|---|
 | Theme provider or toggle | head script + listener on the Toggle/DropdownMenu event (recipes) |
-| Mobile nav that differs from HamburgerMenu's layout | Collapsible for an inline push-down panel; Drawer for a side sheet |
+| Mobile nav that differs from HamburgerMenu's layout | HamburgerMenu `triggerPosition="start"` for a left trigger, `panel="inline"` for a push-down panel, `--hamburger-menu-bar-height` and `barClass`/`panelClass` to match the header; Drawer for a side sheet |
 | Close the menu on link tap | Drawer: `<a data-slot="drawer-close" href>`, or `drawer:close` on link click. Collapsible: none, so record it |
 | A panel that's collapsible below a breakpoint and always visible above it | the `hidden` attribute beats `lg:flex!` (preflight `!important`), so render a static desktop copy and wrap only the mobile copy in Collapsible (`class="contents lg:hidden"`) |
 | DropdownMenuItem as a link | an `<a>` inside `DropdownMenuItem class="p-0"`, plus a `dropdown-menu:select` listener that clicks the link when `detail.source === "keyboard"` |
