@@ -301,7 +301,24 @@ const {
 
 <script>
   import { createTabs } from "@data-slot/tabs";
-  document
-    .querySelectorAll('[data-slot="tabs"]')
-    .forEach((el) => createTabs(el));
+
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll('[data-slot="tabs"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, createTabs(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>

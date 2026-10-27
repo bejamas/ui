@@ -177,11 +177,20 @@ const {
 <script>
   import { createDrawer } from "@data-slot/drawer";
 
-  document
-    .querySelectorAll<HTMLElement>('[data-slot="drawer"]')
-    .forEach((root) => {
-      if (!root.hasAttribute("data-drawer-initialized")) {
-        root.setAttribute("data-drawer-initialized", "");
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll<HTMLElement>('[data-slot="drawer"]')
+      .forEach((root) => {
+        if (controllers.has(root)) return;
         const backdrop = root.querySelector<HTMLElement>(
           '[data-slot="drawer-backdrop"]',
         );
@@ -193,7 +202,10 @@ const {
         backdrop?.addEventListener("pointerdown", (event) => {
           if (event.pointerType !== "touch") event.preventDefault();
         });
-        createDrawer(root);
-      }
-    });
+        controllers.set(root, createDrawer(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>

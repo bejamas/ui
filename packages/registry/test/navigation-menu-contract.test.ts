@@ -72,7 +72,7 @@ describe("navigation-menu registry parity", () => {
     expect(root).toContain(
       "{viewport && <NavigationMenuPositioner align={align} />}",
     );
-    expect(root).toContain("createNavigationMenu(el);");
+    expect(root).toContain("createNavigationMenu(root)");
     expect(root).not.toContain("syncNavigationMenuTriggerBooleans");
     expect(root).not.toContain("bindNavigationMenuTriggerCompatibility");
     expect(root).not.toContain("<style is:global>");

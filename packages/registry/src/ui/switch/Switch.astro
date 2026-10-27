@@ -100,7 +100,25 @@ const initialChecked = checked ?? defaultChecked ?? false;
 </span>
 
 <script>
-  import { create } from "@data-slot/switch";
+  import { createSwitch } from "@data-slot/switch";
 
-  create();
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll('[data-slot="switch"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, createSwitch(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>

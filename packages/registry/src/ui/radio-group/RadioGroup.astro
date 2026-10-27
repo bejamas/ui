@@ -75,7 +75,23 @@ const {
 <script>
   import { createRadioGroup } from "@data-slot/radio-group";
 
-  document
-    .querySelectorAll('[data-slot="radio-group"]')
-    .forEach((el) => createRadioGroup(el));
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll('[data-slot="radio-group"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, createRadioGroup(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>

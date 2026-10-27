@@ -133,7 +133,24 @@ const {
 
 <script>
   import { createToggle } from "@data-slot/toggle";
-  document
-    .querySelectorAll<HTMLElement>('[data-slot="toggle"]')
-    .forEach((el) => createToggle(el));
+
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll<HTMLElement>('[data-slot="toggle"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, createToggle(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>

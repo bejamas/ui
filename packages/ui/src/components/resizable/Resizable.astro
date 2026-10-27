@@ -168,12 +168,23 @@ const {
 <script>
   import { createResizable } from "@data-slot/resizable";
 
-  document
-    .querySelectorAll<HTMLElement>('[data-slot="resizable"]')
-    .forEach((root) => {
-      if (!root.hasAttribute("data-resizable-initialized")) {
-        root.setAttribute("data-resizable-initialized", "");
-        createResizable(root);
-      }
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
     });
+    document
+      .querySelectorAll<HTMLElement>('[data-slot="resizable"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, createResizable(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>
