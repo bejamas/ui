@@ -58,8 +58,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@bejamas/registry/ui/to
 
 ```astro nocollapse
 ---
-import { Tooltip, TooltipTrigger, TooltipContent } from '@bejamas/ui/components/tooltip';
-import { Button } from '@bejamas/ui/components/button';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@bejamas/registry/ui/tooltip';
+import { Button } from '@bejamas/registry/ui/button';
 ---
 
 <Tooltip>
@@ -351,10 +351,6 @@ The tooltip emits custom events that you can listen to:
 | Event | Detail | Description |
 |-------|--------|-------------|
 | `tooltip:change` | `{ open: boolean, trigger: HTMLElement, content: HTMLElement, reason: string }` | Fired when visibility changes |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Tooltip id="my-tooltip"> <TooltipTrigger asChild> <Button variant="outline">Hover me</Button> </TooltipTrigger> <TooltipContent> <p>Tooltip content</p> </TooltipContent> </Tooltip>
-</div>
 
 ```astro nocollapse
 <Tooltip id="my-tooltip">

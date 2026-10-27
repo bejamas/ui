@@ -94,8 +94,8 @@ import { Label } from '@bejamas/registry/ui/label';
 
 ```astro nocollapse
 ---
-import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter, DialogClose } from '@bejamas/ui/components/dialog';
-import { Button } from '@bejamas/ui/components/button';
+import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter, DialogClose } from '@bejamas/registry/ui/dialog';
+import { Button } from '@bejamas/registry/ui/button';
 ---
 
 
@@ -182,10 +182,6 @@ The dialog emits custom events that you can listen to:
 | Event | Detail | Description |
 |-------|--------|-------------|
 | `dialog:change` | `{ open: boolean }` | Fired when the open state changes |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Dialog id="my-dialog"> <DialogTrigger>{"Open Dialog"}</DialogTrigger> <DialogContent> <DialogTitle>{"Title"}</DialogTitle> <DialogDescription>{"Description"}</DialogDescription> </DialogContent> </Dialog>
-</div>
 
 ```astro nocollapse
 <Dialog id="my-dialog">

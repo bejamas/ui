@@ -7,7 +7,7 @@ import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/com
 
 import { Button } from '@bejamas/registry/ui/button';
 import { Checkbox } from '@bejamas/registry/ui/checkbox';
-import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle } from '@bejamas/registry/ui/field';
+import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle } from '@bejamas/registry/ui/field';
 import { Input } from '@bejamas/registry/ui/input';
 import { RadioGroup, RadioGroupItem } from '@bejamas/registry/ui/radio-group';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@bejamas/registry/ui/select';
@@ -177,7 +177,7 @@ import {
   FieldSeparator,
   FieldSet,
   FieldTitle,
-} from '@bejamas/ui/components/field';
+} from '@bejamas/registry/ui/field';
 ---
 
 <FieldGroup>
@@ -624,10 +624,6 @@ Container that renders a semantic `fieldset` with spacing presets.
 |------|------|---------|
 | `class` | `string` | - |
 
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<FieldSet> <FieldLegend>{"Delivery"}</FieldLegend> <FieldGroup> <Field> <FieldLabel for="address">{"Address"}</FieldLabel> <Input id="address" /> </Field> </FieldGroup> </FieldSet>
-</div>
-
 ```astro nocollapse
 <FieldSet>
   <FieldLegend>Delivery</FieldLegend>
@@ -649,10 +645,6 @@ Legend element for a `FieldSet`. Use the `label` variant to align with label siz
 | `variant` | `"legend" \| "label"` | `"legend"` |
 | `class` | `string` | - |
 
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<FieldLegend variant="label">{"Notification Preferences"}</FieldLegend>
-</div>
-
 ```astro nocollapse
 <FieldLegend variant="label">Notification Preferences</FieldLegend>
 ```
@@ -665,10 +657,6 @@ responsive orientations.
 | Prop | Type | Default |
 |------|------|---------|
 | `class` | `string` | - |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<FieldGroup class="@container/field-group flex flex-col gap-6"> <Field>{"..."}</Field> <Field>{"..."}</Field> </FieldGroup>
-</div>
 
 ```astro nocollapse
 <FieldGroup class="@container/field-group flex flex-col gap-6">
@@ -688,10 +676,6 @@ styling, and spacing.
 | `class` | `string` | - |
 | `data-invalid` | `"true" \| "false"` | - |
 
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Field orientation="horizontal"> <FieldLabel for="remember">{"Remember me"}</FieldLabel> <Switch id="remember" /> </Field>
-</div>
-
 ```astro nocollapse
 <Field orientation="horizontal">
   <FieldLabel for="remember">Remember me</FieldLabel>
@@ -706,10 +690,6 @@ Flex column for grouping control and descriptions when label/content are split.
 | Prop | Type | Default |
 |------|------|---------|
 | `class` | `string` | - |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Field orientation="horizontal"> <Checkbox id="notifications" /> <FieldContent> <FieldLabel for="notifications">{"Notifications"}</FieldLabel> <FieldDescription>{"Email, SMS, and push options."}</FieldDescription> </FieldContent> </Field>
-</div>
 
 ```astro nocollapse
 <Field orientation="horizontal">
@@ -730,10 +710,6 @@ Label styled for both direct controls and nested `Field` children.
 | `class` | `string` | - |
 | `for` | `string` | - |
 
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<FieldLabel for="email">{"Email"}</FieldLabel>
-</div>
-
 ```astro nocollapse
 <FieldLabel for="email">Email</FieldLabel>
 ```
@@ -745,10 +721,6 @@ Title text styled for use inside `FieldContent`.
 | Prop | Type | Default |
 |------|------|---------|
 | `class` | `string` | - |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<FieldContent> <FieldTitle>{"Enable Touch ID"}</FieldTitle> <FieldDescription>{"Unlock your device faster."}</FieldDescription> </FieldContent>
-</div>
 
 ```astro nocollapse
 <FieldContent>
@@ -765,10 +737,6 @@ Helper text slot that supports links and balanced wrapping in horizontal layouts
 |------|------|---------|
 | `class` | `string` | - |
 
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<FieldDescription>{"We never share your email with anyone."}</FieldDescription>
-</div>
-
 ```astro nocollapse
 <FieldDescription>We never share your email with anyone.</FieldDescription>
 ```
@@ -781,10 +749,6 @@ content through its default slot.
 | Prop | Type | Default |
 |------|------|---------|
 | `class` | `string` | - |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<FieldSeparator>{"Or continue with"}</FieldSeparator>
-</div>
 
 ```astro nocollapse
 <FieldSeparator>Or continue with</FieldSeparator>
@@ -801,10 +765,6 @@ derives output from the `errors` array.
 | `forceMount` | `boolean` | `false` |
 | `class` | `string` | - |
 
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<FieldError errors={[{ message: "Username is required" }]} />
-</div>
-
 ```astro nocollapse
 <FieldError errors={[{ message: "Username is required" }]} />
 ```
@@ -813,10 +773,6 @@ When `errors` contains multiple unique messages, the component renders a list
 automatically.
 
 For client-side script flows in Astro, mount once and toggle visibility:
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<FieldError forceMount class="hidden" data-error-for="email" />
-</div>
 
 ```astro nocollapse
 <FieldError forceMount class="hidden" data-error-for="email" />

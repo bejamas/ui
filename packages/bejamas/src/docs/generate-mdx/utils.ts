@@ -2,7 +2,14 @@ import { existsSync, readFileSync } from "fs";
 import { readdir } from "fs/promises";
 import path, { dirname, extname, join, posix as pathPosix } from "path";
 import { createRequire } from "module";
-import { Project, SyntaxKind, SourceFile } from "ts-morph";
+import {
+  Node,
+  Project,
+  PropertySignature,
+  SyntaxKind,
+  SourceFile,
+  TypeNode,
+} from "ts-morph";
 
 export const RESERVED_COMPONENTS: Set<string> = new Set([
   "Fragment",
@@ -237,25 +244,75 @@ export function extractPropsFromDeclaredProps(sourceFile: SourceFile): Array<{
     });
   }
 
-  // Fallback: type Props = { ... }
-  const typeAlias = sourceFile.getTypeAlias("Props");
-  if (typeAlias) {
-    const typeNode = typeAlias.getTypeNode();
-    if (typeNode && typeNode.getKind() === SyntaxKind.TypeLiteral) {
-      const literal = typeNode.asKindOrThrow(SyntaxKind.TypeLiteral);
-      const properties = literal.getProperties();
-      return properties.map((prop) => {
-        const name = prop.getName();
-        const tn = prop.getTypeNode();
-        const rawType = tn ? tn.getText() : prop.getType().getText();
-        const typeText = normalizeTypeText(rawType);
-        const optional = prop.hasQuestionToken();
-        return { name, type: typeText, optional };
-      });
-    }
-  }
+  type DeclaredProp = { name: string; type: string; optional: boolean };
 
-  return [];
+  const fromProperties = (properties: PropertySignature[]): DeclaredProp[] =>
+    properties.map((prop) => {
+      const tn = prop.getTypeNode();
+      const rawType = tn ? tn.getText() : prop.getType().getText();
+      return {
+        name: prop.getName(),
+        type: normalizeTypeText(rawType),
+        optional: prop.hasQuestionToken(),
+      };
+    });
+
+  // Intersection: every part applies, so a prop is required if any part requires it.
+  const intersect = (parts: DeclaredProp[][]): DeclaredProp[] => {
+    const merged = new Map<string, DeclaredProp>();
+    for (const prop of parts.flat()) {
+      const existing = merged.get(prop.name);
+      if (existing) existing.optional &&= prop.optional;
+      else merged.set(prop.name, { ...prop });
+    }
+    return [...merged.values()];
+  };
+
+  // Union: a prop is required only if every member requires it.
+  const unite = (members: DeclaredProp[][]): DeclaredProp[] => {
+    const merged = new Map<string, DeclaredProp & { types: string[] }>();
+    for (const prop of members.flat()) {
+      const existing = merged.get(prop.name);
+      if (existing) {
+        existing.optional ||= prop.optional;
+        if (!existing.types.includes(prop.type)) existing.types.push(prop.type);
+      } else {
+        merged.set(prop.name, { ...prop, types: [prop.type] });
+      }
+    }
+    return [...merged.values()].map(({ types, ...prop }) => ({
+      ...prop,
+      type: types.join(" | "),
+      optional:
+        prop.optional ||
+        members.some((member) => !member.some((p) => p.name === prop.name)),
+    }));
+  };
+
+  // Resolve type literals, unions, intersections and local type references.
+  // External types such as HTMLAttributes<"div"> contribute no rows.
+  const collect = (node: TypeNode, seen: Set<string>): DeclaredProp[] => {
+    if (Node.isTypeLiteral(node)) return fromProperties(node.getProperties());
+    if (Node.isParenthesizedTypeNode(node))
+      return collect(node.getTypeNode(), seen);
+    if (Node.isIntersectionTypeNode(node))
+      return intersect(node.getTypeNodes().map((n) => collect(n, seen)));
+    if (Node.isUnionTypeNode(node))
+      return unite(node.getTypeNodes().map((n) => collect(n, seen)));
+    if (Node.isTypeReference(node)) {
+      const name = node.getTypeName().getText();
+      if (seen.has(name)) return [];
+      const next = new Set(seen).add(name);
+      const alias = sourceFile.getTypeAlias(name)?.getTypeNode();
+      if (alias) return collect(alias, next);
+      const localIface = sourceFile.getInterface(name);
+      if (localIface) return fromProperties(localIface.getProperties());
+    }
+    return [];
+  };
+
+  const typeNode = sourceFile.getTypeAlias("Props")?.getTypeNode();
+  return typeNode ? collect(typeNode, new Set(["Props"])) : [];
 }
 
 export function resolveUiRoot(cwd: string): string {

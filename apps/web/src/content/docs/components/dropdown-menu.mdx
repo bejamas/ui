@@ -65,7 +65,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuRadioItem,
-} from '@bejamas/ui/components/dropdown-menu';
+} from '@bejamas/registry/ui/dropdown-menu';
 ---
 
 <DropdownMenu>
@@ -176,10 +176,6 @@ The dropdown menu emits custom events that you can listen to:
 | `dropdown-menu:select` | `{ value, item, itemType, source, checked? }` | Cancelable user activation event fired before commit |
 | `dropdown-menu:value-change` | `{ value, previousValue, item, previousItem, source }` | Fired when radio selection commits |
 | `dropdown-menu:values-change` | `{ values, previousValues, changedValue, checked, item, source }` | Fired when checkbox selection commits |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<DropdownMenu id="my-dropdown" defaultValue="edit"> <DropdownMenuTrigger>{"Menu"}</DropdownMenuTrigger> <DropdownMenuContent> <DropdownMenuRadioItem value="edit">{"Edit"}</DropdownMenuRadioItem> <DropdownMenuRadioItem value="delete">{"Delete"}</DropdownMenuRadioItem> </DropdownMenuContent> </DropdownMenu>
-</div>
 
 ```astro nocollapse
 <DropdownMenu id="my-dropdown" defaultValue="edit">

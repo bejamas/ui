@@ -128,6 +128,7 @@ Each main component file (e.g., `Dialog.astro`, `Tabs.astro`, `Button.astro`) ha
 - Preview blocks are raw HTML (no code fence)
 - Usage/API code blocks use triple backticks with `nocollapse` modifier
 - Don't document `<component>:set` events in `@api`; `@dataSlotUrl` links to the primitive's full API instead
+- Component files here and the docs pages in `apps/web/src/content/docs/components` are generated. Edit `packages/registry/src/ui`, then run `bun run build:artifacts` in `apps/web` to regenerate both. `component-docs-sync.test.ts` fails if the committed pages drift
 
 ## Key Styling Conventions
 

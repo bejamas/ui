@@ -71,7 +71,7 @@ import {
   ComboboxGroup,
   ComboboxLabel,
   ComboboxSeparator,
-} from '@bejamas/ui/components/combobox';
+} from '@bejamas/registry/ui/combobox';
 ---
 
 <Combobox name="framework">
@@ -324,10 +324,6 @@ The combobox emits custom events that you can listen to:
 | `combobox:change` | `{ value: string \| null }` | Fired when a new value is selected |
 | `combobox:open-change` | `{ open: boolean }` | Fired when the dropdown opens or closes |
 | `combobox:input-change` | `{ inputValue: string }` | Fired when the user types in the input |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Combobox id="my-combobox"> <ComboboxInput placeholder="Search..." /> <ComboboxContent> <ComboboxList> <ComboboxItem value="option1">{"Option 1"}</ComboboxItem> <ComboboxItem value="option2">{"Option 2"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox>
-</div>
 
 ```astro nocollapse
 <Combobox id="my-combobox">

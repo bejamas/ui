@@ -50,7 +50,7 @@ import { Slider } from '@bejamas/registry/ui/slider';
 
 ```astro nocollapse
 ---
-import { Slider } from '@bejamas/ui/components/slider';
+import { Slider } from '@bejamas/registry/ui/slider';
 ---
 
 <Slider defaultValue={50} max={100} />
@@ -147,10 +147,6 @@ The slider emits custom events that you can listen to:
 |-------|--------|-------------|
 | `slider:change` | `{ value: number \| [number, number] }` | Fired on every value change (during drag) |
 | `slider:commit` | `{ value: number \| [number, number] }` | Fired when value is committed (pointer up or keyboard blur) |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Slider id="my-slider" defaultValue={50} max={100} />
-</div>
 
 ```astro nocollapse
 <Slider id="my-slider" defaultValue={50} max={100} />

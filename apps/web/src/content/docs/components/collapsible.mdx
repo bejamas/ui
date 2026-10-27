@@ -69,8 +69,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@bejamas/re
 
 ```astro nocollapse
 ---
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@bejamas/ui/components/collapsible';
-import { Button } from '@bejamas/ui/components/button';
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@bejamas/registry/ui/collapsible';
+import { Button } from '@bejamas/registry/ui/button';
 ---
 
 <Collapsible>
@@ -190,10 +190,6 @@ The collapsible emits custom events that you can listen to:
 | Event | Detail | Description |
 |-------|--------|-------------|
 | `collapsible:change` | `{ open: boolean }` | Fired when the open state changes |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Collapsible id="my-collapsible"> <CollapsibleTrigger>{"Toggle"}</CollapsibleTrigger> <CollapsibleContent>{"Hidden content"}</CollapsibleContent> </Collapsible>
-</div>
 
 ```astro nocollapse
 <Collapsible id="my-collapsible">

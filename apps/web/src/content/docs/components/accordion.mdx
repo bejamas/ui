@@ -67,7 +67,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@b
 
 ```astro nocollapse
 ---
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@bejamas/ui/components/accordion';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@bejamas/registry/ui/accordion';
 ---
 
 <Accordion class="w-full max-w-[420px] self-start" defaultValue="accordion-item-1">
@@ -141,10 +141,6 @@ The accordion emits custom events that you can listen to:
 | Event | Detail | Description |
 |-------|--------|-------------|
 | `accordion:change` | `{ value: string[] }` | Fired when expanded items change |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Accordion id="my-accordion"> <AccordionItem value="item-1"> <AccordionTrigger>{"Item 1"}</AccordionTrigger> <AccordionContent>{"Content 1"}</AccordionContent> </AccordionItem> </Accordion>
-</div>
 
 ```astro nocollapse
 <Accordion id="my-accordion">
