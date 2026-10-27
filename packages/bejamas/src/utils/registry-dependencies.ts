@@ -2,7 +2,10 @@ import { getHeadlessDependencies } from "@bejamas/registry/lib/headless-dependen
 import fs from "node:fs/promises";
 import path from "node:path";
 import { execa } from "execa";
-import { getPackageManager } from "./get-package-manager";
+import {
+  getPackageManager,
+  WORKSPACE_ROOT_INSTALL_ENV,
+} from "./get-package-manager";
 import type { RegistryItem } from "./reorganize-components";
 
 export function missingRegistryDependencies(
@@ -40,6 +43,7 @@ export async function ensureRegistryDependencies(
   const manager = await getPackageManager(cwd);
   await execa(manager, [manager === "npm" ? "install" : "add", ...missing], {
     cwd,
+    env: WORKSPACE_ROOT_INSTALL_ENV,
     stdio: "inherit",
   });
 }

@@ -34,6 +34,12 @@ export async function getPackageManager(
   return "npm";
 }
 
+// pnpm refuses to `add` to a workspace root without `-w`. bejamas installs into
+// the project it runs in, and a site can be its own workspace root.
+export const WORKSPACE_ROOT_INSTALL_ENV = {
+  npm_config_ignore_workspace_root_check: "true",
+};
+
 export async function getPackageRunner(cwd: string) {
   const packageManager = await getPackageManager(cwd);
 
