@@ -2,6 +2,7 @@
 title: "Select"
 description: "A dropdown control that lets users pick one option from a list with full keyboard navigation and accessibility support."
 figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2549-18530&t=YFStJ3V8fXEO8QD8-4"
+dataSlotUrl: "https://data-slot.com/components/select"
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -293,29 +294,6 @@ The select emits custom events that you can listen to:
     console.log('Is open:', e.detail.open);
   });
 </script>
-```
-
-### Programmatic Control
-
-You can control the select programmatically by dispatching a `select:set` event:
-
-```js nocollapse
-const select = document.getElementById('my-select');
-
-// Set a specific value
-select.dispatchEvent(new CustomEvent('select:set', {
-  detail: { value: 'option2' }
-}));
-
-// Open the select dropdown
-select.dispatchEvent(new CustomEvent('select:set', {
-  detail: { open: true }
-}));
-
-// Close the select dropdown
-select.dispatchEvent(new CustomEvent('select:set', {
-  detail: { open: false }
-}));
 ```
 
 ### Data Attributes

@@ -1,6 +1,7 @@
 ---
 title: "Dropdown Menu"
 description: "Action and selection menus with runtime-owned open, highlight, and committed selection state."
+dataSlotUrl: "https://data-slot.com/components/dropdown-menu"
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -200,29 +201,6 @@ The dropdown menu emits custom events that you can listen to:
   dropdown.addEventListener('dropdown-menu:value-change', (e) => {
     console.log('Selected:', e.detail.value);
   });
-```
-
-### Programmatic Control
-
-You can control the dropdown menu programmatically by dispatching a `dropdown-menu:set` event:
-
-```js nocollapse
-const dropdown = document.getElementById('my-dropdown');
-
-// Open the dropdown menu
-dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
-  detail: { open: true }
-}));
-
-// Commit radio selection
-dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
-  detail: { value: 'delete', source: 'restore' }
-}));
-
-// Commit checkbox selection
-dropdown.dispatchEvent(new CustomEvent('dropdown-menu:set', {
-  detail: { values: ['email', 'push'], source: 'restore' }
-}));
 ```
 
 ### Structural Wrappers

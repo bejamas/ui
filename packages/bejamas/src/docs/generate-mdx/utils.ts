@@ -111,6 +111,8 @@ export function parseJsDocMetadata(
     // Backward compatibility: support @figma but map to figmaUrl
     else if (line.trim().startsWith("@figma"))
       meta.figmaUrl = line.replace("@figma", "").trim();
+    else if (line.trim().startsWith("@dataSlotUrl"))
+      meta.dataSlotUrl = line.replace("@dataSlotUrl", "").trim();
     else if (line.trim().startsWith("@usage")) {
       inUsage = true;
       continue;

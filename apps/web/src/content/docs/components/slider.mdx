@@ -2,6 +2,7 @@
 title: "Slider"
 description: "An input component that allows users to select a value from a range by dragging a thumb along a track."
 figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2523-6067&t=YFStJ3V8fXEO8QD8-4"
+dataSlotUrl: "https://data-slot.com/components/slider"
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -165,22 +166,6 @@ The slider emits custom events that you can listen to:
   slider.addEventListener('slider:commit', (e) => {
     console.log('Value committed:', e.detail.value);
   });
-```
-
-### Programmatic Control
-
-You can set the slider value programmatically by dispatching a `slider:set` event:
-
-```js nocollapse
-// Set single value
-slider.dispatchEvent(new CustomEvent('slider:set', {
-  detail: { value: 75 }
-}));
-
-// Set range values
-slider.dispatchEvent(new CustomEvent('slider:set', {
-  detail: { value: [25, 75] }
-}));
 ```
 
 ### Data Attributes

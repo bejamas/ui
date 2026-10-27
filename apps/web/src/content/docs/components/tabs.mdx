@@ -2,6 +2,7 @@
 title: "Tabs"
 description: "Organize content into tabbed panels, rendering one panel at a time."
 figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2523-6067&t=YFStJ3V8fXEO8QD8-4"
+dataSlotUrl: "https://data-slot.com/components/tabs"
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -333,19 +334,6 @@ The tabs component emits custom events that you can listen to:
     console.log('Selected tab:', e.detail.value);
   });
 </script>
-```
-
-### Programmatic Control
-
-You can control the tabs programmatically by dispatching a `tabs:set` event:
-
-```js nocollapse
-const tabs = document.getElementById('my-tabs');
-
-// Select a tab
-tabs.dispatchEvent(new CustomEvent('tabs:set', {
-  detail: { value: 'tab2' }
-}));
 ```
 
 ### Variants

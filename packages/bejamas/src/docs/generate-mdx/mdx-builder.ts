@@ -136,6 +136,7 @@ export function buildMdx(params: {
   description: string;
   descriptionBodyMDX?: string;
   figmaUrl?: string;
+  dataSlotUrl?: string;
   usageMDX: string;
   hasImport: boolean;
   propsList: string;
@@ -191,6 +192,7 @@ export function buildMdx(params: {
     componentSource,
     commandName,
     figmaUrl,
+    dataSlotUrl,
     componentsAlias,
     namedExports,
     apiMDX,
@@ -1093,6 +1095,7 @@ ${ex.source}
     serializeFrontmatter("title", title),
     serializeFrontmatter("description", description),
     serializeFrontmatter("figmaUrl", figmaUrl),
+    serializeFrontmatter("dataSlotUrl", dataSlotUrl),
     "---",
     "",
     ...importLines,

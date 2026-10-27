@@ -79,6 +79,7 @@ Each main component file (e.g., `Dialog.astro`, `Tabs.astro`, `Button.astro`) ha
  * @title Display Title
  * @description Brief description of the component
  * @figmaUrl https://www.figma.com/design/...
+ * @dataSlotUrl https://data-slot.com/components/component-name
  *
  * @preview
  * <ComponentName>Live preview HTML (no code fence)</ComponentName>
@@ -96,11 +97,6 @@ Each main component file (e.g., `Dialog.astro`, `Tabs.astro`, `Button.astro`) ha
  * | Event | Detail | Description |
  * |-------|--------|-------------|
  * | `component:change` | `{ value: string }` | Fired when... |
- *
- * ### Programmatic Control
- * ```js nocollapse
- * element.dispatchEvent(new CustomEvent('component:set', { detail: {...} }));
- * ```
  *
  * ### Data Attributes
  * | Attribute | Element | Description |
@@ -121,15 +117,17 @@ Each main component file (e.g., `Dialog.astro`, `Tabs.astro`, `Button.astro`) ha
 | `@title` | Display title for docs |
 | `@description` | Brief description |
 | `@figmaUrl` | Link to Figma design |
+| `@dataSlotUrl` | data-slot docs page for the underlying primitive, rendered as an "API reference" button |
 | `@preview` | Live preview HTML (no code fence, rendered in docs) |
 | `@usage` | Basic usage with code fence (use `astro nocollapse`) |
-| `@api` | Events table, Programmatic Control, Data Attributes, CSS Variables |
+| `@api` | Events table, Data Attributes, CSS Variables |
 | `@examples` | Additional examples with `### Heading` and raw HTML |
 
 **Notes:**
 - Only main component files get full JSDoc (e.g., `Dialog.astro`, not `DialogTrigger.astro`)
 - Preview blocks are raw HTML (no code fence)
 - Usage/API code blocks use triple backticks with `nocollapse` modifier
+- Don't document `<component>:set` events in `@api`; `@dataSlotUrl` links to the primitive's full API instead
 
 ## Key Styling Conventions
 

@@ -31,7 +31,14 @@ import {
   ToggleGroupItem,
 } from "@bejamas/ui/components/toggle-group";
 
-import { ArrowRight, ArrowLeft, ChevronDown, Copy, Check } from "@lucide/astro";
+import {
+  ArrowRight,
+  ArrowLeft,
+  ArrowUpRight,
+  ChevronDown,
+  Copy,
+  Check,
+} from "@lucide/astro";
 
 import MarkdownIcon from "./icons/Markdown.astro";
 
@@ -182,6 +189,24 @@ const options: OptionsProps[] = [
     {
       entry.data.description && (
         <p class="sl-bejamas-description">{entry.data.description}</p>
+      )
+    }
+
+    {
+      entry.data.dataSlotUrl && (
+        <div class="sl-bejamas-docs-title-references">
+          <Button
+            as="a"
+            href={entry.data.dataSlotUrl}
+            variant="outline"
+            size="sm"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            API reference
+            <ArrowUpRight class="size-3.5" />
+          </Button>
+        </div>
       )
     }
   </div>
@@ -339,6 +364,12 @@ const options: OptionsProps[] = [
       align-items: center;
       gap: 0.5rem;
       padding-bottom: 0.25rem;
+    }
+
+    .sl-bejamas-docs-title-references {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
     .sl-bejamas-docs-title-buttons {
