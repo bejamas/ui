@@ -12,7 +12,7 @@ const threshold = Number(flags.threshold ?? 2);
 // Top-level page regions. Astro wraps hydrated islands in <astro-island> and emits helper <script>/<style> tags
 // inside <main>; skipping them keeps landmark keys aligned between a React original and an Astro port.
 const REGIONS = "header, nav, main > :not(astro-island, script, style, template), main > astro-island > *, section, footer";
-// PrimeReact marks internal wrappers data-slot=root|outer|inner; they aren't component slots to match.
+// Some component libraries mark internal wrappers data-slot=root|outer|inner; they aren't component slots to match.
 const SELECTOR = `${REGIONS}, h1, h2, h3, h4, p, a, button, img, svg[role=img], input, textarea, label, li, [data-slot]:not([data-slot=root], [data-slot=outer], [data-slot=inner])`;
 const STYLE_KEYS = ["fontFamily", "fontSize", "fontWeight", "fontStyle", "fontVariationSettings", "lineHeight", "letterSpacing", "color", "backgroundColor", "borderTopWidth", "borderTopStyle", "borderTopColor", "borderRadius", "paddingTop", "paddingLeft", "boxShadow"];
 

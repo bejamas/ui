@@ -216,7 +216,7 @@ Legacy modules that import `next/*` run in Astro when Vite aliases point those i
 Phase 3a renders the legacy page or section renderer inside Astro:
 
 - Import it through `@legacy`, and render it from an `.astro` component as a React island (`@astrojs/react`). Without a `client:*` directive it renders to static HTML and ships no JavaScript.
-- Wrap it in one React component that recreates every provider from the ledger: the UI library's provider (with its server-side style collection, e.g. PrimeReact's `PrimeReactStyleSheet` emitted as `<style precedence>`), URL-state adapters (nuqs: `nuqs/adapters/react`), data clients and theme. A missing provider shows up as a build error on the first page that needs it, possibly one you can't check offline.
+- Wrap it in one React component that recreates every provider from the ledger: the UI library's provider (with its server-side style collection, emitted as `<style precedence>` so the styles reach the static HTML), URL-state adapters (nuqs: `nuqs/adapters/react`), data clients and theme. A missing provider shows up as a build error on the first page that needs it, possibly one you can't check offline.
 - Report each use at build time from the `.astro` component, where the route is known: `console.warn("[legacy-island]", Astro.url.pathname, section._type)`. Phase 5 reads this report from the full-content build log.
 
 ### Offline content

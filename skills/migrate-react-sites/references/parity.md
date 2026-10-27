@@ -1,6 +1,6 @@
 # Parity resets: bejamas defaults vs shadcn
 
-This is the happy path: sources built on shadcn/ui or kits made the same way (Tailwind merged with tailwind-merge over Radix or Base UI primitives). Sources on PrimeReact, MUI, Chakra, Mantine or similar follow [other libraries](other-libraries.md) instead.
+This is the happy path: sources built on shadcn/ui or kits made the same way (Tailwind merged with tailwind-merge over Radix or Base UI primitives). Sources on a component library that ships its own CSS follow [other libraries](other-libraries.md) instead.
 
 bejamas components carry their own style (juno), which differs from shadcn's new-york, nova, vega and luma styles. Undoing these defaults was the biggest effort hotspot across 15 site ports. The tables list what those ports found on bejamas 0.5.0 (juno). Defaults change between releases, so **open the installed `src/ui/<name>/` file and confirm a default is still there before you apply its reset.**
 

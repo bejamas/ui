@@ -1,6 +1,6 @@
 ---
 name: migrate-react-sites
-description: Port a React/Next.js website to Astro with bejamas/ui at pixel parity, whatever component library it uses (shadcn/ui is the happy path; PrimeReact, MUI and others work too). Three cases - rebuilding a site from its repo and live demo as a new project, migrating a site inside its own repository, or restyling a site already on Astro from another styling system to Tailwind and bejamas/ui in place. Use when recreating or migrating a site, page or demo to Astro/bejamas.
+description: Port a React/Next.js website to Astro with bejamas/ui at pixel parity, whatever component library it uses (shadcn/ui is the happy path; other component libraries work too). Three cases - rebuilding a site from its repo and live demo as a new project, migrating a site inside its own repository, or restyling a site already on Astro from another styling system to Tailwind and bejamas/ui in place. Use when recreating or migrating a site, page or demo to Astro/bejamas.
 ---
 
 # React site → Astro / bejamas/ui
@@ -28,7 +28,7 @@ When neither fits clearly, ask before scaffolding.
 Before porting the first component, check what the source's components are built on (`components.json`, `package.json`, the rendered DOM and stylesheets):
 
 - **shadcn/ui or a kit built the same way** (Tailwind classes merged with tailwind-merge over Radix or Base UI): the happy path. Use [parity](references/parity.md).
-- **Anything else** (PrimeReact, MUI, Chakra, Mantine, an in-house system on one of them): use [other libraries](references/other-libraries.md). parity's reset classes don't apply.
+- **Anything else** (a component library that ships its own CSS, or an in-house system built on one): use [other libraries](references/other-libraries.md). parity's reset classes don't apply.
 
 ## Shared references
 
