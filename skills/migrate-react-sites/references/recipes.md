@@ -124,7 +124,7 @@ Gate every effect behind `@media (prefers-reduced-motion: no-preference)`, and a
 
 ## Other styling systems → Tailwind
 
-Translating declarations from a non-Tailwind source (PandaCSS, vanilla-extract, CSS modules, CSS-in-JS) into utilities. Each trap renders differently while looking equivalent; check computed values with `compare-boxes.mjs`.
+Translating declarations from a non-Tailwind source (style objects, CSS modules, plain stylesheets) into utilities. Each trap renders differently while looking equivalent; check computed values with `compare-boxes.mjs`.
 
 | Trap | Fix |
 |---|---|
@@ -134,7 +134,7 @@ Translating declarations from a non-Tailwind source (PandaCSS, vanilla-extract, 
 | keyword utilities emit `flex-start`/`flex-end` (`content-start`, `self-end`, `justify-start`) where the source wrote `start`/`end` | arbitrary properties: `[align-content:start]`, `justify-normal` |
 | keyword arbitrary values generate nothing (`items-[start]`, `self-[end]`, `justify-(--x)`), and `content-[start]` sets the CSS `content` property | arbitrary properties: `[align-items:start]` |
 | `shadow-none` computes a stack of transparent shadows, not `none` | `[box-shadow:none]` where the computed value matters |
-| opacity modifiers (`border-x/50`) mix in oklab | `border-[color:color-mix(in_srgb,var(--x)_50%,transparent)]` when the source mixed in sRGB (Panda does) |
+| opacity modifiers (`border-x/50`) mix in oklab | `border-[color:color-mix(in_srgb,var(--x)_50%,transparent)]` when the source mixed in sRGB |
 | arbitrary shorthands (`[border:…]`) sort after color utilities and reset their color | longhand utilities: `border-l-4 border-l-(--highlight)` |
 | site class hooks named like utilities (`hidden`, `block`, `flex`, `container`) now get Tailwind's CSS | guard them (`[&.hidden]:block`), or rename the hook together with its script |
 | tailwind-merge reads hook classes like `text-columns-wrapper` as a text color and drops the real one | keep hook classes outside `cn()`; teach `cn()` the site's custom scales |

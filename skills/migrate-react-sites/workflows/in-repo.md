@@ -19,7 +19,7 @@ When a step doesn't fit what you find in the repo, follow the repo, and record t
 
 For a React/Next source, continue at [The ledger](#the-ledger).
 
-When the site already runs on Astro and only its styling stack changes (PandaCSS, vanilla-extract, CSS modules → Tailwind and bejamas/ui), there's no legacy app and no new app: the site is ported **in place**, one component at a time. The measuring scripts, the parity method and the primitive guidance apply unchanged. The phases change like this:
+When the site already runs on Astro and only its styling stack changes (another styling system → Tailwind and bejamas/ui), there's no legacy app and no new app: the site is ported **in place**, one component at a time. The measuring scripts, the parity method and the primitive guidance apply unchanged. The phases change like this:
 
 - **Reference:** the untouched baseline commit, served from a worktree on its own port (`git worktree add --detach <ref-dir> <commit>`). Wherever this workflow says *legacy build*, read *that worktree*.
 - **Dev servers** are acceptable on both sides when a production build per change is too slow (a Worker adapter, a CMS-heavy build), because they share the site's CSS pipeline. Turn HMR off on the port (`vite: { server: { hmr: false } }` behind an env var) so a save can't reload a page mid-measurement, and pre-bundle the `@data-slot/*` packages (see the dev-server row in [known issues](../references/known-issues.md#astro-gotchas)). Record the choice in *How to resume*.

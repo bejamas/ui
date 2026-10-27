@@ -25,19 +25,19 @@ Resetting bejamas components with utilities can't reproduce another library's ca
 
 ## Two styling systems at once
 
-An in-place port ([Astro source](../workflows/in-repo.md#astro-source)) runs the old styling system and Tailwind side by side until the last unit is ported. Atomic-class systems such as PandaCSS translate into Tailwind utilities one declaration at a time ([recipes](recipes.md#other-styling-systems--tailwind) lists the traps). Learned from one port (PandaCSS). Parity holds during the overlap only if both systems share one cascade the way the old one did alone:
+An in-place port ([Astro source](../workflows/in-repo.md#astro-source)) runs the old styling system and Tailwind side by side until the last unit is ported. Style objects and atomic classes translate into Tailwind utilities one declaration at a time ([recipes](recipes.md#other-styling-systems--tailwind) lists the traps). Parity holds during the overlap only if both systems share one cascade the way the old one did alone. Read that cascade from the old system's generated CSS, not its config:
 
-- **One layer order**, declared at the top of the global CSS, with Tailwind's layers slotted where the old system's equivalents were. Panda's order is `reset, base, tokens, recipes, utilities`.
-- **Nested layers recreated.** Panda puts `textStyle` in a `compositions` layer nested inside `utilities`. Any plain utility beats a text style, and a text style a Panda parent sets on a child (`& .x { textStyle }`) beats the child's own. Port text styles as utilities that emit into that same nested layer, named outside Tailwind's namespaces (`typo-*`; `text-*` is font size):
+- **One layer order**, declared at the top of the global CSS, with Tailwind's layers slotted where the old system's equivalents were.
+- **Nested layers recreated.** A system can emit composite styles (text styles, layer styles) into a layer nested inside its utilities layer. Then any plain utility beats a text style, and a text style a parent sets on a child (`& .x { … }`) beats the child's own. Port them as utilities that emit into a nested layer of the same name, named outside Tailwind's namespaces (`typo-*`; `text-*` is font size):
   ```css
   @utility typo-heading-small {
     @layer compositions { font-size: var(--text-heading-small); line-height: 1.2em; }
   }
   ```
 - **Reset deltas:** keep Tailwind's preflight, and add one rule per thing the old reset did that preflight doesn't (font smoothing, `text-wrap: balance` on headings, transparent control backgrounds), so swapping resets moves nothing.
-- **Breakpoints:** copy the queries the old system generated, not its config values. Panda's `…Down` conditions compile to `max-width: <breakpoint − 0.0025rem>` (`59.9975rem`). Tailwind orders custom variants by declaration, so declare the `max-width` variants widest first and the narrowest wins, as in Panda.
+- **Breakpoints:** copy the queries the old system generated, not its config values. A "below breakpoint" condition can compile to `max-width: <breakpoint − 0.0025rem>`, not the breakpoint itself. Tailwind orders custom variants by declaration, so declare the `max-width` variants widest first and the narrowest wins.
 - **bejamas base rules:** the style's `* { border-border outline-ring/50 }` recolors every border that defaults to `currentColor`, and the browser focus ring. Scope it to the components: `[data-slot] { border-color: var(--border) }`.
-- **The rendered result:** Panda silently drops invalid values (a token name inside a shorthand string, a token that doesn't exist), so the browser default renders. Port that default and list the intended values as follow-ups.
+- **The rendered result:** systems that compile style objects can drop invalid values silently (a token name inside a shorthand string, a token that doesn't exist), so the browser default renders. Port that default and list the intended values as follow-ups.
 
 ## Port behavior: primitives, not styled components
 
