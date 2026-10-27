@@ -23,6 +23,22 @@ Resetting bejamas components with utilities can't reproduce another library's ca
 3. Put those rules into the Astro app's CSS **inside the same layer name** (`@layer primereact { … }`), declared in the same layer order as the source, so utilities keep winning exactly as before.
 4. Measure with `compare-boxes.mjs`: boxes and colors should match on the first try. When they don't, a state wasn't captured in step 2.
 
+## Two styling systems at once
+
+An in-place port ([Astro source](../workflows/in-repo.md#astro-source)) runs the old styling system and Tailwind side by side until the last unit is ported. Atomic-class systems such as PandaCSS translate into Tailwind utilities one declaration at a time ([recipes](recipes.md#other-styling-systems--tailwind) lists the traps). Learned from one port (PandaCSS). Parity holds during the overlap only if both systems share one cascade the way the old one did alone:
+
+- **One layer order**, declared at the top of the global CSS, with Tailwind's layers slotted where the old system's equivalents were. Panda's order is `reset, base, tokens, recipes, utilities`.
+- **Nested layers recreated.** Panda puts `textStyle` in a `compositions` layer nested inside `utilities`. Any plain utility beats a text style, and a text style a Panda parent sets on a child (`& .x { textStyle }`) beats the child's own. Port text styles as utilities that emit into that same nested layer, named outside Tailwind's namespaces (`typo-*`; `text-*` is font size):
+  ```css
+  @utility typo-heading-small {
+    @layer compositions { font-size: var(--text-heading-small); line-height: 1.2em; }
+  }
+  ```
+- **Reset deltas:** keep Tailwind's preflight, and add one rule per thing the old reset did that preflight doesn't (font smoothing, `text-wrap: balance` on headings, transparent control backgrounds), so swapping resets moves nothing.
+- **Breakpoints:** copy the queries the old system generated, not its config values. Panda's `…Down` conditions compile to `max-width: <breakpoint − 0.0025rem>` (`59.9975rem`). Tailwind orders custom variants by declaration, so declare the `max-width` variants widest first and the narrowest wins, as in Panda.
+- **bejamas base rules:** the style's `* { border-border outline-ring/50 }` recolors every border that defaults to `currentColor`, and the browser focus ring. Scope it to the components: `[data-slot] { border-color: var(--border) }`.
+- **The rendered result:** Panda silently drops invalid values (a token name inside a shorthand string, a token that doesn't exist), so the browser default renders. Port that default and list the intended values as follow-ups.
+
 ## Port behavior: primitives, not styled components
 
 Use the `@data-slot` primitives (navigation-menu, drawer, collapsible, accordion, carousel, dialog, dropdown-menu) under the legacy markup for open state, focus and keyboard. bejamas styled components bring their own look, which you would then have to undo. Where a primitive's model differs from the library's (a combobox that commits on close when the source allows free text), a native element (`<datalist>`) can be closer.

@@ -1,4 +1,4 @@
-# Recipes: Next.js → Astro, theming, motion, Tailwind v3 → v4, drift, in-repo migration
+# Recipes: Next.js → Astro, theming, motion, Tailwind v3 → v4, other styling systems → Tailwind, drift, in-repo migration
 
 ## Next.js features
 
@@ -47,6 +47,7 @@ Add one entry per family, then map `--font-heading`, `--font-mono` and others in
 | `defaultTheme="system"` | head script with default `system` + a `matchMedia` listener. The demo "loads dark" only on a dark OS |
 | `enableSystem={false}` | light (or the default) regardless of the OS. Verify by seeding `localStorage.theme`, since `--dark` emulation won't switch it |
 | no ThemeProvider | light only, and no script. `dark:` classes in the source never apply |
+| themes switched by an attribute (`data-theme="dark"`, per section) | bejamas components' `dark:` variants follow only `.dark`. Feed the site's theme into the bejamas tokens (`--background`, `--primary` …) on `:root, [data-theme]`, so components follow nested section themes; redefine `@custom-variant dark` with the site's selector when a component's `dark:` classes must apply too |
 
 The head script below covers the system default; set the `system` fallback to `dark` or `light` to match the source's `defaultTheme`. Keep the source's storage key (usually `theme`; Vite templates use e.g. `vite-ui-theme`):
 
@@ -120,6 +121,27 @@ Gate every effect behind `@media (prefers-reduced-motion: no-preference)`, and a
 | scaffold radius scale is additive and stops at `xl` | copy the source's radius block (v4 nova is multiplicative, ×1.4, and defines `2xl`–`4xl`) |
 | redefining a utility bejamas uses (e.g. `.border-border` at 70% opacity) | create an opt-in utility instead (`@utility border-soft`) |
 | theme variable named like a Tailwind key (`--radius-xl` as a palette value) | rename it |
+
+## Other styling systems → Tailwind
+
+Translating declarations from a non-Tailwind source (PandaCSS, vanilla-extract, CSS modules, CSS-in-JS) into utilities. Each trap renders differently while looking equivalent; check computed values with `compare-boxes.mjs`.
+
+| Trap | Fix |
+|---|---|
+| `hover:` adds `@media (hover: hover)`, which the source's `&:hover` didn't | `[&:hover]:` |
+| `translate-*` writes the `translate` property, not `transform`, so it stacks with the source's other transforms differently | `[transform:translateY(…)]` |
+| `ease-out`, `ease-in-out` are Tailwind's own cubic-béziers, not the CSS keywords | `ease-[ease-out]` |
+| keyword utilities emit `flex-start`/`flex-end` (`content-start`, `self-end`, `justify-start`) where the source wrote `start`/`end` | arbitrary properties: `[align-content:start]`, `justify-normal` |
+| keyword arbitrary values generate nothing (`items-[start]`, `self-[end]`, `justify-(--x)`), and `content-[start]` sets the CSS `content` property | arbitrary properties: `[align-items:start]` |
+| `shadow-none` computes a stack of transparent shadows, not `none` | `[box-shadow:none]` where the computed value matters |
+| opacity modifiers (`border-x/50`) mix in oklab | `border-[color:color-mix(in_srgb,var(--x)_50%,transparent)]` when the source mixed in sRGB (Panda does) |
+| arbitrary shorthands (`[border:…]`) sort after color utilities and reset their color | longhand utilities: `border-l-4 border-l-(--highlight)` |
+| site class hooks named like utilities (`hidden`, `block`, `flex`, `container`) now get Tailwind's CSS | guard them (`[&.hidden]:block`), or rename the hook together with its script |
+| tailwind-merge reads hook classes like `text-columns-wrapper` as a text color and drops the real one | keep hook classes outside `cn()`; teach `cn()` the site's custom scales |
+| token names starting with an axis letter collide with axis utilities: `gap-x-regular` is `column-gap: var(--spacing-regular)` | `gap-(--spacing-x-regular)` (padding and margin forms are fine) |
+| a breakpoint-wrapped arbitrary variant can be emitted before a plain arbitrary variant with a different selector, so the responsive override loses | `!` on the override, or scope the base to the complementary breakpoint |
+| a same-specificity conflict the source resolved by stylesheet order in the caller's favour | `:where()` on the component's own rule, so the caller's classes still win |
+| Prettier wraps long inline text, which matters where whitespace is significant (split-letter animations) | render the text with `set:text` |
 
 ## Detecting drift
 
