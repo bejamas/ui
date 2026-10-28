@@ -1090,6 +1090,15 @@ ${ex.source}
     return `${label}: ${JSON.stringify(value)}`;
   };
 
+  const apiSection = [
+    dataSlotUrl
+      ? `See [@data-slot](${dataSlotUrl}) documentation for more info.`
+      : null,
+    renderedApiMDX,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
   const lines = [
     "---",
     serializeFrontmatter("title", title),
@@ -1127,9 +1136,7 @@ ${ex.source}
       ? `## Examples\n\n` + renderedExampleSections.join("\n\n")
       : null,
     renderedExampleSections.length ? "" : null,
-    renderedApiMDX && renderedApiMDX.length
-      ? `## API Reference\n\n${renderedApiMDX}`
-      : null,
+    apiSection.length ? `## API Reference\n\n${apiSection}` : null,
   ].filter((v) => v !== null && v !== undefined);
 
   return lines.join("\n").trim() + "\n";

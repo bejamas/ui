@@ -748,6 +748,45 @@ const { class: className = "", ...props } = Astro.props;
     expect(sourceMatch![1]).toContain("console.log('Is open:', e.detail.open);");
   });
 
+  test("links the data-slot docs from the API Reference section", () => {
+    const baseOptions = {
+      importName: "Switch",
+      importPath: "@bejamas/ui/components/switch",
+      title: "Switch",
+      description: "A switch",
+      usageMDX: "",
+      hasImport: false,
+      propsList: "",
+      examples: [],
+      examplesSections: [],
+      componentFolderMap: { Switch: "switch" },
+      autoImports: [],
+      lucideIcons: [],
+      primaryExampleMDX: "",
+      componentSource: "",
+      commandName: "switch",
+      componentsAlias: "@bejamas/ui/components",
+      namedExports: [],
+    };
+    const note =
+      "See [@data-slot](https://data-slot.com/components/switch) documentation for more info.";
+
+    const withApi = buildMdx({
+      ...baseOptions,
+      dataSlotUrl: "https://data-slot.com/components/switch",
+      apiMDX: "### Events",
+    });
+    expect(withApi).toContain(`## API Reference\n\n${note}\n\n### Events`);
+
+    const withoutApi = buildMdx({
+      ...baseOptions,
+      dataSlotUrl: "https://data-slot.com/components/switch",
+    });
+    expect(withoutApi).toContain(`## API Reference\n\n${note}`);
+
+    expect(buildMdx(baseOptions)).not.toContain("## API Reference");
+  });
+
   test("skips example preview when fenced astro block uses nopreview", () => {
     const examplesSections = parseExamplesSections(`### Hidden Preview
 
