@@ -194,7 +194,7 @@ const options: OptionsProps[] = [
 
     {
       entry.data.dataSlotUrl && (
-        <div class="sl-bejamas-docs-title-references">
+        <div class="sl-bejamas-docs-title-references-mobile">
           <Button
             as="a"
             href={entry.data.dataSlotUrl}
@@ -212,62 +212,85 @@ const options: OptionsProps[] = [
   </div>
 
   {
-    showMarkdownActions && (
+    (showMarkdownActions || entry.data.dataSlotUrl) && (
       <div class="sl-bejamas-docs-title-buttons">
-        <ButtonGroup>
-          <Button
-            variant="outline"
-            size="sm"
-            id="copy-markdown"
-            data-path={currentPath}
-          >
-            <Copy id="copy-icon" class="size-3.5" />
-            <Check id="check-icon" class="size-3.5 hidden" />
-            Copy page
-          </Button>
-          <DropdownMenu>
-            <Button
-              variant="outline"
-              class="rounded-l-none border-l-0 px-1"
-              size="sm"
-              data-slot="dropdown-menu-trigger"
-            >
-              <ChevronDown class="size-4" />
-            </Button>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem class="p-0">
+        {showMarkdownActions && (
+          <ButtonGroup>
+            <Tooltip delay={300}>
+              <TooltipTrigger asChild class="flex">
                 <Button
-                  as="a"
-                  href={`${currentPath}.md`}
-                  variant="ghost"
-                  size="sm"
-                  class="w-full justify-start rounded-sm hover:bg-transparent"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  variant="outline"
+                  size="icon-sm"
+                  class="rounded-e-none!"
+                  id="copy-markdown"
+                  data-path={currentPath}
+                  aria-label="Copy page"
                 >
-                  <MarkdownIcon />
-                  <span>View as Markdown</span>
+                  <Copy id="copy-icon" class="size-3.5" />
+                  <Check id="check-icon" class="size-3.5 hidden" />
                 </Button>
-              </DropdownMenuItem>
-              {options.map((option) => (
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Copy page</p>
+              </TooltipContent>
+            </Tooltip>
+            <DropdownMenu>
+              <Button
+                variant="outline"
+                class="rounded-l-none border-l-0 px-1"
+                size="sm"
+                data-slot="dropdown-menu-trigger"
+              >
+                <ChevronDown class="size-4" />
+              </Button>
+              <DropdownMenuContent align="end">
                 <DropdownMenuItem class="p-0">
                   <Button
                     as="a"
-                    href={option.href}
+                    href={`${currentPath}.md`}
                     variant="ghost"
                     size="sm"
                     class="w-full justify-start rounded-sm hover:bg-transparent"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Icon icon={option.id} />
-                    <span>{option.label}</span>
+                    <MarkdownIcon />
+                    <span>View as Markdown</span>
                   </Button>
                 </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </ButtonGroup>
+                {options.map((option) => (
+                  <DropdownMenuItem class="p-0">
+                    <Button
+                      as="a"
+                      href={option.href}
+                      variant="ghost"
+                      size="sm"
+                      class="w-full justify-start rounded-sm hover:bg-transparent"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Icon icon={option.id} />
+                      <span>{option.label}</span>
+                    </Button>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </ButtonGroup>
+        )}
+        {entry.data.dataSlotUrl && (
+          <Button
+            as="a"
+            href={entry.data.dataSlotUrl}
+            variant="outline"
+            size="sm"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            API reference
+            <ArrowUpRight class="size-3.5" />
+          </Button>
+        )}
         {prevHref && (
           <Button as="a" href={prevHref} variant="outline" size="icon-sm">
             <ArrowLeft class="size-3.5" />
@@ -366,7 +389,9 @@ const options: OptionsProps[] = [
       padding-bottom: 0.25rem;
     }
 
-    .sl-bejamas-docs-title-references {
+    /* The header buttons are hidden on narrow screens, so the API reference
+       link falls back to sitting under the description there. */
+    .sl-bejamas-docs-title-references-mobile {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
@@ -382,6 +407,10 @@ const options: OptionsProps[] = [
     @media (min-width: 50rem) {
       .sl-bejamas-docs-title-buttons {
         display: flex;
+      }
+
+      .sl-bejamas-docs-title-references-mobile {
+        display: none;
       }
     }
   }
