@@ -5,6 +5,7 @@ import { execa } from "execa";
 import prompts from "prompts";
 
 import { getConfig, getWorkspaceConfig } from "@/src/utils/get-config";
+import { WORKSPACE_ROOT_INSTALL_ENV } from "@/src/utils/get-package-manager";
 import {
   buildSubfolderMap,
   RegistryInstallBatch,
@@ -384,6 +385,7 @@ async function addComponents(
 ): Promise<ParsedOutput> {
   const env = {
     ...process.env,
+    ...WORKSPACE_ROOT_INSTALL_ENV,
     REGISTRY_URL: resolveRegistryUrl(),
   };
   await PINNED_SHADCN.ensureExecPrefix();
