@@ -2,6 +2,7 @@
 title: "Switch"
 description: "A toggle control for switching between checked and unchecked states."
 figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2509-4236&t=YFStJ3V8fXEO8QD8-4"
+dataSlotUrl: "https://data-slot.com/components/switch"
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -54,8 +55,8 @@ import { Switch } from '@bejamas/registry/ui/switch';
 
 ```astro nocollapse
 ---
-import { Switch } from '@bejamas/ui/components/switch';
-import { Label } from '@bejamas/ui/components/label';
+import { Switch } from '@bejamas/registry/ui/switch';
+import { Label } from '@bejamas/registry/ui/label';
 ---
 
 <div class="flex items-center gap-3">
@@ -80,3 +81,7 @@ import { Label } from '@bejamas/ui/components/label';
 | <code>readOnly</code> | `boolean` | `false` |
 | <code>required</code> | `boolean` | `false` |
 | <code>"aria-invalid"</code> | `boolean \| "true" \| "false"` |  |
+
+## API Reference
+
+See [@data-slot](https://data-slot.com/components/switch) documentation for more info.

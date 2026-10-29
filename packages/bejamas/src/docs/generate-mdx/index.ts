@@ -290,6 +290,7 @@ async function main() {
     const description = meta.description || "";
     const descriptionBodyMDX = (meta as any).descriptionBodyMDX || "";
     const figmaUrl = (meta as any).figmaUrl || "";
+    const dataSlotUrl = (meta as any).dataSlotUrl || "";
     // Do not display props if there is no declared Props
     const propsList = "";
 
@@ -417,6 +418,7 @@ async function main() {
       componentSource: astroFile.trim(),
       commandName: slug,
       figmaUrl,
+      dataSlotUrl,
       descriptionBodyMDX,
       componentsAlias,
       // Pass subcomponents as named exports for folder-based components

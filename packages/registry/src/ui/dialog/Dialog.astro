@@ -4,6 +4,7 @@
  * @title Dialog
  * @description An accessible modal window for focused content or user actions with customizable open/close behavior.
  * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2543-9384&t=YFStJ3V8fXEO8QD8-4
+ * @dataSlotUrl https://data-slot.com/components/dialog
  *
  * @preview
  *
@@ -105,24 +106,6 @@
  *   dialog.addEventListener('dialog:change', (e) => {
  *     console.log('Is open:', e.detail.open);
  *   });
- * ```
- *
- * ### Programmatic Control
- *
- * You can control the dialog programmatically by dispatching a `dialog:set` event:
- *
- * ```js nocollapse
- * const dialog = document.getElementById('my-dialog');
- *
- * // Open the dialog
- * dialog.dispatchEvent(new CustomEvent('dialog:set', {
- *   detail: { open: true }
- * }));
- *
- * // Close the dialog
- * dialog.dispatchEvent(new CustomEvent('dialog:set', {
- *   detail: { open: false }
- * }));
  * ```
  *
  * ### Data Attributes

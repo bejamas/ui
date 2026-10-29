@@ -1,6 +1,7 @@
 ---
 title: "Toggle Group"
 description: "A set of two-state buttons that can be toggled on or off. Supports single or multiple selection."
+dataSlotUrl: "https://data-slot.com/components/toggle-group"
 ---
 
 import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon, AlignVerticalJustifyCenterIcon, AlignVerticalJustifyEndIcon, AlignVerticalJustifyStartIcon, BoldIcon, ItalicIcon, UnderlineIcon } from '@lucide/astro';
@@ -61,7 +62,7 @@ import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group'
 
 ```astro nocollapse
 ---
-import { ToggleGroup, ToggleGroupItem } from '@bejamas/ui/components/toggle-group';
+import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group';
 import { BoldIcon, ItalicIcon, UnderlineIcon } from '@lucide/astro';
 ---
 
@@ -250,20 +251,13 @@ import { ToggleGroup, ToggleGroupItem } from '@bejamas/registry/ui/toggle-group'
 
 ## API Reference
 
+See [@data-slot](https://data-slot.com/components/toggle-group) documentation for more info.
+
 ### Events
 
 | Event | Detail | Description |
 |-------|--------|-------------|
 | `toggle-group:change` | `{ value: string[] }` | Fired when the selection changes |
-
-### Programmatic Control
-
-```js nocollapse
-// Set selected values programmatically
-element.dispatchEvent(new CustomEvent('toggle-group:set', {
-  detail: { value: ['bold', 'italic'] }
-}));
-```
 
 ### Data Attributes
 

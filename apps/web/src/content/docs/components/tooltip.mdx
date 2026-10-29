@@ -1,6 +1,7 @@
 ---
 title: "Tooltip"
 description: "A small popup that appears when hovering over or focusing on an element. Positioning is computed in JavaScript."
+dataSlotUrl: "https://data-slot.com/components/tooltip"
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -57,8 +58,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@bejamas/registry/ui/to
 
 ```astro nocollapse
 ---
-import { Tooltip, TooltipTrigger, TooltipContent } from '@bejamas/ui/components/tooltip';
-import { Button } from '@bejamas/ui/components/button';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@bejamas/registry/ui/tooltip';
+import { Button } from '@bejamas/registry/ui/button';
 ---
 
 <Tooltip>
@@ -343,6 +344,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@bejamas/registry/ui/to
 
 ## API Reference
 
+See [@data-slot](https://data-slot.com/components/tooltip) documentation for more info.
+
 ### Events
 
 The tooltip emits custom events that you can listen to:
@@ -350,10 +353,6 @@ The tooltip emits custom events that you can listen to:
 | Event | Detail | Description |
 |-------|--------|-------------|
 | `tooltip:change` | `{ open: boolean, trigger: HTMLElement, content: HTMLElement, reason: string }` | Fired when visibility changes |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Tooltip id="my-tooltip"> <TooltipTrigger asChild> <Button variant="outline">Hover me</Button> </TooltipTrigger> <TooltipContent> <p>Tooltip content</p> </TooltipContent> </Tooltip>
-</div>
 
 ```astro nocollapse
 <Tooltip id="my-tooltip">
@@ -374,26 +373,6 @@ The tooltip emits custom events that you can listen to:
     console.log('Reason:', e.detail.reason);
   });
 ```
-
-### Programmatic Control
-
-You can control the tooltip programmatically by dispatching a `tooltip:set` event:
-
-```js nocollapse
-const tooltip = document.getElementById('my-tooltip');
-
-// Show the tooltip
-tooltip.dispatchEvent(new CustomEvent('tooltip:set', {
-  detail: { open: true }
-}));
-
-// Hide the tooltip
-tooltip.dispatchEvent(new CustomEvent('tooltip:set', {
-  detail: { open: false }
-}));
-```
-
-The deprecated `{ value: boolean }` detail shape is still supported temporarily for compatibility, but new code should always use `{ open: boolean }`.
 
 ### Data Attributes
 

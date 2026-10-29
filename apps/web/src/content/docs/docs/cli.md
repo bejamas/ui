@@ -192,6 +192,7 @@ npx bejamas docs:check [--cwd <path>] [--json]
 **Optional:**
 
 - `@examples` - Additional examples
+- `@dataSlotUrl` - data-slot docs page for the underlying primitive, shown as an "API reference" button
 
 ### bench
 

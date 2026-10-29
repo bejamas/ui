@@ -63,6 +63,7 @@ export const collections = {
     schema: docsSchema({
       extend: z.object({
         figmaUrl: z.string().optional(),
+        dataSlotUrl: z.string().optional(),
       }),
     }),
   }),

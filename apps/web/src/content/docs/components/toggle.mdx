@@ -1,6 +1,7 @@
 ---
 title: "Toggle"
 description: "A two-state button that can be either on or off."
+dataSlotUrl: "https://data-slot.com/components/toggle"
 ---
 
 import { BoldIcon, BookmarkIcon, ItalicIcon } from '@lucide/astro';
@@ -54,7 +55,7 @@ import { Toggle } from '@bejamas/registry/ui/toggle';
 
 ```astro nocollapse
 ---
-import { Toggle } from '@bejamas/ui/components/toggle';
+import { Toggle } from '@bejamas/registry/ui/toggle';
 import { BoldIcon } from '@lucide/astro';
 ---
 
@@ -164,18 +165,13 @@ import { Toggle } from '@bejamas/registry/ui/toggle';
 
 ## API Reference
 
+See [@data-slot](https://data-slot.com/components/toggle) documentation for more info.
+
 ### Events
 
 | Event | Detail | Description |
 |-------|--------|-------------|
 | `toggle:change` | `{ pressed: boolean }` | Fired when the toggle state changes |
-
-### Programmatic Control
-
-```js nocollapse
-// Set toggle state programmatically
-element.dispatchEvent(new CustomEvent('toggle:set', { detail: { value: true } }));
-```
 
 ### Data Attributes
 

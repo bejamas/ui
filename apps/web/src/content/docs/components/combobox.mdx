@@ -1,6 +1,7 @@
 ---
 title: "Combobox"
 description: "A searchable dropdown (autocomplete) that lets users filter and select from a list of options with full keyboard navigation and accessibility support."
+dataSlotUrl: "https://data-slot.com/components/combobox"
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -70,7 +71,7 @@ import {
   ComboboxGroup,
   ComboboxLabel,
   ComboboxSeparator,
-} from '@bejamas/ui/components/combobox';
+} from '@bejamas/registry/ui/combobox';
 ---
 
 <Combobox name="framework">
@@ -314,6 +315,8 @@ import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, 
 
 ## API Reference
 
+See [@data-slot](https://data-slot.com/components/combobox) documentation for more info.
+
 ### Events
 
 The combobox emits custom events that you can listen to:
@@ -323,10 +326,6 @@ The combobox emits custom events that you can listen to:
 | `combobox:change` | `{ value: string \| null }` | Fired when a new value is selected |
 | `combobox:open-change` | `{ open: boolean }` | Fired when the dropdown opens or closes |
 | `combobox:input-change` | `{ inputValue: string }` | Fired when the user types in the input |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Combobox id="my-combobox"> <ComboboxInput placeholder="Search..." /> <ComboboxContent> <ComboboxList> <ComboboxItem value="option1">{"Option 1"}</ComboboxItem> <ComboboxItem value="option2">{"Option 2"}</ComboboxItem> </ComboboxList> </ComboboxContent> </Combobox>
-</div>
 
 ```astro nocollapse
 <Combobox id="my-combobox">
@@ -350,44 +349,6 @@ The combobox emits custom events that you can listen to:
   combobox.addEventListener('combobox:input-change', (e) => {
     console.log('Input text:', e.detail.inputValue);
   });
-```
-
-### Programmatic Control
-
-You can control the combobox programmatically by dispatching a `combobox:set` event:
-
-```js nocollapse
-const combobox = document.getElementById('my-combobox');
-
-// Set a specific value
-combobox.dispatchEvent(new CustomEvent('combobox:set', {
-  detail: { value: 'option2' }
-}));
-
-// Clear the value
-combobox.dispatchEvent(new CustomEvent('combobox:set', {
-  detail: { value: null }
-}));
-
-// Open the dropdown
-combobox.dispatchEvent(new CustomEvent('combobox:set', {
-  detail: { open: true }
-}));
-
-// Set the input text
-combobox.dispatchEvent(new CustomEvent('combobox:set', {
-  detail: { inputValue: 'search term' }
-}));
-
-// Custom display text for selected value
-// itemToStringValue — (item: HTMLElement | null, value: string | null) => string
-// Controls what text appears in the input after selection.
-// Useful when items contain rich content (icons, descriptions).
-combobox.dispatchEvent(new CustomEvent('combobox:set', {
-  detail: {
-    itemToStringValue: (item, value) => value ? `TZ: ${value}` : ''
-  }
-}));
 ```
 
 ### Data Attributes

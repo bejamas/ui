@@ -79,6 +79,7 @@ describe("dev style watch workflow", () => {
       "generate:ui-package",
       "build:registry",
       "normalize-component-paths-in-registry",
+      "build:docs",
     ]);
     expect(STYLE_IGNORED_OUTPUT_RELATIVE_PATHS).toEqual([
       "packages/create-config/src/generated",
