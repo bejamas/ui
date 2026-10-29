@@ -4,6 +4,7 @@
  * @component NavigationMenu
  * @title Navigation Menu
  * @description A menu with dropdown content and optional viewport transitions.
+ * @dataSlotUrl https://data-slot.com/components/navigation-menu
  *
  * @preview
  *
@@ -220,20 +221,6 @@
  * | Event | Detail | Description |
  * |-------|--------|-------------|
  * | `navigation-menu:change` | `{ value: string \| null }` | Fired when active item changes |
- *
- * ### Programmatic Control
- *
- * ```js nocollapse
- * // Open a specific item
- * element.dispatchEvent(
- *   new CustomEvent("navigation-menu:set", { detail: { value: "products" } })
- * );
- *
- * // Close the menu
- * element.dispatchEvent(
- *   new CustomEvent("navigation-menu:set", { detail: { value: null } })
- * );
- * ```
  *
  * @examples
  *

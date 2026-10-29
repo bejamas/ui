@@ -4,6 +4,7 @@
  * @component Resizable
  * @title Resizable
  * @description Accessible resizable panel groups with pointer and keyboard support.
+ * @dataSlotUrl https://data-slot.com/components/resizable
  *
  * @preview
  * <Resizable direction="horizontal" class="max-w-md rounded-lg border md:min-w-[450px]">
@@ -64,18 +65,6 @@
  * group.addEventListener('resizable:change', (event) => {
  *   console.log('Layout:', event.detail.layout);
  * });
- * ```
- *
- * ### Programmatic Control
- *
- * Dispatch `resizable:set` on the root with one size per panel. Values are normalized to 100% and clamped to each panel's constraints:
- *
- * ```js nocollapse
- * const group = document.getElementById('my-resizable');
- *
- * group.dispatchEvent(new CustomEvent('resizable:set', {
- *   detail: { layout: [30, 70] }
- * }));
  * ```
  *
  * ### Keyboard

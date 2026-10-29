@@ -89,7 +89,7 @@ import { Badge } from '@bejamas/registry/ui/badge';
 
 ```astro nocollapse
 ---
-import { Badge } from '@bejamas/ui/components/badge';
+import { Badge } from '@bejamas/registry/ui/badge';
 ---
 
 <Badge>Badge</Badge>
@@ -100,7 +100,7 @@ import { Badge } from '@bejamas/ui/components/badge';
 
 | Prop | Type | Default |
 |---|---|---|
-| <code>as</code> | `HTMLTag` | `"span"` |
+| <code>as</code> | `Exclude<HTMLTag, "a"> \| "a"` | `"span"` |
 | <code>variant</code> | `"default" \| "secondary" \| "destructive" \| "outline"` | `"default"` |
 | <code>class</code> | `string` | `""` |
 | <code>shape</code> | `"default" \| "pill"` | `"default"` |

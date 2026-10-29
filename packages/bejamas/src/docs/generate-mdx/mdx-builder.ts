@@ -136,6 +136,7 @@ export function buildMdx(params: {
   description: string;
   descriptionBodyMDX?: string;
   figmaUrl?: string;
+  dataSlotUrl?: string;
   usageMDX: string;
   hasImport: boolean;
   propsList: string;
@@ -191,6 +192,7 @@ export function buildMdx(params: {
     componentSource,
     commandName,
     figmaUrl,
+    dataSlotUrl,
     componentsAlias,
     namedExports,
     apiMDX,
@@ -1088,11 +1090,21 @@ ${ex.source}
     return `${label}: ${JSON.stringify(value)}`;
   };
 
+  const apiSection = [
+    dataSlotUrl
+      ? `See [@data-slot](${dataSlotUrl}) documentation for more info.`
+      : null,
+    renderedApiMDX,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
   const lines = [
     "---",
     serializeFrontmatter("title", title),
     serializeFrontmatter("description", description),
     serializeFrontmatter("figmaUrl", figmaUrl),
+    serializeFrontmatter("dataSlotUrl", dataSlotUrl),
     "---",
     "",
     ...importLines,
@@ -1124,9 +1136,7 @@ ${ex.source}
       ? `## Examples\n\n` + renderedExampleSections.join("\n\n")
       : null,
     renderedExampleSections.length ? "" : null,
-    renderedApiMDX && renderedApiMDX.length
-      ? `## API Reference\n\n${renderedApiMDX}`
-      : null,
+    apiSection.length ? `## API Reference\n\n${apiSection}` : null,
   ].filter((v) => v !== null && v !== undefined);
 
   return lines.join("\n").trim() + "\n";

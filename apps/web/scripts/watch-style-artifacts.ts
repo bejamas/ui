@@ -37,6 +37,7 @@ export const STYLE_BUILD_SCRIPTS = [
   "generate:ui-package",
   "build:registry",
   "normalize-component-paths-in-registry",
+  "build:docs",
 ] as const;
 export const STYLE_REBUILD_DEBOUNCE_MS = 150;
 

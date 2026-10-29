@@ -4,6 +4,7 @@
  * @component HoverCard
  * @title Hover Card
  * @description For sighted users to preview content available behind a link.
+ * @dataSlotUrl https://data-slot.com/components/hover-card
  *
  * @preview
  *
@@ -71,24 +72,6 @@
  *     console.log('Is open:', e.detail.open);
  *     console.log('Reason:', e.detail.reason);
  *   });
- * ```
- *
- * ### Programmatic Control
- *
- * You can control the hover card programmatically by dispatching a `hover-card:set` event:
- *
- * ```js nocollapse
- * const hoverCard = document.getElementById('my-hover-card');
- *
- * // Open the hover card
- * hoverCard.dispatchEvent(new CustomEvent('hover-card:set', {
- *   detail: { open: true }
- * }));
- *
- * // Close the hover card
- * hoverCard.dispatchEvent(new CustomEvent('hover-card:set', {
- *   detail: { open: false }
- * }));
  * ```
  *
  * ### Data Attributes

@@ -25,6 +25,7 @@ import { fixAstroImports } from "@/src/utils/astro-imports";
 import { TEMPLATES, createProject } from "@/src/utils/create-project";
 import * as ERRORS from "@/src/utils/errors";
 import { getConfig } from "@/src/utils/get-config";
+import { WORKSPACE_ROOT_INSTALL_ENV } from "@/src/utils/get-package-manager";
 import { handleError } from "@/src/utils/handle-error";
 import { highlighter } from "@/src/utils/highlighter";
 import { getInstalledUiComponents } from "@/src/utils/installed-ui-components";
@@ -407,6 +408,7 @@ export async function runExistingProjectInit(
 ) {
   const env = {
     ...process.env,
+    ...WORKSPACE_ROOT_INSTALL_ENV,
     REGISTRY_URL: resolveRegistryUrl(),
   };
   const initUrl = buildInitUrl(designConfig, options.themeRef);

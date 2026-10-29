@@ -4,6 +4,7 @@
  * @component Carousel
  * @title Carousel
  * @description An accessible, draggable carousel powered by data-slot, with horizontal and vertical layouts.
+ * @dataSlotUrl https://data-slot.com/components/carousel
  *
  * @preview
  *
@@ -140,29 +141,6 @@
  * carousel.addEventListener('carousel:change', (event) => {
  *   console.log('Active slide:', event.detail.index);
  * });
- * ```
- *
- * ### Programmatic Control
- *
- * Dispatch `carousel:set` on the root to select a slide or navigate:
- *
- * ```js nocollapse
- * const carousel = document.getElementById('my-carousel');
- *
- * // Select the third slide (zero-based index).
- * carousel.dispatchEvent(new CustomEvent('carousel:set', {
- *   detail: { index: 2 }
- * }));
- *
- * // Move to the next slide.
- * carousel.dispatchEvent(new CustomEvent('carousel:set', {
- *   detail: { action: 'next' }
- * }));
- *
- * // Move to the previous slide.
- * carousel.dispatchEvent(new CustomEvent('carousel:set', {
- *   detail: { action: 'prev' }
- * }));
  * ```
  *
  * ### Data Attributes

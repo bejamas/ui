@@ -4,6 +4,7 @@
  * @component Collapsible
  * @title Collapsible
  * @description An interactive component that expands and collapses content sections.
+ * @dataSlotUrl https://data-slot.com/components/collapsible
  *
  * @preview
  *
@@ -75,24 +76,6 @@
  *   collapsible.addEventListener('collapsible:change', (e) => {
  *     console.log('Is open:', e.detail.open);
  *   });
- * ```
- *
- * ### Programmatic Control
- *
- * You can control the collapsible programmatically by dispatching a `collapsible:set` event:
- *
- * ```js nocollapse
- * const collapsible = document.getElementById('my-collapsible');
- *
- * // Open the collapsible
- * collapsible.dispatchEvent(new CustomEvent('collapsible:set', {
- *   detail: { open: true }
- * }));
- *
- * // Close the collapsible
- * collapsible.dispatchEvent(new CustomEvent('collapsible:set', {
- *   detail: { open: false }
- * }));
  * ```
  *
  * ### Data Attributes

@@ -1,6 +1,7 @@
 ---
 title: "Command"
 description: "A searchable command palette with grouped items, keyboard navigation, and optional dialog composition."
+dataSlotUrl: "https://data-slot.com/components/command"
 ---
 
 import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from '@lucide/astro';
@@ -97,7 +98,7 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from '@bejamas/ui/components/command';
+} from '@bejamas/registry/ui/command';
 import {
   Calculator,
   Calendar,
@@ -163,6 +164,8 @@ import {
 
 ## API Reference
 
+See [@data-slot](https://data-slot.com/components/command) documentation for more info.
+
 ### Events
 
 | Event | Detail | Description |
@@ -170,19 +173,6 @@ import {
 | `command:change` | `{ value: string \| null }` | Fired when the active item changes |
 | `command:search-change` | `{ search: string }` | Fired when the search query changes |
 | `command:select` | `{ value: string }` | Fired when an item is selected |
-
-### Programmatic Control
-
-```js nocollapse
-const command = document.getElementById('my-command');
-
-command.dispatchEvent(new CustomEvent('command:set', {
-  detail: {
-    search: 'settings',
-    value: 'settings'
-  }
-}));
-```
 
 ### Dialog Composition
 

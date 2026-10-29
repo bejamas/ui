@@ -1,6 +1,7 @@
 ---
 title: "Navigation Menu"
 description: "A menu with dropdown content and optional viewport transitions."
+dataSlotUrl: "https://data-slot.com/components/navigation-menu"
 ---
 
 import { ChartBarIcon, ShieldIcon, ZapIcon } from '@lucide/astro';
@@ -184,7 +185,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
-} from '@bejamas/ui/components/navigation-menu';
+} from '@bejamas/registry/ui/navigation-menu';
 ---
 
 <NavigationMenu>
@@ -415,6 +416,8 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 
 ## API Reference
 
+See [@data-slot](https://data-slot.com/components/navigation-menu) documentation for more info.
+
 ### NavigationMenu Props
 
 | Prop | Type | Default | Description |
@@ -437,17 +440,3 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 | Event | Detail | Description |
 |-------|--------|-------------|
 | `navigation-menu:change` | `{ value: string \| null }` | Fired when active item changes |
-
-### Programmatic Control
-
-```js nocollapse
-// Open a specific item
-element.dispatchEvent(
-  new CustomEvent("navigation-menu:set", { detail: { value: "products" } })
-);
-
-// Close the menu
-element.dispatchEvent(
-  new CustomEvent("navigation-menu:set", { detail: { value: null } })
-);
-```

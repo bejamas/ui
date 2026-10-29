@@ -58,7 +58,7 @@ import { Button } from '@bejamas/registry/ui/button';
 
 ```astro nocollapse
 ---
-import { Button } from '@bejamas/ui/components/button';
+import { Button } from '@bejamas/registry/ui/button';
 ---
 
 <Button>Click me</Button>
@@ -70,11 +70,17 @@ You can use the `as` prop to render the component as an anchor.
 
 ```astro nocollapse
 ---
-import { Button } from '@bejamas/ui/components/button';
+import { Button } from '@bejamas/registry/ui/button';
 ---
 
 <Button as="a" href="https://bejamas.com">Click me</Button>
 ```
+
+## Props
+
+| Prop | Type | Default |
+|---|---|---|
+| <code>as</code> | `"button" \| "a"` | `"button"` |
 
 ## Examples
 

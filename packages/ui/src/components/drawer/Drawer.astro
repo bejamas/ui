@@ -5,6 +5,7 @@
  * @title Drawer
  * @description A modal panel that slides in from the left, right, or bottom, with swipe dismissal and accessible focus management.
  * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=5929-4173
+ * @dataSlotUrl https://data-slot.com/components/drawer
  *
  * @preview
  * <Drawer side="right">
@@ -64,22 +65,6 @@
  * drawer.addEventListener('drawer:change', (event) => {
  *   console.log('Is open:', event.detail.open);
  * });
- * ```
- *
- * ### Programmatic Control
- *
- * Dispatch `drawer:set` on the root to change its open state:
- *
- * ```js nocollapse
- * const drawer = document.getElementById('my-drawer');
- *
- * drawer.dispatchEvent(new CustomEvent('drawer:set', {
- *   detail: { open: true }
- * }));
- *
- * drawer.dispatchEvent(new CustomEvent('drawer:set', {
- *   detail: { open: false }
- * }));
  * ```
  *
  * ### Data Attributes

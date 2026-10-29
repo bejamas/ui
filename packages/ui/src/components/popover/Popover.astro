@@ -4,6 +4,7 @@
  * @component Popover
  * @title Popover
  * @description A floating panel that appears on trigger click, useful for displaying rich content like forms or additional information.
+ * @dataSlotUrl https://data-slot.com/components/popover
  *
  * @preview
  * <Popover>
@@ -70,24 +71,6 @@
  *   popover.addEventListener('popover:change', (e) => {
  *     console.log('Is open:', e.detail.open);
  *   });
- * ```
- *
- * ### Programmatic Control
- *
- * You can control the popover programmatically by dispatching a `popover:set` event:
- *
- * ```js nocollapse
- * const popover = document.getElementById('my-popover');
- *
- * // Open the popover
- * popover.dispatchEvent(new CustomEvent('popover:set', {
- *   detail: { open: true }
- * }));
- *
- * // Close the popover
- * popover.dispatchEvent(new CustomEvent('popover:set', {
- *   detail: { open: false }
- * }));
  * ```
  *
  * ### Data Attributes

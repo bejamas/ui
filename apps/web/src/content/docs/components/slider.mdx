@@ -2,6 +2,7 @@
 title: "Slider"
 description: "An input component that allows users to select a value from a range by dragging a thumb along a track."
 figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2523-6067&t=YFStJ3V8fXEO8QD8-4"
+dataSlotUrl: "https://data-slot.com/components/slider"
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -49,7 +50,7 @@ import { Slider } from '@bejamas/registry/ui/slider';
 
 ```astro nocollapse
 ---
-import { Slider } from '@bejamas/ui/components/slider';
+import { Slider } from '@bejamas/registry/ui/slider';
 ---
 
 <Slider defaultValue={50} max={100} />
@@ -138,6 +139,8 @@ import { Slider } from '@bejamas/registry/ui/slider';
 
 ## API Reference
 
+See [@data-slot](https://data-slot.com/components/slider) documentation for more info.
+
 ### Events
 
 The slider emits custom events that you can listen to:
@@ -146,10 +149,6 @@ The slider emits custom events that you can listen to:
 |-------|--------|-------------|
 | `slider:change` | `{ value: number \| [number, number] }` | Fired on every value change (during drag) |
 | `slider:commit` | `{ value: number \| [number, number] }` | Fired when value is committed (pointer up or keyboard blur) |
-
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Slider id="my-slider" defaultValue={50} max={100} />
-</div>
 
 ```astro nocollapse
 <Slider id="my-slider" defaultValue={50} max={100} />
@@ -165,22 +164,6 @@ The slider emits custom events that you can listen to:
   slider.addEventListener('slider:commit', (e) => {
     console.log('Value committed:', e.detail.value);
   });
-```
-
-### Programmatic Control
-
-You can set the slider value programmatically by dispatching a `slider:set` event:
-
-```js nocollapse
-// Set single value
-slider.dispatchEvent(new CustomEvent('slider:set', {
-  detail: { value: 75 }
-}));
-
-// Set range values
-slider.dispatchEvent(new CustomEvent('slider:set', {
-  detail: { value: [25, 75] }
-}));
 ```
 
 ### Data Attributes

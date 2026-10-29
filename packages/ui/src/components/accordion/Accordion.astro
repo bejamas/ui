@@ -5,6 +5,7 @@
  * @title Accordion
  * @description Vertically stacked collapsible sections that let users show and hide content panels.
  * @figmaUrl https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/BejamasUI---Design-System?node-id=2589-14086&t=YFStJ3V8fXEO8QD8-4
+ * @dataSlotUrl https://data-slot.com/components/accordion
  *
  * @preview
  *
@@ -71,24 +72,6 @@
  *   accordion.addEventListener('accordion:change', (e) => {
  *     console.log('Expanded items:', e.detail.value);
  *   });
- * ```
- *
- * ### Programmatic Control
- *
- * You can control the accordion programmatically by dispatching an `accordion:set` event:
- *
- * ```js nocollapse
- * const accordion = document.getElementById('my-accordion');
- *
- * // Expand a single item
- * accordion.dispatchEvent(new CustomEvent('accordion:set', {
- *   detail: { value: 'item-1' }
- * }));
- *
- * // Expand multiple items (when multiple prop is true)
- * accordion.dispatchEvent(new CustomEvent('accordion:set', {
- *   detail: { value: ['item-1', 'item-2'] }
- * }));
  * ```
  *
  * ### Data Attributes

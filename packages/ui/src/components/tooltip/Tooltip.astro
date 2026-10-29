@@ -4,6 +4,7 @@
  * @component Tooltip
  * @title Tooltip
  * @description A small popup that appears when hovering over or focusing on an element. Positioning is computed in JavaScript.
+ * @dataSlotUrl https://data-slot.com/components/tooltip
  *
  * @preview
  *
@@ -259,26 +260,6 @@
  *     console.log('Reason:', e.detail.reason);
  *   });
  * ```
- *
- * ### Programmatic Control
- *
- * You can control the tooltip programmatically by dispatching a `tooltip:set` event:
- *
- * ```js nocollapse
- * const tooltip = document.getElementById('my-tooltip');
- *
- * // Show the tooltip
- * tooltip.dispatchEvent(new CustomEvent('tooltip:set', {
- *   detail: { open: true }
- * }));
- *
- * // Hide the tooltip
- * tooltip.dispatchEvent(new CustomEvent('tooltip:set', {
- *   detail: { open: false }
- * }));
- * ```
- *
- * The deprecated `{ value: boolean }` detail shape is still supported temporarily for compatibility, but new code should always use `{ open: boolean }`.
  *
  * ### Data Attributes
  *

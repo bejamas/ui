@@ -2,6 +2,7 @@
 title: "Dialog"
 description: "An accessible modal window for focused content or user actions with customizable open/close behavior."
 figmaUrl: "https://www.figma.com/design/koxai7zw5vIuBzuVxe5T2l/bejamas-ui?node-id=2543-9384&t=YFStJ3V8fXEO8QD8-4"
+dataSlotUrl: "https://data-slot.com/components/dialog"
 ---
 
 import { Tabs as DocsTabs, TabItem as DocsTabItem } from '@astrojs/starlight/components';
@@ -93,8 +94,8 @@ import { Label } from '@bejamas/registry/ui/label';
 
 ```astro nocollapse
 ---
-import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter, DialogClose } from '@bejamas/ui/components/dialog';
-import { Button } from '@bejamas/ui/components/button';
+import { Dialog, DialogTitle, DialogDescription, DialogContent, DialogFooter, DialogClose } from '@bejamas/registry/ui/dialog';
+import { Button } from '@bejamas/registry/ui/button';
 ---
 
 
@@ -164,6 +165,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 
 ## API Reference
 
+See [@data-slot](https://data-slot.com/components/dialog) documentation for more info.
+
 ### Overlay styling
 
 Pass `overlayClass` to `DialogContent` to style the overlay separately from the content. For example, reserve space above a mobile menu for a fixed header:
@@ -182,10 +185,6 @@ The dialog emits custom events that you can listen to:
 |-------|--------|-------------|
 | `dialog:change` | `{ open: boolean }` | Fired when the open state changes |
 
-<div class="not-content sl-bejamas-component-preview flex justify-center px-4 md:px-10 py-12 border border-border rounded-t-lg min-h-72 items-center">
-<Dialog id="my-dialog"> <DialogTrigger>{"Open Dialog"}</DialogTrigger> <DialogContent> <DialogTitle>{"Title"}</DialogTitle> <DialogDescription>{"Description"}</DialogDescription> </DialogContent> </Dialog>
-</div>
-
 ```astro nocollapse
 <Dialog id="my-dialog">
   <DialogTrigger>Open Dialog</DialogTrigger>
@@ -202,24 +201,6 @@ The dialog emits custom events that you can listen to:
   dialog.addEventListener('dialog:change', (e) => {
     console.log('Is open:', e.detail.open);
   });
-```
-
-### Programmatic Control
-
-You can control the dialog programmatically by dispatching a `dialog:set` event:
-
-```js nocollapse
-const dialog = document.getElementById('my-dialog');
-
-// Open the dialog
-dialog.dispatchEvent(new CustomEvent('dialog:set', {
-  detail: { open: true }
-}));
-
-// Close the dialog
-dialog.dispatchEvent(new CustomEvent('dialog:set', {
-  detail: { open: false }
-}));
 ```
 
 ### Data Attributes
