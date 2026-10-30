@@ -1,5 +1,15 @@
 # bejamas
 
+## 0.6.1
+
+### Patch Changes
+
+- [#188](https://github.com/bejamas/ui/pull/188) [`f20e373`](https://github.com/bejamas/ui/commit/f20e37302df633be5408670b075ab65ba7865524) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - `bejamas add` and `bejamas init` now install dependencies in a project that is its own pnpm workspace root, instead of failing with `ERR_PNPM_ADDING_TO_ROOT`.
+
+- [#190](https://github.com/bejamas/ui/pull/190) [`ad083fe`](https://github.com/bejamas/ui/commit/ad083fe570200f31ccd24f70f22bf1d4926db683) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - `bejamas docs:build` reads a `@dataSlotUrl` JSDoc tag and writes it to the page frontmatter as `dataSlotUrl`, so docs sites can link a component to its data-slot API reference. Pages with the tag also open their API Reference section with a link to the data-slot docs.
+
+- [#190](https://github.com/bejamas/ui/pull/190) [`32eda12`](https://github.com/bejamas/ui/commit/32eda1268255cd7000bf9c90c0498301404b8a9a) Thanks [@Tadzik-2](https://github.com/Tadzik-2)! - `bejamas docs:build` lists props declared through unions, intersections and local type references, such as `type Props = (AsButton | AsAnchor) & OwnProps`, instead of dropping the Props table.
+
 ## 0.6.0
 
 ### Minor Changes
