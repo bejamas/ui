@@ -1,0 +1,97 @@
+---
+/**
+ * Astro port of a shadcnblocks.com block.
+ * Copyright (c) 2025 shadcnblocks.com - Rob Austin.
+ * Upstream license: MIT + Commons Clause; retain its license notice.
+ */
+import { Mail, MapPin, MessageCircle, Phone } from "@lucide/astro";
+
+interface Props {
+  class?: string;
+  title?: string;
+  description?: string;
+  emailLabel?: string;
+  emailDescription?: string;
+  email?: string;
+  officeLabel?: string;
+  officeDescription?: string;
+  officeAddress?: string;
+  phoneLabel?: string;
+  phoneDescription?: string;
+  phone?: string;
+  chatLabel?: string;
+  chatDescription?: string;
+  chatLink?: string;
+}
+
+const {
+  class: className = "",
+  title = "Contact Us",
+  description = "Contact the support team at Shadcnblocks.",
+  emailLabel = "Email",
+  emailDescription = "We respond to all emails within 24 hours.",
+  email = "example@shadcnblocks.com",
+  officeLabel = "Office",
+  officeDescription = "Drop by our office for a chat.",
+  officeAddress = "1 Eagle St, Brisbane, QLD, 4000",
+  phoneLabel = "Phone",
+  phoneDescription = "We're available Mon-Fri, 9am-5pm.",
+  phone = "+123 456 7890",
+  chatLabel = "Live Chat",
+  chatDescription = "Get instant help from our support team.",
+  chatLink = "Start Chat",
+} = Astro.props;
+---
+
+<section class:list={["bg-background py-32", className]}>
+  <div class="mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]">
+    <div class="mb-14">
+      <h1 class="mb-3 mt-2 text-balance text-3xl font-semibold md:text-4xl">
+        {title}
+      </h1>
+      <p class="text-muted-foreground max-w-xl text-lg">{description}</p>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2">
+      <div class="bg-muted rounded-lg p-6">
+        <span class="bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full">
+          <Mail class="h-6 w-auto" />
+        </span>
+        <p class="mb-2 text-lg font-semibold">{emailLabel}</p>
+        <p class="text-muted-foreground mb-3">{emailDescription}</p>
+        <a href={`mailto:${email}`} class="font-semibold hover:underline">
+          {email}
+        </a>
+      </div>
+      <div class="bg-muted rounded-lg p-6">
+        <span class="bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full">
+          <MapPin class="h-6 w-auto" />
+        </span>
+        <p class="mb-2 text-lg font-semibold">{officeLabel}</p>
+        <p class="text-muted-foreground mb-3">{officeDescription}</p>
+        <a href="#" class="font-semibold hover:underline">
+          {officeAddress}
+        </a>
+      </div>
+      <div class="bg-muted rounded-lg p-6">
+        <span class="bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full">
+          <Phone class="h-6 w-auto" />
+        </span>
+        <p class="mb-2 text-lg font-semibold">{phoneLabel}</p>
+        <p class="text-muted-foreground mb-3">{phoneDescription}</p>
+        <a href={`tel:${phone}`} class="font-semibold hover:underline">
+          {phone}
+        </a>
+      </div>
+      <div class="bg-muted rounded-lg p-6">
+        <span class="bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full">
+          <MessageCircle class="h-6 w-auto" />
+        </span>
+        <p class="mb-2 text-lg font-semibold">{chatLabel}</p>
+        <p class="text-muted-foreground mb-3">{chatDescription}</p>
+        <a href="#" class="font-semibold hover:underline">
+          {chatLink}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

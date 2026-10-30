@@ -86,6 +86,15 @@ describe("components.json schema", () => {
       expect(config.style).toBe("bejamas-juno");
       expect("rsc" in config).toBe(false);
       expect("tsx" in config).toBe(false);
+      expect(
+        parseRawConfigWithCompatibility(config).config.registries?.[
+          "@shadcnblocks"
+        ],
+      ).toBe("https://ui.bejamas.com/r/shadcnblocks/styles/{style}/{name}.json");
+      // Namespace mappings in starter configurations must parse successfully.
+      expect(
+        await getRawConfig(path.dirname(path.resolve(repoRoot, relativePath))),
+      ).not.toBeNull();
     }
   });
 

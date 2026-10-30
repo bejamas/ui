@@ -1,4 +1,10 @@
-import { existsSync, readdirSync, statSync, readFileSync, writeFileSync } from "fs";
+import {
+  existsSync,
+  readdirSync,
+  statSync,
+  readFileSync,
+  writeFileSync,
+} from "fs";
 import { extname, join, posix, resolve } from "path";
 import {
   inferRegistryFileType,
@@ -71,7 +77,12 @@ function extractLocalRelativeImports(content: string) {
 }
 
 function resolveRegistrySourceImport(filePath: string) {
-  const candidates = [filePath, `${filePath}.ts`, `${filePath}.astro`, `${filePath}.js`];
+  const candidates = [
+    filePath,
+    `${filePath}.ts`,
+    `${filePath}.astro`,
+    `${filePath}.js`,
+  ];
 
   for (const candidate of candidates) {
     const sourcePath = resolve(registrySourceRoot, candidate);
@@ -132,7 +143,9 @@ function augmentRegistryItem(item: RegistryItem) {
       const nextFile = {
         path: nextPath,
         type,
-        content: normalizeRegistrySource(readFileSync(resolvedImport.sourcePath, "utf8")),
+        content: normalizeRegistrySource(
+          readFileSync(resolvedImport.sourcePath, "utf8"),
+        ),
       } satisfies RegistryFile;
 
       item.files.push(nextFile);

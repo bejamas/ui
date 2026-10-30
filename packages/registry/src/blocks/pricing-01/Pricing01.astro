@@ -1,0 +1,142 @@
+---
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@bejamas/registry/ui/card";
+import { Button } from "@bejamas/registry/ui/button";
+import { Separator } from "@bejamas/registry/ui/separator";
+import { Switch } from "@bejamas/registry/ui/switch";
+import { Label } from "@bejamas/registry/ui/label";
+interface Plan {
+  name: string;
+  description: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  features: string[];
+  href: string;
+  featured?: boolean;
+}
+interface Props {
+  heading?: string;
+  description?: string;
+  plans?: Plan[];
+  class?: string;
+}
+const {
+  heading = "Choose your plan",
+  description = "Simple pricing that grows with your team.",
+  plans = [
+    {
+      name: "Starter",
+      description: "Everything you need to get going.",
+      monthlyPrice: 19,
+      yearlyPrice: 190,
+      features: ["One workspace", "Unlimited projects", "Email support"],
+      href: "/signup",
+    },
+    {
+      name: "Team",
+      description: "More room for your next big idea.",
+      monthlyPrice: 49,
+      yearlyPrice: 490,
+      features: [
+        "Unlimited workspaces",
+        "Team collaboration",
+        "Priority support",
+      ],
+      href: "/signup",
+      featured: true,
+    },
+  ],
+  class: className = "",
+} = Astro.props;
+const switchId = `billing-${crypto.randomUUID()}`;
+---
+
+<section data-pricing-block class:list={["px-6 py-20 md:py-32", className]}>
+  <div class="mx-auto max-w-4xl">
+    <div class="mb-10 space-y-4 text-center">
+      <h2 class="text-3xl font-semibold md:text-4xl">{heading}</h2>
+      <p class="text-muted-foreground">{description}</p>
+      <div class="flex items-center justify-center gap-3">
+        <span class="text-sm">Monthly</span>
+        <Switch id={switchId} aria-label="Yearly billing" />
+        <Label for={switchId}>Yearly</Label>
+      </div>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2">
+      {plans.map((plan) => (
+        <Card
+          class:list={[
+            "shadow-none",
+            plan.featured && "border-2 border-solid border-primary",
+          ]}
+        >
+          <CardHeader>
+            <CardTitle>{plan.name}</CardTitle>
+            <CardDescription>{plan.description}</CardDescription>
+          </CardHeader>
+          <CardContent class="space-y-6">
+            <p aria-live="polite">
+              <span
+                class="text-4xl font-semibold"
+                data-price
+                data-monthly={plan.monthlyPrice}
+                data-yearly={plan.yearlyPrice}
+              >
+                ${plan.monthlyPrice}
+              </span>
+              <span class="text-muted-foreground" data-cadence>
+                {" "}
+                / month
+              </span>
+            </p>
+            <Separator />
+            <ul class="space-y-3">
+              {plan.features.map((feature) => (
+                <li class="flex gap-2 text-sm">
+                  <span aria-hidden="true" class="text-primary">
+                    ✓
+                  </span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+          <CardFooter class="mt-auto">
+            <Button
+              as="a"
+              href={plan.href}
+              variant={plan.featured ? "default" : "outline"}
+              class="w-full"
+            >
+              Get started
+            </Button>
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  </div>
+</section>
+<script>
+  document
+    .querySelectorAll<HTMLElement>("[data-pricing-block]")
+    .forEach((block) => {
+      block.addEventListener("switch:change", (event) => {
+        const yearly = (event as CustomEvent<{ checked: boolean }>).detail
+          .checked;
+        block.querySelectorAll<HTMLElement>("[data-price]").forEach((price) => {
+          price.textContent = `$${yearly ? price.dataset.yearly : price.dataset.monthly}`;
+        });
+        block
+          .querySelectorAll<HTMLElement>("[data-cadence]")
+          .forEach((cadence) => {
+            cadence.textContent = yearly ? " / year" : " / month";
+          });
+      });
+    });
+</script>

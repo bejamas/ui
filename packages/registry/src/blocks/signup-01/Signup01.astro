@@ -1,0 +1,135 @@
+---
+import { Button } from "@bejamas/registry/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@bejamas/registry/ui/card";
+import { Input } from "@bejamas/registry/ui/input";
+import { Label } from "@bejamas/registry/ui/label";
+interface Props {
+  brand?: string;
+  heading?: string;
+  action?: string;
+  alternateHref?: string;
+  class?: string;
+}
+const {
+  brand = "Acme",
+  heading = "Create an account",
+  action,
+  alternateHref = "/login",
+  class: className = "",
+} = Astro.props;
+const formId = `signup-${crypto.randomUUID()}`;
+---
+
+<section
+  class:list={[
+    "flex min-h-[700px] items-center justify-center bg-muted px-6 py-16",
+    className,
+  ]}
+>
+  <div class="w-full max-w-sm space-y-6">
+    <a href="/" class="block text-center text-2xl font-semibold">
+      {brand}
+    </a>
+    <Card>
+      <CardHeader>
+        <CardTitle class="text-center text-xl">{heading}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form
+          action={action}
+          method="post"
+          data-auth-form
+          data-demo={action ? undefined : "true"}
+          class="space-y-4"
+        >
+          <div class="space-y-2">
+            <Label for={`${formId}-email`}>Email</Label>
+            <Input
+              id={`${formId}-email`}
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+          <div class="space-y-2">
+            <Label for={`${formId}-password`}>Password</Label>
+            <Input
+              id={`${formId}-password`}
+              name="password"
+              type="password"
+              autocomplete="new-password"
+              required
+              minlength="8"
+            />
+          </div>
+          <div class="space-y-2">
+            <Label for={`${formId}-confirm`}>Confirm password</Label>
+            <Input
+              id={`${formId}-confirm`}
+              name="confirmPassword"
+              type="password"
+              autocomplete="new-password"
+              required
+              minlength="8"
+            />
+          </div>
+          <Button type="submit" class="w-full">
+            Create account
+          </Button>
+          <p
+            data-form-status
+            role="status"
+            class="text-sm text-muted-foreground"
+          ></p>
+        </form>
+      </CardContent>
+    </Card>
+    <p class="text-center text-sm text-muted-foreground">
+      Already have an account?{" "}
+      <a
+        href={alternateHref}
+        class="font-medium text-foreground underline underline-offset-4"
+      >
+        Sign in
+      </a>
+    </p>
+  </div>
+</section>
+<script>
+  document
+    .querySelectorAll<HTMLFormElement>("[data-auth-form]")
+    .forEach((form) => {
+      const password =
+        form.querySelector<HTMLInputElement>('[name="password"]');
+      const confirm = form.querySelector<HTMLInputElement>(
+        '[name="confirmPassword"]',
+      );
+      const validate = () =>
+        confirm?.setCustomValidity(
+          confirm.value !== password?.value ? "Passwords must match." : "",
+        );
+      password?.addEventListener("input", validate);
+      confirm?.addEventListener("input", validate);
+      form.addEventListener("submit", (event) => {
+        validate();
+        if (!form.reportValidity()) {
+          event.preventDefault();
+          return;
+        }
+        if (form.dataset.demo === "true") {
+          event.preventDefault();
+          const status = form.querySelector<HTMLElement>("[data-form-status]");
+          if (status)
+            status.textContent =
+              "Demo only. Connect a form action to enable authentication.";
+        }
+      });
+    });
+</script>

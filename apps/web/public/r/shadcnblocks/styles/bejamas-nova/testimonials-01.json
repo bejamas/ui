@@ -1,0 +1,31 @@
+{
+  "name": "testimonials-01",
+  "type": "registry:block",
+  "title": "Testimonials 01",
+  "description": "A responsive masonry wall of quote cards with avatars and optional source links.",
+  "registryDependencies": [
+    "index",
+    "card",
+    "avatar",
+    "button"
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/testimonial9"
+  },
+  "files": [
+    {
+      "path": "blocks/testimonials-01/Testimonials01.astro",
+      "type": "registry:component",
+      "target": "src/components/blocks/testimonials-01/Testimonials01.astro",
+      "content": "---\nimport { Card, CardHeader, CardContent } from \"@/registry/bejamas/ui/card\";\nimport {\n  Avatar,\n  AvatarImage,\n  AvatarFallback,\n} from \"@/registry/bejamas/ui/avatar\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\ninterface Testimonial {\n  name: string;\n  role: string;\n  quote: string;\n  avatarSrc?: string;\n  sourceHref?: string;\n}\ninterface Props {\n  heading?: string;\n  description?: string;\n  testimonials?: Testimonial[];\n  class?: string;\n}\nconst {\n  heading = \"Good work starts with good tools\",\n  description = \"A few words from the people building with us. Sample testimonials for this demo.\",\n  testimonials = [\n    {\n      name: \"Alex Morgan\",\n      role: \"Product designer\",\n      quote:\n        \"We went from an early sketch to a polished prototype in a single afternoon. The components gave us room to focus on the experience.\",\n    },\n    {\n      name: \"Sam Taylor\",\n      role: \"Frontend developer\",\n      quote:\n        \"Clear source, thoughtful defaults, and no surprises. Exactly what I want in a component library.\",\n    },\n    {\n      name: \"Jordan Lee\",\n      role: \"Founder\",\n      quote:\n        \"Our small team can move quickly without sacrificing the details. It has made a real difference to how we ship, and every page still feels like our own.\",\n    },\n    {\n      name: \"Casey Rivera\",\n      role: \"Engineering lead\",\n      quote:\n        \"The accessible foundations mean we spend less time fixing the basics and more time solving real problems for our customers.\",\n    },\n    {\n      name: \"Jamie Chen\",\n      role: \"Creative director\",\n      quote:\n        \"Easy to shape around a brand. The layouts feel consistent without looking identical.\",\n    },\n    {\n      name: \"Riley Brooks\",\n      role: \"Independent developer\",\n      quote:\n        \"A great starting point for client projects. I can adapt the source to each project and keep the final site fast and simple to maintain.\",\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\nconst initials = (name: string) =>\n  name\n    .split(/\\s+/)\n    .filter(Boolean)\n    .slice(0, 2)\n    .map((part) => part[0])\n    .join(\"\");\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-6xl\">\n    <div class=\"mx-auto mb-10 max-w-2xl space-y-4 text-center\">\n      <h2 class=\"text-balance text-3xl font-semibold tracking-tight md:text-4xl\">\n        {heading}\n      </h2>\n      <p class=\"text-lg text-muted-foreground\">{description}</p>\n    </div>\n    <div class=\"columns-1 gap-6 md:columns-2 lg:columns-3\">\n      {testimonials.map((testimonial) => (\n        <Card class=\"mb-6 break-inside-avoid\">\n          <CardHeader class=\"flex flex-row items-center gap-3\">\n            <Avatar class=\"shrink-0\">\n              {testimonial.avatarSrc && (\n                <AvatarImage\n                  src={testimonial.avatarSrc}\n                  alt=\"\"\n                  loading=\"lazy\"\n                />\n              )}\n              <AvatarFallback>{initials(testimonial.name)}</AvatarFallback>\n            </Avatar>\n            <div class=\"min-w-0 flex-1\">\n              <p class=\"font-semibold\">{testimonial.name}</p>\n              <p class=\"text-sm text-muted-foreground\">{testimonial.role}</p>\n            </div>\n            {testimonial.sourceHref && (\n              <Button\n                as=\"a\"\n                href={testimonial.sourceHref}\n                variant=\"ghost\"\n                size=\"icon\"\n                aria-label={`View testimonial from ${testimonial.name}`}\n              >\n                <span aria-hidden=\"true\">↗</span>\n              </Button>\n            )}\n          </CardHeader>\n          <CardContent>\n            <blockquote class=\"text-muted-foreground\">\n              <p>“{testimonial.quote}”</p>\n            </blockquote>\n          </CardContent>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n"
+    },
+    {
+      "path": "blocks/testimonials-01/index.ts",
+      "type": "registry:component",
+      "target": "src/components/blocks/testimonials-01/index.ts",
+      "content": "export { default as Testimonials01 } from \"./Testimonials01.astro\";\n"
+    }
+  ],
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": []
+}

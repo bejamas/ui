@@ -43,13 +43,45 @@ const blockItems = sourceRegistry.items.filter(
 const blockIds = blockItems.map((item) => item.name);
 
 describe("first-party block registry", () => {
+  it("publishes only Shadcnblocks ports in a dedicated registry for every style", () => {
+    const ports = sourceRegistry.items.filter((item) =>
+      (
+        item as PublishedItem & { meta?: { source?: string } }
+      ).meta?.source?.startsWith("https://www.shadcnblocks.com/block/"),
+    );
+    expect(ports).toHaveLength(14);
+    for (const style of STYLES) {
+      const root = `apps/web/public/r/shadcnblocks/styles/${style.id}`;
+      const registry = readJson<{ items: PublishedItem[] }>(
+        `${root}/registry.json`,
+      );
+      expect(registry.items.map((item) => item.name).sort()).toEqual(
+        ports.map((item) => item.name).sort(),
+      );
+      for (const port of ports) {
+        const item = readJson<PublishedItem>(`${root}/${port.name}.json`);
+        expect(item).toEqual(
+          readJson(`apps/web/public/r/styles/${style.id}/${port.name}.json`),
+        );
+        // Dependencies stay in the main styled registry, outside this collection.
+        for (const dependency of item.registryDependencies ?? []) {
+          expect(
+            readJson<PublishedItem>(
+              `apps/web/public/r/styles/${style.id}/${dependency}.json`,
+            ),
+          ).toBeDefined();
+        }
+      }
+    }
+  });
+
   it("declares every block with portable component targets and UI dependencies", () => {
     expect(blockIds.length).toBeGreaterThan(0);
 
     for (const item of blockItems) {
       expect(item.title).toBeString();
       expect(item.description).toBeString();
-      expect(item.registryDependencies?.length).toBeGreaterThan(0);
+      expect(item.registryDependencies).toBeArray();
       expect(item.files.length).toBeGreaterThan(0);
 
       for (const file of item.files) {
@@ -109,7 +141,11 @@ describe("first-party block registry", () => {
 
       expect(artifact.type).toBe("registry:block");
       expect(component?.path).toStartWith(`blocks/${blockId}/`);
-      expect(component?.content).toContain("@/registry/bejamas/ui/");
+      if (
+        blockItems.find((item) => item.name === blockId)?.registryDependencies
+          ?.length
+      )
+        expect(component?.content).toContain("@/registry/bejamas/ui/");
       expect(component?.content).not.toContain("@bejamas/ui");
       expect(component?.content).not.toContain("@bejamas/registry");
     }

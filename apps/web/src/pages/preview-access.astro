@@ -1,0 +1,98 @@
+---
+// Login page for the temporary preview gate (src/preview-gate.ts). Revert
+// together with the gate before merging.
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { Button } from "@bejamas/ui/components/button";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@bejamas/ui/components/field";
+import { Input } from "@bejamas/ui/components/input";
+import { PREVIEW_GATE_BRANCH, PREVIEW_GATE_PATH } from "@/preview-gate";
+
+export const prerender = true;
+---
+
+<StarlightPage
+  hasSidebar={false}
+  frontmatter={{
+    title: "Preview access",
+    description: "This branch preview is password protected.",
+    template: "splash",
+    pagefind: false,
+    head: [{ tag: "meta", attrs: { name: "robots", content: "noindex" } }],
+  }}
+>
+  <div data-page-scope="preview-access" hidden></div>
+  <div class="not-content mx-auto w-full max-w-sm pb-24">
+    <form
+      method="post"
+      action={PREVIEW_GATE_PATH}
+      class="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm"
+      data-preview-access
+    >
+      <input type="hidden" name="next" value="/" />
+      <FieldGroup>
+        <Field>
+          <FieldLabel for="preview-password">Password</FieldLabel>
+          <Input
+            id="preview-password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            autofocus
+          />
+          <FieldDescription>
+            You're viewing a preview of{" "}
+            <code class="font-mono text-xs">{PREVIEW_GATE_BRANCH}</code>. You'll
+            stay signed in on this browser for 30 days.
+          </FieldDescription>
+          <FieldError forceMount class="hidden" data-preview-error>
+            That password didn't work. Try again.
+          </FieldError>
+        </Field>
+        <Button type="submit" class="w-full">
+          Continue
+        </Button>
+      </FieldGroup>
+    </form>
+  </div>
+
+  <style is:global>
+    :root:has([data-page-scope="preview-access"]) .content-panel {
+      border: 0;
+    }
+    :root:has([data-page-scope="preview-access"]) .sl-bejamas-docs-title {
+      text-align: center;
+    }
+    :root:has([data-page-scope="preview-access"]) .sl-bejamas-docs-title-main,
+    :root:has([data-page-scope="preview-access"])
+      .sl-bejamas-docs-title-heading {
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</StarlightPage>
+
+<script is:inline>
+  // The gate serves this page in place of the requested URL, so return there
+  // after signing in. On /preview-access itself, the target comes from ?next.
+  (() => {
+    const form = document.querySelector("[data-preview-access]");
+    if (!form) return;
+    const params = new URLSearchParams(location.search);
+    const onLoginPath = location.pathname === "/preview-access";
+    form.elements.next.value = onLoginPath
+      ? params.get("next") || "/"
+      : location.pathname + location.search + location.hash;
+    if (onLoginPath && params.get("error")) {
+      const error = form.querySelector("[data-preview-error]");
+      error.classList.remove("hidden");
+      form.elements.password.setAttribute("aria-invalid", "true");
+    }
+  })();
+</script>
