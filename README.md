@@ -51,7 +51,7 @@ import Button from "@/ui/Button.astro";
 
 ## Agent Skill
 
-Use [migrate-react-sites](./skills/migrate-react-sites/SKILL.md) to port a React or Next.js site to Astro with bejamas/ui at pixel parity. It covers rebuilding a site as a new project and migrating inside an existing repository.
+Use [migrate-react-sites](./skills/migrate-react-sites/SKILL.md) to port a React or Next.js site to Astro with bejamas/ui at pixel parity. It covers rebuilding a site as a new project, migrating inside an existing repository, and restyling a site already on Astro to Tailwind in place.
 
 Install it into your project with the [Skills CLI](https://github.com/vercel-labs/skills):
 

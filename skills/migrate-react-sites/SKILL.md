@@ -1,6 +1,6 @@
 ---
 name: migrate-react-sites
-description: Port a React/Next.js website to Astro with bejamas/ui at pixel parity, whatever component library it uses (shadcn/ui is the happy path; PrimeReact, MUI and others work too). Two cases - rebuilding a site from its repo and live demo as a new project, or migrating a site inside its own repository. Use when recreating or migrating a site, page or demo to Astro/bejamas.
+description: Port a React/Next.js website to Astro with bejamas/ui at pixel parity, whatever component library it uses (shadcn/ui is the happy path; other component libraries work too). Three cases - rebuilding a site from its repo and live demo as a new project, migrating a site inside its own repository, or restyling a site already on Astro from another styling system to Tailwind and bejamas/ui in place. Use when recreating or migrating a site, page or demo to Astro/bejamas.
 ---
 
 # React site → Astro / bejamas/ui
@@ -18,7 +18,7 @@ Effort concentrates in four places. Plan for them from the start:
 
 Read one workflow file and follow it step by step:
 
-- **[In-repo](workflows/in-repo.md)**: the result lives **in the site's own repository**, as an Astro app next to the existing React/Next app. This is the case when you're working inside the React/Next repo being migrated and the request doesn't name a separate project.
+- **[In-repo](workflows/in-repo.md)**: the result lives **in the site's own repository**, as an Astro app next to the existing React/Next app. This is the case when you're working inside the React/Next repo being migrated and the request doesn't name a separate project. A site **already on Astro** follows the same workflow through its [Astro source](workflows/in-repo.md#astro-source) variant: the styling stack changes, the framework stays.
 - **[Rebuild](workflows/rebuild.md)**: the result is a **new project**, built from a site's repo and its live demo (someone else's site, a template, a public demo).
 
 When neither fits clearly, ask before scaffolding.
@@ -28,13 +28,13 @@ When neither fits clearly, ask before scaffolding.
 Before porting the first component, check what the source's components are built on (`components.json`, `package.json`, the rendered DOM and stylesheets):
 
 - **shadcn/ui or a kit built the same way** (Tailwind classes merged with tailwind-merge over Radix or Base UI): the happy path. Use [parity](references/parity.md).
-- **Anything else** (PrimeReact, MUI, Chakra, Mantine, an in-house system on one of them): use [other libraries](references/other-libraries.md). parity's reset classes don't apply.
+- **Anything else** (a component library that ships its own CSS, or an in-house system built on one): use [other libraries](references/other-libraries.md). parity's reset classes don't apply.
 
 ## Shared references
 
 - [parity](references/parity.md): bejamas defaults vs shadcn styles, and the reset classes. Read before porting the first Button, Card, Badge or Accordion of a shadcn source.
 - [other libraries](references/other-libraries.md): porting styling and behavior from non-shadcn libraries.
-- [recipes](references/recipes.md): Next.js features, color mode, motion, Tailwind v3 → v4, drift, and the in-repo migration mappings.
+- [recipes](references/recipes.md): Next.js features, color mode, motion, Tailwind v3 → v4, other styling systems → Tailwind, drift, and the in-repo migration mappings.
 - [known issues](references/known-issues.md): bejamas setup bugs, component bugs, primitive gaps, Astro gotchas and the accepted workarounds.
 
 ## Measuring

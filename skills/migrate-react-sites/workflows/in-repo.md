@@ -13,6 +13,22 @@ When a step doesn't fit what you find in the repo, follow the repo, and record t
 - **React islands are a starting point, not a destination.** Legacy code rendered as islands gets the Astro app to parity on day one; sections are then swapped out one by one. At cutover, no published page renders an island. React code may only stay for section types no published page uses, listed in the ledger. Removing React entirely belongs to the optional legacy removal.
 - **Local checks and deployment checks are separate.** Every "done when" below is checkable locally. Checks that need a deployment (host redirects and headers, ISR, CI) go into the ledger's *Deployment checks* and become the developer's cutover checklist.
 - **Work on a migration branch**, commit per phase or per route, and use the repo's own package manager, lint and format config.
+- **Keep this skill's folder out of the repo's formatting.** When the skill is vendored into the repo (e.g. `.agents/skills/`), add that folder to `.prettierignore` and the lint ignores: a `prepare` or `build` script that runs `prettier --write .` rewrites it.
+
+## Astro source
+
+For a React/Next source, continue at [The ledger](#the-ledger).
+
+When the site already runs on Astro and only its styling stack changes (another styling system → Tailwind and bejamas/ui), there's no legacy app and no new app: the site is ported **in place**, one component at a time. The measuring scripts, the parity method and the primitive guidance apply unchanged. The phases change like this:
+
+- **Reference:** the untouched baseline commit, served from a worktree on its own port (`git worktree add --detach <ref-dir> <commit>`). Wherever this workflow says *legacy build*, read *that worktree*.
+- **Dev servers** are acceptable on both sides when a production build per change is too slow (a Worker adapter, a CMS-heavy build), because they share the site's CSS pipeline. Turn HMR off on the port (`vite: { server: { hmr: false } }` behind an env var) so a save can't reload a page mid-measurement, and pre-bundle the `@data-slot/*` packages (see the dev-server row in [known issues](../references/known-issues.md#astro-gotchas)). Record the choice in *How to resume*.
+- **Ledger:** keep *Routes*, *e2e baseline*, *Deployment checks*, gaps, follow-ups and skill feedback. In place of *Providers*, *Next features*, *Shared code* and *Islands*, keep **Work units** (each component or style module to port, `todo` → `ported` → `verified`) and **Porting conventions** (the old-styles → Tailwind mapping every unit uses, so each session translates the same way).
+- **Phase 0:** steps 1, 2, 4 and 9 apply, with the source's styling system surveyed in place of Next: where its CSS lives and in which cascade layers, its tokens, breakpoints and conditions, and its text styles (see [two styling systems at once](../references/other-libraries.md#two-styling-systems-at-once)). Step 3 is the reference worktree; steps 5–8 don't apply.
+- **Phase 1:** run `bejamas init` in the site itself, apply the *Setup and CLI* fixes in [known issues](../references/known-issues.md), and set up Tailwind **beside** the old system: layer order, reset deltas and tokens copied 1:1. **Done when** the site builds with both systems and `compare-boxes.mjs` shows no diff on any route.
+- **Phases 2 and 3** become one pass over the work units. Replace each unit's style definitions with Tailwind classes (translation traps in [recipes](../references/recipes.md#other-styling-systems--tailwind)), or with a bejamas component or `@data-slot` primitive (see [other libraries](../references/other-libraries.md)). Then measure every route that renders the unit as in phase 3b. There are no islands, so 3a doesn't apply.
+- **Phases 4, 5 and 8 don't apply.** Once the last unit is `verified`, remove the old styling system in one step (packages, config, codegen output, imports), run phase 6 again, and finish with phase 7's checklist and PR description.
+- **`<ClientRouter />`:** if the site uses it, read the ClientRouter row in [known issues](../references/known-issues.md#components) before porting the first interactive component.
 
 ## The ledger
 
