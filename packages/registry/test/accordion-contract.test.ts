@@ -61,7 +61,7 @@ describe("accordion compatibility contract", () => {
     expect(source).toContain("collapsible = true");
     expect(source).toContain("const rootDefaultValue");
     expect(source).toContain("data-default-value={rootDefaultValue}");
-    expect(source).toContain("createAccordion(el);");
+    expect(source).toContain("createAccordion(root)");
     expect(source).not.toContain("data-default-value-json");
     expect(source).not.toContain("parseDefaultValue");
     expect(source).not.toContain("parseBooleanDataAttribute");
@@ -184,7 +184,7 @@ describe("accordion compatibility contract", () => {
     expect(registryAccordion).toContain("defaultValue?: string | string[]");
     expect(registryAccordion).toContain("const rootDefaultValue");
     expect(registryAccordion).toContain("data-default-value={rootDefaultValue}");
-    expect(registryAccordion).toContain("createAccordion(el);");
+    expect(registryAccordion).toContain("createAccordion(root)");
     expect(registryAccordion).not.toContain("data-default-value-json");
     expect(registryAccordion).not.toContain("data-enhanced");
     expect(registryAccordion).not.toContain("AccordionItem open");
@@ -201,7 +201,7 @@ describe("accordion compatibility contract", () => {
 
     expect(styleAccordion).toContain("const rootDefaultValue");
     expect(styleAccordion).toContain("data-default-value={rootDefaultValue}");
-    expect(styleAccordion).toContain("createAccordion(el);");
+    expect(styleAccordion).toContain("createAccordion(root)");
     expect(styleAccordion).not.toContain("data-default-value-json");
     expect(styleAccordion).not.toContain("data-enhanced");
     expect(styleContent).toContain("data-open:animate-accordion-down");

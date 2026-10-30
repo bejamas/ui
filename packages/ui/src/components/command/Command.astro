@@ -186,7 +186,23 @@ const {
 <script>
   import { createCommand } from "@data-slot/command";
 
-  document
-    .querySelectorAll<HTMLElement>('[data-slot="command"]')
-    .forEach((el) => createCommand(el));
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll<HTMLElement>('[data-slot="command"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, createCommand(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>

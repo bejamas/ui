@@ -24,8 +24,8 @@ describe("registry switch source", () => {
     expect(source).toContain(
       'class="cn-switch-thumb pointer-events-none block ring-0 transition-transform"',
     );
-    expect(source).toContain('import { create } from "@data-slot/switch";');
-    expect(source).toContain("create();");
+    expect(source).toContain('import { createSwitch } from "@data-slot/switch";');
+    expect(source).toContain("createSwitch(root)");
     expect(source).not.toContain('type="checkbox"');
     expect(source).not.toContain("window.__bejamasSwitchSync");
     expect(source).not.toContain(

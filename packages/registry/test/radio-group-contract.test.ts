@@ -60,7 +60,7 @@ describe("radio-group compatibility contract", () => {
     expect(rootSource).toContain(
       'import { createRadioGroup } from "@data-slot/radio-group";',
     );
-    expect(rootSource).toContain("createRadioGroup(el)");
+    expect(rootSource).toContain("createRadioGroup(root)");
     expect(rootSource).not.toContain('role="radiogroup"');
 
     expect(itemSource).toContain(

@@ -54,7 +54,7 @@ describe("collapsible compatibility contract", () => {
     expect(source).toContain(
       'data-[state=closed]:[&_[data-slot=collapsible-content]]:hidden',
     );
-    expect(source).toContain("createCollapsible(el);");
+    expect(source).toContain("createCollapsible(root)");
     expect(source).not.toContain("parseBooleanDataAttribute");
     expect(source).not.toContain("data-enhanced");
   });
@@ -83,20 +83,20 @@ describe("collapsible compatibility contract", () => {
       "ui/collapsible/Collapsible.astro",
     );
 
-    expect(uiSource).toContain("createCollapsible(el);");
+    expect(uiSource).toContain("createCollapsible(root)");
     expect(uiSource).not.toContain("data-enhanced");
     expect(uiSource).toContain(
       'data-[state=closed]:[&_[data-slot=collapsible-content]]:hidden',
     );
 
-    expect(registryCollapsible).toContain("createCollapsible(el);");
+    expect(registryCollapsible).toContain("createCollapsible(root)");
     expect(registryCollapsible).not.toContain("parseBooleanDataAttribute");
     expect(registryCollapsible).not.toContain("data-enhanced");
     expect(registryCollapsible).toContain(
       'data-[state=closed]:[&_[data-slot=collapsible-content]]:hidden',
     );
 
-    expect(styleCollapsible).toContain("createCollapsible(el);");
+    expect(styleCollapsible).toContain("createCollapsible(root)");
     expect(styleCollapsible).not.toContain("parseBooleanDataAttribute");
     expect(styleCollapsible).not.toContain("data-enhanced");
     expect(styleCollapsible).toContain(

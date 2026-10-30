@@ -164,19 +164,37 @@ const thumbCount = Array.isArray(resolvedValue) ? 2 : 1;
 <script>
   import { createSlider } from "@data-slot/slider";
 
-  document.querySelectorAll('[data-slot="slider"]').forEach((el) => {
-    const element = el as HTMLElement;
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
 
-    // Don't pass defaultValue in options - let the library read from
-    // data-default-value directly so single and range sliders stay aligned.
-    createSlider(element, {
-      min: Number(element.dataset.min) || 0,
-      max: Number(element.dataset.max) || 100,
-      step: Number(element.dataset.step) || 1,
-      orientation:
-        (element.dataset.orientation as "horizontal" | "vertical") ||
-        "horizontal",
-      disabled: element.dataset.disabled === "true",
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
     });
-  });
+    document
+      .querySelectorAll<HTMLElement>('[data-slot="slider"]')
+      .forEach((root) => {
+        if (controllers.has(root)) return;
+        // Don't pass defaultValue in options - let the library read from
+        // data-default-value directly so single and range sliders stay aligned.
+        controllers.set(
+          root,
+          createSlider(root, {
+            min: Number(root.dataset.min) || 0,
+            max: Number(root.dataset.max) || 100,
+            step: Number(root.dataset.step) || 1,
+            orientation:
+              (root.dataset.orientation as "horizontal" | "vertical") ||
+              "horizontal",
+            disabled: root.dataset.disabled === "true",
+          }),
+        );
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>

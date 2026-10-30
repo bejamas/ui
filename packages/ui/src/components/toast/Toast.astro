@@ -211,8 +211,25 @@ const {
 <script>
   import { bindToaster } from "./toast";
 
-  const roots = document.querySelectorAll('[data-slot="toast"]');
-  roots.forEach((root) => bindToaster(root));
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll('[data-slot="toast"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, bindToaster(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 
   // `<Button data-slot="toast-trigger" data-toast-title="Saved">` shows a toast
   // on click without a client script. The root validates `toast:show` details,
@@ -225,7 +242,7 @@ const {
     if (!trigger) return;
     const { toastTitle, toastDescription, toastType, toastDuration } =
       trigger.dataset;
-    roots[0].dispatchEvent(
+    document.querySelector('[data-slot="toast"]')?.dispatchEvent(
       new CustomEvent("toast:show", {
         detail: {
           title: toastTitle,

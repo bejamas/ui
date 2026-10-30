@@ -274,7 +274,23 @@ const {
 <script>
   import { createSelect } from "@bejamas/registry/lib/select";
 
-  document.querySelectorAll('[data-slot="select"]').forEach((el) => {
-    createSelect(el);
-  });
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll('[data-slot="select"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, createSelect(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>

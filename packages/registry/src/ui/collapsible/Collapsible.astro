@@ -179,7 +179,23 @@ const {
 <script>
   import { createCollapsible } from "@data-slot/collapsible";
 
-  document.querySelectorAll<HTMLElement>('[data-slot="collapsible"]').forEach((el) => {
-    createCollapsible(el);
-  });
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll('[data-slot="collapsible"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, createCollapsible(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>

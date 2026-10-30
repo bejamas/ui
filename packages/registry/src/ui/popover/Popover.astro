@@ -187,7 +187,24 @@ const { class: className = "", ...rest } = Astro.props as Props;
 
 <script>
   import { createPopover } from "@data-slot/popover";
-  document
-    .querySelectorAll('[data-slot="popover"]')
-    .forEach((el) => createPopover(el));
+
+  // Bind on load and after every ClientRouter navigation, and release the
+  // controllers of roots the navigation removed.
+  const controllers = new Map<Element, { destroy(): void }>();
+
+  function bind() {
+    controllers.forEach((controller, root) => {
+      if (root.isConnected) return;
+      controller.destroy();
+      controllers.delete(root);
+    });
+    document
+      .querySelectorAll('[data-slot="popover"]')
+      .forEach((root) => {
+        if (!controllers.has(root)) controllers.set(root, createPopover(root));
+      });
+  }
+
+  bind();
+  document.addEventListener("astro:page-load", bind);
 </script>
