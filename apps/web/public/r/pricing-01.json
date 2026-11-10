@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "pricing-01",
+  "title": "Pricing 01",
+  "description": "Two pricing cards with an interactive monthly and yearly billing switch.",
+  "registryDependencies": [
+    "card",
+    "button",
+    "separator",
+    "switch",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "blocks/pricing-01/Pricing01.astro",
+      "content": "---\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardDescription,\n  CardContent,\n  CardFooter,\n} from \"@/registry/bejamas/ui/card\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport { Separator } from \"@/registry/bejamas/ui/separator\";\nimport { Switch } from \"@/registry/bejamas/ui/switch\";\nimport { Label } from \"@/registry/bejamas/ui/label\";\ninterface Plan {\n  name: string;\n  description: string;\n  monthlyPrice: number;\n  yearlyPrice: number;\n  features: string[];\n  href: string;\n  featured?: boolean;\n}\ninterface Props {\n  heading?: string;\n  description?: string;\n  plans?: Plan[];\n  class?: string;\n}\nconst {\n  heading = \"Choose your plan\",\n  description = \"Simple pricing that grows with your team.\",\n  plans = [\n    {\n      name: \"Starter\",\n      description: \"Everything you need to get going.\",\n      monthlyPrice: 19,\n      yearlyPrice: 190,\n      features: [\"One workspace\", \"Unlimited projects\", \"Email support\"],\n      href: \"/signup\",\n    },\n    {\n      name: \"Team\",\n      description: \"More room for your next big idea.\",\n      monthlyPrice: 49,\n      yearlyPrice: 490,\n      features: [\n        \"Unlimited workspaces\",\n        \"Team collaboration\",\n        \"Priority support\",\n      ],\n      href: \"/signup\",\n      featured: true,\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\nconst switchId = `billing-${crypto.randomUUID()}`;\n---\n\n<section data-pricing-block class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-4xl\">\n    <div class=\"mb-10 space-y-4 text-center\">\n      <h2 class=\"text-3xl font-semibold md:text-4xl\">{heading}</h2>\n      <p class=\"text-muted-foreground\">{description}</p>\n      <div class=\"flex items-center justify-center gap-3\">\n        <span class=\"text-sm\">Monthly</span>\n        <Switch id={switchId} aria-label=\"Yearly billing\" />\n        <Label for={switchId}>Yearly</Label>\n      </div>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2\">\n      {plans.map((plan) => (\n        <Card\n          class:list={[\n            \"shadow-none\",\n            plan.featured && \"border-2 border-solid border-primary\",\n          ]}\n        >\n          <CardHeader>\n            <CardTitle>{plan.name}</CardTitle>\n            <CardDescription>{plan.description}</CardDescription>\n          </CardHeader>\n          <CardContent class=\"space-y-6\">\n            <p aria-live=\"polite\">\n              <span\n                class=\"text-4xl font-semibold\"\n                data-price\n                data-monthly={plan.monthlyPrice}\n                data-yearly={plan.yearlyPrice}\n              >\n                ${plan.monthlyPrice}\n              </span>\n              <span class=\"text-muted-foreground\" data-cadence>\n                {\" \"}\n                / month\n              </span>\n            </p>\n            <Separator />\n            <ul class=\"space-y-3\">\n              {plan.features.map((feature) => (\n                <li class=\"flex gap-2 text-sm\">\n                  <span aria-hidden=\"true\" class=\"text-primary\">\n                    ✓\n                  </span>\n                  {feature}\n                </li>\n              ))}\n            </ul>\n          </CardContent>\n          <CardFooter class=\"mt-auto\">\n            <Button\n              as=\"a\"\n              href={plan.href}\n              variant={plan.featured ? \"default\" : \"outline\"}\n              class=\"w-full\"\n            >\n              Get started\n            </Button>\n          </CardFooter>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n<script>\n  document\n    .querySelectorAll<HTMLElement>(\"[data-pricing-block]\")\n    .forEach((block) => {\n      block.addEventListener(\"switch:change\", (event) => {\n        const yearly = (event as CustomEvent<{ checked: boolean }>).detail\n          .checked;\n        block.querySelectorAll<HTMLElement>(\"[data-price]\").forEach((price) => {\n          price.textContent = `$${yearly ? price.dataset.yearly : price.dataset.monthly}`;\n        });\n        block\n          .querySelectorAll<HTMLElement>(\"[data-cadence]\")\n          .forEach((cadence) => {\n            cadence.textContent = yearly ? \" / year\" : \" / month\";\n          });\n      });\n    });\n</script>\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/pricing-01/Pricing01.astro"
+    },
+    {
+      "path": "blocks/pricing-01/index.ts",
+      "content": "export { default as Pricing01 } from \"./Pricing01.astro\";\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/pricing-01/index.ts"
+    }
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/pricing2"
+  },
+  "type": "registry:block"
+}

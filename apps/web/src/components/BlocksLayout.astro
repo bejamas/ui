@@ -1,38 +1,62 @@
 ---
 import BlocksNav from "@/components/BlocksNav.astro";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import { ArrowUpRight } from "@lucide/astro";
+
+interface Props {
+  category?: string;
+}
+const { category } = Astro.props;
 ---
 
-<script is:inline src="//unpkg.com/alpinejs" defer></script>
-
 <StarlightPage
+  hasSidebar={true}
   frontmatter={{
-    title: "Building blocks for content-driven sites.",
+    title: `${category ? `${category} blocks` : "Blocks"} for Astro`,
+    description:
+      "Ready-to-use sections built with Astro and b/ui. Preview, customize, and copy the code into your project.",
     template: "splash",
   }}
 >
-  <BlocksNav />
-
-  <slot />
+  <div class="not-content" data-page-scope="blocks">
+    <BlocksNav />
+    <div class="space-y-16 pb-16" id="block-collection">
+      <slot />
+    </div>
+    <aside class="border-t border-border py-8 text-sm">
+      <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground">
+        Looking for more designs?
+        <a
+          href="https://www.shadcnblocks.com/pricing"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1 font-medium text-foreground hover:underline underline-offset-4"
+        >
+          Explore Shadcnblocks' premium collection
+          <ArrowUpRight class="size-3.5" />
+        </a>
+      </p>
+      <p class="mt-2 text-xs text-muted-foreground">
+        Sold by Shadcnblocks. Premium blocks haven't been adapted for Astro +
+        b/ui yet.
+      </p>
+    </aside>
+  </div>
 </StarlightPage>
 
 <style is:global>
-  @reference "tailwindcss";
-
-  .content-panel {
-    @apply text-center border-0 pt-30 pb-0 first:pt-10;
+  :root:has([data-page-scope="blocks"]) .content-panel {
+    border: 0;
+    padding-block: 0;
   }
-
-  .content-panel + .content-panel {
-    @apply pt-10;
-  }
-
-  .content-panel h1 {
-    @apply text-5xl font-medium text-left max-w-2xl text-balance mx-0;
-  }
-
-  .sl-container {
+  :root:has([data-page-scope="blocks"]) .sl-container {
     margin-inline: auto;
     max-width: 1500px;
+  }
+
+  :root:has([data-page-scope="blocks"]) .footer-wide {
+    width: 100%;
+    margin-inline: 0;
+    padding-inline: 0;
   }
 </style>

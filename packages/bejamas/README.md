@@ -43,6 +43,28 @@ You can also run the command without any arguments to view a list of all availab
 npx bejamas add
 ```
 
+## Shadcnblocks Astro ports
+
+Install the migrated Astro blocks with the project's selected Bejamas style:
+
+```bash
+bunx bejamas@latest add @shadcnblocks/features-02
+```
+
+Bejamas resolves `@shadcnblocks` to its own registry of Astro ports. This works without a registry entry, including in older projects that still map the namespace to the upstream React registry. Use migrated names such as `hero-01` and `features-02`, rather than upstream names such as `hero1` and `feature13`.
+
+Starter templates include this mapping in `components.json`:
+
+```json
+{
+  "registries": {
+    "@shadcnblocks": "https://ui.bejamas.com/r/shadcnblocks/styles/{style}/{name}.json"
+  }
+}
+```
+
+The dedicated registry contains the migrated blocks; their UI and style dependencies come from the main Bejamas registry. Bare names and `@bejamas/<name>` remain available as compatibility aliases. Other external namespaces follow their configured registry mappings.
+
 ## apply
 
 Use the `apply` command to switch an existing project to a new preset.

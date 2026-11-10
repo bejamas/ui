@@ -7,3 +7,5 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 @import "@bejamas/ui/styles/globals.css";
+
+@source "../../../../packages/registry/src/blocks/**/*.astro";

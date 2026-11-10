@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from "@/src/utils/logger";
+import { resolveShadcnblocksItemUrl } from "./shadcnblocks-registry";
 
 export interface RegistryFile {
   path: string;
@@ -40,6 +41,8 @@ export async function fetchRegistryItem(
   registryUrl: string,
   style = "bejamas-juno",
 ): Promise<RegistryItem | null> {
+  const portUrl = resolveShadcnblocksItemUrl(componentName, registryUrl, style);
+  if (portUrl) return fetchRegistryItem(portUrl, registryUrl, style);
   if (isRegistryItemUrl(componentName)) {
     try {
       const response = await fetch(componentName);
@@ -303,7 +306,11 @@ export async function fetchRegistryTree(
     if (seen.has(name)) return;
     seen.add(name);
     // Custom external registries are managed by shadcn, not this compatibility shim.
-    if (!isRegistryItemUrl(name) && !resolveBejamasRegistryItemName(name))
+    if (
+      !isRegistryItemUrl(name) &&
+      !resolveBejamasRegistryItemName(name) &&
+      !resolveShadcnblocksItemUrl(name, registryUrl, style)
+    )
       return;
     const item = await fetchRegistryItem(name, registryUrl, style);
     if (!item)

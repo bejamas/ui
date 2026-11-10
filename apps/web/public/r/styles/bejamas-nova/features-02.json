@@ -1,0 +1,30 @@
+{
+  "name": "features-02",
+  "type": "registry:block",
+  "title": "Features 02",
+  "description": "A two-column feature card grid with labels, linked titles, and images.",
+  "registryDependencies": [
+    "index",
+    "card",
+    "badge"
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/feature13"
+  },
+  "files": [
+    {
+      "path": "blocks/features-02/Features02.astro",
+      "type": "registry:component",
+      "target": "src/components/blocks/features-02/Features02.astro",
+      "content": "---\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardDescription,\n  CardMedia,\n} from \"@/registry/bejamas/ui/card\";\nimport { Badge } from \"@/registry/bejamas/ui/badge\";\ninterface Feature {\n  label: string;\n  title: string;\n  description: string;\n  href?: string;\n  imageSrc: string;\n  imageAlt: string;\n}\ninterface Props {\n  heading?: string;\n  description?: string;\n  features?: Feature[];\n  class?: string;\n}\nconst {\n  heading = \"Everything you need to move forward\",\n  description = \"A flexible foundation for your next website, from the first sketch to the final detail.\",\n  features = [\n    {\n      label: \"For developers\",\n      title: \"Build with confidence\",\n      description:\n        \"Accessible components and portable source give you a clear starting point. Spend your time on what makes your product special.\",\n      href: \"/docs\",\n      imageSrc:\n        \"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=80\",\n      imageAlt: \"A bright shared workspace\",\n    },\n    {\n      label: \"For teams\",\n      title: \"Make it feel like you\",\n      description:\n        \"Bring your brand into every detail with flexible themes, consistent components, and layouts that adapt to your content.\",\n      href: \"/create\",\n      imageSrc:\n        \"https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1000&q=80\",\n      imageAlt: \"A workspace with natural light and plants\",\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-6xl\">\n    <div class=\"mb-10 max-w-2xl space-y-4\">\n      <h2 class=\"text-balance text-3xl font-semibold tracking-tight md:text-4xl\">\n        {heading}\n      </h2>\n      <p class=\"text-lg text-muted-foreground\">{description}</p>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2\">\n      {features.map((feature) => (\n        <Card>\n          <CardHeader class=\"space-y-4\">\n            <Badge variant=\"secondary\" class=\"w-fit\">\n              {feature.label}\n            </Badge>\n            <CardTitle class=\"text-2xl\">\n              {feature.href ? (\n                <a\n                  href={feature.href}\n                  class=\"underline-offset-4 hover:underline\"\n                >\n                  {feature.title}\n                  <span aria-hidden=\"true\"> ↗</span>\n                </a>\n              ) : (\n                feature.title\n              )}\n            </CardTitle>\n            <CardDescription class=\"text-base\">\n              {feature.description}\n            </CardDescription>\n          </CardHeader>\n          <CardMedia class=\"mx-6 mt-auto aspect-video\">\n            <img\n              src={feature.imageSrc}\n              alt={feature.imageAlt}\n              width=\"1000\"\n              height=\"563\"\n              loading=\"lazy\"\n            />\n          </CardMedia>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n"
+    },
+    {
+      "path": "blocks/features-02/index.ts",
+      "type": "registry:component",
+      "target": "src/components/blocks/features-02/index.ts",
+      "content": "export { default as Features02 } from \"./Features02.astro\";\n"
+    }
+  ],
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": []
+}

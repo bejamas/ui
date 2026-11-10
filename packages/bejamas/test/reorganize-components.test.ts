@@ -53,6 +53,42 @@ function createTabsFiles(): RegistryFile[] {
 }
 
 describe("registry item resolution", () => {
+  it("validates Astro port dependencies through the main styled registry", async () => {
+    fetchMock = spyOn(globalThis, "fetch").mockImplementation(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      const item = url.includes("/shadcnblocks/")
+        ? {
+            name: "features-02",
+            type: "registry:block",
+            registryDependencies: ["button"],
+          }
+        : { name: "button", type: "registry:ui" };
+      return new Response(JSON.stringify(item));
+    });
+    const items = await fetchRegistryTree(
+      ["@shadcnblocks/features-02"],
+      "https://ui.example.test/r",
+      "bejamas-vega",
+    );
+    expect(items.map((item) => item.name)).toEqual(["button", "features-02"]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://ui.example.test/r/shadcnblocks/styles/bejamas-vega/features-02.json",
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://ui.example.test/r/styles/bejamas-vega/button.json",
+    );
+  });
+
+  it("does not fall back outside the dedicated registry for missing ports", async () => {
+    fetchMock = spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(null, { status: 404 }),
+    );
+    await expect(
+      fetchRegistryTree(["@shadcnblocks/button"], "https://ui.example.test/r"),
+    ).rejects.toThrow("Unable to load registry item @shadcnblocks/button");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it("recognizes Bejamas item names, the @bejamas namespace, and URLs", () => {
     expect(resolveBejamasRegistryItemName("features-01")).toBe("features-01");
     expect(resolveBejamasRegistryItemName("@bejamas/features-01")).toBe(

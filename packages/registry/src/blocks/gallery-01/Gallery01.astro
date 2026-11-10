@@ -1,0 +1,125 @@
+---
+/**
+ * Astro port of a shadcnblocks.com block.
+ * Copyright (c) 2025 shadcnblocks.com - Rob Austin. MIT + Commons Clause.
+ * Retain upstream notice; redistribution of component ports requires permission.
+ */
+import { ArrowRight, ArrowUpRight } from "@lucide/astro";
+import { Carousel, CarouselSlide } from "@bejamas/registry/ui/carousel";
+
+interface GalleryItem {
+  id: string;
+  title: string;
+  summary: string;
+  url: string;
+  image: string;
+}
+
+interface Props {
+  heading?: string;
+  demoUrl?: string;
+  items?: GalleryItem[];
+  class?: string;
+}
+
+const {
+  heading = "Gallery",
+  demoUrl = "https://www.shadcnblocks.com",
+  items = [
+    {
+      id: "item-1",
+      title: "Build Modern UIs",
+      summary:
+        "Create stunning user interfaces with our comprehensive design system.",
+      url: "#",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg",
+    },
+    {
+      id: "item-2",
+      title: "Computer Vision Technology",
+      summary:
+        "Powerful image recognition and processing capabilities that allow AI systems to analyze, understand, and interpret visual information from the world.",
+      url: "#",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg",
+    },
+    {
+      id: "item-3",
+      title: "Machine Learning Automation",
+      summary:
+        "Self-improving algorithms that learn from data patterns to automate complex tasks and make intelligent decisions with minimal human intervention.",
+      url: "#",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg",
+    },
+    {
+      id: "item-4",
+      title: "Predictive Analytics",
+      summary:
+        "Advanced forecasting capabilities that analyze historical data to predict future trends and outcomes, helping businesses make data-driven decisions.",
+      url: "#",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg",
+    },
+    {
+      id: "item-5",
+      title: "Neural Network Architecture",
+      summary:
+        "Sophisticated AI models inspired by human brain structure, capable of solving complex problems through deep learning and pattern recognition.",
+      url: "#",
+      image:
+        "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg",
+    },
+  ],
+  class: className,
+} = Astro.props;
+---
+
+<section class:list={["py-32", className]}>
+  <div class="mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]">
+    <div class="mb-8 md:mb-14 lg:mb-16">
+      <h2 class="mb-3 text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6">
+        {heading}
+      </h2>
+      <a
+        href={demoUrl}
+        class="group flex items-center gap-1 text-sm font-medium md:text-base lg:text-lg"
+      >
+        Book a demo
+        <ArrowUpRight class="size-4 transition-transform group-hover:translate-x-1" />
+      </a>
+    </div>
+    <Carousel aria-label={heading} showCounter={false} contentClass="gap-8">
+      {items.map((item) => (
+        <CarouselSlide class="md:max-w-[452px]">
+          <a href={item.url} class="group flex flex-col justify-between">
+            <div>
+              <div class="aspect-3/2 flex overflow-clip rounded-xl">
+                <div class="flex-1">
+                  <div class="relative h-full w-full origin-bottom transition duration-300 group-hover:scale-105">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      class="h-full w-full object-cover object-center"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2 line-clamp-3 break-words pt-4 text-lg font-medium md:mb-3 md:pt-4 md:text-xl lg:pt-4 lg:text-2xl">
+              {item.title}
+            </div>
+            <div class="text-muted-foreground mb-8 line-clamp-2 text-sm md:mb-12 md:text-base lg:mb-9">
+              {item.summary}
+            </div>
+            <div class="flex items-center text-sm">
+              Read more
+              <ArrowRight class="ml-2 size-5 transition-transform group-hover:translate-x-1" />
+            </div>
+          </a>
+        </CarouselSlide>
+      ))}
+    </Carousel>
+  </div>
+</section>

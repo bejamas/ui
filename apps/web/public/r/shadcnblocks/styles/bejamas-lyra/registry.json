@@ -1,0 +1,464 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "bejamas/shadcnblocks",
+  "homepage": "https://ui.bejamas.com/blocks",
+  "items": [
+    {
+      "name": "blog-01",
+      "type": "registry:block",
+      "title": "Blog 01",
+      "description": "A centered blog section with responsive image cards and read-more links.",
+      "registryDependencies": [
+        "index",
+        "badge",
+        "button",
+        "card"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/blog7"
+      },
+      "files": [
+        {
+          "path": "blocks/blog-01/Blog01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/blog-01/Blog01.astro",
+          "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin.\n * Upstream license: MIT + Commons Clause; retain its license notice.\n */\nimport { ArrowRight } from \"@lucide/astro\";\n\nimport { Badge } from \"@/registry/bejamas/ui/badge\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  Card,\n  CardContent,\n  CardFooter,\n  CardHeader,\n} from \"@/registry/bejamas/ui/card\";\n\ninterface Post {\n  id: string;\n  title: string;\n  summary: string;\n  label: string;\n  author: string;\n  published: string;\n  url: string;\n  image: string;\n}\n\ninterface Props {\n  class?: string;\n  tagline?: string;\n  heading?: string;\n  description?: string;\n  buttonText?: string;\n  buttonUrl?: string;\n  posts?: Post[];\n}\n\nconst {\n  class: className = \"\",\n  tagline = \"Latest Updates\",\n  heading = \"Blog Posts\",\n  description = \"Discover the latest trends, tips, and best practices in modern web development. From UI components to design systems, stay updated with our expert insights.\",\n  buttonText = \"View all articles\",\n  buttonUrl = \"https://shadcnblocks.com\",\n  posts = [\n    {\n      id: \"post-1\",\n      title: \"Getting Started with shadcn/ui Components\",\n      summary:\n        \"Learn how to quickly integrate and customize shadcn/ui components in your Next.js projects. We'll cover installation, theming, and best practices for building modern interfaces.\",\n      label: \"Tutorial\",\n      author: \"Sarah Chen\",\n      published: \"1 Jan 2024\",\n      url: \"https://shadcnblocks.com\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"post-2\",\n      title: \"Building Accessible Web Applications\",\n      summary:\n        \"Explore how to create inclusive web experiences using shadcn/ui's accessible components. Discover practical tips for implementing ARIA labels, keyboard navigation, and semantic HTML.\",\n      label: \"Accessibility\",\n      author: \"Marcus Rodriguez\",\n      published: \"1 Jan 2024\",\n      url: \"https://shadcnblocks.com\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"post-3\",\n      title: \"Modern Design Systems with Tailwind CSS\",\n      summary:\n        \"Dive into creating scalable design systems using Tailwind CSS and shadcn/ui. Learn how to maintain consistency while building flexible and maintainable component libraries.\",\n      label: \"Design Systems\",\n      author: \"Emma Thompson\",\n      published: \"1 Jan 2024\",\n      url: \"https://shadcnblocks.com\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n  ],\n} = Astro.props;\n---\n\n<section class:list={[\"py-32\", className]}>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] flex flex-col items-center gap-16 lg:px-16\">\n    <div class=\"text-center\">\n      <Badge variant=\"secondary\" class=\"mb-6\">\n        {tagline}\n      </Badge>\n      <h2 class=\"mb-3 text-pretty text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6 lg:max-w-3xl lg:text-5xl\">\n        {heading}\n      </h2>\n      <p class=\"text-muted-foreground mb-8 md:text-base lg:max-w-2xl lg:text-lg\">\n        {description}\n      </p>\n      <Button\n        as=\"a\"\n        href={buttonUrl}\n        target=\"_blank\"\n        rel=\"noopener noreferrer\"\n        variant=\"link\"\n        class=\"w-full sm:w-auto\"\n      >\n        {buttonText}\n        <ArrowRight class=\"ml-2 size-4\" />\n      </Button>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8\">\n      {posts.map((post) => (\n        <Card class=\"grid grid-rows-[auto_auto_1fr_auto] pt-0\">\n          <div class=\"aspect-16/9 w-full\">\n            <a\n              href={post.url}\n              target=\"_blank\"\n              rel=\"noopener noreferrer\"\n              class=\"fade-in transition-opacity duration-200 hover:opacity-70\"\n            >\n              <img\n                src={post.image}\n                alt={post.title}\n                class=\"h-full w-full object-cover object-center\"\n              />\n            </a>\n          </div>\n          <CardHeader>\n            <h3 class=\"text-lg font-semibold hover:underline md:text-xl\">\n              <a href={post.url} target=\"_blank\" rel=\"noopener noreferrer\">\n                {post.title}\n              </a>\n            </h3>\n          </CardHeader>\n          <CardContent>\n            <p class=\"text-muted-foreground\">{post.summary}</p>\n          </CardContent>\n          <CardFooter>\n            <a\n              href={post.url}\n              target=\"_blank\"\n              rel=\"noopener noreferrer\"\n              class=\"text-foreground flex items-center hover:underline\"\n            >\n              Read more\n              <ArrowRight class=\"ml-2 size-4\" />\n            </a>\n          </CardFooter>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/blog-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/blog-01/index.ts",
+          "content": "export { default as Blog01 } from \"./Blog01.astro\";\n"
+        },
+        {
+          "path": "blocks/blog-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/blog-01/LICENSE.md",
+          "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n"
+        }
+      ],
+      "dependencies": [],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json"
+    },
+    {
+      "name": "contact-01",
+      "type": "registry:block",
+      "title": "Contact 01",
+      "description": "Contact method cards for email, office, phone, and chat.",
+      "registryDependencies": [
+        "index"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/contact7"
+      },
+      "files": [
+        {
+          "path": "blocks/contact-01/Contact01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/contact-01/Contact01.astro",
+          "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin.\n * Upstream license: MIT + Commons Clause; retain its license notice.\n */\nimport { Mail, MapPin, MessageCircle, Phone } from \"@lucide/astro\";\n\ninterface Props {\n  class?: string;\n  title?: string;\n  description?: string;\n  emailLabel?: string;\n  emailDescription?: string;\n  email?: string;\n  officeLabel?: string;\n  officeDescription?: string;\n  officeAddress?: string;\n  phoneLabel?: string;\n  phoneDescription?: string;\n  phone?: string;\n  chatLabel?: string;\n  chatDescription?: string;\n  chatLink?: string;\n}\n\nconst {\n  class: className = \"\",\n  title = \"Contact Us\",\n  description = \"Contact the support team at Shadcnblocks.\",\n  emailLabel = \"Email\",\n  emailDescription = \"We respond to all emails within 24 hours.\",\n  email = \"example@shadcnblocks.com\",\n  officeLabel = \"Office\",\n  officeDescription = \"Drop by our office for a chat.\",\n  officeAddress = \"1 Eagle St, Brisbane, QLD, 4000\",\n  phoneLabel = \"Phone\",\n  phoneDescription = \"We're available Mon-Fri, 9am-5pm.\",\n  phone = \"+123 456 7890\",\n  chatLabel = \"Live Chat\",\n  chatDescription = \"Get instant help from our support team.\",\n  chatLink = \"Start Chat\",\n} = Astro.props;\n---\n\n<section class:list={[\"bg-background py-32\", className]}>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]\">\n    <div class=\"mb-14\">\n      <h1 class=\"mb-3 mt-2 text-balance text-3xl font-semibold md:text-4xl\">\n        {title}\n      </h1>\n      <p class=\"text-muted-foreground max-w-xl text-lg\">{description}</p>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2\">\n      <div class=\"bg-muted rounded-lg p-6\">\n        <span class=\"bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full\">\n          <Mail class=\"h-6 w-auto\" />\n        </span>\n        <p class=\"mb-2 text-lg font-semibold\">{emailLabel}</p>\n        <p class=\"text-muted-foreground mb-3\">{emailDescription}</p>\n        <a href={`mailto:${email}`} class=\"font-semibold hover:underline\">\n          {email}\n        </a>\n      </div>\n      <div class=\"bg-muted rounded-lg p-6\">\n        <span class=\"bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full\">\n          <MapPin class=\"h-6 w-auto\" />\n        </span>\n        <p class=\"mb-2 text-lg font-semibold\">{officeLabel}</p>\n        <p class=\"text-muted-foreground mb-3\">{officeDescription}</p>\n        <a href=\"#\" class=\"font-semibold hover:underline\">\n          {officeAddress}\n        </a>\n      </div>\n      <div class=\"bg-muted rounded-lg p-6\">\n        <span class=\"bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full\">\n          <Phone class=\"h-6 w-auto\" />\n        </span>\n        <p class=\"mb-2 text-lg font-semibold\">{phoneLabel}</p>\n        <p class=\"text-muted-foreground mb-3\">{phoneDescription}</p>\n        <a href={`tel:${phone}`} class=\"font-semibold hover:underline\">\n          {phone}\n        </a>\n      </div>\n      <div class=\"bg-muted rounded-lg p-6\">\n        <span class=\"bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full\">\n          <MessageCircle class=\"h-6 w-auto\" />\n        </span>\n        <p class=\"mb-2 text-lg font-semibold\">{chatLabel}</p>\n        <p class=\"text-muted-foreground mb-3\">{chatDescription}</p>\n        <a href=\"#\" class=\"font-semibold hover:underline\">\n          {chatLink}\n        </a>\n      </div>\n    </div>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/contact-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/contact-01/index.ts",
+          "content": "export { default as Contact01 } from \"./Contact01.astro\";\n"
+        },
+        {
+          "path": "blocks/contact-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/contact-01/LICENSE.md",
+          "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n"
+        }
+      ],
+      "dependencies": [],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json"
+    },
+    {
+      "name": "cta-01",
+      "type": "registry:block",
+      "title": "CTA 01",
+      "description": "An inline split call to action with two buttons and a closing divider.",
+      "registryDependencies": [
+        "index",
+        "button",
+        "separator"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/cta36"
+      },
+      "files": [
+        {
+          "path": "blocks/cta-01/Cta01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/cta-01/Cta01.astro",
+          "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport { Separator } from \"@/registry/bejamas/ui/separator\";\ninterface Props {\n  heading?: string;\n  description?: string;\n  primaryLabel?: string;\n  primaryHref?: string;\n  secondaryLabel?: string;\n  secondaryHref?: string;\n  class?: string;\n}\nconst {\n  heading = \"Ready to build your next great idea?\",\n  description = \"Start with thoughtful components and make them your own.\",\n  primaryLabel = \"Get started\",\n  primaryHref = \"/docs\",\n  secondaryLabel = \"Explore components\",\n  secondaryHref = \"/components\",\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-6xl\">\n    <div class=\"flex flex-col gap-8 pb-10 lg:flex-row lg:items-center lg:justify-between\">\n      <div class=\"max-w-2xl space-y-4\">\n        <h2 class=\"text-balance text-3xl font-semibold tracking-tight md:text-4xl\">\n          {heading}\n        </h2>\n        <p class=\"text-lg text-muted-foreground\">{description}</p>\n      </div>\n      <div class=\"flex shrink-0 flex-col gap-3 sm:flex-row\">\n        <Button as=\"a\" href={secondaryHref} variant=\"outline\">\n          {secondaryLabel}\n        </Button>\n        <Button as=\"a\" href={primaryHref}>\n          {primaryLabel}\n          <span aria-hidden=\"true\">→</span>\n        </Button>\n      </div>\n    </div>\n    <Separator />\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/cta-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/cta-01/index.ts",
+          "content": "export { default as Cta01 } from \"./Cta01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "faq-01",
+      "type": "registry:block",
+      "title": "FAQ 01",
+      "description": "A centered FAQ section with accessible collapsible answers.",
+      "registryDependencies": [
+        "index",
+        "accordion"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/faq1"
+      },
+      "files": [
+        {
+          "path": "blocks/faq-01/Faq01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/faq-01/Faq01.astro",
+          "content": "---\nimport {\n  Accordion,\n  AccordionItem,\n  AccordionTrigger,\n  AccordionContent,\n} from \"@/registry/bejamas/ui/accordion\";\ninterface Props {\n  heading?: string;\n  items?: { question: string; answer: string }[];\n  class?: string;\n}\nconst {\n  heading = \"Frequently asked questions\",\n  items = [\n    {\n      question: \"What is Bejamas UI?\",\n      answer:\n        \"A collection of accessible Astro components that you can customize and own.\",\n    },\n    {\n      question: \"Can I customize the components?\",\n      answer:\n        \"Yes. Install the source into your project and adjust the styles and content to suit your brand.\",\n    },\n    {\n      question: \"Does it work on mobile?\",\n      answer:\n        \"The components and blocks adapt to small screens and support keyboard interaction.\",\n    },\n    {\n      question: \"Can I use it for commercial projects?\",\n      answer:\n        \"Yes. Bejamas UI is open source and available for personal and commercial projects.\",\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-3xl\">\n    <h2 class=\"mb-8 text-3xl font-semibold md:text-4xl\">{heading}</h2>\n    <Accordion>\n      {items.map((item, index) => (\n        <AccordionItem value={`question-${index}`}>\n          <AccordionTrigger>{item.question}</AccordionTrigger>\n          <AccordionContent>\n            <p class=\"text-muted-foreground\">{item.answer}</p>\n          </AccordionContent>\n        </AccordionItem>\n      ))}\n    </Accordion>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/faq-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/faq-01/index.ts",
+          "content": "export { default as Faq01 } from \"./Faq01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "features-02",
+      "type": "registry:block",
+      "title": "Features 02",
+      "description": "A two-column feature card grid with labels, linked titles, and images.",
+      "registryDependencies": [
+        "index",
+        "card",
+        "badge"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/feature13"
+      },
+      "files": [
+        {
+          "path": "blocks/features-02/Features02.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-02/Features02.astro",
+          "content": "---\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardDescription,\n  CardMedia,\n} from \"@/registry/bejamas/ui/card\";\nimport { Badge } from \"@/registry/bejamas/ui/badge\";\ninterface Feature {\n  label: string;\n  title: string;\n  description: string;\n  href?: string;\n  imageSrc: string;\n  imageAlt: string;\n}\ninterface Props {\n  heading?: string;\n  description?: string;\n  features?: Feature[];\n  class?: string;\n}\nconst {\n  heading = \"Everything you need to move forward\",\n  description = \"A flexible foundation for your next website, from the first sketch to the final detail.\",\n  features = [\n    {\n      label: \"For developers\",\n      title: \"Build with confidence\",\n      description:\n        \"Accessible components and portable source give you a clear starting point. Spend your time on what makes your product special.\",\n      href: \"/docs\",\n      imageSrc:\n        \"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=80\",\n      imageAlt: \"A bright shared workspace\",\n    },\n    {\n      label: \"For teams\",\n      title: \"Make it feel like you\",\n      description:\n        \"Bring your brand into every detail with flexible themes, consistent components, and layouts that adapt to your content.\",\n      href: \"/create\",\n      imageSrc:\n        \"https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1000&q=80\",\n      imageAlt: \"A workspace with natural light and plants\",\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-6xl\">\n    <div class=\"mb-10 max-w-2xl space-y-4\">\n      <h2 class=\"text-balance text-3xl font-semibold tracking-tight md:text-4xl\">\n        {heading}\n      </h2>\n      <p class=\"text-lg text-muted-foreground\">{description}</p>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2\">\n      {features.map((feature) => (\n        <Card>\n          <CardHeader class=\"space-y-4\">\n            <Badge variant=\"secondary\" class=\"w-fit\">\n              {feature.label}\n            </Badge>\n            <CardTitle class=\"text-2xl\">\n              {feature.href ? (\n                <a\n                  href={feature.href}\n                  class=\"underline-offset-4 hover:underline\"\n                >\n                  {feature.title}\n                  <span aria-hidden=\"true\"> ↗</span>\n                </a>\n              ) : (\n                feature.title\n              )}\n            </CardTitle>\n            <CardDescription class=\"text-base\">\n              {feature.description}\n            </CardDescription>\n          </CardHeader>\n          <CardMedia class=\"mx-6 mt-auto aspect-video\">\n            <img\n              src={feature.imageSrc}\n              alt={feature.imageAlt}\n              width=\"1000\"\n              height=\"563\"\n              loading=\"lazy\"\n            />\n          </CardMedia>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/features-02/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-02/index.ts",
+          "content": "export { default as Features02 } from \"./Features02.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "features-03",
+      "type": "registry:block",
+      "title": "Features 03",
+      "description": "A feature accordion with a synchronized companion image panel.",
+      "registryDependencies": [
+        "index",
+        "accordion"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/feature197"
+      },
+      "files": [
+        {
+          "path": "blocks/features-03/Features03.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-03/Features03.astro",
+          "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin. MIT + Commons Clause.\n * Retain upstream notice; redistribution of component ports requires permission.\n */\nimport {\n  Accordion,\n  AccordionContent,\n  AccordionItem,\n  AccordionTrigger,\n} from \"@/registry/bejamas/ui/accordion\";\ninterface FeatureItem {\n  id: number;\n  title: string;\n  image: string;\n  description: string;\n}\ninterface Props {\n  features?: FeatureItem[];\n  class?: string;\n}\nconst {\n  features = [\n    {\n      id: 1,\n      title: \"Ready-to-Use UI Blocks\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-1.svg\",\n      description:\n        \"Browse through our extensive collection of pre-built UI blocks designed with shadcn/ui. Each block is carefully crafted to be responsive, accessible, and easily customizable. Simply copy and paste the code into your project.\",\n    },\n    {\n      id: 2,\n      title: \"Tailwind CSS & TypeScript\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-2.svg\",\n      description:\n        \"Built with Tailwind CSS for rapid styling and TypeScript for type safety. Our blocks leverage the full power of Tailwind's utility classes while maintaining clean, type-safe code that integrates seamlessly with your Next.js projects.\",\n    },\n    {\n      id: 3,\n      title: \"Dark Mode & Customization\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-3.svg\",\n      description:\n        \"Every block supports dark mode out of the box and can be customized to match your brand. Modify colors, spacing, and typography using Tailwind's configuration. The shadcn/ui theming system makes it easy to maintain consistency across your site.\",\n    },\n    {\n      id: 4,\n      title: \"Accessibility First\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-4.svg\",\n      description:\n        \"All blocks are built with accessibility in mind, following WCAG guidelines. They include proper ARIA labels, keyboard navigation support, and semantic HTML structure. Ensure your website is usable by everyone without extra effort.\",\n    },\n    {\n      id: 5,\n      title: \"Modern Development Stack\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-5.svg\",\n      description:\n        \"Built for modern web development with React 18, Next.js 14, and the latest shadcn/ui components. Take advantage of React Server Components, TypeScript strict mode, and other cutting-edge features while maintaining excellent performance.\",\n    },\n  ],\n  class: className,\n} = Astro.props;\n---\n\n<bejamas-features-03 data-block=\"features-03\" class=\"block\">\n  <section class:list={[\"py-32\", className]}>\n    <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]\">\n      <div class=\"mb-12 flex w-full items-start justify-between gap-12\">\n        <div class=\"w-full md:w-1/2\">\n          <Accordion class=\"w-full\" defaultValue=\"item-1\" collapsible={false}>\n            {features.map((tab) => (\n              <AccordionItem\n                value={`item-${tab.id}`}\n                class=\"transition-opacity hover:opacity-80\"\n                data-feature-image={tab.image}\n              >\n                <AccordionTrigger class=\"no-underline! cursor-pointer py-5 transition\">\n                  <h4\n                    data-feature-title\n                    class:list={[\n                      \"text-xl font-semibold\",\n                      tab.id === 1\n                        ? \"text-foreground\"\n                        : \"text-muted-foreground\",\n                    ]}\n                  >\n                    {tab.title}\n                  </h4>\n                </AccordionTrigger>\n                <AccordionContent>\n                  <p class=\"text-muted-foreground text-base\">\n                    {tab.description}\n                  </p>\n                  <div class=\"mt-4 md:hidden\">\n                    <img\n                      src={tab.image}\n                      alt={tab.title}\n                      class=\"h-full max-h-80 w-full rounded-md object-cover\"\n                    />\n                  </div>\n                </AccordionContent>\n              </AccordionItem>\n            ))}\n          </Accordion>\n        </div>\n        <div class=\"bg-muted relative m-auto hidden w-1/2 overflow-hidden rounded-xl md:block\">\n          {features[0] && (\n            <img\n              data-feature-preview\n              src={features[0].image}\n              alt=\"Feature preview\"\n              class=\"aspect-4/3 w-full object-cover\"\n            />\n          )}\n        </div>\n      </div>\n    </div>\n  </section>\n</bejamas-features-03>\n\n<script>\n  class Features03Element extends HTMLElement {\n    private cleanup?: AbortController;\n    connectedCallback() {\n      if (this.cleanup) return;\n      this.cleanup = new AbortController();\n      const accordion = this.querySelector<HTMLElement>(\n        '[data-slot=\"accordion\"]',\n      );\n      const preview = this.querySelector<HTMLImageElement>(\n        \"[data-feature-preview]\",\n      );\n      accordion?.addEventListener(\n        \"accordion:change\",\n        (event) => {\n          const value = (event as CustomEvent<{ value: string[] }>).detail\n            .value[0];\n          if (!value) return;\n          accordion\n            .querySelectorAll<HTMLElement>('[data-slot=\"accordion-item\"]')\n            .forEach((item) => {\n              const active = item.dataset.value === value;\n              const title = item.querySelector<HTMLElement>(\n                \"[data-feature-title]\",\n              );\n              title?.classList.toggle(\"text-foreground\", active);\n              title?.classList.toggle(\"text-muted-foreground\", !active);\n              if (active && preview && item.dataset.featureImage)\n                preview.src = item.dataset.featureImage;\n            });\n        },\n        { signal: this.cleanup.signal },\n      );\n    }\n    disconnectedCallback() {\n      this.cleanup?.abort();\n      this.cleanup = undefined;\n    }\n  }\n  if (!customElements.get(\"bejamas-features-03\"))\n    customElements.define(\"bejamas-features-03\", Features03Element);\n</script>\n"
+        },
+        {
+          "path": "blocks/features-03/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-03/index.ts",
+          "content": "export { default as Features03 } from \"./Features03.astro\";\n"
+        },
+        {
+          "path": "blocks/features-03/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/features-03/LICENSE.md",
+          "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "gallery-01",
+      "type": "registry:block",
+      "title": "Gallery 01",
+      "description": "A multi-card image gallery carousel with previous and next controls.",
+      "registryDependencies": [
+        "index",
+        "carousel"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/gallery6"
+      },
+      "files": [
+        {
+          "path": "blocks/gallery-01/Gallery01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/gallery-01/Gallery01.astro",
+          "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin. MIT + Commons Clause.\n * Retain upstream notice; redistribution of component ports requires permission.\n */\nimport { ArrowRight, ArrowUpRight } from \"@lucide/astro\";\nimport { Carousel, CarouselSlide } from \"@/registry/bejamas/ui/carousel\";\n\ninterface GalleryItem {\n  id: string;\n  title: string;\n  summary: string;\n  url: string;\n  image: string;\n}\n\ninterface Props {\n  heading?: string;\n  demoUrl?: string;\n  items?: GalleryItem[];\n  class?: string;\n}\n\nconst {\n  heading = \"Gallery\",\n  demoUrl = \"https://www.shadcnblocks.com\",\n  items = [\n    {\n      id: \"item-1\",\n      title: \"Build Modern UIs\",\n      summary:\n        \"Create stunning user interfaces with our comprehensive design system.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"item-2\",\n      title: \"Computer Vision Technology\",\n      summary:\n        \"Powerful image recognition and processing capabilities that allow AI systems to analyze, understand, and interpret visual information from the world.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"item-3\",\n      title: \"Machine Learning Automation\",\n      summary:\n        \"Self-improving algorithms that learn from data patterns to automate complex tasks and make intelligent decisions with minimal human intervention.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"item-4\",\n      title: \"Predictive Analytics\",\n      summary:\n        \"Advanced forecasting capabilities that analyze historical data to predict future trends and outcomes, helping businesses make data-driven decisions.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n    {\n      id: \"item-5\",\n      title: \"Neural Network Architecture\",\n      summary:\n        \"Sophisticated AI models inspired by human brain structure, capable of solving complex problems through deep learning and pattern recognition.\",\n      url: \"#\",\n      image:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg\",\n    },\n  ],\n  class: className,\n} = Astro.props;\n---\n\n<section class:list={[\"py-32\", className]}>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]\">\n    <div class=\"mb-8 md:mb-14 lg:mb-16\">\n      <h2 class=\"mb-3 text-3xl font-semibold md:mb-4 md:text-4xl lg:mb-6\">\n        {heading}\n      </h2>\n      <a\n        href={demoUrl}\n        class=\"group flex items-center gap-1 text-sm font-medium md:text-base lg:text-lg\"\n      >\n        Book a demo\n        <ArrowUpRight class=\"size-4 transition-transform group-hover:translate-x-1\" />\n      </a>\n    </div>\n    <Carousel aria-label={heading} showCounter={false} contentClass=\"gap-8\">\n      {items.map((item) => (\n        <CarouselSlide class=\"md:max-w-[452px]\">\n          <a href={item.url} class=\"group flex flex-col justify-between\">\n            <div>\n              <div class=\"aspect-3/2 flex overflow-clip rounded-xl\">\n                <div class=\"flex-1\">\n                  <div class=\"relative h-full w-full origin-bottom transition duration-300 group-hover:scale-105\">\n                    <img\n                      src={item.image}\n                      alt={item.title}\n                      class=\"h-full w-full object-cover object-center\"\n                    />\n                  </div>\n                </div>\n              </div>\n            </div>\n            <div class=\"mb-2 line-clamp-3 break-words pt-4 text-lg font-medium md:mb-3 md:pt-4 md:text-xl lg:pt-4 lg:text-2xl\">\n              {item.title}\n            </div>\n            <div class=\"text-muted-foreground mb-8 line-clamp-2 text-sm md:mb-12 md:text-base lg:mb-9\">\n              {item.summary}\n            </div>\n            <div class=\"flex items-center text-sm\">\n              Read more\n              <ArrowRight class=\"ml-2 size-5 transition-transform group-hover:translate-x-1\" />\n            </div>\n          </a>\n        </CarouselSlide>\n      ))}\n    </Carousel>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/gallery-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/gallery-01/index.ts",
+          "content": "export { default as Gallery01 } from \"./Gallery01.astro\";\n"
+        },
+        {
+          "path": "blocks/gallery-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/gallery-01/LICENSE.md",
+          "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n"
+        }
+      ],
+      "dependencies": [],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json"
+    },
+    {
+      "name": "hero-01",
+      "type": "registry:block",
+      "title": "Hero 01",
+      "description": "A responsive split hero with a badge, two actions, and a framed image.",
+      "registryDependencies": [
+        "index",
+        "badge",
+        "button"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/hero1"
+      },
+      "files": [
+        {
+          "path": "blocks/hero-01/Hero01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/hero-01/Hero01.astro",
+          "content": "---\nimport { Badge } from \"@/registry/bejamas/ui/badge\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\ninterface Props {\n  badge?: string;\n  heading?: string;\n  description?: string;\n  imageSrc?: string;\n  imageAlt?: string;\n  primaryHref?: string;\n  primaryLabel?: string;\n  secondaryHref?: string;\n  secondaryLabel?: string;\n  class?: string;\n}\nconst {\n  badge = \"Built for the web\",\n  heading = \"Build something your users will love.\",\n  description = \"Thoughtful components that help you turn your next idea into a fast, accessible website.\",\n  imageSrc = \"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80\",\n  imageAlt = \"A bright workspace with desks and plants\",\n  primaryHref = \"/docs\",\n  primaryLabel = \"Get started\",\n  secondaryHref = \"/blocks\",\n  secondaryLabel = \"Explore blocks\",\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2\">\n    <div class=\"flex flex-col items-center gap-6 text-center lg:items-start lg:text-left\">\n      <Badge variant=\"outline\">{badge}</Badge>\n      <h1 class=\"text-balance text-4xl font-semibold tracking-tight md:text-6xl\">\n        {heading}\n      </h1>\n      <p class=\"max-w-xl text-lg text-muted-foreground\">{description}</p>\n      <div class=\"flex w-full flex-col gap-3 sm:w-auto sm:flex-row\">\n        <Button as=\"a\" href={primaryHref}>\n          {primaryLabel}\n          <span aria-hidden=\"true\">→</span>\n        </Button>\n        <Button as=\"a\" href={secondaryHref} variant=\"outline\">\n          {secondaryLabel}\n        </Button>\n      </div>\n    </div>\n    <img\n      src={imageSrc}\n      alt={imageAlt}\n      width=\"1200\"\n      height=\"675\"\n      class=\"aspect-video w-full rounded-xl border object-cover object-top\"\n    />\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/hero-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/hero-01/index.ts",
+          "content": "export { default as Hero01 } from \"./Hero01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "login-01",
+      "type": "registry:block",
+      "title": "Login 01",
+      "description": "A centered email and password login form.",
+      "registryDependencies": [
+        "index",
+        "button",
+        "card",
+        "input",
+        "label"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/login1"
+      },
+      "files": [
+        {
+          "path": "blocks/login-01/Login01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/login-01/Login01.astro",
+          "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardContent,\n} from \"@/registry/bejamas/ui/card\";\nimport { Input } from \"@/registry/bejamas/ui/input\";\nimport { Label } from \"@/registry/bejamas/ui/label\";\ninterface Props {\n  brand?: string;\n  heading?: string;\n  action?: string;\n  alternateHref?: string;\n  class?: string;\n}\nconst {\n  brand = \"Acme\",\n  heading = \"Welcome back\",\n  action,\n  alternateHref = \"/signup\",\n  class: className = \"\",\n} = Astro.props;\nconst formId = `login-${crypto.randomUUID()}`;\n---\n\n<section\n  class:list={[\n    \"flex min-h-[700px] items-center justify-center bg-muted px-6 py-16\",\n    className,\n  ]}\n>\n  <div class=\"w-full max-w-sm space-y-6\">\n    <a href=\"/\" class=\"block text-center text-2xl font-semibold\">\n      {brand}\n    </a>\n    <Card>\n      <CardHeader>\n        <CardTitle class=\"text-center text-xl\">{heading}</CardTitle>\n      </CardHeader>\n      <CardContent>\n        <form\n          action={action}\n          method=\"post\"\n          data-auth-form\n          data-demo={action ? undefined : \"true\"}\n          class=\"space-y-4\"\n        >\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-email`}>Email</Label>\n            <Input\n              id={`${formId}-email`}\n              name=\"email\"\n              type=\"email\"\n              placeholder=\"you@example.com\"\n              autocomplete=\"email\"\n              required\n            />\n          </div>\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-password`}>Password</Label>\n            <Input\n              id={`${formId}-password`}\n              name=\"password\"\n              type=\"password\"\n              autocomplete=\"current-password\"\n              required\n            />\n          </div>\n\n          <Button type=\"submit\" class=\"w-full\">\n            Sign in\n          </Button>\n          <p\n            data-form-status\n            role=\"status\"\n            class=\"text-sm text-muted-foreground\"\n          ></p>\n        </form>\n      </CardContent>\n    </Card>\n    <p class=\"text-center text-sm text-muted-foreground\">\n      New here?{\" \"}\n      <a\n        href={alternateHref}\n        class=\"font-medium text-foreground underline underline-offset-4\"\n      >\n        Create an account\n      </a>\n    </p>\n  </div>\n</section>\n<script>\n  document\n    .querySelectorAll<HTMLFormElement>(\"[data-auth-form]\")\n    .forEach((form) => {\n      const password =\n        form.querySelector<HTMLInputElement>('[name=\"password\"]');\n      const confirm = form.querySelector<HTMLInputElement>(\n        '[name=\"confirmPassword\"]',\n      );\n      const validate = () =>\n        confirm?.setCustomValidity(\n          confirm.value !== password?.value ? \"Passwords must match.\" : \"\",\n        );\n      password?.addEventListener(\"input\", validate);\n      confirm?.addEventListener(\"input\", validate);\n      form.addEventListener(\"submit\", (event) => {\n        validate();\n        if (!form.reportValidity()) {\n          event.preventDefault();\n          return;\n        }\n        if (form.dataset.demo === \"true\") {\n          event.preventDefault();\n          const status = form.querySelector<HTMLElement>(\"[data-form-status]\");\n          if (status)\n            status.textContent =\n              \"Demo only. Connect a form action to enable authentication.\";\n        }\n      });\n    });\n</script>\n"
+        },
+        {
+          "path": "blocks/login-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/login-01/index.ts",
+          "content": "export { default as Login01 } from \"./Login01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "pricing-01",
+      "type": "registry:block",
+      "title": "Pricing 01",
+      "description": "Two pricing cards with an interactive monthly and yearly billing switch.",
+      "registryDependencies": [
+        "index",
+        "card",
+        "button",
+        "separator",
+        "switch",
+        "label"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/pricing2"
+      },
+      "files": [
+        {
+          "path": "blocks/pricing-01/Pricing01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/pricing-01/Pricing01.astro",
+          "content": "---\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardDescription,\n  CardContent,\n  CardFooter,\n} from \"@/registry/bejamas/ui/card\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport { Separator } from \"@/registry/bejamas/ui/separator\";\nimport { Switch } from \"@/registry/bejamas/ui/switch\";\nimport { Label } from \"@/registry/bejamas/ui/label\";\ninterface Plan {\n  name: string;\n  description: string;\n  monthlyPrice: number;\n  yearlyPrice: number;\n  features: string[];\n  href: string;\n  featured?: boolean;\n}\ninterface Props {\n  heading?: string;\n  description?: string;\n  plans?: Plan[];\n  class?: string;\n}\nconst {\n  heading = \"Choose your plan\",\n  description = \"Simple pricing that grows with your team.\",\n  plans = [\n    {\n      name: \"Starter\",\n      description: \"Everything you need to get going.\",\n      monthlyPrice: 19,\n      yearlyPrice: 190,\n      features: [\"One workspace\", \"Unlimited projects\", \"Email support\"],\n      href: \"/signup\",\n    },\n    {\n      name: \"Team\",\n      description: \"More room for your next big idea.\",\n      monthlyPrice: 49,\n      yearlyPrice: 490,\n      features: [\n        \"Unlimited workspaces\",\n        \"Team collaboration\",\n        \"Priority support\",\n      ],\n      href: \"/signup\",\n      featured: true,\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\nconst switchId = `billing-${crypto.randomUUID()}`;\n---\n\n<section data-pricing-block class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-4xl\">\n    <div class=\"mb-10 space-y-4 text-center\">\n      <h2 class=\"text-3xl font-semibold md:text-4xl\">{heading}</h2>\n      <p class=\"text-muted-foreground\">{description}</p>\n      <div class=\"flex items-center justify-center gap-3\">\n        <span class=\"text-sm\">Monthly</span>\n        <Switch id={switchId} aria-label=\"Yearly billing\" />\n        <Label for={switchId}>Yearly</Label>\n      </div>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2\">\n      {plans.map((plan) => (\n        <Card\n          class:list={[\n            \"shadow-none\",\n            plan.featured && \"border-2 border-solid border-primary\",\n          ]}\n        >\n          <CardHeader>\n            <CardTitle>{plan.name}</CardTitle>\n            <CardDescription>{plan.description}</CardDescription>\n          </CardHeader>\n          <CardContent class=\"space-y-6\">\n            <p aria-live=\"polite\">\n              <span\n                class=\"text-4xl font-semibold\"\n                data-price\n                data-monthly={plan.monthlyPrice}\n                data-yearly={plan.yearlyPrice}\n              >\n                ${plan.monthlyPrice}\n              </span>\n              <span class=\"text-muted-foreground\" data-cadence>\n                {\" \"}\n                / month\n              </span>\n            </p>\n            <Separator />\n            <ul class=\"space-y-3\">\n              {plan.features.map((feature) => (\n                <li class=\"flex gap-2 text-sm\">\n                  <span aria-hidden=\"true\" class=\"text-primary\">\n                    ✓\n                  </span>\n                  {feature}\n                </li>\n              ))}\n            </ul>\n          </CardContent>\n          <CardFooter class=\"mt-auto\">\n            <Button\n              as=\"a\"\n              href={plan.href}\n              variant={plan.featured ? \"default\" : \"outline\"}\n              class=\"w-full\"\n            >\n              Get started\n            </Button>\n          </CardFooter>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n<script>\n  document\n    .querySelectorAll<HTMLElement>(\"[data-pricing-block]\")\n    .forEach((block) => {\n      block.addEventListener(\"switch:change\", (event) => {\n        const yearly = (event as CustomEvent<{ checked: boolean }>).detail\n          .checked;\n        block.querySelectorAll<HTMLElement>(\"[data-price]\").forEach((price) => {\n          price.textContent = `$${yearly ? price.dataset.yearly : price.dataset.monthly}`;\n        });\n        block\n          .querySelectorAll<HTMLElement>(\"[data-cadence]\")\n          .forEach((cadence) => {\n            cadence.textContent = yearly ? \" / year\" : \" / month\";\n          });\n      });\n    });\n</script>\n"
+        },
+        {
+          "path": "blocks/pricing-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/pricing-01/index.ts",
+          "content": "export { default as Pricing01 } from \"./Pricing01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "signup-01",
+      "type": "registry:block",
+      "title": "Signup 01",
+      "description": "A centered signup form with password confirmation.",
+      "registryDependencies": [
+        "index",
+        "button",
+        "card",
+        "input",
+        "label"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/signup1"
+      },
+      "files": [
+        {
+          "path": "blocks/signup-01/Signup01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/signup-01/Signup01.astro",
+          "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardContent,\n} from \"@/registry/bejamas/ui/card\";\nimport { Input } from \"@/registry/bejamas/ui/input\";\nimport { Label } from \"@/registry/bejamas/ui/label\";\ninterface Props {\n  brand?: string;\n  heading?: string;\n  action?: string;\n  alternateHref?: string;\n  class?: string;\n}\nconst {\n  brand = \"Acme\",\n  heading = \"Create an account\",\n  action,\n  alternateHref = \"/login\",\n  class: className = \"\",\n} = Astro.props;\nconst formId = `signup-${crypto.randomUUID()}`;\n---\n\n<section\n  class:list={[\n    \"flex min-h-[700px] items-center justify-center bg-muted px-6 py-16\",\n    className,\n  ]}\n>\n  <div class=\"w-full max-w-sm space-y-6\">\n    <a href=\"/\" class=\"block text-center text-2xl font-semibold\">\n      {brand}\n    </a>\n    <Card>\n      <CardHeader>\n        <CardTitle class=\"text-center text-xl\">{heading}</CardTitle>\n      </CardHeader>\n      <CardContent>\n        <form\n          action={action}\n          method=\"post\"\n          data-auth-form\n          data-demo={action ? undefined : \"true\"}\n          class=\"space-y-4\"\n        >\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-email`}>Email</Label>\n            <Input\n              id={`${formId}-email`}\n              name=\"email\"\n              type=\"email\"\n              placeholder=\"you@example.com\"\n              autocomplete=\"email\"\n              required\n            />\n          </div>\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-password`}>Password</Label>\n            <Input\n              id={`${formId}-password`}\n              name=\"password\"\n              type=\"password\"\n              autocomplete=\"new-password\"\n              required\n              minlength=\"8\"\n            />\n          </div>\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-confirm`}>Confirm password</Label>\n            <Input\n              id={`${formId}-confirm`}\n              name=\"confirmPassword\"\n              type=\"password\"\n              autocomplete=\"new-password\"\n              required\n              minlength=\"8\"\n            />\n          </div>\n          <Button type=\"submit\" class=\"w-full\">\n            Create account\n          </Button>\n          <p\n            data-form-status\n            role=\"status\"\n            class=\"text-sm text-muted-foreground\"\n          ></p>\n        </form>\n      </CardContent>\n    </Card>\n    <p class=\"text-center text-sm text-muted-foreground\">\n      Already have an account?{\" \"}\n      <a\n        href={alternateHref}\n        class=\"font-medium text-foreground underline underline-offset-4\"\n      >\n        Sign in\n      </a>\n    </p>\n  </div>\n</section>\n<script>\n  document\n    .querySelectorAll<HTMLFormElement>(\"[data-auth-form]\")\n    .forEach((form) => {\n      const password =\n        form.querySelector<HTMLInputElement>('[name=\"password\"]');\n      const confirm = form.querySelector<HTMLInputElement>(\n        '[name=\"confirmPassword\"]',\n      );\n      const validate = () =>\n        confirm?.setCustomValidity(\n          confirm.value !== password?.value ? \"Passwords must match.\" : \"\",\n        );\n      password?.addEventListener(\"input\", validate);\n      confirm?.addEventListener(\"input\", validate);\n      form.addEventListener(\"submit\", (event) => {\n        validate();\n        if (!form.reportValidity()) {\n          event.preventDefault();\n          return;\n        }\n        if (form.dataset.demo === \"true\") {\n          event.preventDefault();\n          const status = form.querySelector<HTMLElement>(\"[data-form-status]\");\n          if (status)\n            status.textContent =\n              \"Demo only. Connect a form action to enable authentication.\";\n        }\n      });\n    });\n</script>\n"
+        },
+        {
+          "path": "blocks/signup-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/signup-01/index.ts",
+          "content": "export { default as Signup01 } from \"./Signup01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "stats-01",
+      "type": "registry:block",
+      "title": "Stats 01",
+      "description": "A heading and report link above a responsive four-metric grid.",
+      "registryDependencies": [
+        "index"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/stats8"
+      },
+      "files": [
+        {
+          "path": "blocks/stats-01/Stats01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/stats-01/Stats01.astro",
+          "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin. MIT + Commons Clause.\n * Retain upstream notice; redistribution of component ports requires permission.\n */\nimport { ArrowRight } from \"@lucide/astro\";\ninterface Props {\n  heading?: string;\n  description?: string;\n  link?: { text: string; url: string };\n  stats?: Array<{ id: string; value: string; label: string }>;\n  class?: string;\n}\nconst {\n  heading = \"Platform performance insights\",\n  description = \"Ensuring stability and scalability for all users\",\n  link = {\n    text: \"Read the full impact report\",\n    url: \"https://www.shadcnblocks.com\",\n  },\n  stats = [\n    {\n      id: \"stat-1\",\n      value: \"250%+\",\n      label: \"average growth in user engagement\",\n    },\n    {\n      id: \"stat-2\",\n      value: \"$2.5m\",\n      label: \"annual savings per enterprise partner\",\n    },\n    {\n      id: \"stat-3\",\n      value: \"200+\",\n      label: \"integrations with top industry platforms\",\n    },\n    {\n      id: \"stat-4\",\n      value: \"99.9%\",\n      label: \"customer satisfaction over the last year\",\n    },\n  ],\n  class: className,\n} = Astro.props;\n---\n\n<section data-block=\"stats-01\" class:list={[\"py-32\", className]}>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]\">\n    <div class=\"flex flex-col gap-4\">\n      <h2 class=\"text-2xl font-bold md:text-4xl\">{heading}</h2>\n      <p>{description}</p>\n      <a\n        href={link.url}\n        class=\"flex items-center gap-1 font-bold hover:underline\"\n      >\n        {link.text}\n        <ArrowRight class=\"h-auto w-4\" />\n      </a>\n    </div>\n    <div class=\"mt-14 grid gap-x-5 gap-y-8 md:grid-cols-2 lg:grid-cols-4\">\n      {stats.map((stat) => (\n        <div class=\"flex flex-col gap-5\">\n          <div class=\"text-6xl font-bold\">{stat.value}</div>\n          <p>{stat.label}</p>\n        </div>\n      ))}\n    </div>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/stats-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/stats-01/index.ts",
+          "content": "export { default as Stats01 } from \"./Stats01.astro\";\n"
+        },
+        {
+          "path": "blocks/stats-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/stats-01/LICENSE.md",
+          "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n"
+        }
+      ],
+      "dependencies": [],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json"
+    },
+    {
+      "name": "team-01",
+      "type": "registry:block",
+      "title": "Team 01",
+      "description": "A centered team introduction and responsive member avatar grid.",
+      "registryDependencies": [
+        "index",
+        "avatar"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/team1"
+      },
+      "files": [
+        {
+          "path": "blocks/team-01/Team01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/team-01/Team01.astro",
+          "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin.\n * Upstream license: MIT + Commons Clause; retain its license notice.\n */\nimport {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n} from \"@/registry/bejamas/ui/avatar\";\n\ninterface TeamMember {\n  id: string;\n  name: string;\n  role: string;\n  avatar: string;\n}\n\ninterface Props {\n  class?: string;\n  heading?: string;\n  subheading?: string;\n  description?: string;\n  members?: TeamMember[];\n}\n\nconst {\n  class: className = \"\",\n  heading = \"Team\",\n  description = \"Our diverse team of experts brings together decades of experience in design, engineering, and product development.\",\n  members = [\n    {\n      id: \"member-1\",\n      name: \"Sarah Chen\",\n      role: \"CEO & Founder\",\n      avatar:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-1.webp\",\n    },\n    {\n      id: \"member-2\",\n      name: \"Marcus Rodriguez\",\n      role: \"CTO\",\n      avatar:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-2.webp\",\n    },\n    {\n      id: \"member-3\",\n      name: \"Emily Watson\",\n      role: \"Head of Design\",\n      avatar:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-3.webp\",\n    },\n    {\n      id: \"member-4\",\n      name: \"David Kim\",\n      role: \"Lead Engineer\",\n      avatar:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-4.webp\",\n    },\n    {\n      id: \"member-5\",\n      name: \"Lisa Thompson\",\n      role: \"Product Manager\",\n      avatar:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-5.webp\",\n    },\n    {\n      id: \"member-6\",\n      name: \"Alex Johnson\",\n      role: \"UX Designer\",\n      avatar:\n        \"https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-6.webp\",\n    },\n  ],\n} = Astro.props;\n---\n\n<section class:list={[\"py-32\", className]}>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] flex flex-col items-center text-center\">\n    <h2 class=\"my-6 text-pretty text-2xl font-bold lg:text-4xl\">{heading}</h2>\n    <p class=\"text-muted-foreground mb-8 max-w-3xl lg:text-xl\">{description}</p>\n  </div>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px] mt-16 grid gap-x-8 gap-y-16 md:grid-cols-2 lg:grid-cols-3\">\n    {members.map((member) => (\n      <div class=\"flex flex-col items-center\">\n        <Avatar class=\"mb-4 size-20 border md:mb-5 lg:size-24\">\n          <AvatarImage src={member.avatar} alt=\"\" />\n          <AvatarFallback>{member.name}</AvatarFallback>\n        </Avatar>\n        <p class=\"text-center font-medium\">{member.name}</p>\n        <p class=\"text-muted-foreground text-center\">{member.role}</p>\n      </div>\n    ))}\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/team-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/team-01/index.ts",
+          "content": "export { default as Team01 } from \"./Team01.astro\";\n"
+        },
+        {
+          "path": "blocks/team-01/LICENSE.md",
+          "type": "registry:component",
+          "target": "src/components/blocks/team-01/LICENSE.md",
+          "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    },
+    {
+      "name": "testimonials-01",
+      "type": "registry:block",
+      "title": "Testimonials 01",
+      "description": "A responsive masonry wall of quote cards with avatars and optional source links.",
+      "registryDependencies": [
+        "index",
+        "card",
+        "avatar",
+        "button"
+      ],
+      "meta": {
+        "source": "https://www.shadcnblocks.com/block/testimonial9"
+      },
+      "files": [
+        {
+          "path": "blocks/testimonials-01/Testimonials01.astro",
+          "type": "registry:component",
+          "target": "src/components/blocks/testimonials-01/Testimonials01.astro",
+          "content": "---\nimport { Card, CardHeader, CardContent } from \"@/registry/bejamas/ui/card\";\nimport {\n  Avatar,\n  AvatarImage,\n  AvatarFallback,\n} from \"@/registry/bejamas/ui/avatar\";\nimport { Button } from \"@/registry/bejamas/ui/button\";\ninterface Testimonial {\n  name: string;\n  role: string;\n  quote: string;\n  avatarSrc?: string;\n  sourceHref?: string;\n}\ninterface Props {\n  heading?: string;\n  description?: string;\n  testimonials?: Testimonial[];\n  class?: string;\n}\nconst {\n  heading = \"Good work starts with good tools\",\n  description = \"A few words from the people building with us. Sample testimonials for this demo.\",\n  testimonials = [\n    {\n      name: \"Alex Morgan\",\n      role: \"Product designer\",\n      quote:\n        \"We went from an early sketch to a polished prototype in a single afternoon. The components gave us room to focus on the experience.\",\n    },\n    {\n      name: \"Sam Taylor\",\n      role: \"Frontend developer\",\n      quote:\n        \"Clear source, thoughtful defaults, and no surprises. Exactly what I want in a component library.\",\n    },\n    {\n      name: \"Jordan Lee\",\n      role: \"Founder\",\n      quote:\n        \"Our small team can move quickly without sacrificing the details. It has made a real difference to how we ship, and every page still feels like our own.\",\n    },\n    {\n      name: \"Casey Rivera\",\n      role: \"Engineering lead\",\n      quote:\n        \"The accessible foundations mean we spend less time fixing the basics and more time solving real problems for our customers.\",\n    },\n    {\n      name: \"Jamie Chen\",\n      role: \"Creative director\",\n      quote:\n        \"Easy to shape around a brand. The layouts feel consistent without looking identical.\",\n    },\n    {\n      name: \"Riley Brooks\",\n      role: \"Independent developer\",\n      quote:\n        \"A great starting point for client projects. I can adapt the source to each project and keep the final site fast and simple to maintain.\",\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\nconst initials = (name: string) =>\n  name\n    .split(/\\s+/)\n    .filter(Boolean)\n    .slice(0, 2)\n    .map((part) => part[0])\n    .join(\"\");\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-6xl\">\n    <div class=\"mx-auto mb-10 max-w-2xl space-y-4 text-center\">\n      <h2 class=\"text-balance text-3xl font-semibold tracking-tight md:text-4xl\">\n        {heading}\n      </h2>\n      <p class=\"text-lg text-muted-foreground\">{description}</p>\n    </div>\n    <div class=\"columns-1 gap-6 md:columns-2 lg:columns-3\">\n      {testimonials.map((testimonial) => (\n        <Card class=\"mb-6 break-inside-avoid\">\n          <CardHeader class=\"flex flex-row items-center gap-3\">\n            <Avatar class=\"shrink-0\">\n              {testimonial.avatarSrc && (\n                <AvatarImage\n                  src={testimonial.avatarSrc}\n                  alt=\"\"\n                  loading=\"lazy\"\n                />\n              )}\n              <AvatarFallback>{initials(testimonial.name)}</AvatarFallback>\n            </Avatar>\n            <div class=\"min-w-0 flex-1\">\n              <p class=\"font-semibold\">{testimonial.name}</p>\n              <p class=\"text-sm text-muted-foreground\">{testimonial.role}</p>\n            </div>\n            {testimonial.sourceHref && (\n              <Button\n                as=\"a\"\n                href={testimonial.sourceHref}\n                variant=\"ghost\"\n                size=\"icon\"\n                aria-label={`View testimonial from ${testimonial.name}`}\n              >\n                <span aria-hidden=\"true\">↗</span>\n              </Button>\n            )}\n          </CardHeader>\n          <CardContent>\n            <blockquote class=\"text-muted-foreground\">\n              <p>“{testimonial.quote}”</p>\n            </blockquote>\n          </CardContent>\n        </Card>\n      ))}\n    </div>\n  </div>\n</section>\n"
+        },
+        {
+          "path": "blocks/testimonials-01/index.ts",
+          "type": "registry:component",
+          "target": "src/components/blocks/testimonials-01/index.ts",
+          "content": "export { default as Testimonials01 } from \"./Testimonials01.astro\";\n"
+        }
+      ],
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "dependencies": []
+    }
+  ]
+}

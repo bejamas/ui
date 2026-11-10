@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "signup-01",
+  "title": "Signup 01",
+  "description": "A centered signup form with password confirmation.",
+  "registryDependencies": [
+    "button",
+    "card",
+    "input",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "blocks/signup-01/Signup01.astro",
+      "content": "---\nimport { Button } from \"@/registry/bejamas/ui/button\";\nimport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardContent,\n} from \"@/registry/bejamas/ui/card\";\nimport { Input } from \"@/registry/bejamas/ui/input\";\nimport { Label } from \"@/registry/bejamas/ui/label\";\ninterface Props {\n  brand?: string;\n  heading?: string;\n  action?: string;\n  alternateHref?: string;\n  class?: string;\n}\nconst {\n  brand = \"Acme\",\n  heading = \"Create an account\",\n  action,\n  alternateHref = \"/login\",\n  class: className = \"\",\n} = Astro.props;\nconst formId = `signup-${crypto.randomUUID()}`;\n---\n\n<section\n  class:list={[\n    \"flex min-h-[700px] items-center justify-center bg-muted px-6 py-16\",\n    className,\n  ]}\n>\n  <div class=\"w-full max-w-sm space-y-6\">\n    <a href=\"/\" class=\"block text-center text-2xl font-semibold\">\n      {brand}\n    </a>\n    <Card>\n      <CardHeader>\n        <CardTitle class=\"text-center text-xl\">{heading}</CardTitle>\n      </CardHeader>\n      <CardContent>\n        <form\n          action={action}\n          method=\"post\"\n          data-auth-form\n          data-demo={action ? undefined : \"true\"}\n          class=\"space-y-4\"\n        >\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-email`}>Email</Label>\n            <Input\n              id={`${formId}-email`}\n              name=\"email\"\n              type=\"email\"\n              placeholder=\"you@example.com\"\n              autocomplete=\"email\"\n              required\n            />\n          </div>\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-password`}>Password</Label>\n            <Input\n              id={`${formId}-password`}\n              name=\"password\"\n              type=\"password\"\n              autocomplete=\"new-password\"\n              required\n              minlength=\"8\"\n            />\n          </div>\n          <div class=\"space-y-2\">\n            <Label for={`${formId}-confirm`}>Confirm password</Label>\n            <Input\n              id={`${formId}-confirm`}\n              name=\"confirmPassword\"\n              type=\"password\"\n              autocomplete=\"new-password\"\n              required\n              minlength=\"8\"\n            />\n          </div>\n          <Button type=\"submit\" class=\"w-full\">\n            Create account\n          </Button>\n          <p\n            data-form-status\n            role=\"status\"\n            class=\"text-sm text-muted-foreground\"\n          ></p>\n        </form>\n      </CardContent>\n    </Card>\n    <p class=\"text-center text-sm text-muted-foreground\">\n      Already have an account?{\" \"}\n      <a\n        href={alternateHref}\n        class=\"font-medium text-foreground underline underline-offset-4\"\n      >\n        Sign in\n      </a>\n    </p>\n  </div>\n</section>\n<script>\n  document\n    .querySelectorAll<HTMLFormElement>(\"[data-auth-form]\")\n    .forEach((form) => {\n      const password =\n        form.querySelector<HTMLInputElement>('[name=\"password\"]');\n      const confirm = form.querySelector<HTMLInputElement>(\n        '[name=\"confirmPassword\"]',\n      );\n      const validate = () =>\n        confirm?.setCustomValidity(\n          confirm.value !== password?.value ? \"Passwords must match.\" : \"\",\n        );\n      password?.addEventListener(\"input\", validate);\n      confirm?.addEventListener(\"input\", validate);\n      form.addEventListener(\"submit\", (event) => {\n        validate();\n        if (!form.reportValidity()) {\n          event.preventDefault();\n          return;\n        }\n        if (form.dataset.demo === \"true\") {\n          event.preventDefault();\n          const status = form.querySelector<HTMLElement>(\"[data-form-status]\");\n          if (status)\n            status.textContent =\n              \"Demo only. Connect a form action to enable authentication.\";\n        }\n      });\n    });\n</script>\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/signup-01/Signup01.astro"
+    },
+    {
+      "path": "blocks/signup-01/index.ts",
+      "content": "export { default as Signup01 } from \"./Signup01.astro\";\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/signup-01/index.ts"
+    }
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/signup1"
+  },
+  "type": "registry:block"
+}

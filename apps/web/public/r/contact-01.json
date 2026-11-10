@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "contact-01",
+  "title": "Contact 01",
+  "description": "Contact method cards for email, office, phone, and chat.",
+  "dependencies": [
+    "@lucide/astro"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "blocks/contact-01/Contact01.astro",
+      "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin.\n * Upstream license: MIT + Commons Clause; retain its license notice.\n */\nimport { Mail, MapPin, MessageCircle, Phone } from \"@lucide/astro\";\n\ninterface Props {\n  class?: string;\n  title?: string;\n  description?: string;\n  emailLabel?: string;\n  emailDescription?: string;\n  email?: string;\n  officeLabel?: string;\n  officeDescription?: string;\n  officeAddress?: string;\n  phoneLabel?: string;\n  phoneDescription?: string;\n  phone?: string;\n  chatLabel?: string;\n  chatDescription?: string;\n  chatLink?: string;\n}\n\nconst {\n  class: className = \"\",\n  title = \"Contact Us\",\n  description = \"Contact the support team at Shadcnblocks.\",\n  emailLabel = \"Email\",\n  emailDescription = \"We respond to all emails within 24 hours.\",\n  email = \"example@shadcnblocks.com\",\n  officeLabel = \"Office\",\n  officeDescription = \"Drop by our office for a chat.\",\n  officeAddress = \"1 Eagle St, Brisbane, QLD, 4000\",\n  phoneLabel = \"Phone\",\n  phoneDescription = \"We're available Mon-Fri, 9am-5pm.\",\n  phone = \"+123 456 7890\",\n  chatLabel = \"Live Chat\",\n  chatDescription = \"Get instant help from our support team.\",\n  chatLink = \"Start Chat\",\n} = Astro.props;\n---\n\n<section class:list={[\"bg-background py-32\", className]}>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]\">\n    <div class=\"mb-14\">\n      <h1 class=\"mb-3 mt-2 text-balance text-3xl font-semibold md:text-4xl\">\n        {title}\n      </h1>\n      <p class=\"text-muted-foreground max-w-xl text-lg\">{description}</p>\n    </div>\n    <div class=\"grid gap-6 md:grid-cols-2\">\n      <div class=\"bg-muted rounded-lg p-6\">\n        <span class=\"bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full\">\n          <Mail class=\"h-6 w-auto\" />\n        </span>\n        <p class=\"mb-2 text-lg font-semibold\">{emailLabel}</p>\n        <p class=\"text-muted-foreground mb-3\">{emailDescription}</p>\n        <a href={`mailto:${email}`} class=\"font-semibold hover:underline\">\n          {email}\n        </a>\n      </div>\n      <div class=\"bg-muted rounded-lg p-6\">\n        <span class=\"bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full\">\n          <MapPin class=\"h-6 w-auto\" />\n        </span>\n        <p class=\"mb-2 text-lg font-semibold\">{officeLabel}</p>\n        <p class=\"text-muted-foreground mb-3\">{officeDescription}</p>\n        <a href=\"#\" class=\"font-semibold hover:underline\">\n          {officeAddress}\n        </a>\n      </div>\n      <div class=\"bg-muted rounded-lg p-6\">\n        <span class=\"bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full\">\n          <Phone class=\"h-6 w-auto\" />\n        </span>\n        <p class=\"mb-2 text-lg font-semibold\">{phoneLabel}</p>\n        <p class=\"text-muted-foreground mb-3\">{phoneDescription}</p>\n        <a href={`tel:${phone}`} class=\"font-semibold hover:underline\">\n          {phone}\n        </a>\n      </div>\n      <div class=\"bg-muted rounded-lg p-6\">\n        <span class=\"bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full\">\n          <MessageCircle class=\"h-6 w-auto\" />\n        </span>\n        <p class=\"mb-2 text-lg font-semibold\">{chatLabel}</p>\n        <p class=\"text-muted-foreground mb-3\">{chatDescription}</p>\n        <a href=\"#\" class=\"font-semibold hover:underline\">\n          {chatLink}\n        </a>\n      </div>\n    </div>\n  </div>\n</section>\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/contact-01/Contact01.astro"
+    },
+    {
+      "path": "blocks/contact-01/index.ts",
+      "content": "export { default as Contact01 } from \"./Contact01.astro\";\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/contact-01/index.ts"
+    },
+    {
+      "path": "blocks/contact-01/LICENSE.md",
+      "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n",
+      "type": "registry:component",
+      "target": "src/components/blocks/contact-01/LICENSE.md"
+    }
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/contact7"
+  },
+  "type": "registry:block"
+}

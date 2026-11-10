@@ -1,0 +1,34 @@
+{
+  "name": "stats-01",
+  "type": "registry:block",
+  "title": "Stats 01",
+  "description": "A heading and report link above a responsive four-metric grid.",
+  "registryDependencies": [
+    "index"
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/stats8"
+  },
+  "files": [
+    {
+      "path": "blocks/stats-01/Stats01.astro",
+      "type": "registry:component",
+      "target": "src/components/blocks/stats-01/Stats01.astro",
+      "content": "---\n/**\n * Astro port of a shadcnblocks.com block.\n * Copyright (c) 2025 shadcnblocks.com - Rob Austin. MIT + Commons Clause.\n * Retain upstream notice; redistribution of component ports requires permission.\n */\nimport { ArrowRight } from \"@lucide/astro\";\ninterface Props {\n  heading?: string;\n  description?: string;\n  link?: { text: string; url: string };\n  stats?: Array<{ id: string; value: string; label: string }>;\n  class?: string;\n}\nconst {\n  heading = \"Platform performance insights\",\n  description = \"Ensuring stability and scalability for all users\",\n  link = {\n    text: \"Read the full impact report\",\n    url: \"https://www.shadcnblocks.com\",\n  },\n  stats = [\n    {\n      id: \"stat-1\",\n      value: \"250%+\",\n      label: \"average growth in user engagement\",\n    },\n    {\n      id: \"stat-2\",\n      value: \"$2.5m\",\n      label: \"annual savings per enterprise partner\",\n    },\n    {\n      id: \"stat-3\",\n      value: \"200+\",\n      label: \"integrations with top industry platforms\",\n    },\n    {\n      id: \"stat-4\",\n      value: \"99.9%\",\n      label: \"customer satisfaction over the last year\",\n    },\n  ],\n  class: className,\n} = Astro.props;\n---\n\n<section data-block=\"stats-01\" class:list={[\"py-32\", className]}>\n  <div class=\"mx-auto w-full px-8 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1536px]\">\n    <div class=\"flex flex-col gap-4\">\n      <h2 class=\"text-2xl font-bold md:text-4xl\">{heading}</h2>\n      <p>{description}</p>\n      <a\n        href={link.url}\n        class=\"flex items-center gap-1 font-bold hover:underline\"\n      >\n        {link.text}\n        <ArrowRight class=\"h-auto w-4\" />\n      </a>\n    </div>\n    <div class=\"mt-14 grid gap-x-5 gap-y-8 md:grid-cols-2 lg:grid-cols-4\">\n      {stats.map((stat) => (\n        <div class=\"flex flex-col gap-5\">\n          <div class=\"text-6xl font-bold\">{stat.value}</div>\n          <p>{stat.label}</p>\n        </div>\n      ))}\n    </div>\n  </div>\n</section>\n"
+    },
+    {
+      "path": "blocks/stats-01/index.ts",
+      "type": "registry:component",
+      "target": "src/components/blocks/stats-01/index.ts",
+      "content": "export { default as Stats01 } from \"./Stats01.astro\";\n"
+    },
+    {
+      "path": "blocks/stats-01/LICENSE.md",
+      "type": "registry:component",
+      "target": "src/components/blocks/stats-01/LICENSE.md",
+      "content": "MIT + Commons Clause License Condition v1.0\n\nCopyright (c) 2025 shadcnblocks.com - Rob Austin\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and distribute the Software as part of an application, website, or product, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n## Commons Clause Restriction\n\nYou may use this Software, including for any commercial purpose, so long as you do not sell, sublicense, or redistribute the components themselves-whether alone, in a bundle, or as a ported version.\n"
+    }
+  ],
+  "dependencies": [],
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json"
+}

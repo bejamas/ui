@@ -1,0 +1,29 @@
+{
+  "name": "faq-01",
+  "type": "registry:block",
+  "title": "FAQ 01",
+  "description": "A centered FAQ section with accessible collapsible answers.",
+  "registryDependencies": [
+    "index",
+    "accordion"
+  ],
+  "meta": {
+    "source": "https://www.shadcnblocks.com/block/faq1"
+  },
+  "files": [
+    {
+      "path": "blocks/faq-01/Faq01.astro",
+      "type": "registry:component",
+      "target": "src/components/blocks/faq-01/Faq01.astro",
+      "content": "---\nimport {\n  Accordion,\n  AccordionItem,\n  AccordionTrigger,\n  AccordionContent,\n} from \"@/registry/bejamas/ui/accordion\";\ninterface Props {\n  heading?: string;\n  items?: { question: string; answer: string }[];\n  class?: string;\n}\nconst {\n  heading = \"Frequently asked questions\",\n  items = [\n    {\n      question: \"What is Bejamas UI?\",\n      answer:\n        \"A collection of accessible Astro components that you can customize and own.\",\n    },\n    {\n      question: \"Can I customize the components?\",\n      answer:\n        \"Yes. Install the source into your project and adjust the styles and content to suit your brand.\",\n    },\n    {\n      question: \"Does it work on mobile?\",\n      answer:\n        \"The components and blocks adapt to small screens and support keyboard interaction.\",\n    },\n    {\n      question: \"Can I use it for commercial projects?\",\n      answer:\n        \"Yes. Bejamas UI is open source and available for personal and commercial projects.\",\n    },\n  ],\n  class: className = \"\",\n} = Astro.props;\n---\n\n<section class:list={[\"px-6 py-20 md:py-32\", className]}>\n  <div class=\"mx-auto max-w-3xl\">\n    <h2 class=\"mb-8 text-3xl font-semibold md:text-4xl\">{heading}</h2>\n    <Accordion>\n      {items.map((item, index) => (\n        <AccordionItem value={`question-${index}`}>\n          <AccordionTrigger>{item.question}</AccordionTrigger>\n          <AccordionContent>\n            <p class=\"text-muted-foreground\">{item.answer}</p>\n          </AccordionContent>\n        </AccordionItem>\n      ))}\n    </Accordion>\n  </div>\n</section>\n"
+    },
+    {
+      "path": "blocks/faq-01/index.ts",
+      "type": "registry:component",
+      "target": "src/components/blocks/faq-01/index.ts",
+      "content": "export { default as Faq01 } from \"./Faq01.astro\";\n"
+    }
+  ],
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": []
+}

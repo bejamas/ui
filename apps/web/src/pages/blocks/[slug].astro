@@ -1,61 +1,36 @@
 ---
-import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
-
-import { getCollection, getEntry } from "astro:content";
+import BlocksLayout from "@/components/BlocksLayout.astro";
 import BlockPreview from "@/components/BlockPreview.astro";
-import BlocksNav from "@/components/BlocksNav.astro";
+import { shadcnblocksCategories } from "@/lib/block-gallery";
 
 export const prerender = true;
 
-const block = await getEntry("blocks", Astro.params.slug);
-const blockItems = block?.data.items ?? [];
-
-export async function getStaticPaths() {
-  const blocks = await getCollection("blocks");
-
-  return blocks.map((block) => ({
-    params: { slug: block.id },
-  }));
+export function getStaticPaths() {
+  const aliases = {
+    features: "/blocks/feature",
+    testimonials: "/blocks/testimonial",
+    authentication: "/blocks/login",
+    "navigation-headers": "/blocks",
+    footers: "/blocks",
+  };
+  return [
+    ...shadcnblocksCategories.map((category) => ({
+      params: { slug: category.slug },
+      props: { category, redirect: undefined },
+    })),
+    ...Object.entries(aliases).map(([slug, redirect]) => ({
+      params: { slug },
+      props: { category: undefined, redirect },
+    })),
+  ];
 }
+
+const { category, redirect } = Astro.props;
+if (redirect) return Astro.redirect(redirect, 301);
 ---
 
-<script is:inline src="//unpkg.com/alpinejs" defer></script>
-
-<StarlightPage
-  hasSidebar={true}
-  frontmatter={{
-    title: "Building blocks for content-driven sites.",
-    template: "splash",
-  }}
->
-  <div data-page-scope="blocks-slug" hidden></div>
-  <BlocksNav />
-
-  {
-    <section class="text-left not-content space-y-20">
-      {blockItems.map((item) => (
-        <BlockPreview item={item} />
-      ))}
-    </section>
-  }
-</StarlightPage>
-
-<style is:global>
-  @reference "tailwindcss";
-
-  :root:has([data-page-scope="blocks-slug"]) .content-panel {
-    @apply text-center border-0 pt-30 pb-0 first:pt-10;
-  }
-
-  :root:has([data-page-scope="blocks-slug"]) .content-panel + .content-panel {
-    @apply pt-10;
-  }
-
-  :root:has([data-page-scope="blocks-slug"]) .content-panel h1 {
-    @apply text-5xl font-medium text-left max-w-2xl text-balance mx-0;
-  }
-
-  :root:has([data-page-scope="blocks-slug"]) .sl-container {
-    @apply max-w-[1500px] mx-auto;
-  }
-</style>
+<BlocksLayout category={category?.label}>
+  {category?.items.map((item) => (
+    <BlockPreview item={item} />
+  ))}
+</BlocksLayout>
