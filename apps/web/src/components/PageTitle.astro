@@ -35,6 +35,7 @@ import {
   ArrowRight,
   ArrowLeft,
   ArrowUpRight,
+  Bot,
   ChevronDown,
   Copy,
   Check,
@@ -78,6 +79,12 @@ const prevHref = isRtl ? next?.href : prev?.href;
 const nextHref = isRtl ? prev?.href : next?.href;
 const prompt = PAGE_ACTION_PROMPT.replace("{url}", currentUrl);
 const encodedPrompt = encodeURIComponent(prompt);
+const siteUrl = Astro.site ?? new URL(Astro.url.origin);
+const llmsTxtUrl = new URL("/llms.txt", siteUrl).href;
+const pageMarkdownUrl = new URL(`${currentPath}.md`, siteUrl).href;
+const agentPrompt = currentComponent
+  ? `Use the bejamas/ui ${entry.data.title} component in this Astro project. Read ${pageMarkdownUrl} first, add it with \`npx bejamas@latest add ${currentComponent}\`, and use ${llmsTxtUrl} to look up any other component you need.`
+  : `I'm building an Astro project with bejamas/ui. Read ${pageMarkdownUrl}, and use ${llmsTxtUrl} to look up components (append .md to any docs URL for its Markdown).`;
 
 const options: OptionsProps[] = [
   {
@@ -256,6 +263,19 @@ const options: OptionsProps[] = [
                   >
                     <MarkdownIcon />
                     <span>View as Markdown</span>
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem class="p-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    class="w-full justify-start rounded-sm hover:bg-transparent"
+                    data-copy-agent-prompt={agentPrompt}
+                  >
+                    <Bot class="size-4" />
+                    <span data-copy-agent-prompt-label>
+                      Copy prompt for agents
+                    </span>
                   </Button>
                 </DropdownMenuItem>
                 {options.map((option) => (
@@ -481,5 +501,30 @@ const options: OptionsProps[] = [
         copyButton.classList.remove(copyButttonClass);
       }, 3000);
     }
+  });
+
+  const agentPromptButton = document.querySelector<HTMLButtonElement>(
+    "[data-copy-agent-prompt]",
+  );
+  const agentPromptLabel = agentPromptButton?.querySelector(
+    "[data-copy-agent-prompt-label]",
+  );
+
+  agentPromptButton?.addEventListener("click", async () => {
+    const prompt = agentPromptButton.dataset.copyAgentPrompt;
+    if (!prompt || !agentPromptLabel) return;
+
+    const label = agentPromptLabel.textContent;
+    try {
+      await navigator.clipboard.writeText(prompt);
+      agentPromptLabel.textContent = "Copied";
+    } catch (error) {
+      console.error(error);
+      agentPromptLabel.textContent = "Couldn't copy";
+    }
+
+    setTimeout(() => {
+      agentPromptLabel.textContent = label;
+    }, 2000);
   });
 </script>

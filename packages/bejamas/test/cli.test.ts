@@ -94,13 +94,14 @@ test("shows preset subcommands in preset help", async () => {
   expect(stdout).toContain("open");
 });
 
-test("shows wrapper flags in docs help", async () => {
+test("shows bejamas flags in docs help", async () => {
   const { stdout, stderr, exitCode } = await runCli(["docs", "--help"]);
 
   expect(exitCode).toBe(0);
   expect(stderr).toBe("");
-  expect(stdout).toContain("--base");
   expect(stdout).toContain("--json");
+  expect(stdout).not.toContain("--base");
+  expect(stdout).not.toContain("proxy to shadcn docs");
 });
 
 test("shows wrapper flags in info help", async () => {

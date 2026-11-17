@@ -74,7 +74,22 @@ You can then import it like this:
 
 ```astro {2,4} showLineNumbers title="src/pages/index.astro"
 ---
-import Button from "@/ui/Button.astro";
+import { Button } from "@/ui/button";
 ---
 <Button>Click me</Button>
+```
+## Use with coding agents
+
+Coding agents can read these docs as Markdown. [llms.txt](/llms.txt) lists every page, [llms-full.txt](/llms-full.txt) has all of them in one file, and any docs URL with `.md` appended returns that page. Every page also has **Copy prompt for agents** in the menu next to its title.
+
+To start a project with an agent, paste this prompt:
+
+```text wrap
+Build this with bejamas/ui in an Astro project. Before writing code, read https://ui.bejamas.com/llms.txt, then the Markdown page of each component you use (append .md to its docs URL, for example https://ui.bejamas.com/components/select.md). Add components with `npx bejamas@latest add <name>` and import them from the `ui` alias in components.json.
+```
+
+For repeated work, install the bejamas-ui skill. It teaches agents how components are composed, styled and scripted:
+
+```bash
+npx skills add bejamas/ui --skill bejamas-ui
 ```

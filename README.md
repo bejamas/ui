@@ -43,17 +43,25 @@ npx bejamas@latest add button
 
 ```astro
 ---
-import Button from "@/ui/Button.astro";
+import { Button } from "@/ui/button";
 ---
 
 <Button>Click me</Button>
 ```
 
-## Agent Skill
+## Agent Skills
+
+Coding agents can read the docs as Markdown: [llms.txt](https://ui.bejamas.com/llms.txt) indexes every page, [llms-full.txt](https://ui.bejamas.com/llms-full.txt) has all of them in one file, and any docs URL with `.md` appended returns that page.
+
+Use [bejamas-ui](./skills/bejamas-ui/SKILL.md) to build pages and components with bejamas/ui: adding components, composing them, styling their states and scripting their behavior.
+
+```bash
+npx skills add bejamas/ui --skill bejamas-ui
+```
 
 Use [migrate-react-sites](./skills/migrate-react-sites/SKILL.md) to port a React or Next.js site to Astro with bejamas/ui at pixel parity. It covers rebuilding a site as a new project, migrating inside an existing repository, and restyling a site already on Astro to Tailwind in place.
 
-Install it into your project with the [Skills CLI](https://github.com/vercel-labs/skills):
+Install it with the [Skills CLI](https://github.com/vercel-labs/skills):
 
 ```bash
 npx skills add bejamas/ui --skill migrate-react-sites
@@ -61,7 +69,7 @@ npx skills add bejamas/ui --skill migrate-react-sites
 
 The installer lets you choose your coding agent. For a non-interactive installation, add `--agent claude-code --yes` or `--agent codex --yes`. Add `--global` to make the skill available across projects.
 
-The skill's measurement scripts require Node.js 22+ or Bun and an installed Chrome, Chromium, Edge, or Brave browser. Set `CHROME_PATH` if the browser isn't in a standard location.
+migrate-react-sites' measurement scripts require Node.js 22+ or Bun and an installed Chrome, Chromium, Edge, or Brave browser. Set `CHROME_PATH` if the browser isn't in a standard location.
 
 ## Documentation
 

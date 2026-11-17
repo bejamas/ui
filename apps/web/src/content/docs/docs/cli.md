@@ -12,7 +12,7 @@ The `bejamas` CLI is a thin Astro-first wrapper over shadcn. Use it for:
 - **`apply`**: switch an existing app to a different preset.
 - **`preset`**: decode, share, open, or resolve Bejamas preset codes.
 - **`info`**: show the current project and config summary from shadcn.
-- **`docs`**: fetch docs, examples, and API links for components.
+- **`docs`**: print a component's bejamas/ui docs as Markdown.
 - **`docs:build`**: generate MDX docs from `.astro` comments.
 - **`docs:check`**: validate documentation completeness for components.
 - **`bench`**: compare an original site with its ported version.
@@ -125,7 +125,7 @@ npx bejamas info --json
 
 ### docs <component>
 
-Proxy to `shadcn docs` for component docs, examples, and API links.
+Prints the bejamas/ui docs for one or more components as Markdown, fetched from the `.md` version of each component page. Useful for coding agents and offline reading. `--json` returns `{ results: [{ component, links, content }] }`; a component without docs gets an `error` field and the command exits with code 1.
 
 #### Usage
 
