@@ -27,31 +27,74 @@ export function hasMarkdownSource(pathname: string) {
   return docsByRoute.has(normalizeDocsRoute(pathname));
 }
 
-export function transformMarkdown(content: string) {
-  const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/;
-  const match = content.match(frontmatterRegex);
+const FRONTMATTER_REGEX = /^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/;
 
-  let title = "";
-  let markdownContent = content;
+function readFrontmatterField(frontmatter: string, field: string) {
+  const fieldMatch = frontmatter.match(
+    new RegExp(`^${field}:\\s*["']?([^"'\\n]+)["']?\\s*$`, "m"),
+  );
+  return fieldMatch?.[1]?.trim() ?? "";
+}
 
-  if (match?.[1] && match[2] !== undefined) {
-    const frontmatter = match[1];
-    markdownContent = match[2];
+export function parseFrontmatter(content: string) {
+  const match = content.match(FRONTMATTER_REGEX);
 
-    const titleMatch = frontmatter.match(/title:\s*["']?([^"'\n]+)["']?/);
-    if (titleMatch?.[1]) {
-      title = titleMatch[1].trim();
-    }
+  if (!match?.[1] || match[2] === undefined) {
+    return { title: "", description: "", template: "", body: content };
   }
+
+  const frontmatter = match[1];
+
+  return {
+    title: readFrontmatterField(frontmatter, "title"),
+    description: readFrontmatterField(frontmatter, "description"),
+    template: readFrontmatterField(frontmatter, "template"),
+    body: match[2],
+  };
+}
+
+function dedent(value: string) {
+  const lines = value.replace(/^\n+|\s+$/g, "").split("\n");
+  const indent = Math.min(
+    ...lines
+      .filter((line) => line.trim().length > 0)
+      .map((line) => line.match(/^ */)?.[0].length ?? 0),
+  );
+
+  return lines.map((line) => line.slice(indent)).join("\n");
+}
+
+export function transformMarkdown(content: string) {
+  const { title, body: markdownContent } = parseFrontmatter(content);
 
   const regexes = [
     /import\s+[\s\S]*?from\s+['"].*?['"];?\s*/g,
     /<\s*\/?\s*Steps\b[^>]*>\s*/g,
+    /<\s*\/?\s*FileTree\b[^>]*>\s*/g,
   ];
 
   let cleanContent = regexes.reduce(
     (value, regex) => value.replace(regex, ""),
     markdownContent,
+  );
+
+  // Live previews render the same component as the code block that follows
+  // them, so they only add noise for readers of the markdown export.
+  cleanContent = cleanContent.replace(
+    /^<div class="not-content[^"]*">\n[\s\S]*?\n<\/div>\n?/gm,
+    "",
+  );
+
+  cleanContent = cleanContent.replace(
+    /<DocsTabs\b[^>]*>([\s\S]*?)<\/DocsTabs>/g,
+    (_, tabs: string) =>
+      Array.from(
+        tabs.matchAll(
+          /<DocsTabItem\s+label=["']([^"']+)["'][^>]*>([\s\S]*?)<\/DocsTabItem>/g,
+        ),
+      )
+        .map(([, label, body]) => `${label}:\n\n${dedent(body ?? "")}`)
+        .join("\n\n"),
   );
 
   cleanContent = cleanContent.replace(
@@ -143,4 +186,57 @@ function loadDocSources() {
   }
 
   return collected;
+}
+
+export interface DocsIndexPage {
+  route: string;
+  title: string;
+  description: string;
+}
+
+export interface DocsIndexSection {
+  label: string;
+  pages: DocsIndexPage[];
+}
+
+// Mirrors the "Getting Started" group of the Starlight sidebar so agents read
+// pages in the same order people do. Pages missing here fall into Concepts.
+const GETTING_STARTED_ROUTES = [
+  "docs/introduction",
+  "docs/installation",
+  "docs/cli",
+  "docs/forms-astro-actions",
+];
+
+export function getDocsIndex(): DocsIndexSection[] {
+  const pages = new Map<string, DocsIndexPage>();
+
+  for (const [route, source] of docsByRoute) {
+    const { title, description, template } = parseFrontmatter(source);
+    if (template === "splash" || !title) continue;
+    pages.set(route, { route, title, description });
+  }
+
+  const byTitle = (a: DocsIndexPage, b: DocsIndexPage) =>
+    a.title.localeCompare(b.title);
+  const gettingStarted = GETTING_STARTED_ROUTES.flatMap((route) => {
+    const page = pages.get(route);
+    return page ? [page] : [];
+  });
+  const components = [...pages.values()]
+    .filter((page) => page.route.startsWith("components/"))
+    .sort(byTitle);
+  const concepts = [...pages.values()]
+    .filter(
+      (page) =>
+        !page.route.startsWith("components/") &&
+        !GETTING_STARTED_ROUTES.includes(page.route),
+    )
+    .sort(byTitle);
+
+  return [
+    { label: "Getting Started", pages: gettingStarted },
+    { label: "Components", pages: components },
+    { label: "Concepts", pages: concepts },
+  ];
 }
