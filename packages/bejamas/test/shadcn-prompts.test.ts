@@ -29,19 +29,22 @@ function fixture() {
 
 const settle = () => new Promise((resolve) => setTimeout(resolve, 60));
 
-function prompt(filename: string) {
-  return `\u001b[36m?\u001b[39m The file \u001b[1m${filename}\u001b[22m already exists. Would you like to overwrite? › \u001b[90m(y/N)\u001b[39m`;
+function prompt(filename: string, separator = "›") {
+  return `\u001b[36m?\u001b[39m The file \u001b[1m${filename}\u001b[22m already exists. Would you like to overwrite? ${separator} \u001b[90m(y/N)\u001b[39m`;
 }
 
-test("answers an overwrite exactly once across every possible byte split", () => {
-  const bytes = Buffer.from(prompt("Résumé.astro"));
-  for (let split = 1; split < bytes.length; split++) {
-    const process = fixture();
-    process.stdout.write(bytes.subarray(0, split));
-    process.stdout.write(bytes.subarray(split));
-    expect(process.answers()).toBe("n\n");
-  }
-});
+test.each(["›", "»"])(
+  "answers an overwrite exactly once across every byte split with %s",
+  (separator) => {
+    const bytes = Buffer.from(prompt("Résumé.astro", separator));
+    for (let split = 1; split < bytes.length; split++) {
+      const process = fixture();
+      process.stdout.write(bytes.subarray(0, split));
+      process.stdout.write(bytes.subarray(split));
+      expect(process.answers()).toBe("n\n");
+    }
+  },
+);
 
 test("handles redraws and multiple questions without duplicate answers", () => {
   const process = fixture();
@@ -116,15 +119,20 @@ test("waits for a confirm hint split into a later chunk", async () => {
   expect(process.unsupported()).toEqual([]);
 });
 
-test("reports questions that cannot be declined, despite spinner output", async () => {
-  const process = fixture();
-  process.stdout.write(
-    "? Which color would you like to use as the base color? › - Use arrow-keys. Return to submit.\n❯   Neutral\n    Gray",
-  );
-  for (let frame = 0; frame < 5; frame++) process.stderr.write("⠋ Checking registry.\r");
-  expect(process.answers()).toBe("");
-  await settle();
-  expect(process.unsupported()).toEqual([
-    "Which color would you like to use as the base color?",
-  ]);
-});
+test.each(["›", "»"])(
+  "reports questions using %s that cannot be declined",
+  async (separator) => {
+    const process = fixture();
+    process.stdout.write(
+      `? Which color would you like to use as the base color? ${separator} - Use arrow-keys. Return to submit.\n❯   Neutral\n    Gray`,
+    );
+    for (let frame = 0; frame < 5; frame++) {
+      process.stderr.write("⠋ Checking registry.\r");
+    }
+    expect(process.answers()).toBe("");
+    await settle();
+    expect(process.unsupported()).toEqual([
+      "Which color would you like to use as the base color?",
+    ]);
+  },
+);

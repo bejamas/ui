@@ -2,10 +2,10 @@ import { StringDecoder } from "node:string_decoder";
 import type { Readable, Writable } from "node:stream";
 import { stripVTControlCharacters } from "node:util";
 
-// prompts renders a question as `? <message> › <input or hint>`.
-const QUESTION_PATTERN = /(?:^|\s)\?\s+([^\r\n]+?)\s+›/g;
+// prompts uses `»` instead of `›` on Windows.
+const QUESTION_PATTERN = /(?:^|\s)\?\s+([^\r\n]+?)\s+[›»]/g;
 // Confirm questions only render in full once the `(y/N)` hint is written.
-const CONFIRM_PATTERN = /(?:^|\s)\?\s+([^\r\n]+?)\s+›\s*\((?:y\/N|Y\/n)\)/g;
+const CONFIRM_PATTERN = /(?:^|\s)\?\s+([^\r\n]+?)\s+[›»]\s*\((?:y\/N|Y\/n)\)/g;
 const SUMMARY_PATTERN = /(?:Created|Updated|Skipped)\s+\d+\s+file|No files updated/i;
 
 export interface ShadcnPromptOptions {
