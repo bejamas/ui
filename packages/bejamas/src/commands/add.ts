@@ -76,12 +76,18 @@ export function withoutShadcnSilentOption(forwardedOptions: string[]) {
 /**
  * shadcn only knows the registries declared in components.json. The built-in
  * `@bejamas/<item>` namespace is the default registry (REGISTRY_URL), so it is
- * passed to shadcn as the bare item name, which resolves to the styled payload.
- * Bare names, URLs, and third-party namespaces are passed through unchanged.
+ * usually passed to shadcn as the bare item name. `toast` needs its registry
+ * URL to bypass shadcn's Base UI check for its own component of the same name.
  */
-export function toShadcnAddArgument(item: string) {
+export function toShadcnAddArgument(
+  item: string,
+  registryUrl: string,
+  style: string,
+) {
+  const name = resolveBejamasRegistryItemName(item);
+  if (name === "toast") return `${registryUrl}/styles/${style}/toast.json`;
   if (!item.startsWith(BEJAMAS_REGISTRY_NAMESPACE)) return item;
-  return resolveBejamasRegistryItemName(item) ?? item;
+  return name ?? item;
 }
 
 // Derive only the user-provided flags for shadcn to avoid losing options.
@@ -604,7 +610,7 @@ export const add = new Command()
 
         const parsed = await addComponents(
           cwd,
-          [toShadcnAddArgument(component)],
+          [toShadcnAddArgument(component, registryUrl, activeStyle)],
           addOptions,
           verbose,
           isSilent,

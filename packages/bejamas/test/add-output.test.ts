@@ -73,16 +73,29 @@ describe("block-aware add helpers", () => {
   });
 
   test("passes the built-in @bejamas namespace to shadcn as the default registry item", () => {
-    expect(toShadcnAddArgument("@bejamas/features-01")).toBe("features-01");
-    expect(toShadcnAddArgument("@bejamas/button")).toBe("button");
-    expect(toShadcnAddArgument("features-01")).toBe("features-01");
-    expect(toShadcnAddArgument("@acme/hero")).toBe("@acme/hero");
-    expect(toShadcnAddArgument("https://other.example.test/item.json")).toBe(
-      "https://other.example.test/item.json",
-    );
-    expect(toShadcnAddArgument("@bejamas/Not Valid")).toBe(
-      "@bejamas/Not Valid",
-    );
+    for (const [item, expected] of [
+      ["@bejamas/features-01", "features-01"],
+      ["@bejamas/button", "button"],
+      ["features-01", "features-01"],
+      ["@acme/hero", "@acme/hero"],
+      [
+        "https://other.example.test/item.json",
+        "https://other.example.test/item.json",
+      ],
+      ["@bejamas/Not Valid", "@bejamas/Not Valid"],
+    ]) {
+      expect(
+        toShadcnAddArgument(item, "https://example.test/r", "bejamas-vega"),
+      ).toBe(expected);
+    }
+  });
+
+  test("passes Bejamas toast as a styled registry URL to bypass shadcn's Base UI check", () => {
+    for (const item of ["toast", "@bejamas/toast"]) {
+      expect(
+        toShadcnAddArgument(item, "https://example.test/r", "bejamas-vega"),
+      ).toBe("https://example.test/r/styles/bejamas-vega/toast.json");
+    }
   });
 
   test("does not re-forward --all after expanding the registry index", () => {
